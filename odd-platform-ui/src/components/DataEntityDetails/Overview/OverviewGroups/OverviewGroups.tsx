@@ -4,6 +4,7 @@ import { DataEntityRef } from 'generated-sources';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddDataEntityToGroupForm from 'components/DataEntityDetails/Overview/OverviewGroups/AddDataEntityToGroupForm/AddDataEntityToGroupForm';
 import AddIcon from 'components/shared/Icons/AddIcon';
+import { usePermissions } from 'lib/hooks';
 import GroupItem from './GroupItem/GroupItem';
 import { GroupsCaptionContainer } from './OverviewGroupsStyles';
 
@@ -16,6 +17,8 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
   dataEntityGroups,
   dataEntityId,
 }) => {
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+
   const visibleLimit = 10;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -29,6 +32,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
+              disabled={!editDataEntity}
               startIcon={<AddIcon />}
             >
               Add to group
@@ -89,7 +93,11 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
           <AddDataEntityToGroupForm
             dataEntityId={dataEntityId}
             btnCreateEl={
-              <AppButton size="small" color="tertiary">
+              <AppButton
+                size="small"
+                color="tertiary"
+                disabled={!editDataEntity}
+              >
                 Add to group
               </AppButton>
             }

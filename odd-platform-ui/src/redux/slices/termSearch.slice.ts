@@ -25,11 +25,7 @@ const initialState: TermSearchState = {
   query: '',
   results: {
     items: [],
-    pageInfo: {
-      total: 0,
-      page: 0,
-      hasNext: true,
-    },
+    pageInfo: { total: 0, page: 0, hasNext: true },
   },
   suggestions: [],
   facets: {},
@@ -88,11 +84,7 @@ const updateTermsSearchState = (
     isFacetsStateSynced: true,
     results: {
       items: [],
-      pageInfo: {
-        page: 0,
-        total: total || 0,
-        hasNext: true,
-      },
+      pageInfo: { page: 0, total: total || 0, hasNext: true },
     },
   };
 };
@@ -182,11 +174,7 @@ export const termsSearchSlice = createSlice({
         },
         results: {
           items: [],
-          pageInfo: {
-            page: 0,
-            total: 0,
-            hasNext: true,
-          },
+          pageInfo: { page: 0, total: 0, hasNext: true },
         },
       };
     },

@@ -6,6 +6,7 @@ import {
   DataQualityTestSeverity,
   DataSetFieldTypeTypeEnum,
   SLAColour,
+  OwnerAssociationRequestStatus,
 } from 'generated-sources';
 import { TypographyStyle } from '@mui/material';
 import { TypographyStyleOptions } from '@mui/material/styles/createTypography';
@@ -36,6 +37,8 @@ type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
 type RunStatus = Record<DataEntityRunStatus, ItemColors>;
 
+type AssociationRequestStatus = Record<OwnerAssociationRequestStatus, ItemColors>;
+
 type SLAStatus = Record<DataQualityTestSeverity | SLAColour, string>;
 
 interface TextType {
@@ -50,6 +53,8 @@ interface ButtonType {
   primary: ItemCondition;
   primaryLight: ItemCondition;
   secondary: ItemCondition;
+  secondarySuccess: ItemCondition;
+  secondaryWarn: ItemCondition;
   tertiary: ItemCondition;
   dropdown: ItemCondition;
   expand: ItemCondition;
@@ -57,6 +62,7 @@ interface ButtonType {
   unfilled: ItemCondition;
   collapse: ItemCondition;
   valueCount: ItemCondition;
+  animationParas: { start: string; end: string };
 }
 
 interface BackgroundType extends TypeBackground {
@@ -88,6 +94,7 @@ declare module '@mui/material/styles' {
     entityClass: EntityClasses;
     reportStatus: ReportStatus;
     runStatus: RunStatus;
+    associationRequestStatus: AssociationRequestStatus;
     button: ButtonType;
     tag: TagType;
     structureLabel: StructureLabelType;
@@ -104,6 +111,7 @@ declare module '@mui/material/styles' {
     entityClass?: EntityClasses;
     reportStatus?: ReportStatus;
     runStatus?: RunStatus;
+    associationRequestStatus?: AssociationRequestStatus;
     button?: ButtonType;
     tag?: TagType;
     structureLabel?: StructureLabelType;

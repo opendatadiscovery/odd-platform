@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 
-import users from '../config/users.json';
 import { ThirdPartyCredentials } from '../common-utilities/interfaces/shared';
+import users from './users.json';
 
 dotenv.config({ path: 'envs/.env' });
 
@@ -43,7 +43,6 @@ type Mutable<T> = {
 
 const env_with_defaults = (
   configuration_defaults: EnvironmentVariables,
-  // @ts-ignore
   env,
 ): EnvironmentVariables => {
   const result: Mutable<EnvironmentVariables> = configuration_defaults; // so we could assign to result.users for production case
@@ -51,7 +50,6 @@ const env_with_defaults = (
     .filter(key => key !== 'users')
     .forEach(key => {
       if (env[key.toUpperCase()]) {
-        // @ts-ignore
         result[key] = env[key.toUpperCase()];
       }
     });

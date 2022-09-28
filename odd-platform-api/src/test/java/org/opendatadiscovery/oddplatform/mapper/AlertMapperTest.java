@@ -55,7 +55,7 @@ class AlertMapperTest {
 
         final AssociatedOwner associatedOwner = new AssociatedOwner();
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
-        when(associatedOwnerMapper.mapAssociatedOwner(anyString(), isNull())).thenReturn(associatedOwner);
+        when(associatedOwnerMapper.mapAssociatedOwner(any())).thenReturn(associatedOwner);
 
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, null));
 
@@ -91,7 +91,7 @@ class AlertMapperTest {
         final AssociatedOwner associatedOwner = new AssociatedOwner();
         associatedOwner.setOwner(owner);
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
-        when(associatedOwnerMapper.mapAssociatedOwner(anyString(), any(OwnerPojo.class))).thenReturn(associatedOwner);
+        when(associatedOwnerMapper.mapAssociatedOwner(any())).thenReturn(associatedOwner);
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
 
         //when
@@ -127,7 +127,7 @@ class AlertMapperTest {
         final AssociatedOwner associatedOwner = new AssociatedOwner();
         associatedOwner.setOwner(owner);
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
-        when(associatedOwnerMapper.mapAssociatedOwner(anyString(), any(OwnerPojo.class))).thenReturn(associatedOwner);
+        when(associatedOwnerMapper.mapAssociatedOwner(any())).thenReturn(associatedOwner);
 
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
         final long pageTotal = 2L;

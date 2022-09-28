@@ -20,6 +20,7 @@ const SELECTORS = {
 
 export default class Table extends CustomElement {
   private readonly selectors: typeof SELECTORS;
+
   private readonly list: List;
 
   constructor(
@@ -45,6 +46,7 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param selector
    */
   find(selector: string) {
     return this.custom_element.locator(selector);
@@ -90,6 +92,9 @@ export default class Table extends CustomElement {
 
   /**
    * Click on header checkbox to select all items
+   *
+   * @param cell_index
+   * @param checkbox_locator
    */
   async click_header_cell(cell_index: number, checkbox_locator: string) {
     const row = this.get_header_cell(cell_index);
@@ -106,13 +111,13 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param row_identifier
    */
   private get_row_by_identifier(row_identifier: number | string): Locator {
     if (typeof row_identifier === 'number') {
       return this.get_rows().nth(row_identifier);
-    } else {
-      return this.get_body().locator(`${this.selectors.row}:has-text("${row_identifier}")`);
     }
+    return this.get_body().locator(`${this.selectors.row}:has-text("${row_identifier}")`);
   }
 
   /**
@@ -124,6 +129,8 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param row_index
+   * @param cell_index
    */
   async get_row_cell(row_index: number, cell_index: number) {
     const row = await this.get_row(row_index);
@@ -147,6 +154,7 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param row_identifier
    */
   async get_row(row_identifier: number | string): Promise<Locator> {
     await this.get_body().waitFor();
@@ -193,6 +201,7 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param row_identifier
    */
   async is_row_visible(row_identifier: number | string) {
     this.custom_element = await this.get_row(row_identifier);
@@ -202,6 +211,7 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param row_identifier
    */
   async is_row_hidden(row_identifier: number | string) {
     this.custom_element = await this.get_row(row_identifier);
@@ -211,6 +221,8 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param row_identifier
+   * @param child_selector
    */
   async click_row(row_identifier: number | string, child_selector = 'a') {
     const row = await this.get_row(row_identifier);
@@ -224,6 +236,8 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param callback
+   * @param item_custom_wrapper_class
    */
   async for_each_row<T extends CustomElement>(
     callback: ForEachCallback<T>,
@@ -234,6 +248,8 @@ export default class Table extends CustomElement {
 
   /**
    *
+   * @param callback
+   * @param item_custom_wrapper_class
    */
   async for_each_header_cell<T extends CustomElement>(
     callback: ForEachCallback<T>,

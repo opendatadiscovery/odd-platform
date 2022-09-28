@@ -1,4 +1,5 @@
 import {
+  Actions,
   Configuration,
   DataEntityApi,
   DataEntityApiAddDataEntityDataEntityGroupRequest,
@@ -9,6 +10,7 @@ import {
   DataEntityApiDeleteDataEntityGroupRequest,
   DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityApiGetDataEntityPermissionsRequest,
   DataEntityApiGetMyObjectsRequest,
   DataEntityApiGetMyObjectsWithDownstreamRequest,
   DataEntityApiGetMyObjectsWithUpstreamRequest,
@@ -153,7 +155,6 @@ export const fetchPopularDataEntitiesList = createAsyncThunk<
   })
 );
 
-// data entity groups
 export const createDataEntityGroup = createAsyncThunk<
   DataEntityRef,
   DataEntityApiCreateDataEntityGroupRequest
@@ -212,3 +213,14 @@ export const fetchDataEntitiesUsageInfo = createAsyncThunk<DataEntityUsageInfo, 
   actions.fetchDataEntitiesUsageActionType,
   async () => dataEntityApi.getDataEntitiesUsage()
 );
+
+export const fetchDataEntityPermissions = createAsyncThunk<
+  { dataEntityId: number; permissions: Actions },
+  DataEntityApiGetDataEntityPermissionsRequest
+>(actions.fetchDataEntityPermissionsActionType, async ({ dataEntityId }) => {
+  const permissions = await dataEntityApi.getDataEntityPermissions({
+    dataEntityId,
+  });
+
+  return { dataEntityId, permissions };
+});

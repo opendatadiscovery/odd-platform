@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 /**
  * Find out dynamically size of scrollbar width of client's browser.
@@ -20,3 +20,5 @@ export const useScrollBarWidth: (width?: number) => string = (width = 15) => {
   }, []);
   return scrollbarWidth;
 };
+
+export default useScrollBarWidth;

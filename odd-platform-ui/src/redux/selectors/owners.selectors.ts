@@ -1,7 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'redux/interfaces';
+import { RootState, OwnersState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
-import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { getTermId } from 'redux/selectors/terms.selectors';
@@ -28,7 +27,7 @@ export const getOwnersList = createSelector(ownersState, owners =>
   owners.allIds.map(id => owners.byId[id])
 );
 
-export const getOwnersListPage = createSelector(
+export const getOwnersListPageInfo = createSelector(
   ownersState,
   ownersList => ownersList.pageInfo
 );

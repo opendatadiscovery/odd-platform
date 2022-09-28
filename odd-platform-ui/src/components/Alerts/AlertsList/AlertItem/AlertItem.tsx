@@ -2,22 +2,34 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
-import KebabIcon from 'components/shared/Icons/KebabIcon';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import AppPopover from 'components/shared/AppPopover/AppPopover';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppPaths } from 'lib/hooks';
+import {
+  AlertStatusItem,
+  AppIconButton,
+  AppMenuItem,
+  AppPopover,
+  AppTooltip,
+  EntityClassItem,
+} from 'components/shared';
+import { KebabIcon } from 'components/shared/Icons';
+import { useAppPaths, usePermissions } from 'lib/hooks';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
+import { AlertStatus } from 'generated-sources';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { fetchDataEntityPermissions } from 'redux/thunks';
+import {
+  getDataEntityPermissionsFetchingStatuses,
+  isDataEntityPermissionsAlreadyFetched,
+} from 'redux/selectors';
 import { ColContainer } from '../AlertsListStyles';
 import * as S from './AlertItemStyles';
 
 interface AlertItemProps {
   alert: Alert;
-  alertStatusHandler: () => void;
+  alertStatusHandler: (
+    alertId: Alert['id'],
+    alertStatus: AlertStatus
+  ) => void;
 }
 
 const AlertItem: React.FC<AlertItemProps> = ({
@@ -25,6 +37,30 @@ const AlertItem: React.FC<AlertItemProps> = ({
   alertStatusHandler,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
+  const dispatch = useAppDispatch();
+  const { isAllowedTo: alertProcessing } = usePermissions({
+    dataEntityId: alert.dataEntity?.id,
+  });
+
+  const isPermFetched = useAppSelector(
+    isDataEntityPermissionsAlreadyFetched(alert.dataEntity?.id)
+  );
+
+  const { isLoading: isPermissionsFetching } = useAppSelector(
+    getDataEntityPermissionsFetchingStatuses
+  );
+
+  const alertOnClickHandle = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+  ) => {
+    if (alert.dataEntity?.id && !isPermFetched) {
+      dispatch(
+        fetchDataEntityPermissions({ dataEntityId: alert.dataEntity.id })
+      );
+    }
+    onClick(e);
+  };
 
   return (
     <S.Container container>
@@ -38,7 +74,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
         <S.NameContainer>
           <Link
             to={
-              alert?.dataEntity?.id
+              alert.dataEntity?.id
                 ? dataEntityDetailsPath(alert.dataEntity.id)
                 : '#'
             }
@@ -100,13 +136,17 @@ const AlertItem: React.FC<AlertItemProps> = ({
                 size="medium"
                 color="primaryLight"
                 icon={<KebabIcon />}
-                onClick={onClick}
+                onClick={e => alertOnClickHandle(e, onClick)}
               />
             )}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            transformOrigin={{ vertical: 'top', horizontal: 100 }}
+            transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+            isLoading={isPermissionsFetching}
           >
-            <AppMenuItem onClick={alertStatusHandler}>
+            <AppMenuItem
+              disabled={!alertProcessing}
+              onClick={() => alertStatusHandler(alert.id, alert.status)}
+            >
               {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
             </AppMenuItem>
           </AppPopover>

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.Actions;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
@@ -36,6 +37,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
+import org.opendatadiscovery.oddplatform.service.DataEntitySecurityService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
@@ -59,19 +61,22 @@ public class DataEntityController
     private final TermService termService;
     private final LineageService lineageService;
     private final ActivityService activityService;
+    private final DataEntitySecurityService dataEntitySecurityService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
                                 final AlertService alertService,
                                 final TermService termService,
                                 final LineageService lineageService,
-                                final ActivityService activityService) {
+                                final ActivityService activityService,
+                                final DataEntitySecurityService dataEntitySecurityService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
         this.termService = termService;
         this.lineageService = lineageService;
         this.activityService = activityService;
+        this.dataEntitySecurityService = dataEntitySecurityService;
     }
 
     @Override
@@ -348,6 +353,13 @@ public class DataEntityController
     @Override
     public Mono<ResponseEntity<DataEntityUsageInfo>> getDataEntitiesUsage(final ServerWebExchange exchange) {
         return entityService.getDataEntityUsageInfo()
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Actions>> getDataEntityPermissions(final Long dataEntityId,
+                                                                  final ServerWebExchange exchange) {
+        return dataEntitySecurityService.getActionsForCurrentUser(dataEntityId)
             .map(ResponseEntity::ok);
     }
 }

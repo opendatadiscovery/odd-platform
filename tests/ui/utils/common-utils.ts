@@ -6,6 +6,8 @@ import { configuration } from '../../config/configuration';
 export default class UiCommonUtils {
   /**
    *
+   * @param cb
+   * @param options
    */
   static async wait_until<T extends Record<keyof T, unknown> | PredicateReturnValue>(
     cb: Predicate<T>,

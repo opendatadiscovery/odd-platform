@@ -21,7 +21,9 @@ export default class List extends CustomElement {
 
   /**
    * Calls the callback function on each list element
+   *
    * @param {Function} cb
+   * @param item_custom_wrapper_class
    */
   async for_each_list_item<T extends CustomElement>(
     cb: ForEachCallback<T>,
@@ -44,24 +46,27 @@ export default class List extends CustomElement {
 
   /**
    * Gets the single list item
+   *
    * @param identifier
+   * @param exact
    * @returns
    */
   private get_list_element(identifier: string | number, exact = false) {
     if (typeof identifier === 'number') {
       return this.custom_element.locator(this.list_item).nth(identifier);
-    } else {
-      return this.custom_element.locator(
-        exact
-          ? SELECTORS.list_item_by_exact_match(this.list_item, identifier)
-          : SELECTORS.list_item_by_partial_match(this.list_item, identifier),
-      );
     }
+    return this.custom_element.locator(
+      exact
+        ? SELECTORS.list_item_by_exact_match(this.list_item, identifier)
+        : SELECTORS.list_item_by_partial_match(this.list_item, identifier),
+    );
   }
 
   /**
    * Search for element handles pagination
+   *
    * @param identifier
+   * @param exact
    * @returns
    */
   private async get_list_item(identifier: number | string, exact?: boolean): Promise<Locator> {
@@ -109,8 +114,11 @@ export default class List extends CustomElement {
 
   /**
    * Clicks on list item or its child
+   *
    * @param identifier list element identifier
    * @param selector "optional" selector of an element within list element which should be clicked
+   * @param selector.locator
+   * @param selector.exact
    */
   async click_on_list_item(
     identifier: string | number,
@@ -130,6 +138,7 @@ export default class List extends CustomElement {
 
   /**
    * Gets list item text
+   *
    * @param identifier
    * @returns
    */
@@ -139,6 +148,7 @@ export default class List extends CustomElement {
 
   /**
    * Checks if the list item is visible
+   *
    * @param identifier
    * @returns
    */
@@ -150,8 +160,10 @@ export default class List extends CustomElement {
 
   /**
    * Searches within particular list item
+   *
    * @param list_item_identifier
    * @param selector
+   * @param child_locator
    * @returns
    */
   async find_inside(list_item_identifier: string | number, child_locator?: string) {
@@ -169,6 +181,7 @@ export default class List extends CustomElement {
 
   /**
    * Get the attribute of the list item or its inner element if `inner_selector` is passed
+   *
    * @param list_item_identifier
    * @param attribute
    * @param inner_selector

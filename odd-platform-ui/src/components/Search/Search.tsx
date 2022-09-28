@@ -5,7 +5,7 @@ import values from 'lodash/values';
 import { MainSearch } from 'components/shared';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   createDataEntitiesSearch,
@@ -20,7 +20,6 @@ import {
   getSearchMyObjects,
   getSearchQuery,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
 import Filters from './Filters/Filters';
 import Results from './Results/Results';
 

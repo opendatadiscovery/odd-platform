@@ -8,8 +8,6 @@ import {
   AppLoadingPage,
   AppMenuItem,
   AppPopover,
-  AppTabItem,
-  AppTabs,
   ConfirmationDialog,
   EntityClassItem,
   EntityTypeItem,
@@ -18,12 +16,13 @@ import {
 } from 'components/shared';
 import { AddIcon, EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
   fetchDataSetQualitySLAReport,
+  fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
@@ -32,17 +31,16 @@ import {
   getDataEntityDetails,
   getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
-  getDataEntityOpenAlertsCount,
-  getDatasetTestReport,
-  getIsDataEntityBelongsToClass,
   getSearchId,
 } from 'redux/selectors';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { Permission } from 'generated-sources';
+import { PermissionProvider } from 'components/shared/contexts';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
 import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
+import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
 
 // lazy components
 const Overview = React.lazy(() => import('./Overview/Overview'));
@@ -50,52 +48,37 @@ const DatasetStructure = React.lazy(() => import('./DatasetStructure/DatasetStru
 const Lineage = React.lazy(() => import('./Lineage/Lineage'));
 const TestReport = React.lazy(() => import('./TestReport/TestReport'));
 const TestReportDetails = React.lazy(
-  () => import('./TestReport/TestReportDetails/TestReportDetails'),
+  () => import('./TestReport/TestReportDetails/TestReportDetails')
 );
 const DataEntityAlerts = React.lazy(() => import('./DataEntityAlerts/DataEntityAlerts'));
 const QualityTestHistory = React.lazy(
-  () => import('./QualityTestRunsHistory/TestRunsHistory'),
+  () => import('./QualityTestRunsHistory/TestRunsHistory')
 );
 const DataEntityActivity = React.lazy(
-  () => import('./DataEntityActivity/DataEntityActivity'),
+  () => import('./DataEntityActivity/DataEntityActivity')
 );
 
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { dataEntityId, viewType } = useAppParams();
-  const {
-    searchPath,
-    dataEntityOverviewPath,
-    datasetStructurePath,
-    dataEntityLineagePath,
-    dataEntityTestReportPath,
-    dataEntityLinkedItemsPath,
-    dataEntityHistoryPath,
-    dataEntityAlertsPath,
-    dataEntityActivityPath,
-  } = useAppPaths();
+  const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { searchPath } = useAppPaths();
 
-  const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
   const searchId = useAppSelector(getSearchId);
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
-  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
-    getIsDataEntityBelongsToClass(dataEntityId),
-  );
 
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
-    getDataEntityGroupUpdatingStatuses,
+    getDataEntityGroupUpdatingStatuses
   );
   const { isLoading: isDataEntityDetailsFetching, isLoaded: isDataEntityDetailsFetched } =
     useAppSelector(getDataEntityDetailsFetchingStatuses);
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
-    getDataEntityAddToGroupStatuses,
+    getDataEntityAddToGroupStatuses
   );
   const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
-    getDataEntityDeleteFromGroupStatuses,
+    getDataEntityDeleteFromGroupStatuses
   );
-
-  const datasetQualityTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
 
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
@@ -111,81 +94,15 @@ const DataEntityDetails: React.FC = () => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
+    dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
-
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
-
-  React.useEffect(() => {
-    setTabs([
-      {
-        name: 'Overview',
-        link: dataEntityOverviewPath(dataEntityId),
-        value: 'overview',
-      },
-      {
-        name: 'Structure',
-        link: datasetStructurePath(dataEntityId),
-        hidden: !isDataset,
-        value: 'structure',
-      },
-      {
-        name: 'Lineage',
-        link: dataEntityLineagePath(dataEntityId),
-        hidden: isQualityTest,
-        value: 'lineage',
-      },
-      {
-        name: 'Test reports',
-        link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset || !datasetQualityTestReport?.total,
-        value: 'test-reports',
-      },
-      {
-        name: 'History',
-        link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformer,
-        value: 'history',
-      },
-      {
-        name: 'Alerts',
-        link: dataEntityAlertsPath(dataEntityId),
-        value: 'alerts',
-        hint: openAlertsCount,
-        hintType: 'alert',
-      },
-      {
-        name: 'Linked items',
-        link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden: !dataEntityDetails?.hasChildren,
-        value: 'linked-items',
-      },
-      {
-        name: 'Activity',
-        link: dataEntityActivityPath(dataEntityId),
-        value: 'activity',
-      },
-    ]);
-  }, [
-    dataEntityId,
-    isQualityTest,
-    isDataset,
-    dataEntityDetails,
-    openAlertsCount,
-    datasetQualityTestReport?.total,
-  ]);
-
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
-
-  React.useEffect(() => {
-    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
-  }, [tabs, viewType]);
 
   const handleEntityGroupDelete = React.useCallback(
     () =>
       dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() =>
-        history.push(searchPath(searchId)),
+        history.push(searchPath(searchId))
       ),
-    [deleteDataEntityGroup, dataEntityId],
+    [deleteDataEntityGroup, dataEntityId]
   );
 
   return (
@@ -220,6 +137,7 @@ const DataEntityDetails: React.FC = () => {
                         size='small'
                         color='tertiary'
                         sx={{ ml: 1 }}
+                        disabled={!editDataEntity}
                         startIcon={
                           dataEntityDetails.internalName ? <EditIcon /> : <AddIcon />
                         }
@@ -309,14 +227,7 @@ const DataEntityDetails: React.FC = () => {
             )}
           </Grid>
           <Grid sx={{ mt: 2 }}>
-            {tabs.length && selectedTab >= 0 ? (
-              <AppTabs
-                type='primary'
-                items={tabs}
-                selectedTab={selectedTab}
-                handleTabChange={() => {}}
-              />
-            ) : null}
+            <DataEntityDetailsTabs />
           </Grid>
         </>
       ) : null}
@@ -376,7 +287,11 @@ const DataEntityDetails: React.FC = () => {
                 '/dataentities/:dataEntityId/alerts',
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
-              component={DataEntityAlerts}
+              render={() => (
+                <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
+                  <DataEntityAlerts />
+                </PermissionProvider>
+              )}
             />
             <Route
               exact

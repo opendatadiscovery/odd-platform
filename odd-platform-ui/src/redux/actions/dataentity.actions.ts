@@ -48,7 +48,6 @@ export const fetchPopularDataEntitiesActionType = createActionType(
   'fetchMyPopularDataEntities'
 );
 
-// data entity groups
 export const createDataEntityGroupActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'createDataEntityGroup'
@@ -75,4 +74,9 @@ export const deleteDataEntityFromGroupActionType = createActionType(
 export const fetchDataEntitiesUsageActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'dataEntitiesUsage'
+);
+
+export const fetchDataEntityPermissionsActionType = createActionType(
+  dataEntitiesActionTypePrefix,
+  'fetchDataEntityPermissions'
 );

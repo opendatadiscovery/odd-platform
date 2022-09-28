@@ -33,3 +33,4 @@ export const alertDateFormat = 'd MMM yyyy, HH:mm';
 
 // empty structures
 export const emptyArr = [];
+export const emptyObj = {};

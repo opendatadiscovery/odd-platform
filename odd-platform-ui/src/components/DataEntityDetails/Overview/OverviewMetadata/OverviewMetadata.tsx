@@ -7,6 +7,7 @@ import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors';
+import { usePermissions } from 'lib/hooks';
 import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import { SubtitleContainer } from './OverviewMetadataStyles';
@@ -16,6 +17,8 @@ interface Props {
 }
 
 const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+
   const predefinedMetadata = useAppSelector(
     getDataEntityPredefinedMetadataList(dataEntityId)
   );
@@ -113,6 +116,7 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
                     size="medium"
                     color="primaryLight"
                     startIcon={<AddIcon />}
+                    disabled={!editDataEntity}
                   >
                     Add metadata
                   </AppButton>
@@ -147,6 +151,7 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
                     sx={{ ml: 0.5 }}
                     size="small"
                     color="tertiary"
+                    disabled={!editDataEntity}
                   >
                     Add Metadata
                   </AppButton>

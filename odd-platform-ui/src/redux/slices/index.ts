@@ -21,6 +21,7 @@ import terms from './terms.slice';
 import termSearch from './termSearch.slice';
 import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
+import ownerAssociation from './ownerAssociation.slice';
 
 export default combineReducers({
   namespaces,
@@ -45,4 +46,5 @@ export default combineReducers({
   termSearch,
   dataEntityRuns,
   activities,
+  ownerAssociation,
 });

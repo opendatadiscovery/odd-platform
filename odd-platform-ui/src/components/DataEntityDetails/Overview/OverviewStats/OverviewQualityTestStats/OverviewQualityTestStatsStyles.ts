@@ -2,7 +2,6 @@ import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
 export const StatsContainer = styled(Grid)(({ theme }) => ({
-  justifyContent: 'space-between',
   alignItems: 'flex-start',
   flexWrap: 'nowrap',
   columnGap: theme.spacing(4),

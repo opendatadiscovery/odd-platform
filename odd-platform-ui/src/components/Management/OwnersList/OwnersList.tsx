@@ -1,40 +1,36 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Owner } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import EditableOwnerItem from 'components/Management/OwnersList/EditableOwnerItem/EditableOwnerItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  NumberFormatted,
+  SkeletonWrapper,
+  EmptyContentPlaceholder,
+  AppInput,
+  AppButton,
+} from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import {
   getOwnerCreatingStatuses,
   getOwnerDeletingStatuses,
   getOwnerListFetchingStatuses,
+  getOwnersList,
+  getOwnersListPageInfo,
 } from 'redux/selectors';
+import { usePermissions } from 'lib/hooks';
+import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
 import * as S from './OwnersListStyles';
 
-interface OwnersListProps {
-  ownersList: Owner[];
-  pageInfo?: CurrentPageInfo;
-}
-
-const OwnersListView: React.FC<OwnersListProps> = ({
-  ownersList,
-  pageInfo,
-}) => {
+const OwnersList: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
+
+  const ownersList = useAppSelector(getOwnersList);
+  const pageInfo = useAppSelector(getOwnersListPageInfo);
 
   const { isLoading: isOwnerListFetching } = useAppSelector(
     getOwnerListFetchingStatuses
@@ -130,6 +126,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
               color="primaryLight"
               size="medium"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create Owner
             </AppButton>
@@ -174,4 +171,4 @@ const OwnersListView: React.FC<OwnersListProps> = ({
   );
 };
 
-export default OwnersListView;
+export default OwnersList;

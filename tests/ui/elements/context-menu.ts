@@ -18,6 +18,7 @@ export default class ContextMenu extends CustomElement {
 
   /**
    * Click the Context menu item
+   *
    * @param item_name
    * @param open if false - does not open the context menu
    */

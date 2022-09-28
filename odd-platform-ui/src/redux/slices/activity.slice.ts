@@ -1,7 +1,4 @@
-import {
-  activitiesActionTypePrefix,
-  fetchActivityListActionType,
-} from 'redux/actions';
+import { activitiesActionTypePrefix, fetchActivityListActionType } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { addDays, endOfDay, format } from 'date-fns';
@@ -66,11 +63,7 @@ const updateActivitiesState = (
       activitiesByDate: {
         ...memo.activitiesByDate,
         [formattedDate(activity.createdAt)]: uniqBy(
-          [
-            ...(memo.activitiesByDate[formattedDate(activity.createdAt)] ||
-              []),
-            activity,
-          ],
+          [...(memo.activitiesByDate[formattedDate(activity.createdAt)] || []), activity],
           'id'
         ).sort((a, b) => b.createdAt - a.createdAt),
       },
@@ -133,29 +126,15 @@ export const activitiesSlice = createSlice({
     clearActivityFilters: () => initialState,
   },
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchActivityCounts.fulfilled,
-      (state, { payload }) => {
-        state.counts = payload;
-      }
-    );
-
-    builder.addCase(
-      thunks.fetchActivityList.fulfilled,
-      updateActivitiesState
-    );
-
-    builder.addCase(
-      thunks.fetchDataEntityActivityList.fulfilled,
-      updateActivitiesState
-    );
+    builder.addCase(thunks.fetchActivityCounts.fulfilled, (state, { payload }) => {
+      state.counts = payload;
+    });
+    builder.addCase(thunks.fetchActivityList.fulfilled, updateActivitiesState);
+    builder.addCase(thunks.fetchDataEntityActivityList.fulfilled, updateActivitiesState);
   },
 });
 
-export const {
-  clearActivityFilters,
-  setActivityQueryParam,
-  deleteActivityQueryParam,
-} = activitiesSlice.actions;
+export const { clearActivityFilters, setActivityQueryParam, deleteActivityQueryParam } =
+  activitiesSlice.actions;
 
 export default activitiesSlice.reducer;

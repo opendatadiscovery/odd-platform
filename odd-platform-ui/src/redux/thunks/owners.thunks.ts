@@ -21,7 +21,7 @@ import {
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -46,15 +46,10 @@ export const fetchRoleList = createAsyncThunk<
 export const fetchOwnersList = createAsyncThunk<
   { items: Array<Owner>; pageInfo: CurrentPageInfo },
   OwnerApiGetOwnerListRequest
->(actions.fetchOwnersAction, async ({ page, size, query, ids }) => {
-  const { items, pageInfo } = await ownerApi.getOwnerList({
-    page,
-    size,
-    query,
-    ids,
-  });
+>(actions.fetchOwnersAction, async params => {
+  const { items, pageInfo } = await ownerApi.getOwnerList(params);
 
-  return { items, pageInfo: { ...pageInfo, page } };
+  return { items, pageInfo: { ...pageInfo, page: params.page } };
 });
 
 export const createOwner = createAsyncThunk<Owner, OwnerApiCreateOwnerRequest>(

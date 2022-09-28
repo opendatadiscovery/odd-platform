@@ -5,13 +5,13 @@ import { useAppSelector } from 'lib/redux/hooks';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure, getIsUniqStatsExist } from 'redux/selectors';
 import {
-  AppButton,
   AppIconButton,
   AppTooltip,
   ButtonColors,
   TruncatedLabel,
 } from 'components/shared';
 import { GraphIcon, InformationIcon, MinusIcon, PlusIcon } from 'components/shared/Icons';
+import { usePermissions } from 'lib/hooks';
 import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
@@ -30,7 +30,7 @@ interface DatasetStructureItemProps {
   renderStructureItem: (
     field: DataSetField,
     nesting: number,
-    onSizeChange: () => void,
+    onSizeChange: () => void
   ) => JSX.Element;
   onSizeChange: () => void;
   rowHeight?: string | number;
@@ -47,6 +47,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   onSizeChange,
   rowHeight,
 }) => {
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
 
   const datasetStructure = useAppSelector(
@@ -54,13 +56,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       datasetId: dataEntityId,
       versionId,
       parentFieldId: datasetField.id,
-    }),
+    })
   );
   const isUniqStatsExist = useAppSelector(
     getIsUniqStatsExist({
       datasetId: dataEntityId,
       versionId,
-    }),
+    })
   );
 
   const childFields = isComplexField(datasetField.type.type) ? datasetStructure : [];
@@ -96,20 +98,27 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     }
 
     return (
-      <S.ButtonContainer $showBtn={showBtn}>
-        <AppButton size={btnSize} color={btnColor} sx={{ mr: 1 }}>
-          {btnText}
-        </AppButton>
-      </S.ButtonContainer>
+      <S.Button
+        $showBtn={showBtn}
+        disabled={!editDataEntity}
+        size={btnSize}
+        color={btnColor}
+        sx={{ mr: 1 }}
+      >
+        {btnText}
+      </S.Button>
     );
   }, [datasetField.enumValueCount]);
 
   const datasetFieldInfoEditBtn = (
-    <S.ButtonContainer>
-      <AppButton size='medium' color='primaryLight' sx={{ mr: 1 }}>
-        Edit
-      </AppButton>
-    </S.ButtonContainer>
+    <S.Button
+      disabled={!editDataEntity}
+      size='medium'
+      color='primaryLight'
+      sx={{ mr: 1 }}
+    >
+      Edit
+    </S.Button>
   );
 
   return (
@@ -177,8 +186,12 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     onSizeChange={onSizeChange}
                     labelList={datasetField.labels}
                   />
-                  <DatasetStructureKeyFieldLabel sx={{ ml: 0.5 }} keyType='primary' />
-                  <DatasetStructureKeyFieldLabel sx={{ ml: 0.5 }} keyType='sort' />
+                  {datasetField.isPrimaryKey && (
+                    <DatasetStructureKeyFieldLabel sx={{ ml: 0.5 }} keyType='primary' />
+                  )}
+                  {datasetField.isSortKey && (
+                    <DatasetStructureKeyFieldLabel sx={{ ml: 0.5 }} keyType='sort' />
+                  )}
                 </Grid>
               )}
               {datasetField.externalDescription && (
@@ -228,7 +241,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         >
           {open && childFields.length
             ? childFields.map(field =>
-                renderStructureItem(field, nesting + 1, onSizeChange),
+                renderStructureItem(field, nesting + 1, onSizeChange)
               )
             : null}
         </Collapse>

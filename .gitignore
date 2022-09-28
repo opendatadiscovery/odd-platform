@@ -18,5 +18,6 @@ __pycache__/
 *$py.class
 node_modules/
 /test-results/
-/playwright-report/
+/tests/playwright-report/
+/tests/dist/
 /playwright/.cache/

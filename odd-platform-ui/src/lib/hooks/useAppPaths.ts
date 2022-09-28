@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { AlertViewType, ManagementViewType } from 'lib/interfaces';
 
-export const useAppPaths = () => {
+const useAppPaths = () => {
   const location = useLocation();
   const isPathEmbedded = location.pathname.includes('embedded');
   const updatePath = (link: string) => {
@@ -103,3 +103,5 @@ export const useAppPaths = () => {
     activityPath,
   };
 };
+
+export default useAppPaths;

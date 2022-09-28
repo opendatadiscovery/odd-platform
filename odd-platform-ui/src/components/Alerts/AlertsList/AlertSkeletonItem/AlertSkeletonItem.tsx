@@ -1,23 +1,28 @@
 import React from 'react';
-import Skeleton from '@mui/material/Skeleton';
-import { Grid } from '@mui/material';
+import { Grid, Skeleton } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
+import { SkeletonWrapper } from 'components/shared';
 
 interface SkeletonProps {
-  width: string;
+  length: number;
 }
 
-const AlertSkeletonItem: React.FC<SkeletonProps> = ({ width }) => (
-  <Grid container sx={{ py: 1.25, px: 1 }} wrap="nowrap">
-    <Grid item xs={3}>
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </Grid>
-    <Grid item xs={7}>
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </Grid>
-    <Grid item xs={2}>
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </Grid>
-  </Grid>
+const AlertSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
+  <SkeletonWrapper
+    length={length}
+    renderContent={({ randWidth, key }) => (
+      <Grid key={key} container sx={{ py: 1.25, px: 1 }} wrap="nowrap">
+        <Grid item xs={3}>
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+        </Grid>
+        <Grid item xs={7}>
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+        </Grid>
+        <Grid item xs={2}>
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+        </Grid>
+      </Grid>
+    )}
+  />
 );
 export default AlertSkeletonItem;
