@@ -196,7 +196,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
                 insertStep = insertStep.set(rs.get(i)).newRecord();
             }
 
-            InsertSetMoreStep<R> query = insertStep.set(rs.get(rs.size() - 1));
+            final InsertSetMoreStep<R> query = insertStep.set(rs.get(rs.size() - 1));
 
             return !failOnDuplicateKey
                 ? jooqReactiveOperations.mono(query.onDuplicateKeyIgnore())

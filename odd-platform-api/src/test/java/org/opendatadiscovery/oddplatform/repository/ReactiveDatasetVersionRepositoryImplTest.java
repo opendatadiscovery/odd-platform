@@ -194,7 +194,8 @@
 //
 //        final DatasetFieldDto datasetFieldDto = createDatasetFieldDto();
 //        final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.getDatasetFieldPojo());
-//        final Map<String, List<DatasetFieldPojo>> datasetFields = Map.of(dataEntityPojo.getOddrn(), datasetFieldPojos);
+//        final Map<String, List<DatasetFieldPojo>> datasetFields
+//             = Map.of(dataEntityPojo.getOddrn(), datasetFieldPojos);
 //
 //        final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
 //        datasetVersionPojo.setDatasetOddrn(dataEntityPojo.getOddrn());

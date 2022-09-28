@@ -526,7 +526,8 @@ public class DataEntityServiceImpl
             .flatMap(reactiveDataEntityRepository::update)
             .flatMap(degPojo -> reactiveGroupEntityRelationRepository
                 .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
-            .flatMap(degPojo -> reactiveGroupEntityRelationRepository.createRelationsReturning(degPojo.getOddrn(), entityOddrns)
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
+                .createRelationsReturning(degPojo.getOddrn(), entityOddrns)
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
             .map(entityMapper::mapRef);

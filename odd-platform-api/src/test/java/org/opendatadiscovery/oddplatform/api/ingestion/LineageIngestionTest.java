@@ -30,10 +30,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LineageIngestionTest extends BaseIngestionTest {
     /**
      * Simple lineage ingestion test.
-     * Ingests a simple graph of data entities and checks that it was ingested correctly
-     * ([inputDataset1] + [inputDataset2]) -> [dataTransformer1] -> [middlewareDataset] -> [dataTransformer2] -> ([outputDataset1] + [outputDataset2])
-     * <p>
-     * Hollow entities cannot be tested yet since we can't get their ids from the Client API, but we still inject them validating by indirect assertions such as hasSize
+     *
+     * <p>Ingests a simple graph of data entities and checks that it was ingested correctly
+     * ([inputDataset1] + [inputDataset2]) -> [dataTransformer1] ->
+     * [middlewareDataset] -> [dataTransformer2] -> ([outputDataset1] + [outputDataset2])
+     *
+     * <p>Hollow entities cannot be tested yet since we can't get their ids from the Client API,
+     * but we still inject them validating by indirect assertions such as hasSize
      */
     @Test
     @DisplayName("Simple lineage ingestion test")

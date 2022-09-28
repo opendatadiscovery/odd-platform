@@ -37,9 +37,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AlertIngestionTest extends BaseIngestionTest {
 
     /**
-     * Backwards incompatible schema change alert test
-     * <p>
-     * Ingests a dataset and then changes its schema in a backwards incompatible way so that alert would trigger
+     * Backwards incompatible schema change alert test.
+     *
+     * <p>Ingests a dataset and then changes its schema in a backwards incompatible way so that alert would trigger
      * and asserts the existence of the alert
      */
     @Test
@@ -101,8 +101,8 @@ public class AlertIngestionTest extends BaseIngestionTest {
 
     /**
      * Failed job alert ingestion test
-     * <p>
-     * Ingests a data transformer with successful data transformer run.
+     *
+     * <p>Ingests a data transformer with successful data transformer run.
      * Then ingests the same data transformer with the same data transformer run but with failed status.
      * Asserts that the alert of type JOB_FAILED was created
      */

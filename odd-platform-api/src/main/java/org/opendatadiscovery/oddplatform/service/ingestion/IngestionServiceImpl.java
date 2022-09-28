@@ -183,7 +183,6 @@ public class IngestionServiceImpl implements IngestionService {
             .build();
     }
 
-
     private List<GroupEntityRelationsPojo> extractGroupEntityRelations(final EnrichedDataEntityIngestionDto dto) {
         if (!dto.getEntityClasses().contains(DataEntityClassDto.DATA_ENTITY_GROUP)
             || CollectionUtils.isEmpty(dto.getDataEntityGroup().entitiesOddrns())) {

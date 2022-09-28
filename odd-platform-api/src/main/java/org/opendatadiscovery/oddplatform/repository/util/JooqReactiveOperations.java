@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class JooqReactiveOperations {
-    private final static int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 1000;
 
     private final DSLContext mappingDSLContext = DSL.using(SQLDialect.POSTGRES);
 

@@ -24,7 +24,8 @@ public class ActivityIngestionRequestProcessor implements IngestionRequestProces
     public Mono<Void> process(final IngestionRequest request) {
         return Mono.zip(
                 activityService.getContextInfo(emptyMap(), ActivityEventTypeDto.DATA_ENTITY_CREATED),
-                activityService.getUpdatedInfo(emptyMap(), request.getNewIds(), ActivityEventTypeDto.DATA_ENTITY_CREATED)
+                activityService.getUpdatedInfo(emptyMap(), request.getNewIds(),
+                    ActivityEventTypeDto.DATA_ENTITY_CREATED)
             )
             .map(function(this::createActivityEvents))
             .flatMap(activityService::createActivityEvents);

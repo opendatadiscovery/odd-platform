@@ -1,12 +1,10 @@
 package org.opendatadiscovery.oddplatform.api.ingestion;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.collections4.MapUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
@@ -25,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MetadataIngestionTest extends BaseIngestionTest {
     /**
-     * Simple metadata ingestion test
+     * Simple metadata ingestion test.
      *
-     * Flow:
+     * <p>Flow:
      * 1. Ingests dataset with random metadata, asserts that metadata is ingested.
      * 2. Ingests new metadata set and asserts that old metadata is deleted and new metadata is ingested.
      * 3. Ingests an empty metadata set and asserts that no metadata is present in the data entity

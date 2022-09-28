@@ -60,7 +60,8 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
-    public Flux<GroupEntityRelationsPojo> createRelationsReturning(final String groupOddrn, final List<String> entityOddrns) {
+    public Flux<GroupEntityRelationsPojo> createRelationsReturning(final String groupOddrn,
+                                                                   final List<String> entityOddrns) {
         if (entityOddrns.isEmpty()) {
             return Flux.just();
         }

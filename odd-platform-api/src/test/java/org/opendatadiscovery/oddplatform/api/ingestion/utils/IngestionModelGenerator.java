@@ -16,9 +16,9 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
 
 public class IngestionModelGenerator {
-    private final static EasyRandom EASY_RANDOM = new EasyRandom();
+    private static final EasyRandom EASY_RANDOM = new EasyRandom();
 
-    private final static MapRandomizer<String, String> MAP_RANDOMIZER =
+    private static final MapRandomizer<String, String> MAP_RANDOMIZER =
         new MapRandomizer<>(new StringRandomizer(), new StringRandomizer());
 
     public static DataEntity generateSimpleDataEntity(final DataEntityType ingestionEntityType) {
