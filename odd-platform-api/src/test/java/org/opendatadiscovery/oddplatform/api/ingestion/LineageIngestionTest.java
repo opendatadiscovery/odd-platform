@@ -302,15 +302,4 @@ public class LineageIngestionTest extends BaseIngestionTest {
             .parentsCount(parentsCount)
             .childrenCount(childrenCount);
     }
-
-    private DataEntityRef buildExpectedDataEntityRef(final DataEntity ingestedEntity, final long ingestedId) {
-        return new DataEntityRef()
-            .id(ingestedId)
-            .oddrn(ingestedEntity.getOddrn())
-            .externalName(ingestedEntity.getName())
-            // TODO: wtf?
-            .url("")
-            .hasAlerts(false)
-            .manuallyCreated(false);
-    }
 }

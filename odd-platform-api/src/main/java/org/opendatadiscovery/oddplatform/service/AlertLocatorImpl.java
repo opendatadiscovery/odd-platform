@@ -29,6 +29,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQuality
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
@@ -49,16 +50,15 @@ public class AlertLocatorImpl implements AlertLocator {
 
     @Override
     public Flux<AlertPojo> locateAlerts(final IngestionRequest request) {
-        final List<Long> changedDatasetIds = request.getExistingEntities()
-            .stream()
-            .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
-            .map(EnrichedDataEntityIngestionDto::getId)
-            .toList();
-
-        return Flux.concat(
-            locateDataEntityRunFailed(request.getTaskRuns()),
-            locateBackIncSchemaChanged(changedDatasetIds, request.getSpecificAttributesDeltas())
-        );
+        return Mono.fromCallable(() -> request.getExistingEntities()
+                .stream()
+                .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+                .map(EnrichedDataEntityIngestionDto::getId)
+                .toList())
+            .flatMapMany(changedDatasetIds -> Flux.concat(
+                locateDataEntityRunFailed(request.getTaskRuns()),
+                locateBackIncSchemaChanged(changedDatasetIds, request.getSpecificAttributesDeltas())
+            ));
     }
 
     public Flux<AlertPojo> locateBackIncSchemaChanged(final List<Long> changedDatasetIds,

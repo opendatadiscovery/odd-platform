@@ -7,6 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
@@ -55,6 +56,10 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
         return (long) extractIngestedEntitiesAndAssert(createdDataSource, 1).values().toArray()[0];
     }
 
+    protected void assertDataEntityDetailsEqual(final DataEntityDetails expected) {
+        assertDataEntityDetailsEqual(expected, null);
+    }
+
     protected void assertDataEntityDetailsEqual(
         final DataEntityDetails expected,
         final BiConsumer<DataEntityDetails, DataEntityDetails> additionalAssertions
@@ -70,7 +75,8 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
                     .ignoringFields(
                         "dataSource.token", "viewCount", "updatedAt",
                         "versionList", "entityClasses", "type.id",
-                        "sourceList", "targetList", "metadataFieldValues"
+                        "sourceList", "targetList", "datasetsList", "metadataFieldValues",
+                        "latestRun.id", "latestRun.updatedAt", "latestRun.createdAt"
                     )
                     .isEqualTo(expected);
 
@@ -111,6 +117,19 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
             .getItems()
             .stream()
             .collect(Collectors.toMap(DataEntity::getOddrn, DataEntity::getId));
+    }
+
+    protected DataEntityRef buildExpectedDataEntityRef(
+        final org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity ingestedEntity,
+        final long ingestedId
+    ) {
+        return new DataEntityRef()
+            .id(ingestedId)
+            .oddrn(ingestedEntity.getOddrn())
+            .externalName(ingestedEntity.getName())
+            .url("")
+            .hasAlerts(false)
+            .manuallyCreated(false);
     }
 
     private String createSearchId() {
