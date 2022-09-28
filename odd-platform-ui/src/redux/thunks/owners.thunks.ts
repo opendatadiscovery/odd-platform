@@ -57,14 +57,10 @@ export const fetchOwnersList = createAsyncThunk<
   return { items, pageInfo: { ...pageInfo, page } };
 });
 
-export const createOwner = createAsyncThunk<
-  Owner,
-  OwnerApiCreateOwnerRequest
->(actions.createOwnerAction, async ({ ownerFormData }) => {
-  const owner = await ownerApi.createOwner({ ownerFormData });
-
-  return owner;
-});
+export const createOwner = createAsyncThunk<Owner, OwnerApiCreateOwnerRequest>(
+  actions.createOwnerAction,
+  async ({ ownerFormData }) => ownerApi.createOwner({ ownerFormData })
+);
 
 export const deleteOwner = createAsyncThunk<
   { ownerId: number },
@@ -119,31 +115,25 @@ export const updateDataEntityOwnership = createAsyncThunk<
 export const deleteDataEntityOwnership = createAsyncThunk<
   { dataEntityId: number; ownershipId: number },
   DataEntityApiDeleteOwnershipRequest
->(
-  actions.deleteDataEntityOwnershipAction,
-  async ({ dataEntityId, ownershipId }) => {
-    await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId });
+>(actions.deleteDataEntityOwnershipAction, async ({ dataEntityId, ownershipId }) => {
+  await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId });
 
-    return { dataEntityId, ownershipId };
-  }
-);
+  return { dataEntityId, ownershipId };
+});
 
 // Term ownership
 
 export const createTermOwnership = createAsyncThunk<
   { termId: number; ownership: Ownership },
   TermApiCreateTermOwnershipRequest
->(
-  actions.createTermOwnershipAction,
-  async ({ termId, ownershipFormData }) => {
-    const ownership = await termApi.createTermOwnership({
-      termId,
-      ownershipFormData,
-    });
+>(actions.createTermOwnershipAction, async ({ termId, ownershipFormData }) => {
+  const ownership = await termApi.createTermOwnership({
+    termId,
+    ownershipFormData,
+  });
 
-    return { termId, ownership };
-  }
-);
+  return { termId, ownership };
+});
 
 export const updateTermOwnership = createAsyncThunk<
   { termId: number; ownershipId: number; ownership: Ownership },

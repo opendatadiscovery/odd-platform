@@ -46,28 +46,21 @@ const updateTermsSearchState = (
   const setFacetOptionsById = (
     facetOptions: CountableSearchFilter[] | SearchFilter[] | undefined
   ) =>
-    reduce<
-      CountableSearchFilter | SearchFilter,
-      TermsSearchFacetStateById
-    >(
+    reduce<CountableSearchFilter | SearchFilter, TermsSearchFacetStateById>(
       facetOptions,
       (memo, facetOption) => ({
         ...memo,
         [facetOption.id]: {
           entityId: facetOption.id,
           entityName: facetOption.name,
-          selected:
-            'selected' in facetOption ? !!facetOption.selected : true,
+          selected: 'selected' in facetOption ? !!facetOption.selected : true,
           syncedState: true,
         },
       }),
       {}
     );
 
-  const newTermSearchFacetsById = mapValues(
-    facetState,
-    setFacetOptionsById
-  );
+  const newTermSearchFacetsById = mapValues(facetState, setFacetOptionsById);
 
   const assignFacetStateWithNewFacets = (
     currFacetState: SearchFacetStateById,
@@ -77,10 +70,7 @@ const updateTermsSearchState = (
       currFacetState || {},
       newTermSearchFacetsById[facetName as TermSearchFacetNames] || {},
       (currFilterState, syncedFilterState) => {
-        if (
-          currFilterState &&
-          currFilterState.selected !== syncedFilterState.selected
-        ) {
+        if (currFilterState && currFilterState.selected !== syncedFilterState.selected) {
           return { ...currFilterState, syncedState: false }; // Keep unsynced filter state (due to debounce).
         }
         return syncedFilterState;
@@ -112,10 +102,7 @@ export const termsSearchSlice = createSlice({
   initialState,
   reducers: {
     clearTermSearchFacets: (state: TermSearchState): TermSearchState => {
-      const getClearedFacetState = (
-        _: TermsSearchFacetStateById,
-        facetName: string
-      ) =>
+      const getClearedFacetState = (_: TermsSearchFacetStateById, facetName: string) =>
         reduce<TermsSearchFacetStateById, TermsSearchFacetStateById>(
           state.facetState[facetName as TermSearchFacetNames],
           (acc, facetOption) => {
@@ -144,13 +131,8 @@ export const termsSearchSlice = createSlice({
       state: TermSearchState,
       { payload }: { payload: TermSearchFacetStateUpdate }
     ): TermSearchState => {
-      const {
-        facetName,
-        facetOptionId,
-        facetOptionName,
-        facetOptionState,
-        facetSingle,
-      } = payload;
+      const { facetName, facetOptionId, facetOptionName, facetOptionState, facetSingle } =
+        payload;
 
       const currentFacetState = state.facetState[facetName];
 
@@ -158,16 +140,10 @@ export const termsSearchSlice = createSlice({
       // Unselect previous type
       let selectedOptionState: SearchFilterStateSynced | undefined;
       if (facetSingle) {
-        const selectedOption = values(currentFacetState).find(
-          filter => filter.selected
-        );
+        const selectedOption = values(currentFacetState).find(filter => filter.selected);
 
         if (selectedOption) {
-          const entityId = get(
-            selectedOption,
-            'entityId',
-            get(selectedOption, 'id')
-          );
+          const entityId = get(selectedOption, 'entityId', get(selectedOption, 'id'));
           const entityName = get(
             selectedOption,
             'entityName',
@@ -217,21 +193,9 @@ export const termsSearchSlice = createSlice({
   },
 
   extraReducers: builder => {
-    builder.addCase(
-      thunks.createTermSearch.fulfilled,
-      updateTermsSearchState
-    );
-
-    builder.addCase(
-      thunks.updateTermSearch.fulfilled,
-      updateTermsSearchState
-    );
-
-    builder.addCase(
-      thunks.getTermsSearch.fulfilled,
-      updateTermsSearchState
-    );
-
+    builder.addCase(thunks.createTermSearch.fulfilled, updateTermsSearchState);
+    builder.addCase(thunks.updateTermSearch.fulfilled, updateTermsSearchState);
+    builder.addCase(thunks.getTermsSearch.fulfilled, updateTermsSearchState);
     builder.addCase(
       thunks.fetchTermsSearchResults.fulfilled,
       (state, { payload }): TermSearchState => {
@@ -260,16 +224,12 @@ export const termsSearchSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.fetchTermSearchSuggestions.fulfilled,
-      (state, { payload }) => {
-        state.suggestions = payload;
-      }
-    );
+    builder.addCase(thunks.fetchTermSearchSuggestions.fulfilled, (state, { payload }) => {
+      state.suggestions = payload;
+    });
   },
 });
 
-export const { clearTermSearchFacets, changeTermSearchFacet } =
-  termsSearchSlice.actions;
+export const { clearTermSearchFacets, changeTermSearchFacet } = termsSearchSlice.actions;
 
 export default termsSearchSlice.reducer;

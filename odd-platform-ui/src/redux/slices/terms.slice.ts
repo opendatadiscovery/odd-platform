@@ -55,48 +55,27 @@ export const termsSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.createTerm.fulfilled,
-      (state, { payload }): TermsState => {
-        const term = payload;
+    builder.addCase(thunks.createTerm.fulfilled, (state, { payload }): TermsState => {
+      const term = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [term.id]: term,
-          },
-          allIds: [term.id, ...state.allIds],
-        };
-      }
-    );
+      return {
+        ...state,
+        byId: { ...state.byId, [term.id]: term },
+        allIds: [term.id, ...state.allIds],
+      };
+    });
 
-    builder.addCase(
-      thunks.updateTerm.fulfilled,
-      (state, { payload }): TermsState => {
-        const term = payload;
+    builder.addCase(thunks.updateTerm.fulfilled, (state, { payload }): TermsState => {
+      const term = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [term.id]: term,
-          },
-        };
-      }
-    );
+      return { ...state, byId: { ...state.byId, [term.id]: term } };
+    });
 
-    builder.addCase(
-      thunks.deleteTerm.fulfilled,
-      (state, { payload }): TermsState => {
-        const { termId } = payload;
+    builder.addCase(thunks.deleteTerm.fulfilled, (state, { payload }): TermsState => {
+      const { termId } = payload;
 
-        return {
-          ...state,
-          allIds: state.allIds.filter(id => id !== termId),
-        };
-      }
-    );
+      return { ...state, allIds: state.allIds.filter(id => id !== termId) };
+    });
   },
 });
 

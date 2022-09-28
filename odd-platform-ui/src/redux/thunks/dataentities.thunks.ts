@@ -51,30 +51,24 @@ export const fetchDataEntityDetails = createAsyncThunk<
 export const updateDataEntityTags = createAsyncThunk<
   { dataEntityId: number; tags: Array<Tag> },
   DataEntityApiCreateDataEntityTagsRelationsRequest
->(
-  actions.updateDataEntityTagsActionType,
-  async ({ dataEntityId, tagsFormData }) => {
-    const tags = await dataEntityApi.createDataEntityTagsRelations({
-      dataEntityId,
-      tagsFormData,
-    });
-    return { dataEntityId, tags };
-  }
-);
+>(actions.updateDataEntityTagsActionType, async ({ dataEntityId, tagsFormData }) => {
+  const tags = await dataEntityApi.createDataEntityTagsRelations({
+    dataEntityId,
+    tagsFormData,
+  });
+  return { dataEntityId, tags };
+});
 
 export const addDataEntityTerm = createAsyncThunk<
   { dataEntityId: number; term: TermRef },
   DataEntityApiAddDataEntityTermRequest
->(
-  actions.addDataEntityTermAction,
-  async ({ dataEntityId, dataEntityTermFormData }) => {
-    const term = await dataEntityApi.addDataEntityTerm({
-      dataEntityId,
-      dataEntityTermFormData,
-    });
-    return { dataEntityId, term };
-  }
-);
+>(actions.addDataEntityTermAction, async ({ dataEntityId, dataEntityTermFormData }) => {
+  const term = await dataEntityApi.addDataEntityTerm({
+    dataEntityId,
+    dataEntityTermFormData,
+  });
+  return { dataEntityId, term };
+});
 
 export const deleteDataEntityTerm = createAsyncThunk<
   { dataEntityId: number; termId: number },
@@ -106,19 +100,15 @@ export const updateDataEntityInternalDescription = createAsyncThunk<
 );
 
 export const updateDataEntityInternalName = createAsyncThunk<
-  {
-    dataEntityId: number;
-    internalName: InternalName['internalName'];
-  },
+  { dataEntityId: number; internalName: InternalName['internalName'] },
   DataEntityApiUpsertDataEntityInternalNameRequest
 >(
   actions.updateDataEntityInternalNameActionType,
   async ({ dataEntityId, internalNameFormData }) => {
-    const { internalName } =
-      await dataEntityApi.upsertDataEntityInternalName({
-        dataEntityId,
-        internalNameFormData,
-      });
+    const { internalName } = await dataEntityApi.upsertDataEntityInternalName({
+      dataEntityId,
+      internalNameFormData,
+    });
     return { dataEntityId, internalName };
   }
 );
@@ -146,13 +136,11 @@ export const fetchMyUpstreamDataEntitiesList = createAsyncThunk<
 export const fetchMyDownstreamDataEntitiesList = createAsyncThunk<
   DataEntityRef[],
   DataEntityApiGetMyObjectsWithDownstreamRequest
->(
-  actions.fetchMyDownstreamDataEntitiesActionType,
-  async ({ page, size }) =>
-    dataEntityApi.getMyObjectsWithDownstream({
-      page,
-      size,
-    })
+>(actions.fetchMyDownstreamDataEntitiesActionType, async ({ page, size }) =>
+  dataEntityApi.getMyObjectsWithDownstream({
+    page,
+    size,
+  })
 );
 
 export const fetchPopularDataEntitiesList = createAsyncThunk<
@@ -169,10 +157,8 @@ export const fetchPopularDataEntitiesList = createAsyncThunk<
 export const createDataEntityGroup = createAsyncThunk<
   DataEntityRef,
   DataEntityApiCreateDataEntityGroupRequest
->(
-  actions.createDataEntityGroupActionType,
-  async ({ dataEntityGroupFormData }) =>
-    dataEntityApi.createDataEntityGroup({ dataEntityGroupFormData })
+>(actions.createDataEntityGroupActionType, async ({ dataEntityGroupFormData }) =>
+  dataEntityApi.createDataEntityGroup({ dataEntityGroupFormData })
 );
 
 export const updateDataEntityGroup = createAsyncThunk<
@@ -190,15 +176,12 @@ export const updateDataEntityGroup = createAsyncThunk<
 export const deleteDataEntityGroup = createAsyncThunk<
   number,
   DataEntityApiDeleteDataEntityGroupRequest
->(
-  actions.deleteDataEntityGroupActionType,
-  async ({ dataEntityGroupId }) => {
-    await dataEntityApi.deleteDataEntityGroup({
-      dataEntityGroupId,
-    });
-    return dataEntityGroupId;
-  }
-);
+>(actions.deleteDataEntityGroupActionType, async ({ dataEntityGroupId }) => {
+  await dataEntityApi.deleteDataEntityGroup({
+    dataEntityGroupId,
+  });
+  return dataEntityGroupId;
+});
 
 export const addDataEntityToGroup = createAsyncThunk<
   DataEntityRef,
@@ -225,10 +208,7 @@ export const deleteDataEntityFromGroup = createAsyncThunk<
   }
 );
 
-export const fetchDataentitiesUsageInfo = createAsyncThunk<
-  DataEntityUsageInfo,
-  void
->(actions.fetchDataEntitiesUsageActionType, async () => {
-  const response = await dataEntityApi.getDataEntitiesUsage();
-  return response;
-});
+export const fetchDataEntitiesUsageInfo = createAsyncThunk<DataEntityUsageInfo, void>(
+  actions.fetchDataEntitiesUsageActionType,
+  async () => dataEntityApi.getDataEntitiesUsage()
+);

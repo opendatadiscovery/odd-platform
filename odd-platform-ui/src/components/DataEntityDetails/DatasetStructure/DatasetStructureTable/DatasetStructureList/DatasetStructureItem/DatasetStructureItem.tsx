@@ -1,10 +1,6 @@
 import React from 'react';
 import { ButtonProps, Collapse, Grid, Typography } from '@mui/material';
-import {
-  DataSetField,
-  DataSetFieldTypeTypeEnum,
-  DataSetStats,
-} from 'generated-sources';
+import { DataSetField, DataSetFieldTypeTypeEnum, DataSetStats } from 'generated-sources';
 import { useAppSelector } from 'lib/redux/hooks';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure, getIsUniqStatsExist } from 'redux/selectors';
@@ -15,12 +11,7 @@ import {
   ButtonColors,
   TruncatedLabel,
 } from 'components/shared';
-import {
-  GraphIcon,
-  InformationIcon,
-  MinusIcon,
-  PlusIcon,
-} from 'components/shared/Icons';
+import { GraphIcon, InformationIcon, MinusIcon, PlusIcon } from 'components/shared/Icons';
 import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
@@ -39,7 +30,7 @@ interface DatasetStructureItemProps {
   renderStructureItem: (
     field: DataSetField,
     nesting: number,
-    onSizeChange: () => void
+    onSizeChange: () => void,
   ) => JSX.Element;
   onSizeChange: () => void;
   rowHeight?: string | number;
@@ -63,18 +54,16 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       datasetId: dataEntityId,
       versionId,
       parentFieldId: datasetField.id,
-    })
+    }),
   );
   const isUniqStatsExist = useAppSelector(
     getIsUniqStatsExist({
       datasetId: dataEntityId,
       versionId,
-    })
+    }),
   );
 
-  const childFields = isComplexField(datasetField.type.type)
-    ? datasetStructure
-    : [];
+  const childFields = isComplexField(datasetField.type.type) ? datasetStructure : [];
 
   const nestedOffset = Math.min(nesting, 10) * 20 + 8;
 
@@ -82,16 +71,12 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   if (childFields?.length) {
     collapseBlock = (
       <AppIconButton
-        color="collapse"
+        color='collapse'
         open={open}
         icon={
-          open ? (
-            <MinusIcon width={6} height={6} />
-          ) : (
-            <PlusIcon width={6} height={6} />
-          )
+          open ? <MinusIcon width={6} height={6} /> : <PlusIcon width={6} height={6} />
         }
-        aria-label="expand row"
+        aria-label='expand row'
         onClick={() => setOpen(!open)}
       />
     );
@@ -121,7 +106,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 
   const datasetFieldInfoEditBtn = (
     <S.ButtonContainer>
-      <AppButton size="medium" color="primaryLight" sx={{ mr: 1 }}>
+      <AppButton size='medium' color='primaryLight' sx={{ mr: 1 }}>
         Edit
       </AppButton>
     </S.ButtonContainer>
@@ -129,28 +114,19 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 
   return (
     <>
-      <S.RowContainer
-        container
-        $offset={nestedOffset}
-        $rowHeight={rowHeight}
-      >
+      <S.RowContainer container $offset={nestedOffset} $rowHeight={rowHeight}>
         <Grid
           container
           item
           lg={isUniqStatsExist ? 8 : 12}
           sx={{ p: 1 }}
-          flexWrap="nowrap"
+          flexWrap='nowrap'
         >
-          <S.RowInfoWrapper
-            container
-            $padOffset={nestedOffset}
-            item
-            lg={12}
-          >
+          <S.RowInfoWrapper container $padOffset={nestedOffset} item lg={12}>
             {collapseBlock && (
               <Grid sx={{ p: 0.5, display: 'flex' }}>{collapseBlock}</Grid>
             )}
-            <Grid container flexDirection="column" flexWrap="nowrap">
+            <Grid container flexDirection='column' flexWrap='nowrap'>
               <S.RowInfoHeader item lg={12}>
                 <Grid container sx={{ mr: 0.5 }}>
                   <AppTooltip title={() => datasetField.name}>
@@ -166,10 +142,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     datasetFieldId={datasetField.id}
                     btnCreateEl={datasetFieldInfoEditBtn}
                   />
-                  {datasetField.type.type ===
-                    DataSetFieldTypeTypeEnum.INTEGER ||
-                  datasetField.type.type ===
-                    DataSetFieldTypeTypeEnum.STRING ? (
+                  {datasetField.type.type === DataSetFieldTypeTypeEnum.INTEGER ||
+                  datasetField.type.type === DataSetFieldTypeTypeEnum.STRING ? (
                     <DatasetFieldEnumsEditForm
                       datasetFieldId={datasetField.id}
                       datasetFieldName={datasetField.name}
@@ -182,10 +156,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     sx={{ mr: 1 }}
                   />
                   <AppTooltip
-                    title={() =>
-                      `Logical type: ${datasetField.type.logicalType}`
-                    }
-                    type="dark"
+                    title={() => `Logical type: ${datasetField.type.logicalType}`}
+                    type='dark'
                     checkForOverflow={false}
                   >
                     <InformationIcon />
@@ -193,8 +165,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 </S.RowInfoHeaderActions>
               </S.RowInfoHeader>
               {(datasetField.isPrimaryKey ||
-                (datasetField?.labels &&
-                  datasetField?.labels?.length > 0) ||
+                (datasetField?.labels && datasetField?.labels?.length > 0) ||
                 datasetField.isSortKey) && (
                 <Grid
                   container
@@ -206,22 +177,14 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     onSizeChange={onSizeChange}
                     labelList={datasetField.labels}
                   />
-                  <DatasetStructureKeyFieldLabel
-                    sx={{ ml: 0.5 }}
-                    keyType="primary"
-                  />
-                  <DatasetStructureKeyFieldLabel
-                    sx={{ ml: 0.5 }}
-                    keyType="sort"
-                  />
+                  <DatasetStructureKeyFieldLabel sx={{ ml: 0.5 }} keyType='primary' />
+                  <DatasetStructureKeyFieldLabel sx={{ ml: 0.5 }} keyType='sort' />
                 </Grid>
               )}
               {datasetField.externalDescription && (
                 <Grid container sx={{ py: 0.25 }} item lg={12}>
-                  <AppTooltip
-                    title={() => datasetField.externalDescription}
-                  >
-                    <Typography variant="subtitle2" noWrap>
+                  <AppTooltip title={() => datasetField.externalDescription}>
+                    <Typography variant='subtitle2' noWrap>
                       {datasetField.externalDescription}
                     </Typography>
                   </AppTooltip>
@@ -235,8 +198,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   />
                 </Grid>
               )}
-              {datasetField.type.type ===
-                DataSetFieldTypeTypeEnum.STRUCT && childFields.length ? (
+              {datasetField.type.type === DataSetFieldTypeTypeEnum.STRUCT &&
+              childFields.length ? (
                 <Grid
                   container
                   sx={{ py: 0.25, alignItems: 'center', mt: 0.5 }}
@@ -244,7 +207,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   lg={12}
                 >
                   <GraphIcon sx={{ mr: 0.5 }} />
-                  <Typography variant="subtitle2" color="texts.info">
+                  <Typography variant='subtitle2' color='texts.info'>
                     {childFields?.map(field => field.name).join(', ')}
                   </Typography>
                 </Grid>
@@ -253,10 +216,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
           </S.RowInfoWrapper>
         </Grid>
         {isUniqStatsExist && (
-          <DatasetFieldStats
-            datasetField={datasetField}
-            rowsCount={rowsCount}
-          />
+          <DatasetFieldStats datasetField={datasetField} rowsCount={rowsCount} />
         )}
       </S.RowContainer>
       <Grid item lg={12}>
@@ -268,7 +228,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         >
           {open && childFields.length
             ? childFields.map(field =>
-                renderStructureItem(field, nesting + 1, onSizeChange)
+                renderStructureItem(field, nesting + 1, onSizeChange),
               )
             : null}
         </Collapse>

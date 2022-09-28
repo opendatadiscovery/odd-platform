@@ -17,24 +17,18 @@ interface OverviewDQTestReportProps {
   dataEntityId: number;
 }
 
-const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({
-  dataEntityId,
-}) => {
+const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityId }) => {
   const { dataEntityTestReportPath } = useAppPaths();
 
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
-    getDatasetTestReportFetchingStatuses
+    getDatasetTestReportFetchingStatuses,
   );
-  const datasetQualityTestReport = useAppSelector(
-    getDatasetTestReport(dataEntityId)
-  );
+  const datasetQualityTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
 
   const renderReportBar = React.useMemo(() => {
     const { total } = datasetQualityTestReport;
 
-    return Object.entries(
-      omit(datasetQualityTestReport, ['score', 'total'])
-    ).map(
+    return Object.entries(omit(datasetQualityTestReport, ['score', 'total'])).map(
       ([runStatus, count]) =>
         count > 0 && (
           <S.Bar
@@ -43,29 +37,28 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({
             $runCount={count}
             $total={total}
           />
-        )
+        ),
     );
   }, [datasetQualityTestReport]);
 
   const renderReportCounts = React.useMemo(
     () =>
-      Object.entries(
-        omit(datasetQualityTestReport, ['score', 'total'])
-      ).map(([runStatusTotal, count]) => {
-        const runStatus = runStatusTotal.replace('Total', '');
-        const runStatusPalette =
-          runStatus.toUpperCase() as DataEntityRunStatus;
+      Object.entries(omit(datasetQualityTestReport, ['score', 'total'])).map(
+        ([runStatusTotal, count]) => {
+          const runStatus = runStatusTotal.replace('Total', '');
+          const runStatusPalette = runStatus.toUpperCase() as DataEntityRunStatus;
 
-        return (
-          <S.CountContainer container>
-            <S.Count key={runStatus} $runStatus={runStatusPalette}>
-              <NumberFormatted value={count} sx={{ fontWeight: 500 }} />
-            </S.Count>
-            <Typography variant="subtitle2">{runStatus}</Typography>
-          </S.CountContainer>
-        );
-      }),
-    [datasetQualityTestReport]
+          return (
+            <S.CountContainer key={runStatusTotal} container>
+              <S.Count key={runStatus} $runStatus={runStatusPalette}>
+                <NumberFormatted value={count} sx={{ fontWeight: 500 }} />
+              </S.Count>
+              <Typography variant='subtitle2'>{runStatus}</Typography>
+            </S.CountContainer>
+          );
+        },
+      ),
+    [datasetQualityTestReport],
   );
 
   return (
@@ -73,44 +66,25 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({
       {isDatasetTestReportFetching ? (
         <OverviewDataQualityReportSkeleton />
       ) : (
-        <Grid container direction="column">
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            justifyContent="space-between"
-          >
+        <Grid container direction='column'>
+          <Grid item container wrap='nowrap' justifyContent='space-between'>
             <Grid item>
-              <Typography variant="h4">Test report</Typography>
+              <Typography variant='h4'>Test report</Typography>
             </Grid>
             <Grid item>
-              <AppButton size="small" color="tertiary">
-                <Link to={dataEntityTestReportPath(dataEntityId)}>
-                  See all
-                </Link>
+              <AppButton size='small' color='tertiary'>
+                <Link to={dataEntityTestReportPath(dataEntityId)}>See all</Link>
               </AppButton>
             </Grid>
           </Grid>
-          <Grid
-            item
-            container
-            sx={{ mt: 1.25 }}
-            justifyContent="space-between"
-          >
-            <Typography variant="h4">
-              {datasetQualityTestReport?.score}% score
-            </Typography>
-            <Typography variant="subtitle1">
+          <Grid item container sx={{ mt: 1.25 }} justifyContent='space-between'>
+            <Typography variant='h4'>{datasetQualityTestReport?.score}% score</Typography>
+            <Typography variant='subtitle1'>
               {datasetQualityTestReport?.total} tests
             </Typography>
           </Grid>
           <S.BarContainer container>{renderReportBar}</S.BarContainer>
-          <Grid
-            container
-            justifyContent="space-between"
-            flexWrap="nowrap"
-            sx={{ mt: 1 }}
-          >
+          <Grid container justifyContent='space-between' flexWrap='nowrap' sx={{ mt: 1 }}>
             {renderReportCounts}
           </Grid>
         </Grid>

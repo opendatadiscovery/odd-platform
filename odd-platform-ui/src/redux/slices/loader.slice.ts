@@ -43,8 +43,7 @@ export const loaderSlice = createSlice({
           action.type.endsWith('/rejected'),
         (state, { type, payload }) => {
           state.statuses[type.replace('/rejected', '')] = 'rejected';
-          state.errors[type.replace('/rejected', '')] =
-            payload as ErrorState;
+          state.errors[type.replace('/rejected', '')] = payload as ErrorState;
         }
       );
   },

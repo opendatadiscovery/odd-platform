@@ -80,10 +80,7 @@ export const dataEntitiesSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchDataEntitiesClassesAndTypes.pending,
-      () => initialState
-    );
+    builder.addCase(thunks.fetchDataEntitiesClassesAndTypes.pending, () => initialState);
     builder.addCase(
       thunks.fetchDataEntitiesClassesAndTypes.fulfilled,
       (state, { payload }) => ({
@@ -95,70 +92,54 @@ export const dataEntitiesSlice = createSlice({
       })
     );
 
-    builder.addCase(
-      thunks.fetchDataEntityDetails.fulfilled,
-      (state, { payload }) => updateDataEntity(state, payload)
+    builder.addCase(thunks.fetchDataEntityDetails.fulfilled, (state, { payload }) =>
+      updateDataEntity(state, payload)
     );
 
-    builder.addCase(
-      thunks.updateDataEntityTags.fulfilled,
-      (state, { payload }) => {
-        const { dataEntityId, tags } = payload;
+    builder.addCase(thunks.updateDataEntityTags.fulfilled, (state, { payload }) => {
+      const { dataEntityId, tags } = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [dataEntityId]: {
-              ...state.byId[dataEntityId],
-              tags,
-            },
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [dataEntityId]: {
+            ...state.byId[dataEntityId],
+            tags,
           },
-        };
-      }
-    );
+        },
+      };
+    });
 
-    builder.addCase(
-      thunks.addDataEntityTerm.fulfilled,
-      (state, { payload }) => {
-        const { dataEntityId, term } = payload;
+    builder.addCase(thunks.addDataEntityTerm.fulfilled, (state, { payload }) => {
+      const { dataEntityId, term } = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [dataEntityId]: {
-              ...state.byId[dataEntityId],
-              terms: uniqBy(
-                [...(state.byId[dataEntityId].terms || []), term],
-                'id'
-              ),
-            },
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [dataEntityId]: {
+            ...state.byId[dataEntityId],
+            terms: uniqBy([...(state.byId[dataEntityId].terms || []), term], 'id'),
           },
-        };
-      }
-    );
+        },
+      };
+    });
 
-    builder.addCase(
-      thunks.deleteDataEntityTerm.fulfilled,
-      (state, { payload }) => {
-        const { dataEntityId, termId } = payload;
+    builder.addCase(thunks.deleteDataEntityTerm.fulfilled, (state, { payload }) => {
+      const { dataEntityId, termId } = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [dataEntityId]: {
-              ...state.byId[dataEntityId],
-              terms: filter(
-                state.byId[dataEntityId].terms,
-                term => term.id !== termId
-              ),
-            },
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [dataEntityId]: {
+            ...state.byId[dataEntityId],
+            terms: filter(state.byId[dataEntityId].terms, term => term.id !== termId),
           },
-        };
-      }
-    );
+        },
+      };
+    });
 
     builder.addCase(
       thunks.fetchTermLinkedList.fulfilled,
@@ -216,13 +197,10 @@ export const dataEntitiesSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.fetchMyDataEntitiesList.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        my: payload,
-      })
-    );
+    builder.addCase(thunks.fetchMyDataEntitiesList.fulfilled, (state, { payload }) => ({
+      ...state,
+      my: payload,
+    }));
 
     builder.addCase(
       thunks.fetchMyUpstreamDataEntitiesList.fulfilled,
@@ -248,7 +226,7 @@ export const dataEntitiesSlice = createSlice({
       })
     );
     builder.addCase(
-      thunks.fetchDataentitiesUsageInfo.fulfilled,
+      thunks.fetchDataEntitiesUsageInfo.fulfilled,
       (state, { payload }) => ({
         ...state,
         dataEntityUsageInfo: payload,
@@ -275,19 +253,16 @@ export const dataEntitiesSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.deleteDataEntityGroup.fulfilled,
-      (state, { payload }) => {
-        const dataEntityGroupId = payload;
+    builder.addCase(thunks.deleteDataEntityGroup.fulfilled, (state, { payload }) => {
+      const dataEntityGroupId = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...omit(state.byId, dataEntityGroupId),
-          },
-        };
-      }
-    );
+      return {
+        ...state,
+        byId: {
+          ...omit(state.byId, dataEntityGroupId),
+        },
+      };
+    });
   },
 });
 

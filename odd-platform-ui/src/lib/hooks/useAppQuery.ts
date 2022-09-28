@@ -9,9 +9,7 @@ export const useAppQuery = <QueryParams extends object>(
     arrayFormatSeparator: '|',
   };
 
-  const query = queryParams
-    ? stringify(queryParams, queryStringOptions)
-    : '';
+  const query = queryParams ? stringify(queryParams, queryStringOptions) : '';
   const params = queryString
     ? (parse(queryString, {
         ...queryStringOptions,

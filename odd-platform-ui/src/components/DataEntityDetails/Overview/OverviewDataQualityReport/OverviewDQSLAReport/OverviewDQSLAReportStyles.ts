@@ -1,9 +1,6 @@
-import { Grid, LinearProgress } from '@mui/material';
-import styled from 'styled-components';
-import {
-  DataEntityRunStatus,
-  DataQualityTestSeverity,
-} from 'generated-sources';
+import { Grid, LinearProgress, linearProgressClasses, Theme } from '@mui/material';
+import styled, { CSSObject } from 'styled-components';
+import { DataQualityTestSeverity, SLAColour } from 'generated-sources';
 
 export const Container = styled('div')(() => ({
   width: '100%',
@@ -14,52 +11,60 @@ export const Container = styled('div')(() => ({
   flexGrow: 1,
 }));
 
-export const BarContainer = styled(Grid)(({ theme }) => ({
-  flexWrap: 'nowrap',
-  marginTop: theme.spacing(1),
-  columnGap: '1px',
-  '*:first-child': {
-    borderTopLeftRadius: '2px',
-    borderBottomLeftRadius: '2px',
-  },
-  '*:last-child': {
-    borderTopRightRadius: '2px',
-    borderBottomRightRadius: '2px',
-  },
-}));
+export const BarContainer = styled(Grid)(
+  () =>
+    ({
+      flexWrap: 'nowrap',
+      marginTop: '3px',
+      columnGap: '2px',
+    } as CSSObject),
+);
 
 export const Bar = styled(LinearProgress)<{
-  $slaStatus?: DataQualityTestSeverity;
-}>(({ theme, $slaStatus }) => {
-  const relation = 1;
+  $slaColor: SLAColour | undefined;
+}>(({ theme, $slaColor }) => ({
+  [`&.${linearProgressClasses.root}`]: {
+    borderRadius: '2px',
+    height: '7px',
+    backgroundColor: theme.palette.backgrounds.secondary,
 
-  return {
-    // backgroundColor: theme.palette.runStatus[runStatusPaletteKey].color,
-    // height: '8px',
-    // width: '100%',
-    // maxWidth: `${relation}%`,
-  };
-});
+    [`& .${linearProgressClasses.bar}`]: {
+      backgroundColor: $slaColor ? theme.palette.slaStatus[$slaColor] : '',
+      borderRadius: '2px',
+    },
 
-export const CountContainer = styled(Grid)(({ theme }) => ({
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: theme.spacing(0.5),
+    [`& .${linearProgressClasses.determinate}`]: {
+      backgroundColor: theme.palette.backgrounds.secondary,
+    },
+  },
 }));
 
-export const Count = styled('div')<{
-  $runStatus: DataEntityRunStatus;
-}>(({ theme, $runStatus }) => {
-  const runStatusPaletteKey = $runStatus
-    .replace('Total', '')
-    .toUpperCase() as DataEntityRunStatus;
+export const WeightsBar = styled('div')<{
+  $severity: DataQualityTestSeverity;
+  $count: number;
+  $total: number;
+}>(({ theme, $severity, $count, $total }) => {
+  const relation = Math.round((100 * ($count || 0)) / ($total || 1));
 
   return {
-    backgroundColor:
-      theme.palette.runStatus[runStatusPaletteKey].background,
-    color: theme.palette.runStatus[runStatusPaletteKey].color,
-    borderRadius: '16px',
-    padding: theme.spacing(0, 1),
-    width: 'fit-content',
+    backgroundColor: theme.palette.slaStatus[$severity],
+    height: '2px',
+    borderRadius: '1px',
+    width: '100%',
+    maxWidth: `${relation}%`,
   };
 });
+
+const hintListStyles = (theme: Theme) => ({
+  margin: 0,
+  padding: 0,
+  paddingLeft: theme.spacing(2),
+  fontSize: theme.typography.body1.fontSize,
+  fontWeight: theme.typography.body1.fontWeight,
+  lineHeight: theme.typography.body1.lineHeight,
+  color: theme.palette.text.primary,
+});
+
+export const HintUList = styled('ul')(({ theme }) => hintListStyles(theme));
+
+export const HintOList = styled('ol')(({ theme }) => hintListStyles(theme));

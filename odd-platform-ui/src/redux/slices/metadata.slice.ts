@@ -15,30 +15,25 @@ export const metadataSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchDataEntityDetails.fulfilled,
-      (state, { payload }) => {
-        const { id: dataEntityId, metadataFieldValues } = payload;
-        return {
-          ...state,
-          dataEntityMetadata: {
-            ...state.dataEntityMetadata,
-            [dataEntityId]: {
-              byId: metadataFieldValues.reduce(
-                (memo, metadata) => ({
-                  ...memo,
-                  [metadata.field.id]: metadata,
-                }),
-                {}
-              ),
-              allIds: metadataFieldValues.map(
-                metadata => metadata.field.id
-              ),
-            },
+    builder.addCase(thunks.fetchDataEntityDetails.fulfilled, (state, { payload }) => {
+      const { id: dataEntityId, metadataFieldValues } = payload;
+      return {
+        ...state,
+        dataEntityMetadata: {
+          ...state.dataEntityMetadata,
+          [dataEntityId]: {
+            byId: metadataFieldValues.reduce(
+              (memo, metadata) => ({
+                ...memo,
+                [metadata.field.id]: metadata,
+              }),
+              {}
+            ),
+            allIds: metadataFieldValues.map(metadata => metadata.field.id),
           },
-        };
-      }
-    );
+        },
+      };
+    });
 
     builder.addCase(
       thunks.createDataEntityCustomMetadata.fulfilled,
@@ -109,13 +104,10 @@ export const metadataSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.searchMetadata.fulfilled,
-      (state, { payload }) => {
-        const { metadataFields } = payload;
-        return { ...state, metadataFields };
-      }
-    );
+    builder.addCase(thunks.searchMetadata.fulfilled, (state, { payload }) => {
+      const { metadataFields } = payload;
+      return { ...state, metadataFields };
+    });
   },
 });
 

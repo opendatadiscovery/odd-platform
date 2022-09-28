@@ -23,11 +23,7 @@ interface AppRouteParams {
   termSearchId: string;
   versionId: number;
   searchId: string;
-  viewType:
-    | TermsViewType
-    | AlertViewType
-    | ManagementViewType
-    | TestReportViewType;
+  viewType: TermsViewType | AlertViewType | ManagementViewType | TestReportViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {

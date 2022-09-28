@@ -114,9 +114,12 @@ export const palette = createPalette({
     UNKNOWN: { background: colors.black10, border: colors.black20 },
   },
   slaStatus: {
-    MINOR: { normal: colors.orange50, light: colors.orange20 },
-    MAJOR: { normal: colors.green50, light: colors.green20 },
-    CRITICAL: { normal: colors.red50, light: colors.red20 },
+    MINOR: colors.green20,
+    MAJOR: colors.orange20,
+    CRITICAL: colors.red20,
+    YELLOW: colors.orange50,
+    GREEN: colors.green50,
+    RED: colors.red50,
   },
   button: {
     primary: {

@@ -16,15 +16,11 @@ import {
   getPopularDataEntitiesFetchingStatuses,
   getPopularEntities,
 } from 'redux/selectors';
-import {
-  EntityClassItem,
-  MainSearch,
-  SkeletonWrapper,
-} from 'components/shared';
+import { EntityClassItem, MainSearch, SkeletonWrapper } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchAlertsTotals,
-  fetchDataentitiesUsageInfo,
+  fetchDataEntitiesUsageInfo,
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
@@ -53,19 +49,11 @@ const Overview: React.FC = () => {
   const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
   const popularEntities = useAppSelector(getPopularEntities);
 
-  const dataEntityClassesUsageInfo = useAppSelector(
-    getDataEntityClassesUsageInfo
-  );
-  const dataEntityUsageTotalCount = useAppSelector(
-    getDataEntitiesUsageTotalCount
-  );
-  const dataEntityUsageUnfilledCount = useAppSelector(
-    getDataEntitiesUsageUnfilledCount
-  );
+  const dataEntityClassesUsageInfo = useAppSelector(getDataEntityClassesUsageInfo);
+  const dataEntityUsageTotalCount = useAppSelector(getDataEntitiesUsageTotalCount);
+  const dataEntityUsageUnfilledCount = useAppSelector(getDataEntitiesUsageUnfilledCount);
 
-  const isMainOverviewContentFetching = useAppSelector(
-    getIsMainOverviewContentFetching
-  );
+  const isMainOverviewContentFetching = useAppSelector(getIsMainOverviewContentFetching);
   const { isLoading: isMyDataEntitiesFetching } = useAppSelector(
     getMyDataEntitiesFetchingStatuses
   );
@@ -78,9 +66,7 @@ const Overview: React.FC = () => {
   const { isLoading: isPopularDataEntitiesFetching } = useAppSelector(
     getPopularDataEntitiesFetchingStatuses
   );
-  const { isLoaded: isIdentityFetched } = useAppSelector(
-    getIdentityFetchingStatuses
-  );
+  const { isLoaded: isIdentityFetched } = useAppSelector(getIdentityFetchingStatuses);
 
   React.useEffect(() => {
     if (!identity) return;
@@ -97,33 +83,29 @@ const Overview: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());
     dispatch(fetchTagsList({ page: 1, size: 20 }));
-    dispatch(fetchDataentitiesUsageInfo());
+    dispatch(fetchDataEntitiesUsageInfo());
   }, []);
 
   return (
     <S.Container>
       {isMainOverviewContentFetching ? (
         <SkeletonWrapper
-          renderContent={({ randWidth }) => (
-            <OverviewSkeleton width={randWidth()} />
-          )}
+          renderContent={({ randWidth }) => <OverviewSkeleton width={randWidth()} />}
         />
       ) : (
         <>
-          <Grid container justifyContent="center" sx={{ pt: 8, pb: 9 }}>
+          <Grid container justifyContent='center' sx={{ pt: 8, pb: 9 }}>
             <MainSearch />
           </Grid>
           <S.TagsContainer container>
             <TopTagsListContainer />
           </S.TagsContainer>
-          <Grid container sx={{ mt: 8 }} wrap="nowrap">
+          <Grid container sx={{ mt: 8 }} wrap='nowrap'>
             <S.DataEntitiesUsageContainer>
               <S.DataEntitiesTotalContainer>
                 <Box>
-                  <Typography variant="h4">Total entities</Typography>
-                  <Typography variant="h1">
-                    {dataEntityUsageTotalCount}
-                  </Typography>
+                  <Typography variant='h4'>Total entities</Typography>
+                  <Typography variant='h1'>{dataEntityUsageTotalCount}</Typography>
                 </Box>
                 <Box>
                   <S.UnfilledEntities>
@@ -142,12 +124,10 @@ const Overview: React.FC = () => {
                       />
                       <Typography noWrap title={item?.entityClass?.name}>
                         {item.entityClass &&
-                          DataEntityClassLabelMap.get(
-                            item.entityClass.name
-                          )?.normal}
+                          DataEntityClassLabelMap.get(item.entityClass.name)?.normal}
                       </Typography>
                     </S.ListItem>
-                    <Typography variant="h4" noWrap>
+                    <Typography variant='h4' noWrap>
                       {item.totalCount}
                     </Typography>
                   </S.ListItemWrapper>
@@ -160,7 +140,7 @@ const Overview: React.FC = () => {
               <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntities}
-                  entityListName="My Objects"
+                  entityListName='My Objects'
                   entityListIcon={<CatalogIcon />}
                   isFetching={isMyDataEntitiesFetching}
                 />
@@ -168,7 +148,7 @@ const Overview: React.FC = () => {
               <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntitiesUpstream}
-                  entityListName="Upstream dependents"
+                  entityListName='Upstream dependents'
                   entityListIcon={<UpstreamIcon />}
                   isFetching={isUpstreamDataEntitiesFetching}
                 />
@@ -176,7 +156,7 @@ const Overview: React.FC = () => {
               <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntitiesDownstream}
-                  entityListName="Downstream dependents"
+                  entityListName='Downstream dependents'
                   entityListIcon={<DownstreamIcon />}
                   isFetching={isDownstreamDataEntitiesFetching}
                 />
@@ -184,7 +164,7 @@ const Overview: React.FC = () => {
               <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={popularEntities}
-                  entityListName="Popular"
+                  entityListName='Popular'
                   entityListIcon={<StarIcon />}
                   isFetching={isPopularDataEntitiesFetching}
                 />
@@ -193,9 +173,7 @@ const Overview: React.FC = () => {
           ) : null}
         </>
       )}
-      {!identity?.owner && identity?.identity && isIdentityFetched ? (
-        <Identity />
-      ) : null}
+      {!identity?.owner && identity?.identity && isIdentityFetched ? <Identity /> : null}
     </S.Container>
   );
 };
