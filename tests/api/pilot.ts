@@ -5,8 +5,8 @@ class Pilot extends APIBase {
     super('pilot', 'api/v2/');
 
     this.axios_instance.interceptors.request.use(config => {
-      config.headers.common['Authorization'] = `Bearer ${APIBase.token}`;
-      config.headers.common['referer'] = this.referer;
+      config.headers.common.Authorization = `Bearer ${APIBase.token}`;
+      config.headers.common.referer = this.referer;
 
       return config;
     });

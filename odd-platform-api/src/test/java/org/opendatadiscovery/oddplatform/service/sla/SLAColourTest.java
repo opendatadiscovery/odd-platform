@@ -10,11 +10,11 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStat
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SLACalculatorTest {
+public class SLAColourTest {
     private final SLACalculator slaCalculator = new SLACalculator();
 
     @Test
-    public void shouldBeRedIfAtLeastOneMajorTestFailed() {
+    public void shouldBeRedIfAtLeastOneCriticalTestFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
@@ -26,7 +26,7 @@ public class SLACalculatorTest {
     }
 
     @Test
-    public void shouldBeRedIfAllAverageTestsFailed() {
+    public void shouldBeRedIfAllMajorTestsFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
@@ -42,7 +42,7 @@ public class SLACalculatorTest {
     }
 
     @Test
-    public void shouldBeRedIfAllMinorTestsFailedAndMostAverageFailed() {
+    public void shouldBeRedIfAllMinorTestsFailedAndOnlyOneMajorSuccess() {
         final List<TestStatusWithSeverityDto> tests = List.of(
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
@@ -58,7 +58,20 @@ public class SLACalculatorTest {
     }
 
     @Test
-    public void shouldBeYellowIfAtLeastOneAverageTestFailed() {
+    public void shouldBeYellowIfAtLeastOneMajorTestFailedAndMinorsAreNotExists() {
+        final List<TestStatusWithSeverityDto> tests = List.of(
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR)
+        );
+
+        assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.YELLOW);
+    }
+
+    @Test
+    public void shouldBeYellowIfAtLeastOneMajorTestFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),

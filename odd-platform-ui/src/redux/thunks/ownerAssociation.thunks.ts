@@ -12,9 +12,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import { CurrentPageInfo } from 'redux/interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const ownerAssociationRequestApi = new OwnerAssociationRequestApi(
-  apiClientConf
-);
+const ownerAssociationRequestApi = new OwnerAssociationRequestApi(apiClientConf);
 
 export const createOwnerAssociationRequest = createAsyncThunk<
   OwnerAssociationRequest,
@@ -24,17 +22,11 @@ export const createOwnerAssociationRequest = createAsyncThunk<
 );
 
 export const fetchOwnerAssociationRequestList = createAsyncThunk<
-  {
-    items: Array<OwnerAssociationRequest>;
-    pageInfo: CurrentPageInfo;
-    active: boolean;
-  },
+  { items: Array<OwnerAssociationRequest>; pageInfo: CurrentPageInfo; active: boolean },
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest
 >(actions.fetchOwnerAssociationRequestsListActionType, async params => {
   const { items, pageInfo } =
-    await ownerAssociationRequestApi.getOwnerAssociationRequestList(
-      params
-    );
+    await ownerAssociationRequestApi.getOwnerAssociationRequestList(params);
 
   return {
     items,
@@ -47,8 +39,7 @@ export const updateOwnerAssociationRequest = createAsyncThunk<
   number,
   OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
 >(actions.updateOwnerAssociationRequestActionType, async params => {
-  const { id } =
-    await ownerAssociationRequestApi.updateOwnerAssociationRequest(params);
+  const { id } = await ownerAssociationRequestApi.updateOwnerAssociationRequest(params);
 
   return id;
 });

@@ -33,6 +33,7 @@ const colors = {
   orange5: '#FFF6E5',
 
   green60: '#1FAD1F',
+  green50: '#17CF54',
   green40: '#14B84B',
   green20: '#A8F0A8',
   green10: '#D1FADF',
@@ -111,6 +112,14 @@ export const palette = createPalette({
     SKIPPED: { background: colors.blue10, border: colors.blue20 },
     ABORTED: { background: colors.purple10, border: colors.purple30 },
     UNKNOWN: { background: colors.black10, border: colors.black20 },
+  },
+  slaStatus: {
+    MINOR: colors.green20,
+    MAJOR: colors.orange20,
+    CRITICAL: colors.red20,
+    YELLOW: colors.orange50,
+    GREEN: colors.green50,
+    RED: colors.red50,
   },
   button: {
     primary: {

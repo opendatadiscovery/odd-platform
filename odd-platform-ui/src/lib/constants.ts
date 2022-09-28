@@ -1,7 +1,4 @@
-import {
-  ConfigurationParameters,
-  DataQualityTestSeverity,
-} from 'generated-sources';
+import { ConfigurationParameters, DataQualityTestSeverity } from 'generated-sources';
 
 export const BASE_PARAMS: ConfigurationParameters = {
   basePath: import.meta.env.VITE_API_URL || '',

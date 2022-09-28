@@ -14,18 +14,14 @@ import {
   LabelItem,
   SkeletonWrapper,
 } from 'components/shared';
-import {
-  AddIcon,
-  EditIcon,
-  KebabIcon,
-  TimeGapIcon,
-} from 'components/shared/Icons';
+import { AddIcon, EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataSetQualitySLAReport,
   fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
@@ -48,17 +44,13 @@ import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs
 
 // lazy components
 const Overview = React.lazy(() => import('./Overview/Overview'));
-const DatasetStructure = React.lazy(
-  () => import('./DatasetStructure/DatasetStructure')
-);
+const DatasetStructure = React.lazy(() => import('./DatasetStructure/DatasetStructure'));
 const Lineage = React.lazy(() => import('./Lineage/Lineage'));
 const TestReport = React.lazy(() => import('./TestReport/TestReport'));
 const TestReportDetails = React.lazy(
   () => import('./TestReport/TestReportDetails/TestReportDetails')
 );
-const DataEntityAlerts = React.lazy(
-  () => import('./DataEntityAlerts/DataEntityAlerts')
-);
+const DataEntityAlerts = React.lazy(() => import('./DataEntityAlerts/DataEntityAlerts'));
 const QualityTestHistory = React.lazy(
   () => import('./QualityTestRunsHistory/TestRunsHistory')
 );
@@ -74,18 +66,13 @@ const DataEntityDetails: React.FC = () => {
   const { searchPath } = useAppPaths();
 
   const searchId = useAppSelector(getSearchId);
-  const dataEntityDetails = useAppSelector(
-    getDataEntityDetails(dataEntityId)
-  );
+  const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
   );
-  const {
-    isLoading: isDataEntityDetailsFetching,
-    isLoaded: isDataEntityDetailsFetched,
-  } = useAppSelector(getDataEntityDetailsFetchingStatuses);
-
+  const { isLoading: isDataEntityDetailsFetching, isLoaded: isDataEntityDetailsFetched } =
+    useAppSelector(getDataEntityDetailsFetchingStatuses);
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
@@ -106,14 +93,15 @@ const DataEntityDetails: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+    dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
     dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
 
   const handleEntityGroupDelete = React.useCallback(
     () =>
-      dispatch(
-        deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })
-      ).then(() => history.push(searchPath(searchId))),
+      dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() =>
+        history.push(searchPath(searchId))
+      ),
     [deleteDataEntityGroup, dataEntityId]
   );
 
@@ -121,15 +109,10 @@ const DataEntityDetails: React.FC = () => {
     <S.Container>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <>
-          <Grid
-            container
-            justifyContent="space-between"
-            alignItems="center"
-            wrap="nowrap"
-          >
-            <S.Caption item>
-              <Grid container item alignItems="center">
-                <Typography variant="h1" noWrap sx={{ mr: 1 }}>
+          <Grid container flexDirection='column' alignItems='flex-start'>
+            <S.Caption container alignItems='center' flexWrap='nowrap'>
+              <Grid container item lg={11} alignItems='center' flexWrap='nowrap'>
+                <Typography variant='h1' noWrap sx={{ mr: 1 }}>
                   {dataEntityDetails.internalName
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
@@ -151,116 +134,97 @@ const DataEntityDetails: React.FC = () => {
                   <InternalNameFormDialog
                     btnCreateEl={
                       <AppButton
-                        size="small"
-                        color="tertiary"
+                        size='small'
+                        color='tertiary'
                         sx={{ ml: 1 }}
                         disabled={!editDataEntity}
                         startIcon={
-                          dataEntityDetails.internalName ? (
-                            <EditIcon />
-                          ) : (
-                            <AddIcon />
-                          )
+                          dataEntityDetails.internalName ? <EditIcon /> : <AddIcon />
                         }
                       >
                         {`${
-                          dataEntityDetails.internalName
-                            ? 'Edit custom'
-                            : 'Add custom'
+                          dataEntityDetails.internalName ? 'Edit custom' : 'Add custom'
                         } name`}
                       </AppButton>
                     }
                   />
                 </S.InternalNameEditBtnContainer>
               </Grid>
-              {dataEntityDetails.internalName &&
-                dataEntityDetails.externalName && (
-                  <Grid container alignItems="center">
-                    <LabelItem labelName="Original" variant="body1" />
-                    <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
-                      {dataEntityDetails.externalName}
-                    </Typography>
-                  </Grid>
-                )}
-            </S.Caption>
-            <Grid
-              container
-              item
-              alignItems="center"
-              width="auto"
-              flexWrap="nowrap"
-            >
-              {dataEntityDetails.updatedAt ? (
-                <>
-                  <TimeGapIcon />
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 1, whiteSpace: 'nowrap' }}
-                  >
-                    {formatDistanceToNowStrict(
-                      dataEntityDetails.updatedAt,
-                      {
+              <Grid
+                container
+                item
+                lg={1}
+                sx={{ ml: 1 }}
+                alignItems='center'
+                flexWrap='nowrap'
+              >
+                {dataEntityDetails.updatedAt ? (
+                  <>
+                    <TimeGapIcon />
+                    <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+                      {formatDistanceToNowStrict(dataEntityDetails.updatedAt, {
                         addSuffix: true,
-                      }
-                    )}
-                  </Typography>
-                </>
-              ) : null}
-              <Grid>
-                {dataEntityDetails.manuallyCreated && (
-                  <AppPopover
-                    childrenSx={{
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                    }}
-                    renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-                      <AppIconButton
-                        sx={{ ml: 2 }}
-                        ariaDescribedBy={ariaDescribedBy}
-                        size="medium"
-                        color="primaryLight"
-                        icon={<KebabIcon />}
-                        onClick={onClick}
+                      })}
+                    </Typography>
+                  </>
+                ) : null}
+                <Grid>
+                  {dataEntityDetails.manuallyCreated && (
+                    <AppPopover
+                      childrenSx={{
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                      }}
+                      renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                        <AppIconButton
+                          sx={{ ml: 2 }}
+                          ariaDescribedBy={ariaDescribedBy}
+                          size='medium'
+                          color='primaryLight'
+                          icon={<KebabIcon />}
+                          onClick={onClick}
+                        />
+                      )}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 65,
+                      }}
+                    >
+                      <DataEntityGroupForm
+                        btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
                       />
-                    )}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 65,
-                    }}
-                  >
-                    <DataEntityGroupForm
-                      btnCreateEl={
-                        <AppMenuItem disabled={!editDataEntity}>
-                          Edit
-                        </AppMenuItem>
-                      }
-                    />
-                    <ConfirmationDialog
-                      actionTitle="Are you sure you want to delete this data entity group?"
-                      actionName="Delete Data Entity Group"
-                      actionText={
-                        <>
-                          &quot;
-                          {dataEntityDetails.internalName ||
-                            dataEntityDetails.externalName}
-                          &quot; will be deleted permanently.
-                        </>
-                      }
-                      onConfirm={handleEntityGroupDelete}
-                      actionBtn={
-                        <AppMenuItem disabled={!editDataEntity}>
-                          Delete
-                        </AppMenuItem>
-                      }
-                    />
-                  </AppPopover>
-                )}
+                      <ConfirmationDialog
+                        actionTitle='Are you sure you want to delete this data entity group?'
+                        actionName='Delete Data Entity Group'
+                        actionText={
+                          <>
+                            &quot;
+                            {dataEntityDetails.internalName ||
+                              dataEntityDetails.externalName}
+                            &quot; will be deleted permanently.
+                          </>
+                        }
+                        onConfirm={handleEntityGroupDelete}
+                        actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                      />
+                    </AppPopover>
+                  )}
+                </Grid>
               </Grid>
-            </Grid>
+            </S.Caption>
+
+            {dataEntityDetails.internalName && dataEntityDetails.externalName && (
+              <Grid container alignItems='center' width='auto'>
+                <LabelItem labelName='Original' variant='body1' />
+                <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+                  {dataEntityDetails.externalName}
+                </Typography>
+              </Grid>
+            )}
           </Grid>
           <Grid sx={{ mt: 2 }}>
             <DataEntityDetailsTabs />
@@ -324,9 +288,7 @@ const DataEntityDetails: React.FC = () => {
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
               render={() => (
-                <PermissionProvider
-                  permissions={[Permission.ALERT_PROCESSING]}
-                >
+                <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
                   <DataEntityAlerts />
                 </PermissionProvider>
               )}
@@ -356,12 +318,12 @@ const DataEntityDetails: React.FC = () => {
               component={DataEntityActivity}
             />
             <Redirect
-              from="/dataentities/:dataEntityId"
-              to="/dataentities/:dataEntityId/overview"
+              from='/dataentities/:dataEntityId'
+              to='/dataentities/:dataEntityId/overview'
             />
             <Redirect
-              from="/embedded/dataentities/:dataEntityId"
-              to="/embedded/dataentities/:dataEntityId/overview"
+              from='/embedded/dataentities/:dataEntityId'
+              to='/embedded/dataentities/:dataEntityId/overview'
             />
           </Switch>
         </React.Suspense>

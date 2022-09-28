@@ -2,22 +2,15 @@ import { DataQualityTestState } from 'redux/interfaces';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { dataQualityTestTypePrefix } from 'redux/actions';
-import {
-  DataEntity,
-  DataEntityList,
-  DataEntityRunStatus,
-} from 'generated-sources';
+import { DataEntity, DataEntityList, DataEntityRunStatus } from 'generated-sources';
 import uniq from 'lodash/uniq';
 
 export const initialState: DataQualityTestState = {
   qualityTestsById: {},
   allSuiteNamesByDatasetId: {},
-  qualityTestRunsPageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  qualityTestRunsPageInfo: { total: 0, page: 0, hasNext: true },
   datasetTestReportByEntityId: {},
+  datasetSLAReportByEntityId: {},
   testReportBySuiteName: {},
 };
 
@@ -27,8 +20,7 @@ const latestRunStatusesCounter = (
   statusType: DataEntityRunStatus
 ): number =>
   arr.filter(
-    item =>
-      item.suiteName === suiteName && item.latestRun?.status === statusType
+    item => item.suiteName === suiteName && item.latestRun?.status === statusType
   ).length;
 
 const createDataSetQualityTestList = (
@@ -65,9 +57,7 @@ const createDataSetQualityTestList = (
         ...(dataSetQualityTest.suiteName
           ? {
               [dataSetQualityTest.suiteName]: {
-                ...memo.testReportBySuiteName[
-                  dataSetQualityTest.suiteName
-                ],
+                ...memo.testReportBySuiteName[dataSetQualityTest.suiteName],
                 success: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
@@ -103,10 +93,9 @@ const createDataSetQualityTestList = (
           : null),
       },
     }),
-    {
-      ...state,
-    }
+    { ...state }
   );
+
 export const dataQualityTestSlice = createSlice({
   name: dataQualityTestTypePrefix,
   initialState,
@@ -117,18 +106,25 @@ export const dataQualityTestSlice = createSlice({
       (state, { payload }) => ({
         ...state,
         datasetTestReportByEntityId: {
+          ...state.datasetTestReportByEntityId,
           [payload.entityId]: payload.value,
         },
       })
     );
+
     builder.addCase(
-      thunks.fetchDataSetQualityTestList.fulfilled,
-      (state, { payload }) =>
-        createDataSetQualityTestList(
-          state,
-          payload.value,
-          payload.entityId
-        )
+      thunks.fetchDataSetQualitySLAReport.fulfilled,
+      (state, { payload }): DataQualityTestState => ({
+        ...state,
+        datasetSLAReportByEntityId: {
+          ...state.datasetSLAReportByEntityId,
+          [payload.entityId]: payload.value,
+        },
+      })
+    );
+
+    builder.addCase(thunks.fetchDataSetQualityTestList.fulfilled, (state, { payload }) =>
+      createDataSetQualityTestList(state, payload.value, payload.entityId)
     );
   },
 });

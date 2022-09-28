@@ -10,6 +10,8 @@ import {
 import { useAppSelector } from 'lib/redux/hooks';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
+import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
+import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
 import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
@@ -19,7 +21,6 @@ import OverviewStats from './OverviewStats/OverviewStats';
 import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
-import OverviewDataQualityReport from './OverviewDataQualityReport/OverviewDataQualityReport';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
 
 const Overview: React.FC = () => {
@@ -81,7 +82,8 @@ const Overview: React.FC = () => {
             </SectionContainer>
             {isDataset && datasetQualityTestReport?.total ? (
               <SectionContainer square elevation={0}>
-                <OverviewDataQualityReport dataEntityId={dataEntityId} />
+                <OverviewDQSLAReport dataEntityId={dataEntityId} />
+                <OverviewDQTestReport dataEntityId={dataEntityId} />
               </SectionContainer>
             ) : null}
             <SectionContainer square elevation={0}>

@@ -1,8 +1,8 @@
 import { Locator } from '@playwright/test';
 
+import { Pages } from '..';
 import Button from '../../elements/button';
 import TextBox from '../../elements/text-box';
-import { Pages } from '..';
 import BasePage from '../base-page';
 
 const SELECTORS = {

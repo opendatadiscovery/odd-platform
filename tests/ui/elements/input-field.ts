@@ -8,7 +8,7 @@ export default class InputField extends CustomElement {
     try {
       await this.custom_element.waitFor({ timeout: 12000 });
 
-      return this.custom_element.isDisabled();
+      return await this.custom_element.isDisabled();
     } catch {
       return this.custom_element.isDisabled();
     }
@@ -16,6 +16,7 @@ export default class InputField extends CustomElement {
 
   /**
    * Fills the input field immediately
+   *
    * @param value
    */
   async fill(value: string) {
@@ -24,8 +25,12 @@ export default class InputField extends CustomElement {
 
   /**
    * Type the value in the input field with delay
+   *
    * @param value
    * @param options
+   * @param options.delay
+   * @param options.noWaitAfter
+   * @param options.timeout
    */
   async type(
     value: string,
@@ -49,6 +54,7 @@ export default class InputField extends CustomElement {
 
   /**
    * Press `key` for focused input field
+   *
    * @param key
    */
   async press(key: 'Enter'): Promise<void> {

@@ -1,13 +1,15 @@
-// @ts-ignore
+/**
+ *
+ * @param obj
+ * @param keys
+ */
 export function obj_has_keys<T extends object>(obj: T, keys: string[]) {
   const next = keys.shift();
 
-  // @ts-ignore
   return obj[next] && (!keys.length || obj_has_keys(obj[next], keys));
 }
 
 export const keyify = <T>(obj: T, prefix = ''): string[] =>
-  // @ts-ignore
   Object.entries(obj).reduce((collector, [key, val]) => {
     const new_keys = [...collector, prefix ? `${prefix}.${key}` : key];
 
