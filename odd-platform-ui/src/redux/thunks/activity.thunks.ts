@@ -17,7 +17,7 @@ import {
   DataEntityActivityQueryParams,
 } from 'redux/interfaces';
 import { toDateWithoutOffset } from 'lib/helpers';
-import { activityListSize } from 'redux/reducers/activity.slice';
+import { activityListSize } from 'redux/slices/activity.slice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const activityApi = new ActivityApi(apiClientConf);
@@ -66,10 +66,7 @@ export const fetchActivityList = createAsyncThunk<
 
   const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
 
-  const pageInfo = setActivitiesPageInfo(
-    activitiesWithTimestamps,
-    activityListSize
-  );
+  const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
 
   return { activities: activitiesWithTimestamps, pageInfo };
 });
@@ -93,10 +90,7 @@ export const fetchDataEntityActivityList = createAsyncThunk<
 
   const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
 
-  const pageInfo = setActivitiesPageInfo(
-    activitiesWithTimestamps,
-    activityListSize
-  );
+  const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
 
   return { activities: activitiesWithTimestamps, pageInfo };
 });

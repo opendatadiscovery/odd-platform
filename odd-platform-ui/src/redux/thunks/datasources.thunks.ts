@@ -34,40 +34,30 @@ export const updateDataSource = createAsyncThunk<
   DataSourceApiUpdateDataSourceRequest
 >(
   actions.updateDatasourceActionType,
-  async ({ dataSourceId, dataSourceUpdateFormData }) => {
-    const datasource = await apiClient.updateDataSource({
+  async ({ dataSourceId, dataSourceUpdateFormData }) =>
+    apiClient.updateDataSource({
       dataSourceId,
       dataSourceUpdateFormData,
-    });
-
-    return datasource;
-  }
+    })
 );
 
 export const regenerateDataSourceToken = createAsyncThunk<
   DataSource,
   DataSourceApiRegenerateDataSourceTokenRequest
->(
-  actions.regenerateDataSourceTokenActionType,
-  async ({ dataSourceId }) => {
-    const datasource = await apiClient.regenerateDataSourceToken({
-      dataSourceId,
-    });
-
-    return datasource;
-  }
+>(actions.regenerateDataSourceTokenActionType, async ({ dataSourceId }) =>
+  apiClient.regenerateDataSourceToken({
+    dataSourceId,
+  })
 );
 
 export const registerDataSource = createAsyncThunk<
   DataSource,
   DataSourceApiRegisterDataSourceRequest
->(actions.registerDataSourceActionType, async ({ dataSourceFormData }) => {
-  const datasource = await apiClient.registerDataSource({
+>(actions.registerDataSourceActionType, async ({ dataSourceFormData }) =>
+  apiClient.registerDataSource({
     dataSourceFormData,
-  });
-
-  return datasource;
-});
+  })
+);
 
 export const deleteDataSource = createAsyncThunk<
   number,

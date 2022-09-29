@@ -23,9 +23,7 @@ const searchApi = new SearchApi(apiClientConf);
 export const createDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
   SearchApiSearchRequest
->(actions.createDataEntitySearchActionType, async params =>
-  searchApi.search(params)
-);
+>(actions.createDataEntitySearchActionType, async params => searchApi.search(params));
 
 export const updateDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
@@ -62,15 +60,11 @@ export const getDataEntitySearchFacetOptions = createAsyncThunk<
   FacetOptions,
   SearchApiGetFiltersForFacetRequest
 >(actions.getDataEntitySearchFacetOptionsActionType, async params => {
-  const countableSearchFilters = await searchApi.getFiltersForFacet(
-    params
-  );
+  const countableSearchFilters = await searchApi.getFiltersForFacet(params);
   const { query, page, facetType } = params;
 
   return {
-    facetName: query
-      ? undefined
-      : (facetType.toLowerCase() as MultipleFacetType),
+    facetName: query ? undefined : (facetType.toLowerCase() as MultipleFacetType),
     facetOptions: countableSearchFilters,
     page,
   };

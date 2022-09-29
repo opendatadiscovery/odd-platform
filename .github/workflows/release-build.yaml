@@ -15,7 +15,10 @@ on:
         default: ''
 
 jobs:
+  run_playwright_tests:
+    uses: ./.github/workflows/run-playwright-tests.yml
   release:
+    needs: [run_playwright_tests]
     concurrency: release
     runs-on: ubuntu-latest
     outputs:
@@ -46,21 +49,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'gradle'
-      - name: Test and build the image
-        env:
-          GENERATE_SOURCEMAP: false
-          CI: false
-        run: ./gradlew test jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --scan --image odd-platform -Pversion=${{ steps.get-version.outputs.version }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.PAT_GITHUB }}
-      - name: Retag image in GHCR
-        if: ${{ github.event.action == 'published' }}
-        run: |
-          docker tag odd-platform:${{ steps.get-version.outputs.version }} ghcr.io/opendatadiscovery/odd-platform:${{ steps.get-version.outputs.version }}
-          docker push ghcr.io/opendatadiscovery/odd-platform:${{ steps.get-version.outputs.version }}
-          docker tag odd-platform:${{ steps.get-version.outputs.version }} ghcr.io/opendatadiscovery/odd-platform:latest
-          docker push ghcr.io/opendatadiscovery/odd-platform:latest
+      - name: Test and build the image
+        env:
+          GENERATE_SOURCEMAP: false
+          CI: false
+        run: ./gradlew test jib ${{ github.event.inputs.buildOptions }} --no-daemon --scan --image ghcr.io/opendatadiscovery/odd-platform -Pversion=${{ steps.get-version.outputs.version }}

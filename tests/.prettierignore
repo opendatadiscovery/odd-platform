@@ -1,0 +1,7 @@
+# artifacts:
+build
+coverage
+playwright-report
+
+# markdown files
+*.md

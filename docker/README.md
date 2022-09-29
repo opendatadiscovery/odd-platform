@@ -1,7 +1,7 @@
 # Open Data Discovery Platform local demo environment
 * * *
 
-The following is a set of instructions to run ODD Platform locally using docker and docker-compose. 
+The following is a set of instructions to run ODD Platform locally using docker and docker-compose.
 This configuration is basic and best suited as a demo sandbox.
 
 This environment consists of:
@@ -22,7 +22,8 @@ This environment consists of:
 * Ports 5432 and 8080 are free. Commands to check that might be:
     * Linux/Mac: `lsof -i -P -n | grep LISTEN | grep <PORT_NUMBER>`
     * Windows Powershell: `Get-NetTCPConnection | where Localport -eq <PORT_NUMBER> | select Localport,OwningProcess`
-      Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output mean that the port is free and ready to go.
+
+    Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output means that the port is free and ready to go.
 
 ### Execution
 
@@ -36,7 +37,7 @@ You should be able to see 10 predefined data sources in the list
 
 2. Go to the **Catalog** section
 
-You should be able to see metadata sample injected in the Platform
+You should be able to see metadata sample injected into the Platform
 
 ## Step 2: Configuring and running Collector to gather metadata from the sample data source
 
@@ -60,7 +61,7 @@ You should be able to see metadata sample injected in the Platform
 
 1. Open http://localhost:8080/management/datasources in your browser
 
-You should be able to see a new data source with the name you've passed into the collector_config.yaml file 
+You should be able to see a new data source with the name you've passed into the collector_config.yaml file
 (Default is `Sample demo data source`). Overall you should see 11 data sources in the list
 
 2. Go to the **Catalog** section. Select the created data source in the `Datasources` filter

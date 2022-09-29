@@ -16,11 +16,11 @@ export const LeftSidebarContainer = styled(Grid)(({ theme }) => ({
   maxWidth: `${maxSidebarWidth}px`,
   position: 'fixed',
   left: 0,
+  paddingLeft: theme.spacing(2),
   paddingRight: theme.spacing(2),
 }));
 
-export const ListContainer = styled(Grid)(({ theme }) => ({
+export const ListContainer = styled(Grid)(() => ({
   flexGrow: 1,
   maxWidth: '100%',
-  marginLeft: theme.spacing(1),
 }));

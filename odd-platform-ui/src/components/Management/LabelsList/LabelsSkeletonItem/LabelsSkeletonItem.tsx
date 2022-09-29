@@ -2,16 +2,22 @@ import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
+import { SkeletonWrapper } from 'components/shared';
 
 interface SkeletonProps {
-  width: string;
+  length: number;
 }
 
-const LabelsSkeletonItem: React.FC<SkeletonProps> = ({ width }) => (
-  <Grid container sx={{ py: 1.5, px: 1 }} wrap="nowrap">
-    <Grid item xs={3}>
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </Grid>
-  </Grid>
+const LabelsSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
+  <SkeletonWrapper
+    length={length}
+    renderContent={({ randWidth, key }) => (
+      <Grid container key={key} sx={{ py: 1.5, px: 1 }} wrap="nowrap">
+        <Grid item xs={3}>
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+        </Grid>
+      </Grid>
+    )}
+  />
 );
 export default LabelsSkeletonItem;

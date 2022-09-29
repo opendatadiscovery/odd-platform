@@ -21,12 +21,9 @@ const TestRunStatusItem: React.FC<TestRunStatusItemProps> = ({
     {size === 'small' ? (
       <S.FilledContainer $typeName={typeName}>{count}</S.FilledContainer>
     ) : (
-      <>
-        <S.Count>{count}</S.Count>
-        <S.FilledContainer $typeName={typeName}>
-          {typeName?.toLowerCase()}
-        </S.FilledContainer>
-      </>
+      <S.FilledContainer variant="body2" $typeName={typeName}>
+        {count} {typeName?.toLowerCase()}
+      </S.FilledContainer>
     )}
   </S.Container>
 );

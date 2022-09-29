@@ -15,7 +15,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
 }) => {
   let formattedNumber: number | string = 0;
   if (value === undefined) formattedNumber = '';
-  if (value === null) formattedNumber = 'null';
+  if (value === null) formattedNumber = 'N/A';
 
   const numVal =
     typeof value === 'string' ? parseInt(value, 10) : (value as number);

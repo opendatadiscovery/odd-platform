@@ -1,84 +1,60 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState, MetaDataState } from 'redux/interfaces';
+import { MetaDataState, RootState } from 'redux/interfaces';
 import { MetadataFieldValue } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { createLegacyFetchingSelector } from './loader-selectors';
-import { getDataEntityId } from './dataentity.selectors';
+import { emptyArr } from 'lib/constants';
+import { createStatusesSelector } from './loader-selectors';
 
 const metaDataState = ({ metaData }: RootState): MetaDataState => metaData;
 
 // Details
-const getDataEntityMetadataCreateFetchingStatus =
-  createLegacyFetchingSelector(actions.createDataEntityMetadataAction);
-const getDataEntityMetadataUpdateFetchingStatus =
-  createLegacyFetchingSelector(actions.updateDataEntityMetadataAction);
+export const getDataEntityMetadataCreatingStatuses =
+  createStatusesSelector(actions.createDataEntityMetadataAction);
+export const getDataEntityMetadataUpdatingStatuses =
+  createStatusesSelector(actions.updateDataEntityMetadataAction);
+export const getDataEntityMetadataDeletingStatuses =
+  createStatusesSelector(actions.deleteDataEntityMetadataAction);
 
-const getDataEntityMetadataDeleteFetchingStatus =
-  createLegacyFetchingSelector(actions.deleteDataEntityMetadataAction);
+const getDataEntityMetaDataState = (dataEntityId: number) =>
+  createSelector(
+    metaDataState,
+    metadata => metadata.dataEntityMetadata[dataEntityId]
+  );
 
-export const getDataEntityMetadataCreateFetching = createSelector(
-  getDataEntityMetadataCreateFetchingStatus,
-  status => status === 'fetching'
-);
+export const getDataEntityPredefinedMetadataList = (
+  dataEntityId: number
+) =>
+  createSelector(
+    getDataEntityMetaDataState(dataEntityId),
+    metadataState => {
+      if (!metadataState) return emptyArr;
 
-export const getDataEntityMetadataUpdateFetching = createSelector(
-  getDataEntityMetadataUpdateFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getDataEntityMetadataDeleteFetching = createSelector(
-  getDataEntityMetadataDeleteFetchingStatus,
-  status => status === 'fetching'
-);
-
-const getDataEntityMetaDataState = createSelector(
-  metaDataState,
-  getDataEntityId,
-  (metadata, dataEntityId) => metadata.dataEntityMetadata[dataEntityId]
-);
-
-export const getDataEntityPredefinedMetadataList = createSelector(
-  getDataEntityMetaDataState,
-  metadataState => {
-    if (!metadataState) {
-      return [];
+      return metadataState.allIds?.reduce<MetadataFieldValue[]>(
+        (metadataList, id) => {
+          if (metadataState.byId[id].field.origin === 'EXTERNAL') {
+            metadataList.push(metadataState.byId[id]);
+          }
+          return metadataList;
+        },
+        []
+      );
     }
-    return metadataState.allIds?.reduce<MetadataFieldValue[]>(
-      (metadataList, id) => {
-        if (metadataState.byId[id].field.origin === 'EXTERNAL') {
-          metadataList.push(metadataState.byId[id]);
-        }
-        return metadataList;
-      },
-      []
-    );
-  }
-);
+  );
 
-export const getDataEntityCustomMetadataList = createSelector(
-  getDataEntityMetaDataState,
-  metadataState => {
-    if (!metadataState) {
-      return [];
+export const getDataEntityCustomMetadataList = (dataEntityId: number) =>
+  createSelector(
+    getDataEntityMetaDataState(dataEntityId),
+    metadataState => {
+      if (!metadataState) return emptyArr;
+
+      return metadataState.allIds?.reduce<MetadataFieldValue[]>(
+        (metadataList, id) => {
+          if (metadataState.byId[id].field.origin === 'INTERNAL') {
+            metadataList.push(metadataState.byId[id]);
+          }
+          return metadataList;
+        },
+        []
+      );
     }
-    return metadataState.allIds?.reduce<MetadataFieldValue[]>(
-      (matadataList, id) => {
-        if (metadataState.byId[id].field.origin === 'INTERNAL') {
-          matadataList.push(metadataState.byId[id]);
-        }
-        return matadataList;
-      },
-      []
-    );
-  }
-);
-
-const getMetaDataListState = createSelector(
-  metaDataState,
-  metadata => metadata.metadataFields
-);
-
-export const getMetadataFieldList = createSelector(
-  getMetaDataListState,
-  metadataState => metadataState || []
-);
+  );

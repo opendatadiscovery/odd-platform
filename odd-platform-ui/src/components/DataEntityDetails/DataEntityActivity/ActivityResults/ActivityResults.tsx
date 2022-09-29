@@ -12,7 +12,7 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useAppParams, useAppPaths, useAppQuery } from 'lib/hooks';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
-import { setActivityQueryParam } from 'redux/reducers/activity.slice';
+import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { fetchDataEntityActivityList } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';

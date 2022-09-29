@@ -21,15 +21,18 @@ export const assignWith = <
       [sourceKey]: customizer(target[sourceKey], source[sourceKey]),
     }),
     target
-  ) as ReturnType;
+  ) as unknown as ReturnType;
 
 export const createActionType = (actionPrefix: string, action: string) =>
   `${actionPrefix}/${action}`;
 
-export const isDateType = (value: any) =>
+export const isDateType = (value: unknown): value is Date =>
   typeof value === 'object' && value instanceof Date;
 
-export const castItemDatesToTimestampInArray = <Data, RData>(
+export const castItemDatesToTimestampInArray = <
+  Data extends object,
+  RData extends object
+>(
   data: Array<Data>
 ): Array<RData> =>
   data.map<RData>(item =>

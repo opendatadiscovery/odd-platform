@@ -1,21 +1,28 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import { Tag, TagFormData } from 'generated-sources';
+import { Tag } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import { OptionsContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppInput from 'components/shared/AppInput/AppInput';
+import { AppInput, AutocompleteSuggestion } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { fetchTagsList as searchTags } from 'redux/thunks';
 import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { OptionsContainer } from '../TagsEditFormStyles';
+
+type DataEntityTagsFormType = {
+  tagNameList: {
+    name: string;
+    important?: boolean;
+    external?: boolean;
+  }[];
+};
 
 interface TagsEditFormAutocompleteProps {
-  append: UseFieldArrayAppend<TagFormData>;
+  append: UseFieldArrayAppend<DataEntityTagsFormType, 'tagNameList'>;
 }
 
 const TagsEditFormAutocomplete: React.FC<

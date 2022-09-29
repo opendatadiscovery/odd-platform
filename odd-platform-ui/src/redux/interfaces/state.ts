@@ -1,6 +1,7 @@
 import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
+  Actions,
   ActivityCountInfo,
   AlertTotals,
   AppInfo,
@@ -14,6 +15,7 @@ import {
   DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
+  DataSetSLAReport,
   DataSetTestReport,
   DataSetVersion,
   DataSource,
@@ -23,11 +25,12 @@ import {
   MetadataFieldValue,
   Namespace,
   Owner,
+  OwnerAssociationRequest,
   Ownership,
   Tag,
   Term,
   TermDetails,
-  TermRefList,
+  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -122,6 +125,9 @@ export interface DataQualityTestState {
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
   };
+  datasetSLAReportByEntityId: {
+    [dataEntityId: string]: DataSetSLAReport;
+  };
   testReportBySuiteName: {
     [suiteName: string]: DataSetQualityTestsStatusCount;
   };
@@ -190,7 +196,17 @@ export interface AlertsState extends EntityState<Alert> {
 }
 
 export interface ProfileState {
-  owner?: AssociatedOwner;
+  owner: AssociatedOwner;
+  permissions: { byDataEntityId: { [entityId: number]: Actions } };
+}
+
+export interface OwnerAssociationState {
+  newRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
+  resolvedRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
 }
 
 export interface AppInfoState {
@@ -212,7 +228,7 @@ export interface TermSearchState {
     items: Term[];
     pageInfo: CurrentPageInfo;
   };
-  suggestions: TermRefList;
+  suggestions: TermRef[];
   facetState: TermSearchFacetsByName;
 }
 

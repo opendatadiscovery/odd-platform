@@ -1,12 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { formatDistanceStrict } from 'date-fns';
-import values from 'lodash/values';
-import {
-  DataEntityRunStatus,
-  DataQualityTestExpectation,
-} from 'generated-sources';
-import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
+import { DataEntityRunStatus } from 'generated-sources';
+import { TestRunStatusIcon } from 'components/shared';
 import { Container } from './TestitemStyles';
 
 interface TestItemProps {
@@ -15,7 +11,6 @@ interface TestItemProps {
   testName: string;
   testStartTime: Date | undefined;
   testEndTime: Date | undefined;
-  testExpectations?: DataQualityTestExpectation;
 }
 
 const TestItem: React.FC<TestItemProps> = ({
@@ -24,19 +19,15 @@ const TestItem: React.FC<TestItemProps> = ({
   testName,
   testStartTime,
   testEndTime,
-  testExpectations,
 }) => (
   <Container container $active={active}>
-    <Grid item>
+    <Grid item xs={0.25}>
       {latestRunStatus && <TestRunStatusIcon typeName={latestRunStatus} />}
     </Grid>
-    <Grid container item wrap="nowrap">
-      <Grid item xs={2}>
-        <Typography variant="body1">{testName}</Typography>
-      </Grid>
-      <Grid container item xs={9} justifyContent="center">
-        <Typography variant="body1" sx={{ mr: 0.5 }}>
-          {values(testExpectations).join(', ')}
+    <Grid container item wrap="nowrap" xs={11.75}>
+      <Grid item xs={10}>
+        <Typography variant="body1" noWrap>
+          {testName}
         </Typography>
       </Grid>
       <Grid item container xs={2} justifyContent="flex-end">

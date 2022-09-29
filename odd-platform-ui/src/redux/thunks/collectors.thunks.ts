@@ -1,12 +1,12 @@
 import {
-  CollectorApi,
-  Configuration,
   Collector,
-  CollectorApiGetCollectorsListRequest,
-  CollectorApiUpdateCollectorRequest,
-  CollectorApiRegisterCollectorRequest,
+  CollectorApi,
   CollectorApiDeleteCollectorRequest,
+  CollectorApiGetCollectorsListRequest,
   CollectorApiRegenerateCollectorTokenRequest,
+  CollectorApiRegisterCollectorRequest,
+  CollectorApiUpdateCollectorRequest,
+  Configuration,
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -32,39 +32,30 @@ export const fetchCollectorsList = createAsyncThunk<
 export const updateCollector = createAsyncThunk<
   Collector,
   CollectorApiUpdateCollectorRequest
->(
-  actions.updateCollectorActionType,
-  async ({ collectorId, collectorUpdateFormData }) => {
-    const collector = await apiClient.updateCollector({
-      collectorId,
-      collectorUpdateFormData,
-    });
-
-    return collector;
-  }
+>(actions.updateCollectorActionType, async ({ collectorId, collectorUpdateFormData }) =>
+  apiClient.updateCollector({
+    collectorId,
+    collectorUpdateFormData,
+  })
 );
 
 export const regenerateCollectorToken = createAsyncThunk<
   Collector,
   CollectorApiRegenerateCollectorTokenRequest
->(actions.regenerateCollectorTokenActionType, async ({ collectorId }) => {
-  const collector = await apiClient.regenerateCollectorToken({
+>(actions.regenerateCollectorTokenActionType, async ({ collectorId }) =>
+  apiClient.regenerateCollectorToken({
     collectorId,
-  });
-
-  return collector;
-});
+  })
+);
 
 export const registerCollector = createAsyncThunk<
   Collector,
   CollectorApiRegisterCollectorRequest
->(actions.registerCollectorActionType, async ({ collectorFormData }) => {
-  const collector = await apiClient.registerCollector({
+>(actions.registerCollectorActionType, async ({ collectorFormData }) =>
+  apiClient.registerCollector({
     collectorFormData,
-  });
-
-  return collector;
-});
+  })
+);
 
 export const deleteCollector = createAsyncThunk<
   number,

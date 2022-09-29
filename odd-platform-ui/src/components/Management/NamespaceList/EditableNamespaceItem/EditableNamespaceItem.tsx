@@ -1,12 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Namespace } from 'generated-sources';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { ConfirmationDialog, AppButton } from 'components/shared';
 import { deleteNamespace } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
+import { usePermissions } from 'lib/hooks';
 import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
 
@@ -18,6 +17,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
   namespace,
 }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteNamespace({ namespaceId: namespace.id })),
@@ -40,6 +40,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
               color="primaryLight"
               startIcon={<EditIcon />}
               sx={{ mr: 0.5 }}
+              disabled={!isAdmin}
             >
               Edit
             </AppButton>
@@ -57,6 +58,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
               size="medium"
               color="primaryLight"
               startIcon={<DeleteIcon />}
+              disabled={!isAdmin}
             >
               Delete
             </AppButton>

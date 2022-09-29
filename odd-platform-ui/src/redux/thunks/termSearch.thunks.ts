@@ -1,107 +1,82 @@
 import {
-  TermApi,
   Configuration,
-  TermSearchFacetsData,
-  TermApiTermSearchRequest,
-  TermApiGetTermSearchFacetListRequest,
-  TermApiUpdateTermSearchFacetsRequest,
-  TermList,
-  TermApiGetTermSearchResultsRequest,
+  Term,
+  TermApi,
   TermApiGetTermFiltersForFacetRequest,
-  CountableSearchFilter,
+  TermApiGetTermSearchFacetListRequest,
+  TermApiGetTermSearchResultsRequest,
   TermApiGetTermSearchSuggestionsRequest,
-  TermRefList,
+  TermApiTermSearchRequest,
+  TermApiUpdateTermSearchFacetsRequest,
+  TermRef,
+  TermSearchFacetsData,
 } from 'generated-sources';
 import {
-  PaginatedResponse,
-  TermSearchOptionalFacetNames,
+  CurrentPageInfo,
   TermSearchFacetOptions,
+  TermSearchOptionalFacetNames,
 } from 'redux/interfaces';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const termSearchApiClient = new TermApi(apiClientConf);
+const termApi = new TermApi(apiClientConf);
 
-export const createTermSearch = createThunk<
-  TermApiTermSearchRequest,
+export const createTermSearch = createAsyncThunk<
   TermSearchFacetsData,
-  TermSearchFacetsData
->(
-  (params: TermApiTermSearchRequest) =>
-    termSearchApiClient.termSearch(params),
-  actions.createTermSearchAction,
-  (response: TermSearchFacetsData) => response
+  TermApiTermSearchRequest
+>(actions.createTermsSearchActionType, async params => termApi.termSearch(params));
+
+export const updateTermSearch = createAsyncThunk<
+  TermSearchFacetsData,
+  TermApiUpdateTermSearchFacetsRequest
+>(actions.updateTermsSearchActionType, async params =>
+  termApi.updateTermSearchFacets(params)
 );
 
-export const getTermSearchDetails = createThunk<
-  TermApiGetTermSearchFacetListRequest,
+export const getTermsSearch = createAsyncThunk<
   TermSearchFacetsData,
-  TermSearchFacetsData
->(
-  (params: TermApiGetTermSearchFacetListRequest) =>
-    termSearchApiClient.getTermSearchFacetList(params),
-  actions.getTermSearchAction,
-  (response: TermSearchFacetsData) => response
+  TermApiGetTermSearchFacetListRequest
+>(actions.getTermsSearchActionType, async params =>
+  termApi.getTermSearchFacetList(params)
 );
 
-export const updateTermSearch = createThunk<
-  TermApiUpdateTermSearchFacetsRequest,
-  TermSearchFacetsData,
-  TermSearchFacetsData
->(
-  (params: TermApiUpdateTermSearchFacetsRequest) =>
-    termSearchApiClient.updateTermSearchFacets(params),
-  actions.updateTermSearchAction,
-  (response: TermSearchFacetsData) => response
-);
+export const fetchTermsSearchResults = createAsyncThunk<
+  { items: Term[]; pageInfo: CurrentPageInfo },
+  TermApiGetTermSearchResultsRequest
+>(actions.fetchTermsSearchResultsActionType, async params => {
+  const { items, pageInfo } = await termApi.getTermSearchResults(params);
+  const { page, size } = params;
 
-export const getTermSearchResults = createThunk<
-  TermApiGetTermSearchResultsRequest,
-  TermList,
-  PaginatedResponse<TermList>
->(
-  (params: TermApiGetTermSearchResultsRequest) =>
-    termSearchApiClient.getTermSearchResults(params),
-  actions.getTermSearchResultsAction,
-  (response: TermList, request: TermApiGetTermSearchResultsRequest) => ({
-    ...response,
+  return {
+    items,
     pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
+      ...pageInfo,
+      page,
+      hasNext: page * size < pageInfo.total,
     },
-  })
-);
+  };
+});
 
-export const getTermSearchFacetOptions = createThunk<
-  TermApiGetTermFiltersForFacetRequest,
-  CountableSearchFilter[],
-  TermSearchFacetOptions
->(
-  (params: TermApiGetTermFiltersForFacetRequest) =>
-    termSearchApiClient.getTermFiltersForFacet(params),
-  actions.getTermSearchFacetOptionsAction,
-  (
-    response: CountableSearchFilter[],
-    request: TermApiGetTermFiltersForFacetRequest
-  ) => ({
-    facetName: request.query
-      ? undefined
-      : (request.facetType.toLowerCase() as TermSearchOptionalFacetNames),
-    facetOptions: response,
-    page: request.page,
-  })
-);
+export const getTermsSearchFacetOptions = createAsyncThunk<
+  TermSearchFacetOptions,
+  TermApiGetTermFiltersForFacetRequest
+>(actions.getTermsSearchFacetOptionsActionType, async params => {
+  const facetOptions = await termApi.getTermFiltersForFacet(params);
+  const { query, page, facetType } = params;
+  const facetName = query
+    ? undefined
+    : (facetType.toLowerCase() as TermSearchOptionalFacetNames);
 
-export const fetchTermSearchSuggestions = createThunk<
-  TermApiGetTermSearchSuggestionsRequest,
-  TermRefList,
-  TermRefList
->(
-  (params: TermApiGetTermSearchSuggestionsRequest) =>
-    termSearchApiClient.getTermSearchSuggestions(params),
-  actions.getTermSearchSuggestionsAction,
-  (response: TermRefList) => response
-);
+  return { facetName, facetOptions, page };
+});
+
+export const fetchTermSearchSuggestions = createAsyncThunk<
+  TermRef[],
+  TermApiGetTermSearchSuggestionsRequest
+>(actions.fetchTermsSearchSuggestionsActionType, async params => {
+  const { items } = await termApi.getTermSearchSuggestions(params);
+
+  return items;
+});

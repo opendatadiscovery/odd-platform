@@ -13,14 +13,13 @@ import {
   getAlertListPageInfo,
   getMyAlertListFetchingStatus,
   getMyDependentsAlertListFetchingStatus,
-} from 'redux/selectors/alert.selectors';
+} from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { AlertsResponse, updateAlertStatus } from 'redux/thunks';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import { EmptyContentPlaceholder } from 'components/shared';
 import { Box, Grid, Typography } from '@mui/material';
-import AlertListSkeleton from 'components/Alerts/AlertsList/AlertSkeletonItem/AlertSkeletonItem';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { AsyncThunk } from '@reduxjs/toolkit';
+import AlertListSkeleton from './AlertSkeletonItem/AlertSkeletonItem';
 import * as S from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';
 
@@ -36,8 +35,10 @@ interface AlertsListProps {
 
 const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
   const dispatch = useAppDispatch();
+
   const pageInfo = useAppSelector(getAlertListPageInfo);
   const alerts = useAppSelector(getAlertList);
+
   const { isLoading: isAlertListFetching } = useAppSelector(
     getAlertListFetchingStatus
   );
@@ -47,6 +48,16 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
   const { isLoading: isMyDependentsAlertListFetching } = useAppSelector(
     getMyDependentsAlertListFetchingStatus
   );
+  const isAlertsFetching =
+    isAlertListFetching ||
+    isMyAlertListFetching ||
+    isMyDependentsAlertListFetching;
+
+  const isAlertsNotFetching =
+    !isAlertListFetching ||
+    !isMyAlertListFetching ||
+    !isMyDependentsAlertListFetching;
+
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
     dispatch(fetchAlerts({ page: pageInfo.page + 1, size: 30 }));
@@ -62,7 +73,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
   }, [fetchAlerts]);
 
   const alertStatusHandler = React.useCallback(
-    (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
+    (alertId: Alert['id'], alertStatus: AlertStatus) => {
       dispatch(
         updateAlertStatus({
           alertId,
@@ -115,39 +126,20 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
             dataLength={alerts?.length}
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
-            loader={
-              (isAlertListFetching ||
-                isMyAlertListFetching ||
-                isMyDependentsAlertListFetching) && (
-                <SkeletonWrapper
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <AlertListSkeleton
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
-                />
-              )
-            }
             scrollThreshold="200px"
+            loader={isAlertsFetching && <AlertListSkeleton length={5} />}
           >
             {alerts?.map(alert => (
               <AlertItem
-                alertStatusHandler={alertStatusHandler(
-                  alert.id,
-                  alert.status
-                )}
                 key={alert.id}
+                alertStatusHandler={alertStatusHandler}
                 alert={alert}
               />
             ))}
           </InfiniteScroll>
         </div>
       </Grid>
-      {(!isAlertListFetching ||
-        !isMyAlertListFetching ||
-        !isMyDependentsAlertListFetching) &&
-      !alerts?.length ? (
+      {isAlertsNotFetching && !alerts?.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Box>

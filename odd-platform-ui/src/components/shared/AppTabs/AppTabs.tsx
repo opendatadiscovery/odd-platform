@@ -7,7 +7,7 @@ import AppLinkTab from 'components/shared/AppTabs/AppTab/AppLinkTab';
 import AppTabLabel from 'components/shared/AppTabs/AppTabLabel/AppTabLabel';
 import { TabsContainer } from './AppTabsStyles';
 
-export type AppTabItem<ValueT = number | string> = {
+export type AppTabItem<ValueT = number | string | boolean> = {
   name: string;
   link?: string;
   hint?: number | string;

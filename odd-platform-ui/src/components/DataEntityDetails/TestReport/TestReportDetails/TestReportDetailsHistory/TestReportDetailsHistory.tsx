@@ -4,19 +4,15 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getDataEntityRunList,
   getDataEntityRunsFetchingStatuses,
-} from 'redux/selectors/dataEntityRun.selector';
+  getQualityTestNameByTestId,
+} from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
-import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceStrict } from 'date-fns';
-import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import TestRunStatusReasonModal from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
+import { TestRunStatusItem, SkeletonWrapper } from 'components/shared';
+import TestRunStatusReasonModal from '../../../QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
-import {
-  QualityTestRunItem,
-  QualityTestRunItemContainer,
-} from './TestReportDetailsHistoryStyles';
+import * as S from './TestReportDetailsHistoryStyles';
 
 const TestReportDetailsHistory: React.FC = () => {
   const { dataQATestId } = useAppParams();
@@ -47,38 +43,38 @@ const TestReportDetailsHistory: React.FC = () => {
           dataQATestName={dataQATestName}
           dataQATestRun={dataQATestRun}
           btnCreateEl={
-            <QualityTestRunItemContainer container>
-              <QualityTestRunItem container>
-                <Typography variant="body1">
-                  {dataQATestRun?.startTime &&
-                    format(
-                      dataQATestRun?.startTime,
-                      'd MMM yyyy, HH:MM a'
-                    )}
-                </Typography>
-                <Typography variant="body1" align="right">
-                  {dataQATestRun?.startTime &&
-                    dataQATestRun?.endTime &&
-                    formatDistanceStrict(
-                      dataQATestRun?.endTime,
-                      dataQATestRun?.startTime,
-                      { addSuffix: false }
-                    )}
-                </Typography>
-                <TestRunStatusItem typeName={dataQATestRun.status} />
-              </QualityTestRunItem>
-            </QualityTestRunItemContainer>
+            <S.QualityTestRunItemContainer container>
+              <S.QualityTestRunItem container>
+                <Grid container item lg={6} justifyContent='flex-start'>
+                  <Typography variant='body1'>
+                    {dataQATestRun?.startTime &&
+                      format(dataQATestRun?.startTime, 'd MMM yyyy, HH:MM a')}
+                  </Typography>
+                </Grid>
+                <Grid container item lg={3} justifyContent='center'>
+                  <Typography variant='body1' align='right'>
+                    {dataQATestRun?.startTime &&
+                      dataQATestRun?.endTime &&
+                      formatDistanceStrict(
+                        dataQATestRun?.endTime,
+                        dataQATestRun?.startTime,
+                        { addSuffix: false }
+                      )}
+                  </Typography>
+                </Grid>
+                <Grid container item lg={3} justifyContent='flex-end'>
+                  <TestRunStatusItem typeName={dataQATestRun.status} />
+                </Grid>
+              </S.QualityTestRunItem>
+            </S.QualityTestRunItemContainer>
           }
         />
       ))}
       {testRunsFetching && (
         <SkeletonWrapper
           length={5}
-          renderContent={({ randomSkeletonPercentWidth, key }) => (
-            <TestReportDetailsHistoryItemSkeleton
-              width={randomSkeletonPercentWidth()}
-              key={key}
-            />
+          renderContent={({ randWidth, key }) => (
+            <TestReportDetailsHistoryItemSkeleton width={randWidth()} key={key} />
           )}
         />
       )}

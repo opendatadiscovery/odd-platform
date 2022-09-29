@@ -8,6 +8,9 @@ export type ManagementViewType =
   | 'collectors'
   | 'owners'
   | 'tags'
-  | 'labels';
+  | 'labels'
+  | 'associations';
+
+export type OwnerAssociationRequestsViewType = 'New' | 'Resolved';
 
 export type CRUDType = 'created' | 'updated' | 'deleted';

@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;

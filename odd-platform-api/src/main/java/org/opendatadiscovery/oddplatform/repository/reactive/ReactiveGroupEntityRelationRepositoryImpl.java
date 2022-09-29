@@ -1,7 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Field;
+import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
@@ -10,7 +16,10 @@ import org.opendatadiscovery.oddplatform.model.tables.records.GroupEntityRelatio
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 
@@ -82,5 +91,51 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
             .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(entityOddrn).and(DATA_ENTITY.MANUALLY_CREATED.isTrue()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(GroupEntityRelationsPojo.class));
+    }
+
+    @Override
+    public Mono<Map<String, List<String>>> fetchGroupRelations(final Collection<String> childOddrns) {
+        if (CollectionUtils.isEmpty(childOddrns)) {
+            return Mono.just(Map.of());
+        }
+
+        final var query = DSL
+            .select(
+                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
+                GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN
+            )
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns));
+        return jooqReactiveOperations.flux(query).collect(Collectors.groupingBy(
+            r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
+            Collectors.mapping(r -> r.get(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), Collectors.toList())
+        ));
+    }
+
+    @Override
+    public Flux<String> getDEGEntitiesOddrns(final long dataEntityGroupId) {
+        final Name cteName = name("t");
+        final Field<String> tDataEntityOddrn = field("t.data_entity_oddrn", String.class);
+
+        final var groupOddrn = DSL.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.eq(dataEntityGroupId));
+
+        final var cte = cteName.as(DSL
+            .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+            .unionAll(
+                DSL
+                    .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+                    .from(GROUP_ENTITY_RELATIONS)
+                    .join(cteName).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(tDataEntityOddrn))
+            ));
+
+        final var query = DSL.withRecursive(cte)
+            .selectDistinct(cte.field(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
+            .from(cte.getName());
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(String.class));
     }
 }

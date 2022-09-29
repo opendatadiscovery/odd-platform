@@ -10,7 +10,7 @@ import {
   fetchSearchSuggestions,
 } from 'redux/thunks';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import {
   getSearchQuery,
   getSearchSuggestions,

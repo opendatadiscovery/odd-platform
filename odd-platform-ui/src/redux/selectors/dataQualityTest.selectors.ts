@@ -6,9 +6,7 @@ import {
 } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-
 import isEmpty from 'lodash/isEmpty';
-import { getDataEntityId } from './dataentity.selectors';
 
 const getDataQualityTestState = ({
   dataQualityTest,
@@ -27,21 +25,37 @@ export const getDatasetTestReportFetchingStatuses = createStatusesSelector(
   actions.fetchDataSetQualityTestReportActionType
 );
 
+export const getDatasetSLAReportFetchingStatuses = createStatusesSelector(
+  actions.fetchDataSetQualitySLAReportActionType
+);
+
 export const getDatasetTestListFetchingStatuses = createStatusesSelector(
   actions.fetchDataSetQualityTestListActionType
 );
 
-export const getDatasetTestReport = createSelector(
-  getDataQualityTestState,
-  getDataEntityId,
-  (dataQualityTestState, dataEntityId) =>
-    dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
-);
+export const getDatasetTestReport = (dataEntityId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
+  );
 
-export const getDatasetQualityTestsBySuiteNames = createSelector(
-  getDataQualityTestState,
-  getDataEntityId,
-  (dataQualityTestState, dataEntityId) => {
+export const getDatasetSLAReport = (dataEntityId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.datasetSLAReportByEntityId[dataEntityId]
+  );
+
+export const getDatasetTestReportTotal = (dataEntityId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.datasetTestReportByEntityId[dataEntityId]?.total
+  );
+
+export const getDatasetQualityTestsBySuiteNames = (dataEntityId: number) =>
+  createSelector(getDataQualityTestState, dataQualityTestState => {
     if (
       isEmpty(dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId])
     ) {
@@ -56,20 +70,19 @@ export const getDatasetQualityTestsBySuiteNames = createSelector(
       return [key, newValues];
     });
     return Object.fromEntries(suitNamesByDatasetId);
-  }
-);
+  });
 
 export const getTestReportListBySuiteName = createSelector(
   getDataQualityTestState,
   dataQualityTestState => dataQualityTestState.testReportBySuiteName
 );
 
-export const getQualityTestByTestId = createSelector(
-  getDataQualityTestState,
-  getDataQATestId,
-  (dataQualityTestState, dataQATestId) =>
-    dataQualityTestState.qualityTestsById[dataQATestId]
-);
+export const getQualityTestByTestId = (dataQATestId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.qualityTestsById[dataQATestId]
+  );
 
 export const getQualityTestNameByTestId = createSelector(
   getDataEntitiesState,

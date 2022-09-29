@@ -53,7 +53,7 @@ export const AppTooltip = styled(
 
 export const ChildrenContainer = styled(Box)<ChildrenContainerProps>(
   ({ $isCursorPointer, $isOverflowed }) => ({
-    cursor: $isCursorPointer ? 'pointer' : 'auto',
+    cursor: $isCursorPointer ? 'pointer' : 'inherit',
     overflow: $isOverflowed ? 'hidden' : 'initial',
     ...($isOverflowed
       ? {

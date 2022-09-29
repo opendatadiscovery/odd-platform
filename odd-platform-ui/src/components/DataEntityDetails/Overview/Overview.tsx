@@ -8,16 +8,19 @@ import {
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
+import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
+import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
+import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
+import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewDescription from './OverviewDescription/OverviewDescription';
-import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
+import OverviewMetadata from './OverviewMetadata/OverviewMetadata';
 import OverviewStats from './OverviewStats/OverviewStats';
 import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
-import OverviewDataQualityReport from './OverviewDataQualityReport/OverviewDataQualityReport';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
 
 const Overview: React.FC = () => {
@@ -29,8 +32,8 @@ const Overview: React.FC = () => {
   const { isDataset } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetQualityTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
 
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
@@ -41,15 +44,30 @@ const Overview: React.FC = () => {
     <>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <Grid container spacing={2} sx={{ mt: 0 }}>
-          <Grid item xs={8}>
+          <Grid item lg={9}>
             <SectionContainer elevation={9}>
               <OverviewStats />
             </SectionContainer>
+            {hasDataQualityTestExpectations(
+              dataEntityDetails?.expectation
+            ) && (
+              <>
+                <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
+                  Expectations
+                </Typography>
+                <SectionContainer square elevation={0}>
+                  <OverviewExpectations
+                    parameters={dataEntityDetails.expectation}
+                    linkedUrlList={dataEntityDetails.linkedUrlList}
+                  />
+                </SectionContainer>
+              </>
+            )}
             <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
               Metadata
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewMetadataContainer dataEntityId={dataEntityId} />
+              <OverviewMetadata dataEntityId={dataEntityId} />
             </SectionContainer>
             <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
               About
@@ -58,13 +76,14 @@ const Overview: React.FC = () => {
               <OverviewDescription />
             </SectionContainer>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item lg={3}>
             <SectionContainer square elevation={0}>
               <OverviewGeneral />
             </SectionContainer>
             {isDataset && datasetQualityTestReport?.total ? (
               <SectionContainer square elevation={0}>
-                <OverviewDataQualityReport dataEntityId={dataEntityId} />
+                <OverviewDQSLAReport dataEntityId={dataEntityId} />
+                <OverviewDQTestReport dataEntityId={dataEntityId} />
               </SectionContainer>
             ) : null}
             <SectionContainer square elevation={0}>
@@ -87,8 +106,8 @@ const Overview: React.FC = () => {
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+          renderContent={({ randWidth }) => (
+            <OverviewSkeleton width={randWidth()} />
           )}
         />
       ) : null}

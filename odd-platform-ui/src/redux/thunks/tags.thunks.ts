@@ -31,19 +31,12 @@ export const fetchTagsList = createAsyncThunk<
 
 export const createTag = createAsyncThunk<Tag[], TagApiCreateTagRequest>(
   actions.createTagsActionType,
-  async params => {
-    const result = await apiClient.createTag(params);
-    return result;
-  }
+  async params => apiClient.createTag(params)
 );
 
 export const updateTag = createAsyncThunk<Tag, TagApiUpdateTagRequest>(
   actions.updateTagActionType,
-  async ({ tagId, tagFormData }) => {
-    const tag = await apiClient.updateTag({ tagId, tagFormData });
-
-    return tag;
-  }
+  async ({ tagId, tagFormData }) => apiClient.updateTag({ tagId, tagFormData })
 );
 
 export const deleteTag = createAsyncThunk<number, TagApiDeleteTagRequest>(

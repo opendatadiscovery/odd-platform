@@ -5,7 +5,3 @@ export const fetchIdentityActionType = createActionType(
   profileActionPrefix,
   'fetchIdentity'
 );
-export const updateIdentityOwnerActionType = createActionType(
-  profileActionPrefix,
-  'updateIdenityOwner'
-);

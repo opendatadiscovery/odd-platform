@@ -2,7 +2,7 @@
 spring-webflux = '5.3.19'
 reactor-extra = '3.4.8'
 micrometer-registry-prometheus = '1.9.0'
-ingestion-contract-server = '0.1.14'
+ingestion-contract-server = '0.1.16'
 oddrn-generator-java = '0.1.10'
 apache-collections = '4.4'
 apache-lang = '3.12.0'
@@ -41,7 +41,6 @@ spring-oauth2-client = { module = 'org.springframework.boot:spring-boot-starter-
 spring-oauth2-rs = { module = 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' }
 spring-aop = { module = 'org.springframework.boot:spring-boot-starter-aop' }
 spring-session = { module = 'org.springframework.session:spring-session-core' }
-spring-ldap = { module = 'org.springframework.boot:spring-boot-starter-data-ldap' }
 spring-security-ldap = { module = 'org.springframework.security:spring-security-ldap' }
 spring-r2dbc = { module = 'org.springframework:spring-r2dbc' }
 spring-data-redis = { module = 'org.springframework.boot:spring-boot-starter-data-redis-reactive' }
@@ -96,7 +95,6 @@ spring = [
     'spring-oauth2-client',
     'spring-oauth2-rs',
     'spring-session',
-    'spring-ldap',
     'spring-security-ldap',
     'spring-r2dbc',
     'reactor-extra',

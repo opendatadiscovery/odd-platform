@@ -32,6 +32,7 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -39,6 +40,9 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
@@ -472,6 +476,18 @@ public class DataEntityServiceImpl
         return Mono.zip(dataEntityStatisticsRepository.getStatistics(),
                 dataEntityFilledService.getFilledDataEntitiesCount())
             .map(function(entityMapper::mapUsageInfo));
+    }
+
+    @Override
+    public Mono<CompactDataEntityList> listEntitiesWithinDEG(final String degOddrn) {
+        return reactiveDataEntityRepository.getDEGEntities(degOddrn)
+            .map(entityList -> entityList
+                .stream()
+                .map(de -> new CompactDataEntity()
+                    .oddrn(de.getOddrn())
+                    .type(DataEntityType.fromValue(DataEntityTypeDto.findById(de.getTypeId()).toString())))
+                .toList())
+            .map(entityList -> new CompactDataEntityList().items(entityList));
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,

@@ -10,23 +10,24 @@ import {
   getLabelsListPage,
 } from 'redux/selectors';
 import { fetchLabelsList } from 'redux/thunks';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  NumberFormatted,
+  AppButton,
+  AppInput,
+  EmptyContentPlaceholder,
+} from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { usePermissions } from 'lib/hooks';
+import LabelsSkeletonItem from './LabelsSkeletonItem/LabelsSkeletonItem';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateForm from './LabelCreateForm/LabelCreateForm';
 import * as S from './LabelsListStyles';
 
 const LabelsListView: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
+
   const labelsList = useAppSelector(getLabelsList);
   const pageInfo = useAppSelector(getLabelsListPage);
 
@@ -125,6 +126,7 @@ const LabelsListView: React.FC = () => {
               size="medium"
               color="primaryLight"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create label
             </AppButton>
@@ -145,19 +147,7 @@ const LabelsListView: React.FC = () => {
             hasMore={!!pageInfo?.hasNext}
             dataLength={labelsList.length}
             scrollThreshold="200px"
-            loader={
-              isLabelFetching ? (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <LabelsSkeletonItem
-                      key={key}
-                      width={randomSkeletonPercentWidth()}
-                    />
-                  )}
-                />
-              ) : null
-            }
+            loader={isLabelFetching && <LabelsSkeletonItem length={5} />}
           >
             {labelsList?.map(label => (
               <EditableLabelItem key={label.id} label={label} />
