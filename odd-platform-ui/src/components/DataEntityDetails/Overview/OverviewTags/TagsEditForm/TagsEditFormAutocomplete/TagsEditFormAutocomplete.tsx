@@ -5,7 +5,7 @@ import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { AppInput, AutocompleteSuggestion } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';

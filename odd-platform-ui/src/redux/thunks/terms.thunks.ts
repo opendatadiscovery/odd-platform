@@ -20,17 +20,17 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const termApi = new TermApi(apiClientConf);
 
 export const createTerm = createAsyncThunk<TermDetails, TermApiCreateTermRequest>(
-  actions.createTermAction,
+  actions.createTermActType,
   async ({ termFormData }) => termApi.createTerm({ termFormData })
 );
 
 export const updateTerm = createAsyncThunk<TermDetails, TermApiUpdateTermRequest>(
-  actions.updateTermAction,
+  actions.updateTermActType,
   async ({ termId, termFormData }) => termApi.updateTerm({ termId, termFormData })
 );
 
 export const deleteTerm = createAsyncThunk<{ termId: number }, TermApiDeleteTermRequest>(
-  actions.deleteTermAction,
+  actions.deleteTermActType,
   async ({ termId }) => {
     await termApi.deleteTerm({ termId });
 
@@ -41,7 +41,7 @@ export const deleteTerm = createAsyncThunk<{ termId: number }, TermApiDeleteTerm
 export const fetchTermsList = createAsyncThunk<
   { termList: Array<TermRef>; pageInfo: CurrentPageInfo },
   TermApiGetTermsListRequest
->(actions.fetchTermsListAction, async ({ page, size, query }) => {
+>(actions.fetchTermListActType, async ({ page, size, query }) => {
   const { items: termList, pageInfo } = await termApi.getTermsList({
     page,
     size,
@@ -57,14 +57,14 @@ export const fetchTermsList = createAsyncThunk<
 export const fetchTermDetails = createAsyncThunk<
   TermDetails,
   TermApiGetTermDetailsRequest
->(actions.fetchTermDetailsAction, async ({ termId }) =>
+>(actions.fetchTermDetailsActType, async ({ termId }) =>
   termApi.getTermDetails({ termId })
 );
 
 export const updateTermDetailsTags = createAsyncThunk<
   { termId: number; tags: Array<Tag> },
   TermApiCreateTermTagsRelationsRequest
->(actions.updateTermDetailsTagsAction, async ({ termId, tagsFormData }) => {
+>(actions.updateTermDetailsTagsActType, async ({ termId, tagsFormData }) => {
   const tags = await termApi.createTermTagsRelations({
     termId,
     tagsFormData,

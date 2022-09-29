@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { DataEntityRunStatus } from 'generated-sources';
-import { useAppSelector } from 'lib/redux/hooks';
 import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,
@@ -10,6 +9,7 @@ import {
 import { AppButton, NumberFormatted } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import omit from 'lodash/omit';
+import { useAppSelector } from 'redux/lib/hooks';
 import OverviewDataQualityReportSkeleton from '../OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
 import * as S from './OverviewDQTestReportStyles';
 
@@ -21,7 +21,7 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
   const { dataEntityTestReportPath } = useAppPaths();
 
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
-    getDatasetTestReportFetchingStatuses,
+    getDatasetTestReportFetchingStatuses
   );
   const datasetQualityTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
 
@@ -37,7 +37,7 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
             $runCount={count}
             $total={total}
           />
-        ),
+        )
     );
   }, [datasetQualityTestReport]);
 
@@ -56,9 +56,9 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
               <Typography variant='subtitle2'>{runStatus}</Typography>
             </S.CountContainer>
           );
-        },
+        }
       ),
-    [datasetQualityTestReport],
+    [datasetQualityTestReport]
   );
 
   return (

@@ -7,7 +7,7 @@ import {
   fetchAppInfo,
   fetchIdentity,
 } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
 import { clearActivityFilters } from 'redux/slices/activity.slice';
@@ -68,9 +68,7 @@ const AppToolbar: React.FC = () => {
     { name: 'Activity', link: '/activity' },
   ]);
 
-  const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
-    false
-  );
+  const [selectedTab, setSelectedTab] = React.useState<number | boolean>(false);
 
   React.useEffect(() => {
     const newTabIndex = tabs.findIndex(tab => {
@@ -92,8 +90,7 @@ const AppToolbar: React.FC = () => {
   }, [setSelectedTab, location.pathname]);
 
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
-  const [termSearchLoading, setTermSearchLoading] =
-    React.useState<boolean>(false);
+  const [termSearchLoading, setTermSearchLoading] = React.useState<boolean>(false);
 
   const handleTabClick = (idx: number) => {
     if (tabs[idx].name === 'Dictionary') {
@@ -134,13 +131,13 @@ const AppToolbar: React.FC = () => {
   };
 
   return (
-    <S.Bar position="fixed" elevation={elevation}>
+    <S.Bar position='fixed' elevation={elevation}>
       <S.Container disableGutters>
         <S.ContentContainer container>
           <S.LogoContainer item xs={3}>
-            <S.Title to="/">
+            <S.Title to='/'>
               <S.Logo />
-              <Typography variant="h4" noWrap>
+              <Typography variant='h4' noWrap>
                 Platform
               </Typography>
             </S.Title>
@@ -149,7 +146,7 @@ const AppToolbar: React.FC = () => {
             <Grid item sx={{ pl: 1 }}>
               {tabs.length ? (
                 <AppTabs
-                  type="menu"
+                  type='menu'
                   items={tabs}
                   selectedTab={selectedTab}
                   handleTabChange={handleTabClick}
@@ -157,15 +154,15 @@ const AppToolbar: React.FC = () => {
               ) : null}
             </Grid>
             <S.SectionDesktop item>
-              <S.UserAvatar stroke="currentColor" />
+              <S.UserAvatar stroke='currentColor' />
               <S.UserName>{identity?.username}</S.UserName>
               <AppIconButton
                 icon={<DropdownIcon />}
-                color="unfilled"
-                edge="end"
-                aria-label="account of current user"
+                color='unfilled'
+                edge='end'
+                aria-label='account of current user'
                 aria-controls={menuId}
-                aria-haspopup="true"
+                aria-haspopup='true'
                 onClick={handleProfileMenuOpen}
               />
             </S.SectionDesktop>
@@ -186,9 +183,7 @@ const AppToolbar: React.FC = () => {
           <S.CaptionsWrapper>
             <AppMenuItem divider />
             <S.CaptionsTypographyWrapper>
-              <Typography variant="caption">
-                ODD Platform v.{version}
-              </Typography>
+              <Typography variant='caption'>ODD Platform v.{version}</Typography>
             </S.CaptionsTypographyWrapper>
           </S.CaptionsWrapper>
         )}

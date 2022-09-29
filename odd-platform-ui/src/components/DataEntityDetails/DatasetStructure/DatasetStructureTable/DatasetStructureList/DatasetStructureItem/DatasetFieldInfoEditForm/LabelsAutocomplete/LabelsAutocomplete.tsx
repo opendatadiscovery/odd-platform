@@ -5,7 +5,7 @@ import {
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { fetchLabelsList as searchLabels } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { Label } from 'generated-sources';
 import { AppInput, AutocompleteSuggestion } from 'components/shared';

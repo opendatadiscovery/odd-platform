@@ -10,7 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
   getSearchSuggestions,

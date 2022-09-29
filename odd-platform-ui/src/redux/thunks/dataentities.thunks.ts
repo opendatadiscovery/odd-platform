@@ -64,7 +64,7 @@ export const updateDataEntityTags = createAsyncThunk<
 export const addDataEntityTerm = createAsyncThunk<
   { dataEntityId: number; term: TermRef },
   DataEntityApiAddDataEntityTermRequest
->(actions.addDataEntityTermAction, async ({ dataEntityId, dataEntityTermFormData }) => {
+>(actions.addDataEntityTermActType, async ({ dataEntityId, dataEntityTermFormData }) => {
   const term = await dataEntityApi.addDataEntityTerm({
     dataEntityId,
     dataEntityTermFormData,
@@ -75,7 +75,7 @@ export const addDataEntityTerm = createAsyncThunk<
 export const deleteDataEntityTerm = createAsyncThunk<
   { dataEntityId: number; termId: number },
   DataEntityApiDeleteTermFromDataEntityRequest
->(actions.deleteDataEntityTermAction, async ({ dataEntityId, termId }) => {
+>(actions.deleteDataEntityTermActType, async ({ dataEntityId, termId }) => {
   await dataEntityApi.deleteTermFromDataEntity({
     dataEntityId,
     termId,

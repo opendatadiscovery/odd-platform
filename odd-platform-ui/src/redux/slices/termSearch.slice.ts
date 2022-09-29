@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { termsSearchActionTypePrefix } from 'redux/actions';
+import { termsSearchActTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import {
   SearchFacetStateById,
@@ -16,9 +16,9 @@ import {
 } from 'generated-sources';
 import mapValues from 'lodash/mapValues';
 import reduce from 'lodash/reduce';
-import { assignWith } from 'lib/redux/helpers';
 import values from 'lodash/values';
 import get from 'lodash/get';
+import { assignWith } from 'redux/lib/helpers';
 
 const initialState: TermSearchState = {
   termSearchId: '',
@@ -90,7 +90,7 @@ const updateTermsSearchState = (
 };
 
 export const termsSearchSlice = createSlice({
-  name: termsSearchActionTypePrefix,
+  name: termsSearchActTypePrefix,
   initialState,
   reducers: {
     clearTermSearchFacets: (state: TermSearchState): TermSearchState => {

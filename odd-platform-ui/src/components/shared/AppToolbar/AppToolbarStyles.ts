@@ -1,17 +1,11 @@
 import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
-import {
-  maxContentWidth,
-  maxSidebarWidth,
-  toolbarHeight,
-} from 'lib/constants';
+import { maxContentWidth, maxSidebarWidth, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import UserIcon from 'components/shared/Icons/UserIcon';
 
 export const Bar = styled(AppBar)(({ theme }) => ({
-  [`&.${appBarClasses.root}`]: {
-    backgroundColor: theme.palette.common.white,
-  },
+  [`&.${appBarClasses.root}`]: { backgroundColor: theme.palette.common.white },
 }));
 
 export const Container = styled(Toolbar)(({ theme }) => ({
@@ -28,9 +22,7 @@ export const ContentContainer = styled(Grid)(({ theme }) => ({
   position: 'relative',
   paddingLeft: `${maxSidebarWidth}px`,
   paddingRight: theme.spacing(2),
-  [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
-    justifyContent: 'center',
-  },
+  [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: { justifyContent: 'center' },
 }));
 
 export const LogoContainer = styled(Grid)(({ theme }) => ({
@@ -50,9 +42,7 @@ export const Title = styled(Link)(({ theme }) => ({
   display: 'flex',
   color: theme.palette.common.black,
   textDecoration: 'none',
-  [theme.breakpoints.up('sm')]: {
-    alignItems: 'center',
-  },
+  [theme.breakpoints.up('sm')]: { alignItems: 'center' },
 }));
 
 export const Logo = styled('div')(({ theme }) => ({

@@ -4,10 +4,7 @@ import { HintType } from 'components/shared/AppTabs/interfaces';
 import { ElementType } from 'react';
 import styled, { CSSObject } from 'styled-components';
 
-const getTabHintStylesByType = (
-  theme: Theme,
-  hintType: HintType
-): CSSObject => {
+const getTabHintStylesByType = (theme: Theme, hintType: HintType): CSSObject => {
   switch (hintType) {
     case 'primary':
       return {
@@ -38,10 +35,7 @@ const getTabHintStylesByType = (
 
 export const Container = styled(Typography)<{
   component: ElementType;
-}>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-}));
+}>(() => ({ display: 'flex', alignItems: 'center' }));
 
 export const HintContainer = styled('div')<{ $hintType: HintType }>(
   ({ theme, $hintType }) => ({

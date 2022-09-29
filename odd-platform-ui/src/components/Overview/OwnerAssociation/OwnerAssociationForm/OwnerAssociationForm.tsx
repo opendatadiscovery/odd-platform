@@ -1,38 +1,20 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import {
-  Controller,
-  ControllerRenderProps,
-  useForm,
-} from 'react-hook-form';
+import { Controller, ControllerRenderProps, useForm } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  getIdentity,
-  getOwnerAssociationRequestCreatingStatuses,
-} from 'redux/selectors';
+import { getIdentity, getOwnerAssociationRequestCreatingStatuses } from 'redux/selectors';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import {
-  Owner,
-  OwnerAssociationRequestStatus,
-  OwnerFormData,
-} from 'generated-sources';
+import { Owner, OwnerAssociationRequestStatus, OwnerFormData } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/Icons';
-import {
-  AppButton,
-  AppInput,
-  AutocompleteSuggestion,
-} from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import {
-  createOwnerAssociationRequest,
-  fetchOwnersList,
-} from 'redux/thunks';
+import { AppButton, AppInput, AutocompleteSuggestion } from 'components/shared';
+import { createOwnerAssociationRequest, fetchOwnersList } from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
 import { setProfileOwnerName } from 'redux/slices/profile.slice';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import * as S from './OwnerAssociationFormStyles';
 
 const OwnerAssociationForm: React.FC = () => {
@@ -53,10 +35,8 @@ const OwnerAssociationForm: React.FC = () => {
   type FilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [optionsLoading, setOptionsLoading] =
-    React.useState<boolean>(false);
-  const [optionsSearchText, setOptionsSearchText] =
-    React.useState<string>('');
+  const [optionsLoading, setOptionsLoading] = React.useState<boolean>(false);
+  const [optionsSearchText, setOptionsSearchText] = React.useState<string>('');
   const ownersFilter = createFilterOptions<FilterOption>();
 
   const handleOwnersSearch = React.useCallback(
@@ -139,10 +119,7 @@ const OwnerAssociationForm: React.FC = () => {
     dispatch(createOwnerAssociationRequest({ ownerFormData: data }))
       .unwrap()
       .then(({ status, ownerName }) => {
-        if (
-          associateImmediately &&
-          status === OwnerAssociationRequestStatus.APPROVED
-        ) {
+        if (associateImmediately && status === OwnerAssociationRequestStatus.APPROVED) {
           dispatch(setProfileOwnerName(ownerName));
         }
       });
@@ -166,40 +143,33 @@ const OwnerAssociationForm: React.FC = () => {
 
   return (
     <Grid container>
-      <Grid item xs={12} container justifyContent="center">
+      <Grid item xs={12} container justifyContent='center'>
         <UserSyncIcon sx={{ width: '76px', height: '41px' }} />
       </Grid>
-      <Grid
-        item
-        xs={12}
-        container
-        alignItems="center"
-        sx={{ mt: 2 }}
-        direction="column"
-      >
-        <Typography variant="h3">
-          {identity?.username ? <>Hi {identity?.username}.</> : null} Sync
-          your account with existing owner.
+      <Grid item xs={12} container alignItems='center' sx={{ mt: 2 }} direction='column'>
+        <Typography variant='h3'>
+          {identity?.username ? <>Hi {identity?.username}.</> : null} Sync your account
+          with existing owner.
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant='subtitle2'>
           This will allow you to bind existing entities in your account.
         </Typography>
       </Grid>
-      <Grid item xs={12} container alignItems="center" direction="column">
+      <Grid item xs={12} container alignItems='center' direction='column'>
         <S.FormContainer
-          id="owner-connect-form"
+          id='owner-connect-form'
           onSubmit={methods.handleSubmit(onSubmit)}
         >
           <Controller
-            name="name"
+            name='name'
             control={methods.control}
-            defaultValue=""
+            defaultValue=''
             rules={{ required: true }}
             render={({ field }) => (
               <Autocomplete
                 {...field}
                 fullWidth
-                id="owners-name-search"
+                id='owners-name-search'
                 open={autocompleteOpen}
                 onOpen={() => setAutocompleteOpen(true)}
                 onClose={() => setAutocompleteOpen(false)}
@@ -209,9 +179,7 @@ const OwnerAssociationForm: React.FC = () => {
                 options={options}
                 filterOptions={getFilterOptions}
                 loading={optionsLoading}
-                isOptionEqualToValue={(option, value) =>
-                  option.name === value.name
-                }
+                isOptionEqualToValue={(option, value) => option.name === value.name}
                 handleHomeEndKeys
                 selectOnFocus
                 blurOnSelect
@@ -222,9 +190,9 @@ const OwnerAssociationForm: React.FC = () => {
                     <AppInput
                       {...params}
                       ref={params.InputProps.ref}
-                      name="name"
-                      label="Owner name"
-                      placeholder="Search name"
+                      name='name'
+                      label='Owner name'
+                      placeholder='Search name'
                       customEndAdornment={{
                         variant: 'loader',
                         showAdornment: optionsLoading,
@@ -236,16 +204,14 @@ const OwnerAssociationForm: React.FC = () => {
                         item
                         xs={12}
                         container
-                        direction="column"
-                        alignItems="flex-start"
+                        direction='column'
+                        alignItems='flex-start'
                       >
-                        <Typography variant="subtitle2">
-                          Maybe it&apos;s you
-                        </Typography>
+                        <Typography variant='subtitle2'>Maybe it&apos;s you</Typography>
                         {possibleOwners.map(owner => (
                           <S.SuggestedOwnerItem
                             key={owner.id}
-                            variant="body1"
+                            variant='body1'
                             onClick={() => field.onChange(owner.name)}
                           >
                             {owner.name}
@@ -257,12 +223,12 @@ const OwnerAssociationForm: React.FC = () => {
                 )}
                 renderOption={(props, option) => (
                   <li {...props}>
-                    <Typography variant="body2">
+                    <Typography variant='body2'>
                       {option.id ? (
                         option.name
                       ) : (
                         <AutocompleteSuggestion
-                          optionLabel="owner"
+                          optionLabel='owner'
                           optionName={option.name}
                         />
                       )}
@@ -274,10 +240,10 @@ const OwnerAssociationForm: React.FC = () => {
           />
           <AppButton
             sx={{ mt: 2 }}
-            size="large"
-            color="primary"
-            type="submit"
-            form="owner-connect-form"
+            size='large'
+            color='primary'
+            type='submit'
+            form='owner-connect-form'
             fullWidth
             disabled={!methods.formState.isValid}
             isLoading={isRequestCreating}

@@ -23,7 +23,7 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
     () =>
       isHintUpdating ? (
         <S.HintContainer $hintType={hintType}>
-          <Skeleton width="18px" height="27px" />
+          <Skeleton width='18px' height='27px' />
         </S.HintContainer>
       ) : (
         <S.HintContainer $hintType={hintType}>
@@ -33,7 +33,7 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
     [isHintUpdating, hintType, hint]
   );
   return (
-    <S.Container variant="body1" component="span">
+    <S.Container variant='body1' component='span'>
       {name}
       {showHint && hint !== undefined ? labelContent : null}
     </S.Container>

@@ -1,23 +1,8 @@
-import { createActionType } from 'lib/redux/helpers';
+import { createActionType } from 'redux/lib/helpers';
 
-export const tagsActionTypePrefix = 'tags';
+export const tagsActTypePrefix = 'tags';
 
-export const fetchTagsActionType = createActionType(
-  tagsActionTypePrefix,
-  'fetchTags'
-);
-
-export const createTagsActionType = createActionType(
-  tagsActionTypePrefix,
-  'createTags'
-);
-
-export const updateTagActionType = createActionType(
-  tagsActionTypePrefix,
-  'updateTags'
-);
-
-export const deleteTagActionType = createActionType(
-  tagsActionTypePrefix,
-  'deleteTag'
-);
+export const fetchTagsActType = createActionType(tagsActTypePrefix, 'fetchTags');
+export const createTagsActType = createActionType(tagsActTypePrefix, 'createTags');
+export const updateTagActType = createActionType(tagsActTypePrefix, 'updateTags');
+export const deleteTagActType = createActionType(tagsActTypePrefix, 'deleteTag');

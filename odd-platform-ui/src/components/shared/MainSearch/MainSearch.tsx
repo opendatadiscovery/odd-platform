@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import { AppInput, EntityClassItem } from 'components/shared';
 import { useDebouncedCallback } from 'use-debounce';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   createDataEntitiesSearch,
   fetchSearchSuggestions,

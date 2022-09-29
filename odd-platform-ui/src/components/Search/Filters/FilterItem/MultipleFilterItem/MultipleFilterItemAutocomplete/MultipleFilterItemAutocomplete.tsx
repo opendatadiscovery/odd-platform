@@ -17,7 +17,7 @@ import {
 import { AppInput } from 'components/shared';
 import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
 import { OptionalFacetNames } from 'redux/interfaces';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataEntitySearchFacetOptions } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import { getSearchFacetsByType, getSearchId } from 'redux/selectors';

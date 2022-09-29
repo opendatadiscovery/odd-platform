@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { AppButton, DialogWrapper, TagItem } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityTags } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import {

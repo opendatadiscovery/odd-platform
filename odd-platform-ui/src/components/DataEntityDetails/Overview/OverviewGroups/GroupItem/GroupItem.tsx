@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { CloseIcon } from 'components/shared/Icons';
 import { AppIconButton } from 'components/shared';
 import { DataEntityRef } from 'generated-sources';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
 import { useAppPaths, usePermissions } from 'lib/hooks';
 import * as S from './GroupItemStyles';

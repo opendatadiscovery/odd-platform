@@ -6,7 +6,7 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import { AppButton } from 'components/shared';
 import remarkGfm from 'remark-gfm';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import { useAppParams, usePermissions } from 'lib/hooks';
 import {

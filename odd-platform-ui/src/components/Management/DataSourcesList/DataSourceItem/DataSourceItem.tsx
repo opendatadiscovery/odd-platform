@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
 import { DataSource } from 'generated-sources';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteDataSource } from 'redux/thunks';
 import {
   LabeledInfoItem,
@@ -13,6 +12,7 @@ import {
 } from 'components/shared';
 import { EditIcon, DeleteIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';
 import DataSourceItemToken from './DataSourceItemToken/DataSourceItemToken';
 import * as S from './DataSourceItemStyles';
@@ -32,9 +32,9 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
 
   return (
     <S.Container elevation={0}>
-      <Grid container alignItems="flex-start" spacing={2}>
+      <Grid container alignItems='flex-start' spacing={2}>
         <Grid item xs={8}>
-          <Typography variant="h4" title={dataSource.name}>
+          <Typography variant='h4' title={dataSource.name}>
             {dataSource.name}
           </Typography>
         </Grid>
@@ -43,8 +43,8 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
             dataSource={dataSource}
             btnCreateEl={
               <AppButton
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
                 disabled={!isAdmin}
@@ -54,18 +54,18 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
             }
           />
           <ConfirmationDialog
-            actionTitle="Are you sure you want to delete this datasource?"
-            actionName="Delete"
+            actionTitle='Are you sure you want to delete this datasource?'
+            actionName='Delete'
             actionText={
-              <Typography variant="subtitle1">
+              <Typography variant='subtitle1'>
                 Delete &quot;{dataSource.name}&quot; datasource?
               </Typography>
             }
             onConfirm={onDelete}
             actionBtn={
               <AppButton
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 startIcon={<DeleteIcon />}
                 disabled={!isAdmin}
               >
@@ -76,37 +76,25 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
         </S.ActionsContainer>
         <S.DescriptionContainer item sm={6} container>
           <LabeledInfoItem
-            variant="body2"
+            variant='body2'
             inline
-            label="ODDRN"
+            label='ODDRN'
             labelWidth={4}
-            valueComponent="div"
+            valueComponent='div'
           >
-            <AppTooltip title={() => dataSource.oddrn}>
-              {dataSource.oddrn}
-            </AppTooltip>
+            <AppTooltip title={() => dataSource.oddrn}>{dataSource.oddrn}</AppTooltip>
           </LabeledInfoItem>
-          <LabeledInfoItem
-            variant="body2"
-            inline
-            label="Description"
-            labelWidth={4}
-          >
+          <LabeledInfoItem variant='body2' inline label='Description' labelWidth={4}>
             {dataSource.description}
           </LabeledInfoItem>
-          <LabeledInfoItem
-            variant="body2"
-            inline
-            label="Namespace"
-            labelWidth={4}
-          >
+          <LabeledInfoItem variant='body2' inline label='Namespace' labelWidth={4}>
             {dataSource.namespace?.name}
           </LabeledInfoItem>
           {dataSource.token?.value && (
             <LabeledInfoItem
-              variant="body2"
+              variant='body2'
               inline
-              label="Token"
+              label='Token'
               labelWidth={4}
               valueSx={{ ml: 0 }}
             >
@@ -117,32 +105,22 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
 
         <S.DescriptionContainer item sm={6} container>
           <LabeledInfoItem
-            variant="body2"
+            variant='body2'
             inline
-            label="Receive Data"
+            label='Receive Data'
             valueColor={dataSource.active ? 'green' : ''}
             labelWidth={4}
           >
             <BooleanFormatted value={dataSource.active} />
           </LabeledInfoItem>
-          <LabeledInfoItem
-            variant="body2"
-            inline
-            label="Pulling Interval"
-            labelWidth={4}
-          >
+          <LabeledInfoItem variant='body2' inline label='Pulling Interval' labelWidth={4}>
             {dataSource.active && dataSource.pullingInterval
               ? formatDistanceToNowStrict(
                   addSeconds(Date.now(), dataSource.pullingInterval)
                 )
               : null}
           </LabeledInfoItem>
-          <LabeledInfoItem
-            variant="body2"
-            inline
-            label="Connection Url"
-            labelWidth={4}
-          >
+          <LabeledInfoItem variant='body2' inline label='Connection Url' labelWidth={4}>
             {dataSource.connectionUrl}
           </LabeledInfoItem>
         </S.DescriptionContainer>

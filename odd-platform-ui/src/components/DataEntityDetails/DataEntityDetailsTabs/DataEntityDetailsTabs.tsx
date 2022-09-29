@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppTabItem, AppTabs } from 'components/shared';
-import { useAppSelector } from 'lib/redux/hooks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,
@@ -8,6 +7,7 @@ import {
   getDatasetTestReportTotal,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
+import { useAppSelector } from 'redux/lib/hooks';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { dataEntityId, viewType } = useAppParams();
@@ -23,9 +23,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   } = useAppPaths();
 
   const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
-  const dataEntityDetails = useAppSelector(
-    getDataEntityDetails(dataEntityId)
-  );
+  const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
   const datasetQualityTestReportTotal = useAppSelector(
     getDatasetTestReportTotal(dataEntityId)
   );
@@ -97,16 +95,14 @@ const DataEntityDetailsTabs: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
-    setSelectedTab(
-      viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
-    );
+    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
   }, [tabs, viewType]);
 
   return (
     <>
       {tabs.length && selectedTab >= 0 ? (
         <AppTabs
-          type="primary"
+          type='primary'
           items={tabs}
           selectedTab={selectedTab}
           handleTabChange={() => {}}

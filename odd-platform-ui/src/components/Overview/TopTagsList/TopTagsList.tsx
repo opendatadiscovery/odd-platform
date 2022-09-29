@@ -3,9 +3,9 @@ import { SearchFormData } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { TagItem } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
 import { getTagsList } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 
 const TopTagsList: React.FC = () => {
   const dispatch = useAppDispatch();

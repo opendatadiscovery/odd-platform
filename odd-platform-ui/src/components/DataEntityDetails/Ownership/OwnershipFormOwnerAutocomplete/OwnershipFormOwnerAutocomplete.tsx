@@ -11,7 +11,7 @@ import {
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 
 interface OwnershipFormOwnerAutocompleteProps {

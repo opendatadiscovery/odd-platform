@@ -1,23 +1,17 @@
 import React from 'react';
 import { Collector } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
-import {
-  ConfirmationDialog,
-  AppButton,
-  CopyButton,
-} from 'components/shared';
+import { ConfirmationDialog, AppButton, CopyButton } from 'components/shared';
 import { Typography } from '@mui/material';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { TokenContainer, Token } from './CollectorItemTokenStyles';
 
 interface CollectorItemProps {
   collector: Collector;
 }
 
-const CollectorItemToken: React.FC<CollectorItemProps> = ({
-  collector,
-}) => {
+const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
   const dispatch = useAppDispatch();
   const { isAdmin } = usePermissions({});
 
@@ -42,26 +36,22 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({
       <Token $isHidden={isHidden}>{collector.token.value}</Token>
       {isHidden ? (
         <ConfirmationDialog
-          actionTitle="Are you sure you want to regenerate token for this collector?"
-          actionName="Regenerate"
+          actionTitle='Are you sure you want to regenerate token for this collector?'
+          actionName='Regenerate'
           actionText={
-            <Typography variant="subtitle1">
+            <Typography variant='subtitle1'>
               Regenerate token for &quot;{collector.name}&quot;?
             </Typography>
           }
           onConfirm={onTokenRegenerate}
           actionBtn={
-            <AppButton
-              size="medium"
-              color="primaryLight"
-              disabled={!isAdmin}
-            >
+            <AppButton size='medium' color='primaryLight' disabled={!isAdmin}>
               Regenerate
             </AppButton>
           }
         />
       ) : (
-        <CopyButton stringToCopy={collector.token.value} text="Copy" />
+        <CopyButton stringToCopy={collector.token.value} text='Copy' />
       )}
     </TokenContainer>
   );

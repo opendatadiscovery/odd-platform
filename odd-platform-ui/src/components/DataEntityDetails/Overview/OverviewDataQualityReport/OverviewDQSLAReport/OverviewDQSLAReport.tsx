@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { useAppSelector } from 'lib/redux/hooks';
 import {
   getDatasetSLAReport,
   getDatasetSLAReportFetchingStatuses,
@@ -8,6 +7,7 @@ import {
 import { AppTooltip, CopyButton } from 'components/shared';
 import { InformationIcon } from 'components/shared/Icons';
 import { ORDERED_SEVERITY } from 'lib/constants';
+import { useAppSelector } from 'redux/lib/hooks';
 import OverviewDataQualityReportSkeleton from '../OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
 import * as S from './OverviewDQSLAReportStyles';
 
@@ -17,7 +17,7 @@ interface OverviewDQSLAReportProps {
 
 const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId }) => {
   const { isLoading: isSLAReportFetching } = useAppSelector(
-    getDatasetSLAReportFetchingStatuses,
+    getDatasetSLAReportFetchingStatuses
   );
   const dqSLAReport = useAppSelector(getDatasetSLAReport(dataEntityId));
 
@@ -30,13 +30,13 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
   const renderSeverityWeightsBar = React.useMemo(() => {
     const totalWeights = dqSLAReport.severityWeights.reduce<number>(
       (acc, { count }) => acc + count,
-      0,
+      0
     );
 
     return [...dqSLAReport.severityWeights]
       .sort(
         (a, b) =>
-          ORDERED_SEVERITY.indexOf(a.severity) - ORDERED_SEVERITY.indexOf(b.severity),
+          ORDERED_SEVERITY.indexOf(a.severity) - ORDERED_SEVERITY.indexOf(b.severity)
       )
       .map(
         ({ severity, count }) =>
@@ -47,7 +47,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
               $total={totalWeights}
               $count={count}
             />
-          ),
+          )
       );
   }, [dqSLAReport.severityWeights]);
 
@@ -104,7 +104,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
         </S.HintOList>
       </>
     ),
-    [],
+    []
   );
 
   return (

@@ -7,7 +7,7 @@ import {
   DialogWrapper,
   LabeledInfoItem,
 } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   createDataEntityOwnership,
   updateDataEntityOwnership,

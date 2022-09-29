@@ -1,4 +1,4 @@
-import { createActionType } from 'lib/redux/helpers';
+import { createActionType } from 'redux/lib/helpers';
 
 export const ownerAssociationActionPrefix = 'ownerAssociation';
 
@@ -7,8 +7,10 @@ export const createOwnerAssociationRequestActionType = createActionType(
   'createOwnerAssociation'
 );
 
-export const fetchOwnerAssociationRequestsListActionType =
-  createActionType(ownerAssociationActionPrefix, 'fetchRequestsList');
+export const fetchOwnerAssociationRequestsListActionType = createActionType(
+  ownerAssociationActionPrefix,
+  'fetchRequestsList'
+);
 
 export const updateOwnerAssociationRequestActionType = createActionType(
   ownerAssociationActionPrefix,

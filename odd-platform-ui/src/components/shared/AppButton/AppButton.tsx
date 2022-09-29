@@ -29,10 +29,7 @@ interface AppButtonProps
 }
 
 const AppButton: React.FC<AppButtonProps> = React.forwardRef(
-  (
-    { color, children, truncate, to, linkTarget, isLoading, ...props },
-    ref
-  ) => {
+  ({ color, children, truncate, to, linkTarget, isLoading, ...props }, ref) => {
     const [isOverflowed, setIsOverflowed] = React.useState(truncate);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -46,7 +43,7 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
 
     if (to) {
       return (
-        <Box sx={props.sx} width="100%">
+        <Box sx={props.sx} width='100%'>
           <Link to={to} style={{ width: 'inherit' }} target={linkTarget}>
             <StyledAppButton
               {...props}

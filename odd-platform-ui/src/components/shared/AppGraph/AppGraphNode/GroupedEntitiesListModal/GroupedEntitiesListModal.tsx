@@ -9,7 +9,7 @@ import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './GroupedEntitiesListModalStyles';
 
@@ -21,9 +21,7 @@ interface GroupedEntitiesListModalProps {
   rootNodeId: number;
 }
 
-const GroupedEntitiesListModal: React.FC<
-  GroupedEntitiesListModalProps
-> = ({
+const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   dataEntityName,
   entities,
   openBtnEl,
@@ -33,15 +31,10 @@ const GroupedEntitiesListModal: React.FC<
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
 
-  const [isLoadMoreClicked, setIsLoadMoreClicked] =
-    React.useState<boolean>(false);
+  const [isLoadMoreClicked, setIsLoadMoreClicked] = React.useState(false);
 
   const loadMoreButtonHandler = (dataEntityId: number) => {
-    const params = {
-      dataEntityId,
-      lineageDepth: 1,
-      rootNodeId,
-    };
+    const params = { dataEntityId, lineageDepth: 1, rootNodeId };
     if (appGraphNodeType === 'downstream') {
       dispatch(fetchDataEntityDownstreamLineage(params));
     }
@@ -54,15 +47,12 @@ const GroupedEntitiesListModal: React.FC<
   const listItem = (item: DataEntityLineageNode) => (
     <Link to={dataEntityDetailsPath(item.id)}>
       <S.ListItemContainer container>
-        <Grid maxWidth="370px">
-          <Typography
-            noWrap
-            title={item.internalName || item.externalName}
-          >
+        <Grid maxWidth='370px'>
+          <Typography noWrap title={item.internalName || item.externalName}>
             {item.internalName || item.externalName}
           </Typography>
         </Grid>
-        <Grid flex="auto" wrap="nowrap" sx={{ ml: 1 }}>
+        <Grid flex='auto' wrap='nowrap' sx={{ ml: 1 }}>
           {item.entityClasses?.map(entityClass => (
             <EntityClassItem
               sx={{ mr: 0.5 }}
@@ -72,8 +62,8 @@ const GroupedEntitiesListModal: React.FC<
           ))}
         </Grid>
         <AppButton
-          color="primaryLight"
-          size="medium"
+          color='primaryLight'
+          size='medium'
           onClick={e => {
             e.preventDefault();
             loadMoreButtonHandler(item.id);
@@ -87,7 +77,7 @@ const GroupedEntitiesListModal: React.FC<
   );
 
   const modalTitle = (
-    <Typography variant="h4">{`Entities list of ${dataEntityName}`}</Typography>
+    <Typography variant='h4'>{`Entities list of ${dataEntityName}`}</Typography>
   );
 
   const modalContent = () => (
@@ -110,7 +100,7 @@ const GroupedEntitiesListModal: React.FC<
       }
       title={modalTitle}
       renderContent={modalContent}
-      maxWidth="md"
+      maxWidth='md'
       handleCloseSubmittedForm={isLoadMoreClicked}
     />
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
 import OverviewDataConsumerStats from './OverviewDataConsumerStats/OverviewDataConsumerStats';

@@ -6,7 +6,7 @@ import {
   Namespace,
 } from 'generated-sources';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { stringFormatted } from 'lib/helpers';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/slices/activity.slice';

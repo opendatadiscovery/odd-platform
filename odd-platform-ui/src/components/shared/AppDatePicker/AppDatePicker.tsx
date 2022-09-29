@@ -13,11 +13,7 @@ export const maxDate = new Date(2099, 11, 31);
 interface AppDatePickerProps
   extends Pick<
     DatePickerProps<Date, Date>,
-    | 'onChange'
-    | 'onAccept'
-    | 'label'
-    | 'inputFormat'
-    | 'disableMaskedInput'
+    'onChange' | 'onAccept' | 'label' | 'inputFormat' | 'disableMaskedInput'
   > {
   sx?: SxProps<Theme>;
   showInputError?: boolean;
@@ -40,22 +36,14 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
     },
     ref
   ) => {
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-      null
-    );
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
-    React.useEffect(
-      () => setSelectedDate(new Date(defaultDate)),
-      [defaultDate]
-    );
+    React.useEffect(() => setSelectedDate(new Date(defaultDate)), [defaultDate]);
 
-    const AppDatePickerIcon = React.useCallback(
-      () => <CalendarIcon />,
-      [CalendarIcon]
-    );
+    const AppDatePickerIcon = React.useCallback(() => <CalendarIcon />, [CalendarIcon]);
 
     return (
-      <Box sx={sx} width="100%">
+      <Box sx={sx} width='100%'>
         <DatePicker
           ref={ref as unknown as React.Ref<HTMLDivElement>}
           minDate={minDate}
@@ -80,7 +68,7 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
             <AppInput
               {...params}
               ref={params.inputRef}
-              type="date"
+              type='date'
               error={showInputError}
               helperText={inputHelperText}
             />

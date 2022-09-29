@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatISO } from 'date-fns';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
 import AppDateRangePicker from 'components/shared/AppDateRangePicker/AppDateRangePicker';

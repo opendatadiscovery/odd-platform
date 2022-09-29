@@ -16,7 +16,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { Alert, CurrentPageInfo } from 'redux/interfaces';
-import { castItemDatesToTimestampInArray } from 'lib/redux/helpers';
+import { castItemDatesToTimestampInArray } from 'redux/lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);

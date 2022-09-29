@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppButton, AppCircularProgress } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getNamespaceList,
   getTermSearchUpdateStatuses,

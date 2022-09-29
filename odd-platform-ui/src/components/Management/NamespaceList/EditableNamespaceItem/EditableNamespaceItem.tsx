@@ -4,8 +4,8 @@ import { Namespace } from 'generated-sources';
 import { EditIcon, DeleteIcon } from 'components/shared/Icons';
 import { ConfirmationDialog, AppButton } from 'components/shared';
 import { deleteNamespace } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
 
@@ -13,9 +13,7 @@ interface EditableNamespaceItemProps {
   namespace: Namespace;
 }
 
-const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
-  namespace,
-}) => {
+const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace }) => {
   const dispatch = useAppDispatch();
   const { isAdmin } = usePermissions({});
 
@@ -27,7 +25,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
   return (
     <S.Container container>
       <Grid item>
-        <Typography variant="body1" noWrap title={namespace.name}>
+        <Typography variant='body1' noWrap title={namespace.name}>
           {namespace.name}
         </Typography>
       </Grid>
@@ -36,8 +34,8 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
           namespace={namespace}
           btnEl={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<EditIcon />}
               sx={{ mr: 0.5 }}
               disabled={!isAdmin}
@@ -47,16 +45,14 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
           }
         />
         <ConfirmationDialog
-          actionTitle="Are you sure you want to delete this namespace?"
-          actionName="Delete Namespace"
-          actionText={
-            <>&quot;{namespace.name}&quot; will be deleted permanently.</>
-          }
+          actionTitle='Are you sure you want to delete this namespace?'
+          actionName='Delete Namespace'
+          actionText={<>&quot;{namespace.name}&quot; will be deleted permanently.</>}
           onConfirm={handleDelete}
           actionBtn={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<DeleteIcon />}
               disabled={!isAdmin}
             >

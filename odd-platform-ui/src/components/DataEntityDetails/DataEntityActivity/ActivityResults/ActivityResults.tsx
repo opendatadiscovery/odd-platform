@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getActivitiesByDate,
   getActivitiesListFetchingStatuses,

@@ -3,9 +3,9 @@ import { Grid, Typography } from '@mui/material';
 import { Label } from 'generated-sources';
 import { EditIcon, DeleteIcon } from 'components/shared/Icons';
 import { ConfirmationDialog, AppButton } from 'components/shared';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteLabel } from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import LabelEditForm from '../LabelEditForm/LabelEditForm';
 import * as S from './EditableLabelItemStyles';
 
@@ -13,9 +13,7 @@ interface EditableLabelItemProps {
   label: Label;
 }
 
-const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
-  label,
-}) => {
+const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
   const dispatch = useAppDispatch();
   const { isAdmin } = usePermissions({});
 
@@ -27,7 +25,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
   return (
     <S.Container container>
       <Grid item>
-        <Typography variant="body1" noWrap title={label.name}>
+        <Typography variant='body1' noWrap title={label.name}>
           {label.name}
         </Typography>
       </Grid>
@@ -37,8 +35,8 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
             label={label}
             editBtn={
               <AppButton
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
                 disabled={!isAdmin}
@@ -48,16 +46,14 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
             }
           />
           <ConfirmationDialog
-            actionTitle="Are you sure you want to delete this label?"
-            actionName="Delete Label"
-            actionText={
-              <>&quot;{label.name}&quot; will be deleted permanently.</>
-            }
+            actionTitle='Are you sure you want to delete this label?'
+            actionName='Delete Label'
+            actionText={<>&quot;{label.name}&quot; will be deleted permanently.</>}
             onConfirm={handleDelete}
             actionBtn={
               <AppButton
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 startIcon={<DeleteIcon />}
                 disabled={!isAdmin}
               >

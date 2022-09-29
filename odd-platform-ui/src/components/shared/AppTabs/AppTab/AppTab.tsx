@@ -8,14 +8,8 @@ export interface AppTabProps extends TabProps {
   $orientation?: TabsProps['orientation'];
 }
 
-const AppTab: React.FC<AppTabProps> = ({
-  type,
-  hidden,
-  $orientation,
-  ...props
-}) => (
+const AppTab: React.FC<AppTabProps> = ({ type, hidden, $orientation, ...props }) => (
   <TabContainer
-    // eslint-disable-next-line react/jsx-props-no-spreading
     {...props}
     disableRipple
     $type={type}

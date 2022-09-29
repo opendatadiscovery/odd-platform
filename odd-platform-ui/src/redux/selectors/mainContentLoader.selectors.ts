@@ -6,11 +6,11 @@ import {
   getMyDownstreamFetchingStatuses,
   getMyUpstreamDataEntitiesFetchingStatuses,
   getPopularDataEntitiesFetchingStatuses,
-  getTagsListFetchingStatuses,
+  getTagListFetchingStatuses,
 } from 'redux/selectors';
 
 export const getIsMainOverviewContentFetching = createSelector(
-  getTagsListFetchingStatuses,
+  getTagListFetchingStatuses,
   getIdentityFetchingStatuses,
   (...isFetchingFlags) =>
     compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
