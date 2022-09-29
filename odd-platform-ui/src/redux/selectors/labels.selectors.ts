@@ -7,8 +7,9 @@ import * as actions from 'redux/actions';
 
 const labelsState = ({ labels }: RootState): LabelsState => labels;
 
-export const { selectAll: getLabelsList } =
-  labelsAdapter.getSelectors<RootState>(state => state.labels);
+export const { selectAll: getLabelsList } = labelsAdapter.getSelectors<RootState>(
+  state => state.labels
+);
 
 export const getLabelListFetchingStatuses = createStatusesSelector(
   actions.fetchLabelsActionType

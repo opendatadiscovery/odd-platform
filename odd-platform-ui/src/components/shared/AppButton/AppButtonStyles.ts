@@ -39,9 +39,7 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       ...($isOverflowed && { width: 'inherit', display: 'block' }),
     },
     [`&.${buttonClasses.text}`]: {
-      padding: isTertiary($color)
-        ? theme.spacing(0, 0.5)
-        : theme.spacing(0.25, 1.5),
+      padding: isTertiary($color) ? theme.spacing(0, 0.5) : theme.spacing(0.25, 1.5),
     },
     [`& .${buttonClasses.startIcon}`]: {
       marginRight: theme.spacing(0.5),
@@ -117,8 +115,6 @@ export const Loader = styled('div')(({ theme }) => ({
   },
   '@keyframes dotFlashing': {
     '0%': { backgroundColor: theme.palette.button.animationParas.end },
-    '50%, 100%': {
-      backgroundColor: theme.palette.button.animationParas.start,
-    },
+    '50%, 100%': { backgroundColor: theme.palette.button.animationParas.start },
   },
 }));

@@ -12,7 +12,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppInput from 'components/shared/AppInput/AppInput';
 
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchRoleList } from 'redux/thunks';
 
 interface OwnershipFormRoleAutocompleteProps {

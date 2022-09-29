@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { MetadataObject } from 'generated-sources';
 import { AppButton, DialogWrapper } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks';
 import { getDataEntityMetadataCreatingStatuses } from 'redux/selectors';
 import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormItem';

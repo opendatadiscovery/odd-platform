@@ -7,12 +7,12 @@ import {
   getDatasetTestReportFetchingStatuses,
   getTestReportListBySuiteName,
 } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataSetQualityTestList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
 import { AppPaper, TestRunStatusItem } from 'components/shared';
 import omit from 'lodash/omit';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TestReportItem from './TestReportItem/TestReportItem';
 import TestReportDetails from './TestReportDetails/TestReportDetails';
 import TestReportItemSkeleton from './TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';

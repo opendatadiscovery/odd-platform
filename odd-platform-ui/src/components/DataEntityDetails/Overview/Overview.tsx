@@ -7,9 +7,9 @@ import {
   getDatasetTestReport,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
-import { useAppSelector } from 'lib/redux/hooks';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
+import { useAppSelector } from 'redux/lib/hooks';
 import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
 import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
 import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
@@ -26,15 +26,9 @@ import OverviewTerms from './OverviewTerms/OverviewTerms';
 const Overview: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
-  const dataEntityDetails = useAppSelector(
-    getDataEntityDetails(dataEntityId)
-  );
-  const { isDataset } = useAppSelector(
-    getIsDataEntityBelongsToClass(dataEntityId)
-  );
-  const datasetQualityTestReport = useAppSelector(
-    getDatasetTestReport(dataEntityId)
-  );
+  const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
+  const { isDataset } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
+  const datasetQualityTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
 
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
     getDataEntityDetailsFetchingStatuses
@@ -48,11 +42,9 @@ const Overview: React.FC = () => {
             <SectionContainer elevation={9}>
               <OverviewStats />
             </SectionContainer>
-            {hasDataQualityTestExpectations(
-              dataEntityDetails?.expectation
-            ) && (
+            {hasDataQualityTestExpectations(dataEntityDetails?.expectation) && (
               <>
-                <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
+                <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
                   Expectations
                 </Typography>
                 <SectionContainer square elevation={0}>
@@ -63,13 +55,13 @@ const Overview: React.FC = () => {
                 </SectionContainer>
               </>
             )}
-            <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
+            <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
               Metadata
             </Typography>
             <SectionContainer square elevation={0}>
               <OverviewMetadata dataEntityId={dataEntityId} />
             </SectionContainer>
-            <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
+            <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
               About
             </Typography>
             <SectionContainer square elevation={0}>
@@ -106,9 +98,7 @@ const Overview: React.FC = () => {
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randWidth }) => (
-            <OverviewSkeleton width={randWidth()} />
-          )}
+          renderContent={({ randWidth }) => <OverviewSkeleton width={randWidth()} />}
         />
       ) : null}
     </>

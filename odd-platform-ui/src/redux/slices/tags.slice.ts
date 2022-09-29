@@ -1,6 +1,6 @@
 import { TagsState } from 'redux/interfaces/state';
 import { Tag } from 'generated-sources';
-import { tagsActionTypePrefix } from 'redux/actions';
+import { tagsActTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 
@@ -14,7 +14,7 @@ export const initialState: TagsState = {
 };
 
 export const tagsSlice = createSlice({
-  name: tagsActionTypePrefix,
+  name: tagsActTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

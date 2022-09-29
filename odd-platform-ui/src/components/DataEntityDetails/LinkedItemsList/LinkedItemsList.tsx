@@ -2,7 +2,6 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { EmptyContentPlaceholder } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -10,6 +9,7 @@ import {
   getDataEntityGroupLinkedListPage,
   getDEGLinkedListFetchingStatuses,
 } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import LinkedItem from './LinkedItem/LinkedItem';
 import * as S from './LinkedItemsListStyles';
 import LinkedListSkeleton from './LinkedListSkeleton/LinkedListSkeleton';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { OptionalFacetNames } from 'redux/interfaces';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { getSelectedSearchFacetOptions } from 'redux/selectors';
 import SelectedFilterOption from '../SelectedFilterOption/SelectedFilterOption';
 import MultipleFilterItemAutocomplete from './MultipleFilterItemAutocomplete/MultipleFilterItemAutocomplete';

@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Collector, CollectorFormData } from 'generated-sources';
 import { registerCollector, updateCollector } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   getCollectorCreatingStatuses,

@@ -3,9 +3,9 @@ import { Grid, Typography } from '@mui/material';
 import { Owner } from 'generated-sources';
 import { ConfirmationDialog, AppButton } from 'components/shared';
 import { EditIcon, DeleteIcon } from 'components/shared/Icons';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteOwner } from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import * as S from './EditableOwnerItemStyles';
 import OwnerForm from '../OwnerForm/OwnerForm';
 
@@ -13,9 +13,7 @@ interface EditableOwnerItemProps {
   owner: Owner;
 }
 
-const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
-  owner,
-}) => {
+const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({ owner }) => {
   const dispatch = useAppDispatch();
   const { isAdmin } = usePermissions({});
 
@@ -27,7 +25,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   return (
     <S.Container container>
       <Grid item>
-        <Typography variant="body1" noWrap title={owner.name}>
+        <Typography variant='body1' noWrap title={owner.name}>
           {owner.name}
         </Typography>
       </Grid>
@@ -36,8 +34,8 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
           owner={owner}
           btnCreateEl={
             <AppButton
-              color="primaryLight"
-              size="medium"
+              color='primaryLight'
+              size='medium'
               startIcon={<EditIcon />}
               sx={{ mr: 0.5 }}
               disabled={!isAdmin}
@@ -47,16 +45,14 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
           }
         />
         <ConfirmationDialog
-          actionTitle="Are you sure you want to delete this owner?"
-          actionName="Delete Owner"
-          actionText={
-            <>&quot;{owner.name}&quot; will be deleted permanently.</>
-          }
+          actionTitle='Are you sure you want to delete this owner?'
+          actionName='Delete Owner'
+          actionText={<>&quot;{owner.name}&quot; will be deleted permanently.</>}
           onConfirm={handleDelete}
           actionBtn={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<DeleteIcon />}
               sx={{ ml: 1 }}
               disabled={!isAdmin}

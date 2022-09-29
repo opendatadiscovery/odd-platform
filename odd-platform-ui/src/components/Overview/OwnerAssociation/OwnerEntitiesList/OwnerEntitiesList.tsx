@@ -12,7 +12,6 @@ import {
   getPopularDataEntitiesFetchingStatuses,
   getPopularEntities,
 } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
@@ -26,6 +25,7 @@ import {
   UpstreamIcon,
 } from 'components/shared/Icons';
 import { SkeletonWrapper } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
@@ -51,9 +51,7 @@ const OwnerEntitiesList: React.FC = () => {
   const { isLoading: isPopularDataEntitiesFetching } = useAppSelector(
     getPopularDataEntitiesFetchingStatuses
   );
-  const isOwnerEntitiesListFetching = useAppSelector(
-    getIsOwnerEntitiesFetching
-  );
+  const isOwnerEntitiesListFetching = useAppSelector(getIsOwnerEntitiesFetching);
 
   React.useEffect(() => {
     if (!identity) return;
@@ -80,7 +78,7 @@ const OwnerEntitiesList: React.FC = () => {
           <Grid item xs={3}>
             <DataEntityList
               dataEntitiesList={myEntities}
-              entityListName="My Objects"
+              entityListName='My Objects'
               entityListIcon={<CatalogIcon />}
               isFetching={isMyDataEntitiesFetching}
             />
@@ -88,7 +86,7 @@ const OwnerEntitiesList: React.FC = () => {
           <Grid item xs={3}>
             <DataEntityList
               dataEntitiesList={myEntitiesUpstream}
-              entityListName="Upstream dependents"
+              entityListName='Upstream dependents'
               entityListIcon={<UpstreamIcon />}
               isFetching={isUpstreamDataEntitiesFetching}
             />
@@ -96,7 +94,7 @@ const OwnerEntitiesList: React.FC = () => {
           <Grid item xs={3}>
             <DataEntityList
               dataEntitiesList={myEntitiesDownstream}
-              entityListName="Downstream dependents"
+              entityListName='Downstream dependents'
               entityListIcon={<DownstreamIcon />}
               isFetching={isDownstreamDataEntitiesFetching}
             />
@@ -104,7 +102,7 @@ const OwnerEntitiesList: React.FC = () => {
           <Grid item xs={3}>
             <DataEntityList
               dataEntitiesList={popularEntities}
-              entityListName="Popular"
+              entityListName='Popular'
               entityListIcon={<StarIcon />}
               isFetching={isPopularDataEntitiesFetching}
             />

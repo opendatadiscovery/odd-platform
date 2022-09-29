@@ -10,7 +10,7 @@ import {
   NamespaceAutocomplete,
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTerm, updateTerm } from 'redux/thunks';
 import {
   getTermCreatingStatuses,

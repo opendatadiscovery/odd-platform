@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { DataEntityRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityAddToGroupStatuses,
   getDataEntityClassesList,

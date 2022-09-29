@@ -2,28 +2,29 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
-import TermDetailsSkeleton from 'components/Terms/TermDetails/TermDetailsSkeleton/TermDetailsSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import KebabIcon from 'components/shared/Icons/KebabIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import AppPopover from 'components/shared/AppPopover/AppPopover';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { TimeGapIcon, EditIcon, KebabIcon } from 'components/shared/Icons';
+import {
+  SkeletonWrapper,
+  AppTabs,
+  AppTabItem,
+  AppLoadingPage,
+  AppButton,
+  AppIconButton,
+  AppMenuItem,
+  AppPopover,
+  ConfirmationDialog,
+  EntityTypeItem,
+} from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getTermDetails,
   getTermDetailsFetchingStatuses,
-} from 'redux/selectors/terms.selectors';
-import { getTermSearchId } from 'redux/selectors/termSearch.selectors';
+  getTermSearchId,
+} from 'redux/selectors';
 import { deleteTerm, fetchTermDetails } from 'redux/thunks';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import TermsForm from '../TermSearch/TermForm/TermsForm';
+import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
 
 // lazy components
@@ -31,32 +32,22 @@ const Overview = React.lazy(
   () => import('components/Terms/TermDetails/Overview/Overview')
 );
 const LinkedItemsList = React.lazy(
-  () =>
-    import(
-      'components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsList'
-    )
+  () => import('components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsList')
 );
 
 const TermDetailsView: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const { termId, viewType } = useAppParams();
-  const {
-    termSearchPath,
-    termDetailsOverviewPath,
-    termDetailsLinkedItemsPath,
-  } = useAppPaths();
+  const { termSearchPath, termDetailsOverviewPath, termDetailsLinkedItemsPath } =
+    useAppPaths();
 
-  const {
-    isLoading: isTermDetailsFetching,
-    isNotLoaded: isTermDetailsNotFetched,
-  } = useAppSelector(getTermDetailsFetchingStatuses);
+  const { isLoading: isTermDetailsFetching, isNotLoaded: isTermDetailsNotFetched } =
+    useAppSelector(getTermDetailsFetchingStatuses);
 
   const termSearchId = useAppSelector(getTermSearchId);
 
-  const termDetails = useAppSelector(state =>
-    getTermDetails(state, termId)
-  );
+  const termDetails = useAppSelector(state => getTermDetails(state, termId));
 
   React.useEffect(() => {
     dispatch(fetchTermDetails({ termId }));
@@ -84,9 +75,7 @@ const TermDetailsView: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
-    setSelectedTab(
-      viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
-    );
+    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
   }, [tabs, viewType]);
 
   const handleTermDelete = (id: number) => () =>
@@ -98,18 +87,18 @@ const TermDetailsView: React.FC = () => {
     <TermDetailsComponentWrapper>
       {termDetails && !isTermDetailsFetching && (
         <>
-          <Grid container alignItems="center" flexWrap="nowrap">
-            <Grid container alignItems="center">
-              <Typography variant="h1" noWrap sx={{ mr: 1 }}>
+          <Grid container alignItems='center' flexWrap='nowrap'>
+            <Grid container alignItems='center'>
+              <Typography variant='h1' noWrap sx={{ mr: 1 }}>
                 {termDetails.name}
               </Typography>
-              <EntityTypeItem entityTypeName="DCT" />
+              <EntityTypeItem entityTypeName='DCT' />
             </Grid>
-            <Grid container justifyContent="flex-end">
+            <Grid container justifyContent='flex-end'>
               {termDetails.updatedAt && (
                 <>
                   <TimeGapIcon />
-                  <Typography variant="body1" sx={{ ml: 1 }}>
+                  <Typography variant='body1' sx={{ ml: 1 }}>
                     {formatDistanceToNowStrict(termDetails.updatedAt, {
                       addSuffix: true,
                     })}
@@ -120,8 +109,8 @@ const TermDetailsView: React.FC = () => {
                 term={termDetails}
                 btnCreateEl={
                   <AppButton
-                    size="medium"
-                    color="primaryLight"
+                    size='medium'
+                    color='primaryLight'
                     startIcon={<EditIcon />}
                     sx={{ ml: 1 }}
                   >
@@ -133,8 +122,8 @@ const TermDetailsView: React.FC = () => {
                 renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                   <AppIconButton
                     ariaDescribedBy={ariaDescribedBy}
-                    size="medium"
-                    color="primaryLight"
+                    size='medium'
+                    color='primaryLight'
                     icon={<KebabIcon />}
                     onClick={onClick}
                     sx={{ ml: 1 }}
@@ -144,25 +133,20 @@ const TermDetailsView: React.FC = () => {
                 transformOrigin={{ vertical: -5, horizontal: 67 }}
               >
                 <ConfirmationDialog
-                  actionTitle="Are you sure you want to delete this term?"
-                  actionName="Delete term"
+                  actionTitle='Are you sure you want to delete this term?'
+                  actionName='Delete term'
                   actionText={
-                    <>
-                      &quot;{termDetails.name}&quot; will be deleted
-                      permanently.
-                    </>
+                    <>&quot;{termDetails.name}&quot; will be deleted permanently.</>
                   }
                   onConfirm={handleTermDelete(termDetails.id)}
-                  actionBtn={
-                    <AppMenuItem onClick={() => {}}>Delete</AppMenuItem>
-                  }
+                  actionBtn={<AppMenuItem onClick={() => {}}>Delete</AppMenuItem>}
                 />
               </AppPopover>
             </Grid>
           </Grid>
           {tabs.length && selectedTab >= 0 && (
             <AppTabs
-              type="primary"
+              type='primary'
               items={tabs}
               selectedTab={selectedTab}
               handleTabChange={() => {}}
@@ -173,24 +157,14 @@ const TermDetailsView: React.FC = () => {
       )}
       {isTermDetailsFetching && (
         <SkeletonWrapper
-          renderContent={({ randWidth }) => (
-            <TermDetailsSkeleton width={randWidth()} />
-          )}
+          renderContent={({ randWidth }) => <TermDetailsSkeleton width={randWidth()} />}
         />
       )}
       {!isTermDetailsNotFetched && (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route
-              exact
-              path="/terms/:termId/overview"
-              component={Overview}
-            />
-            <Route
-              exact
-              path="/terms/:termId/linked-items"
-              component={LinkedItemsList}
-            />
+            <Route exact path='/terms/:termId/overview' component={Overview} />
+            <Route exact path='/terms/:termId/linked-items' component={LinkedItemsList} />
           </Switch>
         </React.Suspense>
       )}

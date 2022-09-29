@@ -15,7 +15,6 @@ import {
   SkeletonWrapper,
 } from 'components/shared';
 import { AddIcon, EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
@@ -35,6 +34,7 @@ import {
 } from 'redux/selectors';
 import { Permission } from 'generated-sources';
 import { PermissionProvider } from 'components/shared/contexts';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';

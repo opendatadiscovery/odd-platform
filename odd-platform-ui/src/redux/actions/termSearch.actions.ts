@@ -1,33 +1,33 @@
-import { createActionType } from 'lib/redux/helpers';
+import { createActionType } from 'redux/lib/helpers';
 
-export const termsSearchActionTypePrefix = 'termsSearch';
+export const termsSearchActTypePrefix = 'termsSearch';
 
-export const getTermsSearchActionType = createActionType(
-  termsSearchActionTypePrefix,
+export const getTermsSearchActType = createActionType(
+  termsSearchActTypePrefix,
   'getTermsSearch'
 );
 
-export const createTermsSearchActionType = createActionType(
-  termsSearchActionTypePrefix,
+export const createTermsSearchActType = createActionType(
+  termsSearchActTypePrefix,
   'createTermsSearch'
 );
 
-export const updateTermsSearchActionType = createActionType(
-  termsSearchActionTypePrefix,
+export const updateTermsSearchActType = createActionType(
+  termsSearchActTypePrefix,
   'updateTermsSearch'
 );
 
-export const fetchTermsSearchResultsActionType = createActionType(
-  termsSearchActionTypePrefix,
+export const fetchTermsSearchResultsActType = createActionType(
+  termsSearchActTypePrefix,
   'fetchTermsSearchResults'
 );
 
-export const getTermsSearchFacetOptionsActionType = createActionType(
-  termsSearchActionTypePrefix,
+export const getTermsSearchFacetOptionsActType = createActionType(
+  termsSearchActTypePrefix,
   'getTermsSearchFacetOptions'
 );
 
-export const fetchTermsSearchSuggestionsActionType = createActionType(
-  termsSearchActionTypePrefix,
+export const fetchTermsSearchSuggestionsActType = createActionType(
+  termsSearchActTypePrefix,
   'fetchTermsSearchSuggestions'
 );

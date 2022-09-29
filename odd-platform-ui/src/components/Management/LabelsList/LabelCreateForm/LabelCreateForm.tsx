@@ -4,7 +4,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { LabelFormData } from 'generated-sources';
 import { getLabelCreatingStatuses } from 'redux/selectors';
 import { createLabel } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';

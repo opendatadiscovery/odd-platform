@@ -12,7 +12,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
 import { MetadataField, MetadataFieldType } from 'generated-sources';
 import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { searchMetadata } from 'redux/thunks';
 import {
   AppInput,

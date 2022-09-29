@@ -5,8 +5,7 @@ interface FilledContainerProps {
   $typeName: AlertStatus;
 }
 
-const typeChecker = (type: AlertStatus) =>
-  type === 'OPEN' ? 'OPEN' : 'RESOLVED';
+const typeChecker = (type: AlertStatus) => (type === 'OPEN' ? 'OPEN' : 'RESOLVED');
 
 export const Container = styled('div')(() => ({
   display: 'inline-flex',
@@ -20,8 +19,7 @@ export const FilledContainer = styled('span')<FilledContainerProps>(
     borderRadius: '12px',
     border: '1px solid',
     padding: theme.spacing(0.25, 1),
-    backgroundColor:
-      theme.palette.alert[typeChecker($typeName)].background,
+    backgroundColor: theme.palette.alert[typeChecker($typeName)].background,
     borderColor: theme.palette.alert[typeChecker($typeName)].border,
   })
 );

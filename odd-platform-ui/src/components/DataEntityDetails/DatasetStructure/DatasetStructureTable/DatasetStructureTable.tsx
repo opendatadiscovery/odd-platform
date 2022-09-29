@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { DataSetField } from 'generated-sources';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { getIsUniqStatsExist } from 'redux/selectors';
 import DatasetStructureList from './DatasetStructureList/DatasetStructureList';
 import * as S from './DatasetStructureTableStyles';

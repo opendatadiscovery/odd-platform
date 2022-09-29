@@ -257,13 +257,13 @@ export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
 
-export type ThunkResult<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  undefined,
-  Action
->;
+// export type ThunkResult<ReturnType = void> = ThunkAction<
+//   ReturnType,
+//   RootState,
+//   undefined,
+//   Action
+// >;
 
-export type PromiseThunkResult<ReturnType = void> = ThunkResult<
-  Promise<ReturnType>
->;
+// export type PromiseThunkResult<ReturnType = void> = ThunkResult<
+//   Promise<ReturnType>
+// >;

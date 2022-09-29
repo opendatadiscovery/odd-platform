@@ -10,12 +10,9 @@ export const appInfoSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchAppInfo.fulfilled,
-      (state, { payload }) => {
-        state.appInfo = payload;
-      }
-    );
+    builder.addCase(thunks.fetchAppInfo.fulfilled, (state, { payload }) => {
+      state.appInfo = payload;
+    });
   },
 });
 

@@ -32,10 +32,7 @@ interface AppSelectProps
 }
 
 const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
-  (
-    { size = 'medium', fullWidth = true, label, maxMenuHeight, ...props },
-    ref
-  ) => (
+  ({ size = 'medium', fullWidth = true, label, maxMenuHeight, ...props }, ref) => (
     <Grid
       sx={
         props.containerSx || {
@@ -44,16 +41,14 @@ const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
         }
       }
     >
-      {label && (
-        <S.SelectLabel id="select-label-id">{label}</S.SelectLabel>
-      )}
+      {label && <S.SelectLabel id='select-label-id'>{label}</S.SelectLabel>}
       <S.AppSelect
         {...props}
         $size={size}
         $isLabeled={!!label}
-        variant="outlined"
+        variant='outlined'
         fullWidth={fullWidth}
-        labelId="select-label-id"
+        labelId='select-label-id'
         IconComponent={DropdownIcon}
         notched
         ref={ref}

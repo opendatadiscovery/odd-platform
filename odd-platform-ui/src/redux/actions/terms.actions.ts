@@ -1,44 +1,29 @@
-import { createActionType } from 'lib/redux/helpers';
+import { createActionType } from 'redux/lib/helpers';
 
-export const termsActionTypePrefix = 'terms';
+export const termsActTypePrefix = 'terms';
 
-export const fetchTermDetailsAction = createActionType(
-  termsActionTypePrefix,
+export const fetchTermDetailsActType = createActionType(
+  termsActTypePrefix,
   'fetchTermDetails'
 );
-
-export const createTermAction = createActionType(
-  termsActionTypePrefix,
-  'createTerm'
-);
-
-export const updateTermAction = createActionType(
-  termsActionTypePrefix,
-  'updateTerm'
-);
-
-export const deleteTermAction = createActionType(
-  termsActionTypePrefix,
-  'deleteTerm'
-);
-
-export const fetchTermsListAction = createActionType(
-  termsActionTypePrefix,
+export const createTermActType = createActionType(termsActTypePrefix, 'createTerm');
+export const updateTermActType = createActionType(termsActTypePrefix, 'updateTerm');
+export const deleteTermActType = createActionType(termsActTypePrefix, 'deleteTerm');
+export const fetchTermListActType = createActionType(
+  termsActTypePrefix,
   'fetchTermsList'
 );
-
-export const updateTermDetailsTagsAction = createActionType(
-  termsActionTypePrefix,
+export const updateTermDetailsTagsActType = createActionType(
+  termsActTypePrefix,
   'updateTermDetailsTags'
 );
 
 // dataEntity terms
-export const addDataEntityTermAction = createActionType(
-  termsActionTypePrefix,
+export const addDataEntityTermActType = createActionType(
+  termsActTypePrefix,
   'addDataEntityTerm'
 );
-
-export const deleteDataEntityTermAction = createActionType(
-  termsActionTypePrefix,
+export const deleteDataEntityTermActType = createActionType(
+  termsActTypePrefix,
   'deleteDataEntityTerm'
 );

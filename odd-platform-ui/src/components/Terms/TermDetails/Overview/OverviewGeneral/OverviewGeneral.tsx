@@ -11,7 +11,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import OwnershipForm from 'components/Terms/TermDetails/Ownership/OwnershipForm';
 import { deleteTermOwnership } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';

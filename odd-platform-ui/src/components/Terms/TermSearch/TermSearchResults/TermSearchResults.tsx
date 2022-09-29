@@ -3,7 +3,6 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
 import { EmptyContentPlaceholder } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getTermDeletingStatuses,
   getTermSearchCreateStatuses,
@@ -14,6 +13,7 @@ import {
   getTermSearchResultsPage,
 } from 'redux/selectors';
 import { fetchTermsSearchResults } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TermSearchResultItem from './TermSearchResultItem/TermSearchResultItem';
 import * as S from './TermSearchResultsStyles';
 import TermSearchResultsSkeleton from './TermSearchResultsSkeleton/TermSearchResultsSkeleton';

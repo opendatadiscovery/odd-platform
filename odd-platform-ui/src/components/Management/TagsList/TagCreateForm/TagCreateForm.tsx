@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { TagFormData } from 'generated-sources';
 import { getTagCreatingStatuses } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTag } from 'redux/thunks/tags.thunks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';

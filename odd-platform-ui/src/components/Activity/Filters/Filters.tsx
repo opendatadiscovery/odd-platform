@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
 import { clearActivityFilters } from 'redux/slices/activity.slice';
 import { ActivityEventType } from 'generated-sources';

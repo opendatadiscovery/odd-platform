@@ -1,7 +1,6 @@
 import React from 'react';
 import { ButtonProps, Collapse, Grid, Typography } from '@mui/material';
 import { DataSetField, DataSetFieldTypeTypeEnum, DataSetStats } from 'generated-sources';
-import { useAppSelector } from 'lib/redux/hooks';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure, getIsUniqStatsExist } from 'redux/selectors';
 import {
@@ -12,6 +11,7 @@ import {
 } from 'components/shared';
 import { GraphIcon, InformationIcon, MinusIcon, PlusIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
@@ -59,10 +59,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     })
   );
   const isUniqStatsExist = useAppSelector(
-    getIsUniqStatsExist({
-      datasetId: dataEntityId,
-      versionId,
-    })
+    getIsUniqStatsExist({ datasetId: dataEntityId, versionId })
   );
 
   const childFields = isComplexField(datasetField.type.type) ? datasetStructure : [];

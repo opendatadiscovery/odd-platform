@@ -1,11 +1,11 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteTag } from 'redux/thunks';
 import { Tag } from 'generated-sources';
 import { ConfirmationDialog, AppButton } from 'components/shared';
 import { EditIcon, DeleteIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import TagEditForm from '../TagEditForm/TagEditForm';
 import * as S from './EditableTagItemStyles';
 
@@ -25,14 +25,12 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
   return (
     <S.Container container>
       <S.Col item>
-        <Typography variant="body1" noWrap title={tag.name}>
+        <Typography variant='body1' noWrap title={tag.name}>
           {tag.name}
         </Typography>
       </S.Col>
       <S.Col item>
-        <Typography variant="body1">
-          {tag.important ? 'important' : ''}
-        </Typography>
+        <Typography variant='body1'>{tag.important ? 'important' : ''}</Typography>
       </S.Col>
       {!tag.external && (
         <S.ActionsContainer container item>
@@ -40,8 +38,8 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
             tag={tag}
             editBtn={
               <AppButton
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
                 disabled={!isAdmin}
@@ -51,16 +49,14 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
             }
           />
           <ConfirmationDialog
-            actionTitle="Are you sure you want to delete this tag?"
-            actionName="Delete Tag"
-            actionText={
-              <>&quot;{tag.name}&quot; will be deleted permanently.</>
-            }
+            actionTitle='Are you sure you want to delete this tag?'
+            actionName='Delete Tag'
+            actionText={<>&quot;{tag.name}&quot; will be deleted permanently.</>}
             onConfirm={handleDelete}
             actionBtn={
               <AppButton
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 startIcon={<DeleteIcon />}
                 disabled={!isAdmin}
               >

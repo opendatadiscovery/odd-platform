@@ -38,18 +38,13 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
           padding: theme.spacing(inputYPaddingsBySize($size), 1),
         },
         border: '1px solid',
-        borderColor:
-          theme.palette.textField[isLarge($size) ? 'active' : 'normal']
-            .border,
+        borderColor: theme.palette.textField[isLarge($size) ? 'active' : 'normal'].border,
         borderRadius: '4px',
         backgroundColor: theme.palette.textField.normal.background,
         padding: 0,
         marginTop: $isLabeled ? theme.spacing(2) : 0,
         '&:hover': {
-          borderColor:
-            theme.palette.textField.hover[
-              isLarge($size) ? 'color' : 'border'
-            ],
+          borderColor: theme.palette.textField.hover[isLarge($size) ? 'color' : 'border'],
         },
       },
       [`& .${outlinedInputClasses.focused}.${inputBaseClasses.focused}`]: {
@@ -89,9 +84,7 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
         outline: 'none !important',
         top: theme.spacing(-0.25),
       },
-      [`& .${inputLabelClasses.asterisk}`]: {
-        color: theme.palette.warning.main,
-      },
+      [`& .${inputLabelClasses.asterisk}`]: { color: theme.palette.warning.main },
     },
     // overriding DatePicker input's endAdornment button
     [`& .${outlinedInputClasses.root}`]: {
