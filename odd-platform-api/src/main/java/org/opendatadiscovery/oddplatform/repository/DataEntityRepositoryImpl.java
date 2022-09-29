@@ -217,7 +217,6 @@ public class DataEntityRepositoryImpl
     public Optional<Long> incrementViewCount(final long id) {
         return dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(id))
             .returningResult(DATA_ENTITY.VIEW_COUNT)
             .fetchOptional()
