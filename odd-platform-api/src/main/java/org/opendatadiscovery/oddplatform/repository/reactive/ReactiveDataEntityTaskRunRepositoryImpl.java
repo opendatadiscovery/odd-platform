@@ -195,5 +195,4 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
             .map(Record1::value1)
             .map(Long::valueOf);
     }
-
 }
