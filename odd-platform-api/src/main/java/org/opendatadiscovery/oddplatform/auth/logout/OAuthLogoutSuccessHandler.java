@@ -30,12 +30,15 @@ public class OAuthLogoutSuccessHandler implements ServerLogoutSuccessHandler {
     @Override
     public Mono<Void> onLogoutSuccess(final WebFilterExchange exchange,
                                       final Authentication authentication) {
-        final OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-        final String providerId = oauthToken.getAuthorizedClientRegistrationId();
-        final ODDOAuth2Properties.OAuth2Provider oAuth2Provider = properties.getClient().get(providerId);
-        return getLogoutHandler(oAuth2Provider.getProvider())
-            .map(handler -> handler.handle(exchange, authentication, oAuth2Provider))
-            .orElseGet(() -> defaultOidcLogoutHandler.onLogoutSuccess(exchange, authentication));
+        if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
+            final String providerId = oauthToken.getAuthorizedClientRegistrationId();
+            final ODDOAuth2Properties.OAuth2Provider oAuth2Provider = properties.getClient().get(providerId);
+            return getLogoutHandler(oAuth2Provider.getProvider())
+                .map(handler -> handler.handle(exchange, authentication, oAuth2Provider))
+                .orElseGet(() -> defaultOidcLogoutHandler.onLogoutSuccess(exchange, authentication));
+        } else {
+            return defaultOidcLogoutHandler.onLogoutSuccess(exchange, authentication);
+        }
     }
 
     private Optional<LogoutSuccessHandler> getLogoutHandler(final String provider) {
