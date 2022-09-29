@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.api.ingestion;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -115,7 +116,9 @@ public class AlertIngestionTest extends BaseIngestionTest {
             .generateSimpleDataEntity(DataEntityType.JOB)
             .dataTransformer(new DataTransformer());
 
-        final OffsetDateTime jobStartTime = OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC);
+        final OffsetDateTime jobStartTime = OffsetDateTime
+            .of(LocalDateTime.now(), ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.MILLIS);
 
         final DataEntity jobRun = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
             .dataTransformerRun(new DataTransformerRun()
@@ -177,7 +180,9 @@ public class AlertIngestionTest extends BaseIngestionTest {
                 .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
             );
 
-        final OffsetDateTime startTime = OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC);
+        final OffsetDateTime startTime = OffsetDateTime
+            .of(LocalDateTime.now(), ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.MILLIS);
 
         final DataEntity dataQualityTestRun = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
             .dataQualityTestRun(new DataQualityTestRun()
