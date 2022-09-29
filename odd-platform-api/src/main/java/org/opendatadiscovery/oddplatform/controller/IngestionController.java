@@ -20,7 +20,6 @@ import reactor.core.scheduler.Schedulers;
 
 import static reactor.function.TupleUtils.function;
 
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
