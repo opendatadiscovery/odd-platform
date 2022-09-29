@@ -81,13 +81,14 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
 
             final Map<? extends Field<?>, Field<?>> fields = Arrays
                 .stream(DATA_ENTITY_TASK_RUN.fields())
+                .filter(f -> !f.equals(DATA_ENTITY_TASK_RUN.ID))
                 .map(r -> Pair.of(r, table.field(r.getName())))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
             final var query = DSL.update(DATA_ENTITY_TASK_RUN)
                 .set(fields)
                 .from(table)
-                .where(DATA_ENTITY_TASK_RUN.ID.eq(table.field(DATA_ENTITY_TASK_RUN.ID.getName(), Long.class)))
+                .where(DATA_ENTITY_TASK_RUN.ODDRN.eq(table.field(DATA_ENTITY_TASK_RUN.ODDRN.getName(), String.class)))
                 .returning();
 
             return jooqReactiveOperations.flux(query);

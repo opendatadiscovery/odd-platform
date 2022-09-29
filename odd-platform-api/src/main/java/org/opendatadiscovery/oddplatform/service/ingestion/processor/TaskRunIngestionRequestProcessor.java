@@ -39,7 +39,7 @@ public class TaskRunIngestionRequestProcessor implements IngestionRequestProcess
                     .stream()
                     .collect(Collectors.partitioningBy(p -> existDict.getOrDefault(p.getOddrn(), false)));
 
-                return Mono.zip(
+                return Mono.zipDelayError(
                     dataEntityTaskRunRepository.bulkCreate(partitioned.get(false)),
                     dataEntityTaskRunRepository.bulkUpdate(partitioned.get(true))
                 );
