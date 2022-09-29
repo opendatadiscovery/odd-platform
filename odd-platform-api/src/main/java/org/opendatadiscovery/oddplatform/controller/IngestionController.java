@@ -18,6 +18,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import static reactor.function.TupleUtils.function;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -50,9 +52,11 @@ public class IngestionController implements IngestionApi {
                 return collectorId;
             })
             .cast(Long.class);
+
         return dataSourceList
             .zipWhen(l -> collectorIdMono)
-            .flatMapMany(t -> dataSourceIngestionService.createDataSources(t.getT2(), t.getT1()))
+            .flatMapMany(function(
+                (dataSources, collectorId) -> dataSourceIngestionService.createDataSources(collectorId, dataSources)))
             .then(Mono.just(ResponseEntity.ok().build()));
     }
 
