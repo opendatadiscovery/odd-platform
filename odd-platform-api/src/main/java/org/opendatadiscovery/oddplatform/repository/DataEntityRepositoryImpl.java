@@ -260,7 +260,7 @@ public class DataEntityRepositoryImpl
             // TODO: if owner is null no need to join
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
             .where(jooqFTSHelper.facetStateConditions(state, DATA_ENTITY_CONDITIONS,
                 List.of(FacetType.ENTITY_CLASSES)))
             .and(DATA_ENTITY.HOLLOW.isFalse())
