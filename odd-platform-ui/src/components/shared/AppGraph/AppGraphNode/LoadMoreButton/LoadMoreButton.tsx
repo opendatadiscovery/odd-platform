@@ -38,26 +38,16 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const isStreamFetching = useAppSelector(
-    getDataEntityLineageStreamFetching
-  );
+  const isStreamFetching = useAppSelector(getDataEntityLineageStreamFetching);
 
   const loadMoreButtonHandler = () => {
-    const params = {
-      dataEntityId,
-      lineageDepth: 1,
-      rootNodeId,
-    };
+    const params = { dataEntityId, lineageDepth: 1, rootNodeId };
     if (appGraphNodeType === 'downstream') {
-      dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-        hideLoadMore()
-      );
+      dispatch(fetchDataEntityDownstreamLineage(params)).then(() => hideLoadMore());
     }
 
     if (appGraphNodeType === 'upstream') {
-      dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
-        hideLoadMore()
-      );
+      dispatch(fetchDataEntityUpstreamLineage(params)).then(() => hideLoadMore());
     }
   };
 
@@ -105,11 +95,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
       transform={loadMoreTransformTranslate}
       onClick={loadMoreButtonHandler}
     >
-      <rect
-        width={loadMoreLayout.width}
-        height={loadMoreLayout.height}
-        rx={16}
-      />
+      <rect width={loadMoreLayout.width} height={loadMoreLayout.height} rx={16} />
       {isStreamFetching ? (
         <g>
           <S.LoadMoreSpinnerBackground

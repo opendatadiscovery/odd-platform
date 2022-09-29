@@ -11,16 +11,11 @@ const StyledText = styled('text')(({ theme }) => ({
   fill: theme.palette.button.dropdown.normal.color,
   fontWeight: theme.typography.body1.fontWeight,
   lineHeight: theme.typography.body1.lineHeight,
-  '&:hover': {
-    fill: theme.palette.button.tertiary.normal.color,
-  },
+  '&:hover': { fill: theme.palette.button.tertiary.normal.color },
 }));
 
-const NodeListButton: React.FC<NodeListIconProps> = ({
-  text,
-  onClick,
-}) => (
-  <StyledText onClick={onClick} x="50" y="40" fontSize="14" fill="black">
+const NodeListButton: React.FC<NodeListIconProps> = ({ text, onClick }) => (
+  <StyledText onClick={onClick} x='50' y='40' fontSize='14' fill='black'>
     {text}
   </StyledText>
 );

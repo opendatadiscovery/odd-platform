@@ -13,25 +13,18 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const termApi = new TermApi(apiClientConf);
 
 export const fetchTermLinkedList = createAsyncThunk<
-  {
-    termId: number;
-    linkedItemsList: Array<DataEntity>;
-    pageInfo: CurrentPageInfo;
-  },
+  { termId: number; linkedItemsList: Array<DataEntity>; pageInfo: CurrentPageInfo },
   TermApiGetTermLinkedItemsRequest
->(
-  actions.fetchTermLinkedListAction,
-  async (params: TermApiGetTermLinkedItemsRequest) => {
-    const { items, pageInfo } = await termApi.getTermLinkedItems(params);
+>(actions.fetchTermLinkedListAction, async (params: TermApiGetTermLinkedItemsRequest) => {
+  const { items, pageInfo } = await termApi.getTermLinkedItems(params);
 
-    return {
-      termId: params.termId,
-      linkedItemsList: items,
-      pageInfo: {
-        ...pageInfo,
-        page: params.page,
-        hasNext: params.size * params.page < pageInfo.total,
-      },
-    };
-  }
-);
+  return {
+    termId: params.termId,
+    linkedItemsList: items,
+    pageInfo: {
+      ...pageInfo,
+      page: params.page,
+      hasNext: params.size * params.page < pageInfo.total,
+    },
+  };
+});

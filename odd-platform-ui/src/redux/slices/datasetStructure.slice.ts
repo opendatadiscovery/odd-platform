@@ -21,8 +21,7 @@ export const updateDatasetStructure = (
   state: DatasetStructureState,
   { payload }: { payload: DataSetStructureResponse }
 ): DatasetStructureState => {
-  const { dataEntityId, dataSetVersionId, fieldList, isLatestVersion } =
-    payload;
+  const { dataEntityId, dataSetVersionId, fieldList, isLatestVersion } = payload;
 
   let isUniqueStatsExist = false;
 
@@ -105,16 +104,10 @@ export const datasetStructureSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchDataSetStructureLatest.fulfilled,
-      updateDatasetStructure
-    );
-
-    builder.addCase(
-      thunks.fetchDataSetStructure.fulfilled,
-      updateDatasetStructure
-    );
-
+    builder.addCase(thunks.fetchDataSetStructureLatest.fulfilled, updateDatasetStructure);
+    builder.addCase(thunks.fetchDataSetStructure.fulfilled, updateDatasetStructure);
+    builder.addCase(thunks.fetchDataSetFieldEnum.fulfilled, updateDataSetFieldEnums);
+    builder.addCase(thunks.createDataSetFieldEnum.fulfilled, updateDataSetFieldEnums);
     builder.addCase(
       thunks.updateDataSetFieldFormData.fulfilled,
       (state, { payload }): DatasetStructureState => {
@@ -132,16 +125,6 @@ export const datasetStructureSlice = createSlice({
           },
         };
       }
-    );
-
-    builder.addCase(
-      thunks.fetchDataSetFieldEnum.fulfilled,
-      updateDataSetFieldEnums
-    );
-
-    builder.addCase(
-      thunks.createDataSetFieldEnum.fulfilled,
-      updateDataSetFieldEnums
     );
   },
 });

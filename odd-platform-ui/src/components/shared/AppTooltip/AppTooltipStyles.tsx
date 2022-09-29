@@ -14,10 +14,7 @@ interface ChildrenContainerProps {
   $isOverflowed: boolean;
 }
 
-const getTooltipStylesByType = (
-  theme: Theme,
-  type: TooltipColorTypes
-): CSSObject => {
+const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObject => {
   if (type === 'dark')
     return {
       color: theme.palette.divider,
@@ -36,11 +33,9 @@ const getTooltipStylesByType = (
   };
 };
 
-export const AppTooltip = styled(
-  ({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-  )
-)<TooltipStyleProps>(({ theme, $type }) => ({
+export const AppTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))<TooltipStyleProps>(({ theme, $type }) => ({
   [`&.${tooltipClasses.popper}`]: {
     [`& .${tooltipClasses.tooltip}`]: {
       fontSize: theme.typography.body2.fontSize,
@@ -53,13 +48,8 @@ export const AppTooltip = styled(
 
 export const ChildrenContainer = styled(Box)<ChildrenContainerProps>(
   ({ $isCursorPointer, $isOverflowed }) => ({
-    cursor: $isCursorPointer ? 'pointer' : 'auto',
+    cursor: $isCursorPointer ? 'pointer' : 'inherit',
     overflow: $isOverflowed ? 'hidden' : 'initial',
-    ...($isOverflowed
-      ? {
-          maxWidth: '0px',
-          minWidth: '100%',
-        }
-      : {}),
+    ...($isOverflowed ? { maxWidth: '0px', minWidth: '100%' } : {}),
   })
 );

@@ -9,11 +9,7 @@ export const namespaceAdapter = createEntityAdapter<Namespace>({
 });
 
 export const initialState: NamespacesState = {
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ...namespaceAdapter.getInitialState(),
 };
 
@@ -22,36 +18,24 @@ export const namespaceSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchNamespaceList.fulfilled,
-      (state, { payload }) => {
-        const { namespaceList, pageInfo } = payload;
+    builder.addCase(thunks.fetchNamespaceList.fulfilled, (state, { payload }) => {
+      const { namespaceList, pageInfo } = payload;
 
-        namespaceAdapter.setMany(state, namespaceList);
-        state.pageInfo = pageInfo;
-      }
-    );
+      namespaceAdapter.setMany(state, namespaceList);
+      state.pageInfo = pageInfo;
+    });
 
-    builder.addCase(
-      thunks.createNamespace.fulfilled,
-      (state, { payload }) => {
-        namespaceAdapter.addOne(state, payload);
-      }
-    );
+    builder.addCase(thunks.createNamespace.fulfilled, (state, { payload }) => {
+      namespaceAdapter.addOne(state, payload);
+    });
 
-    builder.addCase(
-      thunks.updateNamespace.fulfilled,
-      (state, { payload }) => {
-        namespaceAdapter.upsertOne(state, payload);
-      }
-    );
+    builder.addCase(thunks.updateNamespace.fulfilled, (state, { payload }) => {
+      namespaceAdapter.upsertOne(state, payload);
+    });
 
-    builder.addCase(
-      thunks.deleteNamespace.fulfilled,
-      (state, { payload }) => {
-        namespaceAdapter.removeOne(state, payload);
-      }
-    );
+    builder.addCase(thunks.deleteNamespace.fulfilled, (state, { payload }) => {
+      namespaceAdapter.removeOne(state, payload);
+    });
   },
 });
 

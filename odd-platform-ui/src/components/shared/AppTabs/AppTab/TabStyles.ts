@@ -1,10 +1,4 @@
-import {
-  buttonBaseClasses,
-  Tab,
-  tabClasses,
-  TabProps,
-  TabsProps,
-} from '@mui/material';
+import { buttonBaseClasses, Tab, tabClasses, TabProps, TabsProps } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { TabType } from 'components/shared/AppTabs/interfaces';
 import React from 'react';
@@ -13,15 +7,9 @@ import styled, { CSSObject } from 'styled-components';
 
 const LinkTab: React.ComponentType<
   Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
-> = Tab as React.ComponentType<
-  Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
->;
+> = Tab as React.ComponentType<Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>>;
 
-const getTabStylesByType = (
-  theme: Theme,
-  type: TabType,
-  $hidden?: boolean
-): CSSObject => {
+const getTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {
     case 'primary':
       return {
@@ -33,7 +21,6 @@ const getTabStylesByType = (
         borderBottom: '1px solid transparent',
         marginRight: theme.spacing(0.5),
         '&:last-child': { marginRight: 0 },
-        display: $hidden ? 'none' : 'block',
         '&:hover': {
           color: theme.palette.texts.info,
           borderColor: theme.palette.button?.secondary.hover.background,
@@ -74,10 +61,7 @@ const getTabStylesByType = (
   }
 };
 
-const getSelectedTabStylesByType = (
-  theme: Theme,
-  type: TabType
-): CSSObject => {
+const getSelectedTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {
     case 'primary':
       return {};
@@ -114,6 +98,7 @@ const tabStyles = (
 ): CSSObject => ({
   [`&.${buttonBaseClasses.root}`]: {
     [`&.${tabClasses.root}`]: {
+      display: $hidden ? 'none' : 'flex',
       alignItems: $orientation === 'vertical' ? 'flex-start' : 'center',
       '&:hover, &:active, &:focus': { textDecoration: 'none' },
     },
@@ -128,7 +113,7 @@ const tabStyles = (
   color: theme.palette.texts.secondary,
   fontSize: theme.typography.body1.fontSize,
   textTransform: 'none',
-  ...getTabStylesByType(theme, type, $hidden),
+  ...getTabStylesByType(theme, type),
 });
 
 export const TabContainer = styled(Tab)<{

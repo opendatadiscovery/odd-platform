@@ -13,6 +13,7 @@ export class Steps {
   // inject-step dont delete comment
 
   public go_to: GoToSteps;
+
   public pages: Pages;
 
   constructor(args: { page: Page }) {

@@ -1,35 +1,29 @@
 import { TagsState } from 'redux/interfaces/state';
 import { Tag } from 'generated-sources';
-import { tagsActionTypePrefix } from 'redux/actions';
+import { tagsActTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 
 export const tagsAdapter = createEntityAdapter<Tag>({
   selectId: tag => tag.id,
 });
+
 export const initialState: TagsState = {
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ...tagsAdapter.getInitialState(),
 };
 
 export const tagsSlice = createSlice({
-  name: tagsActionTypePrefix,
+  name: tagsActTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchTagsList.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
+    builder.addCase(thunks.fetchTagsList.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
 
-        tagsAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
-      }
-    );
+      tagsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
+    });
     builder.addCase(thunks.createTag.fulfilled, (state, { payload }) => {
       tagsAdapter.addMany(state, payload);
     });

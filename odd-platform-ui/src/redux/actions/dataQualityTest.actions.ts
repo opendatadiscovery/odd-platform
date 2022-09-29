@@ -7,6 +7,11 @@ export const fetchDataSetQualityTestReportActionType = createActionType(
   'fetchDataSetQualityTestReport'
 );
 
+export const fetchDataSetQualitySLAReportActionType = createActionType(
+  dataQualityTestTypePrefix,
+  'fetchDataSetQualitySLAReport'
+);
+
 export const fetchDataSetQualityTestListActionType = createActionType(
   dataQualityTestTypePrefix,
   'fetchDataSetQualityTestList'

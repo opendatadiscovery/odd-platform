@@ -40,13 +40,13 @@ export const AppSelect = styled(Select)<AppSelectStyleProps>(
         padding: theme.spacing(isMedium($size) ? 0.75 : 0.5, 1),
       },
     },
-    '&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
-      {
-        borderColor: theme.palette.textField.active.border,
-        borderWidth: '1px',
-      },
-    '&.MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-      { borderColor: theme.palette.textField.normal.border },
+    '&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.textField.active.border,
+      borderWidth: '1px',
+    },
+    '&.MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.textField.normal.border,
+    },
 
     [`& .${selectClasses.icon}, .${nativeSelectClasses.icon}`]: {
       top: 'calc(50% - 8px)',

@@ -10,47 +10,39 @@ import {
   getLabelsListPage,
 } from 'redux/selectors';
 import { fetchLabelsList } from 'redux/thunks';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  NumberFormatted,
+  AppButton,
+  AppInput,
+  EmptyContentPlaceholder,
+} from 'components/shared';
+import { usePermissions } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import LabelsSkeletonItem from './LabelsSkeletonItem/LabelsSkeletonItem';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateForm from './LabelCreateForm/LabelCreateForm';
 import * as S from './LabelsListStyles';
 
 const LabelsListView: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
+
   const labelsList = useAppSelector(getLabelsList);
   const pageInfo = useAppSelector(getLabelsListPage);
 
-  const { isLoading: isLabelDeleting } = useAppSelector(
-    getLabelDeletingStatuses
-  );
+  const { isLoading: isLabelDeleting } = useAppSelector(getLabelDeletingStatuses);
 
-  const { isLoading: isLabelCreating } = useAppSelector(
-    getLabelCreatingStatuses
-  );
+  const { isLoading: isLabelCreating } = useAppSelector(getLabelCreatingStatuses);
 
-  const { isLoading: isLabelFetching } = useAppSelector(
-    getLabelListFetchingStatuses
-  );
+  const { isLoading: isLabelFetching } = useAppSelector(getLabelListFetchingStatuses);
 
   const pageSize = 100;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalLabels, setTotalLabels] = React.useState<number | undefined>(
-    pageInfo?.total
-  );
+  const [searchText, setSearchText] = React.useState('');
+  const [totalLabels, setTotalLabels] = React.useState(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText)
-      dispatch(fetchLabelsList({ page: 1, size: pageSize }));
+    if (!searchText) dispatch(fetchLabelsList({ page: 1, size: pageSize }));
   }, [fetchLabelsList, isLabelCreating, isLabelDeleting, searchText]);
 
   React.useEffect(() => {
@@ -70,16 +62,12 @@ const LabelsListView: React.FC = () => {
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(
-        fetchLabelsList({ page: 1, size: pageSize, query: searchText })
-      );
+      dispatch(fetchLabelsList({ page: 1, size: pageSize, query: searchText }));
     }, 500),
     [searchText]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
     handleSearch();
   };
@@ -90,16 +78,16 @@ const LabelsListView: React.FC = () => {
     }
   };
   return (
-    <Grid container flexDirection="column" alignItems="center">
+    <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant="h1">Labels</Typography>
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='h1'>Labels</Typography>
+        <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalLabels} /> labels overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder="Search label..."
+          placeholder='Search label...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={searchText}
@@ -122,9 +110,10 @@ const LabelsListView: React.FC = () => {
         <LabelCreateForm
           btnCreateEl={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create label
             </AppButton>
@@ -133,7 +122,7 @@ const LabelsListView: React.FC = () => {
       </S.Caption>
       <S.TableHeader container>
         <Grid item xs={12}>
-          <Typography variant="subtitle2" color="texts.hint">
+          <Typography variant='subtitle2' color='texts.hint'>
             Name
           </Typography>
         </Grid>
@@ -144,20 +133,8 @@ const LabelsListView: React.FC = () => {
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={labelsList.length}
-            scrollThreshold="200px"
-            loader={
-              isLabelFetching ? (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <LabelsSkeletonItem
-                      key={key}
-                      width={randomSkeletonPercentWidth()}
-                    />
-                  )}
-                />
-              ) : null
-            }
+            scrollThreshold='200px'
+            loader={isLabelFetching && <LabelsSkeletonItem length={5} />}
           >
             {labelsList?.map(label => (
               <EditableLabelItem key={label.id} label={label} />
@@ -165,9 +142,7 @@ const LabelsListView: React.FC = () => {
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isLabelFetching && !labelsList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      {!isLabelFetching && !labelsList.length ? <EmptyContentPlaceholder /> : null}
     </Grid>
   );
 };

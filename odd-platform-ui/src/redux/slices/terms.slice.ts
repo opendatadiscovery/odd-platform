@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { TermsState } from 'redux/interfaces';
 import omit from 'lodash/omit';
-import { termsActionTypePrefix } from 'redux/actions';
+import { termsActTypePrefix } from 'redux/actions';
 
 export const initialState: TermsState = {
   byId: {},
@@ -15,7 +15,7 @@ export const initialState: TermsState = {
 };
 
 export const termsSlice = createSlice({
-  name: termsActionTypePrefix,
+  name: termsActTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {
@@ -55,48 +55,27 @@ export const termsSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.createTerm.fulfilled,
-      (state, { payload }): TermsState => {
-        const term = payload;
+    builder.addCase(thunks.createTerm.fulfilled, (state, { payload }): TermsState => {
+      const term = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [term.id]: term,
-          },
-          allIds: [term.id, ...state.allIds],
-        };
-      }
-    );
+      return {
+        ...state,
+        byId: { ...state.byId, [term.id]: term },
+        allIds: [term.id, ...state.allIds],
+      };
+    });
 
-    builder.addCase(
-      thunks.updateTerm.fulfilled,
-      (state, { payload }): TermsState => {
-        const term = payload;
+    builder.addCase(thunks.updateTerm.fulfilled, (state, { payload }): TermsState => {
+      const term = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [term.id]: term,
-          },
-        };
-      }
-    );
+      return { ...state, byId: { ...state.byId, [term.id]: term } };
+    });
 
-    builder.addCase(
-      thunks.deleteTerm.fulfilled,
-      (state, { payload }): TermsState => {
-        const { termId } = payload;
+    builder.addCase(thunks.deleteTerm.fulfilled, (state, { payload }): TermsState => {
+      const { termId } = payload;
 
-        return {
-          ...state,
-          allIds: state.allIds.filter(id => id !== termId),
-        };
-      }
-    );
+      return { ...state, allIds: state.allIds.filter(id => id !== termId) };
+    });
   },
 });
 

@@ -46,14 +46,14 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
     <>
       <defs>
         <marker
-          id="head"
-          orient="auto-start-reverse"
-          markerWidth="13"
-          markerHeight="14"
-          refX="11"
-          refY="5.6"
+          id='head'
+          orient='auto-start-reverse'
+          markerWidth='13'
+          markerHeight='14'
+          refX='11'
+          refY='5.6'
         >
-          <S.Arrow d="M 0 0 12 6 0 12 3 6" />
+          <S.Arrow d='M 0 0 12 6 0 12 3 6' />
         </marker>
       </defs>
       <S.Path

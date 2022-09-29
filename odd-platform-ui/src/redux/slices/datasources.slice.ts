@@ -8,11 +8,7 @@ export const datasourceAdapter = createEntityAdapter<DataSource>({
   selectId: datasource => datasource.id,
 });
 export const initialState: DataSourcesState = {
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ...datasourceAdapter.getInitialState(),
 };
 
@@ -21,39 +17,24 @@ export const datasourceSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchDataSourcesList.fulfilled,
-      (state, { payload }) => {
-        const { datasourceList, pageInfo } = payload;
+    builder.addCase(thunks.fetchDataSourcesList.fulfilled, (state, { payload }) => {
+      const { datasourceList, pageInfo } = payload;
 
-        datasourceAdapter.setMany(state, datasourceList);
-        state.pageInfo = pageInfo;
-      }
-    );
-    builder.addCase(
-      thunks.registerDataSource.fulfilled,
-      (state, { payload }) => {
-        datasourceAdapter.addOne(state, payload);
-      }
-    );
-    builder.addCase(
-      thunks.updateDataSource.fulfilled,
-      (state, { payload }) => {
-        datasourceAdapter.upsertOne(state, payload);
-      }
-    );
-    builder.addCase(
-      thunks.deleteDataSource.fulfilled,
-      (state, { payload }) => {
-        datasourceAdapter.removeOne(state, payload);
-      }
-    );
-    builder.addCase(
-      thunks.regenerateDataSourceToken.fulfilled,
-      (state, { payload }) => {
-        datasourceAdapter.upsertOne(state, payload);
-      }
-    );
+      datasourceAdapter.setMany(state, datasourceList);
+      state.pageInfo = pageInfo;
+    });
+    builder.addCase(thunks.registerDataSource.fulfilled, (state, { payload }) => {
+      datasourceAdapter.addOne(state, payload);
+    });
+    builder.addCase(thunks.updateDataSource.fulfilled, (state, { payload }) => {
+      datasourceAdapter.upsertOne(state, payload);
+    });
+    builder.addCase(thunks.deleteDataSource.fulfilled, (state, { payload }) => {
+      datasourceAdapter.removeOne(state, payload);
+    });
+    builder.addCase(thunks.regenerateDataSourceToken.fulfilled, (state, { payload }) => {
+      datasourceAdapter.upsertOne(state, payload);
+    });
   },
 });
 

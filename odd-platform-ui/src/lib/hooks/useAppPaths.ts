@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { AlertViewType, ManagementViewType } from 'lib/interfaces';
 
-export const useAppPaths = () => {
+const useAppPaths = () => {
   const location = useLocation();
   const isPathEmbedded = location.pathname.includes('embedded');
   const updatePath = (link: string) => {
@@ -17,8 +17,7 @@ export const useAppPaths = () => {
   const termSearchPath = (termSearchId?: string) =>
     updatePath(`/termsearch${termSearchId ? `/${termSearchId}` : ''}`);
 
-  const termDetailsPath = (termId: number) =>
-    updatePath(`/terms/${termId}`);
+  const termDetailsPath = (termId: number) => updatePath(`/terms/${termId}`);
 
   const termDetailsLinkedItemsPath = (termId: number) =>
     `${termDetailsPath(termId)}/linked-items`;
@@ -55,26 +54,18 @@ export const useAppPaths = () => {
     `${dataEntityDetailsPath(entityId)}/activity?${query}`;
 
   // Test reports details
-  const testReportDetailsOverviewPath = (
-    entityId: number,
-    testId: number
-  ) => `${dataEntityTestPath(entityId, testId)}/overview`;
+  const testReportDetailsOverviewPath = (entityId: number, testId: number) =>
+    `${dataEntityTestPath(entityId, testId)}/overview`;
 
-  const testReportDetailsHistoryPath = (
-    entityId: number,
-    testId: number
-  ) => `${dataEntityTestPath(entityId, testId)}/history`;
+  const testReportDetailsHistoryPath = (entityId: number, testId: number) =>
+    `${dataEntityTestPath(entityId, testId)}/history`;
 
-  const testReportDetailsRetriesPath = (
-    entityId: number,
-    testId: number
-  ) => `${dataEntityTestPath(entityId, testId)}/retries`;
+  const testReportDetailsRetriesPath = (entityId: number, testId: number) =>
+    `${dataEntityTestPath(entityId, testId)}/retries`;
 
   // Entity type specific paths
   const datasetStructurePath = (entityId: number, versionId?: number) =>
-    `${dataEntityDetailsPath(entityId)}/structure${
-      versionId ? `/${versionId}` : ''
-    }`;
+    `${dataEntityDetailsPath(entityId)}/structure${versionId ? `/${versionId}` : ''}`;
 
   // Alerts
   const alertsPath = (viewType: AlertViewType = 'all') =>
@@ -112,3 +103,5 @@ export const useAppPaths = () => {
     activityPath,
   };
 };
+
+export default useAppPaths;

@@ -12,37 +12,22 @@ interface SkeletonProps {
 const LinkedListSkeleton: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
-    renderContent={({ randomSkeletonPercentWidth, key }) => (
+    renderContent={({ randWidth, key }) => (
       <Grid key={key} container sx={{ py: 1.25, px: 0 }} wrap="nowrap">
         <ColContainer item $colType="colmd">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
         <ColContainer item $colType="collg">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
         <ColContainer item $colType="colsm">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
         <ColContainer item $colType="colxs">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
         <ColContainer item $colType="colxs">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
       </Grid>
     )}

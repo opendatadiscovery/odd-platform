@@ -6,17 +6,21 @@ import {
   getMyDownstreamFetchingStatuses,
   getMyUpstreamDataEntitiesFetchingStatuses,
   getPopularDataEntitiesFetchingStatuses,
-  getTagsListFetchingStatuses,
+  getTagListFetchingStatuses,
 } from 'redux/selectors';
 
 export const getIsMainOverviewContentFetching = createSelector(
-  getTagsListFetchingStatuses,
+  getTagListFetchingStatuses,
   getIdentityFetchingStatuses,
+  (...isFetchingFlags) =>
+    compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
+);
+
+export const getIsOwnerEntitiesFetching = createSelector(
   getMyDataEntitiesFetchingStatuses,
   getMyUpstreamDataEntitiesFetchingStatuses,
   getMyDownstreamFetchingStatuses,
   getPopularDataEntitiesFetchingStatuses,
-  getIdentityFetchingStatuses,
   (...isFetchingFlags) =>
     compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
 );

@@ -1,53 +1,58 @@
 import React from 'react';
-import Skeleton from '@mui/material/Skeleton';
-import { Grid, GridSize } from '@mui/material';
+import { Grid, GridSize, Skeleton } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
+import { SkeletonWrapper } from 'components/shared';
 
 interface SkeletonProps {
-  width: string;
+  length: number;
 }
 
 const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({
-  width,
+  length,
 }) => {
-  const skeletonItem = (xs: GridSize) => (
+  const skeletonItem = (xs: GridSize, width: string) => (
     <Grid item xs={xs}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   );
 
   return (
-    <Grid sx={{ mt: 2 }}>
-      <Grid sx={{ mt: 2 }}>
-        <Grid container sx={{ mt: 1 }}>
-          {skeletonItem(4)}
-          {skeletonItem(8)}
+    <SkeletonWrapper
+      length={length}
+      renderContent={({ randWidth }) => (
+        <Grid sx={{ mt: 2 }}>
+          <Grid sx={{ mt: 2 }}>
+            <Grid container sx={{ mt: 1 }}>
+              {skeletonItem(4, randWidth())}
+              {skeletonItem(8, randWidth())}
+            </Grid>
+            <Grid container sx={{ mt: 1 }}>
+              {skeletonItem(4, randWidth())}
+              {skeletonItem(8, randWidth())}
+            </Grid>
+            <Grid container sx={{ mt: 1 }}>
+              {skeletonItem(4, randWidth())}
+              {skeletonItem(8, randWidth())}
+            </Grid>
+          </Grid>
+          <Grid sx={{ mt: 2 }}>
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Grid container>
+              {skeletonItem(4, randWidth())}
+              {skeletonItem(8, randWidth())}
+            </Grid>
+          </Grid>
+          <Grid sx={{ mt: 2 }}>
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Grid container>{skeletonItem(4, randWidth())}</Grid>
+          </Grid>
+          <Grid sx={{ mt: 2 }}>
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Grid container>{skeletonItem(12, randWidth())}</Grid>
+          </Grid>
         </Grid>
-        <Grid container sx={{ mt: 1 }}>
-          {skeletonItem(4)}
-          {skeletonItem(8)}
-        </Grid>
-        <Grid container sx={{ mt: 1 }}>
-          {skeletonItem(4)}
-          {skeletonItem(8)}
-        </Grid>
-      </Grid>
-      <Grid sx={{ mt: 2 }}>
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Grid container>
-          {skeletonItem(4)}
-          {skeletonItem(8)}
-        </Grid>
-      </Grid>
-      <Grid sx={{ mt: 2 }}>
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Grid container>{skeletonItem(4)}</Grid>
-      </Grid>
-      <Grid sx={{ mt: 2 }}>
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Grid container>{skeletonItem(12)}</Grid>
-      </Grid>
-    </Grid>
+      )}
+    />
   );
 };
 

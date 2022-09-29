@@ -2,12 +2,16 @@ import { defineConfig, loadEnv, UserConfigExport } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
+import dns from 'dns';
+
+dns.setDefaultResultOrder('verbatim');
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   const devServerConfig = {
     server: {
+      port: 3000,
       open: true,
       proxy: {
         '/api': {

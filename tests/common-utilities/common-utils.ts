@@ -21,6 +21,7 @@ export default class CommonUtils {
 
   /**
    *
+   * @param filepath
    */
   static extract_filename_from_path(filepath: string) {
     const { name, ext } = path.parse(filepath);
@@ -30,6 +31,10 @@ export default class CommonUtils {
 
   /**
    *
+   * @param root0
+   * @param root0.dimensions
+   * @param root0.content
+   * @param root0.templates
    */
   static generate_dimensional_array_with_data({
     dimensions,
@@ -51,6 +56,11 @@ export default class CommonUtils {
 
   /**
    *
+   * @param cb
+   * @param root0
+   * @param root0.timeout
+   * @param root0.intervalBetweenAttempts
+   * @param root0.timeoutMessage
    */
   static async wait_until<T extends Record<keyof T, unknown> | PredicateReturnValue>(
     cb: Predicate<T>,

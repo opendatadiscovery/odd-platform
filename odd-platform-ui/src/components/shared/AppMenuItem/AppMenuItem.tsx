@@ -6,7 +6,7 @@ import * as S from './AppMenuItemStyles';
 interface AppMenuItemProps
   extends Pick<
     MenuItemProps,
-    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue' | 'ref'
+    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue' | 'ref' | 'disabled'
   > {
   minWidth?: number;
   maxWidth?: number;
@@ -17,33 +17,26 @@ interface AppMenuItemProps
 const AppMenuItem: React.FC<AppMenuItemProps> = React.forwardRef(
   (
     {
-      children,
-      onClick,
-      value,
-      divider,
       maxWidth = 400,
       minWidth,
       removeTextStyles = false,
       fontVariant = 'body1',
-      defaultValue,
+      ...props
     },
     ref
   ) => (
     <S.StyledAppMenuItem
+      {...props}
       disableRipple
-      value={value}
-      onClick={onClick}
-      divider={divider}
       $maxWidth={maxWidth}
       $minWidth={minWidth}
-      defaultValue={defaultValue}
       ref={ref}
     >
       <S.StyledAppListItemText
         $removeTextStyles={removeTextStyles}
         $fontVariant={fontVariant}
       >
-        {children}
+        {props.children}
       </S.StyledAppListItemText>
     </S.StyledAppMenuItem>
   )

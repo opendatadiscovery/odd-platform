@@ -3,7 +3,7 @@ import {
   maxContentWidthWithoutSidebar,
   toolbarHeight,
 } from 'lib/constants';
-import styled from 'styled-components';
+import styled, { CSSObject } from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',
@@ -18,13 +18,16 @@ export const Container = styled('div')(({ theme }) => ({
   },
 }));
 
-export const InternalNameEditBtnContainer = styled('div')(() => ({
-  display: 'none',
-}));
+export const InternalNameEditBtnContainer = styled(Grid)(
+  () => ({ visibility: 'hidden' } as CSSObject)
+);
 
-export const Caption = styled(Grid)(() => ({
-  width: '100%',
-  '&:hover': {
-    [`${InternalNameEditBtnContainer}`]: { display: 'block' },
-  },
-}));
+export const Caption = styled(Grid)(
+  () =>
+    ({
+      width: '100%',
+      '&:hover': {
+        [`${InternalNameEditBtnContainer}`]: { visibility: 'visible' },
+      },
+    } as CSSObject)
+);

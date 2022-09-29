@@ -4,11 +4,11 @@ import { Grid, Typography } from '@mui/material';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AppButton } from 'components/shared';
 import remarkGfm from 'remark-gfm';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import {
   getDataEntityExternalDescription,
   getDataEntityInternalDescription,
@@ -18,6 +18,7 @@ import * as S from './OverviewDescriptionStyles';
 const OverviewDescription: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const DEInternalDescription = useAppSelector(
     getDataEntityInternalDescription(dataEntityId)
@@ -88,6 +89,7 @@ const OverviewDescription: React.FC = () => {
               onClick={onEditClick}
               size="medium"
               color="primaryLight"
+              disabled={!editDataEntity}
               startIcon={
                 DEInternalDescription ? <EditIcon /> : <AddIcon />
               }
@@ -151,6 +153,7 @@ const OverviewDescription: React.FC = () => {
                   onClick={onEditClick}
                   size="small"
                   color="tertiary"
+                  disabled={!editDataEntity}
                 >
                   Add Description
                 </AppButton>

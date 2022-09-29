@@ -8,26 +8,20 @@ import {
   AppLoadingPage,
   AppMenuItem,
   AppPopover,
-  AppTabItem,
-  AppTabs,
   ConfirmationDialog,
   EntityClassItem,
   EntityTypeItem,
   LabelItem,
   SkeletonWrapper,
 } from 'components/shared';
-import {
-  AddIcon,
-  EditIcon,
-  KebabIcon,
-  TimeGapIcon,
-} from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams } from 'lib/hooks';
+import { AddIcon, EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
+import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataSetQualitySLAReport,
+  fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
@@ -36,31 +30,27 @@ import {
   getDataEntityDetails,
   getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
-  getDataEntityOpenAlertsCount,
-  getDatasetTestReport,
-  getIsDataEntityBelongsToClass,
   getSearchId,
 } from 'redux/selectors';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { Permission } from 'generated-sources';
+import { PermissionProvider } from 'components/shared/contexts';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
 import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
+import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
 
 // lazy components
 const Overview = React.lazy(() => import('./Overview/Overview'));
-const DatasetStructure = React.lazy(
-  () => import('./DatasetStructure/DatasetStructure')
-);
+const DatasetStructure = React.lazy(() => import('./DatasetStructure/DatasetStructure'));
 const Lineage = React.lazy(() => import('./Lineage/Lineage'));
 const TestReport = React.lazy(() => import('./TestReport/TestReport'));
 const TestReportDetails = React.lazy(
   () => import('./TestReport/TestReportDetails/TestReportDetails')
 );
-const DataEntityAlerts = React.lazy(
-  () => import('./DataEntityAlerts/DataEntityAlerts')
-);
+const DataEntityAlerts = React.lazy(() => import('./DataEntityAlerts/DataEntityAlerts'));
 const QualityTestHistory = React.lazy(
   () => import('./QualityTestRunsHistory/TestRunsHistory')
 );
@@ -68,47 +58,26 @@ const DataEntityActivity = React.lazy(
   () => import('./DataEntityActivity/DataEntityActivity')
 );
 
-const DataEntityDetailsView: React.FC = () => {
+const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { dataEntityId, viewType } = useAppParams();
-  const {
-    searchPath,
-    dataEntityOverviewPath,
-    datasetStructurePath,
-    dataEntityLineagePath,
-    dataEntityTestReportPath,
-    dataEntityLinkedItemsPath,
-    dataEntityHistoryPath,
-    dataEntityAlertsPath,
-    dataEntityActivityPath,
-  } = useAppPaths();
+  const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { searchPath } = useAppPaths();
 
-  const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
   const searchId = useAppSelector(getSearchId);
-  const dataEntityDetails = useAppSelector(
-    getDataEntityDetails(dataEntityId)
-  );
-  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
-    getIsDataEntityBelongsToClass(dataEntityId)
-  );
+  const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
   );
-  const {
-    isLoading: isDataEntityDetailsFetching,
-    isLoaded: isDataEntityDetailsFetched,
-  } = useAppSelector(getDataEntityDetailsFetchingStatuses);
+  const { isLoading: isDataEntityDetailsFetching, isLoaded: isDataEntityDetailsFetched } =
+    useAppSelector(getDataEntityDetailsFetchingStatuses);
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
   const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
     getDataEntityDeleteFromGroupStatuses
-  );
-
-  const datasetQualityTestReport = useAppSelector(
-    getDatasetTestReport(dataEntityId)
   );
 
   React.useEffect(() => {
@@ -124,82 +93,15 @@ const DataEntityDetailsView: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+    dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
+    dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
-
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
-
-  React.useEffect(() => {
-    setTabs([
-      {
-        name: 'Overview',
-        link: dataEntityOverviewPath(dataEntityId),
-        value: 'overview',
-      },
-      {
-        name: 'Structure',
-        link: datasetStructurePath(dataEntityId),
-        hidden: !isDataset,
-        value: 'structure',
-      },
-      {
-        name: 'Lineage',
-        link: dataEntityLineagePath(dataEntityId),
-        hidden: isQualityTest,
-        value: 'lineage',
-      },
-      {
-        name: 'Test reports',
-        link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset || !datasetQualityTestReport?.total,
-        value: 'test-reports',
-      },
-      {
-        name: 'History',
-        link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformer,
-        value: 'history',
-      },
-      {
-        name: 'Alerts',
-        link: dataEntityAlertsPath(dataEntityId),
-        value: 'alerts',
-        hint: openAlertsCount,
-        hintType: 'alert',
-      },
-      {
-        name: 'Linked items',
-        link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden: !dataEntityDetails?.hasChildren,
-        value: 'linked-items',
-      },
-      {
-        name: 'Activity',
-        link: dataEntityActivityPath(dataEntityId),
-        value: 'activity',
-      },
-    ]);
-  }, [
-    dataEntityId,
-    isQualityTest,
-    isDataset,
-    dataEntityDetails,
-    openAlertsCount,
-    datasetQualityTestReport?.total,
-  ]);
-
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
-
-  React.useEffect(() => {
-    setSelectedTab(
-      viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
-    );
-  }, [tabs, viewType]);
 
   const handleEntityGroupDelete = React.useCallback(
     () =>
-      dispatch(
-        deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })
-      ).then(() => history.push(searchPath(searchId))),
+      dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() =>
+        history.push(searchPath(searchId))
+      ),
     [deleteDataEntityGroup, dataEntityId]
   );
 
@@ -207,15 +109,10 @@ const DataEntityDetailsView: React.FC = () => {
     <S.Container>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <>
-          <Grid
-            container
-            justifyContent="space-between"
-            alignItems="center"
-            wrap="nowrap"
-          >
-            <S.Caption item>
-              <Grid container item alignItems="center">
-                <Typography variant="h1" noWrap sx={{ mr: 1 }}>
+          <Grid container flexDirection='column' alignItems='flex-start'>
+            <S.Caption container alignItems='center' flexWrap='nowrap'>
+              <Grid container item lg={11} alignItems='center' flexWrap='nowrap'>
+                <Typography variant='h1' noWrap sx={{ mr: 1 }}>
                   {dataEntityDetails.internalName
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
@@ -237,126 +134,107 @@ const DataEntityDetailsView: React.FC = () => {
                   <InternalNameFormDialog
                     btnCreateEl={
                       <AppButton
-                        size="small"
-                        color="tertiary"
+                        size='small'
+                        color='tertiary'
                         sx={{ ml: 1 }}
+                        disabled={!editDataEntity}
                         startIcon={
-                          dataEntityDetails.internalName ? (
-                            <EditIcon />
-                          ) : (
-                            <AddIcon />
-                          )
+                          dataEntityDetails.internalName ? <EditIcon /> : <AddIcon />
                         }
                       >
                         {`${
-                          dataEntityDetails.internalName
-                            ? 'Edit custom'
-                            : 'Add custom'
+                          dataEntityDetails.internalName ? 'Edit custom' : 'Add custom'
                         } name`}
                       </AppButton>
                     }
                   />
                 </S.InternalNameEditBtnContainer>
               </Grid>
-              {dataEntityDetails.internalName &&
-                dataEntityDetails.externalName && (
-                  <Grid container alignItems="center">
-                    <LabelItem labelName="Original" variant="body1" />
-                    <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
-                      {dataEntityDetails.externalName}
-                    </Typography>
-                  </Grid>
-                )}
-            </S.Caption>
-            <Grid
-              container
-              item
-              alignItems="center"
-              width="auto"
-              flexWrap="nowrap"
-            >
-              {dataEntityDetails.updatedAt ? (
-                <>
-                  <TimeGapIcon />
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 1, whiteSpace: 'nowrap' }}
-                  >
-                    {formatDistanceToNowStrict(
-                      dataEntityDetails.updatedAt,
-                      {
+              <Grid
+                container
+                item
+                lg={1}
+                sx={{ ml: 1 }}
+                alignItems='center'
+                flexWrap='nowrap'
+              >
+                {dataEntityDetails.updatedAt ? (
+                  <>
+                    <TimeGapIcon />
+                    <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+                      {formatDistanceToNowStrict(dataEntityDetails.updatedAt, {
                         addSuffix: true,
-                      }
-                    )}
-                  </Typography>
-                </>
-              ) : null}
-              <Grid>
-                {dataEntityDetails.manuallyCreated && (
-                  <AppPopover
-                    childrenSx={{
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                    }}
-                    renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-                      <AppIconButton
-                        sx={{ ml: 2 }}
-                        ariaDescribedBy={ariaDescribedBy}
-                        size="medium"
-                        color="primaryLight"
-                        icon={<KebabIcon />}
-                        onClick={onClick}
+                      })}
+                    </Typography>
+                  </>
+                ) : null}
+                <Grid>
+                  {dataEntityDetails.manuallyCreated && (
+                    <AppPopover
+                      childrenSx={{
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                      }}
+                      renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                        <AppIconButton
+                          sx={{ ml: 2 }}
+                          ariaDescribedBy={ariaDescribedBy}
+                          size='medium'
+                          color='primaryLight'
+                          icon={<KebabIcon />}
+                          onClick={onClick}
+                        />
+                      )}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 65,
+                      }}
+                    >
+                      <DataEntityGroupForm
+                        btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
                       />
-                    )}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 65,
-                    }}
-                  >
-                    <DataEntityGroupForm
-                      btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
-                    />
-                    <ConfirmationDialog
-                      actionTitle="Are you sure you want to delete this data entity group?"
-                      actionName="Delete Data Entity Group"
-                      actionText={
-                        <>
-                          &quot;
-                          {dataEntityDetails.internalName ||
-                            dataEntityDetails.externalName}
-                          &quot; will be deleted permanently.
-                        </>
-                      }
-                      onConfirm={handleEntityGroupDelete}
-                      actionBtn={<AppMenuItem>Delete</AppMenuItem>}
-                    />
-                  </AppPopover>
-                )}
+                      <ConfirmationDialog
+                        actionTitle='Are you sure you want to delete this data entity group?'
+                        actionName='Delete Data Entity Group'
+                        actionText={
+                          <>
+                            &quot;
+                            {dataEntityDetails.internalName ||
+                              dataEntityDetails.externalName}
+                            &quot; will be deleted permanently.
+                          </>
+                        }
+                        onConfirm={handleEntityGroupDelete}
+                        actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                      />
+                    </AppPopover>
+                  )}
+                </Grid>
               </Grid>
-            </Grid>
+            </S.Caption>
+
+            {dataEntityDetails.internalName && dataEntityDetails.externalName && (
+              <Grid container alignItems='center' width='auto'>
+                <LabelItem labelName='Original' variant='body1' />
+                <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+                  {dataEntityDetails.externalName}
+                </Typography>
+              </Grid>
+            )}
           </Grid>
           <Grid sx={{ mt: 2 }}>
-            {tabs.length && selectedTab >= 0 ? (
-              <AppTabs
-                type="primary"
-                items={tabs}
-                selectedTab={selectedTab}
-                handleTabChange={() => {}}
-              />
-            ) : null}
+            <DataEntityDetailsTabs />
           </Grid>
         </>
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <DataEntityDetailsSkeleton
-              width={randomSkeletonPercentWidth()}
-            />
+          renderContent={({ randWidth }) => (
+            <DataEntityDetailsSkeleton width={randWidth()} />
           )}
         />
       ) : null}
@@ -409,7 +287,11 @@ const DataEntityDetailsView: React.FC = () => {
                 '/dataentities/:dataEntityId/alerts',
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
-              component={DataEntityAlerts}
+              render={() => (
+                <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
+                  <DataEntityAlerts />
+                </PermissionProvider>
+              )}
             />
             <Route
               exact
@@ -436,12 +318,12 @@ const DataEntityDetailsView: React.FC = () => {
               component={DataEntityActivity}
             />
             <Redirect
-              from="/dataentities/:dataEntityId"
-              to="/dataentities/:dataEntityId/overview"
+              from='/dataentities/:dataEntityId'
+              to='/dataentities/:dataEntityId/overview'
             />
             <Redirect
-              from="/embedded/dataentities/:dataEntityId"
-              to="/embedded/dataentities/:dataEntityId/overview"
+              from='/embedded/dataentities/:dataEntityId'
+              to='/embedded/dataentities/:dataEntityId/overview'
             />
           </Switch>
         </React.Suspense>
@@ -450,4 +332,4 @@ const DataEntityDetailsView: React.FC = () => {
   );
 };
 
-export default DataEntityDetailsView;
+export default DataEntityDetails;

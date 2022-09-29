@@ -1,11 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Namespace } from 'generated-sources';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { ConfirmationDialog, AppButton } from 'components/shared';
 import { deleteNamespace } from 'redux/thunks';
+import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
@@ -14,10 +13,9 @@ interface EditableNamespaceItemProps {
   namespace: Namespace;
 }
 
-const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
-  namespace,
-}) => {
+const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteNamespace({ namespaceId: namespace.id })),
@@ -27,7 +25,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
   return (
     <S.Container container>
       <Grid item>
-        <Typography variant="body1" noWrap title={namespace.name}>
+        <Typography variant='body1' noWrap title={namespace.name}>
           {namespace.name}
         </Typography>
       </Grid>
@@ -36,27 +34,27 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
           namespace={namespace}
           btnEl={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<EditIcon />}
               sx={{ mr: 0.5 }}
+              disabled={!isAdmin}
             >
               Edit
             </AppButton>
           }
         />
         <ConfirmationDialog
-          actionTitle="Are you sure you want to delete this namespace?"
-          actionName="Delete Namespace"
-          actionText={
-            <>&quot;{namespace.name}&quot; will be deleted permanently.</>
-          }
+          actionTitle='Are you sure you want to delete this namespace?'
+          actionName='Delete Namespace'
+          actionText={<>&quot;{namespace.name}&quot; will be deleted permanently.</>}
           onConfirm={handleDelete}
           actionBtn={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<DeleteIcon />}
+              disabled={!isAdmin}
             >
               Delete
             </AppButton>

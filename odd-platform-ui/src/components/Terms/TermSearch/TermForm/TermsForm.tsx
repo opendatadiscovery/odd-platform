@@ -16,7 +16,7 @@ import {
   getTermCreatingStatuses,
   getTermUpdatingStatuses,
 } from 'redux/selectors';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;

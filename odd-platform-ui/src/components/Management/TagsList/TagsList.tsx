@@ -5,7 +5,7 @@ import {
   getTagCreatingStatuses,
   getTagDeletingStatuses,
   getTagsList,
-  getTagsListFetchingStatuses,
+  getTagListFetchingStatuses,
   getTagsListPage,
 } from 'redux/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -17,37 +17,29 @@ import {
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
-  SkeletonWrapper,
 } from 'components/shared';
+import { usePermissions } from 'lib/hooks';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
-
 import * as S from './TagsListStyles';
 
 const TagsListView: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
 
-  const { isLoading: isTagCreating } = useAppSelector(
-    getTagCreatingStatuses
-  );
+  const { isLoading: isTagCreating } = useAppSelector(getTagCreatingStatuses);
 
-  const { isLoading: isTagDeleting } = useAppSelector(
-    getTagDeletingStatuses
-  );
+  const { isLoading: isTagDeleting } = useAppSelector(getTagDeletingStatuses);
 
-  const { isLoading: isTagsFetching } = useAppSelector(
-    getTagsListFetchingStatuses
-  );
+  const { isLoading: isTagsFetching } = useAppSelector(getTagListFetchingStatuses);
 
   const tagsList = useAppSelector(getTagsList);
   const pageInfo = useAppSelector(getTagsListPage);
 
   const pageSize = 100;
   const [searchText, setSearchText] = React.useState<string>('');
-  const [totalTags, setTotalTags] = React.useState<number | undefined>(
-    pageInfo?.total
-  );
+  const [totalTags, setTotalTags] = React.useState<number | undefined>(pageInfo?.total);
 
   React.useEffect(() => {
     if (!searchText) dispatch(fetchTagsList({ page: 1, size: pageSize }));
@@ -70,16 +62,12 @@ const TagsListView: React.FC = () => {
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(
-        fetchTagsList({ page: 1, size: pageSize, query: searchText })
-      );
+      dispatch(fetchTagsList({ page: 1, size: pageSize, query: searchText }));
     }, 500),
     [searchText]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
     handleSearch();
   };
@@ -91,16 +79,16 @@ const TagsListView: React.FC = () => {
   };
 
   return (
-    <Grid container flexDirection="column" alignItems="center">
+    <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant="h1">Tags</Typography>
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='h1'>Tags</Typography>
+        <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalTags} /> tags overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder="Search tag..."
+          placeholder='Search tag...'
           value={searchText}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -123,9 +111,10 @@ const TagsListView: React.FC = () => {
         <TagCreateForm
           btnCreateEl={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create tag
             </AppButton>
@@ -134,12 +123,12 @@ const TagsListView: React.FC = () => {
       </S.Caption>
       <S.TableHeader container>
         <S.Col item>
-          <Typography variant="subtitle2" color="texts.hint">
+          <Typography variant='subtitle2' color='texts.hint'>
             Name
           </Typography>
         </S.Col>
         <S.Col item>
-          <Typography variant="subtitle2" color="texts.hint">
+          <Typography variant='subtitle2' color='texts.hint'>
             Priority
           </Typography>
         </S.Col>
@@ -150,20 +139,8 @@ const TagsListView: React.FC = () => {
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={tagsList.length}
-            scrollThreshold="200px"
-            loader={
-              isTagsFetching && (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <TagsSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
-                />
-              )
-            }
+            scrollThreshold='200px'
+            loader={isTagsFetching && <TagsSkeletonItem length={5} />}
           >
             {tagsList?.map(tag => (
               <EditableTagItem key={tag.id} tag={tag} />
@@ -171,9 +148,7 @@ const TagsListView: React.FC = () => {
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isTagsFetching && !tagsList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      {!isTagsFetching && !tagsList.length ? <EmptyContentPlaceholder /> : null}
     </Grid>
   );
 };

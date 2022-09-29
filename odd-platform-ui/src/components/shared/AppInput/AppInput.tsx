@@ -1,9 +1,6 @@
 import React from 'react';
 import { CircularProgress, TextFieldProps, Theme } from '@mui/material';
-import {
-  AppInputSizes,
-  StyledAppInput,
-} from 'components/shared/AppInput/AppInputStyles';
+import { AppInputSizes, StyledAppInput } from 'components/shared/AppInput/AppInputStyles';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { SxProps } from '@mui/system';
 
@@ -51,31 +48,11 @@ interface AppInputProps
 const AppInput: React.FC<AppInputProps> = React.forwardRef(
   (
     {
-      children,
       size = 'medium',
-      onClick,
-      sx,
-      placeholder,
-      InputProps,
-      value,
-      onChange,
-      disabled,
-      error,
-      helperText,
-      label,
-      defaultValue,
-      onKeyDown,
-      inputProps,
-      required,
-      type,
       customStartAdornment,
       customEndAdornment,
-      maxRows,
-      multiline,
-      name,
       fullWidth = true,
-      minRows,
-      onFocus,
+      ...props
     },
     ref
   ) => {
@@ -91,18 +68,16 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
       }
 
       if (variant === 'loader') {
-        return (
-          <CircularProgress sx={position} color="inherit" size={20} />
-        );
+        return <CircularProgress sx={position} color='inherit' size={20} />;
       }
 
       return (
         <AppIconButton
           sx={position || { mx: 1 }}
-          size="small"
-          color="unfilled"
+          size='small'
+          color='unfilled'
           icon={icon}
-          disabled={disabled}
+          disabled={props.disabled}
           onClick={onCLick}
         />
       );
@@ -110,49 +85,28 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
 
     return (
       <StyledAppInput
+        {...props}
         $size={size}
-        $isLabeled={!!label}
-        variant="outlined"
+        $isLabeled={!!props.label}
+        variant='outlined'
         fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
-        sx={sx}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onClick={onClick}
-        disabled={disabled}
-        error={error}
-        helperText={helperText}
-        label={label}
-        defaultValue={defaultValue}
-        onKeyDown={onKeyDown}
         ref={ref}
-        inputProps={inputProps}
-        required={required}
-        type={type}
-        maxRows={maxRows}
-        minRows={minRows}
-        multiline={multiline}
-        name={name}
-        onFocus={onFocus}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
-          ...InputProps,
+          ...props.InputProps,
           startAdornment: (
-            <>
-              {customStartAdornment &&
-                buildAdornment(customStartAdornment)}
-            </>
+            <>{customStartAdornment && buildAdornment(customStartAdornment)}</>
           ),
           endAdornment: (
             <>
               {customEndAdornment && buildAdornment(customEndAdornment)}
-              {InputProps?.endAdornment}
+              {props.InputProps?.endAdornment}
             </>
           ),
         }}
       >
-        {children}
+        {props.children}
       </StyledAppInput>
     );
   }

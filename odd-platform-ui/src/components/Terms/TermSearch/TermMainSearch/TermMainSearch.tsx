@@ -5,17 +5,14 @@ import { TermRef } from 'generated-sources';
 import { useDebouncedCallback } from 'use-debounce';
 import { AppInput } from 'components/shared';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppPaths } from 'lib/hooks';
 import {
   getTermSearchQuery,
   getTermSearchSuggestions,
   getTermSearchSuggestionsFetchStatuses,
 } from 'redux/selectors';
-import {
-  createTermSearch,
-  fetchTermSearchSuggestions,
-} from 'redux/thunks';
+import { createTermSearch, fetchTermSearchSuggestions } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import * as S from './TermMainSearchStyles';
 
 const TermMainSearch: React.FC = () => {
@@ -31,8 +28,7 @@ const TermMainSearch: React.FC = () => {
 
   const [searchText, setSearchText] = React.useState<string>('');
   const [options, setOptions] = React.useState<Partial<TermRef>[]>([]);
-  const [autocompleteOpen, setAutocompleteOpen] =
-    React.useState<boolean>(false);
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState<boolean>(false);
 
   const createSearch = () => {
     const termSearchQuery = {
@@ -49,10 +45,7 @@ const TermMainSearch: React.FC = () => {
     history.push(termSearchPath());
   };
 
-  const handleInputChange = (
-    _: React.ChangeEvent<unknown>,
-    inputVal: string
-  ) => {
+  const handleInputChange = (_: React.ChangeEvent<unknown>, inputVal: string) => {
     setSearchText(inputVal);
   };
 
@@ -97,11 +90,9 @@ const TermMainSearch: React.FC = () => {
     return (
       <li {...props}>
         <S.TermMainSearchSuggestionItem
-          to={
-            typedOption.id ? termDetailsOverviewPath(typedOption.id) : '#'
-          }
+          to={typedOption.id ? termDetailsOverviewPath(typedOption.id) : '#'}
         >
-          <Typography variant="body1" sx={{ mr: 1 }}>
+          <Typography variant='body1' sx={{ mr: 1 }}>
             {typedOption.name}
           </Typography>
         </S.TermMainSearchSuggestionItem>
@@ -115,7 +106,7 @@ const TermMainSearch: React.FC = () => {
         <S.TermMainSearchAutocomplete
           fullWidth
           value={{ name: searchText }}
-          id="term-search"
+          id='term-search'
           open={autocompleteOpen}
           onOpen={() => {
             if (searchText) setAutocompleteOpen(true);
@@ -134,8 +125,8 @@ const TermMainSearch: React.FC = () => {
             <AppInput
               {...params}
               ref={params.InputProps.ref}
-              size="large"
-              placeholder="Search"
+              size='large'
+              placeholder='Search'
               onKeyDown={handleKeyDown}
               customStartAdornment={{
                 variant: 'search',

@@ -33,6 +33,7 @@ const colors = {
   orange5: '#FFF6E5',
 
   green60: '#1FAD1F',
+  green50: '#17CF54',
   green40: '#14B84B',
   green20: '#A8F0A8',
   green10: '#D1FADF',
@@ -112,6 +113,14 @@ export const palette = createPalette({
     ABORTED: { background: colors.purple10, border: colors.purple30 },
     UNKNOWN: { background: colors.black10, border: colors.black20 },
   },
+  slaStatus: {
+    MINOR: colors.green20,
+    MAJOR: colors.orange20,
+    CRITICAL: colors.red20,
+    YELLOW: colors.orange50,
+    GREEN: colors.green50,
+    RED: colors.red50,
+  },
   button: {
     primary: {
       normal: {
@@ -186,6 +195,19 @@ export const palette = createPalette({
       hover: { background: colors.black15, color: colors.black70 },
       active: { background: colors.black15, color: colors.black90 },
     },
+    secondarySuccess: {
+      normal: { background: colors.green5, color: colors.green60 },
+      hover: { background: colors.green10, color: colors.green60 },
+      active: { background: colors.green20, color: colors.green60 },
+      disabled: { background: colors.green5, color: colors.green20 },
+    },
+    secondaryWarn: {
+      normal: { background: colors.red5, color: colors.red60 },
+      hover: { background: colors.red10, color: colors.red60 },
+      active: { background: colors.red20, color: colors.red60 },
+      disabled: { background: colors.red5, color: colors.red20 },
+    },
+    animationParas: { start: colors.blue30, end: colors.blue5 },
   },
   tag: {
     main: {
@@ -236,12 +258,13 @@ export const palette = createPalette({
     },
   },
   alert: {
-    OPEN: {
-      background: colors.red10,
-      border: colors.red20,
-      color: colors.red5,
-    },
+    OPEN: { background: colors.red10, border: colors.red20 },
     RESOLVED: { background: colors.blue10, border: colors.blue20 },
+  },
+  associationRequestStatus: {
+    APPROVED: { background: colors.green10, border: colors.green20 },
+    DECLINED: { background: colors.red10, border: colors.red20 },
+    PENDING: { background: colors.blue10, border: colors.blue20 },
   },
   textField: {
     normal: { border: colors.black20, background: colors.white },

@@ -8,53 +8,33 @@ import { createStatusesSelector } from './loader-selectors';
 const metaDataState = ({ metaData }: RootState): MetaDataState => metaData;
 
 // Details
-export const getDataEntityMetadataCreatingStatuses =
-  createStatusesSelector(actions.createDataEntityMetadataAction);
-export const getDataEntityMetadataUpdatingStatuses =
-  createStatusesSelector(actions.updateDataEntityMetadataAction);
-export const getDataEntityMetadataDeletingStatuses =
-  createStatusesSelector(actions.deleteDataEntityMetadataAction);
+export const getDataEntityMetadataCreatingStatuses = createStatusesSelector(
+  actions.createDataEntityMetadataAction
+);
 
 const getDataEntityMetaDataState = (dataEntityId: number) =>
-  createSelector(
-    metaDataState,
-    metadata => metadata.dataEntityMetadata[dataEntityId]
-  );
+  createSelector(metaDataState, metadata => metadata.dataEntityMetadata[dataEntityId]);
 
-export const getDataEntityPredefinedMetadataList = (
-  dataEntityId: number
-) =>
-  createSelector(
-    getDataEntityMetaDataState(dataEntityId),
-    metadataState => {
-      if (!metadataState) return emptyArr;
+export const getDataEntityPredefinedMetadataList = (dataEntityId: number) =>
+  createSelector(getDataEntityMetaDataState(dataEntityId), metadataState => {
+    if (!metadataState) return emptyArr;
 
-      return metadataState.allIds?.reduce<MetadataFieldValue[]>(
-        (metadataList, id) => {
-          if (metadataState.byId[id].field.origin === 'EXTERNAL') {
-            metadataList.push(metadataState.byId[id]);
-          }
-          return metadataList;
-        },
-        []
-      );
-    }
-  );
+    return metadataState.allIds?.reduce<MetadataFieldValue[]>((metadataList, id) => {
+      if (metadataState.byId[id].field.origin === 'EXTERNAL') {
+        metadataList.push(metadataState.byId[id]);
+      }
+      return metadataList;
+    }, []);
+  });
 
 export const getDataEntityCustomMetadataList = (dataEntityId: number) =>
-  createSelector(
-    getDataEntityMetaDataState(dataEntityId),
-    metadataState => {
-      if (!metadataState) return emptyArr;
+  createSelector(getDataEntityMetaDataState(dataEntityId), metadataState => {
+    if (!metadataState) return emptyArr;
 
-      return metadataState.allIds?.reduce<MetadataFieldValue[]>(
-        (metadataList, id) => {
-          if (metadataState.byId[id].field.origin === 'INTERNAL') {
-            metadataList.push(metadataState.byId[id]);
-          }
-          return metadataList;
-        },
-        []
-      );
-    }
-  );
+    return metadataState.allIds?.reduce<MetadataFieldValue[]>((metadataList, id) => {
+      if (metadataState.byId[id].field.origin === 'INTERNAL') {
+        metadataList.push(metadataState.byId[id]);
+      }
+      return metadataList;
+    }, []);
+  });

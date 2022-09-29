@@ -32,6 +32,7 @@ tags:
   - name: collector
   - name: term
   - name: activity
+  - name: ownerAssociationRequest
 paths:
   /api/identity/whoami:
     get:
@@ -47,41 +48,6 @@ paths:
                 $ref: './components.yaml/#/components/schemas/AssociatedOwner'
       tags:
         - identity
-  /api/identity/owner:
-    put:
-      summary: Associate owner
-      description: Associates current authed user with owner
-      operationId: associateOwner
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/OwnerFormData'
-      responses:
-        '201':
-          description: The resource has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/AssociatedOwner'
-      tags:
-        - identity
-    delete:
-      summary: Deassociate owner
-      description: Deassociates current authed user with owner
-      operationId: deassociateOwner
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/OwnerFormData'
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
-      tags:
-        - identity
   /api/owners:
     get:
       summary: List of owners
@@ -92,6 +58,11 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/IdsParam'
+        - name: allowedForSync
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
@@ -902,6 +873,22 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityDetails'
       tags:
         - dataEntity
+  /api/dataentities/{data_entity_id}/permission:
+    get:
+      summary: Get DataEntity permissions
+      description: "Gets DataEntity's permissions for current user"
+      operationId: getDataEntityPermissions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Actions'
+      tags:
+        - dataEntity
   /api/dataentities/{data_entity_id}/description:
     put:
       summary: Upsert DataEntity's internal description
@@ -1350,6 +1337,23 @@ paths:
               schema:
                 type: string
                 format: binary
+      tags:
+        - dataQuality
+
+  /api/datasets/{data_entity_id}/sla_report:
+    get:
+      summary: Get SLA report
+      description: Get detailed SLA statistics
+      operationId: getDatasetSLAReport
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetSLAReport'
       tags:
         - dataQuality
 
@@ -2179,3 +2183,74 @@ paths:
                 $ref: './components.yaml/#/components/schemas/ActivityCountInfo'
       tags:
         - activity
+
+  /api/owner_association_request:
+    get:
+      summary: List of pending owner association requests
+      description: Gets the list of pending owner association requests
+      operationId: getOwnerAssociationRequestList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: active
+          in: query
+          schema:
+            type: boolean
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestList'
+      tags:
+        - ownerAssociationRequest
+    post:
+      summary: Create owner association request
+      description: Creates request for associating current authed user with owner
+      operationId: createOwnerAssociationRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnerFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
+      tags:
+        - ownerAssociationRequest
+
+  /api/owner_association_request/{owner_association_request_id}:
+    put:
+      summary: Update owner association request
+      description: Approve or decline owner association request
+      operationId: updateOwnerAssociationRequest
+      parameters:
+        - name: owner_association_request_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnerAssociationRequestStatusFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
+      tags:
+        - ownerAssociationRequest

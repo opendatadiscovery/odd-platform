@@ -6,6 +6,8 @@ export type ButtonColors =
   | 'primary'
   | 'primaryLight'
   | 'secondary'
+  | 'secondarySuccess'
+  | 'secondaryWarn'
   | 'tertiary'
   | 'dropdown'
   | 'expandText'
@@ -13,12 +15,13 @@ export type ButtonColors =
 
 interface AppButtonStyleProps {
   $color: ButtonColors;
+  $isOverflowed?: boolean;
 }
 
 const isTertiary = (color: string) => color === 'tertiary';
 
 export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
-  ({ theme, $color }) => ({
+  ({ theme, $color, $isOverflowed }) => ({
     // overrides of MUI Button styles
     [`&.${buttonClasses.root}`]: {
       minWidth: 0,
@@ -30,12 +33,13 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       fontSize: theme.typography.body1.fontSize,
       lineHeight: theme.typography.body1.lineHeight,
       whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
       ...breakpointDownLgBody2,
+      ...($isOverflowed && { width: 'inherit', display: 'block' }),
     },
     [`&.${buttonClasses.text}`]: {
-      padding: isTertiary($color)
-        ? theme.spacing(0, 0.5)
-        : theme.spacing(0.25, 1.5),
+      padding: isTertiary($color) ? theme.spacing(0, 0.5) : theme.spacing(0.25, 1.5),
     },
     [`& .${buttonClasses.startIcon}`]: {
       marginRight: theme.spacing(0.5),
@@ -77,3 +81,40 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
     },
   })
 );
+
+const loaderDotSize = 4;
+
+export const Loader = styled('div')(({ theme }) => ({
+  position: 'relative',
+  width: `${loaderDotSize}px`,
+  height: `${loaderDotSize}px`,
+  borderRadius: '50%',
+  animation: `dotFlashing 1s infinite linear alternate`,
+  animationDelay: '.5s',
+  '&::before, &::after': {
+    content: '""',
+    display: 'inline-block',
+    position: 'absolute',
+    top: 0,
+  },
+  '&::before': {
+    left: `-${loaderDotSize * 2}px`,
+    width: `${loaderDotSize}px`,
+    height: `${loaderDotSize}px`,
+    borderRadius: '50%',
+    animation: `dotFlashing 1s infinite linear alternate`,
+    animationDelay: '0s',
+  },
+  '&:after': {
+    left: `${loaderDotSize * 2}px`,
+    width: `${loaderDotSize}px`,
+    height: `${loaderDotSize}px`,
+    borderRadius: '50%',
+    animation: `dotFlashing 1s infinite linear alternate`,
+    animationDelay: '1s',
+  },
+  '@keyframes dotFlashing': {
+    '0%': { backgroundColor: theme.palette.button.animationParas.end },
+    '50%, 100%': { backgroundColor: theme.palette.button.animationParas.start },
+  },
+}));

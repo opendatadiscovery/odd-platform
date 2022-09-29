@@ -1,10 +1,7 @@
 import { CircularProgress, Theme } from '@mui/material';
 import React from 'react';
-import CopyIcon from 'components/shared/Icons/CopyIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AlertIcon from 'components/shared/Icons/AlertIcon';
-import SuccessIcon from 'components/shared/Icons/SuccessIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AlertIcon, CopyIcon, SuccessIcon } from 'components/shared/Icons';
+import { AppButton, AppIconButton } from 'components/shared';
 import { SxProps } from '@mui/system';
 
 interface CopyButtonProps {

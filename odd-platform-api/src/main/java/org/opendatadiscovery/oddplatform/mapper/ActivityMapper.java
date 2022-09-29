@@ -26,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DescriptionActivityS
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermActivityState;
+import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
@@ -228,6 +229,7 @@ public abstract class ActivityMapper {
 
     @Named("mapCreatedBy")
     AssociatedOwner mapUser(final ActivityDto activityDto) {
-        return associatedOwnerMapper.mapAssociatedOwner(activityDto.activity().getCreatedBy(), activityDto.user());
+        return associatedOwnerMapper.mapAssociatedOwner(
+            new AssociatedOwnerDto(activityDto.activity().getCreatedBy(), activityDto.user(), Set.of(), null));
     }
 }

@@ -1,16 +1,10 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
-export const StatsContainer = styled(Grid)(() => ({
-  justifyContent: 'space-between',
-  '& > *': {
-    flex: '0 0 278px',
-  },
-}));
-
-export const StatLabel = styled(Typography)(({ theme }) => ({
-  color: theme.palette.texts.secondary,
-  lineHeight: theme.typography.h2.lineHeight,
+export const StatsContainer = styled(Grid)(({ theme }) => ({
+  alignItems: 'flex-start',
+  flexWrap: 'nowrap',
+  columnGap: theme.spacing(4),
 }));
 
 export const Overview = styled(Grid)(({ theme }) => ({

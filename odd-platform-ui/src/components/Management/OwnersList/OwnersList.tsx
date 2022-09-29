@@ -1,60 +1,47 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Owner } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import EditableOwnerItem from 'components/Management/OwnersList/EditableOwnerItem/EditableOwnerItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  NumberFormatted,
+  SkeletonWrapper,
+  EmptyContentPlaceholder,
+  AppInput,
+  AppButton,
+} from 'components/shared';
 import { fetchOwnersList } from 'redux/thunks';
 import {
   getOwnerCreatingStatuses,
   getOwnerDeletingStatuses,
   getOwnerListFetchingStatuses,
+  getOwnersList,
+  getOwnersListPageInfo,
 } from 'redux/selectors';
+import { usePermissions } from 'lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
 import * as S from './OwnersListStyles';
 
-interface OwnersListProps {
-  ownersList: Owner[];
-  pageInfo?: CurrentPageInfo;
-}
-
-const OwnersListView: React.FC<OwnersListProps> = ({
-  ownersList,
-  pageInfo,
-}) => {
+const OwnersList: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
 
-  const { isLoading: isOwnerListFetching } = useAppSelector(
-    getOwnerListFetchingStatuses
-  );
-  const { isLoading: isOwnerCreating } = useAppSelector(
-    getOwnerCreatingStatuses
-  );
-  const { isLoading: isOwnerDeleting } = useAppSelector(
-    getOwnerDeletingStatuses
-  );
+  const ownersList = useAppSelector(getOwnersList);
+  const pageInfo = useAppSelector(getOwnersListPageInfo);
+
+  const { isLoading: isOwnerListFetching } = useAppSelector(getOwnerListFetchingStatuses);
+  const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
+  const { isLoading: isOwnerDeleting } = useAppSelector(getOwnerDeletingStatuses);
 
   const pageSize = 100;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalOwners, setTotalOwners] = React.useState<number | undefined>(
-    pageInfo?.total
-  );
+  const [searchText, setSearchText] = React.useState('');
+  const [totalOwners, setTotalOwners] = React.useState(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText)
-      dispatch(fetchOwnersList({ page: 1, size: pageSize }));
+    if (!searchText) dispatch(fetchOwnersList({ page: 1, size: pageSize }));
   }, [fetchOwnersList, isOwnerCreating, isOwnerDeleting, searchText]);
 
   React.useEffect(() => {
@@ -74,16 +61,12 @@ const OwnersListView: React.FC<OwnersListProps> = ({
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(
-        fetchOwnersList({ page: 1, size: pageSize, query: searchText })
-      );
+      dispatch(fetchOwnersList({ page: 1, size: pageSize, query: searchText }));
     }, 500),
     [searchText]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
     handleSearch();
   };
@@ -95,16 +78,16 @@ const OwnersListView: React.FC<OwnersListProps> = ({
   };
 
   return (
-    <Grid container flexDirection="column" alignItems="center">
+    <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant="h1">Owners</Typography>
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='h1'>Owners</Typography>
+        <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalOwners} /> owners overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder="Search owner..."
+          placeholder='Search owner...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={searchText}
@@ -127,9 +110,10 @@ const OwnersListView: React.FC<OwnersListProps> = ({
         <OwnerForm
           btnCreateEl={
             <AppButton
-              color="primaryLight"
-              size="medium"
+              color='primaryLight'
+              size='medium'
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create Owner
             </AppButton>
@@ -138,7 +122,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
       </S.Caption>
       <S.TableHeader container>
         <Grid item xs={12}>
-          <Typography variant="subtitle2" color="texts.hint">
+          <Typography variant='subtitle2' color='texts.hint'>
             Name
           </Typography>
         </Grid>
@@ -149,16 +133,13 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={ownersList.length}
-            scrollThreshold="200px"
+            scrollThreshold='200px'
             loader={
               isOwnerListFetching && (
                 <SkeletonWrapper
                   length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <OwnersSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <OwnersSkeletonItem width={randWidth()} key={key} />
                   )}
                 />
               )
@@ -170,11 +151,9 @@ const OwnersListView: React.FC<OwnersListProps> = ({
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isOwnerListFetching && !ownersList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      {!isOwnerListFetching && !ownersList.length ? <EmptyContentPlaceholder /> : null}
     </Grid>
   );
 };
 
-export default OwnersListView;
+export default OwnersList;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PopoverProps, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
+import { AppCircularProgress } from 'components/shared';
 import * as S from './AppPopoverStyles';
 
 interface AppPopoverProps extends Omit<PopoverProps, 'open'> {
@@ -9,6 +10,7 @@ interface AppPopoverProps extends Omit<PopoverProps, 'open'> {
     ariaDescribedBy: string | undefined;
   }) => React.ReactElement;
   childrenSx?: SxProps<Theme>;
+  isLoading?: boolean;
 }
 
 const AppPopover: React.FC<AppPopoverProps> = ({
@@ -17,11 +19,10 @@ const AppPopover: React.FC<AppPopoverProps> = ({
   renderOpenBtn,
   sx,
   childrenSx,
+  isLoading,
   ...props
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,7 +51,17 @@ const AppPopover: React.FC<AppPopoverProps> = ({
         anchorOrigin={anchorOrigin}
         disableRestoreFocus
       >
-        <S.PopoverChildren sx={childrenSx}>{children}</S.PopoverChildren>
+        <S.PopoverChildren sx={childrenSx}>
+          {isLoading ? (
+            <AppCircularProgress
+              size={20}
+              background='transparent'
+              progressBackground='dark'
+            />
+          ) : (
+            children
+          )}
+        </S.PopoverChildren>
       </S.AppPopover>
     </>
   );

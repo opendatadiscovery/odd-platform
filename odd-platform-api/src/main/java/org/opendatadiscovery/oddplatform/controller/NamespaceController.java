@@ -37,7 +37,8 @@ public class NamespaceController implements NamespaceApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteNamespace(final Long namespaceId,
                                                       final ServerWebExchange exchange) {
-        return namespaceService.delete(namespaceId).map(ign -> ResponseEntity.noContent().build());
+        return namespaceService.delete(namespaceId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 
     @Override

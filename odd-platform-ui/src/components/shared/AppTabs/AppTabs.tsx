@@ -7,7 +7,7 @@ import AppLinkTab from 'components/shared/AppTabs/AppTab/AppLinkTab';
 import AppTabLabel from 'components/shared/AppTabs/AppTabLabel/AppTabLabel';
 import { TabsContainer } from './AppTabsStyles';
 
-export type AppTabItem<ValueT = number | string> = {
+export type AppTabItem<ValueT = number | string | boolean> = {
   name: string;
   link?: string;
   hint?: number | string;
@@ -35,9 +35,9 @@ const AppTabs: React.FC<AppTabsProps> = ({
   sx,
 }) => {
   const selectedTabState = selectedTab === -1 ? false : selectedTab;
-  const [currentTab, setCurrent] = React.useState<
-    number | boolean | undefined
-  >(selectedTabState);
+  const [currentTab, setCurrent] = React.useState<number | boolean | undefined>(
+    selectedTabState
+  );
 
   const handleChange = (event: SyntheticEvent, newTab: number) => {
     setCurrent(newTab);
@@ -52,9 +52,9 @@ const AppTabs: React.FC<AppTabsProps> = ({
       $type={type}
       value={currentTab}
       onChange={handleChange}
-      variant="scrollable"
+      variant='scrollable'
       orientation={orientation}
-      scrollButtons="auto"
+      scrollButtons='auto'
       sx={sx}
     >
       {items.map(item => {
@@ -65,8 +65,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
         };
 
         const setHintShowed = (): boolean => {
-          if (getHintLength() === 0 && item.hintType === 'alert')
-            return false;
+          if (getHintLength() === 0 && item.hintType === 'alert') return false;
           return type === 'primary';
         };
 

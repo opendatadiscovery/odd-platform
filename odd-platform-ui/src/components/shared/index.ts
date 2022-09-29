@@ -31,4 +31,18 @@ export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchS
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';
+export { default as RestrictedRoute } from './RestrictedRoute/RestrictedRoute';
+export { default as AppRadio } from './AppRadio/AppRadio';
+export { default as AlertStatusItem } from './AlertStatusItem/AlertStatusItem';
+export { default as AppDatePicker } from './AppDatePicker/AppDatePicker';
+export { default as TermItem } from './TermItem/TermItem';
+export {
+  maxDate,
+  minDate,
+  metadataDatePickerInputFormat,
+} from './AppDatePicker/AppDatePicker';
+export { default as EntitiesListModal } from './EntitiesListModal/EntitiesListModal';
+export { default as AppPaper } from './AppPaper/AppPaper';
+export { default as TestRunStatusItem } from './TestRunStatusItem/TestRunStatusItem';
+export { default as TestRunStatusIcon } from './TestRunStatusIcon/TestRunStatusIcon';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';

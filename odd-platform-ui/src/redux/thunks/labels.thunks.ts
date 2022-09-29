@@ -1,11 +1,11 @@
 import {
   Configuration,
-  LabelApi,
   Label,
+  LabelApi,
   LabelApiCreateLabelRequest,
-  LabelApiUpdateLabelRequest,
   LabelApiDeleteLabelRequest,
   LabelApiGetLabelListRequest,
+  LabelApiUpdateLabelRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { CurrentPageInfo } from 'redux/interfaces/common';
@@ -28,33 +28,27 @@ export const fetchLabelsList = createAsyncThunk<
   return { items, pageInfo: { ...pageInfo, page } };
 });
 
-export const createLabel = createAsyncThunk<
-  Label[],
-  LabelApiCreateLabelRequest
->(actions.createLabelsActionType, async ({ labelFormData }) => {
-  const label = await apiClient.createLabel({
-    labelFormData,
-  });
+export const createLabel = createAsyncThunk<Label[], LabelApiCreateLabelRequest>(
+  actions.createLabelsActionType,
+  async ({ labelFormData }) =>
+    apiClient.createLabel({
+      labelFormData,
+    })
+);
 
-  return label;
-});
+export const updateLabel = createAsyncThunk<Label, LabelApiUpdateLabelRequest>(
+  actions.updateLabelActionType,
+  async ({ labelId, labelFormData }) =>
+    apiClient.updateLabel({
+      labelId,
+      labelFormData,
+    })
+);
 
-export const updateLabel = createAsyncThunk<
-  Label,
-  LabelApiUpdateLabelRequest
->(actions.updateLabelActionType, async ({ labelId, labelFormData }) => {
-  const label = await apiClient.updateLabel({
-    labelId,
-    labelFormData,
-  });
-
-  return label;
-});
-
-export const deleteLabel = createAsyncThunk<
-  number,
-  LabelApiDeleteLabelRequest
->(actions.deleteLabelActionType, async ({ labelId }) => {
-  await apiClient.deleteLabel({ labelId });
-  return labelId;
-});
+export const deleteLabel = createAsyncThunk<number, LabelApiDeleteLabelRequest>(
+  actions.deleteLabelActionType,
+  async ({ labelId }) => {
+    await apiClient.deleteLabel({ labelId });
+    return labelId;
+  }
+);

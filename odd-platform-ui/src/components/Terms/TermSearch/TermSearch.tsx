@@ -6,9 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { AppButton, PageWithLeftSidebar } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import { Grid } from '@mui/material';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import { useAppParams } from 'lib/hooks';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getTermSearchCreateStatuses,
   getTermSearchFacetsParams,
@@ -16,11 +14,8 @@ import {
   getTermSearchId,
   getTermSearchQuery,
 } from 'redux/selectors';
-import {
-  createTermSearch,
-  getTermsSearch,
-  updateTermSearch,
-} from 'redux/thunks';
+import { createTermSearch, getTermsSearch, updateTermSearch } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TermSearchFilters from './TermSearchFilters/TermSearchFilters';
 import TermMainSearch from './TermMainSearch/TermMainSearch';
 import TermsSearchResults from './TermSearchResults/TermSearchResults';
@@ -36,9 +31,7 @@ const TermSearch: React.FC = () => {
   const termSearchQuery = useAppSelector(getTermSearchQuery);
   const termSearchFacetParams = useAppSelector(getTermSearchFacetsParams);
   const termSearchFacetsSynced = useAppSelector(getTermSearchFacetsSynced);
-  const { isLoading: isTermSearchCreating } = useAppSelector(
-    getTermSearchCreateStatuses
-  );
+  const { isLoading: isTermSearchCreating } = useAppSelector(getTermSearchCreateStatuses);
 
   React.useEffect(() => {
     if (!routerTermSearchId && !isTermSearchCreating && !termSearchId) {
@@ -94,19 +87,11 @@ const TermSearch: React.FC = () => {
           <TermSearchFilters />
         </PageWithLeftSidebar.LeftSidebarContainer>
         <PageWithLeftSidebar.ListContainer item xs={9}>
-          <Grid
-            container
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Grid container justifyContent='space-between' alignItems='center'>
             <TermMainSearch />
             <TermsForm
               btnCreateEl={
-                <AppButton
-                  size="large"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                >
+                <AppButton size='large' color='primary' startIcon={<AddIcon />}>
                   Add term
                 </AppButton>
               }

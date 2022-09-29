@@ -1,14 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { useAppSelector } from 'redux/lib/hooks';
-import { getQualityTestByTestId } from 'redux/selectors/dataQualityTest.selectors';
-import { Link, Redirect, Route, Switch } from 'react-router-dom';
-import TestReportDetailsOverview from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverview';
-import TestReportDetailsHistory from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistory';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import { AppTabs, AppTabItem, AppButton, AppTooltip } from 'components/shared';
+import { getQualityTestByTestId } from 'redux/selectors';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
+import TestReportDetailsOverview from './TestReportDetailsOverview/TestReportDetailsOverview';
+import TestReportDetailsHistory from './TestReportDetailsHistory/TestReportDetailsHistory';
 
 interface TestRunDetailsProps {
   dataQATestId: number;
@@ -28,9 +26,8 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
     testReportDetailsHistoryPath,
   } = useAppPaths();
 
-  const qualityTest = useAppSelector(state =>
-    getQualityTestByTestId(state, dataQATestId)
-  );
+  const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
+
   React.useEffect(() => {
     setTabs([
       {
@@ -58,29 +55,29 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
 
   return (
     <Grid container sx={{ p: 2 }}>
-      <Grid
-        container
-        alignItems="center"
-        justifyContent="space-between"
-        wrap="nowrap"
-      >
-        <AppTooltip
-          title={() =>
-            qualityTest?.internalName || qualityTest?.externalName
-          }
+      <Grid container alignItems='center' wrap='nowrap'>
+        <Grid container>
+          <AppTooltip
+            title={() => qualityTest?.internalName || qualityTest?.externalName}
+          >
+            <Typography noWrap variant='h2'>
+              {qualityTest?.internalName || qualityTest?.externalName}
+            </Typography>
+          </AppTooltip>
+        </Grid>
+        <AppButton
+          to={dataEntityDetailsPath(dataQATestId)}
+          size='small'
+          color='tertiary'
+          sx={{ ml: 2, width: 'auto' }}
         >
-          <Typography noWrap variant="h2">
-            {qualityTest?.internalName || qualityTest?.externalName}
-          </Typography>
-        </AppTooltip>
-        <AppButton size="small" color="tertiary" sx={{ ml: 2 }}>
-          <Link to={dataEntityDetailsPath(dataQATestId)}>Go to page</Link>
+          Go to page
         </AppButton>
       </Grid>
-      <Grid container wrap="wrap" justifyContent="center" sx={{ mt: 2 }}>
+      <Grid container justifyContent='center' sx={{ mt: 2 }}>
         {tabs.length && selectedTab >= 0 ? (
           <AppTabs
-            type="secondary"
+            type='secondary'
             items={tabs}
             selectedTab={selectedTab}
             handleTabChange={() => {}}
@@ -104,12 +101,12 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
             component={TestReportDetailsHistory}
           />
           <Redirect
-            from="/dataentities/:dataEntityId/test-reports/:dataQATestId?"
-            to="/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview"
+            from='/dataentities/:dataEntityId/test-reports/:dataQATestId?'
+            to='/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
           />
           <Redirect
-            from="/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?"
-            to="/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview"
+            from='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?'
+            to='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
           />
         </Switch>
       </Grid>

@@ -12,6 +12,7 @@ const SELECTORS = {
 };
 export default class Dropdown extends CustomElement {
   private readonly dropdown: Locator;
+
   private readonly dropdown_item: string;
 
   constructor(
@@ -36,7 +37,9 @@ export default class Dropdown extends CustomElement {
 
   /**
    * Filters the dropdown menu items by text or ordering index
+   *
    * @param identifier
+   * @param exact
    * @returns
    */
   private async get_menu_item_by_index_or_text(identifier: number | string, exact: boolean) {
@@ -69,9 +72,12 @@ export default class Dropdown extends CustomElement {
 
   /**
    * Choose the particular value from the dropdown
+   *
    * @param menu_item
    * @param identifier
+   * @param identifier.open
    * @param open
+   * @param identifier.exact
    */
   async set(
     identifier: string | number | number[] | string[],
@@ -88,6 +94,7 @@ export default class Dropdown extends CustomElement {
 
   /**
    * Types the value in the Dropdown's input field
+   *
    * @param value
    */
   async type(value: string) {

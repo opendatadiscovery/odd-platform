@@ -114,10 +114,8 @@ const DatasetStructure: React.FC = () => {
     <Box sx={{ mt: 2 }}>
       {isDatasetStructureFetching || isDatasetStructureLatestFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <DatasetStructureSkeleton
-              width={randomSkeletonPercentWidth()}
-            />
+          renderContent={({ randWidth }) => (
+            <DatasetStructureSkeleton width={randWidth()} />
           )}
         />
       ) : (

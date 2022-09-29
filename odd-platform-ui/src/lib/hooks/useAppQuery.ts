@@ -1,6 +1,6 @@
 import { parse, stringify, StringifyOptions } from 'query-string';
 
-export const useAppQuery = <QueryParams extends object>(
+const useAppQuery = <QueryParams extends object>(
   queryParams?: QueryParams,
   queryString?: string
 ): { query: string; params: QueryParams } => {
@@ -9,9 +9,7 @@ export const useAppQuery = <QueryParams extends object>(
     arrayFormatSeparator: '|',
   };
 
-  const query = queryParams
-    ? stringify(queryParams, queryStringOptions)
-    : '';
+  const query = queryParams ? stringify(queryParams, queryStringOptions) : '';
   const params = queryString
     ? (parse(queryString, {
         ...queryStringOptions,
@@ -21,3 +19,5 @@ export const useAppQuery = <QueryParams extends object>(
 
   return { query, params };
 };
+
+export default useAppQuery;

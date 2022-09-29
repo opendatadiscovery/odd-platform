@@ -16,6 +16,9 @@ const OverviewStats: React.FC = () => {
     getDataEntityDetails(dataEntityId)
   );
 
+  const dataEntityName =
+    dataEntityDetails?.externalName || dataEntityDetails?.internalName;
+
   return (
     <>
       {dataEntityDetails.entityClasses?.map(entityClass => {
@@ -31,10 +34,7 @@ const OverviewStats: React.FC = () => {
             return (
               <OverviewTransformerStats
                 key={entityClass.id}
-                dataEntityName={
-                  dataEntityDetails?.externalName ||
-                  dataEntityDetails?.internalName
-                }
+                dataEntityName={dataEntityName}
                 sources={dataEntityDetails.sourceList}
                 targets={dataEntityDetails.targetList}
                 unknownSourcesCount={dataEntityDetails.unknownSourcesCount}
@@ -45,10 +45,7 @@ const OverviewStats: React.FC = () => {
             return (
               <OverviewDataConsumerStats
                 key={entityClass.id}
-                dataEntityName={
-                  dataEntityDetails?.externalName ||
-                  dataEntityDetails?.internalName
-                }
+                dataEntityName={dataEntityName}
                 inputs={dataEntityDetails.inputList}
                 unknownInputsCount={dataEntityDetails.unknownInputsCount}
               />
@@ -57,6 +54,7 @@ const OverviewStats: React.FC = () => {
             return (
               <OverviewQualityTestStats
                 key={entityClass.id}
+                dataEntityName={dataEntityName}
                 suiteName={dataEntityDetails.suiteName}
                 suiteUrl={dataEntityDetails.suiteUrl}
                 datasetsList={dataEntityDetails.datasetsList}
@@ -67,10 +65,7 @@ const OverviewStats: React.FC = () => {
             return (
               <OverviewDataInputStats
                 key={entityClass.id}
-                dataEntityName={
-                  dataEntityDetails?.externalName ||
-                  dataEntityDetails?.internalName
-                }
+                dataEntityName={dataEntityName}
                 outputs={dataEntityDetails.outputList}
                 unknownOutputsCount={dataEntityDetails.unknownOutputsCount}
               />
@@ -79,10 +74,7 @@ const OverviewStats: React.FC = () => {
             return (
               <OverviewEntityGroupStats
                 key={entityClass.id}
-                dataEntityGroupName={
-                  dataEntityDetails.internalName ||
-                  dataEntityDetails.externalName
-                }
+                dataEntityGroupName={dataEntityName}
                 entities={dataEntityDetails.entities}
                 entityGroups={dataEntityDetails.dataEntityGroups}
               />
