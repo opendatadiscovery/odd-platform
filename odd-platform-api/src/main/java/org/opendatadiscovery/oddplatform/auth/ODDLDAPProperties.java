@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.auth;
 
 import java.util.Set;
+import javax.annotation.PostConstruct;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("auth.ldap")
@@ -32,5 +34,16 @@ public class ODDLDAPProperties {
     public static class ActiveDirectory {
         private boolean enabled;
         private String domain;
+    }
+
+    @PostConstruct
+    public void validate() {
+        if (StringUtils.isEmpty(url)) {
+            throw new IllegalStateException("LDAP server url is not defined");
+        }
+        if (StringUtils.isEmpty(dnPattern)
+            && (userFilter == null || StringUtils.isEmpty(userFilter.getFilter()))) {
+            throw new IllegalStateException("Both DN pattern and user filter are not defined");
+        }
     }
 }

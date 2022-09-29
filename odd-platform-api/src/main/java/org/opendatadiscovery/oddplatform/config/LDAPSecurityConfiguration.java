@@ -59,8 +59,8 @@ public class LDAPSecurityConfiguration {
         final BindAuthenticator ba = new BindAuthenticator(contextSource);
         if (StringUtils.isNotEmpty(properties.getDnPattern())) {
             ba.setUserDnPatterns(new String[] {properties.getDnPattern()});
-        }
-        if (properties.getUserFilter() != null && StringUtils.isNotEmpty(properties.getUserFilter().getFilter())) {
+        } else if (properties.getUserFilter() != null &&
+            StringUtils.isNotEmpty(properties.getUserFilter().getFilter())) {
             final LdapUserSearch userSearch =
                 new FilterBasedLdapUserSearch(properties.getUserFilter().getSearchBase(),
                     properties.getUserFilter().getFilter(), contextSource);
@@ -115,7 +115,6 @@ public class LDAPSecurityConfiguration {
         ctx.setUrl(properties.getUrl());
         ctx.setUserDn(properties.getUsername());
         ctx.setPassword(properties.getPassword());
-        ctx.afterPropertiesSet();
         return ctx;
     }
 

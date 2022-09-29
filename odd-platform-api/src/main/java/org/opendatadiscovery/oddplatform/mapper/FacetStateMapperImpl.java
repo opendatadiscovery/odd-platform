@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.FacetState;
@@ -60,7 +61,7 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     public SearchFacetsPojo mapStateToPojo(final UUID searchId, final FacetStateDto state) {
         return new SearchFacetsPojo()
             .setId(searchId)
-            .setQueryString(state.getQuery())
+            .setQueryString(StringUtils.isNotEmpty(state.getQuery()) ? state.getQuery().trim() : state.getQuery())
             .setFilters(JSONB.jsonb(JSONSerDeUtils.serializeJson(state)));
     }
 
