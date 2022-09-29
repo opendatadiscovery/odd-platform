@@ -22,6 +22,10 @@ jar {
     from buildUI into 'static'
 }
 
+clean.doFirst {
+    delete "${project.projectDir}/src/generated-sources"
+}
+
 sonarqube {
     properties {
         property "sonar.projectKey", "odd-platform_frontend"
