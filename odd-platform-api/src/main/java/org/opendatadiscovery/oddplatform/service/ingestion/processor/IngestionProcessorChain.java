@@ -21,7 +21,7 @@ public class IngestionProcessorChain {
         this.ingestionRequestProcessors = ingestionRequestProcessors.stream()
             .collect(Collectors.groupingBy(
                 IngestionRequestProcessor::getPhase,
-                () -> new TreeMap<>(Comparator.comparingInt(Enum::ordinal)),
+                () -> new TreeMap<>(Comparator.comparingInt(IngestionProcessingPhase::getOrder)),
                 Collectors.toList()
             ));
     }

@@ -58,7 +58,6 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     @ReactiveTransactional
-    // TODO: demo data doesn't work --> reproduce and fix
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
             .switchIfEmpty(Mono.error(() -> new NotFoundException(
