@@ -3,6 +3,8 @@ package org.opendatadiscovery.oddplatform.api.ingestion.utils;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +31,7 @@ public class IngestionModelGenerator {
             .oddrn(uuid)
             .metadata(List.of(EASY_RANDOM.nextObject(MetadataExtension.class).metadata(generateMetadataMap())))
             .type(ingestionEntityType)
-            .createdAt(OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC));
+            .createdAt(OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS));
     }
 
     public static Map<String, Object> generateMetadataMap() {
