@@ -114,7 +114,7 @@ AUTH_LOGIN-FORM-CREDENTIALS=susan:susan_password,dave:dave_password
 **`auth.type`** variable must be set to **OAUTH2**
 {% endhint %}
 
-ODD Platform **** supports different OIDC/OAuth2 providers. Currently there are:&#x20;
+ODD Platform supports different OIDC/OAuth2 providers. Currently there are:&#x20;
 
 * [AWS Cognito](odd-platform.md#aws-cognito)
 * [Github](odd-platform.md#github)
@@ -135,7 +135,7 @@ There are some common parameters which are used across all providers:
 * `auth.oauth2.client.{client-id}.scope`. Authorization scopes which are allowed for application
 
 {% hint style="warning" %}
-For all OIDC providers **openid** scope **** must be included!
+For all OIDC providers **openid** scope must be included!
 {% endhint %}
 
 * `auth.oauth2.client.{client-id}.issuer-uri`.  URI that can either be an OpenID Connect discovery endpoint or an OAuth 2.0 Authorization Server Metadata endpoint defined by RFC 8414.&#x20;
