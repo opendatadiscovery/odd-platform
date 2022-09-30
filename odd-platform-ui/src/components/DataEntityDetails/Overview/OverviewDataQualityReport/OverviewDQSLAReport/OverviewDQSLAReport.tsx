@@ -8,7 +8,8 @@ import { AppTooltip, CopyButton } from 'components/shared';
 import { InformationIcon } from 'components/shared/Icons';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { useAppSelector } from 'redux/lib/hooks';
-import OverviewDataQualityReportSkeleton from '../OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
+import { SLAColour } from 'generated-sources';
+import OverviewDQSLAReportSkeleton from './OverviewDQSLAReportSkeleton/OverviewDQSLAReportSkeleton';
 import * as S from './OverviewDQSLAReportStyles';
 
 interface OverviewDQSLAReportProps {
@@ -51,68 +52,86 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
       );
   }, [dqSLAReport.severityWeights]);
 
-  const getSLAHint = React.useCallback(
-    () => (
+  const getSLAHint = () => {
+    const orderedLiElement = (text: string, color: SLAColour) => {
+      if (color === 'GREEN') {
+        return (
+          <li>
+            {text}
+            <div>
+              <S.SLARect $color={color} /> {color}
+            </div>
+          </li>
+        );
+      }
+
+      return (
+        <li>
+          {text}
+          <S.SLARect $color={color} /> {color}
+        </li>
+      );
+    };
+
+    return (
       <>
-        <Typography variant='h4' color='texts.primary'>
-          SLA represents data quality tests weight relations for dataset.
-        </Typography>
-        <br />
-        <Typography variant='body1'>There are 3 types of tests:</Typography>
+        <S.HintHeader variant='h4'>
+          SLA represents data quality tests weight relations for dataset
+        </S.HintHeader>
+        <S.HintText variant='body1' mt={1}>
+          There are 3 types of tests:
+        </S.HintText>
         <S.HintUList>
           <li>MINOR</li>
           <li>MAJOR</li>
           <li>CRITICAL</li>
         </S.HintUList>
-        <br />
-        <Typography variant='body1'>
-          One minor test has weight of 1. <br />
-          One major test has weight of all minor tests. <br />
+        <S.HintText variant='body1'>
+          One minor test has weight of 1. One major test has weight of all minor tests.
           One critical test has weight of all major tests.
-        </Typography>
-        <br />
-        <Typography variant='h4' color='texts.primary'>
+        </S.HintText>
+        <S.HintHeader variant='h4' mt={2}>
           SLA colour.
-        </Typography>
-        <br />
-        <Typography variant='body1'>There are 3 SLA colours:</Typography>
+        </S.HintHeader>
+        <S.HintText variant='body1' mt={1}>
+          There are 3 SLA colours:
+        </S.HintText>
         <S.HintUList>
-          <li>GREEN</li>
-          <li>YELLOW</li>
-          <li>RED</li>
+          <li>Green</li>
+          <li>Yellow</li>
+          <li>Red</li>
         </S.HintUList>
-        <br />
-        <Typography variant='body1'>
-          SLA colour is calculated by determined set of rules:
-        </Typography>
-        <br />
-        <S.HintOList>
-          <li>If at least one critical test is failed {'->'} RED</li>
-          <li>If all major tests are failed {'->'} RED</li>
-          <li>
-            If all major tests except one are failed and all minor test are failed {'->'}{' '}
-            RED
-          </li>
-          <li>If dataset doesn&apos;t have tests {'->'} YELLOW</li>
-          <li>
-            If at least one major test failed and all critical are passed {'->'} YELLOW
-          </li>
-          <li>
-            If all minor tests are failed, majors and critical are passed {'->'} YELLOW
-          </li>
-          <li>If all tests are passed or some of minors are failed {'->'} GREEN</li>
+        <S.HintOList $isOList>
+          {orderedLiElement('If at least one critical test is failed > ', SLAColour.RED)}
+          {orderedLiElement('If all major tests are failed > ', SLAColour.RED)}
+          {orderedLiElement(
+            'If all major tests except one are failed and all minor test are failed > ',
+            SLAColour.RED
+          )}
+          {orderedLiElement(`If dataset doesn't have tests > `, SLAColour.YELLOW)}
+          {orderedLiElement(
+            `If at least one major test failed and all critical are passed > `,
+            SLAColour.YELLOW
+          )}
+          {orderedLiElement(
+            `If all minor tests are failed, majors and critical are passed > `,
+            SLAColour.YELLOW
+          )}
+          {orderedLiElement(
+            `If all tests are passed or some of minors are failed >             `,
+            SLAColour.GREEN
+          )}
         </S.HintOList>
       </>
-    ),
-    []
-  );
+    );
+  };
 
   return (
     <S.Container>
       {isSLAReportFetching ? (
-        <OverviewDataQualityReportSkeleton />
+        <OverviewDQSLAReportSkeleton />
       ) : (
-        <Grid container direction='column'>
+        <Grid container direction='column' sx={{ py: 0.5 }}>
           <Grid
             item
             container
@@ -127,14 +146,8 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
               <AppTooltip
                 title={getSLAHint}
                 checkForOverflow={false}
-                componentsProps={{
-                  tooltip: {
-                    sx: {
-                      minWidth: '510px !important',
-                      padding: '16px !important',
-                    },
-                  },
-                }}
+                placement='bottom-end'
+                componentsProps={{ tooltip: { sx: S.TooltipStyles } }}
               >
                 <InformationIcon width={14} height={14} />
               </AppTooltip>

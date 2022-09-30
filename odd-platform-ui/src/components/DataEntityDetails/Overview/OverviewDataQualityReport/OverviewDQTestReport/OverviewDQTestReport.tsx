@@ -10,7 +10,7 @@ import { AppButton, NumberFormatted } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import omit from 'lodash/omit';
 import { useAppSelector } from 'redux/lib/hooks';
-import OverviewDataQualityReportSkeleton from '../OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
+import OverviewDQReportSkeleton from './OverviewDQReportSkeleton/OverviewDQReportSkeleton';
 import * as S from './OverviewDQTestReportStyles';
 
 interface OverviewDQTestReportProps {
@@ -64,7 +64,7 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
   return (
     <S.Container>
       {isDatasetTestReportFetching ? (
-        <OverviewDataQualityReportSkeleton />
+        <OverviewDQReportSkeleton />
       ) : (
         <Grid container direction='column'>
           <Grid item container wrap='nowrap' justifyContent='space-between'>
