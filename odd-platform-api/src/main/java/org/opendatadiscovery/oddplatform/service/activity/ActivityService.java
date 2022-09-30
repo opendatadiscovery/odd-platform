@@ -17,8 +17,14 @@ import reactor.core.publisher.Mono;
 public interface ActivityService {
     Mono<Void> createActivityEvent(final ActivityCreateEvent activityCreateEvent);
 
+    Mono<Void> createActivityEvents(final List<ActivityCreateEvent> activityCreateEvents);
+
     Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters,
                                              final ActivityEventTypeDto eventType);
+
+    Mono<Map<Long, String>> getUpdatedInfo(final Map<String, Object> parameters,
+                                           final List<Long> dataEntityIds,
+                                           final ActivityEventTypeDto eventType);
 
     Mono<String> getUpdatedInfo(final Map<String, Object> parameters,
                                 final Long dataEntityId,

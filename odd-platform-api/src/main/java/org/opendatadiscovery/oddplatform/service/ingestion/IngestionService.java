@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.service;
+package org.opendatadiscovery.oddplatform.service.ingestion;
 
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import reactor.core.publisher.Mono;

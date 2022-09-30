@@ -8,15 +8,19 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveGroupEntityRelationRepository {
+    Flux<GroupEntityRelationsPojo> getManuallyCreatedRelations(final String entityOddrn);
+
+    Mono<Void> createRelations(final List<GroupEntityRelationsPojo> pojos);
+
+    Flux<GroupEntityRelationsPojo> createRelationsReturning(final String groupOddrn, final List<String> entityOddrns);
+
+    Mono<Void> deleteRelations(final List<GroupEntityRelationsPojo> pojos);
+
     Flux<GroupEntityRelationsPojo> deleteRelationsForDEG(final String groupOddrn);
 
     Flux<GroupEntityRelationsPojo> deleteRelationsExcept(final String groupOddrn, final List<String> oddrnsToKeep);
 
-    Flux<GroupEntityRelationsPojo> deleteRelations(final String groupOddrn, final String entityOddrn);
-
-    Flux<GroupEntityRelationsPojo> createRelations(final String groupOddrn, final List<String> entityOddrns);
-
-    Flux<GroupEntityRelationsPojo> getManuallyCreatedRelations(final String entityOddrn);
+    Flux<GroupEntityRelationsPojo> deleteRelationsReturning(final String groupOddrn, final String entityOddrn);
 
     Mono<Map<String, List<String>>> fetchGroupRelations(final Collection<String> childOddrns);
 

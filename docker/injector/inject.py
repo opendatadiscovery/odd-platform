@@ -7,6 +7,7 @@ from typing import Union, Dict, Any, Tuple, List
 
 REACH_TRIES_NUMBER = 20
 APP_PATH = os.getenv("APP_PATH") or "."
+DATA_SOURCES_ONLY = os.getenv("DATA_SOURCES_ONLY") or False
 
 platform_host_url = os.environ["PLATFORM_HOST_URL"]
 print(f"Platform host url: {platform_host_url}")
@@ -86,5 +87,8 @@ for oddrn, ds in ingestion_samples_grouped.items():
         continue
 
     ds_token = create_data_source_and_retrieve_token(ds_form)
-    inject_data(ds, ds_token)
-    print(f"{oddrn}: Data source has been injected with JSON sample")
+    print(f"{oddrn}: Data source has been created")
+
+    if not DATA_SOURCES_ONLY:
+        inject_data(ds, ds_token)
+        print(f"{oddrn}: Data source has been injected with JSON sample")

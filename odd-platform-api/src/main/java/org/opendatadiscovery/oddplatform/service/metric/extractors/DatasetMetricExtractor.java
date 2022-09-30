@@ -8,7 +8,7 @@ import io.opentelemetry.sdk.metrics.data.PointData;
 import java.util.stream.Stream;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import static org.opendatadiscovery.oddplatform.service.metric.extractors.Extrac
 @Component
 public class DatasetMetricExtractor implements MetricExtractor {
     @Override
-    public Stream<MetricData> extract(final IngestionDataStructure dataStructure) {
+    public Stream<MetricData> extract(final IngestionRequest dataStructure) {
         final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream = dataStructure.getAllEntities()
             .stream()
             .filter(de -> de.getEntityClasses().contains(DataEntityClassDto.DATA_SET))

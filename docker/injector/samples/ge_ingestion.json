@@ -4572,7 +4572,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_qualification",
         "dataset_list": [
-          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -4740,7 +4740,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_verification",
         "dataset_list": [
-          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -4875,7 +4875,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_qualification",
         "dataset_list": [
-          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -5010,7 +5010,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_verification",
         "dataset_list": [
-          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -5134,7 +5134,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_validation",
         "dataset_list": [
-          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"

@@ -11,7 +11,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
-import org.opendatadiscovery.oddplatform.service.IngestionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.IngestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -34,10 +34,8 @@ public class IngestionController implements IngestionApi {
         final ServerWebExchange exchange
     ) {
         return dataEntityList
-            .publishOn(Schedulers.boundedElastic())
-            .doOnError(t -> log.error(t.getMessage()))
             .flatMap(ingestionService::ingest)
-            .map(voidMono -> ResponseEntity.ok().build());
+            .thenReturn(ResponseEntity.ok().build());
     }
 
     @Override

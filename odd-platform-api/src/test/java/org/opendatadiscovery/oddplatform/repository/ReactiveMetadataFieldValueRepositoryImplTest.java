@@ -39,7 +39,7 @@ public class ReactiveMetadataFieldValueRepositoryImplTest extends BaseIntegratio
         final MetadataFieldValuePojo secondMetadataFieldValue =
             createMetadataFieldValue(secondFieldPojo.getId(), dataEntityPojo.getId());
         final Mono<List<MetadataFieldValuePojo>> fieldValuePojos = metadataFieldValueRepository
-            .bulkCreate(List.of(firstMetadataFieldValue, secondMetadataFieldValue))
+            .bulkCreateReturning(List.of(firstMetadataFieldValue, secondMetadataFieldValue))
             .collectList();
         StepVerifier.create(fieldValuePojos)
             .assertNext(pojos -> assertThat(pojos)
@@ -56,7 +56,7 @@ public class ReactiveMetadataFieldValueRepositoryImplTest extends BaseIntegratio
         final MetadataFieldValuePojo metadataFieldValue =
             createMetadataFieldValue(fieldPojo.getId(), dataEntityPojo.getId());
         final MetadataFieldValuePojo valuePojo = metadataFieldValueRepository
-            .bulkCreate(List.of(metadataFieldValue))
+            .bulkCreateReturning(List.of(metadataFieldValue))
             .blockLast();
         assertThat(valuePojo).isEqualTo(metadataFieldValue);
         valuePojo.setValue(UUID.randomUUID().toString());
@@ -76,10 +76,10 @@ public class ReactiveMetadataFieldValueRepositoryImplTest extends BaseIntegratio
             .block();
         final MetadataFieldValuePojo metadataFieldValue =
             createMetadataFieldValue(fieldPojo.getId(), dataEntityPojo.getId());
-        metadataFieldValueRepository.bulkCreate(List.of(metadataFieldValue)).blockLast();
+        metadataFieldValueRepository.bulkCreateReturning(List.of(metadataFieldValue)).blockLast();
         metadataFieldValueRepository.delete(dataEntityPojo.getId(), fieldPojo.getId()).block();
-        final Mono<List<MetadataFieldValuePojo>> pojos =
-            metadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityPojo.getId()), MetadataOrigin.INTERNAL);
+        final Mono<List<MetadataFieldValuePojo>> pojos = metadataFieldValueRepository
+                .listByDataEntityIds(List.of(dataEntityPojo.getId()), MetadataOrigin.INTERNAL).collectList();
         StepVerifier.create(pojos)
             .assertNext(list -> assertThat(list.isEmpty()).isTrue())
             .verifyComplete();

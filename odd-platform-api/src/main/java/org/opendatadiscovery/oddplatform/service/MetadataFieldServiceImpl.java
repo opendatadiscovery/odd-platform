@@ -42,6 +42,7 @@ public class MetadataFieldServiceImpl implements MetadataFieldService {
         final Map<MetadataKey, MetadataFieldPojo> metadataMap = metadataList.stream()
             .collect(Collectors.toMap(MetadataKey::new, identity()));
         return reactiveMetadataFieldRepository.listByKey(metadataMap.keySet())
+            .collectList()
             .map(existing -> existing.stream().collect(Collectors.toMap(MetadataKey::new, identity())))
             .flatMap(existing -> {
                 final List<MetadataFieldPojo> metadataFieldsToCreate = metadataMap.keySet().stream()

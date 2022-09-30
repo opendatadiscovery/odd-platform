@@ -73,13 +73,15 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
         final var second = createMetadataField(MetadataTypeEnum.FLOAT, MetadataOrigin.INTERNAL);
         final var third = createMetadataField(MetadataTypeEnum.DATETIME, MetadataOrigin.EXTERNAL);
         metadataFieldRepository.bulkCreate(List.of(first, second, third)).blockLast();
-        final Mono<List<MetadataFieldPojo>> emptyPojos = metadataFieldRepository.listByKey(List.of());
+        final Mono<List<MetadataFieldPojo>> emptyPojos = metadataFieldRepository.listByKey(List.of()).collectList();
         StepVerifier.create(emptyPojos)
             .assertNext(list -> assertThat(list.isEmpty()).isTrue())
             .verifyComplete();
 
-        final Mono<List<MetadataFieldPojo>> wrongTypePojo =
-            metadataFieldRepository.listByKey(List.of(new MetadataKey(first.getName(), MetadataTypeEnum.INTEGER)));
+        final Mono<List<MetadataFieldPojo>> wrongTypePojo = metadataFieldRepository
+            .listByKey(List.of(new MetadataKey(first.getName(), MetadataTypeEnum.INTEGER)))
+            .collectList();
+
         StepVerifier.create(wrongTypePojo)
             .assertNext(list -> assertThat(list.isEmpty()).isTrue())
             .verifyComplete();
@@ -87,7 +89,8 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
         final Mono<List<MetadataFieldPojo>> metadataFieldPojos = metadataFieldRepository.listByKey(List.of(
             new MetadataKey(first.getName(), first.getType()),
             new MetadataKey(second.getName(), second.getType())
-        ));
+        )).collectList();
+
         StepVerifier.create(metadataFieldPojos)
             .assertNext(list -> assertThat(list)
                 .hasSize(2)
@@ -106,7 +109,8 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
             new MetadataKey(first.getName(), first.getType()),
             new MetadataKey(second.getName(), second.getType()),
             new MetadataKey(third.getName(), third.getType())
-        ));
+        )).collectList();
+
         StepVerifier.create(excludingDeletedMetadata)
             .assertNext(list -> assertThat(list)
                 .hasSize(2)

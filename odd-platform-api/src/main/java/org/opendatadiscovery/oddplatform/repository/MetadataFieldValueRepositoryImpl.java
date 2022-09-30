@@ -65,15 +65,6 @@ public class MetadataFieldValueRepositoryImpl
             .collect(Collectors.toList());
     }
 
-    @Override
-    public List<MetadataFieldValuePojo> listByDataEntityIds(final List<Long> dataEntityIds) {
-        return dslContext.selectFrom(METADATA_FIELD_VALUE)
-            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.in(dataEntityIds))
-            .fetchStream()
-            .map(this::recordToPojo)
-            .collect(Collectors.toList());
-    }
-
     private MetadataDto metadataDto(final Record r) {
         return new MetadataDto(
             r.into(METADATA_FIELD).into(MetadataFieldPojo.class),

@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.service.metric;
 
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import reactor.core.publisher.Mono;
 
 public interface MetricService {
-    Mono<IngestionDataStructure> exportMetrics(final IngestionDataStructure dataStructure);
+    Mono<IngestionRequest> exportMetrics(final IngestionRequest dataStructure);
 }

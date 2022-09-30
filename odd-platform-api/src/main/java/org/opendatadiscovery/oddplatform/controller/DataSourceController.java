@@ -28,11 +28,6 @@ public class DataSourceController implements DataSourceApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<DataSource>>> getActiveDataSourceList(final ServerWebExchange exchange) {
-        return Mono.just(ResponseEntity.ok(dataSourceService.listActive()));
-    }
-
-    @Override
     public Mono<ResponseEntity<DataSource>> registerDataSource(final Mono<DataSourceFormData> dataSourceFormData,
                                                                final ServerWebExchange exchange) {
         return dataSourceFormData

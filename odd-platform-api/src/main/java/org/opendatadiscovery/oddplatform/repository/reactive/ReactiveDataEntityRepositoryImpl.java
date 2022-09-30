@@ -1,8 +1,12 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -14,7 +18,9 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -29,11 +35,21 @@ public class ReactiveDataEntityRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<DataEntityRecord, DataEntityPojo>
     implements ReactiveDataEntityRepository {
 
+    private final JooqRecordHelper jooqRecordHelper;
+
     public ReactiveDataEntityRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                            final JooqQueryHelper jooqQueryHelper) {
+                                            final JooqQueryHelper jooqQueryHelper,
+                                            final JooqRecordHelper jooqRecordHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY, DataEntityPojo.class,
             DATA_ENTITY.EXTERNAL_NAME, DATA_ENTITY.ID, DATA_ENTITY.CREATED_AT, DATA_ENTITY.UPDATED_AT,
             DATA_ENTITY.IS_DELETED, DATA_ENTITY.DELETED_AT);
+
+        this.jooqRecordHelper = jooqRecordHelper;
+    }
+
+    @Override
+    public Flux<DataEntityPojo> get(final List<Long> ids) {
+        return jooqReactiveOperations.flux(DSL.selectFrom(DATA_ENTITY).where(idCondition(ids))).map(this::recordToPojo);
     }
 
     @Override
@@ -58,6 +74,19 @@ public class ReactiveDataEntityRepositoryImpl
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId))));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1).defaultIfEmpty(false);
+    }
+
+    @Override
+    public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns) {
+        if (CollectionUtils.isEmpty(oddrns)) {
+            return Flux.just();
+        }
+
+        final SelectConditionStep<DataEntityRecord> query = DSL
+            .selectFrom(DATA_ENTITY)
+            .where(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(DataEntityPojo.class));
     }
 
     @Override
@@ -87,6 +116,11 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<Void> createHollow(final Collection<String> hollowOddrns) {
+        return insertMany(hollowOddrns.stream().map(this::buildHollowRecord).toList(), false);
+    }
+
+    @Override
     public Mono<DataEntityPojo> setInternalName(final long dataEntityId, final String name) {
         final String newBusinessName = StringUtils.isEmpty(name) ? null : name;
         final var query = DSL.update(DATA_ENTITY)
@@ -108,6 +142,21 @@ public class ReactiveDataEntityRepositoryImpl
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityPojo.class));
+    }
+
+    @Override
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> dataEntityNonUpdatableFields = List.of(
+            DATA_ENTITY.INTERNAL_NAME,
+            DATA_ENTITY.INTERNAL_DESCRIPTION,
+            DATA_ENTITY.VIEW_COUNT
+        );
+
+        return ListUtils.union(dataEntityNonUpdatableFields, super.getNonUpdatableFields());
+    }
+
+    private DataEntityRecord buildHollowRecord(final String oddrn) {
+        return new DataEntityRecord().setOddrn(oddrn).setHollow(true).setExcludeFromSearch(true);
     }
 
     @Override

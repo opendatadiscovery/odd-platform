@@ -299,7 +299,7 @@ public class DataEntityServiceImpl
                 return Tuples.of(fieldsMap, metadataFieldValuePojos);
             })
             .flatMap(function((fieldsMap, metadataFieldValuePojos) -> reactiveMetadataFieldValueRepository
-                .bulkCreate(metadataFieldValuePojos)
+                .bulkCreateReturning(metadataFieldValuePojos)
                 .map(mfv -> {
                     final MetadataFieldPojo metadataFieldPojo = fieldsMap.get(mfv.getMetadataFieldId());
                     return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
@@ -336,7 +336,8 @@ public class DataEntityServiceImpl
     public Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId) {
         return reactiveMetadataFieldValueRepository.delete(dataEntityId, metadataFieldId)
             .then(reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId))
-            .then(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .thenMany(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .collectList()
             .flatMap(metadata -> {
                 if (CollectionUtils.isEmpty(metadata)) {
                     return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_METADATA);
@@ -433,7 +434,7 @@ public class DataEntityServiceImpl
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function(
                 (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
-                    .createRelations(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
+                    .createRelationsReturning(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
                     .ignoreElements()
                     .thenReturn(groupPojo)))
             .flatMap(
@@ -454,7 +455,7 @@ public class DataEntityServiceImpl
                     "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function((pojo, groupPojo) -> reactiveGroupEntityRelationRepository
-                .deleteRelations(groupPojo.getOddrn(), pojo.getOddrn())
+                .deleteRelationsReturning(groupPojo.getOddrn(), pojo.getOddrn())
                 .collectList()
                 .map(relations -> Tuples.of(relations, pojo.getOddrn()))
             ))
@@ -504,7 +505,7 @@ public class DataEntityServiceImpl
             .flatMap(pojo -> {
                 final List<String> entityOddrns =
                     formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
-                return reactiveGroupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
+                return reactiveGroupEntityRelationRepository.createRelationsReturning(pojo.getOddrn(), entityOddrns)
                     .ignoreElements().thenReturn(pojo);
             })
             .flatMap(this::updateSearchVectors)
@@ -525,7 +526,8 @@ public class DataEntityServiceImpl
             .flatMap(reactiveDataEntityRepository::update)
             .flatMap(degPojo -> reactiveGroupEntityRelationRepository
                 .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
-            .flatMap(degPojo -> reactiveGroupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
+                .createRelationsReturning(degPojo.getOddrn(), entityOddrns)
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
             .map(entityMapper::mapRef);

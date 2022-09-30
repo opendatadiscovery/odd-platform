@@ -71,6 +71,30 @@
       "data_input": null,
       "data_consumer": null,
       "data_entity_group": null
+    },
+    {
+      "oddrn": "//airflow/host/2.1.3.4/jobs/BookETL/runs/1664399516",
+      "name": "BookETL",
+      "version": null,
+      "description": null,
+      "owner": null,
+      "updated_at": null,
+      "created_at": null,
+      "type": "JOB_RUN",
+      "dataset": null,
+      "data_transformer_run": {
+        "transformer_oddrn": "//airflow/host/2.1.3.4/jobs/BookETL",
+        "start_time": "2021-10-10T18:26:53+00:00",
+        "end_time": "2021-10-10T18:27:08+00:00",
+        "status": "SUCCESS",
+        "status_reason": "wow such success"
+      },
+      "data_transformer": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
     }
   ]
 }

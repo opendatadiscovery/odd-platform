@@ -10,7 +10,9 @@ import org.opendatadiscovery.oddplatform.dto.metadata.MetadataTypeEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +20,9 @@ public class MetadataFieldValueRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
     private MetadataFieldValueRepository metadataFieldValueRepository;
+
+    @Autowired
+    private ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
 
     @Autowired
     private DataEntityRepository dataEntityRepository;
@@ -91,11 +96,14 @@ public class MetadataFieldValueRepositoryImplTest extends BaseIntegrationTest {
         metadataFieldValueRepository.bulkCreate(
             List.of(firstMetadataFieldValue, secondMetadataFieldValue, thirdMetadataFieldValue)
         );
-        final List<MetadataFieldValuePojo> metadataFieldValuePojos =
-            metadataFieldValueRepository.listByDataEntityIds(List.of(firstDataEntityPojo.getId()));
-        assertThat(metadataFieldValuePojos)
-            .hasSize(2)
-            .hasSameElementsAs(List.of(firstMetadataFieldValue, secondMetadataFieldValue));
+
+        reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(firstDataEntityPojo.getId()))
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(actual -> assertThat(actual)
+                .hasSize(2)
+                .hasSameElementsAs(List.of(firstMetadataFieldValue, secondMetadataFieldValue)))
+            .verifyComplete();
     }
 
     private MetadataFieldValuePojo createMetadataFieldValue(final Long metadataFieldId,

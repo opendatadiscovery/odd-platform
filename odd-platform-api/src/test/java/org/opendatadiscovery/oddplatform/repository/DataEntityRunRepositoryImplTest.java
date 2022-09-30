@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRunRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.utils.DataEntityTaskRunPojoEndTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -22,13 +22,13 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
         new DataEntityTaskRunPojoEndTimeComparator().reversed();
 
     @Autowired
-    private ReactiveDataEntityRunRepository dataEntityRunRepository;
+    private ReactiveDataEntityTaskRunRepository dataEntityRunRepository;
 
     @Autowired
     private DataEntityRepository dataEntityRepository;
 
     @Autowired
-    private DataEntityTaskRunRepository dataEntityTaskRunRepository;
+    private ReactiveDataEntityTaskRunRepository reactiveDataEntityTaskRunRepository;
 
     @Test
     public void testGetDataQualityRuns() {
@@ -49,7 +49,7 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
             createTaskRun(de.getOddrn(), IngestionTaskRunStatus.RUNNING)
         );
 
-        dataEntityTaskRunRepository.persist(taskRuns);
+        reactiveDataEntityTaskRunRepository.bulkCreate(taskRuns).block();
 
         dataEntityRunRepository.getDataEntityRuns(de.getId(), null, 1, 5)
             .as(StepVerifier::create)

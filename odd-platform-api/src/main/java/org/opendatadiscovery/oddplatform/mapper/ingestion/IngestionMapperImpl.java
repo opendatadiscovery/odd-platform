@@ -26,15 +26,18 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataConsumer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityGroup;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataInput;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTest;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
@@ -49,11 +52,19 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_QUAL
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER_RUN;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataConsumerIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityGroupDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataInputIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataQualityTestIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataSetIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataTransformerIngestionDto;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
+    private final DatasetFieldIngestionMapper datasetFieldIngestionMapper;
+
     private static final List<Pair<Predicate<DataEntity>, DataEntityClassDto>> ENTITY_CLASS_DISCRIMINATOR = List.of(
         Pair.of(de -> de.getDataset() != null, DATA_SET),
         Pair.of(de -> de.getDataTransformer() != null, DATA_TRANSFORMER),
@@ -153,62 +164,93 @@ public class IngestionMapperImpl implements IngestionMapper {
         return dtos.stream().map(this::dtoToPojo).collect(Collectors.toList());
     }
 
-    private DataEntityIngestionDto.DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
-        return new DataEntityIngestionDto.DataSetIngestionDto(
+    @Override
+    public IngestionTaskRun mapTaskRun(final DataEntity dataEntity) {
+        if (dataEntity.getDataTransformerRun() == null && dataEntity.getDataQualityTestRun() == null) {
+            throw new IllegalArgumentException("Data Entity doesn't have task run data");
+        }
+
+        return dataEntity.getDataTransformerRun() != null
+            ? mapTaskRun(dataEntity.getDataTransformerRun(), dataEntity.getName(), dataEntity.getOddrn())
+            : mapTaskRun(dataEntity.getDataQualityTestRun(), dataEntity.getName(), dataEntity.getOddrn());
+    }
+
+    private IngestionTaskRun mapTaskRun(final DataTransformerRun transformerRun,
+                                        final String name,
+                                        final String oddrn) {
+        return IngestionTaskRun.builder()
+            .taskRunName(name)
+            .oddrn(oddrn)
+            .taskOddrn(transformerRun.getTransformerOddrn())
+            .startTime(transformerRun.getStartTime())
+            .endTime(transformerRun.getEndTime())
+            .status(IngestionTaskRun.IngestionTaskRunStatus.valueOf(transformerRun.getStatus().name()))
+            .statusReason(transformerRun.getStatusReason())
+            .type(IngestionTaskRun.IngestionTaskRunType.DATA_TRANSFORMER_RUN)
+            .build();
+    }
+
+    private IngestionTaskRun mapTaskRun(final DataQualityTestRun dataQualityTestRun,
+                                        final String name,
+                                        final String oddrn) {
+        return IngestionTaskRun.builder()
+            .taskRunName(name)
+            .oddrn(oddrn)
+            .taskOddrn(dataQualityTestRun.getDataQualityTestOddrn())
+            .startTime(dataQualityTestRun.getStartTime())
+            .endTime(dataQualityTestRun.getEndTime())
+            .status(IngestionTaskRun.IngestionTaskRunStatus.valueOf(dataQualityTestRun.getStatus().name()))
+            .statusReason(dataQualityTestRun.getStatusReason())
+            .type(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN)
+            .build();
+    }
+
+    private DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
+        return new DataSetIngestionDto(
             dataEntity.getParentOddrn(),
-            dataEntity.getFieldList(),
+            datasetFieldIngestionMapper.mapFields(dataEntity.getFieldList()),
             structureHash(dataEntity.getFieldList()),
             dataEntity.getRowsNumber()
         );
     }
 
-    private DataEntityIngestionDto.DataTransformerIngestionDto createDataTransformerIngestionDto(
-        final DataTransformer dataTransformer
-    ) {
-        return new DataEntityIngestionDto.DataTransformerIngestionDto(
+    private DataTransformerIngestionDto createDataTransformerIngestionDto(final DataTransformer dataTransformer) {
+        return new DataTransformerIngestionDto(
             ListUtils.emptyIfNull(dataTransformer.getInputs()),
             ListUtils.emptyIfNull(dataTransformer.getOutputs())
         );
     }
 
-    private DataEntityIngestionDto.DataConsumerIngestionDto createDataConsumerIngestionDto(
-        final DataConsumer dataConsumer
-    ) {
-        return new DataEntityIngestionDto.DataConsumerIngestionDto(
-            ListUtils.emptyIfNull(dataConsumer.getInputs()));
+    private DataConsumerIngestionDto createDataConsumerIngestionDto(final DataConsumer dataConsumer) {
+        return new DataConsumerIngestionDto(ListUtils.emptyIfNull(dataConsumer.getInputs()));
     }
 
-    private DataEntityIngestionDto.DataQualityTestIngestionDto createDataQualityTestIngestionDto(
-        final DataQualityTest dataQualityTest
-    ) {
-        return new DataEntityIngestionDto.DataQualityTestIngestionDto(
-            ListUtils.emptyIfNull(dataQualityTest.getDatasetList()));
+    private DataQualityTestIngestionDto createDataQualityTestIngestionDto(final DataQualityTest dataQualityTest) {
+        return new DataQualityTestIngestionDto(ListUtils.emptyIfNull(dataQualityTest.getDatasetList()));
     }
 
-    private DataEntityIngestionDto.DataEntityGroupDto createDataEntityGroupDto(
-        final DataEntityGroup dataEntityGroup
-    ) {
-        return new DataEntityIngestionDto.DataEntityGroupDto(
+    private DataEntityGroupDto createDataEntityGroupDto(final DataEntityGroup dataEntityGroup) {
+        return new DataEntityGroupDto(
             ListUtils.emptyIfNull(dataEntityGroup.getEntitiesList()),
             dataEntityGroup.getGroupOddrn()
         );
     }
 
-    private DataEntityIngestionDto.DataInputIngestionDto createDataInput(final DataInput dataInput) {
-        return new DataEntityIngestionDto.DataInputIngestionDto(
+    private DataInputIngestionDto createDataInput(final DataInput dataInput) {
+        return new DataInputIngestionDto(
             ListUtils.emptyIfNull(dataInput.getOutputs())
         );
     }
 
-    private Set<DataEntityClassDto> defineEntityClasses(final DataEntity de) {
+    private Set<DataEntityClassDto> defineEntityClasses(final DataEntity dataEntity) {
         final Set<DataEntityClassDto> entityClasses = ENTITY_CLASS_DISCRIMINATOR.stream()
-            .map(disc -> disc.getLeft().test(de) ? disc.getRight() : null)
+            .map(disc -> disc.getLeft().test(dataEntity) ? disc.getRight() : null)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
         if (entityClasses.isEmpty()) {
             throw new IllegalArgumentException(
-                String.format("There's no supported class for entity %s", de.getOddrn()));
+                String.format("There's no supported class for entity %s", dataEntity.getOddrn()));
         }
 
         return entityClasses;

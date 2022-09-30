@@ -6,6 +6,4 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePo
 
 public interface MetadataFieldValueRepository extends CRUDRepository<MetadataFieldValuePojo> {
     List<MetadataDto> getDtosByDataEntityId(final long dataEntityId);
-
-    List<MetadataFieldValuePojo> listByDataEntityIds(final List<Long> dataEntityIds);
 }

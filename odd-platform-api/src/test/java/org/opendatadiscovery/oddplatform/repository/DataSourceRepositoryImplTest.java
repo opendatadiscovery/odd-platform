@@ -250,49 +250,6 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get only active datasources")
-    public void listActiveTest() {
-        final var token = tokenRepository.create(new TokenPojo().setValue(UUID.randomUUID().toString()))
-            .blockOptional()
-            .orElseThrow();
-        final DataSourcePojo pojo1 = new DataSourcePojo()
-            .setName(UUID.randomUUID().toString())
-            .setOddrn(UUID.randomUUID().toString())
-            .setActive(false)
-            .setTokenId(token.tokenPojo().getId());
-        final DataSourcePojo pojo2 = new DataSourcePojo()
-            .setName(UUID.randomUUID().toString())
-            .setOddrn(UUID.randomUUID().toString())
-            .setActive(true)
-            .setTokenId(token.tokenPojo().getId());
-        final DataSourcePojo pojo3 = new DataSourcePojo()
-            .setName(UUID.randomUUID().toString())
-            .setOddrn(UUID.randomUUID().toString())
-            .setConnectionUrl(UUID.randomUUID().toString())
-            .setActive(true)
-            .setTokenId(token.tokenPojo().getId());
-        final DataSourcePojo pojo4 = new DataSourcePojo()
-            .setName(UUID.randomUUID().toString())
-            .setOddrn(UUID.randomUUID().toString())
-            .setConnectionUrl(UUID.randomUUID().toString())
-            .setActive(true)
-            .setTokenId(token.tokenPojo().getId());
-        final Map<String, DataSourceDto> dtos = dataSourceRepository.bulkCreate(List.of(pojo1, pojo2, pojo3, pojo4))
-            .collectMap(DataSourcePojo::getOddrn, pojo -> new DataSourceDto(pojo, token))
-            .blockOptional()
-            .orElseThrow();
-        dataSourceRepository.delete(dtos.get(pojo3.getOddrn()).dataSource().getId()).blockOptional().orElseThrow();
-        dataSourceRepository.listActive()
-            .as(StepVerifier::create)
-            .assertNext(dto -> {
-                assertThat(dto).usingRecursiveComparison().ignoringFields("token.showToken")
-                    .isEqualTo(dtos.get(dto.dataSource().getOddrn()));
-                assertThat(dto.token().showToken()).isFalse();
-            })
-            .verifyComplete();
-    }
-
-    @Test
     @DisplayName("Check if namespace has datasources")
     public void existsByNamespaceTest() {
         final var namespace1 = namespaceRepository.createByName(UUID.randomUUID().toString())
