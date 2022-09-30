@@ -1,4 +1,10 @@
-import { Grid, LinearProgress, linearProgressClasses, Theme } from '@mui/material';
+import {
+  Grid,
+  LinearProgress,
+  linearProgressClasses,
+  Theme,
+  Typography,
+} from '@mui/material';
 import styled, { CSSObject } from 'styled-components';
 import { DataQualityTestSeverity, SLAColour } from 'generated-sources';
 
@@ -11,13 +17,13 @@ export const Container = styled('div')(() => ({
   flexGrow: 1,
 }));
 
+export const TooltipStyles = {
+  minWidth: '420px !important',
+  padding: '16px !important',
+};
+
 export const BarContainer = styled(Grid)(
-  () =>
-    ({
-      flexWrap: 'nowrap',
-      marginTop: '3px',
-      columnGap: '2px',
-    } as CSSObject),
+  () => ({ flexWrap: 'nowrap', marginTop: '3px', columnGap: '2px' } as CSSObject)
 );
 
 export const Bar = styled(LinearProgress)<{
@@ -55,16 +61,39 @@ export const WeightsBar = styled('div')<{
   };
 });
 
-const hintListStyles = (theme: Theme) => ({
+export const HintHeader = styled(Typography)(({ theme }) => ({
+  color: theme.palette.texts.primary,
+  letterSpacing: '0.05px',
+}));
+
+export const HintText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.texts.secondary,
+}));
+
+const hintListStyles = (theme: Theme, isOList?: boolean) => ({
   margin: 0,
+  marginTop: isOList ? theme.spacing(1) : 0,
   padding: 0,
   paddingLeft: theme.spacing(2),
   fontSize: theme.typography.body1.fontSize,
-  fontWeight: theme.typography.body1.fontWeight,
+  fontWeight: isOList ? 400 : 700,
   lineHeight: theme.typography.body1.lineHeight,
-  color: theme.palette.text.primary,
+  color: theme.palette.texts.secondary,
+  letterSpacing: 0,
 });
 
 export const HintUList = styled('ul')(({ theme }) => hintListStyles(theme));
 
-export const HintOList = styled('ol')(({ theme }) => hintListStyles(theme));
+export const HintOList = styled('ol')<{ $isOList?: boolean }>(({ theme, $isOList }) =>
+  hintListStyles(theme, $isOList)
+);
+
+export const SLARect = styled('span')<{ $color: SLAColour }>(({ theme, $color }) => ({
+  display: 'inline-block',
+  position: 'relative',
+  top: '2px',
+  width: '14px',
+  height: '14px',
+  borderRadius: '2px',
+  backgroundColor: theme.palette.slaStatus[$color],
+}));
