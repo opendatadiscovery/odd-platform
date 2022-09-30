@@ -273,7 +273,6 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 | Damir Abdullin            | [LinkedIn](https://www.linkedin.com/in/dabdullin/)                           | [damirabdul](https://github.com/damirabdul)         |
 | Alexey Kozyurov           | [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)           | [Leshe4ka](https://github.com/Leshe4ka)             |
 | Pavel Makarichev          | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/)           | [vixtir](https://github.com/vixtir)                 |
-| Anna Evdokimova-Glinskaia | [LinkedIn](https://www.linkedin.com/in/anna-evdokimova-glinskaya-6566b5188/) | [Anna-EG](https://github.com/Anna-EG)               |
 | Roman Zabaluev            | [LinkedIn](https://www.linkedin.com/in/haarolean/)                           | [Haarolean](https://github.com/haarolean)           |
 ## License
 
