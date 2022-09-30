@@ -10,7 +10,7 @@ import { MetadataFieldType, MetadataFieldValue } from 'generated-sources';
 import { format } from 'date-fns';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {
   getDataEntityCustomMetadataList,

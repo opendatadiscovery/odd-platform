@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.service.metric.extractors.MetricExtractor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class MetricServiceImpl implements MetricService {
     private final List<MetricExtractor> metricExtractors;
 
     @Override
-    public Mono<IngestionDataStructure> exportMetrics(final IngestionDataStructure dataStructure) {
+    public Mono<IngestionRequest> exportMetrics(final IngestionRequest dataStructure) {
         final List<MetricData> metrics = metricExtractors.stream()
             .flatMap(me -> me.extract(dataStructure))
             .collect(Collectors.toList());

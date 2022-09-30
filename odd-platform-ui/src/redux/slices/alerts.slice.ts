@@ -12,11 +12,7 @@ export const alertsAdapter = createEntityAdapter<Alert>({
 
 export const initialState: AlertsState = {
   totals: {},
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ...alertsAdapter.getInitialState(),
 };
 
@@ -27,58 +23,37 @@ export const alertsSlice = createSlice({
     changeAlertsFilterAction: alertsAdapter.removeAll,
   },
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchAlertsTotals.fulfilled,
-      (state, { payload }) => {
-        state.totals = payload;
-      }
-    );
-    builder.addCase(
-      thunks.fetchAllAlertList.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
+    builder.addCase(thunks.fetchAlertsTotals.fulfilled, (state, { payload }) => {
+      state.totals = payload;
+    });
+    builder.addCase(thunks.fetchAllAlertList.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
+      alertsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
+    });
+    builder.addCase(thunks.fetchMyAlertList.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
+      alertsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
+    });
+    builder.addCase(thunks.fetchMyDependentsAlertList.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
+      alertsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
+    });
+    builder.addCase(thunks.fetchDataEntityAlerts.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
+      alertsAdapter.setAll(state, items);
+      state.pageInfo = { ...pageInfo, page: 1 };
+    });
+    builder.addCase(thunks.updateAlertStatus.fulfilled, (state, { payload }) => {
+      const { alertId, status } = payload;
 
-        alertsAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
+      const currentAlert = state.entities[alertId];
+      if (currentAlert) {
+        currentAlert.status = status;
       }
-    );
-    builder.addCase(
-      thunks.fetchMyAlertList.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
-
-        alertsAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
-      }
-    );
-    builder.addCase(
-      thunks.fetchMyDependentsAlertList.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
-
-        alertsAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
-      }
-    );
-    builder.addCase(
-      thunks.fetchDataEntityAlerts.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
-        alertsAdapter.setAll(state, items);
-        state.pageInfo = { ...pageInfo, page: 1 };
-      }
-    );
-    builder.addCase(
-      thunks.updateAlertStatus.fulfilled,
-      (state, { payload }) => {
-        const { alertId, status } = payload;
-
-        const currentAlert = state.entities[alertId];
-        if (currentAlert) {
-          currentAlert.status = status;
-        }
-      }
-    );
+    });
   },
 });
 export const { changeAlertsFilterAction } = alertsSlice.actions;

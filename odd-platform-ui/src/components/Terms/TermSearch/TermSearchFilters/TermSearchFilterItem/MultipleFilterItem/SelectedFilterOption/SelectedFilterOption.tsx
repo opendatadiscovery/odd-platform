@@ -4,7 +4,7 @@ import { SearchFilter, SearchFilterState } from 'generated-sources';
 import { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { AppIconButton, TextFormatted } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { changeTermSearchFacet } from 'redux/slices/termSearch.slice';
 import * as S from './SelectedFilterOptionStyles';
 

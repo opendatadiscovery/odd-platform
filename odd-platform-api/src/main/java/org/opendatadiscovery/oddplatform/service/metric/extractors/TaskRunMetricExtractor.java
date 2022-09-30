@@ -7,7 +7,7 @@ import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import java.time.Duration;
 import java.util.stream.Stream;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
 import org.opendatadiscovery.oddplatform.utils.Pair;
@@ -18,7 +18,7 @@ import static org.opendatadiscovery.oddplatform.service.metric.extractors.Extrac
 @Component
 public class TaskRunMetricExtractor implements MetricExtractor {
     @Override
-    public Stream<MetricData> extract(final IngestionDataStructure dataStructure) {
+    public Stream<MetricData> extract(final IngestionRequest dataStructure) {
         final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream = dataStructure.getTaskRuns()
             .stream()
             .filter(taskRun -> taskRun.getEndTime() != null)

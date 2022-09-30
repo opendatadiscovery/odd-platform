@@ -22,7 +22,7 @@ import {
   SkeletonWrapper,
 } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
 import DatasetStructureTypeCountLabelList from './DatasetStructureTypeCountLabelList/DatasetStructureTypeCountLabelList';

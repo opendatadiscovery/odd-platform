@@ -32,6 +32,7 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -39,6 +40,9 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
@@ -295,7 +299,7 @@ public class DataEntityServiceImpl
                 return Tuples.of(fieldsMap, metadataFieldValuePojos);
             })
             .flatMap(function((fieldsMap, metadataFieldValuePojos) -> reactiveMetadataFieldValueRepository
-                .bulkCreate(metadataFieldValuePojos)
+                .bulkCreateReturning(metadataFieldValuePojos)
                 .map(mfv -> {
                     final MetadataFieldPojo metadataFieldPojo = fieldsMap.get(mfv.getMetadataFieldId());
                     return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
@@ -332,7 +336,8 @@ public class DataEntityServiceImpl
     public Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId) {
         return reactiveMetadataFieldValueRepository.delete(dataEntityId, metadataFieldId)
             .then(reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId))
-            .then(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .thenMany(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .collectList()
             .flatMap(metadata -> {
                 if (CollectionUtils.isEmpty(metadata)) {
                     return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_METADATA);
@@ -429,7 +434,7 @@ public class DataEntityServiceImpl
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function(
                 (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
-                    .createRelations(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
+                    .createRelationsReturning(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
                     .ignoreElements()
                     .thenReturn(groupPojo)))
             .flatMap(
@@ -450,7 +455,7 @@ public class DataEntityServiceImpl
                     "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function((pojo, groupPojo) -> reactiveGroupEntityRelationRepository
-                .deleteRelations(groupPojo.getOddrn(), pojo.getOddrn())
+                .deleteRelationsReturning(groupPojo.getOddrn(), pojo.getOddrn())
                 .collectList()
                 .map(relations -> Tuples.of(relations, pojo.getOddrn()))
             ))
@@ -474,6 +479,18 @@ public class DataEntityServiceImpl
             .map(function(entityMapper::mapUsageInfo));
     }
 
+    @Override
+    public Mono<CompactDataEntityList> listEntitiesWithinDEG(final String degOddrn) {
+        return reactiveDataEntityRepository.getDEGEntities(degOddrn)
+            .map(entityList -> entityList
+                .stream()
+                .map(de -> new CompactDataEntity()
+                    .oddrn(de.getOddrn())
+                    .type(DataEntityType.fromValue(DataEntityTypeDto.findById(de.getTypeId()).toString())))
+                .toList())
+            .map(entityList -> new CompactDataEntityList().items(entityList));
+    }
+
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
                                           final NamespacePojo namespace) {
         return Mono.just(formData)
@@ -488,7 +505,7 @@ public class DataEntityServiceImpl
             .flatMap(pojo -> {
                 final List<String> entityOddrns =
                     formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
-                return reactiveGroupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
+                return reactiveGroupEntityRelationRepository.createRelationsReturning(pojo.getOddrn(), entityOddrns)
                     .ignoreElements().thenReturn(pojo);
             })
             .flatMap(this::updateSearchVectors)
@@ -509,7 +526,8 @@ public class DataEntityServiceImpl
             .flatMap(reactiveDataEntityRepository::update)
             .flatMap(degPojo -> reactiveGroupEntityRelationRepository
                 .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
-            .flatMap(degPojo -> reactiveGroupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
+                .createRelationsReturning(degPojo.getOddrn(), entityOddrns)
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
             .map(entityMapper::mapRef);

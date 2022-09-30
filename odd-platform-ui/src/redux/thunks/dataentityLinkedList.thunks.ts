@@ -22,17 +22,12 @@ export const fetchDataEntityGroupLinkedList = createAsyncThunk<
 >(
   actions.fetchDataEntityGroupLinkedListAction,
   async ({ dataEntityGroupId, page, size }) => {
-    const { items, pageInfo } =
-      await dataEntityApi.getDataEntityGroupsChildren({
-        dataEntityGroupId,
-        page,
-        size,
-      });
-
-    return {
+    const { items, pageInfo } = await dataEntityApi.getDataEntityGroupsChildren({
       dataEntityGroupId,
-      linkedItemsList: items,
-      pageInfo: { ...pageInfo, page },
-    };
+      page,
+      size,
+    });
+
+    return { dataEntityGroupId, linkedItemsList: items, pageInfo: { ...pageInfo, page } };
   }
 );

@@ -7,12 +7,12 @@ import {
   getDatasetTestReportFetchingStatuses,
   getTestReportListBySuiteName,
 } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataSetQualityTestList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
 import { AppPaper, TestRunStatusItem } from 'components/shared';
 import omit from 'lodash/omit';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TestReportItem from './TestReportItem/TestReportItem';
 import TestReportDetails from './TestReportDetails/TestReportDetails';
 import TestReportItemSkeleton from './TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
@@ -27,15 +27,11 @@ const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataQATestId, dataEntityId, viewType } = useAppParams();
 
-  const datasetTestReport = useAppSelector(
-    getDatasetTestReport(dataEntityId)
-  );
+  const datasetTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
   const datasetQualityTestList: DatasetQualityTestList = useAppSelector(
     getDatasetQualityTestsBySuiteNames(dataEntityId)
   );
-  const testReportBySuitName = useAppSelector(
-    getTestReportListBySuiteName
-  );
+  const testReportBySuitName = useAppSelector(getTestReportListBySuiteName);
 
   const { isLoading: isDatasetTestListFetching } = useAppSelector(
     getDatasetTestListFetchingStatuses
@@ -53,11 +49,14 @@ const TestReport: React.FC = () => {
       Object.entries(omit(datasetTestReport, ['score', 'total'])).map(
         ([runStatusTotal, count]) => {
           const runStatus = runStatusTotal.replace('Total', '');
-          const runStatusPalette =
-            runStatus.toUpperCase() as DataEntityRunStatus;
+          const runStatusPalette = runStatus.toUpperCase() as DataEntityRunStatus;
 
           return (
-            <TestRunStatusItem count={count} typeName={runStatusPalette} />
+            <TestRunStatusItem
+              key={runStatusTotal}
+              count={count}
+              typeName={runStatusPalette}
+            />
           );
         }
       ),
@@ -70,12 +69,12 @@ const TestReport: React.FC = () => {
         {isTestReportFetching ? (
           <TestReportSkeleton />
         ) : (
-          <Grid container alignItems="center" wrap="nowrap">
+          <Grid container alignItems='center' wrap='nowrap'>
             <S.TestReportContainer container item>
               {renderTestReportItems}
             </S.TestReportContainer>
-            <Grid container item justifyContent="flex-end">
-              <Typography variant="subtitle1">{` ${datasetTestReport?.total} tests`}</Typography>
+            <Grid container item justifyContent='flex-end'>
+              <Typography variant='subtitle1'>{` ${datasetTestReport?.total} tests`}</Typography>
             </Grid>
           </Grid>
         )}

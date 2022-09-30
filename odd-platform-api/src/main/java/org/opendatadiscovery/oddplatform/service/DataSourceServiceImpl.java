@@ -43,11 +43,6 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    public Flux<DataSource> listActive() {
-        return dataSourceRepository.listActive().map(dataSourceMapper::mapDto);
-    }
-
-    @Override
     @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<DataSource> create(final DataSourceFormData form) {

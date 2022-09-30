@@ -15,7 +15,9 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.Ingestio
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.utils.DataEntityTaskRunPojoEndTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -40,10 +42,10 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveDataQualityRepository dataQualityRepository;
 
     @Autowired
-    private DataEntityTaskRunRepository dataEntityTaskRunRepository;
+    private ReactiveDataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     @Autowired
-    private DataQualityTestRelationRepository dataQualityTestRelationRepository;
+    private ReactiveDataQualityTestRelationRepository dataQualityTestRelationRepository;
 
     @Autowired
     private DataEntityRepository dataEntityRepository;
@@ -62,7 +64,7 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             new DataQualityTestRelationsPojo()
                 .setDataQualityTestOddrn(dqTest.getOddrn())
                 .setDatasetOddrn(hollowDataEntity.getOddrn())
-        ));
+        )).block();
 
         dataQualityRepository.getDataQualityTestOddrnsForDataset(hollowDataEntity.getId())
             .as(StepVerifier::create)
@@ -88,7 +90,7 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
                     .setDataQualityTestOddrn(dqTest.getOddrn())
                     .setDatasetOddrn(dataEntity.getOddrn()))
                 .toList()
-        );
+        ).block();
 
         dataQualityRepository.getDataQualityTestOddrnsForDataset(dataEntity.getId())
             .collectList()
@@ -127,14 +129,15 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
             .get(0);
 
-        dataEntityTaskRunRepository.persist(
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.RUNNING));
+        dataEntityTaskRunRepository
+            .bulkCreate(List.of(createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.RUNNING)))
+            .block();
 
         dataQualityTestRelationRepository.createRelations(List.of(
             new DataQualityTestRelationsPojo()
                 .setDataQualityTestOddrn(dqTest.getOddrn())
                 .setDatasetOddrn(dataEntity.getOddrn())
-        ));
+        )).block();
 
         dataQualityRepository.getDatasetTestReport(dataEntity.getId())
             .as(StepVerifier::create)
@@ -172,28 +175,26 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
                     () -> createTaskRun(dqTest.getOddrn(), statusEnumRandomizer.getRandomValue())).limit(5))
             .collect(groupingBy(DataEntityTaskRunPojo::getTaskOddrn));
 
-        dataEntityTaskRunRepository.persist(taskRuns.values().stream().flatMap(List::stream).toList());
-
-        dataQualityTestRelationRepository.createRelations(
-            dqTests.stream()
-                .map(dqTest -> new DataQualityTestRelationsPojo()
-                    .setDataQualityTestOddrn(dqTest.getOddrn())
-                    .setDatasetOddrn(dataEntity.getOddrn()))
-                .toList()
-        );
+        final List<DataQualityTestRelationsPojo> relations = dqTests.stream()
+            .map(dqTest -> new DataQualityTestRelationsPojo()
+                .setDataQualityTestOddrn(dqTest.getOddrn())
+                .setDatasetOddrn(dataEntity.getOddrn()))
+            .toList();
 
         final DatasetTestReportDto expected = mapReport(taskRuns.values().stream()
             .map(dataEntityTaskRunPojos -> dataEntityTaskRunPojos
                 .stream()
-                .max(endTimeComparator.reversed())
+                .min(endTimeComparator)
                 .map(DataEntityTaskRunPojo::getStatus)
                 .orElseThrow())
             .collect(groupingBy(identity(), counting())));
 
-        dataQualityRepository.getDatasetTestReport(dataEntity.getId())
-            .as(StepVerifier::create)
-            .assertNext(actual -> assertThat(actual).isEqualTo(expected))
-            .verifyComplete();
+        dataEntityTaskRunRepository.bulkCreate(taskRuns.values().stream().flatMap(List::stream).toList())
+            .then(dataQualityTestRelationRepository.createRelations(relations))
+            .subscribe(ignored -> dataQualityRepository.getDatasetTestReport(dataEntity.getId())
+                .as(StepVerifier::create)
+                .assertNext(actual -> assertThat(actual).isEqualTo(expected))
+                .verifyComplete());
     }
 
     private DataEntityTaskRunPojo createTaskRun(final String dataQualityTestOddrn,

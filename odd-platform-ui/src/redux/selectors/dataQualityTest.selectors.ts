@@ -25,6 +25,10 @@ export const getDatasetTestReportFetchingStatuses = createStatusesSelector(
   actions.fetchDataSetQualityTestReportActionType
 );
 
+export const getDatasetSLAReportFetchingStatuses = createStatusesSelector(
+  actions.fetchDataSetQualitySLAReportActionType
+);
+
 export const getDatasetTestListFetchingStatuses = createStatusesSelector(
   actions.fetchDataSetQualityTestListActionType
 );
@@ -34,6 +38,13 @@ export const getDatasetTestReport = (dataEntityId: number) =>
     getDataQualityTestState,
     dataQualityTestState =>
       dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
+  );
+
+export const getDatasetSLAReport = (dataEntityId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.datasetSLAReportByEntityId[dataEntityId]
   );
 
 export const getDatasetTestReportTotal = (dataEntityId: number) =>

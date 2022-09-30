@@ -20,23 +20,22 @@ export const { selectAll: getResolvedAssociationRequestsList } =
 
 export const getNewOwnerAssociationRequestsPageInfo = createSelector(
   ownerAssociationState,
-  ownerAssociationRequestsList =>
-    ownerAssociationRequestsList.newRequests.pageInfo
+  ownerAssociationRequestsList => ownerAssociationRequestsList.newRequests.pageInfo
 );
 
 export const getResolvedOwnerAssociationRequestsPageInfo = createSelector(
   ownerAssociationState,
-  ownerAssociationRequestsList =>
-    ownerAssociationRequestsList.resolvedRequests.pageInfo
+  ownerAssociationRequestsList => ownerAssociationRequestsList.resolvedRequests.pageInfo
 );
 
-export const getOwnerAssociationRequestsListFetchingStatuses =
-  createStatusesSelector(
-    actions.fetchOwnerAssociationRequestsListActionType
-  );
+export const getOwnerAssociationRequestsListFetchingStatuses = createStatusesSelector(
+  actions.fetchOwnerAssociationRequestsListActionType
+);
 
-export const getOwnerAssociationRequestCreatingStatuses =
-  createStatusesSelector(actions.createOwnerAssociationRequestActionType);
+export const getOwnerAssociationRequestCreatingStatuses = createStatusesSelector(
+  actions.createOwnerAssociationRequestActionType
+);
 
-export const getOwnerAssociationRequestUpdatingStatuses =
-  createStatusesSelector(actions.updateOwnerAssociationRequestActionType);
+export const getOwnerAssociationRequestUpdatingStatuses = createStatusesSelector(
+  actions.updateOwnerAssociationRequestActionType
+);

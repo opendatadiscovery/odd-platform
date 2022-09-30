@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { ActivityQueryName } from 'redux/interfaces';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
 import { Owner, Tag } from 'generated-sources';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';

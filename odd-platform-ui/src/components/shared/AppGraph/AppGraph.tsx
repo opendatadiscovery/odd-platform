@@ -12,20 +12,13 @@ import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
 import { SelectChangeEvent, Typography } from '@mui/material';
 import { DataEntityLineageStreamById } from 'redux/interfaces/dataentityLineage';
-import {
-  Point,
-  TreeLinkDatum,
-  TreeNodeDatum,
-} from 'redux/interfaces/graph';
-import {
-  DataEntityLineageEdge,
-  DataEntityLineageNode,
-} from 'generated-sources';
+import { Point, TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces/graph';
+import { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
@@ -42,9 +35,7 @@ const AppGraph: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
-  const data = useAppSelector(state =>
-    getDataEntityLineage(state, dataEntityId)
-  );
+  const data = useAppSelector(state => getDataEntityLineage(state, dataEntityId));
 
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
@@ -56,16 +47,14 @@ const AppGraph: React.FC = () => {
   const enableLegacyTransitions = false;
   const scaleExtent = { min: 0.1, max: 3 };
   const defaultDepth = 1;
-  const [selectedDepth, setSelectedDepth] =
-    React.useState<number>(defaultDepth);
+  const [selectedDepth, setSelectedDepth] = React.useState<number>(defaultDepth);
 
   const setInitialDepth = React.useCallback(
     (depth: number) => setSelectedDepth(depth),
     [setSelectedDepth]
   );
 
-  const [isLineageFetching, setIsLineageFetching] =
-    React.useState<boolean>(true);
+  const [isLineageFetching, setIsLineageFetching] = React.useState<boolean>(true);
 
   const [parsedData, setParsedData] = React.useState<{
     root: TreeNodeDatum;
@@ -155,9 +144,7 @@ const AppGraph: React.FC = () => {
     );
   }, [selectedDepth, dataEntityId]);
 
-  const assignInternalProps = (
-    nodeData: DataEntityLineageNode
-  ): TreeNodeDatum => ({
+  const assignInternalProps = (nodeData: DataEntityLineageNode): TreeNodeDatum => ({
     ...nodeData,
     d3attrs: {
       id: uuidv4(),
@@ -167,9 +154,7 @@ const AppGraph: React.FC = () => {
   const parseData = (
     rawData: DataEntityLineageStreamById['nodesById']
   ): DataEntityLineageStreamById<TreeNodeDatum>['nodesById'] =>
-    entries(rawData).reduce<
-      DataEntityLineageStreamById<TreeNodeDatum>['nodesById']
-    >(
+    entries(rawData).reduce<DataEntityLineageStreamById<TreeNodeDatum>['nodesById']>(
       (acc, [nodeId, nodeData]) => ({
         ...acc,
         [nodeId]: assignInternalProps(nodeData),
@@ -201,33 +186,34 @@ const AppGraph: React.FC = () => {
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
 
-    const crossLUp = parsedData.upstream.crossEdges?.reduce<
-      TreeLinkDatum[]
-    >((memo, edge) => {
-      const sourceNode = nUp.find(node => node.data.id === edge.sourceId);
-      const targetNode = nUp.find(node => node.data.id === edge.targetId);
+    const crossLUp = parsedData.upstream.crossEdges?.reduce<TreeLinkDatum[]>(
+      (memo, edge) => {
+        const sourceNode = nUp.find(node => node.data.id === edge.sourceId);
+        const targetNode = nUp.find(node => node.data.id === edge.targetId);
 
-      if (sourceNode && targetNode) {
-        const crossLink = {
-          source: sourceNode,
-          target: targetNode,
-        };
-        const replacedCrossLink = {
-          source: targetNode,
-          target: sourceNode,
-        };
+        if (sourceNode && targetNode) {
+          const crossLink = {
+            source: sourceNode,
+            target: targetNode,
+          };
+          const replacedCrossLink = {
+            source: targetNode,
+            target: sourceNode,
+          };
 
-        if (sourceNode.depth < targetNode.depth) {
-          replacedCrossLinksUp.push(replacedCrossLink);
-          memo.push(replacedCrossLink);
-          return memo;
+          if (sourceNode.depth < targetNode.depth) {
+            replacedCrossLinksUp.push(replacedCrossLink);
+            memo.push(replacedCrossLink);
+            return memo;
+          }
+
+          memo.push(crossLink);
         }
 
-        memo.push(crossLink);
-      }
-
-      return memo;
-    }, []);
+        return memo;
+      },
+      []
+    );
 
     const treeDown = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, nodeSize.x + nodeSize.mx])
@@ -250,37 +236,34 @@ const AppGraph: React.FC = () => {
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
-    const crossLDown = parsedData.downstream.crossEdges?.reduce<
-      TreeLinkDatum[]
-    >((memo, edge) => {
-      const sourceNode = nDown.find(
-        node => node.data.id === edge.sourceId
-      );
-      const targetNode = nDown.find(
-        node => node.data.id === edge.targetId
-      );
+    const crossLDown = parsedData.downstream.crossEdges?.reduce<TreeLinkDatum[]>(
+      (memo, edge) => {
+        const sourceNode = nDown.find(node => node.data.id === edge.sourceId);
+        const targetNode = nDown.find(node => node.data.id === edge.targetId);
 
-      if (sourceNode && targetNode) {
-        const crossLink = {
-          source: sourceNode,
-          target: targetNode,
-        };
-        const replacedCrossLink = {
-          source: targetNode,
-          target: sourceNode,
-        };
+        if (sourceNode && targetNode) {
+          const crossLink = {
+            source: sourceNode,
+            target: targetNode,
+          };
+          const replacedCrossLink = {
+            source: targetNode,
+            target: sourceNode,
+          };
 
-        if (sourceNode.depth < targetNode.depth) {
-          replacedCrossLinksDown.push(replacedCrossLink);
-          memo.push(replacedCrossLink);
-          return memo;
+          if (sourceNode.depth < targetNode.depth) {
+            replacedCrossLinksDown.push(replacedCrossLink);
+            memo.push(replacedCrossLink);
+            return memo;
+          }
+
+          memo.push(crossLink);
         }
 
-        memo.push(crossLink);
-      }
-
-      return memo;
-    }, []);
+        return memo;
+      },
+      []
+    );
 
     return {
       nodesUp: nUp,
@@ -319,18 +302,14 @@ const AppGraph: React.FC = () => {
       );
 
       const upstreamWidth = (nodeSize.x + nodeSize.mx) * depth.upstream;
-      const downstreamWidth =
-        (nodeSize.x + nodeSize.mx) * depth.downstream;
+      const downstreamWidth = (nodeSize.x + nodeSize.mx) * depth.downstream;
       transformation.translate = {
         x:
           upstreamWidth * transformation.scale +
           (ref.current.offsetWidth -
-            (upstreamWidth + downstreamWidth + nodeSize.x) *
-              transformation.scale) /
+            (upstreamWidth + downstreamWidth + nodeSize.x) * transformation.scale) /
             2,
-        y:
-          (ref.current.offsetHeight - nodeSize.y * transformation.scale) /
-          2,
+        y: (ref.current.offsetHeight - nodeSize.y * transformation.scale) / 2,
       };
     }
     g.attr(
@@ -347,10 +326,7 @@ const AppGraph: React.FC = () => {
         .call(
           d3Zoom.transform,
           zoomIdentity
-            .translate(
-              transformation.translate.x,
-              transformation.translate.y
-            )
+            .translate(transformation.translate.x, transformation.translate.y)
             .scale(transformation.scale)
         )
         .call(
@@ -372,16 +348,12 @@ const AppGraph: React.FC = () => {
 
         const ellipsis = txt.select<SVGTSpanElement>('tspan.ellip');
         const width =
-          parseFloat(txt.attr('width')) -
-          (ellipsis.node()?.getComputedTextLength() || 0);
+          parseFloat(txt.attr('width')) - (ellipsis.node()?.getComputedTextLength() || 0);
 
         const tspan = txt
           .select<SVGTSpanElement>('tspan.visible-text')
           .text(chars.join(''));
-        while (
-          (tspan.node()?.getComputedTextLength() || 0) > width &&
-          chars.length
-        ) {
+        while ((tspan.node()?.getComputedTextLength() || 0) > width && chars.length) {
           chars.pop();
           tspan.text(chars.join(''));
         }
@@ -424,35 +396,33 @@ const AppGraph: React.FC = () => {
 
   return isLineageFetching ? (
     <S.LoaderContainer>
-      <AppCircularProgress size={16} text="Loading lineage" />
+      <AppCircularProgress size={16} text='Loading lineage' />
     </S.LoaderContainer>
   ) : (
     <S.Container className={zoomable ? 'rd3t-grabbable' : ''} ref={ref}>
       <S.ActionsContainer>
         <AppButton
-          color="primaryLight"
-          size="medium"
+          color='primaryLight'
+          size='medium'
           startIcon={<TargetIcon />}
           onClick={centerRoot}
         >
           Main
         </AppButton>
         <AppTabs
-          type="secondarySmall"
-          orientation="horizontal"
+          type='secondarySmall'
+          orientation='horizontal'
           items={[{ name: 'Full' }, { name: 'Compact' }]}
           selectedTab={compactView ? 1 : 0}
-          handleTabChange={(newViewIndex: number) =>
-            setCompactView(newViewIndex > 0)
-          }
+          handleTabChange={(newViewIndex: number) => setCompactView(newViewIndex > 0)}
         />
-        <Typography variant="subtitle2">Depth:</Typography>
+        <Typography variant='subtitle2'>Depth:</Typography>
         <AppSelect
           sx={{ width: 48 }}
           native
           fullWidth={false}
-          size="small"
-          type="number"
+          size='small'
+          type='number'
           value={selectedDepth}
           onChange={handleDepthChange}
         >
@@ -491,7 +461,7 @@ const AppGraph: React.FC = () => {
           ))}
           {nodesUp?.map(node => (
             <AppGraphNode
-              appGraphNodeType="upstream"
+              appGraphNodeType='upstream'
               rootNodeId={dataEntityId}
               key={`node-${node.x}${node.y}`}
               reverse
@@ -509,7 +479,7 @@ const AppGraph: React.FC = () => {
           ))}
           {nodesDown?.map(node => (
             <AppGraphNode
-              appGraphNodeType="downstream"
+              appGraphNodeType='downstream'
               rootNodeId={dataEntityId}
               key={`node-${node.x}${node.y}`}
               data={node.data}

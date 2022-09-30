@@ -47,14 +47,17 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
                     .collectList()
                     .flatMapMany(list -> {
                         final List<DataSourcePojo> toUpdate = prepareForUpdate(list, dataSources);
-                        log.info("Going to update datasources with oddrns {}",
+
+                        log.debug("Going to update datasources with oddrns {}",
                             toUpdate.stream().map(DataSourcePojo::getOddrn).collect(Collectors.joining(",")));
+
                         final Flux<DataSourcePojo> updatedDataSources =
                             reactiveDataSourceRepository.bulkUpdate(toUpdate);
 
                         final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
                             list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
-                        log.info("Going to create datasources with oddrns {}",
+
+                        log.debug("Going to create datasources with oddrns {}",
                             toCreate.stream().map(DataSourcePojo::getOddrn).collect(Collectors.joining(",")));
 
                         final Flux<DataSourcePojo> createdDataSources =
@@ -80,8 +83,7 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
 
                 return new DataSourcePojo(a)
                     .setName(i.getName())
-                    .setDescription(i.getDescription())
-                    .setNamespaceId(i.getNamespaceId());
+                    .setDescription(i.getDescription());
             })
             .filter(Objects::nonNull)
             .toList();

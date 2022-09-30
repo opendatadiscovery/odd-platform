@@ -4,3 +4,4 @@ logging:
     org.jooq.tools.LoggerListener: debug
     io.r2dbc.postgresql.QUERY: debug
     io.r2dbc.postgresql.PARAM: debug
+    org.opendatadiscovery.oddplatform.service.ingestion: debug

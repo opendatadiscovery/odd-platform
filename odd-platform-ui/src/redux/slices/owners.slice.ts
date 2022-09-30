@@ -7,11 +7,7 @@ import { ownersActionTypePrefix } from 'redux/actions';
 export const initialState: OwnersState = {
   byId: {},
   allIds: [],
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ownershipDataEntity: {},
   ownershipTermDetails: {},
 };
@@ -46,27 +42,23 @@ export const ownersSlice = createSlice({
       }
     );
 
-    builder.addCase(
-      thunks.updateOwner.fulfilled,
-      (state, { payload }): OwnersState => {
-        const { ownerId, owner } = payload;
+    builder.addCase(thunks.updateOwner.fulfilled, (state, { payload }): OwnersState => {
+      const { ownerId, owner } = payload;
 
-        return {
-          ...state,
-          byId: {
-            ...state.byId,
-            [ownerId]: owner,
-          },
-        };
-      }
-    );
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [ownerId]: owner,
+        },
+      };
+    });
 
     // get ownership from data entity details
     builder.addCase(
       thunks.fetchDataEntityDetails.fulfilled,
       (state, { payload }): OwnersState => {
-        const { id: dataEntityId, ownership: dataEntityOwnership } =
-          payload;
+        const { id: dataEntityId, ownership: dataEntityOwnership } = payload;
 
         return {
           ...state,

@@ -46,12 +46,10 @@ export const Count = styled('text')(({ theme }) => ({
   lineHeight: theme.typography.body2.lineHeight,
 }));
 
-export const Placeholder = styled('tspan')<{ $show: boolean }>(
-  ({ theme, $show }) => ({
-    fill: theme.palette.texts.hint,
-    display: $show ? 'initial' : 'none',
-  })
-);
+export const Placeholder = styled('tspan')<{ $show: boolean }>(({ theme, $show }) => ({
+  fill: theme.palette.texts.hint,
+  display: $show ? 'initial' : 'none',
+}));
 
 export const EntityClassContainer = styled('rect')<{
   $entityClassName: DataEntityClassNameEnum;
@@ -76,14 +74,12 @@ export const UnknownEntityNameCircle = styled('circle')(({ theme }) => ({
   stroke: theme.palette.common.black,
 }));
 
-export const UnknownEntityNameCrossedLine = styled('rect')(
-  ({ theme }) => ({
-    x: 0,
-    y: 0.81418,
-    width: 2,
-    height: 9.37199,
-    rx: 1,
-    transform: 'rotate(-45deg) translateY(-2px) translateX(2.4px)',
-    fill: theme.palette.common.black,
-  })
-);
+export const UnknownEntityNameCrossedLine = styled('rect')(({ theme }) => ({
+  x: 0,
+  y: 0.81418,
+  width: 2,
+  height: 9.37199,
+  rx: 1,
+  transform: 'rotate(-45deg) translateY(-2px) translateX(2.4px)',
+  fill: theme.palette.common.black,
+}));

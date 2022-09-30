@@ -15,6 +15,7 @@ import {
   DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
+  DataSetSLAReport,
   DataSetTestReport,
   DataSetVersion,
   DataSource,
@@ -123,6 +124,9 @@ export interface DataQualityTestState {
   qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
+  };
+  datasetSLAReportByEntityId: {
+    [dataEntityId: string]: DataSetSLAReport;
   };
   testReportBySuiteName: {
     [suiteName: string]: DataSetQualityTestsStatusCount;
@@ -253,13 +257,13 @@ export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
 
-export type ThunkResult<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  undefined,
-  Action
->;
+// export type ThunkResult<ReturnType = void> = ThunkAction<
+//   ReturnType,
+//   RootState,
+//   undefined,
+//   Action
+// >;
 
-export type PromiseThunkResult<ReturnType = void> = ThunkResult<
-  Promise<ReturnType>
->;
+// export type PromiseThunkResult<ReturnType = void> = ThunkResult<
+//   Promise<ReturnType>
+// >;

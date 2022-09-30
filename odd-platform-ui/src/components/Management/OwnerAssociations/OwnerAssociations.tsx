@@ -3,7 +3,6 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import {
   getNewAssociationRequestsList,
@@ -21,6 +20,7 @@ import {
 } from 'components/shared';
 import { useAppParams } from 'lib/hooks';
 import { OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest } from 'generated-sources';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import ManagementSkeletonItem from '../ManagementSkeletonItem/ManagementSkeletonItem';
 import ActiveAssociationRequest from './AssociationRequestItem/ActiveAssociationRequest';
 import ResolvedAssociationRequest from './AssociationRequestItem/ResolvedAssociationRequest';
@@ -34,21 +34,15 @@ const OwnerAssociations: React.FC = () => {
   const [query, setQuery] = React.useState('');
   const [active, setActive] = React.useState(true);
 
-  const newRequestsPageInfo = useAppSelector(
-    getNewOwnerAssociationRequestsPageInfo
-  );
+  const newRequestsPageInfo = useAppSelector(getNewOwnerAssociationRequestsPageInfo);
   const resolvedRequestsPageInfo = useAppSelector(
     getResolvedOwnerAssociationRequestsPageInfo
   );
   const newRequestsList = useAppSelector(getNewAssociationRequestsList);
-  const resolvedRequestsList = useAppSelector(
-    getResolvedAssociationRequestsList
-  );
+  const resolvedRequestsList = useAppSelector(getResolvedAssociationRequestsList);
 
-  const {
-    isLoading: isRequestsListFetching,
-    isLoaded: isRequestsListFetched,
-  } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
+  const { isLoading: isRequestsListFetching, isLoaded: isRequestsListFetched } =
+    useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
 
   const pageInfo = React.useMemo(
     () => (active ? newRequestsPageInfo : resolvedRequestsPageInfo),
@@ -77,9 +71,7 @@ const OwnerAssociations: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
-    const tabIdx = viewType
-      ? tabs.findIndex(tab => tab.name === viewType)
-      : 0;
+    const tabIdx = viewType ? tabs.findIndex(tab => tab.name === viewType) : 0;
     setSelectedTab(tabIdx);
   }, [tabs, viewType]);
 
@@ -112,11 +104,7 @@ const OwnerAssociations: React.FC = () => {
         active,
       });
     }
-  }, [
-    newRequestsPageInfo.page,
-    newRequestsPageInfo.hasNext,
-    newRequestsList.length,
-  ]);
+  }, [newRequestsPageInfo.page, newRequestsPageInfo.hasNext, newRequestsList.length]);
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
@@ -135,9 +123,7 @@ const OwnerAssociations: React.FC = () => {
     [query, active]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
     handleSearch();
   };
@@ -149,22 +135,22 @@ const OwnerAssociations: React.FC = () => {
   };
 
   const tableCellText = (text: string) => (
-    <Typography variant="subtitle2" color="texts.hint">
+    <Typography variant='subtitle2' color='texts.hint'>
       {text}
     </Typography>
   );
 
   return (
-    <Grid container flexDirection="column" alignItems="center">
+    <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant="h1">Owner associations</Typography>
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='h1'>Owner associations</Typography>
+        <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={requestCountOverall} /> requests overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder="Search requests..."
+          placeholder='Search requests...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}
@@ -187,7 +173,7 @@ const OwnerAssociations: React.FC = () => {
       </S.Caption>
       <Grid sx={{ width: '100%' }}>
         <AppTabs
-          type="primary"
+          type='primary'
           items={tabs}
           selectedTab={selectedTab}
           handleTabChange={onTabChange}
@@ -231,20 +217,14 @@ const OwnerAssociations: React.FC = () => {
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={requestList.length}
-            scrollThreshold="200px"
+            scrollThreshold='200px'
             loader={isRequestsListFetching && <ManagementSkeletonItem />}
           >
             {requestList?.map(request =>
               active ? (
-                <ActiveAssociationRequest
-                  key={request.id}
-                  request={request}
-                />
+                <ActiveAssociationRequest key={request.id} request={request} />
               ) : (
-                <ResolvedAssociationRequest
-                  key={request.id}
-                  request={request}
-                />
+                <ResolvedAssociationRequest key={request.id} request={request} />
               )
             )}
           </InfiniteScroll>

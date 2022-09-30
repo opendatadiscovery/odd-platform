@@ -1,5 +1,6 @@
 /**
  * Gets a unique list of objects by key
+ *
  * @param arr
  * @param key
  * @returns

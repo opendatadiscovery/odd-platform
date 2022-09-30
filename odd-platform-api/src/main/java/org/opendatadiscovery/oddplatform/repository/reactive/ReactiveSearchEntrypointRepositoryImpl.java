@@ -14,6 +14,8 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
 import org.jooq.UpdateConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -21,6 +23,7 @@ import org.opendatadiscovery.oddplatform.repository.util.ReactiveJooqFTSHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static java.util.Collections.singletonList;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
@@ -48,7 +51,25 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     private final ReactiveJooqFTSHelper jooqFTSHelper;
 
     @Override
+    @ReactiveTransactional
+    public Mono<Void> recalculateVectors(final List<Long> dataEntityIds) {
+        return Mono.zip(
+            updateDataEntityVectors(dataEntityIds),
+            updateDataSourceVectorsForDataEntities(dataEntityIds),
+            updateNamespaceVectorForDataEntities(dataEntityIds),
+            updateMetadataVectors(dataEntityIds),
+            updateStructureVectorForDataEntities(dataEntityIds),
+            updateTagVectorsForDataEntities(dataEntityIds)
+        ).then();
+    }
+
+    @Override
     public Mono<Integer> updateDataEntityVectors(final long dataEntityId) {
+        return updateDataEntityVectors(singletonList(dataEntityId));
+    }
+
+    @Override
+    public Mono<Integer> updateDataEntityVectors(final List<Long> dataEntityIds) {
         final Field<Long> dataEntityIdField = field("data_entity_id", Long.class);
 
         final List<Field<?>> vectorFields = List.of(
@@ -58,10 +79,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             DATA_ENTITY.INTERNAL_DESCRIPTION
         );
 
-        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+        final SelectConditionStep<Record> vectorSelect = DSL
+            .select(vectorFields)
             .select(DATA_ENTITY.ID.as(dataEntityIdField))
             .from(DATA_ENTITY)
-            .where(DATA_ENTITY.ID.eq(dataEntityId));
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -75,17 +99,53 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         return jooqReactiveOperations.mono(insertQuery);
     }
 
+    @Override
+    public Mono<Integer> updateDataSourceVectorsForDataEntities(final List<Long> dataEntityIds) {
+        final Field<Long> dataEntityIdField = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(
+            Tables.DATA_SOURCE.NAME, Tables.DATA_SOURCE.CONNECTION_URL, Tables.DATA_SOURCE.ODDRN);
+
+        final SelectConditionStep<Record> vectorSelect = DSL
+            .select(DATA_ENTITY.ID.as(dataEntityIdField))
+            .select(vectorFields)
+            .from(Tables.DATA_SOURCE)
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(Tables.DATA_SOURCE.ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(DATA_SOURCE.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityIdField,
+            vectorFields,
+            SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY)
+        );
+
+        return jooqReactiveOperations.mono(insertQuery);
+    }
+
     public Mono<Integer> updateNamespaceVectorForDataEntity(final long dataEntityId) {
+        return updateNamespaceVectorForDataEntities(singletonList(dataEntityId));
+    }
+
+    @Override
+    public Mono<Integer> updateNamespaceVectorForDataEntities(final List<Long> dataEntityIds) {
         final Field<Long> dataEntityIdField = field("data_entity_id", Long.class);
 
         final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
 
-        final var vectorSelect = DSL
-            .select(DATA_ENTITY.ID.as(dataEntityIdField))
+        final var vectorSelect = DSL.select(DATA_ENTITY.ID.as(dataEntityIdField))
             .select(vectorFields)
-            .from(DATA_ENTITY)
-            .join(NAMESPACE).on(DATA_ENTITY.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .where(DATA_ENTITY.ID.eq(dataEntityId));
+            .from(NAMESPACE)
+            .join(Tables.DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(Tables.DATA_SOURCE.ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(NAMESPACE.IS_DELETED.isFalse());
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -154,6 +214,55 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     }
 
     @Override
+    public Mono<Integer> updateStructureVectorForDataEntities(final List<Long> dataEntityIds) {
+        final String dsOddrnAlias = "dsv_dataset_oddrn";
+
+        final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
+        final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
+
+        final SelectHavingStep<Record3<Long, String, Long>> subquery = DSL
+            .select(DATA_ENTITY.ID, datasetOddrnField, dsvMaxField)
+            .from(DATASET_VERSION)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .groupBy(DATA_ENTITY.ID, DATASET_VERSION.DATASET_ODDRN);
+
+        final Field<Long> dataEntityIdField = subquery.field(DATA_ENTITY.ID);
+
+        final Field<String> labelName = LABEL.NAME.as("label_name");
+
+        final List<Field<?>> vectorFields = List.of(
+            DATASET_FIELD.NAME,
+            DATASET_FIELD.INTERNAL_DESCRIPTION,
+            DATASET_FIELD.EXTERNAL_DESCRIPTION,
+            labelName
+        );
+
+        final SelectOnConditionStep<Record> vectorSelect = DSL
+            .select(vectorFields)
+            .select(dataEntityIdField)
+            .from(subquery)
+            .join(DATASET_VERSION)
+            .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(dsOddrnAlias, String.class)))
+            .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
+            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityIdField,
+            vectorFields,
+            SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true
+        );
+
+        return jooqReactiveOperations.mono(insertQuery);
+    }
+
+    @Override
     public Mono<Integer> updateChangedDataSourceVector(final long dataSourceId) {
         final Field<Long> deId = field("data_entity_id", Long.class);
 
@@ -183,7 +292,12 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
      * Calculates tag vector for particular data entity.
      */
     @Override
-    public Mono<Integer> updateTagVectorsForDataEntity(final Long dataEntityId) {
+    public Mono<Integer> updateTagVectorsForDataEntity(final long dataEntityId) {
+        return updateStructureVectorForDataEntities(singletonList(dataEntityId));
+    }
+
+    @Override
+    public Mono<Integer> updateTagVectorsForDataEntities(final List<Long> dataEntityIds) {
         final Field<Long> deId = field("data_entity_id", Long.class);
 
         final List<Field<?>> vectorFields = List.of(TAG.NAME);
@@ -194,7 +308,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
             .and(TAG.IS_DELETED.isFalse());
 
         final Insert<? extends Record> tagQuery = jooqFTSHelper.buildVectorUpsert(
@@ -429,6 +543,11 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
 
     @Override
     public Mono<Integer> updateMetadataVectors(final long dataEntityId) {
+        return updateMetadataVectors(singletonList(dataEntityId));
+    }
+
+    @Override
+    public Mono<Integer> updateMetadataVectors(final List<Long> dataEntityIds) {
         final Field<Long> deId = field("data_entity_id", Long.class);
 
         final List<Field<?>> fields = List.of(
@@ -444,7 +563,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
             .and(METADATA_FIELD.IS_DELETED.isFalse());
 
         final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(

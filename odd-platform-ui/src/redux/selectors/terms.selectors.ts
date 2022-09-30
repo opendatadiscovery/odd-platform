@@ -21,7 +21,7 @@ export const getTermDetailsTags = createSelector(
 );
 
 export const getTermDetailsTagsUpdatingStatuses = createStatusesSelector(
-  actions.updateTermDetailsTagsAction
+  actions.updateTermDetailsTagsActType
 );
 
 // Ownership
@@ -33,17 +33,10 @@ export const getTermDetailsOwnerUpdatingStatuses = createStatusesSelector(
 // statuses selectors
 
 export const getTermDetailsFetchingStatuses = createStatusesSelector(
-  actions.fetchTermDetailsAction
+  actions.fetchTermDetailsActType
 );
+export const getTermCreatingStatuses = createStatusesSelector(actions.createTermActType);
 
-export const getTermCreatingStatuses = createStatusesSelector(
-  actions.createTermAction
-);
+export const getTermUpdatingStatuses = createStatusesSelector(actions.updateTermActType);
 
-export const getTermUpdatingStatuses = createStatusesSelector(
-  actions.updateTermAction
-);
-
-export const getTermDeletingStatuses = createStatusesSelector(
-  actions.deleteTermAction
-);
+export const getTermDeletingStatuses = createStatusesSelector(actions.deleteTermActType);

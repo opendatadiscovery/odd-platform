@@ -10,7 +10,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveActivityRepository {
-    Mono<ActivityPojo> save(final ActivityPojo pojo);
+    Mono<ActivityPojo> saveReturning(final ActivityPojo pojo);
+
+    Mono<Void> save(final List<ActivityPojo> pojos);
 
     Flux<ActivityDto> findAllActivities(final LocalDate beginDate,
                                         final LocalDate endDate,

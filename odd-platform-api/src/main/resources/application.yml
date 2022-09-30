@@ -45,7 +45,7 @@ auth:
 #        provider: 'okta'
 #        client-id:
 #        client-secret:
-#        client-name: 'Okta'
+#        client-name:
 #        redirect-uri: http://localhost:8080/login/oauth2/code/okta
 #        scope:
 #          - openid
@@ -60,7 +60,7 @@ auth:
 #        scope:
 #          - openid
 #        redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
-#        client-name: 'Cognito'
+#        client-name:
 #        issuer-uri:
 #        logout-uri:
 #        admin-attribute:
@@ -85,7 +85,7 @@ auth:
 #          - openid
 #          - profile
 #          - email
-#        user-name-attribute: 'name'
+#        user-name-attribute:
 #        admin-principals:
 #        allowed-domain:
 #      keycloak:
@@ -97,8 +97,8 @@ auth:
 #        client-name: 'Keycloak'
 #        redirect-uri: 'http://localhost:8080/login/oauth2/code/keycloak'
 #        issuer-uri:
-#        user-name-attribute: 'preferred_username'
-#        admin-attribute: 'preferred_username'
+#        user-name-attribute:
+#        admin-attribute:
 #        admin-principals:
 
 metrics:
@@ -142,6 +142,10 @@ management:
     redis:
       enabled: false
 
+odd:
+  activity:
+    partition-period: 30
+
 logging:
   level:
     org.springframework.transaction.interceptor: info
@@ -149,8 +153,4 @@ logging:
     io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
-
-odd:
-  activity:
-    partition-period: 30
-
+    org.opendatadiscovery.oddplatform.service.ingestion: info

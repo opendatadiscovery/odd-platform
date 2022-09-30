@@ -24,10 +24,7 @@ export const termLinkedListSlice = createSlice({
         return {
           ...state,
           linkedItemsIdsByTermId: linkedItemsList.reduce(
-            (
-              memo: TermLinkedListState['linkedItemsIdsByTermId'],
-              linkedItem
-            ) => ({
+            (memo: TermLinkedListState['linkedItemsIdsByTermId'], linkedItem) => ({
               ...memo,
               [termId]: [...(memo?.[termId] || []), linkedItem.id],
             }),

@@ -4,10 +4,8 @@ import * as S from 'components/shared/AppTooltip/AppTooltipStyles';
 import { SxProps } from '@mui/system';
 
 interface AppTooltipProps
-  extends Pick<TooltipProps, 'placement' | 'followCursor' | 'sx'> {
-  title: (props: {
-    open?: boolean;
-  }) => React.ReactElement | string | undefined;
+  extends Pick<TooltipProps, 'placement' | 'followCursor' | 'componentsProps'> {
+  title: (props: { open?: boolean }) => React.ReactElement | string | undefined;
   type?: S.TooltipColorTypes;
   checkForOverflow?: boolean;
   children?: React.ReactNode | React.ReactElement | string;
@@ -21,8 +19,8 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   title,
   type = 'light',
   checkForOverflow = true,
-  sx,
   childSx,
+  componentsProps,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -31,16 +29,11 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
 
   React.useEffect(() => {
     if (childrenRef.current && checkForOverflow) {
-      const element =
-        childrenRef.current.firstElementChild || childrenRef.current;
+      const element = childrenRef.current.firstElementChild || childrenRef.current;
       const { scrollWidth, clientWidth } = element;
       setIsOverflow(scrollWidth > clientWidth);
     }
-  }, [
-    childrenRef.current,
-    childrenRef.current?.firstElementChild,
-    checkForOverflow,
-  ]);
+  }, [childrenRef.current, childrenRef.current?.firstElementChild, checkForOverflow]);
 
   return (
     <S.AppTooltip
@@ -50,7 +43,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       followCursor={followCursor}
       disableInteractive
       disableHoverListener={checkForOverflow ? !isOverflowed : false}
-      sx={sx}
+      componentsProps={componentsProps}
     >
       <S.ChildrenContainer
         onMouseEnter={() => {

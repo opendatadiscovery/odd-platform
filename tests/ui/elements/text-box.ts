@@ -12,6 +12,7 @@ export default class TextBox extends CustomElement {
 
   /**
    *  Selects the target text inside text box
+   *
    * @param text_to_select string which should be selected
    */
   async select_text(text_to_select: string): Promise<void> {
@@ -20,7 +21,11 @@ export default class TextBox extends CustomElement {
       (element, { text_to_select }) => {
         let element_text: string;
 
-        if (typeof element.textContent == 'string' && document.createRange && window.getSelection) {
+        if (
+          typeof element.textContent === 'string' &&
+          document.createRange &&
+          window.getSelection
+        ) {
           element_text = element.textContent.replace(/(?:\r\n|\r|\n)/g, '').replace(/\s\s+/g, ' ');
         }
 
@@ -30,6 +35,7 @@ export default class TextBox extends CustomElement {
 
         /**
          *
+         * @param node
          */
         function get_text_nodes_in(node: Node): ChildNode[] & Node[] {
           const text_nodes: ChildNode[] & Node[] = [];
@@ -53,6 +59,9 @@ export default class TextBox extends CustomElement {
 
         /**
          *
+         * @param el
+         * @param start
+         * @param end
          */
         function set_selection_range(el: Node, start: number, end: number) {
           if (document.createRange && window.getSelection) {
@@ -92,6 +101,7 @@ export default class TextBox extends CustomElement {
 
         /**
          *
+         * @param node
          */
         function is_text_node_and_content_no_empty(node: Node) {
           return node.textContent.trim().length > 0;

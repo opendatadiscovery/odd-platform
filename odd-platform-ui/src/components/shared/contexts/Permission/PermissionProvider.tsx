@@ -1,22 +1,18 @@
 import React, { useMemo } from 'react';
 import { Permission } from 'generated-sources';
-import {
-  getDataEntityPermissions,
-  getGlobalPermissions,
-} from 'redux/selectors';
-import { useAppSelector } from 'lib/redux/hooks';
+import { getDataEntityPermissions, getGlobalPermissions } from 'redux/selectors';
 import { emptyArr } from 'lib/constants';
-import PermissionContext, {
-  PermissionContextProps,
-} from './PermissionContext';
+import { useAppSelector } from 'redux/lib/hooks';
+import PermissionContext, { PermissionContextProps } from './PermissionContext';
 
 interface PermissionProviderProps {
   permissions: Permission[];
 }
 
-const PermissionProvider: React.FunctionComponent<
-  PermissionProviderProps
-> = ({ permissions, children }) => {
+const PermissionProvider: React.FunctionComponent<PermissionProviderProps> = ({
+  permissions,
+  children,
+}) => {
   const globalPermissions = useAppSelector(getGlobalPermissions);
   const dataEntityPermissions = (dataEntityId?: number): Permission[] =>
     useAppSelector(getDataEntityPermissions(dataEntityId)) || emptyArr;
@@ -24,14 +20,9 @@ const PermissionProvider: React.FunctionComponent<
   const providerValue = useMemo<PermissionContextProps>(() => {
     const getIsAllowedTo = (dataEntityId?: number) =>
       permissions.every(perm =>
-        [
-          ...globalPermissions,
-          ...dataEntityPermissions(dataEntityId),
-        ].includes(perm)
+        [...globalPermissions, ...dataEntityPermissions(dataEntityId)].includes(perm)
       );
-    const isAdmin = globalPermissions.includes(
-      Permission.MANAGEMENT_CONTROL
-    );
+    const isAdmin = globalPermissions.includes(Permission.MANAGEMENT_CONTROL);
 
     return { getIsAllowedTo, isAdmin };
   }, [permissions, globalPermissions, dataEntityPermissions]);

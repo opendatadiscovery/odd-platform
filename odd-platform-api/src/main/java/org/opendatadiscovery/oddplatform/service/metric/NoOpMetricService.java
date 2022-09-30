@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.metric;
 
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class NoOpMetricService implements MetricService {
     @Override
-    public Mono<IngestionDataStructure> exportMetrics(final IngestionDataStructure dataStructure) {
+    public Mono<IngestionRequest> exportMetrics(final IngestionRequest dataStructure) {
         return Mono.just(dataStructure);
     }
 }

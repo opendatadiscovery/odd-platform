@@ -1,8 +1,5 @@
 import { DataEntityLineageState, StreamType } from 'redux/interfaces';
-import {
-  DataEntityLineageEdge,
-  DataEntityLineageNode,
-} from 'generated-sources';
+import { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
 import {
   FilterDownstreamEdges,
   FilterUpstreamEdges,
@@ -12,10 +9,8 @@ import {
   LocalState,
 } from 'redux/interfaces/dataentityLineage';
 
-export const isRootNodeIdsEqual = (
-  rootNodeId: number,
-  currentRootNodeId: number
-) => rootNodeId === currentRootNodeId;
+export const isRootNodeIdsEqual = (rootNodeId: number, currentRootNodeId: number) =>
+  rootNodeId === currentRootNodeId;
 
 export const setRootNode = (
   state: DataEntityLineageState,
@@ -55,16 +50,9 @@ interface UpstreamFilteringStructure {
   crossEdges: Array<DataEntityLineageEdge>;
 }
 
-const getDefaultFilteringStructures = (
-  rootNodeId: number,
-  type: StreamType
-) => {
-  const upstreamQueue: UpstreamQueue = [
-    { targetId: rootNodeId, depth: 0 },
-  ];
-  const downstreamQueue: DownstreamQueue = [
-    { sourceId: rootNodeId, depth: 0 },
-  ];
+const getDefaultFilteringStructures = (rootNodeId: number, type: StreamType) => {
+  const upstreamQueue: UpstreamQueue = [{ targetId: rootNodeId, depth: 0 }];
+  const downstreamQueue: DownstreamQueue = [{ sourceId: rootNodeId, depth: 0 }];
   const targetIdsMapByDepth = new Map<number, number[]>();
   const sourceIdsMapByDepth = new Map<number, number[]>();
   const allAddedIds = new Set<number>([rootNodeId]);
@@ -125,22 +113,14 @@ export const filterDownstreamEdges = (
 
       const targetIds = edgesMap.get(sourceId);
 
-      if (
-        targetIds !== undefined &&
-        targetIds !== null &&
-        targetIds.length > 0
-      ) {
+      if (targetIds !== undefined && targetIds !== null && targetIds.length > 0) {
         const nonAddedIds = targetIds.filter(id => !allAddedIds.has(id));
 
-        filteredEdges.push(
-          ...nonAddedIds.map(id => ({ sourceId, targetId: id }))
-        );
+        filteredEdges.push(...nonAddedIds.map(id => ({ sourceId, targetId: id })));
 
         const addedIds = targetIds.filter(id => allAddedIds.has(id));
 
-        crossEdges.push(
-          ...addedIds.map(id => ({ sourceId, targetId: id }))
-        );
+        crossEdges.push(...addedIds.map(id => ({ sourceId, targetId: id })));
 
         nonAddedIds.forEach(id => allAddedIds.add(id));
 
@@ -154,9 +134,7 @@ export const filterDownstreamEdges = (
           depthTargetIds.push(...nonAddedIds);
         }
 
-        nonAddedIds.forEach(id =>
-          queue.push({ sourceId: id, depth: lineageDepth })
-        );
+        nonAddedIds.forEach(id => queue.push({ sourceId: id, depth: lineageDepth }));
       }
     }
   }
@@ -175,10 +153,7 @@ export const filterUpstreamEdges = (
     allAddedIds,
     crossEdges,
     filteredEdges,
-  } = getDefaultFilteringStructures(
-    rootNodeId,
-    'upstream'
-  ) as UpstreamFilteringStructure;
+  } = getDefaultFilteringStructures(rootNodeId, 'upstream') as UpstreamFilteringStructure;
 
   const edgesMap = edges.reduce((map, edge) => {
     if (!map.has(edge.targetId)) {
@@ -198,22 +173,14 @@ export const filterUpstreamEdges = (
 
       const sourceIds = edgesMap.get(targetId);
 
-      if (
-        sourceIds !== undefined &&
-        sourceIds !== null &&
-        sourceIds.length > 0
-      ) {
+      if (sourceIds !== undefined && sourceIds !== null && sourceIds.length > 0) {
         const nonAddedIds = sourceIds.filter(id => !allAddedIds.has(id));
 
-        filteredEdges.push(
-          ...nonAddedIds.map(id => ({ sourceId: id, targetId }))
-        );
+        filteredEdges.push(...nonAddedIds.map(id => ({ sourceId: id, targetId })));
 
         const addedIds = sourceIds.filter(id => allAddedIds.has(id));
 
-        crossEdges.push(
-          ...addedIds.map(id => ({ sourceId: id, targetId }))
-        );
+        crossEdges.push(...addedIds.map(id => ({ sourceId: id, targetId })));
 
         nonAddedIds.forEach(id => allAddedIds.add(id));
 
@@ -227,9 +194,7 @@ export const filterUpstreamEdges = (
           depthSourceIds.push(...nonAddedIds);
         }
 
-        nonAddedIds.forEach(id =>
-          queue.push({ targetId: id, depth: lineageDepth })
-        );
+        nonAddedIds.forEach(id => queue.push({ targetId: id, depth: lineageDepth }));
       }
     }
   }
@@ -243,11 +208,7 @@ export const generateGroupIdsMap = (
   nodes: Array<DataEntityLineageNode | GroupedDataEntityLineageNode>
 ) =>
   Array.from(nodes).reduce((map, node) => {
-    if (
-      node.groupIdList &&
-      node.groupIdList?.length > 0 &&
-      !map.has(node.id)
-    ) {
+    if (node.groupIdList && node.groupIdList?.length > 0 && !map.has(node.id)) {
       map.set(node.id, [...node.groupIdList]);
     } else if (node.groupIdList && node.groupIdList?.length > 0) {
       map.get(node.id)?.push(...node.groupIdList);
@@ -290,9 +251,7 @@ export const groupingUpstreamNodes = (
   const groupedNodes: GroupingUpstreamNodes[] = [];
 
   Array.from(sourceIdByDepth.keys()).forEach(depth => {
-    const sourceIds = sourceIdByDepth
-      .get(depth)
-      ?.filter(s => !excludedIds.has(s));
+    const sourceIds = sourceIdByDepth.get(depth)?.filter(s => !excludedIds.has(s));
     // groupId -> sourceId[]
     const depthGroups = sourceIds?.reduce((map, sourceId) => {
       const groupIds = groupIdsBySourceId.get(sourceId);
@@ -327,11 +286,7 @@ export const groupingUpstreamNodes = (
       const groupIds = groupIdsBySourceIdByDepth.get(sourceId);
 
       if (depthGroups && groupIds !== undefined && groupIds.length >= 1) {
-        const maxGroup = generateMaxGroup(
-          groupIds,
-          depthGroups,
-          keepInBiggestGroup
-        );
+        const maxGroup = generateMaxGroup(groupIds, depthGroups, keepInBiggestGroup);
 
         // fill resultSourceIdsByGroupId Map with maxGroup.groupIds -> array of source ids
         if (!resultSourceIdsByGroupId.has(maxGroup.groupId)) {
@@ -389,9 +344,7 @@ export const groupingDownstreamNodes = (
   const groupedNodes: GroupingDownstreamNodes[] = [];
 
   Array.from(targetIdByDepth.keys()).forEach(depth => {
-    const targetIds = targetIdByDepth
-      .get(depth)
-      ?.filter(s => !excludedIds.has(s));
+    const targetIds = targetIdByDepth.get(depth)?.filter(s => !excludedIds.has(s));
     // groupId -> targetId[]
     const depthGroups = targetIds?.reduce((map, targetId) => {
       const groupIds = groupIdsByTargetId.get(targetId);
@@ -426,11 +379,7 @@ export const groupingDownstreamNodes = (
       const groupIds = groupIdsByTargetIdByDepth.get(targetId);
 
       if (depthGroups && groupIds !== undefined && groupIds.length >= 1) {
-        const maxGroup = generateMaxGroup(
-          groupIds,
-          depthGroups,
-          keepInBiggestGroup
-        );
+        const maxGroup = generateMaxGroup(groupIds, depthGroups, keepInBiggestGroup);
 
         // fill resultTargetIdsByGroupId Map with maxGroup.groupIds -> array of source ids
         if (!resultTargetIdsByGroupId.has(maxGroup.groupId)) {

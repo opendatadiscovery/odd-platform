@@ -10,7 +10,6 @@ import {
   AppInput,
   AppButton,
 } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import {
   getOwnerCreatingStatuses,
@@ -20,6 +19,7 @@ import {
   getOwnersListPageInfo,
 } from 'redux/selectors';
 import { usePermissions } from 'lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
@@ -32,25 +32,16 @@ const OwnersList: React.FC = () => {
   const ownersList = useAppSelector(getOwnersList);
   const pageInfo = useAppSelector(getOwnersListPageInfo);
 
-  const { isLoading: isOwnerListFetching } = useAppSelector(
-    getOwnerListFetchingStatuses
-  );
-  const { isLoading: isOwnerCreating } = useAppSelector(
-    getOwnerCreatingStatuses
-  );
-  const { isLoading: isOwnerDeleting } = useAppSelector(
-    getOwnerDeletingStatuses
-  );
+  const { isLoading: isOwnerListFetching } = useAppSelector(getOwnerListFetchingStatuses);
+  const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
+  const { isLoading: isOwnerDeleting } = useAppSelector(getOwnerDeletingStatuses);
 
   const pageSize = 100;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalOwners, setTotalOwners] = React.useState<number | undefined>(
-    pageInfo?.total
-  );
+  const [searchText, setSearchText] = React.useState('');
+  const [totalOwners, setTotalOwners] = React.useState(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText)
-      dispatch(fetchOwnersList({ page: 1, size: pageSize }));
+    if (!searchText) dispatch(fetchOwnersList({ page: 1, size: pageSize }));
   }, [fetchOwnersList, isOwnerCreating, isOwnerDeleting, searchText]);
 
   React.useEffect(() => {
@@ -70,16 +61,12 @@ const OwnersList: React.FC = () => {
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(
-        fetchOwnersList({ page: 1, size: pageSize, query: searchText })
-      );
+      dispatch(fetchOwnersList({ page: 1, size: pageSize, query: searchText }));
     }, 500),
     [searchText]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
     handleSearch();
   };
@@ -91,16 +78,16 @@ const OwnersList: React.FC = () => {
   };
 
   return (
-    <Grid container flexDirection="column" alignItems="center">
+    <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant="h1">Owners</Typography>
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='h1'>Owners</Typography>
+        <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalOwners} /> owners overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder="Search owner..."
+          placeholder='Search owner...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={searchText}
@@ -123,8 +110,8 @@ const OwnersList: React.FC = () => {
         <OwnerForm
           btnCreateEl={
             <AppButton
-              color="primaryLight"
-              size="medium"
+              color='primaryLight'
+              size='medium'
               startIcon={<AddIcon />}
               disabled={!isAdmin}
             >
@@ -135,7 +122,7 @@ const OwnersList: React.FC = () => {
       </S.Caption>
       <S.TableHeader container>
         <Grid item xs={12}>
-          <Typography variant="subtitle2" color="texts.hint">
+          <Typography variant='subtitle2' color='texts.hint'>
             Name
           </Typography>
         </Grid>
@@ -146,7 +133,7 @@ const OwnersList: React.FC = () => {
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={ownersList.length}
-            scrollThreshold="200px"
+            scrollThreshold='200px'
             loader={
               isOwnerListFetching && (
                 <SkeletonWrapper
@@ -164,9 +151,7 @@ const OwnersList: React.FC = () => {
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isOwnerListFetching && !ownersList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      {!isOwnerListFetching && !ownersList.length ? <EmptyContentPlaceholder /> : null}
     </Grid>
   );
 };

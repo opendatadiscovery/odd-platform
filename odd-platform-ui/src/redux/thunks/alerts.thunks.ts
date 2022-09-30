@@ -16,7 +16,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { Alert, CurrentPageInfo } from 'redux/interfaces';
-import { castItemDatesToTimestampInArray } from 'lib/redux/helpers';
+import { castItemDatesToTimestampInArray } from 'redux/lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
@@ -78,17 +78,14 @@ export const fetchMyDependentsAlertList = createAsyncThunk<
 export const updateAlertStatus = createAsyncThunk<
   { alertId: number; status: AlertStatus },
   AlertApiChangeAlertStatusRequest
->(
-  actions.updateAlertStatusActionType,
-  async ({ alertId, alertStatusFormData }) => {
-    const status = await alertApi.changeAlertStatus({
-      alertId,
-      alertStatusFormData,
-    });
+>(actions.updateAlertStatusActionType, async ({ alertId, alertStatusFormData }) => {
+  const status = await alertApi.changeAlertStatus({
+    alertId,
+    alertStatusFormData,
+  });
 
-    return { alertId, status };
-  }
-);
+  return { alertId, status };
+});
 
 export const fetchDataEntityAlerts = createAsyncThunk<
   { items: Alert[]; pageInfo: PageInfo },

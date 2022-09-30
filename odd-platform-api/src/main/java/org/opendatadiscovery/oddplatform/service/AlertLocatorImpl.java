@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
@@ -18,94 +19,117 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
+import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
-import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunType;
 
 @Component
 @RequiredArgsConstructor
 public class AlertLocatorImpl implements AlertLocator {
-    private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
+    private final DatasetStructureService datasetStructureService;
 
-    private static final Set<IngestionTaskRun.IngestionTaskRunStatus> TASK_RUN_BAD_STATUSES = Set.of(
-        IngestionTaskRun.IngestionTaskRunStatus.BROKEN,
-        IngestionTaskRun.IngestionTaskRunStatus.FAILED
+    private final ReactiveDataQualityTestRelationRepository dataQualityTestRelationRepository;
+
+    private static final Set<IngestionTaskRunStatus> TASK_RUN_BAD_STATUSES = Set.of(
+        IngestionTaskRunStatus.BROKEN,
+        IngestionTaskRunStatus.FAILED
     );
 
     @Override
-    public List<AlertPojo> locateDatasetBackIncSchema(final Map<String, DatasetStructureDelta> structureDeltas) {
-        return structureDeltas.entrySet()
-            .stream()
-            .flatMap(this::locateAlertsInDSDelta)
-            .collect(Collectors.toList());
+    public Flux<AlertPojo> locateAlerts(final IngestionRequest request) {
+        return Mono.fromCallable(() -> request.getExistingEntities()
+                .stream()
+                .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+                .map(EnrichedDataEntityIngestionDto::getId)
+                .toList())
+            .flatMapMany(changedDatasetIds -> Flux.concat(
+                locateDataEntityRunFailed(request.getTaskRuns()),
+                locateBackIncSchemaChanged(changedDatasetIds, request.getSpecificAttributesDeltas())
+            ));
     }
 
-    @Override
-    public List<AlertPojo> locateDataEntityRunFailed(final List<IngestionTaskRun> taskRuns) {
-        final Map<IngestionTaskRun.IngestionTaskRunType, List<IngestionTaskRun>> failedTaskRunsMap = taskRuns.stream()
+    public Flux<AlertPojo> locateBackIncSchemaChanged(final List<Long> changedDatasetIds,
+                                                      final List<DataEntitySpecificAttributesDelta> deltas) {
+        final Flux<AlertPojo> datasetAlerts = datasetStructureService
+            .getLastDatasetStructureVersionDelta(changedDatasetIds)
+            .flatMapMany(delta -> Flux.fromStream(delta.entrySet()
+                .stream()
+                .flatMap(this::locateAlertsInDSDelta)));
+
+        final Flux<AlertPojo> transformerAlerts = Flux.fromStream(deltas.stream()
+            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_TRANSFORMER))
+            .flatMap(this::locateAlertsInDTDelta));
+
+        final Flux<AlertPojo> consumerAlerts = Flux.fromStream(deltas.stream()
+            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_CONSUMER))
+            .flatMap(this::locateAlertsInDCDelta));
+
+        return Flux.concat(datasetAlerts, transformerAlerts, consumerAlerts);
+    }
+
+    private Flux<AlertPojo> locateDataEntityRunFailed(final List<IngestionTaskRun> taskRuns) {
+        final Map<IngestionTaskRunType, List<IngestionTaskRun>> failedTaskRunsMap = taskRuns.stream()
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
             .collect(Collectors.groupingBy(IngestionTaskRun::getType));
+
         if (failedTaskRunsMap.isEmpty()) {
-            return List.of();
+            return Flux.just();
         }
-        final List<AlertPojo> dqAlerts = locateDataQualityTestAlerts(
-            failedTaskRunsMap.get(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN));
-        final List<AlertPojo> jobAlerts = locateDataTransformerAlerts(
-            failedTaskRunsMap.get(IngestionTaskRun.IngestionTaskRunType.DATA_TRANSFORMER_RUN));
-        return Stream.concat(dqAlerts.stream(), jobAlerts.stream()).toList();
+
+        return Flux.concat(
+            locateDataQualityTestAlerts(failedTaskRunsMap.get(IngestionTaskRunType.DATA_QUALITY_TEST_RUN)),
+            locateDataTransformerAlerts(failedTaskRunsMap.get(IngestionTaskRunType.DATA_TRANSFORMER_RUN))
+        );
     }
 
-    @Override
-    public List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas) {
-        final Stream<AlertPojo> transformerAlerts = deltas.stream()
-            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_TRANSFORMER))
-            .flatMap(this::locateAlertsInDTDelta);
-
-        final Stream<AlertPojo> consumerAlerts = deltas.stream()
-            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_CONSUMER))
-            .flatMap(this::locateAlertsInDCDelta);
-
-        return Stream.concat(transformerAlerts, consumerAlerts).collect(Collectors.toList());
-    }
-
-    private List<AlertPojo> locateDataTransformerAlerts(final List<IngestionTaskRun> failedDataTransformerRuns) {
+    private Flux<AlertPojo> locateDataTransformerAlerts(final List<IngestionTaskRun> failedDataTransformerRuns) {
         if (CollectionUtils.isEmpty(failedDataTransformerRuns)) {
-            return List.of();
+            return Flux.just();
         }
-        return failedDataTransformerRuns.stream()
-            .map(tr -> buildAlert(
-                tr.getTaskOddrn(),
-                AlertTypeEnum.FAILED_JOB,
-                tr.getOddrn(),
-                String.format("Job %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
-            )).toList();
+
+        return Flux.fromStream(failedDataTransformerRuns.stream().map(tr -> buildAlert(
+            tr.getTaskOddrn(),
+            AlertTypeEnum.FAILED_JOB,
+            tr.getOddrn(),
+            String.format("Job %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
+        )));
     }
 
-    private List<AlertPojo> locateDataQualityTestAlerts(final List<IngestionTaskRun> failedDQTestRuns) {
+    private Flux<AlertPojo> locateDataQualityTestAlerts(final List<IngestionTaskRun> failedDQTestRuns) {
         if (CollectionUtils.isEmpty(failedDQTestRuns)) {
-            return List.of();
+            return Flux.just();
         }
-        final Map<String, List<DataQualityTestRelationsPojo>> relationsMap = dataQualityTestRelationRepository
-            .getRelations(failedDQTestRuns.stream().map(IngestionTaskRun::getTaskOddrn).toList())
-            .stream()
-            .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
-        return failedDQTestRuns.stream()
-            .flatMap(tr -> {
-                final List<DataQualityTestRelationsPojo> relatedPojos =
-                    relationsMap.getOrDefault(tr.getTaskOddrn(), List.of());
-                return relatedPojos.stream().map(p -> buildAlert(
-                    p.getDatasetOddrn(),
-                    AlertTypeEnum.FAILED_DQ_TEST,
-                    tr.getOddrn(),
-                    String.format("Test %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
-                ));
-            }).toList();
+
+        final List<String> failedDQTestRunOddrns =
+            failedDQTestRuns.stream().map(IngestionTaskRun::getTaskOddrn).toList();
+
+        return dataQualityTestRelationRepository.getRelations(failedDQTestRunOddrns)
+            .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn))
+            .flatMapMany(relationsMap -> Flux.fromStream(failedDQTestRuns.stream()
+                .flatMap(tr -> {
+                    final List<DataQualityTestRelationsPojo> relatedPojos =
+                        relationsMap.getOrDefault(tr.getTaskOddrn(), emptyList());
+
+                    return relatedPojos.stream().map(p -> buildAlert(
+                        p.getDatasetOddrn(),
+                        AlertTypeEnum.FAILED_DQ_TEST,
+                        tr.getOddrn(),
+                        String.format("Test %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
+                    ));
+                })));
     }
 
     private Stream<AlertPojo> locateAlertsInDSDelta(final Map.Entry<String, DatasetStructureDelta> e) {

@@ -26,28 +26,24 @@ const termApi = new TermApi(apiClientConf);
 export const createTermSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiTermSearchRequest
->(actions.createTermsSearchActionType, async params =>
-  termApi.termSearch(params)
-);
+>(actions.createTermsSearchActType, async params => termApi.termSearch(params));
 
 export const updateTermSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiUpdateTermSearchFacetsRequest
->(actions.updateTermsSearchActionType, async params =>
+>(actions.updateTermsSearchActType, async params =>
   termApi.updateTermSearchFacets(params)
 );
 
 export const getTermsSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiGetTermSearchFacetListRequest
->(actions.getTermsSearchActionType, async params =>
-  termApi.getTermSearchFacetList(params)
-);
+>(actions.getTermsSearchActType, async params => termApi.getTermSearchFacetList(params));
 
 export const fetchTermsSearchResults = createAsyncThunk<
   { items: Term[]; pageInfo: CurrentPageInfo },
   TermApiGetTermSearchResultsRequest
->(actions.fetchTermsSearchResultsActionType, async params => {
+>(actions.fetchTermsSearchResultsActType, async params => {
   const { items, pageInfo } = await termApi.getTermSearchResults(params);
   const { page, size } = params;
 
@@ -64,7 +60,7 @@ export const fetchTermsSearchResults = createAsyncThunk<
 export const getTermsSearchFacetOptions = createAsyncThunk<
   TermSearchFacetOptions,
   TermApiGetTermFiltersForFacetRequest
->(actions.getTermsSearchFacetOptionsActionType, async params => {
+>(actions.getTermsSearchFacetOptionsActType, async params => {
   const facetOptions = await termApi.getTermFiltersForFacet(params);
   const { query, page, facetType } = params;
   const facetName = query
@@ -77,7 +73,7 @@ export const getTermsSearchFacetOptions = createAsyncThunk<
 export const fetchTermSearchSuggestions = createAsyncThunk<
   TermRef[],
   TermApiGetTermSearchSuggestionsRequest
->(actions.fetchTermsSearchSuggestionsActionType, async params => {
+>(actions.fetchTermsSearchSuggestionsActType, async params => {
   const { items } = await termApi.getTermSearchSuggestions(params);
 
   return items;

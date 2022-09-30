@@ -16,18 +16,12 @@ const dataEntityRunApi = new DataEntityRunApi(apiClientConf);
 export const fetchDataEntityRuns = createAsyncThunk<
   { items: DataEntityRun[]; pageInfo: CurrentPageInfo },
   DataEntityRunApiGetRunsRequest
->(
-  actions.fetchDataEntityRunsActionType,
-  async ({ dataEntityId, page, size, status }) => {
-    const { items, pageInfo } = await dataEntityRunApi.getRuns({
-      dataEntityId,
-      page,
-      size,
-      status,
-    });
-    return {
-      items,
-      pageInfo: { ...pageInfo, page },
-    };
-  }
-);
+>(actions.fetchDataEntityRunsActionType, async ({ dataEntityId, page, size, status }) => {
+  const { items, pageInfo } = await dataEntityRunApi.getRuns({
+    dataEntityId,
+    page,
+    size,
+    status,
+  });
+  return { items, pageInfo: { ...pageInfo, page } };
+});

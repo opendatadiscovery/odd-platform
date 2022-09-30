@@ -24,9 +24,7 @@ interface OverviewQualityTestStatsProps {
   dataEntityName: string | undefined;
 }
 
-const OverviewQualityTestStats: React.FC<
-  OverviewQualityTestStatsProps
-> = ({
+const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   suiteName,
   suiteUrl,
   dataEntityName,
@@ -37,7 +35,7 @@ const OverviewQualityTestStats: React.FC<
   const displayedEntitiesNumber = 10;
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <Grid item sx={{ mb: 1.25 }}>
         <EntityClassItem
           entityClassName={DataEntityClassNameEnum.QUALITY_TEST}
@@ -45,14 +43,8 @@ const OverviewQualityTestStats: React.FC<
         />
       </Grid>
       <S.StatsContainer container>
-        <Grid
-          item
-          lg={4}
-          container
-          flexDirection="column"
-          alignItems="flex-start"
-        >
-          <Typography variant="h3" sx={{ mb: 1.25 }}>
+        <Grid item lg={4} container flexDirection='column' alignItems='flex-start'>
+          <Typography variant='h3' sx={{ mb: 1.25 }}>
             {datasetsList?.length || 0}{' '}
             {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
           </Typography>
@@ -61,68 +53,60 @@ const OverviewQualityTestStats: React.FC<
               to={dataEntityDetailsPath(dataset.id)}
               key={dataset.id}
               sx={{ my: 0.25 }}
-              size="medium"
-              color="tertiary"
+              size='medium'
+              color='tertiary'
               truncate
             >
               {dataset.internalName || dataset.externalName}
             </AppButton>
           ))}
-          {datasetsList &&
-          datasetsList.length > displayedEntitiesNumber ? (
+          {datasetsList && datasetsList.length > displayedEntitiesNumber ? (
             <EntitiesListModal
               entities={datasetsList}
-              labelFor="Datasets"
+              labelFor='Datasets'
               dataEntityName={dataEntityName}
               openBtnEl={
-                <AppButton
-                  size="medium"
-                  color="tertiary"
-                  sx={{ my: 0.25 }}
-                >
+                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
                   Show All
                 </AppButton>
               }
             />
           ) : null}
         </Grid>
-        <Grid item lg={4}>
-          {suiteUrl && (
-            <Grid container flexDirection="column" alignItems="flex-start">
-              <Typography variant="h3" sx={{ mb: 1.25 }}>
+        {suiteUrl && (
+          <Grid item lg={4}>
+            <Grid container flexDirection='column' alignItems='flex-start'>
+              <Typography variant='h3' sx={{ mb: 1.25 }}>
                 Suite
               </Typography>
               <AppButton
                 to={{ pathname: suiteUrl }}
                 sx={{ my: 0.25 }}
-                size="medium"
-                color="tertiary"
+                size='medium'
+                color='tertiary'
                 truncate
-                linkTarget="_blank"
+                linkTarget='_blank'
               >
                 {suiteName || suiteUrl}
               </AppButton>
             </Grid>
-          )}
-        </Grid>
+          </Grid>
+        )}
         <S.Overview item lg={4}>
-          <Typography variant="h3">Last execution</Typography>
+          <Typography variant='h3'>Last execution</Typography>
           <LabeledInfoItem
             inline
-            label="Status"
+            label='Status'
             labelWidth={3}
             runStatus={qualityTest.latestRun?.status}
           >
             {qualityTest?.latestRun?.status}
           </LabeledInfoItem>
-          <LabeledInfoItem inline label="Date" labelWidth={3}>
+          <LabeledInfoItem inline label='Date' labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
-              format(
-                qualityTest?.latestRun?.startTime,
-                'd MMM yyyy, HH:MM a'
-              )}
+              format(qualityTest?.latestRun?.startTime, 'd MMM yyyy, HH:MM a')}
           </LabeledInfoItem>
-          <LabeledInfoItem inline label="Duration" labelWidth={3}>
+          <LabeledInfoItem inline label='Duration' labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
               qualityTest?.latestRun?.endTime &&
               formatDistanceStrict(
@@ -135,7 +119,7 @@ const OverviewQualityTestStats: React.FC<
           </LabeledInfoItem>
           <Grid container>
             <Link to={dataEntityHistoryPath(qualityTest?.id)}>
-              <AppButton size="small" color="tertiary">
+              <AppButton size='small' color='tertiary'>
                 History
               </AppButton>
             </Link>

@@ -5,16 +5,18 @@ import io.opentelemetry.sdk.metrics.data.PointData;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.BinaryFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.BooleanFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.ComplexFieldStat;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DateTimeFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.IntegerFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.NumberFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.StringFieldStat;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
+import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
@@ -32,27 +34,33 @@ public class DatasetFieldMetricExtractor implements MetricExtractor {
     private final DatasetFieldStatExtractor<StringFieldStat> stringExtractor;
 
     @Override
-    public Stream<MetricData> extract(final IngestionDataStructure dataStructure) {
+    public Stream<MetricData> extract(final IngestionRequest dataStructure) {
         final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream = dataStructure.getAllEntities()
             .stream()
             .filter(de -> de.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .flatMap(de -> de.getDataSet().fieldList().stream()
-                .filter(f -> f.getStats() != null)
-                .flatMap(f -> buildMetrics(de.getOddrn(), f)));
+                .filter(f -> f.field().getStats() != null)
+                .flatMap(f -> buildMetrics(de.getOddrn(), f.field())));
 
         return gaugeStream(metricStream);
     }
 
     private Stream<Pair<MetricDataTriplet, ? extends PointData>> buildMetrics(final String entityOddrn,
-                                                                              final DataSetField field) {
+                                                                              final DatasetFieldPojo field) {
+        final DataSetFieldStat stats = JSONSerDeUtils.deserializeJson(field.getStats(), DataSetFieldStat.class);
+
+        if (stats == null) {
+            return Stream.empty();
+        }
+
         return Stream.of(
-            binaryExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getBinaryStats()),
-            booleanExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getBooleanStats()),
-            complexExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getComplexStats()),
-            numberExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getNumberStats()),
-            stringExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getStringStats()),
-            integerExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getIntegerStats()),
-            dateTimeExtractor.extract(entityOddrn, field.getOddrn(), field.getStats().getDatetimeStats())
+            binaryExtractor.extract(entityOddrn, field.getOddrn(), stats.getBinaryStats()),
+            booleanExtractor.extract(entityOddrn, field.getOddrn(), stats.getBooleanStats()),
+            complexExtractor.extract(entityOddrn, field.getOddrn(), stats.getComplexStats()),
+            numberExtractor.extract(entityOddrn, field.getOddrn(), stats.getNumberStats()),
+            stringExtractor.extract(entityOddrn, field.getOddrn(), stats.getStringStats()),
+            integerExtractor.extract(entityOddrn, field.getOddrn(), stats.getIntegerStats()),
+            dateTimeExtractor.extract(entityOddrn, field.getOddrn(), stats.getDatetimeStats())
         ).flatMap(identity());
     }
 }

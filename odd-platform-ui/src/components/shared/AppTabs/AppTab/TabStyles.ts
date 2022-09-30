@@ -1,10 +1,4 @@
-import {
-  buttonBaseClasses,
-  Tab,
-  tabClasses,
-  TabProps,
-  TabsProps,
-} from '@mui/material';
+import { buttonBaseClasses, Tab, tabClasses, TabProps, TabsProps } from '@mui/material';
 import { Theme } from '@mui/material/styles';
 import { TabType } from 'components/shared/AppTabs/interfaces';
 import React from 'react';
@@ -13,9 +7,7 @@ import styled, { CSSObject } from 'styled-components';
 
 const LinkTab: React.ComponentType<
   Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
-> = Tab as React.ComponentType<
-  Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
->;
+> = Tab as React.ComponentType<Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>>;
 
 const getTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {
@@ -69,10 +61,7 @@ const getTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   }
 };
 
-const getSelectedTabStylesByType = (
-  theme: Theme,
-  type: TabType
-): CSSObject => {
+const getSelectedTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {
     case 'primary':
       return {};

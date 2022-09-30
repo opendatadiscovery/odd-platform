@@ -10,6 +10,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.r2dbc.connection.ConnectionFactoryUtils;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,17 +27,13 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
     @Value("${odd.activity.partition-period:30}")
     private Integer partitionDaysPeriod;
     private Mono<LocalDate> lastPartitionDate = Mono.empty();
-    private final ConnectionFactory connectionFactory;
+    private final DatabaseClient databaseClient;
 
     @Override
     public Mono<LocalDate> createPartitionIfNotExists(final LocalDate eventDate) {
-        this.lastPartitionDate = lastPartitionDate.filter(
-            l -> l.isAfter(eventDate)
-        ).switchIfEmpty(
-            Mono.usingWhen(connectionFactory.create(),
-                c -> createPartitionTables(c, eventDate),
-                Connection::close).cache()
-        );
+        this.lastPartitionDate = lastPartitionDate
+            .filter(l -> l.isAfter(eventDate))
+            .switchIfEmpty(databaseClient.inConnection(conn -> createPartitionTables(conn, eventDate)).cache());
 
         return this.lastPartitionDate;
     }
@@ -72,7 +70,8 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
             .flatMap(result -> Mono.from(result.map((row, rowMetadata) -> row.get("table_name", String.class))));
     }
 
-    private Mono<?> createPartitionTable(final Connection connection, final LocalDate beginDate,
+    private Mono<?> createPartitionTable(final Connection connection,
+                                         final LocalDate beginDate,
                                          final LocalDate endDate) {
         final String tableName = getTableName(beginDate, endDate);
         final String sql = "CREATE TABLE IF NOT EXISTS %s PARTITION OF activity FOR VALUES FROM ('%s') TO ('%s');"

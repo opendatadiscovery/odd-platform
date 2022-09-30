@@ -1,6 +1,6 @@
 import React from 'react';
 import { fetchDataEntityRuns } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityRunList,
   getDataEntityRunsFetchingStatuses,
@@ -45,17 +45,14 @@ const TestReportDetailsHistory: React.FC = () => {
           btnCreateEl={
             <S.QualityTestRunItemContainer container>
               <S.QualityTestRunItem container>
-                <Grid container lg={6} justifyContent="flex-start">
-                  <Typography variant="body1">
+                <Grid container item lg={6} justifyContent='flex-start'>
+                  <Typography variant='body1'>
                     {dataQATestRun?.startTime &&
-                      format(
-                        dataQATestRun?.startTime,
-                        'd MMM yyyy, HH:MM a'
-                      )}
+                      format(dataQATestRun?.startTime, 'd MMM yyyy, HH:MM a')}
                   </Typography>
                 </Grid>
-                <Grid container lg={3} justifyContent="center">
-                  <Typography variant="body1" align="right">
+                <Grid container item lg={3} justifyContent='center'>
+                  <Typography variant='body1' align='right'>
                     {dataQATestRun?.startTime &&
                       dataQATestRun?.endTime &&
                       formatDistanceStrict(
@@ -65,7 +62,7 @@ const TestReportDetailsHistory: React.FC = () => {
                       )}
                   </Typography>
                 </Grid>
-                <Grid container lg={3} justifyContent="flex-end">
+                <Grid container item lg={3} justifyContent='flex-end'>
                   <TestRunStatusItem typeName={dataQATestRun.status} />
                 </Grid>
               </S.QualityTestRunItem>
@@ -77,10 +74,7 @@ const TestReportDetailsHistory: React.FC = () => {
         <SkeletonWrapper
           length={5}
           renderContent={({ randWidth, key }) => (
-            <TestReportDetailsHistoryItemSkeleton
-              width={randWidth()}
-              key={key}
-            />
+            <TestReportDetailsHistoryItemSkeleton width={randWidth()} key={key} />
           )}
         />
       )}

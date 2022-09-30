@@ -8,7 +8,7 @@ import {
   getSearchUpdateStatuses,
 } from 'redux/selectors';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AppButton, AppCircularProgress } from 'components/shared';
 import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';

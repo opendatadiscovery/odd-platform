@@ -15,27 +15,21 @@ import { useAppPaths, usePermissions } from 'lib/hooks';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
 import { AlertStatus } from 'generated-sources';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataEntityPermissions } from 'redux/thunks';
 import {
   getDataEntityPermissionsFetchingStatuses,
   isDataEntityPermissionsAlreadyFetched,
 } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { ColContainer } from '../AlertsListStyles';
 import * as S from './AlertItemStyles';
 
 interface AlertItemProps {
   alert: Alert;
-  alertStatusHandler: (
-    alertId: Alert['id'],
-    alertStatus: AlertStatus
-  ) => void;
+  alertStatusHandler: (alertId: Alert['id'], alertStatus: AlertStatus) => void;
 }
 
-const AlertItem: React.FC<AlertItemProps> = ({
-  alert,
-  alertStatusHandler,
-}) => {
+const AlertItem: React.FC<AlertItemProps> = ({ alert, alertStatusHandler }) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const dispatch = useAppDispatch();
   const { isAllowedTo: alertProcessing } = usePermissions({
@@ -55,9 +49,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
   ) => {
     if (alert.dataEntity?.id && !isPermFetched) {
-      dispatch(
-        fetchDataEntityPermissions({ dataEntityId: alert.dataEntity.id })
-      );
+      dispatch(fetchDataEntityPermissions({ dataEntityId: alert.dataEntity.id }));
     }
     onClick(e);
   };
@@ -67,27 +59,21 @@ const AlertItem: React.FC<AlertItemProps> = ({
       <ColContainer
         item
         container
-        $colType="name"
-        justifyContent="space-between"
-        wrap="nowrap"
+        $colType='name'
+        justifyContent='space-between'
+        wrap='nowrap'
       >
         <S.NameContainer>
           <Link
-            to={
-              alert.dataEntity?.id
-                ? dataEntityDetailsPath(alert.dataEntity.id)
-                : '#'
-            }
+            to={alert.dataEntity?.id ? dataEntityDetailsPath(alert.dataEntity.id) : '#'}
           >
             <AppTooltip
               title={() =>
-                alert.dataEntity?.internalName ||
-                alert.dataEntity?.externalName
+                alert.dataEntity?.internalName || alert.dataEntity?.externalName
               }
             >
-              <Typography variant="body1" noWrap>
-                {alert.dataEntity?.internalName ||
-                  alert.dataEntity?.externalName}
+              <Typography variant='body1' noWrap>
+                {alert.dataEntity?.internalName || alert.dataEntity?.externalName}
               </Typography>
             </AppTooltip>
           </Link>
@@ -102,39 +88,33 @@ const AlertItem: React.FC<AlertItemProps> = ({
           ))}
         </S.TypesContainer>
       </ColContainer>
-      <ColContainer item $colType="description">
-        <Typography variant="body1" title={alert.type} noWrap>
+      <ColContainer item $colType='description'>
+        <Typography variant='body1' title={alert.type} noWrap>
           {alert.description}
         </Typography>
       </ColContainer>
-      <ColContainer
-        item
-        container
-        $colType="status"
-        justifyContent="center"
-      >
+      <ColContainer item container $colType='status' justifyContent='center'>
         <AlertStatusItem typeName={alert.status} />
       </ColContainer>
-      <ColContainer item $colType="createdTime">
-        <Typography variant="body1">
+      <ColContainer item $colType='createdTime'>
+        <Typography variant='body1'>
           {alert.createdAt && format(alert.createdAt, alertDateFormat)}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType="updatedBy" />
-      <ColContainer item $colType="updatedAt">
-        <Typography variant="body1">
-          {alert.statusUpdatedAt &&
-            format(alert.statusUpdatedAt, alertDateFormat)}
+      <ColContainer item $colType='updatedBy' />
+      <ColContainer item $colType='updatedAt'>
+        <Typography variant='body1'>
+          {alert.statusUpdatedAt && format(alert.statusUpdatedAt, alertDateFormat)}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType="actionBtn">
+      <ColContainer item $colType='actionBtn'>
         <S.OptionsBtn>
           <AppPopover
             renderOpenBtn={({ onClick, ariaDescribedBy }) => (
               <AppIconButton
                 ariaDescribedBy={ariaDescribedBy}
-                size="medium"
-                color="primaryLight"
+                size='medium'
+                color='primaryLight'
                 icon={<KebabIcon />}
                 onClick={e => alertOnClickHandle(e, onClick)}
               />

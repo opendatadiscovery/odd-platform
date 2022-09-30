@@ -37,10 +37,12 @@ public class MetadataFieldRepositoryImpl
         final Map<MetadataKey, MetadataFieldPojo> existing = listByKey(entitiesMap.keySet()).stream()
             .collect(Collectors.toMap(MetadataKey::new, identity()));
 
-        final List<MetadataFieldPojo> newMetadata = bulkCreate(entitiesMap.keySet().stream()
+        final List<MetadataFieldPojo> metadataToCreate = entitiesMap.keySet().stream()
             .filter(not(existing::containsKey))
             .map(entitiesMap::get)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
+
+        final List<MetadataFieldPojo> newMetadata = bulkCreate(metadataToCreate);
 
         return Stream.concat(existing.values().stream(), newMetadata.stream()).collect(Collectors.toList());
     }

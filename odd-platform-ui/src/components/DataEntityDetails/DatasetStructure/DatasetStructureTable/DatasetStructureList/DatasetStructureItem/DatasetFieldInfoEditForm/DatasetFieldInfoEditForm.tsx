@@ -6,7 +6,7 @@ import {
   getDatasetFieldFormDataUpdatingStatus,
 } from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   AppButton,
   AppInput,

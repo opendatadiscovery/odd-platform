@@ -6,7 +6,6 @@ import { MainSearch } from 'components/shared';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   createDataEntitiesSearch,
   getDataEntitiesSearch,
@@ -20,6 +19,7 @@ import {
   getSearchMyObjects,
   getSearchQuery,
 } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import Filters from './Filters/Filters';
 import Results from './Results/Results';
 
@@ -34,9 +34,7 @@ const Search: React.FC = () => {
   const searchMyObjects = useAppSelector(getSearchMyObjects);
   const searchFacetParams = useAppSelector(getSearchFacetsData);
   const searchFacetsSynced = useAppSelector(getSearchFacetsSynced);
-  const { isLoading: isSearchCreating } = useAppSelector(
-    getSearchCreatingStatuses
-  );
+  const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
 
   React.useEffect(() => {
     if (!routerSearchId && !isSearchCreating && !searchId) {
@@ -45,9 +43,7 @@ const Search: React.FC = () => {
         pageSize: 30,
         filters: {},
       };
-      dispatch(
-        createDataEntitiesSearch({ searchFormData: emptySearchQuery })
-      )
+      dispatch(createDataEntitiesSearch({ searchFormData: emptySearchQuery }))
         .unwrap()
         .then(search => {
           const searchLink = searchPath(search.searchId);
@@ -99,7 +95,7 @@ const Search: React.FC = () => {
           <Filters />
         </S.LeftSidebarContainer>
         <S.ListContainer item xs={9}>
-          <MainSearch placeholder="Search" />
+          <MainSearch placeholder='Search' />
           <Results />
         </S.ListContainer>
       </S.ContentContainer>

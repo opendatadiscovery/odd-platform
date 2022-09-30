@@ -22,9 +22,7 @@ const AppPopover: React.FC<AppPopoverProps> = ({
   isLoading,
   ...props
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -57,8 +55,8 @@ const AppPopover: React.FC<AppPopoverProps> = ({
           {isLoading ? (
             <AppCircularProgress
               size={20}
-              background="transparent"
-              progressBackground="dark"
+              background='transparent'
+              progressBackground='dark'
             />
           ) : (
             children

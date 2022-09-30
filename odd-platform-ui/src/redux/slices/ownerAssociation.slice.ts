@@ -4,10 +4,9 @@ import { OwnerAssociationState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
 import { OwnerAssociationRequest } from 'generated-sources';
 
-export const ownerAssociationAdapter =
-  createEntityAdapter<OwnerAssociationRequest>({
-    selectId: request => request.id,
-  });
+export const ownerAssociationAdapter = createEntityAdapter<OwnerAssociationRequest>({
+  selectId: request => request.id,
+});
 
 export const initialState: OwnerAssociationState = {
   newRequests: {

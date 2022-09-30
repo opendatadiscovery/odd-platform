@@ -1340,6 +1340,23 @@ paths:
       tags:
         - dataQuality
 
+  /api/datasets/{data_entity_id}/sla_report:
+    get:
+      summary: Get SLA report
+      description: Get detailed SLA statistics
+      operationId: getDatasetSLAReport
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetSLAReport'
+      tags:
+        - dataQuality
+
   /api/datasets/{data_entity_id}/test_report:
     get:
       summary: Get Dataset's test report
@@ -1672,22 +1689,6 @@ paths:
                 $ref: './components.yaml/#/components/schemas/AppInfo'
       tags:
         - appInfo
-
-  /ingestion/datasources/active:
-    get:
-      summary: List of active data sources
-      description: Gets the list of active available data sources
-      operationId: getActiveDataSourceList
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: './components.yaml/#/components/schemas/DataSource'
-      tags:
-        - dataSource
 
   /api/terms:
     get:

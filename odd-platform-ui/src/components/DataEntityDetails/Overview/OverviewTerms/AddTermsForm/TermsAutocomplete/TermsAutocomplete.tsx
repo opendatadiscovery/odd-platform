@@ -10,7 +10,7 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
 
 import { ControllerRenderProps } from 'react-hook-form';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermsList } from 'redux/thunks';
 
 interface TermsAutocompleteProps {

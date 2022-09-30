@@ -14,7 +14,7 @@ import {
 import { AppInput, AutocompleteSuggestion } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { ControllerRenderProps } from 'react-hook-form';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 
@@ -53,20 +53,17 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
     [searchNamespace, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback(
-    (option: FilterOption | string) => {
-      // Value selected with enter, right from the input
-      if (typeof option === 'string') {
-        return option;
-      }
-      // Regular option
-      if ('name' in option && option.name) {
-        return option.name;
-      }
-      return '';
-    },
-    []
-  );
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
+    // Value selected with enter, right from the input
+    if (typeof option === 'string') {
+      return option;
+    }
+    // Regular option
+    if ('name' in option && option.name) {
+      return option.name;
+    }
+    return '';
+  }, []);
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -109,10 +106,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
 
   const handleOptionChange = React.useCallback(
     (onChange: (val?: string) => void) =>
-      (
-        _: React.ChangeEvent<unknown>,
-        newValue: FilterChangeOption | null
-      ) => {
+      (_: React.ChangeEvent<unknown>, newValue: FilterChangeOption | null) => {
         let newField;
         if (newValue && typeof newValue === 'object') {
           if ('name' in newValue) {
@@ -135,7 +129,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
     <Autocomplete
       {...controllerProps}
       fullWidth
-      id="namespace-name-search"
+      id='namespace-name-search'
       open={autocompleteOpen}
       onOpen={() => {
         setAutocompleteOpen(true);
@@ -158,8 +152,8 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
         <AppInput
           {...params}
           ref={params.InputProps.ref}
-          placeholder="Namespace"
-          label="Namespace"
+          placeholder='Namespace'
+          label='Namespace'
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,
@@ -169,12 +163,12 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
       )}
       renderOption={(props, option: FilterOption) => (
         <li {...props}>
-          <Typography variant="body2">
+          <Typography variant='body2'>
             {option.id ? (
               option.name
             ) : (
               <AutocompleteSuggestion
-                optionLabel="custom namespace"
+                optionLabel='custom namespace'
                 optionName={option.name}
               />
             )}

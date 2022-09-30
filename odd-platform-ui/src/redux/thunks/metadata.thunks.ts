@@ -20,17 +20,13 @@ const metadataApi = new MetadataApi(apiClientConf);
 export const createDataEntityCustomMetadata = createAsyncThunk<
   { dataEntityId: number; metadataList: Array<MetadataFieldValue> },
   DataEntityApiCreateDataEntityMetadataFieldValueRequest
->(
-  actions.createDataEntityMetadataAction,
-  async ({ dataEntityId, metadataObject }) => {
-    const { items } =
-      await dataEntityApi.createDataEntityMetadataFieldValue({
-        dataEntityId,
-        metadataObject,
-      });
-    return { dataEntityId, metadataList: items };
-  }
-);
+>(actions.createDataEntityMetadataAction, async ({ dataEntityId, metadataObject }) => {
+  const { items } = await dataEntityApi.createDataEntityMetadataFieldValue({
+    dataEntityId,
+    metadataObject,
+  });
+  return { dataEntityId, metadataList: items };
+});
 
 export const updateDataEntityCustomMetadata = createAsyncThunk<
   {
@@ -41,11 +37,8 @@ export const updateDataEntityCustomMetadata = createAsyncThunk<
   DataEntityApiUpsertDataEntityMetadataFieldValueRequest
 >(
   actions.updateDataEntityMetadataAction,
-  async (
-    params: DataEntityApiUpsertDataEntityMetadataFieldValueRequest
-  ) => {
-    const metadata =
-      await dataEntityApi.upsertDataEntityMetadataFieldValue(params);
+  async (params: DataEntityApiUpsertDataEntityMetadataFieldValueRequest) => {
+    const metadata = await dataEntityApi.upsertDataEntityMetadataFieldValue(params);
     return {
       dataEntityId: params.dataEntityId,
       metadataFieldId: params.metadataFieldId,
@@ -57,16 +50,13 @@ export const updateDataEntityCustomMetadata = createAsyncThunk<
 export const deleteDataEntityCustomMetadata = createAsyncThunk<
   { dataEntityId: number; metadataFieldId: number },
   DataEntityApiDeleteDataEntityMetadataFieldValueRequest
->(
-  actions.deleteDataEntityMetadataAction,
-  async ({ dataEntityId, metadataFieldId }) => {
-    await dataEntityApi.deleteDataEntityMetadataFieldValue({
-      dataEntityId,
-      metadataFieldId,
-    });
-    return { dataEntityId, metadataFieldId };
-  }
-);
+>(actions.deleteDataEntityMetadataAction, async ({ dataEntityId, metadataFieldId }) => {
+  await dataEntityApi.deleteDataEntityMetadataFieldValue({
+    dataEntityId,
+    metadataFieldId,
+  });
+  return { dataEntityId, metadataFieldId };
+});
 
 export const searchMetadata = createAsyncThunk<
   { metadataFields: Array<MetadataField> },

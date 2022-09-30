@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.service.activity.handler;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -11,6 +13,8 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityR
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import static java.util.Collections.singletonList;
 
 @Component
 @RequiredArgsConstructor
@@ -29,8 +33,19 @@ public class DataEntityCreatedActivityHandler implements ActivityHandler {
 
     @Override
     public Mono<String> getUpdatedState(final Map<String, Object> parameters, final Long dataEntityId) {
-        return dataEntityRepository.get(dataEntityId)
-            .map(this::getState);
+        return getUpdatedState(parameters, singletonList(dataEntityId))
+            .handle((map, sink) -> {
+                final String state = map.get(dataEntityId);
+                if (state != null) {
+                    sink.next(state);
+                }
+            });
+    }
+
+    @Override
+    public Mono<Map<Long, String>> getUpdatedState(final Map<String, Object> parameters,
+                                                   final List<Long> dataEntityIds) {
+        return dataEntityRepository.get(dataEntityIds).collect(Collectors.toMap(DataEntityPojo::getId, this::getState));
     }
 
     private String getState(final DataEntityPojo pojo) {

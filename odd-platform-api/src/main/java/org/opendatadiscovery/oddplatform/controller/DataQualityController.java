@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverityForm;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetSLAReport;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
 import org.opendatadiscovery.oddplatform.service.SLAResourceResolver;
@@ -62,6 +63,13 @@ public class DataQualityController implements DataQualityApi {
             // TODO: remove subscribeOn after
             //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
             .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataSetSLAReport>> getDatasetSLAReport(final Long dataEntityId,
+                                                                      final ServerWebExchange exchange) {
+        return dataQualityService.getSLAReport(dataEntityId)
             .map(ResponseEntity::ok);
     }
 }

@@ -18,26 +18,19 @@ export const profileSlice = createSlice({
     }),
   },
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchIdentity.fulfilled,
-      (state, { payload }) => {
-        state.owner = payload;
-      }
-    );
+    builder.addCase(thunks.fetchIdentity.fulfilled, (state, { payload }) => {
+      state.owner = payload;
+    });
     builder.addCase(
       thunks.createOwnerAssociationRequest.fulfilled,
       (state, { payload }) => {
         state.owner.associationRequest = payload;
       }
     );
-    builder.addCase(
-      thunks.fetchDataEntityPermissions.fulfilled,
-      (state, { payload }) => {
-        const { dataEntityId, permissions } = payload;
-
-        state.permissions.byDataEntityId[dataEntityId] = permissions;
-      }
-    );
+    builder.addCase(thunks.fetchDataEntityPermissions.fulfilled, (state, { payload }) => {
+      const { dataEntityId, permissions } = payload;
+      state.permissions.byDataEntityId[dataEntityId] = permissions;
+    });
   },
 });
 

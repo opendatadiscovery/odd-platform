@@ -87,19 +87,14 @@ export const dataEntityLineageSlice = createSlice({
 
         localDownstreamState.excludedIds.add(root.id);
 
-        const rootNode = setRootNode(
-          state,
+        const rootNode = setRootNode(state, rootNodeId, dataEntityId, root);
+
+        const { filteredEdges, targetIdsMapByDepth, crossEdges } = filterDownstreamEdges(
           rootNodeId,
-          dataEntityId,
-          root
+          localDownstreamState.allEdges
         );
 
-        const { filteredEdges, targetIdsMapByDepth, crossEdges } =
-          filterDownstreamEdges(rootNodeId, localDownstreamState.allEdges);
-
-        const groupIdsByTargetId = generateGroupIdsMap(
-          localDownstreamState.allNodes
-        );
+        const groupIdsByTargetId = generateGroupIdsMap(localDownstreamState.allNodes);
 
         const groupedDownstreamNodes = groupingDownstreamNodes(
           groupIdsByTargetId,
@@ -117,9 +112,7 @@ export const dataEntityLineageSlice = createSlice({
         });
 
         const replacedEdges = filteredEdges.map(edge => {
-          const depthTargetGroupId = depthGroupIdByTargetId.get(
-            edge.targetId
-          );
+          const depthTargetGroupId = depthGroupIdByTargetId.get(edge.targetId);
 
           if (depthTargetGroupId) {
             return {
@@ -141,9 +134,7 @@ export const dataEntityLineageSlice = createSlice({
         );
 
         const replacedCrossEdges = crossEdges.map(edge => {
-          const depthTargetGroupId = depthGroupIdByTargetId.get(
-            edge.targetId
-          );
+          const depthTargetGroupId = depthGroupIdByTargetId.get(edge.targetId);
 
           if (depthTargetGroupId) {
             return {
@@ -159,8 +150,10 @@ export const dataEntityLineageSlice = createSlice({
           };
         });
 
-        const resultDownstreamCrossEdges: DataEntityLineageEdge[] =
-          uniqWith(replacedCrossEdges, isEqual);
+        const resultDownstreamCrossEdges: DataEntityLineageEdge[] = uniqWith(
+          replacedCrossEdges,
+          isEqual
+        );
 
         const resultDownstreamNodes: GroupedDataEntityLineageNode[] =
           groupedDownstreamNodes
@@ -171,8 +164,8 @@ export const dataEntityLineageSlice = createSlice({
               const resultNode: GroupedDataEntityLineageNode = {
                 ...group,
                 id: groupNode.depthGroupId,
-                nodesRelatedWithDEG: localDownstreamState.allNodes.filter(
-                  n => groupNode.targetIds.includes(n.id)
+                nodesRelatedWithDEG: localDownstreamState.allNodes.filter(n =>
+                  groupNode.targetIds.includes(n.id)
                 ),
                 originalGroupId: group?.id,
               };
@@ -183,8 +176,7 @@ export const dataEntityLineageSlice = createSlice({
         const parsedDataEntityLineage: DataEntityLineageById = {
           rootNode,
           upstream: {
-            ...(state[rootNodeId]?.upstream ||
-              dataEntityLineageInitialState),
+            ...(state[rootNodeId]?.upstream || dataEntityLineageInitialState),
           },
           downstream: {
             edgesById: resultDownstreamEdges.reduce<
@@ -251,19 +243,14 @@ export const dataEntityLineageSlice = createSlice({
 
         localUpstreamState.excludedIds.add(root.id);
 
-        const rootNode = setRootNode(
-          state,
+        const rootNode = setRootNode(state, rootNodeId, dataEntityId, root);
+
+        const { filteredEdges, sourceIdsMapByDepth, crossEdges } = filterUpstreamEdges(
           rootNodeId,
-          dataEntityId,
-          root
+          localUpstreamState.allEdges
         );
 
-        const { filteredEdges, sourceIdsMapByDepth, crossEdges } =
-          filterUpstreamEdges(rootNodeId, localUpstreamState.allEdges);
-
-        const groupIdsBySourceId = generateGroupIdsMap(
-          localUpstreamState.allNodes
-        );
+        const groupIdsBySourceId = generateGroupIdsMap(localUpstreamState.allNodes);
 
         const groupedUpstreamNodes = groupingUpstreamNodes(
           groupIdsBySourceId,
@@ -281,9 +268,7 @@ export const dataEntityLineageSlice = createSlice({
         });
 
         const replacedEdges = filteredEdges.map(edge => {
-          const depthSourceGroupId = depthGroupIdBySourceId.get(
-            edge.sourceId
-          );
+          const depthSourceGroupId = depthGroupIdBySourceId.get(edge.sourceId);
 
           if (depthSourceGroupId) {
             return {
@@ -305,9 +290,7 @@ export const dataEntityLineageSlice = createSlice({
         );
 
         const replacedCrossEdges = crossEdges.map(edge => {
-          const depthSourceGroupId = depthGroupIdBySourceId.get(
-            edge.sourceId
-          );
+          const depthSourceGroupId = depthGroupIdBySourceId.get(edge.sourceId);
 
           if (depthSourceGroupId) {
             return {
@@ -328,23 +311,22 @@ export const dataEntityLineageSlice = createSlice({
           isEqual
         );
 
-        const resultUpstreamNodes: GroupedDataEntityLineageNode[] =
-          groupedUpstreamNodes
-            .map(groupNode => {
-              const group = localUpstreamState.allGroups.find(
-                g => g.id === groupNode.groupId
-              );
-              const resultNode: GroupedDataEntityLineageNode = {
-                ...group,
-                id: groupNode.depthGroupId,
-                nodesRelatedWithDEG: localUpstreamState.allNodes.filter(
-                  n => groupNode.sourceIds.includes(n.id)
-                ),
-                originalGroupId: group?.id,
-              };
-              return resultNode;
-            })
-            .concat(localUpstreamState.allNodes);
+        const resultUpstreamNodes: GroupedDataEntityLineageNode[] = groupedUpstreamNodes
+          .map(groupNode => {
+            const group = localUpstreamState.allGroups.find(
+              g => g.id === groupNode.groupId
+            );
+            const resultNode: GroupedDataEntityLineageNode = {
+              ...group,
+              id: groupNode.depthGroupId,
+              nodesRelatedWithDEG: localUpstreamState.allNodes.filter(n =>
+                groupNode.sourceIds.includes(n.id)
+              ),
+              originalGroupId: group?.id,
+            };
+            return resultNode;
+          })
+          .concat(localUpstreamState.allNodes);
 
         const parsedDataEntityLineage: DataEntityLineageById = {
           rootNode,
@@ -372,8 +354,7 @@ export const dataEntityLineageSlice = createSlice({
             crossEdges: resultUpstreamCrossEdges,
           },
           downstream: {
-            ...(state[rootNodeId]?.downstream ||
-              dataEntityLineageInitialState),
+            ...(state[rootNodeId]?.downstream || dataEntityLineageInitialState),
           },
         };
 

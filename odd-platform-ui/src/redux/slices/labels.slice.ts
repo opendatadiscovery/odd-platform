@@ -9,11 +9,7 @@ export const labelsAdapter = createEntityAdapter<Label>({
 });
 
 export const initialState: LabelsState = {
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ...labelsAdapter.getInitialState(),
 };
 
@@ -22,15 +18,12 @@ export const labelsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchLabelsList.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
+    builder.addCase(thunks.fetchLabelsList.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
 
-        labelsAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
-      }
-    );
+      labelsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
+    });
     builder.addCase(thunks.createLabel.fulfilled, (state, { payload }) => {
       labelsAdapter.addMany(state, payload);
     });

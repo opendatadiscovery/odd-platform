@@ -1,20 +1,19 @@
-import InputField from '../../elements/input-field';
 import Button from '../../elements/button';
+import InputField from '../../elements/input-field';
 import { Pages } from '../index';
 import BaseModal from './base-modal';
-import TextBox from "../../elements/text-box";
 
 const SELECTORS = {
   this_dialog: 'div[role="dialog"]',
   owner_name: 'input[name="name"]',
-  add_owner: 'button:has-text("Add new owner")'
+  add_owner: 'button:has-text("Add new owner")',
 };
 
 export default class AddOwnerModal extends BaseModal {
   constructor(pages: Pages) {
-    // @ts-ignore
     super(pages, SELECTORS.this_dialog);
   }
+
   /**
    * Returns the `InputField` custom wrapper for `Owner name` field
    */

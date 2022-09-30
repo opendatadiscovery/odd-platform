@@ -21,7 +21,7 @@ import {
   TextFormatted,
 } from 'components/shared';
 import { stringFormatted } from 'lib/helpers';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import {
   deleteDataEntityCustomMetadata,
   updateDataEntityCustomMetadata,

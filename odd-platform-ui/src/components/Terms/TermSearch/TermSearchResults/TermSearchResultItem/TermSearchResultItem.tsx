@@ -4,9 +4,9 @@ import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Term } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon } from 'components/shared/Icons';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteTerm } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
@@ -17,15 +17,11 @@ interface TermsResultItemProps {
   termSearchResult: Term;
 }
 
-const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
-  termSearchResult,
-}) => {
+const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult }) => {
   const dispatch = useAppDispatch();
   const { termDetailsOverviewPath } = useAppPaths();
 
-  const termDetailsOverviewLink = termDetailsOverviewPath(
-    termSearchResult.id
-  );
+  const termDetailsOverviewLink = termDetailsOverviewPath(termSearchResult.id);
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteTerm({ termId: termSearchResult.id })),
@@ -35,74 +31,59 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
   return (
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
       <S.TermSearchResultsContainer container>
-        <TermSearchResultsColContainer item $colType="collg">
+        <TermSearchResultsColContainer item $colType='collg'>
           <TermSearchNameContainer container item>
-            <Typography variant="body1" noWrap>
+            <Typography variant='body1' noWrap>
               {termSearchResult.name}
             </Typography>
           </TermSearchNameContainer>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="collg">
-          <Typography
-            variant="body1"
-            title={termSearchResult.namespace.name}
-            noWrap
-          >
+        <TermSearchResultsColContainer item $colType='collg'>
+          <Typography variant='body1' title={termSearchResult.namespace.name} noWrap>
             {termSearchResult.namespace.name}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="collg">
-          <Grid container direction="column" alignItems="flex-start">
+        <TermSearchResultsColContainer item $colType='collg'>
+          <Grid container direction='column' alignItems='flex-start'>
             {termSearchResult.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
-                <Typography
-                  variant="body1"
-                  title={ownership.owner.name}
-                  noWrap
-                >
+                <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
               </Grid>
             ))}
           </Grid>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colxs">
-          <Typography variant="body1" noWrap>
+        <TermSearchResultsColContainer item $colType='colxs'>
+          <Typography variant='body1' noWrap>
             {termSearchResult.entitiesUsingCount}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colsm">
-          <Typography variant="body1" noWrap>
+        <TermSearchResultsColContainer item $colType='colsm'>
+          <Typography variant='body1' noWrap>
             {termSearchResult.createdAt &&
               format(termSearchResult.createdAt, 'd MMM yyyy')}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colsm">
-          <Typography variant="body1" noWrap>
+        <TermSearchResultsColContainer item $colType='colsm'>
+          <Typography variant='body1' noWrap>
             {termSearchResult.updatedAt &&
               formatDistanceToNowStrict(termSearchResult.updatedAt, {
                 addSuffix: true,
               })}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colxs">
+        <TermSearchResultsColContainer item $colType='colxs'>
           <S.ActionsContainer>
             <ConfirmationDialog
-              actionTitle="Are you sure you want to delete this term?"
-              actionName="Delete Term"
+              actionTitle='Are you sure you want to delete this term?'
+              actionName='Delete Term'
               actionText={
-                <>
-                  &quot;{termSearchResult.name}&quot; will be deleted
-                  permanently.
-                </>
+                <>&quot;{termSearchResult.name}&quot; will be deleted permanently.</>
               }
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton
-                  size="medium"
-                  color="primaryLight"
-                  startIcon={<DeleteIcon />}
-                >
+                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
                   Delete
                 </AppButton>
               }

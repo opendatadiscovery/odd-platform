@@ -1,7 +1,4 @@
-import {
-  DataQualityTestExpectation,
-  DataSetFieldTypeTypeEnum,
-} from 'generated-sources';
+import { DataQualityTestExpectation, DataSetFieldTypeTypeEnum } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { Theme } from '@mui/material';
 import { CRUDType } from 'lib/interfaces';
@@ -16,18 +13,13 @@ export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
 export const stringFormatted = (
   value: string,
   splitter: '_' | '.',
-  capitalizing:
-    | 'all'
-    | 'firstLetterOfString'
-    | 'firstLetterOfEveryWord'
-    | 'disabled',
+  capitalizing: 'all' | 'firstLetterOfString' | 'firstLetterOfEveryWord' | 'disabled',
   removePrefix?: boolean
 ) => {
   const capitalizeBy = (str: string, idx: number) => {
     if (capitalizing === 'all') return str.toUpperCase();
     if (capitalizing === 'firstLetterOfEveryWord') return capitalize(str);
-    if (capitalizing === 'firstLetterOfString' && idx === 0)
-      return capitalize(str);
+    if (capitalizing === 'firstLetterOfString' && idx === 0) return capitalize(str);
 
     return str;
   };
@@ -68,5 +60,4 @@ export const setActivityBackgroundColor = (
 
 export const hasDataQualityTestExpectations = (
   expectations?: DataQualityTestExpectation
-) =>
-  expectations && Object.keys(expectations).some(key => expectations[key]);
+) => expectations && Object.keys(expectations).some(key => expectations[key]);

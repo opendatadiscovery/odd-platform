@@ -5,6 +5,7 @@ export default class CustomElement {
 
   /**
    * Returns a locator even if string selector is passed as a parameter
+   *
    * @param element
    * @returns Locator
    */
@@ -77,14 +78,16 @@ export default class CustomElement {
 
   /**
    * Gets bounding box of the target element
+   *
    * @returns
    */
   async bounding_box() {
-    return await this.custom_element.boundingBox();
+    return this.custom_element.boundingBox();
   }
 
   /**
    * Get the elements attribute
+   *
    * @param attribute
    * @returns
    */
@@ -96,6 +99,7 @@ export default class CustomElement {
 
   /**
    * Searches for the child element
+   *
    * @param locator
    */
   find(locator: string) {
@@ -117,9 +121,11 @@ export default class CustomElement {
 
   /**
    * Wait for element to be visible on the page within global timeout
+   *
+   * @param timeout
    */
   async wait_for_element_to_be_visible(timeout = 90000) {
-    await this.custom_element.waitFor({ timeout: timeout });
+    await this.custom_element.waitFor({ timeout });
   }
 
   /**
@@ -132,6 +138,8 @@ export default class CustomElement {
 
   /**
    * Waits until loading spinner will be detached from the DOM
+   *
+   * @param retries
    */
   async wait_until_loaded(retries = 15) {
     await this.context.waitForSelector('svg[class="ui/loading-spinner"]', {

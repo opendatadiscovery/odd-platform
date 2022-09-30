@@ -17,7 +17,7 @@ import {
 import { AppInput } from 'components/shared';
 import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
 import { TermSearchOptionalFacetNames } from 'redux/interfaces';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getTermSearchFacetsByType,
   getTermSearchId,

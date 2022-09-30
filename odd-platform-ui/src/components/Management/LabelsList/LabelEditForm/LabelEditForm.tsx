@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { Label, LabelFormData } from 'generated-sources';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getLabelDeletingStatuses,
   getLabelUpdatingStatuses,

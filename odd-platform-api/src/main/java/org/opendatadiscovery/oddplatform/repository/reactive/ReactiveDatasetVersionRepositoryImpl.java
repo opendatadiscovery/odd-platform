@@ -28,11 +28,11 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.mapping;
-import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
@@ -158,7 +158,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<List<DatasetVersionPojo>> getLatestVersions(final Collection<Long> datasetIds) {
+    public Flux<DatasetVersionPojo> getLatestVersions(final Collection<Long> datasetIds) {
         final String dsOddrnAlias = "dsv_dataset_oddrn";
 
         final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
@@ -176,9 +176,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField));
 
-        return jooqReactiveOperations.flux(conditionStep)
-            .map(this::extractDatasetVersion)
-            .collectList();
+        return jooqReactiveOperations.flux(conditionStep).map(this::extractDatasetVersion);
     }
 
     @Override

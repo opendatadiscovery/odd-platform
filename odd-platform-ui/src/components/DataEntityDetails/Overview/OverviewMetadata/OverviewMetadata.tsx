@@ -2,12 +2,12 @@ import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { AddIcon } from 'components/shared/Icons';
 import { AppButton } from 'components/shared';
-import { useAppSelector } from 'lib/redux/hooks';
 import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors';
 import { usePermissions } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import { SubtitleContainer } from './OverviewMetadataStyles';
@@ -22,9 +22,7 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
   const predefinedMetadata = useAppSelector(
     getDataEntityPredefinedMetadataList(dataEntityId)
   );
-  const customMetadata = useAppSelector(
-    getDataEntityCustomMetadataList(dataEntityId)
-  );
+  const customMetadata = useAppSelector(getDataEntityCustomMetadataList(dataEntityId));
 
   const visibleLimit = 10;
 
@@ -34,13 +32,8 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
   let collapsedPredefined;
   if (predefinedMetadata?.length > visibleLimit) {
     collapsedPredefined = (
-      <Grid container flexDirection="column">
-        <Collapse
-          in={predefOpen}
-          timeout="auto"
-          unmountOnExit
-          sx={{ mt: 0.5 }}
-        >
+      <Grid container flexDirection='column'>
+        <Collapse in={predefOpen} timeout='auto' unmountOnExit sx={{ mt: 0.5 }}>
           {predefOpen ? (
             <Grid container>
               {predefinedMetadata?.slice(visibleLimit).map(item => (
@@ -54,14 +47,12 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
           ) : null}
         </Collapse>
         <AppButton
-          size="small"
-          color="tertiary"
+          size='small'
+          color='tertiary'
           onClick={() => setPredefOpen(!predefOpen)}
           sx={{ mt: 0.75, width: 'fit-content' }}
         >
-          {predefOpen
-            ? 'Hide'
-            : `View All (${predefinedMetadata.length - visibleLimit})`}
+          {predefOpen ? 'Hide' : `View All (${predefinedMetadata.length - visibleLimit})`}
         </AppButton>
       </Grid>
     );
@@ -70,13 +61,8 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
   let collapsedCustom;
   if (customMetadata?.length > visibleLimit) {
     collapsedCustom = (
-      <Grid container flexDirection="column">
-        <Collapse
-          in={customOpen}
-          timeout="auto"
-          unmountOnExit
-          sx={{ mt: 0.5 }}
-        >
+      <Grid container flexDirection='column'>
+        <Collapse in={customOpen} timeout='auto' unmountOnExit sx={{ mt: 0.5 }}>
           {customOpen ? (
             <Grid container>
               {customMetadata?.slice(visibleLimit + 1).map(item => (
@@ -91,13 +77,11 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
         </Collapse>
         <AppButton
           sx={{ mt: 0.75, width: 'fit-content' }}
-          size="small"
-          color="tertiary"
+          size='small'
+          color='tertiary'
           onClick={() => setCustomOpen(!customOpen)}
         >
-          {customOpen
-            ? 'Hide'
-            : `View All (${customMetadata.length - visibleLimit})`}
+          {customOpen ? 'Hide' : `View All (${customMetadata.length - visibleLimit})`}
         </AppButton>
       </Grid>
     );
@@ -108,13 +92,13 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
         <Grid container>
           <Grid item xs={12}>
             <SubtitleContainer>
-              <Typography variant="h4">Custom</Typography>
+              <Typography variant='h4'>Custom</Typography>
               <MetadataCreateForm
                 dataEntityId={dataEntityId}
                 btnCreateEl={
                   <AppButton
-                    size="medium"
-                    color="primaryLight"
+                    size='medium'
+                    color='primaryLight'
                     startIcon={<AddIcon />}
                     disabled={!editDataEntity}
                   >
@@ -139,18 +123,18 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
               item
               xs={12}
               container
-              alignItems="center"
-              justifyContent="flex-start"
-              wrap="nowrap"
+              alignItems='center'
+              justifyContent='flex-start'
+              wrap='nowrap'
             >
-              <Typography variant="subtitle2">Not created.</Typography>
+              <Typography variant='subtitle2'>Not created.</Typography>
               <MetadataCreateForm
                 dataEntityId={dataEntityId}
                 btnCreateEl={
                   <AppButton
                     sx={{ ml: 0.5 }}
-                    size="small"
-                    color="tertiary"
+                    size='small'
+                    color='tertiary'
                     disabled={!editDataEntity}
                   >
                     Add Metadata
@@ -167,7 +151,7 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
           <Grid container>
             <Grid item xs={12}>
               <SubtitleContainer>
-                <Typography variant="h4">Pre-defined</Typography>
+                <Typography variant='h4'>Pre-defined</Typography>
               </SubtitleContainer>
             </Grid>
             {predefinedMetadata?.slice(0, visibleLimit).map(item => (
