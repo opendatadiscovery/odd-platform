@@ -5,25 +5,25 @@ import { Pages } from '../index';
 import BaseModal from './base-modal';
 
 const SELECTORS = {
-  this_dialog: 'div[role="dialog"]',
-  tag_name: '[placeholder="Tag Name"]',
-  save_tag: '[type="submit"]',
-  important_tag: '[type="checkbox"]',
+  thisDialog: 'div[role="dialog"]',
+  tagName: '[placeholder="Tag Name"]',
+  saveTag: '[type="submit"]',
+  importantTag: '[type="checkbox"]',
 };
 export default class EditTagModal extends BaseModal {
   constructor(pages: Pages) {
-    super(pages, SELECTORS.this_dialog);
+    super(pages, SELECTORS.thisDialog);
   }
 
-  get tag_name_field() {
-    return new InputField(this.page, SELECTORS.tag_name);
+  get tagNameField() {
+    return new InputField(this.page, SELECTORS.tagName);
   }
 
-  get check_important() {
-    return new Checkbox(this.page, SELECTORS.important_tag);
+  get checkImportant() {
+    return new Checkbox(this.page, SELECTORS.importantTag);
   }
 
-  get save_tag() {
-    return new Button(this.page, SELECTORS.save_tag);
+  get saveTag() {
+    return new Button(this.page, SELECTORS.saveTag);
   }
 }

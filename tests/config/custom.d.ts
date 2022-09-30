@@ -1,7 +1,7 @@
 declare global {
   namespace NodeJS {
     interface Global {
-      worker_id: string;
+      workerId: string;
     }
   }
 }

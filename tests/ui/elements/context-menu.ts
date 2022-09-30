@@ -7,33 +7,31 @@ export default class ContextMenu extends CustomElement {
 
   constructor(
     context: Page,
-    anchor_locator: string | Locator = '.rc-menu-button',
-    root_selector: string | Locator = '[role="menu"]',
-    private readonly items_selector = '[role="menuitem"]',
+    anchorLocator: string | Locator = '.rc-menu-button',
+    rootSelector: string | Locator = '[role="menu"]',
+    private readonly itemsSelector = '[role="menuitem"]',
   ) {
-    super(context, root_selector);
+    super(context, rootSelector);
 
-    this.anchor = this.get_locator(anchor_locator);
+    this.anchor = this.getLocator(anchorLocator);
   }
 
   /**
    * Click the Context menu item
    *
-   * @param item_name
+   * @param itemName
    * @param open if false - does not open the context menu
    */
-  async click(item_name: string, open = true) {
+  async click(itemName: string, open = true) {
     if (open) {
       await this.open();
     }
-    await this.custom_element.waitFor();
+    await this.customElement.waitFor();
 
-    const menu_item = this.custom_element.locator(
-      `${this.items_selector}:has-text("${item_name}")`,
-    );
+    const menuItem = this.customElement.locator(`${this.itemsSelector}:has-text("${itemName}")`);
 
-    await menu_item.waitFor();
-    await menu_item.click();
+    await menuItem.waitFor();
+    await menuItem.click();
   }
 
   /**

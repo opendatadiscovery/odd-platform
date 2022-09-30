@@ -1,28 +1,28 @@
 export interface MyProfile {
   id: number;
-  first_name: string;
-  feature_flags: string[];
-  last_name: string;
+  firstName: string;
+  featureFlags: string[];
+  lastName: string;
   client: number;
   role: number;
   username: string;
   email: string;
   avatar: string;
-  client_config: ClientConfig;
-  email_notification: boolean | null;
-  client_name: string;
-  segment_info: SegmentInfo;
-  job_title: string;
-  root_folder: number;
-  is_workflow_admin: boolean;
+  clientConfig: ClientConfig;
+  emailNotification: boolean | null;
+  clientName: string;
+  segmentInfo: SegmentInfo;
+  jobTitle: string;
+  rootFolder: number;
+  isWorkflowAdmin: boolean;
 }
 
 interface ClientConfig {
   id: number;
-  upload_form_fields: UploadFormFields[];
-  feature_flags: string[];
-  sub_domain: string;
-  sync_type: string;
+  uploadFormFields: UploadFormFields[];
+  featureFlags: string[];
+  subDomain: string;
+  syncType: string;
 }
 
 interface UploadFormFields {
@@ -30,21 +30,21 @@ interface UploadFormFields {
   type: string;
   values: UploadFormFieldsValues[];
   label: string;
-  allow_new_options: boolean;
+  allowNewOptions: boolean;
 }
 
 interface UploadFormFieldsValues {
   value: string;
-  display_value: string;
+  displayValue: string;
 }
 
 interface SegmentInfo {
-  num_docs: number;
-  num_billable_docs: number;
-  num_users: number;
-  last_sync_date: string | null;
+  numDocs: number;
+  numBillableDocs: number;
+  numUsers: number;
+  lastSyncDate: string | null;
   position: string;
-  client_type: string;
-  storage_provider: string;
-  ai_activation: boolean;
+  clientType: string;
+  storageProvider: string;
+  aiActivation: boolean;
 }

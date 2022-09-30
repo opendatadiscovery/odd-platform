@@ -5,7 +5,7 @@ export default class Checkbox extends CustomElement {
    * Clicks on the checkbox
    */
   async click() {
-    await this.wait_for_element_to_be_visible();
-    await this.custom_element.click();
+    await this.waitForElementToBeVisible();
+    await this.customElement.click();
   }
 }
