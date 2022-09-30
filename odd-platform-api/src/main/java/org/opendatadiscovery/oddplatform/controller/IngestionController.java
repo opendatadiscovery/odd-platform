@@ -32,10 +32,8 @@ public class IngestionController implements IngestionApi {
         final ServerWebExchange exchange
     ) {
         return dataEntityList
-            .publishOn(Schedulers.boundedElastic())
-            .doOnError(t -> log.error(t.getMessage()))
             .flatMap(ingestionService::ingest)
-            .map(voidMono -> ResponseEntity.ok().build());
+            .thenReturn(ResponseEntity.ok().build());
     }
 
     @Override
