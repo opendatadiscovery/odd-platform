@@ -1,11 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,6 +66,12 @@ import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
@@ -487,7 +487,8 @@ public class DataEntityServiceImpl
                 .map(de -> {
                     final DataEntityTypeDto type = DataEntityTypeDto
                         .findById(de.getTypeId())
-                        .orElseThrow();
+                        .orElseThrow(() -> new IllegalStateException(
+                            "Incorrect type id %d in the database".formatted(de.getTypeId())));
 
                     return new CompactDataEntity()
                         .oddrn(de.getOddrn())
