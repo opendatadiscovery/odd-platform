@@ -1,7 +1,7 @@
 ---
 description: >-
   This section defines how to configure ODD Platform in order to leverage all of
-  its functionality and features
+  its functionality and features.
 ---
 
 # Configure ODD Platform
@@ -114,7 +114,7 @@ AUTH_LOGIN-FORM-CREDENTIALS=susan:susan_password,dave:dave_password
 **`auth.type`** variable must be set to **OAUTH2**
 {% endhint %}
 
-ODD Platform supports different OIDC/OAuth2 providers. Currently there are:&#x20;
+ODD Platform supports different OIDC/OAuth2 providers. Currently there are:
 
 * [AWS Cognito](odd-platform.md#aws-cognito)
 * [Github](odd-platform.md#github)
@@ -123,7 +123,7 @@ ODD Platform supports different OIDC/OAuth2 providers. Currently there are:&#x20
 * Keycloak
 * Custom OIDC provider
 
-It is possible to have multiple providers at the same time (e.g. you want to allow to authenticate users from Github and Google, or from multiple Cognito user pools). Configuration properties name for each provider must fit the  pattern `auth.oauth2.client.{client_id}.{client_parameter}`, where `client_id` is provider identifier.&#x20;
+It is possible to have multiple providers at the same time (e.g. you want to allow to authenticate users from Github and Google, or from multiple Cognito user pools). Configuration properties name for each provider must fit the pattern `auth.oauth2.client.{client_id}.{client_parameter}`, where `client_id` is provider identifier.
 
 There are some common parameters which are used across all providers:
 
@@ -138,7 +138,7 @@ There are some common parameters which are used across all providers:
 For all OIDC providers **openid** scope must be included!
 {% endhint %}
 
-* `auth.oauth2.client.{client-id}.issuer-uri`.  URI that can either be an OpenID Connect discovery endpoint or an OAuth 2.0 Authorization Server Metadata endpoint defined by RFC 8414.&#x20;
+* `auth.oauth2.client.{client-id}.issuer-uri`. URI that can either be an OpenID Connect discovery endpoint or an OAuth 2.0 Authorization Server Metadata endpoint defined by RFC 8414.
 
 {% hint style="info" %}
 Given that the issuer uri is composed of a host and a path, ODD Platform tries to fetch information, calling following URLs:
@@ -157,16 +157,16 @@ If you don't have issuer uri or if you want to override some values, there are s
 If issuer uri can provide this info above parameters can be skipped.
 {% endhint %}
 
-* `auth.oauth2.client.{client-id}.username-attribute`.  Defines which token claim should be picked as username in ODD Platform
-* `auth.oauth2.client.{client-id}.admin-attribute`.  Defines which token claim is responsible for admin principal
-* `auth.oauth2.client.{client-id}.admin-principals`.  List of admins. Should be used the values which are retrieved from token using admin attribute property.
+* `auth.oauth2.client.{client-id}.username-attribute`. Defines which token claim should be picked as username in ODD Platform
+* `auth.oauth2.client.{client-id}.admin-attribute`. Defines which token claim is responsible for admin principal
+* `auth.oauth2.client.{client-id}.admin-principals`. List of admins. Should be used the values which are retrieved from token using admin attribute property.
 
 #### AWS Cognito
 
 AWS Cognito provider can be configured using common oauth properties and couple of provider specific properties:
 
-* `auth.oauth2.client.{client-id}.admin-groups`.  List of admin groups. Groups are retrieved from `cognito:groups` token claim.
-* `auth.oauth2.client.{client-id}.logout-uri`.  URI, application will be redirected to after user logout.
+* `auth.oauth2.client.{client-id}.admin-groups`. List of admin groups. Groups are retrieved from `cognito:groups` token claim.
+* `auth.oauth2.client.{client-id}.logout-uri`. URI, application will be redirected to after user logout.
 
 {% hint style="info" %}
 `auth.oauth2.client.{client-id}.username-attribute` is `cognito:username` by default
@@ -195,8 +195,9 @@ auth:
 {% endtab %}
 
 {% tab title="Environment variables" %}
-<pre><code><strong>AUTH_TYPE=OAUTH2
-</strong>AUTH_OAUTH2_CLIENT_COGNITO_PROVIDER=cognito
+```
+AUTH_TYPE=OAUTH2
+AUTH_OAUTH2_CLIENT_COGNITO_PROVIDER=cognito
 AUTH_OAUTH2_CLIENT_COGNITO_CLIENT_ID={client_id}
 AUTH_OAUTH2_CLIENT_COGNITO_CLIENT_SECRET={client_secret}
 AUTH_OAUTH2_CLIENT_COGNITO_SCOPE=openid
@@ -206,7 +207,8 @@ AUTH_OAUTH2_CLIENT_COGNITO_ISSUER_URI={issuer_uri}
 AUTH_OAUTH2_CLIENT_COGNITO_LOGOUT_URI={logout_uri}
 AUTH_OAUTH2_CLIENT_COGNITO_ADMIN_GROUPS=admin
 AUTH_OAUTH2_CLIENT_COGNITO_ADMIN_ATTRIBUTE=cognito:username
-AUTH_OAUTH2_CLIENT_COGNITO_ADMIN_PRINCIPALS=john,david</code></pre>
+AUTH_OAUTH2_CLIENT_COGNITO_ADMIN_PRINCIPALS=john,david
+```
 {% endtab %}
 {% endtabs %}
 
@@ -214,8 +216,8 @@ AUTH_OAUTH2_CLIENT_COGNITO_ADMIN_PRINCIPALS=john,david</code></pre>
 
 You can use Github as your OAUTH provider. ODD platform can retrieve info about user organizations and teams and use it for granting admin permissions. There are some github specific properties, which can be set:
 
-* `auth.oauth2.client.{client-id}.organization-name`.  Restricts to login only for users from this particular organization
-* `auth.oauth2.client.{client-id}.admin-groups`.  Grants admin privilegies for users who are members of these teams, which are inside above organization
+* `auth.oauth2.client.{client-id}.organization-name`. Restricts to login only for users from this particular organization
+* `auth.oauth2.client.{client-id}.admin-groups`. Grants admin privilegies for users who are members of these teams, which are inside above organization
 
 {% hint style="warning" %}
 In order to retrieve organization information from github **user:read** and **read:org** scopes must be included
@@ -247,8 +249,9 @@ auth:
 {% endtab %}
 
 {% tab title="Environment variables" %}
-<pre><code><strong>AUTH_TYPE=OAUTH2
-</strong>AUTH_OAUTH2_CLIENT_GITHUB_PROVIDER=github
+```
+AUTH_TYPE=OAUTH2
+AUTH_OAUTH2_CLIENT_GITHUB_PROVIDER=github
 AUTH_OAUTH2_CLIENT_GITHUB_CLIENT_ID={client_id}
 AUTH_OAUTH2_CLIENT_GITHUB_CLIENT_SECRET={client_secret}
 AUTH_OAUTH2_CLIENT_GITHUB_SCOPE=user:read,read:org
@@ -261,13 +264,14 @@ AUTH_OAUTH2_CLIENT_GITHUB_USER_NAME_ATTRIBUTE=login
 AUTH_OAUTH2_CLIENT_GITHUB_ORGANIZATION_NAME=my-cool-org
 AUTH_OAUTH2_CLIENT_GITHUB_ADMIN_GROUPS=admin
 AUTH_OAUTH2_CLIENT_GITHUB_ADMIN_ATTRIBUTE=login
-AUTH_OAUTH2_CLIENT_GITHUB_ADMIN_PRINCIPALS=john,david</code></pre>
+AUTH_OAUTH2_CLIENT_GITHUB_ADMIN_PRINCIPALS=john,david
+```
 {% endtab %}
 {% endtabs %}
 
 #### Google
 
-ODD Platform allows to authenticate users via Google. You can restrict users to login under your organization domain. This is controlled by `auth.oauth2.client.{client-id}.allowed-domain` property.&#x20;
+ODD Platform allows to authenticate users via Google. You can restrict users to login under your organization domain. This is controlled by `auth.oauth2.client.{client-id}.allowed-domain` property.
 
 {% tabs %}
 {% tab title="YAML" %}
@@ -292,8 +296,9 @@ auth:
 {% endtab %}
 
 {% tab title="Environment variables" %}
-<pre><code><strong>AUTH_TYPE=OAUTH2
-</strong>AUTH_OAUTH2_CLIENT_GOOGLE_PROVIDER=google
+```
+AUTH_TYPE=OAUTH2
+AUTH_OAUTH2_CLIENT_GOOGLE_PROVIDER=google
 AUTH_OAUTH2_CLIENT_GOOGLE_CLIENT_ID={client_id}
 AUTH_OAUTH2_CLIENT_GOOGLE_CLIENT_SECRET={client_secret}
 AUTH_OAUTH2_CLIENT_GOOGLE_SCOPE=openid,profile,email
@@ -303,7 +308,8 @@ AUTH_OAUTH2_CLIENT_GOOGLE_ISSUER_URI=https://accounts.google.com
 AUTH_OAUTH2_CLIENT_GOOGLE_USER_NAME_ATTRIBUTE=name
 AUTH_OAUTH2_CLIENT_GOOGLE_ADMIN_ATTRIBUTE=email
 AUTH_OAUTH2_CLIENT_GOOGLE_ADMIN_PRINCIPALS=john@odd.com,david@odd.com
-AUTH_OAUTH2_CLIENT_GOOGLE_ALLOWED_DOMAIN=odd.com</code></pre>
+AUTH_OAUTH2_CLIENT_GOOGLE_ALLOWED_DOMAIN=odd.com
+```
 {% endtab %}
 {% endtabs %}
 
@@ -333,8 +339,9 @@ auth:
 {% endtab %}
 
 {% tab title="OKTA Environment variables" %}
-<pre><code><strong>AUTH_TYPE=OAUTH2
-</strong>AUTH_OAUTH2_CLIENT_OKTA_PROVIDER=google
+```
+AUTH_TYPE=OAUTH2
+AUTH_OAUTH2_CLIENT_OKTA_PROVIDER=google
 AUTH_OAUTH2_CLIENT_OKTA_CLIENT_ID={client_id}
 AUTH_OAUTH2_CLIENT_OKTA_CLIENT_SECRET={client_secret}
 AUTH_OAUTH2_CLIENT_OKTA_SCOPE=openid,profile,email
@@ -343,7 +350,8 @@ AUTH_OAUTH2_CLIENT_OKTA_CLIENT_NAME=Okta
 AUTH_OAUTH2_CLIENT_OKTA_ISSUER_URI={issuer_uri}
 AUTH_OAUTH2_CLIENT_OKTA_USER_NAME_ATTRIBUTE=email
 AUTH_OAUTH2_CLIENT_OKTA_ADMIN_ATTRIBUTE=email
-AUTH_OAUTH2_CLIENT_OKTA_ADMIN_PRINCIPALS=john@odd.com,david@odd.com</code></pre>
+AUTH_OAUTH2_CLIENT_OKTA_ADMIN_PRINCIPALS=john@odd.com,david@odd.com
+```
 {% endtab %}
 {% endtabs %}
 
@@ -369,8 +377,9 @@ auth:
 {% endtab %}
 
 {% tab title="Keycloak Environment variables" %}
-<pre><code><strong>AUTH_TYPE=OAUTH2
-</strong>AUTH_OAUTH2_CLIENT_KEYCLOAK_PROVIDER=keycloak
+```
+AUTH_TYPE=OAUTH2
+AUTH_OAUTH2_CLIENT_KEYCLOAK_PROVIDER=keycloak
 AUTH_OAUTH2_CLIENT_KEYCLOAK_CLIENT_ID={client_id}
 AUTH_OAUTH2_CLIENT_KEYCLOAK_CLIENT_SECRET={client_secret}
 AUTH_OAUTH2_CLIENT_KEYCLOAK_SCOPE=openid,profile,email
@@ -379,7 +388,8 @@ AUTH_OAUTH2_CLIENT_KEYCLOAK_CLIENT_NAME=Keycloak
 AUTH_OAUTH2_CLIENT_KEYCLOAK_ISSUER_URI={issuer_uri}
 AUTH_OAUTH2_CLIENT_KEYCLOAK_USER_NAME_ATTRIBUTE=preferred_username
 AUTH_OAUTH2_CLIENT_KEYCLOAK_ADMIN_ATTRIBUTE=preferred_username
-AUTH_OAUTH2_CLIENT_KEYCLOAK_ADMIN_PRINCIPALS=john,david</code></pre>
+AUTH_OAUTH2_CLIENT_KEYCLOAK_ADMIN_PRINCIPALS=john,david
+```
 {% endtab %}
 {% endtabs %}
 
@@ -425,14 +435,14 @@ AUTH_LDAP_PASSWORD=password
 
 #### Perform users search
 
-There are 2 ways of how to retrieve users in LDAP server.&#x20;
+There are 2 ways of how to retrieve users in LDAP server.
 
-1. Define DN pattern of user names. This is great, when all users are stored under a single node in a directory.&#x20;
-2. Setup LDAP search filter.&#x20;
+1. Define DN pattern of user names. This is great, when all users are stored under a single node in a directory.
+2. Setup LDAP search filter.
 
 {% tabs %}
 {% tab title="YAML" %}
-#### DN pattern
+**DN pattern**
 
 This is an example of how user DN pattern can be defined. In this case DN for the user will be built by substituting login in the supplied pattern instead of 0.
 
@@ -442,9 +452,7 @@ auth:
         dn-pattern: "uid={0},ou=people,dc=mycompany,dc=com"
 ```
 
-
-
-#### Search filter
+**Search filter**
 
 This is an example of using search filter instead of DN pattern. If a user search base isn’t supplied, the search will be performed from the root.
 
@@ -458,7 +466,7 @@ auth:
 {% endtab %}
 
 {% tab title="Environment variables" %}
-#### DN pattern
+**DN pattern**
 
 This is an example of how user DN pattern can be defined. In this case DN for the user will be built by substituting login in the supplied pattern
 
@@ -466,9 +474,7 @@ This is an example of how user DN pattern can be defined. In this case DN for th
 AUTH_LDAP_DN_PATTERN="uid={0},ou=people"
 ```
 
-
-
-#### Search filter
+**Search filter**
 
 This is an example of using search filter instead of DN pattern. If a user search base isn’t supplied, the search will be performed from the root.
 
@@ -480,7 +486,7 @@ AUTH_LDAP_USER_FILTER_FILTER="uid={0}"
 {% endtabs %}
 
 {% hint style="warning" %}
-It is required to set up one of those search methods, otherwise application start will fail&#x20;
+It is required to set up one of those search methods, otherwise application start will fail
 {% endhint %}
 
 #### Define admin groups
@@ -488,7 +494,7 @@ It is required to set up one of those search methods, otherwise application star
 ODD platform can get LDAP groups, which user is belongs to. Thus it is possible to define, which groups will grant admin priviligies. There are several properties, that need to be set in order to allow ODD platform to do this:
 
 * `auth.ldap.groups.search-base`: The base DN from which the search for group membership should be performed. By default it will be performed from the root.
-*   `auth.ldap.groups.filter`: The pattern to be used for the user search. Default value is&#x20;
+*   `auth.ldap.groups.filter`: The pattern to be used for the user search. Default value is
 
     `(member={0})`, where user DN will be placed instead of 0.
 * `auth.ldap.groups.admin-groups`: List of groups, which members will be granted admin permissions.
@@ -574,8 +580,6 @@ session:
     provider: INTERNAL_POSTGRESQL
 ```
 
-
-
 **Redis**
 
 In order to connect to Redis following variables are needed to be defined:
@@ -608,8 +612,6 @@ session:
 **Internal PostgreSQL**
 
 * `SESSION_PROVIDER=IN_MEMORY`
-
-
 
 **Redis**
 
