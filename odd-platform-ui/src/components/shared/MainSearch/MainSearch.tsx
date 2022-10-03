@@ -1,14 +1,15 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { Box, Typography } from '@mui/material';
+import { Link, useHistory } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
-import { AppInput, EntityClassItem } from 'components/shared';
+import {
+  AppInput,
+  EntityClassItem,
+  SearchSuggestionsAutocomplete,
+} from 'components/shared';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  createDataEntitiesSearch,
-  fetchSearchSuggestions,
-} from 'redux/thunks';
+import { createDataEntitiesSearch, fetchSearchSuggestions } from 'redux/thunks';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
 import {
@@ -34,11 +35,8 @@ const MainSearch: React.FC<AppSearchProps> = ({ placeholder }) => {
   );
 
   const [searchText, setSearchText] = React.useState<string>('');
-  const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>(
-    []
-  );
-  const [autocompleteOpen, setAutocompleteOpen] =
-    React.useState<boolean>(false);
+  const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>([]);
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState<boolean>(false);
 
   const createSearch = () => {
     const searchQuery = {
@@ -55,10 +53,7 @@ const MainSearch: React.FC<AppSearchProps> = ({ placeholder }) => {
     history.push(searchPath());
   };
 
-  const handleInputChange = (
-    _: React.ChangeEvent<unknown>,
-    inputVal: string
-  ) => {
+  const handleInputChange = (_: React.ChangeEvent<unknown>, inputVal: string) => {
     setSearchText(inputVal);
   };
 
@@ -84,10 +79,11 @@ const MainSearch: React.FC<AppSearchProps> = ({ placeholder }) => {
   }, [suggestions]);
 
   React.useEffect(() => {
-    if (!searchText) return;
-    if (autocompleteOpen) {
-      getSuggestions();
+    if (!searchText) {
+      setAutocompleteOpen(false);
+      return;
     }
+    if (autocompleteOpen) getSuggestions();
   }, [autocompleteOpen, searchText, getSuggestions]);
 
   const getOptionLabel = (option: unknown) => {
@@ -102,71 +98,76 @@ const MainSearch: React.FC<AppSearchProps> = ({ placeholder }) => {
     const typedOption = option as DataEntityRef;
     return (
       <li {...props}>
-        <S.SuggestionItem
-          to={typedOption.id ? dataEntityDetailsPath(typedOption.id) : '#'}
-        >
-          <Typography variant="body1" sx={{ mr: 1 }}>
-            {typedOption.internalName || typedOption.externalName}
-          </Typography>
-          {typedOption.entityClasses?.map(entityClass => (
-            <EntityClassItem
-              sx={{ mr: 0.5 }}
-              key={entityClass.id}
-              entityClassName={entityClass.name}
-            />
-          ))}
-        </S.SuggestionItem>
+        <Link to={typedOption.id ? dataEntityDetailsPath(typedOption.id) : '#'}>
+          <Box display='flex'>
+            <Typography variant='body1' sx={{ mr: 1 }}>
+              {typedOption.internalName || typedOption.externalName}
+            </Typography>
+            {typedOption.entityClasses?.map(entityClass => (
+              <EntityClassItem
+                sx={{ mr: 0.5 }}
+                key={entityClass.id}
+                entityClassName={entityClass.name}
+              />
+            ))}
+          </Box>
+        </Link>
       </li>
     );
   };
 
   return (
     <S.Container>
-      <S.Search>
-        <S.SearchAutocomplete
-          fullWidth
-          value={{ externalName: searchText }}
-          id="data-entity-search"
-          open={autocompleteOpen}
-          onOpen={() => {
-            if (searchText) setAutocompleteOpen(true);
-          }}
-          onClose={() => {
-            setAutocompleteOpen(false);
-          }}
-          onInputChange={handleInputChange}
-          getOptionLabel={getOptionLabel}
-          options={options}
-          loading={isSuggestionsLoading}
-          freeSolo
-          filterOptions={option => option}
-          clearIcon={<ClearIcon />}
-          renderInput={params => (
-            <AppInput
-              {...params}
-              ref={params.InputProps.ref}
-              size="large"
-              placeholder={
-                placeholder ||
-                'Search data tables, feature groups, jobs and ML models via keywords'
-              }
-              onKeyDown={handleKeyDown}
-              customStartAdornment={{
-                variant: 'search',
-                showAdornment: true,
-                onCLick: createSearch,
-                icon: <SearchIcon />,
-              }}
-              customEndAdornment={{
-                variant: 'loader',
-                showAdornment: isSuggestionsLoading,
-                position: { mr: 4 },
-              }}
-            />
-          )}
-          renderOption={renderOption}
-        />
-      </S.Search>
+      <SearchSuggestionsAutocomplete
+        inputParams={{
+          placeholder:
+            placeholder ||
+            'Search data tables, feature groups, jobs and ML models via keywords',
+        }}
+      />
+      {/* <S.SearchAutocomplete */}
+      {/*  fullWidth */}
+      {/*  value={{ externalName: searchText }} */}
+      {/*  id='data-entity-search' */}
+      {/*  open={autocompleteOpen} */}
+      {/*  onOpen={() => { */}
+      {/*    if (searchText) setAutocompleteOpen(true); */}
+      {/*  }} */}
+      {/*  onClose={() => { */}
+      {/*    setAutocompleteOpen(false); */}
+      {/*  }} */}
+      {/*  onInputChange={handleInputChange} */}
+      {/*  getOptionLabel={getOptionLabel} */}
+      {/*  options={options} */}
+      {/*  loading={isSuggestionsLoading} */}
+      {/*  freeSolo */}
+      {/*  filterOptions={option => option} */}
+      {/*  clearIcon={<ClearIcon />} */}
+      {/*  renderInput={params => ( */}
+      {/*    <AppInput */}
+      {/*      {...params} */}
+      {/*      ref={params.InputProps.ref} */}
+      {/*      size='large' */}
+      {/*      placeholder={ */}
+      {/*        placeholder || */}
+      {/*        'Search data tables, feature groups, jobs and ML models via keywords' */}
+      {/*      } */}
+      {/*      onKeyDown={handleKeyDown} */}
+      {/*      customStartAdornment={{ */}
+      {/*        variant: 'search', */}
+      {/*        showAdornment: true, */}
+      {/*        onCLick: createSearch, */}
+      {/*        icon: <SearchIcon />, */}
+      {/*      }} */}
+      {/*      customEndAdornment={{ */}
+      {/*        variant: 'loader', */}
+      {/*        showAdornment: isSuggestionsLoading, */}
+      {/*        position: { mr: 4 }, */}
+      {/*      }} */}
+      {/*    /> */}
+      {/*  )} */}
+      {/*  renderOption={renderOption} */}
+      {/* /> */}
     </S.Container>
   );
 };

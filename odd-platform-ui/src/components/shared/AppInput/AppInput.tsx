@@ -14,7 +14,7 @@ interface AdornmentProps {
   position?: SxProps<Theme>;
 }
 
-interface AppInputProps
+export interface AppInputProps
   extends Pick<
     TextFieldProps,
     | 'onClick'

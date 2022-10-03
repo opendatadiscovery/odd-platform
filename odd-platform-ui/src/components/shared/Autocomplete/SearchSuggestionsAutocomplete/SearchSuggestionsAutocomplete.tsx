@@ -1,15 +1,18 @@
 import React from 'react';
-import { Autocomplete, Grid, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Grid,
+  Typography,
+} from '@mui/material';
 import {
   DataEntityGroupFormData,
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+import { EntityClassItem, AppInput, AppButton } from 'components/shared';
 import { useDebouncedCallback } from 'use-debounce';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
@@ -17,17 +20,24 @@ import {
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
 import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { AppInputProps } from 'components/shared/AppInput/AppInput';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
   append?: UseFieldArrayAppend<DataEntityGroupFormData, 'entities'>;
   searchParams?: SearchApiGetSearchSuggestionsRequest;
-  formOnChange?: (val: any) => void;
+  formOnChange?: (val: unknown) => void;
+  inputParams?: Pick<AppInputProps, 'placeholder' | 'size' | 'onKeyDown' | 'label'> & {
+    showSearchIcon?: boolean;
+  };
 }
 
-const SearchSuggestionsAutocomplete: React.FC<
-  SearchSuggestionsAutocompleteProps
-> = ({ addEntities, append, searchParams, formOnChange }) => {
+const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps> = ({
+  addEntities,
+  append,
+  searchParams,
+  formOnChange,
+}) => {
   const dispatch = useAppDispatch();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);
@@ -35,14 +45,10 @@ const SearchSuggestionsAutocomplete: React.FC<
     getSearchSuggestionsFetchingStatuses
   );
 
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>(
-    []
-  );
-  const [selectedOption, setSelectedOption] =
-    React.useState<DataEntityRef | null>(null);
-  const [autocompleteOpen, setAutocompleteOpen] =
-    React.useState<boolean>(false);
+  const [searchText, setSearchText] = React.useState('');
+  const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>([]);
+  const [selectedOption, setSelectedOption] = React.useState<DataEntityRef | null>(null);
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
 
   const handleInputChange = (
     _: React.ChangeEvent<unknown>,
@@ -50,52 +56,43 @@ const SearchSuggestionsAutocomplete: React.FC<
     reason: string
   ) => {
     setSearchText(inputVal);
-    if (inputVal) {
-      setAutocompleteOpen(true);
-    }
-    if (reason === 'clear') {
-      setSelectedOption(null);
-    }
+    if (inputVal) setAutocompleteOpen(true);
+    if (reason === 'clear') setSelectedOption(null);
   };
 
-  const getSuggestions = React.useCallback(
-    useDebouncedCallback(() => {
-      dispatch(
-        fetchSearchSuggestions({ query: searchText, ...searchParams })
-      );
-    }, 500),
-    [searchText, fetchSearchSuggestions, searchParams]
-  );
+  const getSuggestions = useDebouncedCallback(() => {
+    dispatch(fetchSearchSuggestions({ query: searchText, ...searchParams }));
+  }, 500);
 
   React.useEffect(() => {
     setOptions(searchSuggestions);
   }, [searchSuggestions]);
 
   React.useEffect(() => {
-    if (!searchText) return;
-    if (autocompleteOpen) {
-      getSuggestions();
+    if (!searchText) {
+      setAutocompleteOpen(false);
+      return;
     }
+    if (autocompleteOpen) getSuggestions();
   }, [autocompleteOpen, searchText, getSuggestions]);
 
-  const getOptionLabel = (option: unknown) => {
-    const typedOption = option as DataEntityRef;
-    return typedOption.internalName || typedOption.externalName || '';
+  const getOptionLabel = (option: Partial<DataEntityRef> | string) => {
+    if (typeof option === 'string') return option;
+    const { internalName, externalName } = option;
+    return internalName || externalName || '';
   };
 
-  const handleOptionChange = React.useCallback(
-    (
-      _: React.ChangeEvent<unknown>,
-      value: Partial<DataEntityRef> | string | null
-    ) => {
-      setSelectedOption(value as DataEntityRef);
-      if (formOnChange) formOnChange(value);
-    },
-    []
-  );
+  const handleOptionChange = (
+    _: React.ChangeEvent<unknown>,
+    value: Partial<DataEntityRef> | string | null
+  ) => {
+    setSelectedOption(value as DataEntityRef);
+    if (formOnChange) formOnChange(value);
+  };
+
   const handleAddEntity = () => {
-    if (append) {
-      append(selectedOption as DataEntityRef);
+    if (append && selectedOption !== null) {
+      append(selectedOption);
     }
     setSearchText('');
     setSelectedOption(null);
@@ -103,20 +100,21 @@ const SearchSuggestionsAutocomplete: React.FC<
 
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,
-    option: unknown
+    option: Partial<DataEntityRef>
   ): React.ReactNode => {
-    const typedOption = option as DataEntityRef;
+    const { id, internalName, externalName, entityClasses } = option;
+
     return (
-      <li {...props} key={typedOption.id}>
+      <li {...props} key={id}>
         <Typography
-          variant="body1"
+          variant='body1'
           sx={{ mr: 1 }}
           noWrap
-          title={typedOption.internalName || typedOption.externalName}
+          title={internalName || externalName}
         >
-          {typedOption.internalName || typedOption.externalName}
+          {internalName || externalName}
         </Typography>
-        {typedOption.entityClasses?.map(entityClass => (
+        {entityClasses?.map(entityClass => (
           <EntityClassItem
             sx={{ mr: 0.5 }}
             key={entityClass.id}
@@ -127,17 +125,43 @@ const SearchSuggestionsAutocomplete: React.FC<
     );
   };
 
+  const renderInput = (params: AutocompleteRenderInputParams): React.ReactNode => (
+    <Grid container flexWrap='nowrap' alignItems='center'>
+      <AppInput
+        {...params}
+        ref={params.InputProps.ref}
+        label='Entities'
+        customEndAdornment={{
+          variant: 'loader',
+          showAdornment: isSearchSuggestionsLoading,
+          position: { mr: 4 },
+        }}
+      />
+      {addEntities && (
+        <AppButton
+          sx={{ mt: 2, ml: 0.5 }}
+          size='large'
+          color='primaryLight'
+          onClick={handleAddEntity}
+          disabled={selectedOption === null}
+        >
+          Add
+        </AppButton>
+      )}
+    </Grid>
+  );
+
+  const handleOpen = () => (searchText ? setAutocompleteOpen(true) : null);
+  const handleClose = () => setAutocompleteOpen(false);
+
   return (
     <Autocomplete
+      sx={{ mt: 1.5 }}
       fullWidth
       value={{ externalName: searchText }}
       open={autocompleteOpen}
-      onOpen={() => {
-        if (searchText) setAutocompleteOpen(true);
-      }}
-      onClose={() => {
-        setAutocompleteOpen(false);
-      }}
+      onOpen={handleOpen}
+      onClose={handleClose}
       onInputChange={handleInputChange}
       onChange={handleOptionChange}
       getOptionLabel={getOptionLabel}
@@ -146,32 +170,7 @@ const SearchSuggestionsAutocomplete: React.FC<
       freeSolo
       filterOptions={option => option}
       clearIcon={<ClearIcon />}
-      sx={{ mt: 1.5 }}
-      renderInput={params => (
-        <Grid container flexWrap="nowrap" alignItems="center">
-          <AppInput
-            {...params}
-            ref={params.InputProps.ref}
-            label="Entities"
-            customEndAdornment={{
-              variant: 'loader',
-              showAdornment: isSearchSuggestionsLoading,
-              position: { mr: 4 },
-            }}
-          />
-          {addEntities && (
-            <AppButton
-              sx={{ mt: 2, ml: 0.5 }}
-              size="large"
-              color="primaryLight"
-              onClick={handleAddEntity}
-              disabled={selectedOption === null}
-            >
-              Add
-            </AppButton>
-          )}
-        </Grid>
-      )}
+      renderInput={renderInput}
       renderOption={renderOption}
     />
   );
