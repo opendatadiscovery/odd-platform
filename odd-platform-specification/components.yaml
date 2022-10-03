@@ -25,10 +25,10 @@ components:
     Permission:
       type: string
       enum:
-      - MANAGEMENT_CONTROL
-      - DATA_ENTITY_EDIT
-      - DIRECT_OWNER_SYNC
-      - ALERT_PROCESSING
+        - MANAGEMENT_CONTROL
+        - DATA_ENTITY_EDIT
+        - DIRECT_OWNER_SYNC
+        - ALERT_PROCESSING
 
     Actions:
       type: object
@@ -2195,8 +2195,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     OwnerAssociationRequest:
       type: object
@@ -2216,16 +2216,16 @@ components:
           type: string
           format: date-time
       required:
-      - id
-      - username
-      - owner_name
+        - id
+        - username
+        - owner_name
 
     OwnerAssociationRequestStatus:
       type: string
       enum:
-      - PENDING
-      - APPROVED
-      - DECLINED
+        - PENDING
+        - APPROVED
+        - DECLINED
 
     OwnerAssociationRequestStatusFormData:
       type: object
