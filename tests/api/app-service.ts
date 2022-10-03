@@ -5,7 +5,7 @@ export default class AppService {
   /**
    * Gets current user profile data
    */
-  static async get_profile_data(): Promise<MyProfile> {
+  static async getProfileData(): Promise<MyProfile> {
     return (await pilot.get('user/my-profile')).data;
   }
 }

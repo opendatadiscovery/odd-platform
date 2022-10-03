@@ -1,17 +1,17 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { URL } from 'url';
 
-import { configuration, is_on_main, is_on_prod } from '../config/configuration';
+import { configuration, isOnMain, isOnProd } from '../config/configuration';
 import { odd } from '../config/environments.json';
 
 type TInstanceType = 'pilot' | 'auth' | 'api';
 
 export default class APIBase {
-  private readonly instance_type: TInstanceType;
+  private readonly instanceType: TInstanceType;
 
-  private readonly api_version: string;
+  private readonly apiVersion: string;
 
-  protected readonly axios_instance: AxiosInstance;
+  protected readonly axiosInstance: AxiosInstance;
 
   protected readonly env: string = configuration.environment;
 
@@ -23,22 +23,22 @@ export default class APIBase {
 
   /**
    *
-   * @param instance_type
-   * @param api_version
+   * @param instanceType
+   * @param apiVersion
    */
-  protected constructor(instance_type: TInstanceType, api_version = '') {
-    this.instance_type = instance_type;
-    this.api_version = api_version;
+  protected constructor(instanceType: TInstanceType, apiVersion = '') {
+    this.instanceType = instanceType;
+    this.apiVersion = apiVersion;
 
     const config = {
-      baseURL: this.generate_url(),
+      baseURL: this.generateUrl(),
       validateStatus: null,
     };
 
-    this.axios_instance = axios.create(config);
+    this.axiosInstance = axios.create(config);
   }
 
-  static set auth_token(token: string) {
+  static set authToken(token: string) {
     APIBase.token = token;
   }
 
@@ -47,30 +47,27 @@ export default class APIBase {
    * @param prefix
    * @param env
    */
-  private add_prefix(prefix: string, env: string): string {
+  private addPrefix(prefix: string, env: string): string {
     const url = new URL(env);
 
-    return `${url.protocol}//${prefix}-${url.host}/${this.api_version}`;
+    return `${url.protocol}//${prefix}-${url.host}/${this.apiVersion}`;
   }
 
-  /**
-   *
-   */
-  private generate_url() {
-    if (is_on_prod() || is_on_main()) {
+  private generateUrl() {
+    if (isOnProd() || isOnMain()) {
       const url = new URL(odd[this.env] as string);
       const prefix =
-        this.instance_type === 'pilot' && is_on_prod()
+        this.instanceType === 'pilot' && isOnProd()
           ? 'app'
-          : is_on_prod()
-          ? `${this.instance_type}.clients`
-          : this.instance_type;
+          : isOnProd()
+          ? `${this.instanceType}.clients`
+          : this.instanceType;
 
       return `${url.protocol}//${prefix}.${url.host.substring('clients'.length + 1)}/${
-        this.api_version
+        this.apiVersion
       }`;
     }
-    return this.add_prefix(this.instance_type, odd[this.env] as string);
+    return this.addPrefix(this.instanceType, odd[this.env] as string);
   }
 
   /**
@@ -79,7 +76,7 @@ export default class APIBase {
    * @param config
    */
   async get(url: string, config?: AxiosRequestConfig) {
-    return this.axios_instance.request({ method: 'GET', url, ...config });
+    return this.axiosInstance.request({ method: 'GET', url, ...config });
   }
 
   /**
@@ -88,7 +85,7 @@ export default class APIBase {
    * @param config
    */
   async post(url: string, config?: AxiosRequestConfig) {
-    return this.axios_instance.request({ method: 'POST', url, ...config });
+    return this.axiosInstance.request({ method: 'POST', url, ...config });
   }
 
   /**
@@ -97,7 +94,7 @@ export default class APIBase {
    * @param config
    */
   async delete(url: string, config?: AxiosRequestConfig) {
-    return this.axios_instance.request({ method: 'DELETE', url, ...config });
+    return this.axiosInstance.request({ method: 'DELETE', url, ...config });
   }
 
   /**
@@ -106,7 +103,7 @@ export default class APIBase {
    * @param config
    */
   async put(url: string, config?: AxiosRequestConfig) {
-    return this.axios_instance.request({ method: 'PUT', url, ...config });
+    return this.axiosInstance.request({ method: 'PUT', url, ...config });
   }
 
   /**
@@ -115,6 +112,6 @@ export default class APIBase {
    * @param config
    */
   async patch(url: string, config?: AxiosRequestConfig) {
-    return this.axios_instance.request({ method: 'PATCH', url, ...config });
+    return this.axiosInstance.request({ method: 'PATCH', url, ...config });
   }
 }

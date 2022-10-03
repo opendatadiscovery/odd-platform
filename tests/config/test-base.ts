@@ -8,19 +8,19 @@ import { MyProfile } from '../api/interfaces/my-profile';
 import LoginService from '../api/login-service';
 import CommonUtils from '../common-utilities/common-utils';
 import { Steps } from '../ui/steps';
-import { go_to_page } from '../ui/steps/login';
+import { goToPage } from '../ui/steps/login';
 import { configuration, UserType } from './configuration';
 import { odd } from './environments.json';
 
-const workers_folder = `./dist/workers`;
-const save_worker_id = (worker_id: string) => {
-  fs.writeFileSync(path.resolve(`${workers_folder}/${worker_id}`), worker_id, { flag: 'w' });
+const workersFolder = `./dist/workers`;
+const saveWorkerId = (workerId: string) => {
+  fs.writeFileSync(path.resolve(`${workersFolder}/${workerId}`), workerId, { flag: 'w' });
 };
 
 type AuthData =
-  | { auth_type: 'ui'; user: UserType; url?: string }
-  | { auth_type: 'public' }
-  | { auth_type: 'api'; user: UserType; client?: 'general' };
+  | { authType: 'ui'; user: UserType; url?: string }
+  | { authType: 'public' }
+  | { authType: 'api'; user: UserType; client?: 'general' };
 
 export const test = base.extend<
   {
@@ -28,31 +28,31 @@ export const test = base.extend<
     /**
      * Shared beforeEach hook which runs before each `test`
      */
-    shared_before_each;
+    sharedBeforeEach;
     /**
      * Logins in application with the defined auth type
-     * If 'api' auth type is used for preparing IC for UI test then `go_to_page(page, url?)` should be used after it for navigation to main page/or url.
+     * If 'api' auth type is used for preparing IC for UI test then `goToPage(page, url?)` should be used after it for navigation to main page/or url.
      *
      * `You do not need to use both auth types in the same test/test suite`
      *
      * @example
-     * logins_as({auth_type: 'ui', user: 'admin', url: 'https://example.com'}) - navigates to login page and logins under admin user with UI, navigates to main page or url if passed, and sets the `access_token` in `APIBase`
-     * login_as({auth_type: 'api', user: 'power_user'}) - will set `access_token` in `APIBase` (does not perform navigation)
-     * login_as({auth_type: 'public'}) - will set `public_access_token' for `PublicAPI`
-     * @param auth_type define the auth level
+     * loginAs({authType: 'ui', user: 'admin', url: 'https://example.com'}) - navigates to login page and logins under admin user with UI, navigates to main page or url if passed, and sets the `accessToken` in `APIBase`
+     * loginAs({authType: 'api', user: 'power_user'}) - will set `accessToken` in `APIBase` (does not perform navigation)
+     * loginAs({authType: 'public'}) - will set `publicAccessToken' for `PublicAPI`
+     * @param authType define the auth level
      * @param user user under which the login will be performed
      * @returns Promise<MyProfile | void>
      */
-    login_as: (auth_data: AuthData) => Promise<MyProfile | void>;
+    loginAs: (authData: AuthData) => Promise<MyProfile | void>;
   },
-  { worker_id: string }
+  { workerId: string }
 >({
-  worker_id: [
+  workerId: [
     async ({ browser }, use) => {
-      const worker_id = `-auto-${uuidv4().substring(0, 13)}`;
-      save_worker_id(worker_id);
-      // Use worker_id value.
-      await use(worker_id);
+      const workerId = `-auto-${uuidv4().substring(0, 13)}`;
+      saveWorkerId(workerId);
+      // Use workerId value.
+      await use(workerId);
     },
     { scope: 'worker' },
   ],
@@ -60,54 +60,54 @@ export const test = base.extend<
     const steps = new Steps({ page });
     await use(steps);
   },
-  login_as: async ({ page, context, steps }, use) => {
-    const login = async (auth_data: AuthData) => {
-      if ('user' in auth_data) {
-        if (auth_data.auth_type === 'api') {
-          const { access_token, refresh_token } = await LoginService.login_as(
-            auth_data.user,
-            auth_data.client,
+  loginAs: async ({ page, context, steps }, use) => {
+    const login = async (authData: AuthData) => {
+      if ('user' in authData) {
+        if (authData.authType === 'api') {
+          const { accessToken, refreshToken } = await LoginService.loginAs(
+            authData.user,
+            authData.client,
           );
 
           await context.addCookies([
-            { url: odd[configuration.environment], name: 'access_token', value: access_token },
+            { url: odd[configuration.environment], name: 'accessToken', value: accessToken },
             {
               url: odd[configuration.environment],
-              name: 'refresh_token',
-              value: refresh_token,
+              name: 'refreshToken',
+              value: refreshToken,
             },
           ]);
-        } else if (auth_data.auth_type === 'ui') {
+        } else if (authData.authType === 'ui') {
           await context.clearCookies();
-          await go_to_page(page);
+          await goToPage(page);
 
           await steps.pages.login.login({
-            username: configuration.users[auth_data.user].username,
-            password: configuration.users[auth_data.user].password,
+            username: configuration.users[authData.user].username,
+            password: configuration.users[authData.user].password,
           });
 
-          const access_token = await CommonUtils.wait_until(async () => {
-            const [access_token_cookie] = (
+          const accessToken = await CommonUtils.waitUntil(async () => {
+            const [accessTokenCookie] = (
               await context.cookies([odd[configuration.environment]])
-            ).filter(cookie => cookie.name === 'access_token');
+            ).filter(cookie => cookie.name === 'accessToken');
 
-            if (access_token_cookie) return access_token_cookie.value;
+            if (accessTokenCookie) return accessTokenCookie.value;
           });
 
-          if (auth_data.url) {
-            await go_to_page(page, auth_data.url);
+          if (authData.url) {
+            await goToPage(page, authData.url);
           }
 
-          LoginService.auth_token = access_token;
+          LoginService.authToken = accessToken;
         }
       }
 
-      return AppService.get_profile_data();
+      return AppService.getProfileData();
     };
 
     await use(login);
   },
-  shared_before_each: [
+  sharedBeforeEach: [
     async ({ page, browser }, use, testInfo: TestInfo) => {
       // skip automation, that isn't done
       const tags: string[] = testInfo.titlePath.map(title => title.match(/@\w+/gi)).flat();

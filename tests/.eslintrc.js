@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/naming-convention */
 module.exports = {
   root: true,
   env: {
@@ -32,6 +32,26 @@ module.exports = {
      * (That’s how ESLint works – it lets you override configs you extend.)
      * The CLI helper tool reports that conflicts with Prettier, so you can remove it.
      */
+    '@typescript-eslint/naming-convention': [
+      'error',
+      { selector: 'default', format: ['camelCase'] },
+
+      { selector: 'variableLike', format: ['camelCase'] },
+      { selector: 'variable', format: ['camelCase', 'UPPER_CASE'] },
+      { selector: 'parameter', format: ['camelCase'], leadingUnderscore: 'allow' },
+
+      { selector: 'memberLike', format: ['camelCase'] },
+      {
+        selector: 'memberLike',
+        modifiers: ['private'],
+        format: ['camelCase'],
+      },
+
+      { selector: 'typeLike', format: ['PascalCase'] },
+      { selector: 'typeParameter', format: ['PascalCase'], prefix: ['T'] },
+
+      { selector: 'interface', format: ['PascalCase'], custom: { regex: '^I[A-Z]', match: false } },
+    ],
 
     /**
      * Note: The rules have been temporarily changed from 'error' to 'warn.
@@ -43,7 +63,6 @@ module.exports = {
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unsafe-return': 'warn',
     '@typescript-eslint/restrict-template-expressions': 'warn',
-    '@typescript-eslint/naming-convention': 'warn',
     'import/no-extraneous-dependencies': 'warn',
     '@typescript-eslint/no-use-before-define': 'warn',
     'import/prefer-default-export': 'warn',

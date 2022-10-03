@@ -4,13 +4,13 @@ export default class Button extends CustomElement {
   /**
    * Checks if element is disabled
    */
-  async is_disabled() {
+  async isDisabled() {
     try {
-      await this.custom_element.waitFor({ timeout: 12000 });
+      await this.customElement.waitFor({ timeout: 12000 });
 
-      return await this.custom_element.isDisabled();
+      return await this.customElement.isDisabled();
     } catch {
-      return this.custom_element.isDisabled();
+      return this.customElement.isDisabled();
     }
   }
 
@@ -23,7 +23,7 @@ export default class Button extends CustomElement {
    * @param op.position.y
    */
   async click(op?: { position: { x: number; y: number } }) {
-    await this.wait_for_element_to_be_visible();
-    await this.custom_element.click(op);
+    await this.waitForElementToBeVisible();
+    await this.customElement.click(op);
   }
 }

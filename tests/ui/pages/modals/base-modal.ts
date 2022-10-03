@@ -7,24 +7,24 @@ import BasePage from '../base-page';
 
 const SELECTORS = {
   title: `[class*="ModalCardTitle"]`,
-  save_button: `button:has-text("Save")`,
-  cancel_button: `button:has-text("Cancel")`,
+  saveButton: `button:has-text("Save")`,
+  cancelButton: `button:has-text("Cancel")`,
 };
 
 export default class BaseModal extends BasePage {
   protected readonly modal: Locator;
 
-  constructor(pages: Pages, modal_selector: string) {
+  constructor(pages: Pages, modalSelector: string) {
     super(pages);
 
-    this.modal = this.page.locator(`${modal_selector}`);
+    this.modal = this.page.locator(`${modalSelector}`);
   }
 
   /**
    *
    */
-  async is_opened() {
-    // ToDo: modify to use CustomElement and is_visible
+  async isOpened() {
+    // ToDo: modify to use CustomElement and isVisible
     try {
       await this.modal.waitFor({ timeout: 12000 });
 
@@ -45,6 +45,6 @@ export default class BaseModal extends BasePage {
    *
    */
   get cancel() {
-    return new Button(this.page, this.modal.locator(SELECTORS.cancel_button));
+    return new Button(this.page, this.modal.locator(SELECTORS.cancelButton));
   }
 }

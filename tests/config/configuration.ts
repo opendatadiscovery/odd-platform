@@ -7,14 +7,14 @@ dotenv.config({ path: 'envs/.env' });
 
 const { env } = process;
 
-export const print_configuration = () =>
+export const printConfiguration = () =>
   console.log(`configuration: ${JSON.stringify(configuration, null, 3)}`);
 export type UserType = keyof typeof configuration.users;
 
-export const is_on_prod = (): boolean => configuration.environment.startsWith('production');
-export const is_on_main = (): boolean => configuration.environment.startsWith('main');
-export const ui_performance_tag = `@uiPerformance`;
-export const is_on_ci = () => process.env.CI_JOB_ID;
+export const isOnProd = (): boolean => configuration.environment.startsWith('production');
+export const isOnMain = (): boolean => configuration.environment.startsWith('main');
+export const uiPerformanceTag = `@uiPerformance`;
+export const isOnCi = () => process.env.CI_JOB_ID;
 
 type Scope = string; // todo: make explicit scopes 'ui' | 'api' | 'smoke' | '..after-merge..'
 type Users = Record<string, { username: string; password: string }>;
@@ -22,18 +22,18 @@ type EnvironmentVariables = {
   readonly users: Users;
   readonly environment: string;
   readonly scope: Scope;
-  readonly test_dir: string | undefined;
-  readonly skip_teardown: boolean;
-  readonly teardown_pattern?: string;
+  readonly testDir: string | undefined;
+  readonly skipTeardown: boolean;
+  readonly teardownPattern?: string;
   readonly timeout: number;
-  readonly third_party_credentials?: ThirdPartyCredentials;
+  readonly thirdPartyCredentials?: ThirdPartyCredentials;
 };
-const configuration_defaults: EnvironmentVariables = {
+const configurationDefaults: EnvironmentVariables = {
   users: users.odd,
   scope: 'smoke',
-  environment: is_on_ci() ? 'main_qatest' : 'main_qatestdevelop',
-  test_dir: undefined,
-  skip_teardown: false,
+  environment: isOnCi() ? 'main_qatest' : 'main_qatestdevelop',
+  testDir: undefined,
+  skipTeardown: false,
   timeout: 40000,
 };
 
@@ -41,12 +41,12 @@ type Mutable<T> = {
   -readonly [P in keyof T]: T[P] extends ReadonlyArray<infer U> ? Mutable<U>[] : Mutable<T[P]>;
 };
 
-const env_with_defaults = (
-  configuration_defaults: EnvironmentVariables,
+const envWithDefaults = (
+  configurationDefaults: EnvironmentVariables,
   env,
 ): EnvironmentVariables => {
-  const result: Mutable<EnvironmentVariables> = configuration_defaults; // so we could assign to result.users for production case
-  Object.keys(configuration_defaults)
+  const result: Mutable<EnvironmentVariables> = configurationDefaults; // so we could assign to result.users for production case
+  Object.keys(configurationDefaults)
     .filter(key => key !== 'users')
     .forEach(key => {
       if (env[key.toUpperCase()]) {
@@ -58,9 +58,9 @@ const env_with_defaults = (
     result.users = JSON.parse(env.USERS as string).odd;
   }
 
-  result.third_party_credentials = JSON.parse(env.THIRD_PARTY_CREDENTIALS as string);
+  result.thirdPartyCredentials = JSON.parse(env.THIRD_PARTY_CREDENTIALS as string);
 
   return result;
 };
 
-export const configuration: EnvironmentVariables = env_with_defaults(configuration_defaults, env);
+export const configuration: EnvironmentVariables = envWithDefaults(configurationDefaults, env);

@@ -2,7 +2,7 @@ import { configuration, UserType } from '../config/configuration';
 
 import APIBase from './api-base';
 import auth from './auth';
-import { status_is_ok } from './helpers/api-status-check';
+import { isStatusOk } from './helpers/api-status-check';
 
 export default class LoginService {
   /**
@@ -10,10 +10,10 @@ export default class LoginService {
    * @param user
    * @param client
    */
-  static async login_as(
+  static async loginAs(
     user: UserType,
     client?: string,
-  ): Promise<{ access_token: string; refresh_token: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const data = {
       client: client || auth.client,
       username: configuration.users[user].username,
@@ -26,18 +26,18 @@ export default class LoginService {
       data,
     });
 
-    status_is_ok(response);
+    isStatusOk(response);
 
     const {
-      data: { access_token, refresh_token },
+      data: { accessToken, refreshToken },
     } = response;
 
-    APIBase.auth_token = access_token as string;
+    APIBase.authToken = accessToken as string;
 
-    return { access_token, refresh_token };
+    return { accessToken, refreshToken };
   }
 
-  static set auth_token(token: string) {
-    APIBase.auth_token = token;
+  static set authToken(token: string) {
+    APIBase.authToken = token;
   }
 }

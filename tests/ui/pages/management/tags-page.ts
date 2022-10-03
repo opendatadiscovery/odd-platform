@@ -4,94 +4,94 @@ import DeleteTagModal from '../modals/delete-tag-modal';
 import ManagementPage from './management-page';
 
 const SELECTORS = {
-  create_tag: `button:has-text("Create Tag")`,
-  tag_line_root: '.infinite-scroll-component',
-  tag_line_item: 'p[title]',
-  tag_line_item_name: '.MuiTypography-body1.MuiTypography-noWrap',
-  tag_string: tag_name => `div .infinite-scroll-component > div:has-text("${tag_name}")`,
-  tag_important_mark: 'p.MuiTypography-root.MuiTypography-body1.css-1q3quq',
+  createTag: `button:has-text("Create Tag")`,
+  tagLineRoot: '.infinite-scroll-component',
+  tagLineItem: 'p[title]',
+  tagLineItemName: '.MuiTypography-body1.MuiTypography-noWrap',
+  tagString: tagName => `div .infinite-scroll-component > div:has-text("${tagName}")`,
+  tagImportantMark: 'p.MuiTypography-root.MuiTypography-body1.css-1q3quq',
 };
 export default class TagsPage extends ManagementPage {
   deleteTagModal = new DeleteTagModal(this.pages);
 
-  get create_tag() {
-    return new Button(this.page, SELECTORS.create_tag);
+  get createTag() {
+    return new Button(this.page, SELECTORS.createTag);
   }
 
-  get tags_list() {
-    return new List(this.page, SELECTORS.tag_line_root, SELECTORS.tag_line_item);
+  get tagsList() {
+    return new List(this.page, SELECTORS.tagLineRoot, SELECTORS.tagLineItem);
   }
 
-  async get_all_tags() {
-    const all_tags = [];
-    const tag_line_count = await this.page.locator(SELECTORS.tag_line_item_name).count();
-    for (let i = 0; i < tag_line_count; i++) {
-      const tag_name = await this.page.locator(SELECTORS.tag_line_item_name).nth(i).innerText();
-      all_tags.push(tag_name);
+  async getAllTags() {
+    const allTags = [];
+    const tagLineCount = await this.page.locator(SELECTORS.tagLineItemName).count();
+    for (let i = 0; i < tagLineCount; i++) {
+      const tagName = await this.page.locator(SELECTORS.tagLineItemName).nth(i).innerText();
+      allTags.push(tagName);
     }
-    return all_tags;
+    return allTags;
   }
 
-  async is_tag_visible(name: string) {
-    return this.page.locator(SELECTORS.tag_string(name)).isVisible();
+  async isTagVisible(name: string) {
+    return this.page.locator(SELECTORS.tagString(name)).isVisible();
   }
 
-  async is_tag_invisible(name: string) {
-    return this.page.locator(SELECTORS.tag_string(name)).isHidden();
+  async isTagInvisible(name: string) {
+    return this.page.locator(SELECTORS.tagString(name)).isHidden();
   }
 
-  async add_tag(name: string) {
-    await this.create_tag.click();
-    await this.pages.modals.add_tag.tag_name_field.fill(name);
-    await this.pages.modals.add_tag.add_new_tag.click();
+  async addTag(name: string) {
+    await this.createTag.click();
+    await this.pages.modals.addTag.tagNameField.fill(name);
+    await this.pages.modals.addTag.addNewTag.click();
   }
 
-  async add_important_tag(name: string) {
-    await this.create_tag.click();
-    await this.pages.modals.add_tag.tag_name_field.fill(name);
-    await this.pages.modals.add_tag.check_important(0);
-    await this.pages.modals.add_tag.add_new_tag.click();
+  async addImportantTag(name: string) {
+    await this.createTag.click();
+    await this.pages.modals.addTag.tagNameField.fill(name);
+    await this.pages.modals.addTag.checkImportant(0);
+    await this.pages.modals.addTag.addNewTag.click();
   }
 
-  async edit_tag(name: string) {
+  async editTag(name: string) {
     await this.page
-      .locator(SELECTORS.tag_string(name))
+      .locator(SELECTORS.tagString(name))
       .locator('button', { hasText: 'Edit' })
       .click();
   }
 
-  async open_delete_modal(name: string) {
+  async openDeleteModal(name: string) {
     await this.page
-      .locator(SELECTORS.tag_string(name))
+      .locator(SELECTORS.tagString(name))
       .locator('button', { hasText: 'Delete' })
       .click();
   }
 
-  async is_tag_important(name: string) {
+  async isTagImportant(name: string) {
     return this.page
-      .locator(SELECTORS.tag_string(name))
-      .locator(SELECTORS.tag_important_mark, { hasText: 'important' })
+      .locator(SELECTORS.tagString(name))
+      .locator(SELECTORS.tagImportantMark, { hasText: 'important' })
       .isVisible();
   }
 
-  async wait_until_tag_invisible(tag_name: string | Array<string>) {
-    if (typeof tag_name === 'string') {
-      await this.page.waitForSelector(SELECTORS.tag_string(tag_name), { state: 'hidden' });
+  async waitUntilTagInvisible(tagName: string | Array<string>) {
+    if (typeof tagName === 'string') {
+      await this.page.waitForSelector(SELECTORS.tagString(tagName), { state: 'hidden' });
     } else {
-      const tags = Array.from(tag_name);
+      const tags = Array.from(tagName);
       for (const tag of tags) {
-        await this.page.waitForSelector(SELECTORS.tag_string(tag), { state: 'hidden' });
+        await this.page.waitForSelector(SELECTORS.tagString(tag), { state: 'hidden' });
       }
     }
   }
 
-  async wait_until_tag_visible(tag_name: string | Array<string>) {
-    if (typeof tag_name === 'string') {
-      await this.page.waitForSelector(SELECTORS.tag_string(tag_name), { state: 'visible' });
+  async waitUntilTagVisible(tagName: string | Array<string>) {
+    if (typeof tagName === 'string') {
+      await this.page.waitForSelector(SELECTORS.tagString(tagName), { state: 'visible' });
     } else {
-      const tags = Array.from(tag_name);
+      const tags = Array.from(tagName);
       for (const tag of tags) {
-        await this.page.waitForSelector(SELECTORS.tag_string(tag), { state: 'visible' });
+        await this.page.waitForSelector(SELECTORS.tagString(tag), { state: 'visible' });
       }
     }
   }

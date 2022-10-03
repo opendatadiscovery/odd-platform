@@ -4,18 +4,18 @@ import Button from './button';
 import CustomElement from './custom-element';
 
 const SELECTORS = {
-  list_item_by_exact_match: (list_item_locator, identifier) =>
-    `${list_item_locator} :text-is("${identifier}")`,
-  list_item_by_partial_match: (list_item_locator, identifier) =>
-    `${list_item_locator}:has-text("${identifier}")`,
+  listItemByExactMatch: (listItemLocator, identifier) =>
+    `${listItemLocator} :text-is("${identifier}")`,
+  listItemByPartialMatch: (listItemLocator, identifier) =>
+    `${listItemLocator}:has-text("${identifier}")`,
 };
 
 export default class List extends CustomElement {
-  constructor(context: Page, root_element: string | Locator, private readonly list_item: string) {
-    super(context, root_element);
+  constructor(context: Page, rootElement: string | Locator, private readonly listItem: string) {
+    super(context, rootElement);
   }
 
-  get pagination_root() {
+  get paginationRoot() {
     return this.find('[class*="paginationWrapper"]');
   }
 
@@ -23,24 +23,24 @@ export default class List extends CustomElement {
    * Calls the callback function on each list element
    *
    * @param {Function} cb
-   * @param item_custom_wrapper_class
+   * @param itemCustomWrapperClass
    */
-  async for_each_list_item<T extends CustomElement>(
+  async forEachListItem<T extends CustomElement>(
     cb: ForEachCallback<T>,
-    item_custom_wrapper_class: ForEachItemClass<T>,
+    itemCustomWrapperClass: ForEachItemClass<T>,
   ) {
-    await this.custom_element.waitFor();
+    await this.customElement.waitFor();
 
     let index = 0;
-    let next_element: Locator = this.custom_element.locator(`${this.list_item}`).nth(index);
+    let nextElement: Locator = this.customElement.locator(`${this.listItem}`).nth(index);
 
-    while (await next_element.count()) {
-      await next_element.scrollIntoViewIfNeeded();
-      await cb(new item_custom_wrapper_class(this.context, next_element), index);
+    while (await nextElement.count()) {
+      await nextElement.scrollIntoViewIfNeeded();
+      await cb(new itemCustomWrapperClass(this.context, nextElement), index);
 
       index += 1;
 
-      next_element = this.custom_element.locator(this.list_item).nth(index);
+      nextElement = this.customElement.locator(this.listItem).nth(index);
     }
   }
 
@@ -51,14 +51,14 @@ export default class List extends CustomElement {
    * @param exact
    * @returns
    */
-  private get_list_element(identifier: string | number, exact = false) {
+  private getListElement(identifier: string | number, exact = false) {
     if (typeof identifier === 'number') {
-      return this.custom_element.locator(this.list_item).nth(identifier);
+      return this.customElement.locator(this.listItem).nth(identifier);
     }
-    return this.custom_element.locator(
+    return this.customElement.locator(
       exact
-        ? SELECTORS.list_item_by_exact_match(this.list_item, identifier)
-        : SELECTORS.list_item_by_partial_match(this.list_item, identifier),
+        ? SELECTORS.listItemByExactMatch(this.listItem, identifier)
+        : SELECTORS.listItemByPartialMatch(this.listItem, identifier),
     );
   }
 
@@ -69,40 +69,40 @@ export default class List extends CustomElement {
    * @param exact
    * @returns
    */
-  private async get_list_item(identifier: number | string, exact?: boolean): Promise<Locator> {
-    await this.custom_element.waitFor({ state: 'attached' });
+  private async getListItem(identifier: number | string, exact?: boolean): Promise<Locator> {
+    await this.customElement.waitFor({ state: 'attached' });
 
-    const item: Locator = this.get_list_element(identifier, exact);
-    let is_visible = false;
-    let next_button: Button;
+    const item: Locator = this.getListElement(identifier, exact);
+    let isVisible = false;
+    let nextButton: Button;
 
     if (await item.count()) {
       return item;
     }
 
-    const first_pagination_item = new Button(
+    const firstPaginationItem = new Button(
       this.context,
-      this.pagination_root.locator('li[class*="paginationPage"] a').nth(0),
+      this.paginationRoot.locator('li[class*="paginationPage"] a').nth(0),
     );
 
-    if (await first_pagination_item.is_visible()) {
-      await first_pagination_item.click();
+    if (await firstPaginationItem.isVisible()) {
+      await firstPaginationItem.click();
 
-      next_button = new Button(
+      nextButton = new Button(
         this.context,
-        this.pagination_root.locator('li[class*="next"] a[class*="paginationButtonsLinks"]'),
+        this.paginationRoot.locator('li[class*="next"] a[class*="paginationButtonsLinks"]'),
       );
 
-      while (!is_visible && (await next_button.get_attribute('aria-disabled')) === 'false') {
-        await next_button.click();
-        await this.custom_element.waitFor();
+      while (!isVisible && (await nextButton.getAttribute('aria-disabled')) === 'false') {
+        await nextButton.click();
+        await this.customElement.waitFor();
 
         try {
           await item.waitFor({ timeout: 5000 });
 
-          is_visible = true;
+          isVisible = true;
         } catch {
-          is_visible = false;
+          isVisible = false;
         }
       }
 
@@ -120,19 +120,19 @@ export default class List extends CustomElement {
    * @param selector.locator
    * @param selector.exact
    */
-  async click_on_list_item(
+  async clickOnListItem(
     identifier: string | number,
     { locator, exact }: { locator?: string; exact?: boolean } = {},
   ) {
-    const list_item = await this.get_list_item(identifier, exact);
+    const listItem = await this.getListItem(identifier, exact);
 
-    await list_item.waitFor({ state: 'attached' });
-    await list_item.hover();
+    await listItem.waitFor({ state: 'attached' });
+    await listItem.hover();
 
     if (locator) {
-      await list_item.locator(locator).click();
+      await listItem.locator(locator).click();
     } else {
-      await list_item.click();
+      await listItem.click();
     }
   }
 
@@ -142,8 +142,8 @@ export default class List extends CustomElement {
    * @param identifier
    * @returns
    */
-  async get_list_item_text(identifier: string | number) {
-    return (await this.get_list_item(identifier)).innerText();
+  async getListItemText(identifier: string | number) {
+    return (await this.getListItem(identifier)).innerText();
   }
 
   /**
@@ -152,55 +152,55 @@ export default class List extends CustomElement {
    * @param identifier
    * @returns
    */
-  async is_list_item_visible(identifier: string | number): Promise<boolean> {
-    this.custom_element = await this.get_list_item(identifier);
+  async isListItemVisible(identifier: string | number): Promise<boolean> {
+    this.customElement = await this.getListItem(identifier);
 
-    return this.is_visible();
+    return this.isVisible();
   }
 
   /**
    * Searches within particular list item
    *
-   * @param list_item_identifier
+   * @param listItemIdentifier
    * @param selector
-   * @param child_locator
+   * @param childLocator
    * @returns
    */
-  async find_inside(list_item_identifier: string | number, child_locator?: string) {
-    const list_item = await this.get_list_item(list_item_identifier);
+  async findInside(listItemIdentifier: string | number, childLocator?: string) {
+    const listItem = await this.getListItem(listItemIdentifier);
 
-    await list_item.waitFor();
-    await list_item.hover();
+    await listItem.waitFor();
+    await listItem.hover();
 
-    if (child_locator) {
-      return list_item.locator(child_locator);
+    if (childLocator) {
+      return listItem.locator(childLocator);
     }
 
-    return list_item;
+    return listItem;
   }
 
   /**
-   * Get the attribute of the list item or its inner element if `inner_selector` is passed
+   * Get the attribute of the list item or its inner element if `innerSelector` is passed
    *
-   * @param list_item_identifier
+   * @param listItemIdentifier
    * @param attribute
-   * @param inner_selector
+   * @param innerSelector
    * @returns
    */
-  async get_list_item_attribute(
-    list_item_identifier: string | number,
+  async getListItemAttribute(
+    listItemIdentifier: string | number,
     attribute: string,
-    inner_selector?: string,
+    innerSelector?: string,
   ) {
-    const list_item = await this.get_list_item(list_item_identifier);
+    const listItem = await this.getListItem(listItemIdentifier);
 
-    await list_item.waitFor();
+    await listItem.waitFor();
 
-    if (inner_selector) return list_item.locator(inner_selector).getAttribute(attribute);
+    if (innerSelector) return listItem.locator(innerSelector).getAttribute(attribute);
 
-    return list_item.getAttribute(attribute);
+    return listItem.getAttribute(attribute);
   }
 }
 
 export type ForEachCallback<T> = (elem: T, index: number) => Promise<void> | void;
-export type ForEachItemClass<T> = new (context: Page, custom_element: string | Locator) => T;
+export type ForEachItemClass<T> = new (context: Page, customElement: string | Locator) => T;
