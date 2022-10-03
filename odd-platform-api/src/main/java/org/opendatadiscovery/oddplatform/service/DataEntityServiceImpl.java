@@ -484,9 +484,15 @@ public class DataEntityServiceImpl
         return reactiveDataEntityRepository.getDEGEntities(degOddrn)
             .map(entityList -> entityList
                 .stream()
-                .map(de -> new CompactDataEntity()
-                    .oddrn(de.getOddrn())
-                    .type(DataEntityType.fromValue(DataEntityTypeDto.findById(de.getTypeId()).toString())))
+                .map(de -> {
+                    final DataEntityTypeDto type = DataEntityTypeDto
+                        .findById(de.getTypeId())
+                        .orElseThrow();
+
+                    return new CompactDataEntity()
+                        .oddrn(de.getOddrn())
+                        .type(DataEntityType.fromValue(type.toString()));
+                })
                 .toList())
             .map(entityList -> new CompactDataEntityList().items(entityList));
     }
