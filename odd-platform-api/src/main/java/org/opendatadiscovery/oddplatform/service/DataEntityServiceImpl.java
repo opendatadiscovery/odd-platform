@@ -487,7 +487,8 @@ public class DataEntityServiceImpl
                 .map(de -> {
                     final DataEntityTypeDto type = DataEntityTypeDto
                         .findById(de.getTypeId())
-                        .orElseThrow();
+                        .orElseThrow(() -> new IllegalStateException(
+                            "Incorrect type id %d in the database".formatted(de.getTypeId())));
 
                     return new CompactDataEntity()
                         .oddrn(de.getOddrn())
