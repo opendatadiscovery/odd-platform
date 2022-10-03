@@ -4,10 +4,10 @@ import BasePage from '../base-page';
 type Tab = 'Catalog' | 'Management' | 'Dictionary' | 'Alerts' | 'Activity';
 
 const SELECTORS = {
-  shared_navigation: (tab: string) => `span:has-text("${tab}")`,
+  sharedNavigation: (tab: string) => `span:has-text("${tab}")`,
 };
 export default class TopPanel extends BasePage {
-  get user_profile() {
+  get userProfile() {
     return new Dropdown(
       this.page,
       'button[class*="eds__react-menu__menu-button"]',
@@ -20,42 +20,42 @@ export default class TopPanel extends BasePage {
    *
    * @param tab
    */
-  private async go_to(tab: Tab) {
-    await this.page.click(SELECTORS.shared_navigation(tab));
+  private async goTo(tab: Tab) {
+    await this.page.click(SELECTORS.sharedNavigation(tab));
   }
 
   /**
    *
    */
-  async go_to_catalog() {
-    await this.go_to('Catalog');
+  async goToCatalog() {
+    await this.goTo('Catalog');
   }
 
   /**
    *
    */
-  async go_to_management() {
-    await this.go_to('Management');
+  async goToManagement() {
+    await this.goTo('Management');
   }
 
   /**
    *
    */
-  async go_to_dictionary() {
-    await this.go_to('Dictionary');
+  async goToDictionary() {
+    await this.goTo('Dictionary');
   }
 
   /**
    *
    */
-  async go_to_alerts() {
-    await this.go_to('Alerts');
+  async goToAlerts() {
+    await this.goTo('Alerts');
   }
 
   /**
    *
    */
-  async go_to_activity() {
-    await this.go_to('Activity');
+  async goToActivity() {
+    await this.goTo('Activity');
   }
 }

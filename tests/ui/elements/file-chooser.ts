@@ -8,12 +8,12 @@ export default class FileChooser extends Button {
    * @param root0
    * @param root0.filepath
    */
-  async upload_document({ filepath }: FileData) {
-    const [file_chooser] = await Promise.all([
+  async uploadDocument({ filepath }: FileData) {
+    const [fileChooser] = await Promise.all([
       this.context.waitForEvent('filechooser'),
-      this.custom_element.click(),
+      this.customElement.click(),
     ]);
 
-    await file_chooser.setFiles(filepath);
+    await fileChooser.setFiles(filepath);
   }
 }

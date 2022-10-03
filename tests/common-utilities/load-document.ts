@@ -11,62 +11,62 @@ export default class DocumentLoader {
 
   /**
    *
-   * @param document_name
-   * @param worker_id
+   * @param documentName
+   * @param workerId
    */
-  private static prepare_local_file_version(document_name: string, worker_id: string): FileData {
+  private static prepareLocalFileVersion(documentName: string, workerId: string): FileData {
     const GENERATED_FILE_POSTFIX = uuidv4().substring(0, 6);
-    const { name, ext, dir } = path.parse(document_name);
-    let documents_path = ext === '.xlsx' ? './testData/excel/' : './testData/docs/';
+    const { name, ext, dir } = path.parse(documentName);
+    let documentsPath = ext === '.xlsx' ? './testData/excel/' : './testData/docs/';
 
     if (dir) {
-      documents_path = documents_path.concat(`${dir}/`);
+      documentsPath = documentsPath.concat(`${dir}/`);
     }
 
-    const source_file_name = name + ext;
-    const destination_file_name = `${name}_${GENERATED_FILE_POSTFIX}${worker_id}${ext}`;
-    const source_file_path = documents_path + source_file_name;
-    const destination_file_path = this.root + destination_file_name;
+    const sourceFileName = name + ext;
+    const destinationFileName = `${name}_${GENERATED_FILE_POSTFIX}${workerId}${ext}`;
+    const sourceFilePath = documentsPath + sourceFileName;
+    const destinationFilePath = this.root + destinationFileName;
 
-    fs.copyFileSync(source_file_path, destination_file_path);
+    fs.copyFileSync(sourceFilePath, destinationFilePath);
 
     return {
-      filepath: path.resolve(destination_file_path),
-      filename_with_extension: destination_file_name,
-      filename_without_extension: path.parse(destination_file_name).name,
+      filepath: path.resolve(destinationFilePath),
+      filenameWithExtension: destinationFileName,
+      filenameWithoutExtension: path.parse(destinationFileName).name,
       extension: ext,
     };
   }
 
   /**
    *
-   * @param document_name
-   * @param worker_id
+   * @param documentName
+   * @param workerId
    */
-  static load(document_name: string, worker_id: string): FileData {
-    return DocumentLoader.prepare_local_file_version(document_name, worker_id);
+  static load(documentName: string, workerId: string): FileData {
+    return DocumentLoader.prepareLocalFileVersion(documentName, workerId);
   }
 
   /**
    * Download a file from response and store in ./dist/
    *
    * @param response
-   * @param filename_without_extension
+   * @param filenameWithoutExtension
    */
-  static save(response: AxiosResponse, filename_without_extension?: string): FileData {
-    const document_name: string = this.get_file_name(
+  static save(response: AxiosResponse, filenameWithoutExtension?: string): FileData {
+    const documentName: string = this.getFileName(
       response.headers['content-disposition'] as string,
     );
-    const { name, ext, base } = path.parse(document_name);
+    const { name, ext, base } = path.parse(documentName);
     const filepath =
-      this.root + (filename_without_extension || name + CommonUtils.unique_identifier()) + ext;
+      this.root + (filenameWithoutExtension || name + CommonUtils.uniqueIdentifier()) + ext;
 
     writeFileSync(filepath, response.data as DataView);
 
     return {
       filepath: path.resolve(filepath),
-      filename_with_extension: base,
-      filename_without_extension: name,
+      filenameWithExtension: base,
+      filenameWithoutExtension: name,
       extension: ext,
     };
   }
@@ -77,20 +77,20 @@ export default class DocumentLoader {
    * @param disposition
    * @returns
    */
-  private static get_file_name(disposition: string): string {
-    const utf8_filename_regex = /filename\*=UTF-8''([\w%\-.]+)(?:; ?|$)/gi;
-    const ascii_filename_regex = /^filename=(["']?)(.*?[^\\])\1(["']?)(?:; ?|$)/gi;
+  private static getFileName(disposition: string): string {
+    const utf8FilenameRegex = /filename\*=UTF-8''([\w%\-.]+)(?:; ?|$)/gi;
+    const asciiFilenameRegex = /^filename=(["']?)(.*?[^\\])\1(["']?)(?:; ?|$)/gi;
 
     let filename: string = null;
 
-    if (utf8_filename_regex.test(disposition)) {
-      filename = decodeURIComponent(utf8_filename_regex.exec(disposition)[1]);
+    if (utf8FilenameRegex.test(disposition)) {
+      filename = decodeURIComponent(utf8FilenameRegex.exec(disposition)[1]);
     } else {
-      const filename_start = disposition.toLowerCase().indexOf('filename=');
+      const filenameStart = disposition.toLowerCase().indexOf('filename=');
 
-      if (filename_start >= 0) {
-        const partial_disposition = disposition.slice(filename_start);
-        const matches = ascii_filename_regex.exec(partial_disposition);
+      if (filenameStart >= 0) {
+        const partialDisposition = disposition.slice(filenameStart);
+        const matches = asciiFilenameRegex.exec(partialDisposition);
 
         if (matches != null && matches[2]) {
           filename = matches[2];

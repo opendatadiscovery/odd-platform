@@ -5,6 +5,6 @@
  * @param key
  * @returns
  */
-export function get_unique_list_by(arr: Record<string, any>[], key: string) {
+export function getUniqueListBy(arr: Record<string, any>[], key: string) {
   return [...new Map(arr.map(item => [item[key], item])).values()];
 }

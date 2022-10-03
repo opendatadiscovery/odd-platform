@@ -4,49 +4,49 @@ import { Pages } from '../index';
 import BaseModal from './base-modal';
 
 const SELECTORS = {
-  this_dialog: 'div[role="dialog"]',
-  tag_name: '[placeholder="Tag Name"]',
-  add_tag: '[type="submit"]',
-  important_tag: '[type="checkbox"]',
-  add_one_more_tag: 'div[role="dialog"] button:has-text("Create tag")',
-  tag_line_root: '.infinite-scroll-component',
+  thisDialog: 'div[role="dialog"]',
+  tagName: '[placeholder="Tag Name"]',
+  addTag: '[type="submit"]',
+  importantTag: '[type="checkbox"]',
+  addOneMoreTag: 'div[role="dialog"] button:has-text("Create tag")',
+  tagLineRoot: '.infinite-scroll-component',
 };
 export default class AddTagModal extends BaseModal {
   constructor(pages: Pages) {
-    super(pages, SELECTORS.this_dialog);
+    super(pages, SELECTORS.thisDialog);
   }
 
-  get tag_name_field() {
-    return new InputField(this.page, SELECTORS.tag_name);
+  get tagNameField() {
+    return new InputField(this.page, SELECTORS.tagName);
   }
 
-  get add_new_tag() {
-    return new Button(this.page, SELECTORS.add_tag);
+  get addNewTag() {
+    return new Button(this.page, SELECTORS.addTag);
   }
 
-  async check_important(indexOfCheckbox: number) {
-    await this.page.locator(SELECTORS.important_tag).nth(indexOfCheckbox).click();
+  async checkImportant(indexOfCheckbox: number) {
+    await this.page.locator(SELECTORS.importantTag).nth(indexOfCheckbox).click();
   }
 
-  async is_checkbox_marked(indexOfCheckbox: number) {
-    await this.page.locator(SELECTORS.important_tag).nth(indexOfCheckbox).inputValue();
+  async isCheckboxMarked(indexOfCheckbox: number) {
+    await this.page.locator(SELECTORS.importantTag).nth(indexOfCheckbox).inputValue();
   }
 
-  get add_one_more_tag() {
-    return new Button(this.page, SELECTORS.add_one_more_tag);
+  get addOneMoreTag() {
+    return new Button(this.page, SELECTORS.addOneMoreTag);
   }
 
-  async is_tag_name_input_visible(numberOfInput: number) {
-    await this.page.locator(SELECTORS.tag_name).nth(numberOfInput).isVisible();
+  async isTagNameInputVisible(numberOfInput: number) {
+    await this.page.locator(SELECTORS.tagName).nth(numberOfInput).isVisible();
   }
 
-  async fill_all_tag_name(name: string) {
-    const new_tags = [];
-    const input_count = await this.page.locator(SELECTORS.tag_name).count();
-    for (let i = 0; i < input_count; i++) {
-      await this.page.locator(SELECTORS.tag_name).nth(i).fill(`${name}_${i}`);
-      new_tags.push(`${name}_${i}`);
+  async fillAllTagName(name: string) {
+    const newTags = [];
+    const inputCount = await this.page.locator(SELECTORS.tagName).count();
+    for (let i = 0; i < inputCount; i++) {
+      await this.page.locator(SELECTORS.tagName).nth(i).fill(`${name}_${i}`);
+      newTags.push(`${name}_${i}`);
     }
-    return new_tags;
+    return newTags;
   }
 }

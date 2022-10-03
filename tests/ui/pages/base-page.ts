@@ -6,7 +6,7 @@ import TextBox from '../elements/text-box';
 import { Pages } from './index';
 
 const SELECTORS = {
-  toast_massage: 'div[class*="toastText"]',
+  toastMessage: 'div[class*="toastText"]',
 };
 
 export default class BasePage {
@@ -24,8 +24,8 @@ export default class BasePage {
     return this.page.url();
   }
 
-  get toast_message() {
-    return new TextBox(this.page, SELECTORS.toast_massage);
+  get toastMessage() {
+    return new TextBox(this.page, SELECTORS.toastMessage);
   }
 
   get body() {
@@ -36,7 +36,7 @@ export default class BasePage {
    *
    * @param url
    */
-  build_url(url: string) {
+  buildUrl(url: string) {
     return odd[configuration.environment].replace('/login', url);
   }
 }

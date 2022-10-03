@@ -6,10 +6,10 @@ import InputField from '../elements/input-field';
 import BasePage from './base-page';
 
 const SELECTORS = {
-  sign_in_with_okta: 'text=Sign in with Okta',
+  signInWithOkta: 'text=Sign in with Okta',
   username: '#username',
   password: '#password',
-  sign_in: `//button[text()='Sign in']`,
+  signIn: `//button[text()='Sign in']`,
 };
 
 export default class LoginPage extends BasePage {
@@ -21,12 +21,12 @@ export default class LoginPage extends BasePage {
     return new InputField(this.page, SELECTORS.password);
   }
 
-  get sign_in() {
-    return new Button(this.page, SELECTORS.sign_in);
+  get signIn() {
+    return new Button(this.page, SELECTORS.signIn);
   }
 
-  get sign_in_with_okta() {
-    return new Button(this.page, SELECTORS.sign_in_with_okta);
+  get signInWithOkta() {
+    return new Button(this.page, SELECTORS.signInWithOkta);
   }
 
   async login({ username, password }: { username: string; password: string }) {
@@ -36,7 +36,7 @@ export default class LoginPage extends BasePage {
       this.page.waitForResponse(
         response => response.url().includes('auth/login') && response.request().method() === 'POST',
       ),
-      this.sign_in.click(),
+      this.signIn.click(),
     ]);
 
     expect(response.status(), `Request auth/login should have status of 200`).to.eql(200);

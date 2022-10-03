@@ -8,13 +8,13 @@ export default class GoToSteps extends BaseStep {
    *
    */
   async catalog() {
-    await this.pages.top_panel.go_to_catalog();
+    await this.pages.topPanel.goToCatalog();
   }
 
   /**
    *
    */
   async management() {
-    await this.pages.top_panel.go_to_management();
+    await this.pages.topPanel.goToManagement();
   }
 }

@@ -10,9 +10,9 @@ export class Modals {
   constructor(
     private readonly pages: Pages,
 
-    readonly add_owner = new AddOwnerModal(pages),
-    readonly add_tag = new AddTagModal(pages),
-    readonly edit_tag = new EditTagModal(pages),
-    readonly delete_tag = new DeleteTagModal(pages),
+    readonly addOwner = new AddOwnerModal(pages),
+    readonly addTag = new AddTagModal(pages),
+    readonly editTag = new EditTagModal(pages),
+    readonly deleteTag = new DeleteTagModal(pages),
   ) {}
 }
