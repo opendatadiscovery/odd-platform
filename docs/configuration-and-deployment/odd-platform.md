@@ -749,3 +749,22 @@ NOTIFICATIONS_RECEIVERS_WEBHOOK_URL={webhook_url}
 ```
 {% endtab %}
 {% endtabs %}
+
+### Cleaning up
+
+{% hint style="danger" %}
+ODD Platform **doesn't clean up** replication slot it has created. If you need to disable Alert Notification functionality, please perform the following steps along with disabling a feature on a ODD Platform side
+{% endhint %}
+
+In order to remove replication slot and publication, these SQL queries must be run against the database:
+
+*   ```sql
+    SELECT pg_drop_replication_slot('<>');
+    ```
+
+    where `<>` is a name of replication slot defined in the ODD Platform. Default is `odd_platform_replication_slot`
+*   ```sql
+    DROP PUBLICATION IF EXISTS <>;
+    ```
+
+    where `<>` is a name of publication defined in the ODD Platform. Default is `odd_platform_publication_alert`
