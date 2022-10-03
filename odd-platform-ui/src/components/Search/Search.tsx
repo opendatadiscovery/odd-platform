@@ -38,12 +38,8 @@ const Search: React.FC = () => {
 
   React.useEffect(() => {
     if (!routerSearchId && !isSearchCreating && !searchId) {
-      const emptySearchQuery = {
-        query: '',
-        pageSize: 30,
-        filters: {},
-      };
-      dispatch(createDataEntitiesSearch({ searchFormData: emptySearchQuery }))
+      const searchFormData = { query: '', pageSize: 30, filters: {} };
+      dispatch(createDataEntitiesSearch({ searchFormData }))
         .unwrap()
         .then(search => {
           const searchLink = searchPath(search.searchId);
@@ -54,27 +50,20 @@ const Search: React.FC = () => {
 
   React.useEffect(() => {
     if (!searchId && routerSearchId) {
-      dispatch(
-        getDataEntitiesSearch({
-          searchId: routerSearchId,
-        })
-      );
+      dispatch(getDataEntitiesSearch({ searchId: routerSearchId }));
     }
   }, [searchId, routerSearchId]);
 
   const updateSearchFacets = React.useCallback(
     useDebouncedCallback(
       () => {
-        dispatch(
-          updateDataEntitiesSearch({
-            searchId,
-            searchFormData: {
-              query: searchQuery,
-              myObjects: searchMyObjects,
-              filters: mapValues(searchFacetParams, values),
-            },
-          })
-        );
+        const searchFormData = {
+          query: searchQuery,
+          myObjects: searchMyObjects,
+          filters: mapValues(searchFacetParams, values),
+        };
+
+        dispatch(updateDataEntitiesSearch({ searchId, searchFormData }));
       },
       1500,
       { leading: true }
@@ -95,7 +84,7 @@ const Search: React.FC = () => {
           <Filters />
         </S.LeftSidebarContainer>
         <S.ListContainer item xs={9}>
-          <MainSearch placeholder='Search' />
+          <MainSearch placeholder='Search' disableSuggestions />
           <Results />
         </S.ListContainer>
       </S.ContentContainer>

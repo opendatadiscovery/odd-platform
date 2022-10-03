@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Autocomplete,
   AutocompleteRenderInputParams,
+  Box,
   Grid,
   Typography,
 } from '@mui/material';
@@ -10,26 +11,33 @@ import {
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
-import { EntityClassItem, AppInput, AppButton } from 'components/shared';
+import { EntityClassItem, AppInput, AppButton, AppInputProps } from 'components/shared';
 import { useDebouncedCallback } from 'use-debounce';
-import { ClearIcon } from 'components/shared/Icons';
+import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
+  getSearchQuery,
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
 import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { AppInputProps } from 'components/shared/AppInput/AppInput';
+import { Link } from 'react-router-dom';
+import { useAppPaths } from 'lib/hooks';
+import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
   append?: UseFieldArrayAppend<DataEntityGroupFormData, 'entities'>;
   searchParams?: SearchApiGetSearchSuggestionsRequest;
   formOnChange?: (val: unknown) => void;
-  inputParams?: Pick<AppInputProps, 'placeholder' | 'size' | 'onKeyDown' | 'label'> & {
-    showSearchIcon?: boolean;
+  inputParams?: Pick<AppInputProps, 'placeholder' | 'size' | 'label'> & {
+    showSearchAdornment?: boolean;
+    searchAdornmentHandler?: (query: string) => void;
+    onKeyDownHandler?: (e: React.KeyboardEvent) => (query: string) => void;
   };
+  linkedOption?: boolean;
+  disableSuggestions?: boolean;
 }
 
 const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps> = ({
@@ -37,11 +45,16 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
   append,
   searchParams,
   formOnChange,
+  inputParams,
+  linkedOption,
+  disableSuggestions,
 }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityDetailsPath } = useAppPaths();
 
+  const searchQuery = useAppSelector(getSearchQuery);
   const searchSuggestions = useAppSelector(getSearchSuggestions);
-  const { isLoading: isSearchSuggestionsLoading } = useAppSelector(
+  const { isLoading: isSuggestionsLoading } = useAppSelector(
     getSearchSuggestionsFetchingStatuses
   );
 
@@ -56,7 +69,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     reason: string
   ) => {
     setSearchText(inputVal);
-    if (inputVal) setAutocompleteOpen(true);
+    dispatch(updateSearchQuery(inputVal));
     if (reason === 'clear') setSelectedOption(null);
   };
 
@@ -64,9 +77,8 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     dispatch(fetchSearchSuggestions({ query: searchText, ...searchParams }));
   }, 500);
 
-  React.useEffect(() => {
-    setOptions(searchSuggestions);
-  }, [searchSuggestions]);
+  React.useEffect(() => setSearchText(searchQuery || ''), [searchQuery]);
+  React.useEffect(() => setOptions(searchSuggestions), [searchSuggestions]);
 
   React.useEffect(() => {
     if (!searchText) {
@@ -104,8 +116,8 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
   ): React.ReactNode => {
     const { id, internalName, externalName, entityClasses } = option;
 
-    return (
-      <li {...props} key={id}>
+    const item = (
+      <Box display='flex'>
         <Typography
           variant='body1'
           sx={{ mr: 1 }}
@@ -121,21 +133,53 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
             entityClassName={entityClass?.name}
           />
         ))}
+      </Box>
+    );
+
+    const linkedItem = id ? <Link to={dataEntityDetailsPath(id)}>{item}</Link> : null;
+
+    return (
+      <li {...props} key={id}>
+        {linkedOption ? linkedItem : item}
       </li>
     );
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!inputParams?.onKeyDownHandler) return;
+    inputParams.onKeyDownHandler(e)(searchText);
+  };
+
+  const handleSearchIconClick = () => {
+    if (!inputParams?.searchAdornmentHandler) return;
+    inputParams.searchAdornmentHandler(searchText);
+  };
+
+  const customStartAdornment: AppInputProps['customStartAdornment'] =
+    inputParams?.showSearchAdornment
+      ? {
+          variant: 'search',
+          showAdornment: true,
+          onCLick: handleSearchIconClick,
+          icon: <SearchIcon />,
+        }
+      : undefined;
+
+  const customEndAdornment: AppInputProps['customEndAdornment'] = {
+    variant: 'loader',
+    showAdornment: isSuggestionsLoading,
+    position: { mr: 4 },
   };
 
   const renderInput = (params: AutocompleteRenderInputParams): React.ReactNode => (
     <Grid container flexWrap='nowrap' alignItems='center'>
       <AppInput
         {...params}
+        {...inputParams}
         ref={params.InputProps.ref}
-        label='Entities'
-        customEndAdornment={{
-          variant: 'loader',
-          showAdornment: isSearchSuggestionsLoading,
-          position: { mr: 4 },
-        }}
+        onKeyDown={handleKeyDown}
+        customStartAdornment={customStartAdornment}
+        customEndAdornment={customEndAdornment}
       />
       {addEntities && (
         <AppButton
@@ -151,7 +195,8 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     </Grid>
   );
 
-  const handleOpen = () => (searchText ? setAutocompleteOpen(true) : null);
+  const handleOpen = () =>
+    searchText && !disableSuggestions ? setAutocompleteOpen(true) : null;
   const handleClose = () => setAutocompleteOpen(false);
 
   return (
@@ -166,7 +211,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
       onChange={handleOptionChange}
       getOptionLabel={getOptionLabel}
       options={options}
-      loading={isSearchSuggestionsLoading}
+      loading={isSuggestionsLoading}
       freeSolo
       filterOptions={option => option}
       clearIcon={<ClearIcon />}

@@ -40,7 +40,7 @@ const Overview: React.FC = () => {
       ) : (
         <>
           <Grid container justifyContent='center' sx={{ pt: 8, pb: 9 }}>
-            <MainSearch />
+            <MainSearch mainSearch />
           </Grid>
           <S.TagsContainer container>
             <TopTagsList />
