@@ -151,7 +151,8 @@ public class DatasetIngestionTest extends BaseIngestionTest {
 
     /**
      * Test ingests hollow dataset, asserts that it was ingested correctly.
-     * Then it ingests the same entity but with a schema and asserts that the dataset structure was successfully created.
+     * Then it ingests the same entity but with a schema
+     * and asserts that the dataset structure was successfully created.
      */
     @Test
     @DisplayName("Update hollow dataset with schema")
