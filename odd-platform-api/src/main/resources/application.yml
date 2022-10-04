@@ -161,6 +161,3 @@ logging:
     org.opendatadiscovery.oddplatform.notification: info
     org.opendatadiscovery.oddplatform.housekeeping: info
     org.opendatadiscovery.oddplatform.service.ingestion: info
-
-
-# delete from "public"."search_facets" where "public"."search_facets"."last_accessed_at" < (current_timestamp - interval '? days')
