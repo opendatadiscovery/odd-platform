@@ -113,6 +113,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
+    // TODO: add non updatable fields
     public Mono<P> update(final P pojo) {
         return updateOne(pojoToRecord(pojo)).map(this::recordToPojo);
     }

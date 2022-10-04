@@ -152,7 +152,11 @@ public class ReactiveDataEntityRepositoryImpl
             DATA_ENTITY.VIEW_COUNT
         );
 
-        return ListUtils.union(dataEntityNonUpdatableFields, super.getNonUpdatableFields());
+        // ad hoc until https://github.com/opendatadiscovery/odd-platform/issues/628 is closed
+        return ListUtils.union(dataEntityNonUpdatableFields, super.getNonUpdatableFields())
+            .stream()
+            .filter(f -> !f.equals(DATA_ENTITY.CREATED_AT))
+            .toList();
     }
 
     private DataEntityRecord buildHollowRecord(final String oddrn) {

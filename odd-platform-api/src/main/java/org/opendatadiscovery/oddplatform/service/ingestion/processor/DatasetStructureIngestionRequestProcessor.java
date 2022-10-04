@@ -1,10 +1,12 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
@@ -22,6 +24,7 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DatasetStructureIngestionRequestProcessor implements IngestionRequestProcessor {
     private final ReactiveDatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureService datasetStructureService;
@@ -84,21 +87,45 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
 
         return datasetVersionRepository
             .getLatestVersions(datasetIds)
-            .<DatasetVersionPojo>handle((fetchedVersion, sink) -> {
-                final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetOddrn());
-                if (dto == null) {
-                    sink.error(new IllegalStateException("Fetched dataset version has a corrupt dataset oddrn"));
-                    return;
-                }
-
-                if (!fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
-                    // TODO: figure out how to fix mutable behaviour here
-                    dto.setDatasetSchemaChanged(true);
-                    sink.next(incrementDatasetVersion(fetchedVersion, dto));
-                }
-            })
             .collectList()
+            .map(fetchedVersions -> extractVersionsToCreate(datasetDict, fetchedVersions))
             .flatMap(datasetVersions -> datasetStructureService.createDatasetStructure(datasetVersions, datasetFields));
+    }
+
+    private List<DatasetVersionPojo> extractVersionsToCreate(
+        final Map<String, EnrichedDataEntityIngestionDto> datasetDict,
+        final List<DatasetVersionPojo> fetchedVersions
+    ) {
+        final ArrayList<DatasetVersionPojo> versionsToCreate = new ArrayList<>();
+
+        for (final DatasetVersionPojo fetchedVersion : fetchedVersions) {
+            final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetOddrn());
+            if (dto == null) {
+                log.warn("Fetched dataset version {} has a corrupt dataset oddrn", fetchedVersion.getId());
+                continue;
+            }
+
+            if (!fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
+                dto.setDatasetSchemaChanged(true);
+
+                versionsToCreate.add(incrementDatasetVersion(fetchedVersion, dto));
+            }
+        }
+
+        // the following code serves two reasons:
+        // 1. If an entity is former hollow, it will have no fetched versions, so we need to create a new one
+        // 2. If an entity due to some ingestion error didn't have a version created for it, we need to create a new one
+        final Set<String> datasetsWithVersions = fetchedVersions.stream()
+            .map(DatasetVersionPojo::getDatasetOddrn)
+            .collect(Collectors.toSet());
+
+        for (final EnrichedDataEntityIngestionDto dto : datasetDict.values()) {
+            if (!datasetsWithVersions.contains(dto.getOddrn())) {
+                versionsToCreate.add(mapNewDatasetVersion(dto));
+            }
+        }
+
+        return versionsToCreate;
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
