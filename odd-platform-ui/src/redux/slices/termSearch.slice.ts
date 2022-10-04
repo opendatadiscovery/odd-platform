@@ -178,6 +178,14 @@ export const termsSearchSlice = createSlice({
         },
       };
     },
+
+    updateTermSearchQuery: (
+      state: TermSearchState,
+      { payload }: { payload: string }
+    ): TermSearchState => {
+      state.query = payload;
+      return state;
+    },
   },
 
   extraReducers: builder => {
@@ -218,6 +226,7 @@ export const termsSearchSlice = createSlice({
   },
 });
 
-export const { clearTermSearchFacets, changeTermSearchFacet } = termsSearchSlice.actions;
+export const { clearTermSearchFacets, changeTermSearchFacet, updateTermSearchQuery } =
+  termsSearchSlice.actions;
 
 export default termsSearchSlice.reducer;

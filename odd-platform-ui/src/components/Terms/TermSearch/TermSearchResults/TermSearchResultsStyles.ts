@@ -1,30 +1,13 @@
 import { Grid, GridProps } from '@mui/material';
-import {
-  primaryTabsHeight,
-  tabsContainerMargin,
-  toolbarHeight,
-} from 'lib/constants';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 
-export type TermSearchResultsColType =
-  | 'col'
-  | 'colxs'
-  | 'colsm'
-  | 'colmd'
-  | 'collg';
+export type TermSearchResultsColType = 'col' | 'colxs' | 'colsm' | 'colmd' | 'collg';
 export const termSearchResultsColWidthStyles = {
-  colxs: {
-    flex: '2 0 6%',
-  },
-  colsm: {
-    flex: '2 0 7%',
-  },
-  colmd: {
-    flex: '3 0 9%',
-  },
-  collg: {
-    flex: '4 0 12%',
-  },
+  colxs: { flex: '2 0 6%' },
+  colsm: { flex: '2 0 7%' },
+  colmd: { flex: '3 0 9%' },
+  collg: { flex: '4 0 12%' },
   col: {
     display: 'flex',
     alignItems: 'center',
@@ -39,10 +22,15 @@ export const termSearchResultsColWidthStyles = {
 
 const termSearchHeight = 40;
 
-export const TermSearchResultsTableHeader = styled(Grid)(({ theme }) => ({
-  borderBottom: '1px solid',
-  borderBottomColor: theme.palette.divider,
-}));
+export const TermSearchResultsTableHeader = styled(Grid)<{ $scrollbarWidth: string }>(
+  ({ theme, $scrollbarWidth }) => ({
+    borderBottom: '1px solid',
+    borderBottomColor: theme.palette.divider,
+    marginTop: theme.spacing(2),
+    paddingRight: $scrollbarWidth,
+    flexWrap: 'nowrap',
+  })
+);
 
 export const TermSearchResultsColContainer = styled(Grid)<{
   $colType: TermSearchResultsColType;

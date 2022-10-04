@@ -1,6 +1,6 @@
 export { default as SkeletonWrapper } from './SkeletonWrapper/SkeletonWrapper';
 export { default as EntityClassItem } from './EntityClassItem/EntityClassItem';
-export { default as MainSearch } from './MainSearch/MainSearch';
+export { default as MainSearch } from './MainSearchInput/MainSearchInput';
 export { default as AppIconButton } from './AppIconButton/AppIconButton';
 export { default as AppMenu } from './AppMenu/AppMenu';
 export { default as AppMenuItem } from './AppMenuItem/AppMenuItem';

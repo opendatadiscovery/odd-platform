@@ -14,7 +14,7 @@ interface AppSearchProps {
   mainSearch?: boolean;
 }
 
-const MainSearch: React.FC<AppSearchProps> = ({
+const MainSearchInput: React.FC<AppSearchProps> = ({
   placeholder,
   disableSuggestions,
   mainSearch,
@@ -92,4 +92,4 @@ const MainSearch: React.FC<AppSearchProps> = ({
   );
 };
 
-export default MainSearch;
+export default MainSearchInput;
