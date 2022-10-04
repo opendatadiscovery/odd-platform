@@ -193,6 +193,14 @@ export const dataEntitiesSearchSlice = createSlice({
         },
       };
     },
+
+    updateSearchQuery: (
+      state: DataEntitySearchState,
+      { payload }: { payload: string }
+    ): DataEntitySearchState => {
+      state.query = payload;
+      return state;
+    },
   },
 
   extraReducers: builder => {
@@ -234,7 +242,10 @@ export const dataEntitiesSearchSlice = createSlice({
   },
 });
 
-export const { clearDataEntitySearchFacets, changeDataEntitySearchFacet } =
-  dataEntitiesSearchSlice.actions;
+export const {
+  clearDataEntitySearchFacets,
+  changeDataEntitySearchFacet,
+  updateSearchQuery,
+} = dataEntitiesSearchSlice.actions;
 
 export default dataEntitiesSearchSlice.reducer;

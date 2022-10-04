@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import {
+  CurrentPageInfo,
   RootState,
   SearchFacetStateById,
   SearchFilterStateSynced,
@@ -50,7 +51,7 @@ export const getTermSearchFacetsSynced = createSelector(
 
 export const getTermSearchResultsPage = createSelector(
   termSearchState,
-  termsSearch => termsSearch.results.pageInfo
+  (termsSearch): CurrentPageInfo => termsSearch.results.pageInfo
 );
 
 export const getTermSearchResults = createSelector(
