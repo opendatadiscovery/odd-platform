@@ -7,11 +7,18 @@ import { AppInput } from 'components/shared';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
 import {
+  getTermSearchId,
   getTermSearchQuery,
   getTermSearchSuggestions,
   getTermSearchSuggestionsFetchStatuses,
 } from 'redux/selectors';
-import { createTermSearch, fetchTermSearchSuggestions } from 'redux/thunks';
+import {
+  createDataEntitiesSearch,
+  createTermSearch,
+  fetchTermSearchSuggestions,
+  updateDataEntitiesSearch,
+  updateTermSearch,
+} from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import * as S from './TermMainSearchStyles';
 
@@ -20,29 +27,31 @@ const TermMainSearch: React.FC = () => {
   const dispatch = useAppDispatch();
   const { termSearchPath, termDetailsOverviewPath } = useAppPaths();
 
-  const query = useAppSelector(getTermSearchQuery);
+  // const query = useAppSelector(getTermSearchQuery);
+  const searchId = useAppSelector(getTermSearchId);
   const suggestions = useAppSelector(getTermSearchSuggestions);
   const { isLoading: isSuggestionsFetching } = useAppSelector(
     getTermSearchSuggestionsFetchStatuses
   );
 
-  const [searchText, setSearchText] = React.useState<string>('');
+  const [searchText, setSearchText] = React.useState('');
   const [options, setOptions] = React.useState<Partial<TermRef>[]>([]);
-  const [autocompleteOpen, setAutocompleteOpen] = React.useState<boolean>(false);
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
 
-  const createSearch = () => {
-    const termSearchQuery = {
-      query: searchText,
-      pageSize: 30,
-      filters: {},
-    };
-    dispatch(createTermSearch({ termSearchFormData: termSearchQuery }))
-      .unwrap()
-      .then(termSearch => {
-        const termSearchLink = termSearchPath(termSearch.searchId);
-        history.replace(termSearchLink);
-      });
-    history.push(termSearchPath());
+  // const createSearch = () => {
+  //   const termSearchFormData = { query: searchText, pageSize: 30, filters: {} };
+  //   dispatch(createTermSearch({ termSearchFormData }))
+  //     .unwrap()
+  //     .then(termSearch => {
+  //       const termSearchLink = termSearchPath(termSearch.searchId);
+  //       history.replace(termSearchLink);
+  //     });
+  //   history.push(termSearchPath());
+  // };
+
+  const updateSearch = () => {
+    const termSearchFormData = { query: searchText, pageSize: 30, filters: {} };
+    dispatch(updateTermSearch({ searchId, termSearchFormData }));
   };
 
   const handleInputChange = (_: React.ChangeEvent<unknown>, inputVal: string) => {
@@ -51,7 +60,7 @@ const TermMainSearch: React.FC = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      createSearch();
+      updateSearch();
     }
   };
 
@@ -62,9 +71,9 @@ const TermMainSearch: React.FC = () => {
     [searchText, setOptions, fetchTermSearchSuggestions]
   );
 
-  React.useEffect(() => {
-    setSearchText(query || '');
-  }, [query]);
+  // React.useEffect(() => {
+  //   setSearchText(query || '');
+  // }, [query]);
 
   React.useEffect(() => {
     setOptions(suggestions);
@@ -131,14 +140,14 @@ const TermMainSearch: React.FC = () => {
               customStartAdornment={{
                 variant: 'search',
                 showAdornment: true,
-                onCLick: createSearch,
+                onCLick: updateSearch,
                 icon: <SearchIcon />,
               }}
-              customEndAdornment={{
-                variant: 'loader',
-                showAdornment: isSuggestionsFetching,
-                position: { mr: 4 },
-              }}
+              // customEndAdornment={{
+              //   variant: 'loader',
+              //   showAdornment: isSuggestionsFetching,
+              //   position: { mr: 4 },
+              // }}
             />
           )}
           renderOption={renderOption}

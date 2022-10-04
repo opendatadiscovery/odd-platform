@@ -11,6 +11,7 @@ import {
   getTermSearchIsFetching,
   getTermSearchResults,
   getTermSearchResultsPage,
+  getTermSearchUpdateStatuses,
 } from 'redux/selectors';
 import { fetchTermsSearchResults } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -23,17 +24,12 @@ const TermSearchResults: React.FC = () => {
   const termSearchId = useAppSelector(getTermSearchId);
   const termSearchResults = useAppSelector(getTermSearchResults);
   const pageInfo = useAppSelector(getTermSearchResultsPage);
-  const isTermSearchFacetsSynced = useAppSelector(
-    getTermSearchFacetsSynced
-  );
+  const isTermSearchFacetsSynced = useAppSelector(getTermSearchFacetsSynced);
   const isTermSearchFetching = useAppSelector(getTermSearchIsFetching);
 
-  const { isLoading: isTermSearchCreating } = useAppSelector(
-    getTermSearchCreateStatuses
-  );
-  const { isLoaded: isTermDeleted } = useAppSelector(
-    getTermDeletingStatuses
-  );
+  const { isLoading: isTermSearchCreating } = useAppSelector(getTermSearchCreateStatuses);
+  const { isLoading: isTermSearchUpdating } = useAppSelector(getTermSearchUpdateStatuses);
+  const { isLoaded: isTermDeleted } = useAppSelector(getTermDeletingStatuses);
 
   const scrollbarWidth = useScrollBarWidth();
   const pageSize = 30;
@@ -67,54 +63,56 @@ const TermSearchResults: React.FC = () => {
     if (
       isTermSearchFacetsSynced &&
       termSearchId &&
-      !isTermSearchCreating
+      !isTermSearchCreating &&
+      !isTermSearchUpdating
     ) {
       fetchNextPage();
     }
-  }, [isTermSearchFacetsSynced, termSearchId, isTermSearchCreating]);
+  }, [
+    isTermSearchFacetsSynced,
+    termSearchId,
+    isTermSearchCreating,
+    isTermSearchUpdating,
+  ]);
 
   return (
     <Grid sx={{ mt: 2 }}>
       <S.TermSearchResultsTableHeader
         container
         sx={{ mt: 2, pr: scrollbarWidth }}
-        wrap="nowrap"
+        wrap='nowrap'
       >
-        <S.TermSearchResultsColContainer item $colType="collg">
-          <Typography variant="caption">Term name</Typography>
+        <S.TermSearchResultsColContainer item $colType='collg'>
+          <Typography variant='caption'>Term name</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType="collg">
-          <Typography variant="caption">Namespace</Typography>
+        <S.TermSearchResultsColContainer item $colType='collg'>
+          <Typography variant='caption'>Namespace</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType="collg">
-          <Typography variant="caption">Owner</Typography>
+        <S.TermSearchResultsColContainer item $colType='collg'>
+          <Typography variant='caption'>Owner</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType="colxs">
-          <Typography variant="caption">Using</Typography>
+        <S.TermSearchResultsColContainer item $colType='colxs'>
+          <Typography variant='caption'>Using</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType="colsm">
-          <Typography variant="caption">Created</Typography>
+        <S.TermSearchResultsColContainer item $colType='colsm'>
+          <Typography variant='caption'>Created</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType="colsm">
-          <Typography variant="caption">Last update</Typography>
+        <S.TermSearchResultsColContainer item $colType='colsm'>
+          <Typography variant='caption'>Last update</Typography>
         </S.TermSearchResultsColContainer>
-        <S.TermSearchResultsColContainer item $colType="colxs" />
+        <S.TermSearchResultsColContainer item $colType='colxs' />
       </S.TermSearchResultsTableHeader>
       {isTermSearchCreating ? (
         <TermSearchResultsSkeleton length={10} />
       ) : (
-        <S.TermSearchListContainer id="term-search-results-list">
+        <S.TermSearchListContainer id='term-search-results-list'>
           <InfiniteScroll
             dataLength={termSearchResults.length}
             next={fetchNextPage}
             hasMore={pageInfo.hasNext}
-            loader={
-              isTermSearchFetching && (
-                <TermSearchResultsSkeleton length={10} />
-              )
-            }
-            scrollThreshold="200px"
-            scrollableTarget="term-search-results-list"
+            loader={isTermSearchFetching && <TermSearchResultsSkeleton length={10} />}
+            scrollThreshold='200px'
+            scrollableTarget='term-search-results-list'
           >
             {termSearchResults.map(termSearchResult => (
               <TermSearchResultItem
@@ -124,7 +122,7 @@ const TermSearchResults: React.FC = () => {
             ))}
           </InfiniteScroll>
           {!isTermSearchFetching && !pageInfo.total && (
-            <EmptyContentPlaceholder text="No matches found" />
+            <EmptyContentPlaceholder text='No matches found' />
           )}
         </S.TermSearchListContainer>
       )}
