@@ -45,7 +45,7 @@ public class FacetStateDto {
             newState.merge(deltaEntry.getKey(), deltaEntry.getValue(), FacetStateDto::mergeFacetState);
         }
 
-        return new FacetStateDto(newState, currentState.getQuery(), delta.isMyObjects());
+        return new FacetStateDto(newState, delta.getQuery(), delta.isMyObjects());
     }
 
     private static List<SearchFilterDto> mergeFacetState(final List<SearchFilterDto> currentFilters,
