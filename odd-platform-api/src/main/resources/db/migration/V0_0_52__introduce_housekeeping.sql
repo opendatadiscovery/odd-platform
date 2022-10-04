@@ -7,7 +7,7 @@ SET last_accessed_at = (now() at time zone 'utc');
 ALTER TABLE search_facets
     ALTER COLUMN last_accessed_at SET NOT NULL;
 
-CREATE TABLE shedlock
+CREATE TABLE IF NOT EXISTS shedlock
 (
     name       VARCHAR(64)  NOT NULL,
     lock_until TIMESTAMP    NOT NULL,
