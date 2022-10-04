@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record3;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
@@ -69,8 +70,10 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
 
     @Override
     public Optional<SearchFacetsPojo> getFacetState(final UUID id) {
-        return dslContext.selectFrom(SEARCH_FACETS)
+        return dslContext.update(SEARCH_FACETS)
+            .set(SEARCH_FACETS.LAST_ACCESSED_AT, DSL.currentOffsetDateTime())
             .where(SEARCH_FACETS.ID.eq(id))
+            .returning()
             .fetchOptionalInto(SearchFacetsPojo.class);
     }
 

@@ -27,7 +27,7 @@ public class NotificationSubscriberStarter {
     private final AlertNotificationMessageProcessor messageProcessor;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void runLeaderElection() {
+    public void runNotificationSubscriber() {
         log.debug("Notification subscription is enabled, starting WAL parser");
         executorService.submit(new NotificationSubscriber(
             notificationsProperties.getWal(), pgConnectionFactory, messageDecoder, messageProcessor));

@@ -64,11 +64,12 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
 
     @Override
     public Mono<SearchFacetsPojo> get(final UUID id) {
-        final var query = DSL.selectFrom(SEARCH_FACETS)
-            .where(SEARCH_FACETS.ID.eq(id));
-        return jooqReactiveOperations
-            .mono(query)
-            .map(r -> r.into(SearchFacetsPojo.class));
+        final var query = DSL.update(SEARCH_FACETS)
+            .set(SEARCH_FACETS.LAST_ACCESSED_AT, DSL.currentOffsetDateTime())
+            .where(SEARCH_FACETS.ID.eq(id))
+            .returning();
+
+        return jooqReactiveOperations.mono(query).map(r -> r.into(SearchFacetsPojo.class));
     }
 
     @Override

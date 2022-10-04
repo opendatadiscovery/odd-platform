@@ -24,6 +24,7 @@ mapstruct = '1.4.2.Final'
 opentelemetry = '1.6.0'
 opentelemetry-alpha = '1.6.0-alpha'
 slack-api-model = '1.24.0'
+shedlock-version = '4.42.0'
 lombok = '1.18.24'
 testcontainers = '1.17.1'
 slf4j-api = '1.7.30'
@@ -73,6 +74,8 @@ opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metri
 opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
 slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api-model' }
+shedlock = { module = 'net.javacrumbs.shedlock:shedlock-spring', version.ref = 'shedlock-version' }
+shedlock-jdbc-lock-provider = { module = 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template', version.ref = 'shedlock-version' }
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
 slf4j-api = { module = 'org.slf4j:slf4j-api', version.ref = 'slf4j-api' }
 jul-to-slf4j = { module = 'org.slf4j:jul-to-slf4j', version.ref = 'slf4j-api' }
