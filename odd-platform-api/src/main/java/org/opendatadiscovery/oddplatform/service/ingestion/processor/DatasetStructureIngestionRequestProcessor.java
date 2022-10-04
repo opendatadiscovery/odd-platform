@@ -96,7 +96,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         final Map<String, EnrichedDataEntityIngestionDto> datasetDict,
         final List<DatasetVersionPojo> fetchedVersions
     ) {
-        final ArrayList<DatasetVersionPojo> versionsToCreate = new ArrayList<>();
+        final List<DatasetVersionPojo> versionsToCreate = new ArrayList<>();
 
         for (final DatasetVersionPojo fetchedVersion : fetchedVersions) {
             final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetOddrn());
