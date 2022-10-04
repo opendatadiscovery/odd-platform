@@ -17,7 +17,6 @@ import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
-  getSearchQuery,
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
@@ -38,6 +37,7 @@ interface SearchSuggestionsAutocompleteProps {
   };
   linkedOption?: boolean;
   disableSuggestions?: boolean;
+  searchQuery?: string;
 }
 
 const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps> = ({
@@ -48,11 +48,11 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
   inputParams,
   linkedOption,
   disableSuggestions,
+  searchQuery,
 }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
 
-  const searchQuery = useAppSelector(getSearchQuery);
   const searchSuggestions = useAppSelector(getSearchSuggestions);
   const { isLoading: isSuggestionsLoading } = useAppSelector(
     getSearchSuggestionsFetchingStatuses
@@ -175,7 +175,9 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     <Grid container flexWrap='nowrap' alignItems='center'>
       <AppInput
         {...params}
-        {...inputParams}
+        placeholder={inputParams?.placeholder}
+        size={inputParams?.size}
+        label={inputParams?.label}
         ref={params.InputProps.ref}
         onKeyDown={handleKeyDown}
         customStartAdornment={customStartAdornment}

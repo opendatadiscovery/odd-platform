@@ -4,8 +4,9 @@ import { SearchSuggestionsAutocomplete } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { getSearchId } from 'redux/selectors';
+import { getSearchId, getSearchQuery } from 'redux/selectors';
 import { Box } from '@mui/material';
+import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 
 interface AppSearchProps {
   placeholder?: string;
@@ -23,6 +24,15 @@ const MainSearch: React.FC<AppSearchProps> = ({
   const { searchPath } = useAppPaths();
 
   const storedSearchId = useAppSelector(getSearchId);
+  const searchQuery = useAppSelector(getSearchQuery);
+
+  React.useEffect(() => {
+    const clearSearchQuery = () => {
+      if (mainSearch) dispatch(updateSearchQuery(''));
+    };
+
+    return clearSearchQuery();
+  }, [dispatch, updateSearchQuery]);
 
   const createSearch = React.useCallback(
     (query: string) => {
@@ -76,6 +86,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
           onKeyDownHandler: handleKeyDown,
         }}
         disableSuggestions={disableSuggestions}
+        searchQuery={searchQuery}
       />
     </Box>
   );
