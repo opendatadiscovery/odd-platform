@@ -106,6 +106,12 @@ metrics:
     enabled: false
     otlp-endpoint: http://localhost:4317
 
+housekeeping:
+  enabled: true
+  ttl:
+    resolved_alerts_days: 30
+    search_facets_days: 30
+
 notifications:
   enabled: false
   message:
@@ -149,8 +155,12 @@ odd:
 logging:
   level:
     org.springframework.transaction.interceptor: info
-    org.jooq.tools.LoggerListener: info
-    io.r2dbc.postgresql.QUERY: info
+    org.jooq.tools.LoggerListener: debug
+    io.r2dbc.postgresql.QUERY: debug
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
+    org.opendatadiscovery.oddplatform.housekeeping: debug
     org.opendatadiscovery.oddplatform.service.ingestion: info
+
+
+# delete from "public"."search_facets" where "public"."search_facets"."last_accessed_at" < (current_timestamp - interval '? days')
