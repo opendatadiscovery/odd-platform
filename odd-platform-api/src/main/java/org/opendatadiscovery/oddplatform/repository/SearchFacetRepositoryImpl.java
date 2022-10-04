@@ -16,7 +16,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record3;
+import org.jooq.SelectConditionStep;
+import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
@@ -28,11 +34,13 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
@@ -116,6 +124,17 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             select = select.join(TAG_TO_DATA_ENTITY)
                 .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
                 .and(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
+        }
+
+        final Set<Long> groupIds = state.getFacetEntitiesIds(FacetType.GROUPS);
+        if (!CollectionUtils.isEmpty(groupIds)) {
+            select = select.join(GROUP_ENTITY_RELATIONS)
+                .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
+
+            final SelectConditionStep<Record1<String>> groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
+                .from(DATA_ENTITY)
+                .where(DATA_ENTITY.ID.in(groupIds));
+            conditions.add(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns));
         }
 
         final Set<Long> typeIds = state.getFacetEntitiesIds(FacetType.TYPES);
@@ -315,6 +334,59 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             .where(conditions)
             .groupBy(TAG.ID, TAG.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
+            .limit(size)
+            .offset((page - 1) * size)
+            .fetchStream()
+            .collect(FACET_COLLECTOR);
+    }
+
+    @Override
+    public Map<SearchFilterId, Long> getGroupFacet(final String facetQuery,
+                                                   final int page,
+                                                   final int size,
+                                                   final FacetStateDto state) {
+        final Field<Integer> dataEntityCount = countDistinct(DATA_ENTITY.ID).as("data_entity_count");
+        var cteSelect = DSL.select(
+                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
+                dataEntityCount)
+            .from(GROUP_ENTITY_RELATIONS)
+            .leftJoin(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
+        final Long selectedEntityClass = state.selectedDataEntityClass().orElse(null);
+        if (selectedEntityClass != null) {
+            cteSelect =
+                cteSelect.and(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {selectedEntityClass.intValue()}));
+        }
+
+        cteSelect = cteSelect.leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            cteSelect = cteSelect.and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
+        }
+
+        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
+        if (!dataSourceIds.isEmpty()) {
+            cteSelect = cteSelect.join(DATA_SOURCE)
+                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+                .and(DATA_SOURCE.ID.in(dataSourceIds));
+        }
+        cteSelect
+            .where(getDefaultConditions())
+            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
+            .orderBy(dataEntityCount.desc());
+
+        final Table<? extends Record> cte = cteSelect.asTable("cte");
+        final Field<String> groupName = coalesce(DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME);
+
+        final List<Condition> conditions = getDefaultConditions();
+        if (StringUtils.isNotEmpty(facetQuery)) {
+            conditions.add(groupName.containsIgnoreCase(facetQuery));
+        }
+        return dslContext.with(cte.getName())
+            .as(cteSelect)
+            .select(DATA_ENTITY.ID, groupName, cte.field(dataEntityCount))
+            .from(cte.getName())
+            .join(DATA_ENTITY).on(cte.field(GROUP_ENTITY_RELATIONS.GROUP_ODDRN).eq(DATA_ENTITY.ODDRN))
+            .where(conditions)
+            .orderBy(cte.field(dataEntityCount).desc())
             .limit(size)
             .offset((page - 1) * size)
             .fetchStream()

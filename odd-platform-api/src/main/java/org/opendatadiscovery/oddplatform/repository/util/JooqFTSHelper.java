@@ -57,27 +57,25 @@ public class JooqFTSHelper {
             .collect(Collectors.toList());
     }
 
-    // TODO: ad-hoc
     public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
                                                                              final boolean skipEntityClassCondition) {
-        final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> entryPredicate =
+        final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> cteFilters =
             e -> e.getKey().equals(FacetType.DATA_SOURCES)
                 || e.getKey().equals(FacetType.ENTITY_CLASSES)
                 || e.getKey().equals(FacetType.TYPES);
 
         final List<Condition> joinConditions = state.getState().entrySet().stream()
-            .filter(not(entryPredicate))
+            .filter(not(cteFilters))
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), DATA_ENTITY_CONDITIONS))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         final List<Condition> cteConditions = state.getState().entrySet().stream()
-            .filter(entryPredicate)
+            .filter(cteFilters)
             .filter(e -> {
                 if (skipEntityClassCondition) {
                     return !e.getKey().equals(FacetType.ENTITY_CLASSES);
                 }
-
                 return true;
             })
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), DATA_ENTITY_CONDITIONS))
@@ -89,7 +87,7 @@ public class JooqFTSHelper {
         return Pair.of(cteConditions, joinConditions);
     }
 
-    public Condition compileFacetCondition(final FacetType facetType,
+    private Condition compileFacetCondition(final FacetType facetType,
                                            final List<SearchFilterDto> filters,
                                            final Map<FacetType, Function<List<SearchFilterDto>, Condition>> facetMap) {
         final Function<List<SearchFilterDto>, Condition> function = facetMap.get(facetType);

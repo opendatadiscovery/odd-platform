@@ -39,7 +39,8 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             SearchFormDataFilters::getDatasources, FacetType.DATA_SOURCES,
             SearchFormDataFilters::getNamespaces, FacetType.NAMESPACES,
             SearchFormDataFilters::getOwners, FacetType.OWNERS,
-            SearchFormDataFilters::getTags, FacetType.TAGS
+            SearchFormDataFilters::getTags, FacetType.TAGS,
+            SearchFormDataFilters::getGroups, FacetType.GROUPS
         );
 
     private static final Map<Function<TermSearchFormDataFilters, List<SearchFilterState>>, FacetType>

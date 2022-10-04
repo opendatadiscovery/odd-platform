@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 
@@ -13,6 +14,7 @@ import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
@@ -62,7 +64,13 @@ public class FTSConstants {
             FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
             FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-            FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
+            FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters)),
+            FacetType.GROUPS, filters -> {
+                final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
+                    .from(DATA_ENTITY)
+                    .where(DATA_ENTITY.ID.in(extractFilterId(filters)));
+                return GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns);
+            }
         );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> TERM_CONDITIONS = Map.of(
@@ -71,7 +79,7 @@ public class FTSConstants {
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
 
-    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
+    public static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
             .map(SearchFilterDto::getEntityId)
             .collect(Collectors.toList());
