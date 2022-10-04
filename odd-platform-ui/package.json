@@ -48,7 +48,7 @@
     "d3-interpolate": "^3.0.1",
     "d3-selection": "^2.0.0",
     "d3-shape": "^3.1.0",
-    "d3-zoom": "^2.0.0",
+    "d3-zoom": "^3.0.0",
     "date-fns": "^2.28.0",
     "github-markdown-css": "^5.1.0",
     "lodash": "^4.17.21",
