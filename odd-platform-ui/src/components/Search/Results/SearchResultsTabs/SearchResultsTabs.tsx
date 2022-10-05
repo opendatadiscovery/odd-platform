@@ -69,9 +69,7 @@ const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
-    setSelectedTab(
-      searchClass ? tabs.findIndex(tab => tab.value === searchClass) : 0
-    );
+    setSelectedTab(searchClass ? tabs.findIndex(tab => tab.value === searchClass) : 0);
   }, [tabs, searchClass]);
 
   const onTabChange = (newTabIndex: number) => {
@@ -85,7 +83,7 @@ const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
         <SearchTabsSkeleton length={tabs.length} />
       ) : (
         <AppTabs
-          type="primary"
+          type='primary'
           items={tabs}
           selectedTab={selectedTab}
           handleTabChange={onTabChange}

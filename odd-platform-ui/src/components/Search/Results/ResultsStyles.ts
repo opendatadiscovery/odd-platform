@@ -1,34 +1,20 @@
 import { Grid, GridProps } from '@mui/material';
-import {
-  primaryTabsHeight,
-  tabsContainerMargin,
-  toolbarHeight,
-} from 'lib/constants';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 
 export type ColType = 'col' | 'colxs' | 'colsm' | 'colmd' | 'collg';
 export const colWidthStyles = {
-  colxs: {
-    flex: '2 0 6%',
-  },
-  colsm: {
-    flex: '2 0 7%',
-  },
-  colmd: {
-    flex: '3 0 9%',
-  },
-  collg: {
-    flex: '4 0 12%',
-  },
+  colxs: { flex: '2 0 6%' },
+  colsm: { flex: '2 0 7%' },
+  colmd: { flex: '3 0 9%' },
+  collg: { flex: '4 0 12%' },
   col: {
     display: 'flex',
     alignItems: 'center',
     overflow: 'hidden',
     paddingRight: '8px',
     paddingLeft: '8px',
-    '&:last-of-type': {
-      paddingRight: 0,
-    },
+    '&:last-of-type': { paddingRight: 0 },
   },
 };
 
@@ -42,10 +28,7 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
 
 export const ColContainer = styled(Grid)<{
   $colType: ColType;
-}>(({ $colType }) => ({
-  ...colWidthStyles.col,
-  ...colWidthStyles[$colType],
-}));
+}>(({ $colType }) => ({ ...colWidthStyles.col, ...colWidthStyles[$colType] }));
 
 export const NameContainer = styled(Grid)<GridProps>(() => ({
   ...colWidthStyles.col,

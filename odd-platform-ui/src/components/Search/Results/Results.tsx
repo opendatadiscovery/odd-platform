@@ -22,9 +22,9 @@ import {
 import { fetchDataEntitySearchResults } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import { SearchClass } from 'redux/interfaces';
-import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import { AppButton, EmptyContentPlaceholder } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
+import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import ResultItem from './ResultItem/ResultItem';
 import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton';
