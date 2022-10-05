@@ -8,9 +8,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   textDecoration: 'none',
   cursor: 'pointer',
   alignItems: 'center',
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.primary,
-  },
+  '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   '& > *': { padding: theme.spacing(1.25, 1) },
 }));
 

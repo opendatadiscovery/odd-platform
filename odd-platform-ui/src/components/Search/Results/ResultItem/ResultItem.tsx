@@ -21,38 +21,39 @@ interface ResultItemProps {
   searchResult: DataEntity;
 }
 
-const ResultItem: React.FC<ResultItemProps> = ({
-  searchResult,
-  searchClass,
-  totals,
-}) => {
+const ResultItem: React.FC<ResultItemProps> = ({ searchResult, searchClass, totals }) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
   const resultItemPreview = React.useCallback(
-    ({ open }) => (
-      <ResultItemPreview dataEntityId={searchResult.id} fetchData={open} />
-    ),
+    ({ open }) => <ResultItemPreview dataEntityId={searchResult.id} fetchData={open} />,
     [searchResult.id]
   );
+
+  const updatedAt =
+    searchResult.updatedAt &&
+    formatDistanceToNowStrict(searchResult.updatedAt, {
+      addSuffix: true,
+    });
+
+  const createdAt =
+    searchResult.createdAt && format(searchResult.createdAt, 'd MMM yyyy');
 
   return (
     <ItemLink to={detailsLink}>
       <Container container>
         <ColContainer
-          $colType="collg"
+          $colType='collg'
           item
           container
-          justifyContent="space-between"
-          wrap="nowrap"
+          justifyContent='space-between'
+          wrap='nowrap'
         >
           <NameContainer container item>
             <Typography
-              variant="body1"
+              variant='body1'
               noWrap
-              title={
-                searchResult.internalName || searchResult.externalName
-              }
+              title={searchResult.internalName || searchResult.externalName}
             >
               {searchResult.internalName || searchResult.externalName}
             </Typography>
@@ -60,13 +61,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
               <InformationIcon sx={{ ml: 1.25 }} />
             </AppTooltip>
           </NameContainer>
-          <Grid
-            container
-            item
-            justifyContent="flex-end"
-            wrap="nowrap"
-            flexBasis={0}
-          >
+          <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
             {!searchClass ||
               (typeof searchClass === 'string' &&
                 searchResult.entityClasses?.map(entityClass => (
@@ -78,21 +73,20 @@ const ResultItem: React.FC<ResultItemProps> = ({
                 )))}
           </Grid>
         </ColContainer>
-        {searchClass &&
-        searchClass === totals[DataEntityClassNameEnum.SET]?.id ? (
+        {searchClass && searchClass === totals[DataEntityClassNameEnum.SET]?.id ? (
           <>
-            <ColContainer item $colType="colxs">
-              <Typography variant="body1" noWrap>
+            <ColContainer item $colType='colxs'>
+              <Typography variant='body1' noWrap>
                 {searchResult.stats?.consumersCount}
               </Typography>
             </ColContainer>
-            <ColContainer item $colType="colxs">
-              <Typography variant="body1" noWrap>
+            <ColContainer item $colType='colxs'>
+              <Typography variant='body1' noWrap>
                 <NumberFormatted value={searchResult.stats?.rowsCount} />
               </Typography>
             </ColContainer>
-            <ColContainer item $colType="colxs">
-              <Typography variant="body1" noWrap>
+            <ColContainer item $colType='colxs'>
+              <Typography variant='body1' noWrap>
                 {searchResult.stats?.fieldsCount}
               </Typography>
             </ColContainer>
@@ -101,13 +95,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
         {searchClass &&
         searchClass === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
           <>
-            <ColContainer $colType="collg" item container wrap="wrap">
+            <ColContainer $colType='collg' item container wrap='wrap'>
               <TruncatedCell
                 dataList={searchResult.sourceList}
                 externalEntityId={searchResult.id}
               />
             </ColContainer>
-            <ColContainer item $colType="collg">
+            <ColContainer item $colType='collg'>
               <TruncatedCell
                 dataList={searchResult.targetList}
                 externalEntityId={searchResult.id}
@@ -115,9 +109,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </ColContainer>
           </>
         ) : null}
-        {searchClass &&
-        searchClass === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
-          <ColContainer item $colType="collg">
+        {searchClass && searchClass === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
+          <ColContainer item $colType='collg'>
             <TruncatedCell
               dataList={searchResult.inputList}
               externalEntityId={searchResult.id}
@@ -125,16 +118,15 @@ const ResultItem: React.FC<ResultItemProps> = ({
           </ColContainer>
         ) : null}
         {searchClass &&
-        searchClass ===
-          totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
+        searchClass === totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
           <>
-            <ColContainer item container wrap="wrap" $colType="collg">
+            <ColContainer item container wrap='wrap' $colType='collg'>
               <TruncatedCell
                 dataList={searchResult.datasetsList}
                 externalEntityId={searchResult.id}
               />
             </ColContainer>
-            <ColContainer item $colType="collg">
+            <ColContainer item $colType='collg'>
               <TruncatedCell
                 dataList={searchResult.linkedUrlList}
                 externalEntityId={searchResult.id}
@@ -143,79 +135,46 @@ const ResultItem: React.FC<ResultItemProps> = ({
           </>
         ) : null}
         {searchClass &&
-        searchClass ===
-          totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
-          <ColContainer item $colType="colsm">
-            <Typography variant="body1" noWrap>
+        searchClass === totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
+          <ColContainer item $colType='colsm'>
+            <Typography variant='body1' noWrap>
               {searchResult?.itemsCount}
             </Typography>
           </ColContainer>
         ) : null}
-        <ColContainer item $colType="colmd">
+        <ColContainer item $colType='colmd'>
           <Typography
-            variant="body1"
+            variant='body1'
             title={searchResult.dataSource.namespace?.name}
             noWrap
           >
             {searchResult.dataSource.namespace?.name}
           </Typography>
         </ColContainer>
-        <ColContainer item $colType="colmd">
-          <Typography
-            variant="body1"
-            title={searchResult.dataSource?.name}
-            noWrap
-          >
+        <ColContainer item $colType='colmd'>
+          <Typography variant='body1' title={searchResult.dataSource?.name} noWrap>
             {searchResult.dataSource?.name}
           </Typography>
         </ColContainer>
-        <ColContainer item $colType="colmd">
-          <Grid container direction="column" alignItems="flex-start">
+        <ColContainer item $colType='colmd'>
+          <Grid container direction='column' alignItems='flex-start'>
             {searchResult.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
-                <Typography
-                  variant="body1"
-                  title={ownership.owner.name}
-                  noWrap
-                >
+                <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
               </Grid>
             ))}
           </Grid>
         </ColContainer>
-        <ColContainer item $colType="colsm">
-          <Typography
-            variant="body1"
-            title={
-              searchResult.createdAt
-                ? format(searchResult.createdAt, 'd MMM yyyy')
-                : undefined
-            }
-            noWrap
-          >
-            {searchResult.createdAt
-              ? format(searchResult.createdAt, 'd MMM yyyy')
-              : null}
+        <ColContainer item $colType='colsm'>
+          <Typography variant='body1' title={createdAt} noWrap>
+            {createdAt}
           </Typography>
         </ColContainer>
-        <ColContainer item $colType="colsm">
-          <Typography
-            variant="body1"
-            title={
-              searchResult.updatedAt
-                ? formatDistanceToNowStrict(searchResult.updatedAt, {
-                    addSuffix: true,
-                  })
-                : undefined
-            }
-            noWrap
-          >
-            {searchResult.updatedAt
-              ? formatDistanceToNowStrict(searchResult.updatedAt, {
-                  addSuffix: true,
-                })
-              : null}
+        <ColContainer item $colType='colsm'>
+          <Typography variant='body1' title={updatedAt} noWrap>
+            {updatedAt}
           </Typography>
         </ColContainer>
       </Container>

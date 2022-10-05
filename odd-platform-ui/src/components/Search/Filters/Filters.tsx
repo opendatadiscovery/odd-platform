@@ -24,9 +24,7 @@ const Filters: React.FC = () => {
   const { isLoading: isDatasourceListFetching } = useAppSelector(
     getIsDataSourcesListFetching
   );
-  const { isLoading: isSearchUpdating } = useAppSelector(
-    getSearchUpdateStatuses
-  );
+  const { isLoading: isSearchUpdating } = useAppSelector(getSearchUpdateStatuses);
 
   React.useEffect(() => {
     dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
@@ -35,11 +33,11 @@ const Filters: React.FC = () => {
 
   return (
     <S.Container>
-      <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
-        <Typography variant="h4">Filters</Typography>
+      <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
+        <Typography variant='h4'>Filters</Typography>
         <AppButton
-          color="tertiary"
-          size="medium"
+          color='tertiary'
+          size='medium'
           onClick={() => dispatch(clearDataEntitySearchFacets())}
         >
           Clear All
@@ -47,25 +45,26 @@ const Filters: React.FC = () => {
       </Grid>
       <S.ListContainer>
         <SingleFilterItem
-          key="ds"
-          facetName="datasources"
-          name="Datasource"
+          key='ds'
+          facetName='datasources'
+          name='Datasource'
           facetOptions={datasources}
         />
         {searchClass && searchClass > 0 ? (
-          <MultipleFilterItem key="st" facetName="types" name="Type" />
+          <MultipleFilterItem key='st' facetName='types' name='Type' />
         ) : null}
         <SingleFilterItem
-          key="ns"
-          facetName="namespaces"
-          name="Namespace"
+          key='ns'
+          facetName='namespaces'
+          name='Namespace'
           facetOptions={namespaces}
         />
-        <MultipleFilterItem key="ow" facetName="owners" name="Owner" />
-        <MultipleFilterItem key="tg" facetName="tags" name="Tag" />
+        <MultipleFilterItem key='ow' facetName='owners' name='Owner' />
+        <MultipleFilterItem key='tg' facetName='tags' name='Tag' />
+        <MultipleFilterItem key='gr' facetName='groups' name='Groups' />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchUpdating || isDatasourceListFetching) && (
-            <AppCircularProgress size={16} text="Updating filters" />
+            <AppCircularProgress size={16} text='Updating filters' />
           )}
         </S.FacetsLoaderContainer>
       </S.ListContainer>

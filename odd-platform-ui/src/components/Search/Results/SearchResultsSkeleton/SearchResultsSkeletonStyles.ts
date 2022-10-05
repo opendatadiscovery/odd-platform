@@ -4,7 +4,4 @@ import { ColType, colWidthStyles } from '../ResultsStyles';
 
 export const ColContainer = styled(Grid)<{
   $colType: ColType;
-}>(({ $colType }) => ({
-  ...colWidthStyles.col,
-  ...colWidthStyles[$colType],
-}));
+}>(({ $colType }) => ({ ...colWidthStyles.col, ...colWidthStyles[$colType] }));
