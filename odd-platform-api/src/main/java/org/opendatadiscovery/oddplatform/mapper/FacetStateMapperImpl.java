@@ -1,6 +1,9 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,6 +66,7 @@ public class FacetStateMapperImpl implements FacetStateMapper {
         return new SearchFacetsPojo()
             .setId(searchId)
             .setQueryString(StringUtils.isNotEmpty(state.getQuery()) ? state.getQuery().trim() : state.getQuery())
+            .setLastAccessedAt(OffsetDateTime.now(ZoneOffset.UTC))
             .setFilters(JSONB.jsonb(JSONSerDeUtils.serializeJson(state)));
     }
 

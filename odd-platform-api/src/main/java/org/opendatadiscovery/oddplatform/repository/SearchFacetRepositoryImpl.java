@@ -77,8 +77,10 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
 
     @Override
     public Optional<SearchFacetsPojo> getFacetState(final UUID id) {
-        return dslContext.selectFrom(SEARCH_FACETS)
+        return dslContext.update(SEARCH_FACETS)
+            .set(SEARCH_FACETS.LAST_ACCESSED_AT, DSL.currentOffsetDateTime())
             .where(SEARCH_FACETS.ID.eq(id))
+            .returning()
             .fetchOptionalInto(SearchFacetsPojo.class);
     }
 

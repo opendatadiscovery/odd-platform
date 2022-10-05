@@ -35,6 +35,9 @@ dependencies {
     implementation libs.jetbrains.annotations
     implementation libs.mapstruct
     implementation libs.slack.api.model
+    implementation libs.shedlock
+    implementation libs.shedlock.jdbc.lock.provider
+
     compileOnly libs.lombok
 
     annotationProcessor libs.lombok
@@ -65,7 +68,7 @@ springBoot {
 jooqGenerate {
     basePackageName = "org.opendatadiscovery.oddplatform.model"
     includeMatches = ".*"
-    excludes = "FLYWAY_SCHEMA_HISTORY"
+    excludes = "(FLYWAY_SCHEMA_HISTORY | shedlock)"
     inputSchema = "public"
     generate {
         daos = false

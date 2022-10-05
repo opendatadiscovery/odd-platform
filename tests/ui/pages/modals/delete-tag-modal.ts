@@ -3,16 +3,16 @@ import { Pages } from '../index';
 import BaseModal from './base-modal';
 
 const SELECTORS = {
-  this_dialog: 'div[role="dialog"]',
-  delete_tag: 'button:has-text:"Delete"',
-  delete_tag_confirm: 'text=Delete Tag',
+  thisDialog: 'div[role="dialog"]',
+  deleteTag: 'button:has-text:"Delete"',
+  deleteTagConfirm: 'text=Delete Tag',
 };
 export default class DeleteTagModal extends BaseModal {
   constructor(pages: Pages) {
-    super(pages, SELECTORS.this_dialog);
+    super(pages, SELECTORS.thisDialog);
   }
 
-  get delete_tag_confirm() {
-    return new Button(this.page, SELECTORS.delete_tag_confirm);
+  get deleteTagConfirm() {
+    return new Button(this.page, SELECTORS.deleteTagConfirm);
   }
 }

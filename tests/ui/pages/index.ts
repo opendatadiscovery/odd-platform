@@ -9,7 +9,7 @@ import TopPanel from './shared/top-panel';
 // inject-import-page dont delete comment
 
 export class Pages {
-  readonly top_panel: TopPanel;
+  readonly topPanel: TopPanel;
 
   readonly login: LoginPage;
   // inject-page dont delete comment
@@ -23,7 +23,7 @@ export class Pages {
   readonly tags: TagsPage;
 
   constructor(readonly page: Page) {
-    this.top_panel = new TopPanel(this);
+    this.topPanel = new TopPanel(this);
     this.login = new LoginPage(this);
     this.modals = new Modals(this);
     this.management = new ManagementPage(this);

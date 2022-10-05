@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 
 export default class CustomElement {
-  private custom_element_context: Locator;
+  private customElementContext: Locator;
 
   /**
    * Returns a locator even if string selector is passed as a parameter
@@ -9,48 +9,48 @@ export default class CustomElement {
    * @param element
    * @returns Locator
    */
-  protected get_locator(element: string | Locator): Locator {
+  protected getLocator(element: string | Locator): Locator {
     return typeof element === 'string' ? this.context.locator(element) : element;
   }
 
   /**
-   * Gets the custom_element as proxied class
+   * Gets the customElement as proxied class
    */
-  protected get custom_element(): Locator {
-    return this.as_proxy();
+  protected get customElement(): Locator {
+    return this.asProxy();
   }
 
   /**
-   * Sets the custom_element_context to desired element
+   * Sets the customElementContext to desired element
    */
-  protected set custom_element(custom_element: Locator) {
-    this.custom_element_context = custom_element;
+  protected set customElement(customElement: Locator) {
+    this.customElementContext = customElement;
   }
 
-  constructor(protected readonly context: Page, custom_element: string | Locator) {
-    this.custom_element_context = this.get_locator(custom_element);
+  constructor(protected readonly context: Page, customElement: string | Locator) {
+    this.customElementContext = this.getLocator(customElement);
   }
 
   /**
-   * Wraps the custom_element_context in a Proxy class to dynamically deal with loading status before and after each PW command
+   * Wraps the customElementContext in a Proxy class to dynamically deal with loading status before and after each PW command
    */
-  private as_proxy() {
-    const page_context = this.context;
+  private asProxy() {
+    const pageContext = this.context;
 
-    return new Proxy(this.custom_element_context, {
-      get(target, prop_name) {
+    return new Proxy(this.customElementContext, {
+      get(target, propName) {
         if (
-          (prop_name in target && prop_name === 'locator') ||
-          typeof target[prop_name] !== 'function'
+          (propName in target && propName === 'locator') ||
+          typeof target[propName] !== 'function'
         ) {
-          return target[prop_name];
+          return target[propName];
         }
         return async (...args) => {
           let loaded = false;
 
           while (!loaded) {
             try {
-              await page_context.waitForSelector('div[class="loadingContainer"]', {
+              await pageContext.waitForSelector('div[class="loadingContainer"]', {
                 state: 'attached',
                 timeout: 1000,
               });
@@ -61,7 +61,7 @@ export default class CustomElement {
             }
           }
 
-          const resolved = await target[prop_name](...args);
+          const resolved = await target[propName](...args);
 
           return resolved;
         };
@@ -73,7 +73,7 @@ export default class CustomElement {
    * Hovers the target element
    */
   async hover() {
-    await this.custom_element.hover();
+    await this.customElement.hover();
   }
 
   /**
@@ -81,8 +81,8 @@ export default class CustomElement {
    *
    * @returns
    */
-  async bounding_box() {
-    return this.custom_element.boundingBox();
+  async boundingBox() {
+    return this.customElement.boundingBox();
   }
 
   /**
@@ -91,10 +91,10 @@ export default class CustomElement {
    * @param attribute
    * @returns
    */
-  async get_attribute(attribute: string) {
-    await this.wait_for_element_to_be_visible();
+  async getAttribute(attribute: string) {
+    await this.waitForElementToBeVisible();
 
-    return this.custom_element.getAttribute(attribute);
+    return this.customElement.getAttribute(attribute);
   }
 
   /**
@@ -103,15 +103,15 @@ export default class CustomElement {
    * @param locator
    */
   find(locator: string) {
-    return this.custom_element.locator(locator);
+    return this.customElement.locator(locator);
   }
 
   /**
    * Checks if element is visible
    */
-  async is_visible() {
+  async isVisible() {
     try {
-      await this.custom_element.waitFor({ timeout: 12000 });
+      await this.customElement.waitFor({ timeout: 12000 });
 
       return true;
     } catch {
@@ -124,16 +124,16 @@ export default class CustomElement {
    *
    * @param timeout
    */
-  async wait_for_element_to_be_visible(timeout = 90000) {
-    await this.custom_element.waitFor({ timeout });
+  async waitForElementToBeVisible(timeout = 90000) {
+    await this.customElement.waitFor({ timeout });
   }
 
   /**
    * Wait for element to be firstly attached to the DOM and then detached
    */
-  async wait_for_fading() {
-    await this.custom_element.waitFor();
-    await this.custom_element.waitFor({ state: 'detached' });
+  async waitForFading() {
+    await this.customElement.waitFor();
+    await this.customElement.waitFor({ state: 'detached' });
   }
 
   /**
@@ -141,11 +141,11 @@ export default class CustomElement {
    *
    * @param retries
    */
-  async wait_until_loaded(retries = 15) {
+  async waitUntilLoaded(retries = 15) {
     await this.context.waitForSelector('svg[class="ui/loading-spinner"]', {
       state: 'detached',
     });
 
-    if (retries) await this.wait_until_loaded(retries - 1);
+    if (retries) await this.waitUntilLoaded(retries - 1);
   }
 }

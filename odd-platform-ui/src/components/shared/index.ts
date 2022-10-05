@@ -1,6 +1,6 @@
 export { default as SkeletonWrapper } from './SkeletonWrapper/SkeletonWrapper';
 export { default as EntityClassItem } from './EntityClassItem/EntityClassItem';
-export { default as MainSearch } from './MainSearch/MainSearch';
+export { default as MainSearch } from './MainSearchInput/MainSearchInput';
 export { default as AppIconButton } from './AppIconButton/AppIconButton';
 export { default as AppMenu } from './AppMenu/AppMenu';
 export { default as AppMenuItem } from './AppMenuItem/AppMenuItem';
@@ -19,6 +19,7 @@ export { default as EntityTypeItem } from './EntityTypeItem/EntityTypeItem';
 export { default as AppPopover } from './AppPopover/AppPopover';
 export { default as DialogWrapper } from './DialogWrapper/DialogWrapper';
 export { default as AppInput } from './AppInput/AppInput';
+export { type AppInputProps } from './AppInput/AppInput';
 export { default as AppSelect } from './AppSelect/AppSelect';
 export { default as TagItem } from './TagItem/TagItem';
 export { default as TruncatedCell } from './TruncatedCell/TruncatedCell';

@@ -14,7 +14,7 @@ export default class ErrorHandler {
   /**
    * Prints the error
    */
-  print_error() {
+  printError() {
     if (this.err.message.includes('networkidle')) {
       console.log(
         `${this.err}\n"networkidle" - consider operation to be finished when there are no network connections for at least 500 ms.`,

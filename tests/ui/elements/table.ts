@@ -5,17 +5,17 @@ import Dropdown from './dropdown';
 import List, { ForEachCallback, ForEachItemClass } from './list';
 
 const SELECTORS = {
-  header_root: 'thead',
-  body_root: 'tbody',
+  headerRoot: 'thead',
+  bodyRoot: 'tbody',
   row: 'tr',
-  header_cell: 'th',
-  body_cell: 'td',
-  pagination_container: 'ul[class*="paginationContainer"]',
-  pagination_next_button: 'li[class*="next"] a[class*="paginationButtonsLinks"]',
-  pagination_items: 'a[class*="paginatonLink"]',
-  page_size: 'div[class*="documentsPageSize"]',
-  page_size_option: (option_index: number): string =>
-    `div[id^="react-select"][id$="-option-${option_index}"]`,
+  headerCell: 'th',
+  bodyCell: 'td',
+  paginationContainer: 'ul[class*="paginationContainer"]',
+  paginationNextButton: 'li[class*="next"] a[class*="paginationButtonsLinks"]',
+  paginationItems: 'a[class*="paginatonLink"]',
+  pageSize: 'div[class*="documentsPageSize"]',
+  pageSizeOption: (optionIndex: number): string =>
+    `div[id^="react-select"][id$="-option-${optionIndex}"]`,
 };
 
 export default class Table extends CustomElement {
@@ -25,23 +25,23 @@ export default class Table extends CustomElement {
 
   constructor(
     context: Page,
-    root_element: string | Locator,
-    table_selectors?: {
-      header_root: string;
-      body_root: string;
+    rootElement: string | Locator,
+    tableSelectors?: {
+      headerRoot: string;
+      bodyRoot: string;
       row: string;
-      header_cell: string;
-      body_cell: string;
+      headerCell: string;
+      bodyCell: string;
     },
   ) {
-    super(context, root_element);
+    super(context, rootElement);
 
-    this.selectors = { ...SELECTORS, ...table_selectors };
-    this.list = new List(this.context, this.get_body(), this.selectors.row);
+    this.selectors = { ...SELECTORS, ...tableSelectors };
+    this.list = new List(this.context, this.getBody(), this.selectors.row);
   }
 
   get exists() {
-    return this.custom_element.isVisible();
+    return this.customElement.isVisible();
   }
 
   /**
@@ -49,148 +49,148 @@ export default class Table extends CustomElement {
    * @param selector
    */
   find(selector: string) {
-    return this.custom_element.locator(selector);
+    return this.customElement.locator(selector);
   }
 
   /**
    *
    */
-  private get_header() {
-    return this.custom_element.locator(this.selectors.header_root);
+  private getHeader() {
+    return this.customElement.locator(this.selectors.headerRoot);
   }
 
   /**
    *
    */
-  private get_header_cells() {
-    return this.get_header().locator(this.selectors.header_cell);
+  private getHeaderCells() {
+    return this.getHeader().locator(this.selectors.headerCell);
   }
 
   /**
    *
    */
-  private get_body() {
-    return this.custom_element.locator(this.selectors.body_root);
+  private getBody() {
+    return this.customElement.locator(this.selectors.bodyRoot);
   }
 
   /**
    *
-   * @param cell_identifier ordering index or text content
+   * @param cellIdentifier ordering index or text content
    * @returns Locator
    */
-  get_header_cell(cell_identifier: number | string): Locator {
-    let header_cell: Locator;
+  getHeaderCell(cellIdentifier: number | string): Locator {
+    let headerCell: Locator;
 
-    if (typeof cell_identifier === 'number') {
-      header_cell = this.get_header().locator(this.selectors.header_cell).nth(cell_identifier);
+    if (typeof cellIdentifier === 'number') {
+      headerCell = this.getHeader().locator(this.selectors.headerCell).nth(cellIdentifier);
     } else {
-      header_cell = this.get_header().locator(`text=${cell_identifier}`);
+      headerCell = this.getHeader().locator(`text=${cellIdentifier}`);
     }
 
-    return header_cell;
+    return headerCell;
   }
 
   /**
    * Click on header checkbox to select all items
    *
-   * @param cell_index
-   * @param checkbox_locator
+   * @param cellIndex
+   * @param checkboxLocator
    */
-  async click_header_cell(cell_index: number, checkbox_locator: string) {
-    const row = this.get_header_cell(cell_index);
+  async clickHeaderCell(cellIndex: number, checkboxLocator: string) {
+    const row = this.getHeaderCell(cellIndex);
 
-    await row.locator(checkbox_locator).click();
+    await row.locator(checkboxLocator).click();
   }
 
   /**
    *
    */
-  get_rows(): Locator {
-    return this.get_body().locator(this.selectors.row);
+  getRows(): Locator {
+    return this.getBody().locator(this.selectors.row);
   }
 
   /**
    *
-   * @param row_identifier
+   * @param rowIdentifier
    */
-  private get_row_by_identifier(row_identifier: number | string): Locator {
-    if (typeof row_identifier === 'number') {
-      return this.get_rows().nth(row_identifier);
+  private getRowByIdentifier(rowIdentifier: number | string): Locator {
+    if (typeof rowIdentifier === 'number') {
+      return this.getRows().nth(rowIdentifier);
     }
-    return this.get_body().locator(`${this.selectors.row}:has-text("${row_identifier}")`);
+    return this.getBody().locator(`${this.selectors.row}:has-text("${rowIdentifier}")`);
   }
 
   /**
    *
    */
-  get_rows_count(): Promise<number> {
-    return this.get_rows().count();
+  getRowsCount(): Promise<number> {
+    return this.getRows().count();
   }
 
   /**
    *
-   * @param row_index
-   * @param cell_index
+   * @param rowIndex
+   * @param cellIndex
    */
-  async get_row_cell(row_index: number, cell_index: number) {
-    const row = await this.get_row(row_index);
+  async getRowCell(rowIndex: number, cellIndex: number) {
+    const row = await this.getRow(rowIndex);
 
-    return row.locator(this.selectors.body_cell).nth(cell_index);
-  }
-
-  /**
-   *
-   */
-  private get_pagination_root() {
-    return this.context.locator(this.selectors.pagination_container);
+    return row.locator(this.selectors.bodyCell).nth(cellIndex);
   }
 
   /**
    *
    */
-  private get_page_size() {
-    return new Dropdown(this.context, this.selectors.page_size);
+  private getPaginationRoot() {
+    return this.context.locator(this.selectors.paginationContainer);
   }
 
   /**
    *
-   * @param row_identifier
    */
-  async get_row(row_identifier: number | string): Promise<Locator> {
-    await this.get_body().waitFor();
+  private getPageSize() {
+    return new Dropdown(this.context, this.selectors.pageSize);
+  }
 
-    const row: Locator = this.get_row_by_identifier(row_identifier);
-    let row_count: number;
-    let next_button: Locator;
+  /**
+   *
+   * @param rowIdentifier
+   */
+  async getRow(rowIdentifier: number | string): Promise<Locator> {
+    await this.getBody().waitFor();
+
+    const row: Locator = this.getRowByIdentifier(rowIdentifier);
+    let rowCount: number;
+    let nextButton: Locator;
 
     if (await row.count()) {
       return row;
     }
 
-    const first_pagination_item = this.get_pagination_root()
-      .locator(this.selectors.pagination_items)
+    const firstPaginationItem = this.getPaginationRoot()
+      .locator(this.selectors.paginationItems)
       .nth(0);
-    const page_size = this.context.locator(this.selectors.page_size);
+    const pageSize = this.context.locator(this.selectors.pageSize);
 
-    if (await page_size.isVisible()) {
-      await this.get_page_size().set('50');
-      await this.get_body().waitFor();
+    if (await pageSize.isVisible()) {
+      await this.getPageSize().set('50');
+      await this.getBody().waitFor();
     }
 
     if (await row.count()) {
       return row;
     }
 
-    if (await first_pagination_item.count()) {
-      await first_pagination_item.click();
+    if (await firstPaginationItem.count()) {
+      await firstPaginationItem.click();
 
-      next_button = this.get_pagination_root().locator(this.selectors.pagination_next_button);
+      nextButton = this.getPaginationRoot().locator(this.selectors.paginationNextButton);
 
-      while (!row_count && (await next_button.getAttribute('aria-disabled')) === 'false') {
-        await next_button.click();
-        await this.get_body().waitFor();
+      while (!rowCount && (await nextButton.getAttribute('aria-disabled')) === 'false') {
+        await nextButton.click();
+        await this.getBody().waitFor();
 
-        row_count = await row.count();
+        rowCount = await row.count();
       }
 
       return row;
@@ -201,66 +201,66 @@ export default class Table extends CustomElement {
 
   /**
    *
-   * @param row_identifier
+   * @param rowIdentifier
    */
-  async is_row_visible(row_identifier: number | string) {
-    this.custom_element = await this.get_row(row_identifier);
+  async isRowVisible(rowIdentifier: number | string) {
+    this.customElement = await this.getRow(rowIdentifier);
 
-    return this.is_visible();
+    return this.isVisible();
   }
 
   /**
    *
-   * @param row_identifier
+   * @param rowIdentifier
    */
-  async is_row_hidden(row_identifier: number | string) {
-    this.custom_element = await this.get_row(row_identifier);
+  async isRowHidden(rowIdentifier: number | string) {
+    this.customElement = await this.getRow(rowIdentifier);
 
-    return this.custom_element.isHidden();
+    return this.customElement.isHidden();
   }
 
   /**
    *
-   * @param row_identifier
-   * @param child_selector
+   * @param rowIdentifier
+   * @param childSelector
    */
-  async click_row(row_identifier: number | string, child_selector = 'a') {
-    const row = await this.get_row(row_identifier);
+  async clickRow(rowIdentifier: number | string, childSelector = 'a') {
+    const row = await this.getRow(rowIdentifier);
 
     await row.hover();
 
-    this.custom_element = row.locator(child_selector);
+    this.customElement = row.locator(childSelector);
 
-    await this.custom_element.click();
+    await this.customElement.click();
   }
 
   /**
    *
    * @param callback
-   * @param item_custom_wrapper_class
+   * @param itemCustomWrapperClass
    */
-  async for_each_row<T extends CustomElement>(
+  async forEachRow<T extends CustomElement>(
     callback: ForEachCallback<T>,
-    item_custom_wrapper_class: ForEachItemClass<T>,
+    itemCustomWrapperClass: ForEachItemClass<T>,
   ) {
-    await this.list.for_each_list_item(callback, item_custom_wrapper_class);
+    await this.list.forEachListItem(callback, itemCustomWrapperClass);
   }
 
   /**
    *
    * @param callback
-   * @param item_custom_wrapper_class
+   * @param itemCustomWrapperClass
    */
-  async for_each_header_cell<T extends CustomElement>(
+  async forEachHeaderCell<T extends CustomElement>(
     callback: ForEachCallback<T>,
-    item_custom_wrapper_class: ForEachItemClass<T>,
+    itemCustomWrapperClass: ForEachItemClass<T>,
   ) {
-    await this.get_header().waitFor();
+    await this.getHeader().waitFor();
 
-    const count = await this.get_header_cells().count();
+    const count = await this.getHeaderCells().count();
 
     for (let i = 0; i < count; i++) {
-      await callback(new item_custom_wrapper_class(this.context, this.get_header_cell(i)), i);
+      await callback(new itemCustomWrapperClass(this.context, this.getHeaderCell(i)), i);
     }
   }
 }

@@ -2,9 +2,8 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
-import { MainSearch } from 'components/shared';
+import { MainSearch, PageWithLeftSidebar } from 'components/shared';
 import { useHistory } from 'react-router-dom';
-import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   createDataEntitiesSearch,
@@ -38,12 +37,8 @@ const Search: React.FC = () => {
 
   React.useEffect(() => {
     if (!routerSearchId && !isSearchCreating && !searchId) {
-      const emptySearchQuery = {
-        query: '',
-        pageSize: 30,
-        filters: {},
-      };
-      dispatch(createDataEntitiesSearch({ searchFormData: emptySearchQuery }))
+      const searchFormData = { query: '', pageSize: 30, filters: {} };
+      dispatch(createDataEntitiesSearch({ searchFormData }))
         .unwrap()
         .then(search => {
           const searchLink = searchPath(search.searchId);
@@ -54,27 +49,20 @@ const Search: React.FC = () => {
 
   React.useEffect(() => {
     if (!searchId && routerSearchId) {
-      dispatch(
-        getDataEntitiesSearch({
-          searchId: routerSearchId,
-        })
-      );
+      dispatch(getDataEntitiesSearch({ searchId: routerSearchId }));
     }
   }, [searchId, routerSearchId]);
 
   const updateSearchFacets = React.useCallback(
     useDebouncedCallback(
       () => {
-        dispatch(
-          updateDataEntitiesSearch({
-            searchId,
-            searchFormData: {
-              query: searchQuery,
-              myObjects: searchMyObjects,
-              filters: mapValues(searchFacetParams, values),
-            },
-          })
-        );
+        const searchFormData = {
+          query: searchQuery,
+          myObjects: searchMyObjects,
+          filters: mapValues(searchFacetParams, values),
+        };
+
+        dispatch(updateDataEntitiesSearch({ searchId, searchFormData }));
       },
       1500,
       { leading: true }
@@ -89,17 +77,17 @@ const Search: React.FC = () => {
   }, [searchFacetParams]);
 
   return (
-    <S.MainContainer>
-      <S.ContentContainer container>
-        <S.LeftSidebarContainer item xs={3}>
+    <PageWithLeftSidebar.MainContainer>
+      <PageWithLeftSidebar.ContentContainer container>
+        <PageWithLeftSidebar.LeftSidebarContainer item xs={3}>
           <Filters />
-        </S.LeftSidebarContainer>
-        <S.ListContainer item xs={9}>
-          <MainSearch placeholder='Search' />
+        </PageWithLeftSidebar.LeftSidebarContainer>
+        <PageWithLeftSidebar.ListContainer item xs={9}>
+          <MainSearch placeholder='Search' disableSuggestions />
           <Results />
-        </S.ListContainer>
-      </S.ContentContainer>
-    </S.MainContainer>
+        </PageWithLeftSidebar.ListContainer>
+      </PageWithLeftSidebar.ContentContainer>
+    </PageWithLeftSidebar.MainContainer>
   );
 };
 

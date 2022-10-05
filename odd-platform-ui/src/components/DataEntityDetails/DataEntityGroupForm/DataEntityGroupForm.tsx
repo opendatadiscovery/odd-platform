@@ -26,10 +26,7 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getDataEntityTypesByClassName,
 } from 'redux/selectors';
-import {
-  createDataEntityGroup,
-  updateDataEntityGroup,
-} from 'redux/thunks';
+import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
 import { useHistory } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import EntityItem from './EntityItem/EntityItem';
@@ -39,9 +36,7 @@ interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
 }
 
-const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
-  btnCreateEl,
-}) => {
+const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
   const history = useHistory();
@@ -68,8 +63,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         dataEntityGroupDetails?.internalName ||
         dataEntityGroupDetails?.externalName ||
         '',
-      namespaceName:
-        dataEntityGroupDetails?.dataSource?.namespace?.name || '',
+      namespaceName: dataEntityGroupDetails?.dataSource?.namespace?.name || '',
       type: dataEntityGroupDetails?.type || ({} as DataEntityType),
       entities: dataEntityGroupDetails?.entities || [],
     }),
@@ -128,31 +122,25 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       );
   };
 
-  const handleRemove = React.useCallback(
-    (index: number) => () => remove(index),
-    []
-  );
+  const handleRemove = React.useCallback((index: number) => () => remove(index), []);
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {dataEntityGroupDetails ? 'Edit' : 'Add'} Group
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="dataentitygroup-create-form"
-      onSubmit={handleSubmit(handleSubmitForm)}
-    >
+    <form id='dataentitygroup-create-form' onSubmit={handleSubmit(handleSubmitForm)}>
       <Controller
-        name="name"
+        name='name'
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Data Entity Group Name"
-            label="Name"
+            placeholder='Data Entity Group Name'
+            label='Name'
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -164,22 +152,15 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       />
       <Controller
         control={control}
-        name="namespaceName"
-        render={({ field }) => (
-          <NamespaceAutocomplete controllerProps={field} />
-        )}
+        name='namespaceName'
+        render={({ field }) => <NamespaceAutocomplete controllerProps={field} />}
       />
       <Controller
-        name="type"
+        name='type'
         control={control}
         rules={{ required: true, validate: val => !isEmpty(val) }}
         render={({ field }) => (
-          <AppSelect
-            {...field}
-            label="Type"
-            sx={{ mt: 1.5 }}
-            value={watch('type')}
-          >
+          <AppSelect {...field} label='Type' sx={{ mt: 1.5 }} value={watch('type')}>
             {types
               ?.filter(
                 // filtration needs to avoid user create ml_experiment from ui
@@ -193,7 +174,11 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
           </AppSelect>
         )}
       />
-      <SearchSuggestionsAutocomplete append={append} addEntities />
+      <SearchSuggestionsAutocomplete
+        append={append}
+        addEntities
+        inputParams={{ label: 'Entities' }}
+      />
       <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (
           <EntityItem
@@ -208,10 +193,10 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="dataentitygroup-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='dataentitygroup-create-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
@@ -221,7 +206,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, {
           onClick: () => {
@@ -235,9 +220,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={
-        dataEntityGroupDetails
-          ? isDataEntityGroupUpdating
-          : isDataEntityGroupCreating
+        dataEntityGroupDetails ? isDataEntityGroupUpdating : isDataEntityGroupCreating
       }
       errorText={error}
       clearState={clearState}

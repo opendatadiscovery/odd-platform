@@ -33,7 +33,7 @@ import * as S from './ResultsStyles';
 const Results: React.FC = () => {
   const dispatch = useAppDispatch();
   const scrollbarWidth = useScrollBarWidth();
-  const pageSize = 30;
+  const size = 30;
 
   const searchId = useAppSelector(getSearchId);
   const searchClass = useAppSelector(getSearchEntityClass);
@@ -44,70 +44,44 @@ const Results: React.FC = () => {
   const pageInfo = useAppSelector(getSearchResultsPageInfo);
 
   const isSearchFetching = useAppSelector(getSearchIsFetching);
-  const isSearchCreatingAndFetching = useAppSelector(
-    getSearchIsCreatingAndFetching
-  );
-  const { isLoading: isSearchUpdating } = useAppSelector(
-    getSearchUpdateStatuses
-  );
-  const { isLoading: isSearchCreating } = useAppSelector(
-    getSearchCreatingStatuses
-  );
+  const isSearchCreatingAndFetching = useAppSelector(getSearchIsCreatingAndFetching);
+  const { isLoading: isSearchUpdating } = useAppSelector(getSearchUpdateStatuses);
+  const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
   const { isLoaded: isDataEntityGroupDeleted } = useAppSelector(
     getDataEntityGroupDeletingStatuses
   );
 
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
-    dispatch(
-      fetchDataEntitySearchResults({
-        searchId,
-        page: pageInfo.page + 1,
-        size: pageSize,
-      })
-    );
+    dispatch(fetchDataEntitySearchResults({ searchId, page: pageInfo.page + 1, size }));
   };
 
   React.useEffect(() => {
-    if (searchFiltersSynced && searchId && !isSearchCreating) {
+    if (searchFiltersSynced && searchId && !isSearchCreating && !isSearchUpdating) {
       fetchNextPage();
     }
-  }, [searchFiltersSynced, searchId, isSearchCreating]);
+  }, [searchFiltersSynced, searchId, isSearchCreating, isSearchUpdating]);
 
   const fetchPageAfterDEGDeleting = () => {
     if (pageInfo.page && isDataEntityGroupDeleted) {
-      dispatch(
-        fetchDataEntitySearchResults({
-          searchId,
-          page: pageInfo.page,
-          size: pageSize,
-        })
-      );
+      dispatch(fetchDataEntitySearchResults({ searchId, page: pageInfo.page, size }));
     }
   };
 
-  React.useEffect(
-    () => fetchPageAfterDEGDeleting(),
-    [isDataEntityGroupDeleted]
-  );
+  React.useEffect(() => fetchPageAfterDEGDeleting(), [isDataEntityGroupDeleted]);
 
   const [showDEGBtn, setShowDEGBtn] = React.useState(false);
   const searchClassIdPredicate = (totalName: DataEntityClassNameEnum) =>
     searchClass === totals[totalName]?.id;
 
   React.useEffect(
-    () =>
-      setShowDEGBtn(
-        searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP)
-      ),
+    () => setShowDEGBtn(searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP)),
     [searchClass, totals]
   );
 
   const onSearchClassChange = React.useCallback(
     (tabValue: SearchClass | undefined) => {
-      const newSearchClass = tabValue
-        ? get(dataEntityClassesDict, `${tabValue}`)
-        : null;
+      const newSearchClass = tabValue ? get(dataEntityClassesDict, `${tabValue}`) : null;
       const facetOptionId = newSearchClass?.id ?? tabValue;
       const facetOptionName = newSearchClass?.name ?? tabValue?.toString();
 
@@ -121,9 +95,7 @@ const Results: React.FC = () => {
         })
       );
 
-      setShowDEGBtn(
-        newSearchClass?.name === DataEntityClassNameEnum.ENTITY_GROUP
-      );
+      setShowDEGBtn(newSearchClass?.name === DataEntityClassNameEnum.ENTITY_GROUP);
     },
     [dataEntityClassesDict]
   );
@@ -142,8 +114,8 @@ const Results: React.FC = () => {
           btnCreateEl={
             <AppButton
               sx={{ mt: 2 }}
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<AddIcon />}
             >
               Add group
@@ -151,84 +123,80 @@ const Results: React.FC = () => {
           }
         />
       )}
-      <S.ResultsTableHeader
-        container
-        sx={{ mt: 2, pr: scrollbarWidth }}
-        wrap="nowrap"
-      >
-        <S.ColContainer item $colType="collg">
-          <Typography variant="caption">Name</Typography>
+      <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
+        <S.ColContainer item $colType='collg'>
+          <Typography variant='caption'>Name</Typography>
         </S.ColContainer>
         {searchClassIdPredicate(DataEntityClassNameEnum.SET) && (
           <>
-            <S.ColContainer item $colType="colxs">
-              <Typography variant="caption">Use</Typography>
+            <S.ColContainer item $colType='colxs'>
+              <Typography variant='caption'>Use</Typography>
             </S.ColContainer>
-            <S.ColContainer item $colType="colxs">
-              <Typography variant="caption">Rows</Typography>
+            <S.ColContainer item $colType='colxs'>
+              <Typography variant='caption'>Rows</Typography>
             </S.ColContainer>
-            <S.ColContainer item $colType="colxs">
-              <Typography variant="caption">Columns</Typography>
+            <S.ColContainer item $colType='colxs'>
+              <Typography variant='caption'>Columns</Typography>
             </S.ColContainer>
           </>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) && (
           <>
-            <S.ColContainer item $colType="collg">
-              <Typography variant="caption">Sources</Typography>
+            <S.ColContainer item $colType='collg'>
+              <Typography variant='caption'>Sources</Typography>
             </S.ColContainer>
-            <S.ColContainer item $colType="collg">
-              <Typography variant="caption">Targets</Typography>
+            <S.ColContainer item $colType='collg'>
+              <Typography variant='caption'>Targets</Typography>
             </S.ColContainer>
           </>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) && (
           <>
-            <S.ColContainer item $colType="collg">
-              <Typography variant="caption">Entities</Typography>
+            <S.ColContainer item $colType='collg'>
+              <Typography variant='caption'>Entities</Typography>
             </S.ColContainer>
-            <S.ColContainer item $colType="collg">
-              <Typography variant="caption">Suite URL</Typography>
+            <S.ColContainer item $colType='collg'>
+              <Typography variant='caption'>Suite URL</Typography>
             </S.ColContainer>
           </>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) && (
-          <S.ColContainer item $colType="collg">
-            <Typography variant="caption">Source</Typography>
+          <S.ColContainer item $colType='collg'>
+            <Typography variant='caption'>Source</Typography>
           </S.ColContainer>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) && (
-          <S.ColContainer item $colType="colsm">
-            <Typography variant="caption">Number of entities</Typography>
+          <S.ColContainer item $colType='colsm'>
+            <Typography variant='caption'>Number of entities</Typography>
           </S.ColContainer>
         )}
-        <S.ColContainer item $colType="colmd">
-          <Typography variant="caption">Namespace</Typography>
+        <S.ColContainer item $colType='colmd'>
+          <Typography variant='caption'>Namespace</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colmd">
-          <Typography variant="caption">Datasource</Typography>
+        <S.ColContainer item $colType='colmd'>
+          <Typography variant='caption'>Datasource</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colmd">
-          <Typography variant="caption">Owners</Typography>
+        <S.ColContainer item $colType='colmd'>
+          <Typography variant='caption'>Owners</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colsm">
-          <Typography variant="caption">Created</Typography>
+        <S.ColContainer item $colType='colsm'>
+          <Typography variant='caption'>Created</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colsm">
-          <Typography variant="caption">Last Update</Typography>
+        <S.ColContainer item $colType='colsm'>
+          <Typography variant='caption'>Last Update</Typography>
         </S.ColContainer>
       </S.ResultsTableHeader>
       {isSearchCreating ? (
         <SearchResultsSkeleton />
       ) : (
-        <S.ListContainer id="results-list">
+        <S.ListContainer id='results-list'>
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
             hasMore={pageInfo.hasNext}
             loader={isSearchFetching && <SearchResultsSkeleton />}
-            scrollThreshold="200px"
-            scrollableTarget="results-list"
+            scrollThreshold='200px'
+            scrollableTarget='results-list'
           >
             {searchResults.map(searchResult => (
               <ResultItem
@@ -240,7 +208,7 @@ const Results: React.FC = () => {
             ))}
           </InfiniteScroll>
           {!isSearchFetching && !pageInfo.total ? (
-            <EmptyContentPlaceholder text="No matches found" />
+            <EmptyContentPlaceholder text='No matches found' />
           ) : null}
         </S.ListContainer>
       )}
