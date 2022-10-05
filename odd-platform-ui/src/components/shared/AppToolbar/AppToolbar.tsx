@@ -1,6 +1,6 @@
 import React, { MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
-import { getIdentity, getVersion } from 'redux/selectors';
+import { getIdentity, getOwnership, getVersion } from 'redux/selectors';
 import {
   createDataEntitiesSearch,
   createTermSearch,
@@ -29,6 +29,7 @@ const AppToolbar: React.FC = () => {
 
   const version = useAppSelector(getVersion);
   const identity = useAppSelector(getIdentity);
+  const owner = useAppSelector(getOwnership);
 
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
@@ -89,8 +90,8 @@ const AppToolbar: React.FC = () => {
     }
   }, [setSelectedTab, location.pathname]);
 
-  const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
-  const [termSearchLoading, setTermSearchLoading] = React.useState<boolean>(false);
+  const [searchLoading, setSearchLoading] = React.useState(false);
+  const [termSearchLoading, setTermSearchLoading] = React.useState(false);
 
   const handleTabClick = (idx: number) => {
     if (tabs[idx].name === 'Dictionary') {
@@ -112,13 +113,9 @@ const AppToolbar: React.FC = () => {
     } else if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
       setSearchLoading(true);
-      const searchQuery = {
-        query: '',
-        pageSize: 30,
-        filters: {},
-      };
+      const searchFormData = { query: '', pageSize: 30, filters: {} };
 
-      dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+      dispatch(createDataEntitiesSearch({ searchFormData }))
         .unwrap()
         .then(({ searchId }) => {
           const searchLink = searchPath(searchId);
@@ -155,7 +152,7 @@ const AppToolbar: React.FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <S.UserAvatar stroke='currentColor' />
-              <S.UserName>{identity?.username}</S.UserName>
+              <S.UserName>{owner?.name || identity?.username}</S.UserName>
               <AppIconButton
                 icon={<DropdownIcon />}
                 color='unfilled'
@@ -180,12 +177,12 @@ const AppToolbar: React.FC = () => {
       >
         <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
         {version && (
-          <S.CaptionsWrapper>
+          <div>
             <AppMenuItem divider />
             <S.CaptionsTypographyWrapper>
               <Typography variant='caption'>ODD Platform v.{version}</Typography>
             </S.CaptionsTypographyWrapper>
-          </S.CaptionsWrapper>
+          </div>
         )}
       </AppMenu>
     </S.Bar>
