@@ -83,7 +83,7 @@ components:
       required:
       - name
 
-    Role:
+    Title:
       type: object
       properties:
         id:
@@ -95,13 +95,13 @@ components:
       - id
       - name
 
-    RoleList:
+    TitleList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/Title'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
@@ -198,8 +198,8 @@ components:
           format: int64
         owner:
           $ref: '#/components/schemas/Owner'
-        role:
-          $ref: '#/components/schemas/Role'
+        title:
+          $ref: '#/components/schemas/Title'
       required:
       - id
       - owner
@@ -214,13 +214,13 @@ components:
       properties:
         owner_name:
           type: string
-        role_name:
+        title_name:
           type: string
 
     OwnershipUpdateFormData:
       type: object
       properties:
-        role_name:
+        title_name:
           type: string
 
     DataEntityUsageInfo:
@@ -1987,7 +1987,7 @@ components:
       properties:
         owner_name:
           type: string
-        role_name:
+        title_name:
           type: string
 
     TagActivityState:
