@@ -1,11 +1,10 @@
 import React, { CSSProperties } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
 import { TermActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityFieldStyles';
+import * as S from './TermActivityFieldStyles';
 
 interface ActivityData extends TermActivityState {
   typeOfChange?: CRUDType;
@@ -32,8 +31,7 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
 
   const [changedItem, setChangedItem] = React.useState<ActivityData>({});
 
-  const sortChangedItemsLast = (item: ActivityData) =>
-    item.typeOfChange ? 1 : -1;
+  const sortChangedItemsLast = (item: ActivityData) => (item.typeOfChange ? 1 : -1);
 
   const setOldState = () =>
     oldState
@@ -65,12 +63,9 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
     setNewValues(setNewState());
   }, [oldState, newState]);
 
-  const renderTermItem = ([namespace, terms]: [
-    string,
-    ActivityData[]
-  ]) => (
+  const renderTermItem = ([namespace, terms]: [string, ActivityData[]]) => (
     <Grid sx={{ mb: 0.5 }}>
-      <Typography variant="body1" color="texts.hint">
+      <Typography variant='body1' color='texts.hint'>
         {namespace}
       </Typography>
       {terms.map(term => (
@@ -87,19 +82,16 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
         activity.namespace
           ? {
               ...memo,
-              [activity.namespace]: [
-                ...(memo[activity.namespace] || []),
-                activity,
-              ],
+              [activity.namespace]: [...(memo[activity.namespace] || []), activity],
             }
           : {},
       {}
     );
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText="Term"
+        startText='Term'
         activityName={`${changedItem.name} in ${changedItem.namespace}`}
         eventType={eventType}
         showDetailsBtn
@@ -111,15 +103,11 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
           !isEmpty(oldValues) &&
-          Object.entries(groupTermsByNamespace(oldValues)).map(
-            renderTermItem
-          )
+          Object.entries(groupTermsByNamespace(oldValues)).map(renderTermItem)
         }
         newStateChildren={
           !isEmpty(newValues) &&
-          Object.entries(groupTermsByNamespace(newValues)).map(
-            renderTermItem
-          )
+          Object.entries(groupTermsByNamespace(newValues)).map(renderTermItem)
         }
       />
     </Grid>

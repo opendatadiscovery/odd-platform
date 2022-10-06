@@ -6,8 +6,8 @@ export interface TestRunStatusIconProps {
   typeName: DataEntityRunStatus;
 }
 
-const TestRunStatusIcon: React.FC<TestRunStatusIconProps> = ({
-  typeName,
-}) => <S.Content $typeName={typeName} />;
+const TestRunStatusIcon: React.FC<TestRunStatusIconProps> = ({ typeName }) => (
+  <S.Content $typeName={typeName} />
+);
 
 export default TestRunStatusIcon;

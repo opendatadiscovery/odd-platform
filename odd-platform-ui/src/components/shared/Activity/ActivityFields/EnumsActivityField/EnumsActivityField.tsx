@@ -1,14 +1,13 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
 import {
   DatasetFieldEnumValuesActivityState,
   DatasetFieldValuesActivityState,
 } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityFieldStyles';
+import * as S from './EnumsActivityFieldStyles';
 
 interface ActivityData extends DatasetFieldEnumValuesActivityState {
   typeOfChange?: CRUDType;
@@ -29,15 +28,12 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
-  const sortChangedItemsLast = (item: ActivityData) =>
-    item.typeOfChange ? 1 : -1;
+  const sortChangedItemsLast = (item: ActivityData) => (item.typeOfChange ? 1 : -1);
 
   const setOldState = () =>
     oldState?.enumValues
       ?.map<ActivityData>(oldItem => {
-        if (
-          !newState?.enumValues?.some(newItem => oldItem.id === newItem.id)
-        ) {
+        if (!newState?.enumValues?.some(newItem => oldItem.id === newItem.id)) {
           return { ...oldItem, typeOfChange: 'deleted' };
         }
         return oldItem;
@@ -47,9 +43,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
   const setNewState = () =>
     newState?.enumValues
       ?.map<ActivityData>(newItem => {
-        if (
-          !oldState?.enumValues?.some(oldItem => oldItem.id === newItem.id)
-        ) {
+        if (!oldState?.enumValues?.some(oldItem => oldItem.id === newItem.id)) {
           return { ...newItem, typeOfChange: 'created' };
         }
         return newItem;
@@ -58,24 +52,18 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);
-  const [activityEvent, setActivityEvent] =
-    React.useState<CRUDType>('created');
+  const [activityEvent, setActivityEvent] = React.useState<CRUDType>('created');
 
   React.useEffect(() => {
     setOldValues(setOldState());
     setNewValues(setNewState());
   }, [oldState, newState]);
 
-  const createdPredicate = (value: ActivityData) =>
-    value.typeOfChange === 'created';
-  const deletedPredicate = (value: ActivityData) =>
-    value.typeOfChange === 'deleted';
+  const createdPredicate = (value: ActivityData) => value.typeOfChange === 'created';
+  const deletedPredicate = (value: ActivityData) => value.typeOfChange === 'deleted';
 
   React.useEffect(() => {
-    if (
-      oldValues?.some(deletedPredicate) &&
-      newValues?.some(createdPredicate)
-    ) {
+    if (oldValues?.some(deletedPredicate) && newValues?.some(createdPredicate)) {
       setActivityEvent('updated');
       return;
     }
@@ -97,10 +85,10 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
   );
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText=""
-        activityName="Dataset field values"
+        startText=''
+        activityName='Dataset field values'
         eventType={activityEvent}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
@@ -108,12 +96,12 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
         plural
       />
       <ActivityFieldState
-        stateDirection="column"
+        stateDirection='column'
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
           !isEmpty(oldValues) && (
             <>
-              <Typography variant="body1" color="texts.hint">
+              <Typography variant='body1' color='texts.hint'>
                 {`Column: ${oldState?.name}`}
               </Typography>
               {oldValues.map(renderStateItem)}
@@ -123,7 +111,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
         newStateChildren={
           !isEmpty(newValues) && (
             <>
-              <Typography variant="body1" color="texts.hint">
+              <Typography variant='body1' color='texts.hint'>
                 {`Column: ${oldState?.name}`}
               </Typography>
               {newValues.map(renderStateItem)}

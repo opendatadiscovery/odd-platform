@@ -5,11 +5,13 @@ import {
   ActivityState,
   OwnershipActivityState,
 } from 'generated-sources';
-import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import {
+  ActivityFieldState,
+  ActivityFieldHeader,
+  OwnerWithTitle,
+} from 'components/shared/Activity';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import OwnerWithRole from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerWithRole/OwnerWithRole';
 
 type OwnerItem = OwnershipActivityState & {
   typeOfChange?: CRUDType;
@@ -34,9 +36,7 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
 
   const getEnrichedOldState = () =>
     oldState?.map<OwnerItem>(oldItem => {
-      if (
-        !newState?.some(newItem => oldItem.ownerName === newItem.ownerName)
-      ) {
+      if (!newState?.some(newItem => oldItem.ownerName === newItem.ownerName)) {
         return { ...oldItem, typeOfChange: 'deleted' };
       }
       return oldItem;
@@ -44,9 +44,7 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
 
   const getEnrichedNewState = () =>
     newState?.map<OwnerItem>(newItem => {
-      if (
-        !oldState?.some(oldItem => oldItem.ownerName === newItem.ownerName)
-      ) {
+      if (!oldState?.some(oldItem => oldItem.ownerName === newItem.ownerName)) {
         return { ...newItem, typeOfChange: 'created' };
       }
       return newItem;
@@ -54,14 +52,12 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
 
   const getUpdatedOldState = () =>
     oldState?.filter(
-      oldItem =>
-        !newState?.some(newItem => newItem.roleName === oldItem.roleName)
+      oldItem => !newState?.some(newItem => newItem.titleName === oldItem.titleName)
     ) || [];
 
   const getCreatedItem = () =>
     newState?.find(
-      newItem =>
-        !oldState?.some(oldItem => newItem.ownerName === oldItem.ownerName)
+      newItem => !oldState?.some(oldItem => newItem.ownerName === oldItem.ownerName)
     ) || {};
 
   const getUpdatedItem = () => {
@@ -69,7 +65,7 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
       oldState?.some(
         oldItem =>
           newItem.ownerName === oldItem.ownerName &&
-          newItem.roleName !== oldItem.roleName
+          newItem.titleName !== oldItem.titleName
       )
     );
 
@@ -77,15 +73,13 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
   };
   const getDeletedItem = () =>
     oldState?.find(
-      oldItem =>
-        !newState?.some(newItem => newItem.ownerName === oldItem.ownerName)
+      oldItem => !newState?.some(newItem => newItem.ownerName === oldItem.ownerName)
     ) || {};
 
   const [oldValues, setOldValues] = React.useState<OwnerItem[]>([]);
   const [newValues, setNewValues] = React.useState<OwnerItem[]>([]);
   const [changedOwner, setChangedOwner] = React.useState<OwnerItem>({});
-  const [activityEvent, setActivityEvent] =
-    React.useState<CRUDType>('created');
+  const [activityEvent, setActivityEvent] = React.useState<CRUDType>('created');
 
   React.useEffect(() => {
     setOldValues(getEnrichedOldState());
@@ -105,12 +99,9 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
     }
   }, [oldState, newState]);
 
-  const createdPredicate = (value: OwnerItem) =>
-    value.typeOfChange === 'created';
-  const updatedPredicate = (value: OwnerItem) =>
-    value.typeOfChange === 'updated';
-  const deletedPredicate = (value: OwnerItem) =>
-    value.typeOfChange === 'deleted';
+  const createdPredicate = (value: OwnerItem) => value.typeOfChange === 'created';
+  const updatedPredicate = (value: OwnerItem) => value.typeOfChange === 'updated';
+  const deletedPredicate = (value: OwnerItem) => value.typeOfChange === 'deleted';
 
   React.useEffect(() => {
     if (newValues?.some(updatedPredicate)) {
@@ -128,24 +119,24 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
     }
   }, [oldValues, newValues]);
 
-  const ownerWithRole = (owner: OwnerItem) => (
-    <OwnerWithRole
-      key={`${owner.ownerName}-${owner.roleName}`}
+  const ownerWithTitle = (owner: OwnerItem) => (
+    <OwnerWithTitle
+      key={`${owner.ownerName}-${owner.titleName}`}
       ownerName={owner.ownerName}
-      roleName={owner.roleName}
+      roleName={owner.titleName}
       typeOfChange={owner.typeOfChange}
     />
   );
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText="Owner"
+        startText='Owner'
         activityName={
-          <OwnerWithRole
+          <OwnerWithTitle
             ownerName={changedOwner.ownerName}
-            roleName={changedOwner.roleName}
-            ownerTypographyVariant="h4"
+            roleName={changedOwner.titleName}
+            ownerTypographyVariant='h4'
           />
         }
         eventType={activityEvent}
@@ -155,12 +146,8 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
       />
       <ActivityFieldState
         isDetailsOpen={isDetailsOpen}
-        oldStateChildren={
-          !isEmpty(oldValues) && oldValues.map(ownerWithRole)
-        }
-        newStateChildren={
-          !isEmpty(newValues) && newValues.map(ownerWithRole)
-        }
+        oldStateChildren={!isEmpty(oldValues) && oldValues.map(ownerWithTitle)}
+        newStateChildren={!isEmpty(newValues) && newValues.map(ownerWithTitle)}
       />
     </Grid>
   );

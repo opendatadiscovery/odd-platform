@@ -1,10 +1,9 @@
 import React, { CSSProperties } from 'react';
 import { Grid } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';
+import * as S from './ArrayActivityFieldStyles';
 
 interface ActivityData {
   id?: number;
@@ -42,8 +41,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const [changedItem, setChangedItem] = React.useState<ActivityData>({});
 
-  const sortChangedItemsLast = (item: ActivityData) =>
-    item.typeOfChange ? 1 : -1;
+  const sortChangedItemsLast = (item: ActivityData) => (item.typeOfChange ? 1 : -1);
 
   const setOldState = () =>
     oldState
@@ -69,24 +67,18 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);
-  const [activityEvent, setActivityEvent] =
-    React.useState<CRUDType>('created');
+  const [activityEvent, setActivityEvent] = React.useState<CRUDType>('created');
 
   React.useEffect(() => {
     setOldValues(setOldState());
     setNewValues(setNewState());
   }, [oldState, newState]);
 
-  const createdPredicate = (value: ActivityData) =>
-    value.typeOfChange === 'created';
-  const deletedPredicate = (value: ActivityData) =>
-    value.typeOfChange === 'deleted';
+  const createdPredicate = (value: ActivityData) => value.typeOfChange === 'created';
+  const deletedPredicate = (value: ActivityData) => value.typeOfChange === 'deleted';
 
   React.useEffect(() => {
-    if (
-      oldValues?.some(deletedPredicate) &&
-      newValues?.some(createdPredicate)
-    ) {
+    if (oldValues?.some(deletedPredicate) && newValues?.some(createdPredicate)) {
       setActivityEvent('updated');
       return;
     }
@@ -108,7 +100,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
   );
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <ActivityFieldHeader
         startText={startText || ''}
         activityName={activityName || changedItem.name}
@@ -121,12 +113,8 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
       <ActivityFieldState
         stateDirection={stateDirection}
         isDetailsOpen={isDetailsOpen}
-        oldStateChildren={
-          !isEmpty(oldValues) && oldValues.map(renderStateItem)
-        }
-        newStateChildren={
-          !isEmpty(newValues) && newValues.map(renderStateItem)
-        }
+        oldStateChildren={!isEmpty(oldValues) && oldValues.map(renderStateItem)}
+        newStateChildren={!isEmpty(newValues) && newValues.map(renderStateItem)}
       />
     </Grid>
   );

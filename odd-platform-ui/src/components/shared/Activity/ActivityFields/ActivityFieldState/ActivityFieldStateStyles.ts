@@ -1,5 +1,5 @@
 import styled, { CSSObject } from 'styled-components';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import { DropdownIcon } from 'components/shared/Icons';
 import { Grid } from '@mui/material';
 import { CSSProperties } from 'react';
 
