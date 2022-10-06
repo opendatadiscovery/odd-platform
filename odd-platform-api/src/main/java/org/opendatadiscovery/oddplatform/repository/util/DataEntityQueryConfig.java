@@ -17,7 +17,7 @@ public class DataEntityQueryConfig {
     public static final String AGG_TAGS_FIELD = "tag";
     public static final String AGG_OWNERSHIP_FIELD = "ownership";
     public static final String AGG_OWNER_FIELD = "owner";
-    public static final String AGG_ROLE_FIELD = "role";
+    public static final String AGG_TITLE_FIELD = "title";
     public static final String HAS_ALERTS_FIELD = "has_alerts";
 
     private List<Condition> cteSelectConditions;

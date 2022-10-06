@@ -134,7 +134,7 @@ public class SlackNotificationMessageGenerator {
     private String extractOwners(final Set<OwnershipPair> ownershipPairs) {
         return ownershipPairs
             .stream()
-            .map(owner -> String.format("@%s (%s)", owner.ownerName(), owner.roleName()))
+            .map(owner -> String.format("@%s (%s)", owner.ownerName(), owner.titleName()))
             .collect(joining(", "));
     }
 
