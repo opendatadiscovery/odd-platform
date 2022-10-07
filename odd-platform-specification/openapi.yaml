@@ -14,7 +14,7 @@ tags:
   - name: identity
   - name: owner
   - name: namespace
-  - name: role
+  - name: title
   - name: tag
   - name: label
   - name: dataSource
@@ -233,11 +233,11 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - namespace
-  /api/roles:
+  /api/titles:
     get:
-      summary: List of roles
-      description: Gets the list of existing roles
-      operationId: getRoleList
+      summary: List of titles
+      description: Gets the list of existing titles
+      operationId: getTitleList
       parameters:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
@@ -248,9 +248,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/RoleList'
+                $ref: './components.yaml/#/components/schemas/TitleList'
       tags:
-        - role
+        - title
   /api/tags:
     get:
       summary: List of popular tags

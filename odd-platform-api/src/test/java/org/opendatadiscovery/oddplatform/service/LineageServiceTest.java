@@ -30,9 +30,9 @@ import org.opendatadiscovery.oddplatform.mapper.NamespaceMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.OffsetDateTimeMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.OwnerMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapperImpl;
-import org.opendatadiscovery.oddplatform.mapper.RoleMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.TagMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.TermMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.TitleMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.TokenMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
@@ -75,7 +75,7 @@ class LineageServiceTest {
                 ),
                 new OwnershipMapperImpl(
                     new OwnerMapperImpl(),
-                    new RoleMapperImpl()
+                    new TitleMapperImpl()
                 ),
                 new TagMapperImpl(),
                 new MetadataFieldValueMapperImpl(
@@ -95,7 +95,7 @@ class LineageServiceTest {
                     new OffsetDateTimeMapperImpl(),
                     new OwnershipMapperImpl(
                         new OwnerMapperImpl(),
-                        new RoleMapperImpl()
+                        new TitleMapperImpl()
                     )
                 )
             )

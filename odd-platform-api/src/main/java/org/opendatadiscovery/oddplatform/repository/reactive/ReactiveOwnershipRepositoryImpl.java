@@ -5,7 +5,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.OwnershipRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,18 +26,18 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
     @Override
     public Mono<OwnershipDto> get(final long id) {
         final var query = DSL.select(OWNERSHIP.asterisk())
-            .select(ROLE.asterisk())
+            .select(TITLE.asterisk())
             .select(OWNER.asterisk())
             .from(OWNERSHIP)
             .join(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .join(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
+            .join(TITLE).on(OWNERSHIP.TITLE_ID.eq(TITLE.ID))
             .where(OWNERSHIP.ID.eq(id));
 
         return jooqReactiveOperations.mono(query)
             .map(r -> OwnershipDto.builder()
                 .ownership(r.into(OWNERSHIP).into(OwnershipPojo.class))
                 .owner(r.into(OWNER).into(OwnerPojo.class))
-                .role(r.into(ROLE).into(RolePojo.class))
+                .title(r.into(TITLE).into(TitlePojo.class))
                 .build());
     }
 
@@ -60,9 +60,9 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
     }
 
     @Override
-    public Mono<OwnershipPojo> updateRole(final long ownershipId, final long roleId) {
+    public Mono<OwnershipPojo> updateTitle(final long ownershipId, final long titleId) {
         final var query = DSL.update(OWNERSHIP)
-            .set(OWNERSHIP.ROLE_ID, roleId)
+            .set(OWNERSHIP.TITLE_ID, titleId)
             .where(OWNERSHIP.ID.eq(ownershipId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -91,18 +91,18 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
     @Override
     public Flux<OwnershipDto> getOwnershipsByDataEntityId(final long dataEntityId) {
         final var query = DSL.select(OWNERSHIP.asterisk())
-            .select(ROLE.asterisk())
+            .select(TITLE.asterisk())
             .select(OWNER.asterisk())
             .from(OWNERSHIP)
             .join(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .join(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
+            .join(TITLE).on(OWNERSHIP.TITLE_ID.eq(TITLE.ID))
             .where(OWNERSHIP.DATA_ENTITY_ID.eq(dataEntityId));
 
         return jooqReactiveOperations.flux(query)
             .map(r -> OwnershipDto.builder()
                 .ownership(r.into(OWNERSHIP).into(OwnershipPojo.class))
                 .owner(r.into(OWNER).into(OwnerPojo.class))
-                .role(r.into(ROLE).into(RolePojo.class))
+                .title(r.into(TITLE).into(TitlePojo.class))
                 .build());
     }
 }

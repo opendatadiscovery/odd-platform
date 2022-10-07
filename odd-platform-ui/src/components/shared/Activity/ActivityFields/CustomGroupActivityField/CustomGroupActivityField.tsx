@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
 import { CustomGroupActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
-import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import isEmpty from 'lodash/isEmpty';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AppButton } from 'components/shared';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import * as S from '../ArrayActivityField/ArrayActivityFieldStyles';
@@ -29,9 +28,11 @@ interface CustomGroupActivityFieldProps {
   hideAllDetails: boolean;
 }
 
-const CustomGroupActivityField: React.FC<
-  CustomGroupActivityFieldProps
-> = ({ oldState, newState, hideAllDetails }) => {
+const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
+  oldState,
+  newState,
+  hideAllDetails,
+}) => {
   const { dataEntityDetailsPath } = useAppPaths();
 
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
@@ -40,9 +41,7 @@ const CustomGroupActivityField: React.FC<
 
   const setOldEntitiesState = () =>
     oldState?.entities?.map<GroupFieldData>(oldItem => {
-      if (
-        !newState?.entities?.some(newItem => oldItem.id === newItem.id)
-      ) {
+      if (!newState?.entities?.some(newItem => oldItem.id === newItem.id)) {
         return {
           id: oldItem.id,
           name: oldItem.internalName || oldItem.externalName,
@@ -57,9 +56,7 @@ const CustomGroupActivityField: React.FC<
 
   const setNewEntitiesState = () =>
     newState?.entities?.map<GroupFieldData>(newItem => {
-      if (
-        !oldState?.entities?.some(oldItem => oldItem.id === newItem.id)
-      ) {
+      if (!oldState?.entities?.some(oldItem => oldItem.id === newItem.id)) {
         return {
           id: newItem.id,
           name: newItem.internalName || newItem.externalName,
@@ -72,9 +69,7 @@ const CustomGroupActivityField: React.FC<
       };
     }) || [];
 
-  const prepareValues = (
-    state?: CustomGroupActivityState
-  ): CustomGroupData => ({
+  const prepareValues = (state?: CustomGroupActivityState): CustomGroupData => ({
     internalName: { name: state?.internalName },
     type: { name: state?.type?.name },
     namespaceName: { name: state?.namespaceName },
@@ -118,41 +113,35 @@ const CustomGroupActivityField: React.FC<
   const renderGroupItem = (state: CustomGroupData) => (
     <Grid sx={{ mb: 0.5 }}>
       <Box sx={{ mb: 1 }}>
-        <Typography variant="subtitle1">Name</Typography>
-        <S.ArrayItemWrapper
-          $typeOfChange={state.internalName.typeOfChange}
-        >
+        <Typography variant='subtitle1'>Name</Typography>
+        <S.ArrayItemWrapper $typeOfChange={state.internalName.typeOfChange}>
           <Box>{state.internalName.name}</Box>
         </S.ArrayItemWrapper>
       </Box>
       <Box sx={{ mb: 1 }}>
-        <Typography variant="subtitle1">Namespace</Typography>
-        <S.ArrayItemWrapper
-          $typeOfChange={state.namespaceName.typeOfChange}
-        >
+        <Typography variant='subtitle1'>Namespace</Typography>
+        <S.ArrayItemWrapper $typeOfChange={state.namespaceName.typeOfChange}>
           <Box>{state.namespaceName.name}</Box>
         </S.ArrayItemWrapper>
       </Box>
       <Box sx={{ mb: 1 }}>
-        <Typography variant="subtitle1">Type</Typography>
+        <Typography variant='subtitle1'>Type</Typography>
         <S.ArrayItemWrapper $typeOfChange={state.type.typeOfChange}>
           <Box>{state.type.name}</Box>
         </S.ArrayItemWrapper>
       </Box>
-      <Typography variant="subtitle1">Entities</Typography>
+      <Typography variant='subtitle1'>Entities</Typography>
       {state.entities.map(
         item =>
           item.id && (
             <S.ArrayItemWrapper $typeOfChange={item.typeOfChange}>
               <Link to={dataEntityDetailsPath(item.id)}>
                 <AppButton
-                  size="medium"
-                  color="tertiary"
+                  size='medium'
+                  color='tertiary'
                   sx={{
                     mb: item.typeOfChange ? 0 : 0.5,
-                    backgroundColor: item.typeOfChange
-                      ? 'inherit !important'
-                      : '',
+                    backgroundColor: item.typeOfChange ? 'inherit !important' : '',
                   }}
                 >
                   <Box>{item.name}</Box>
@@ -165,24 +154,20 @@ const CustomGroupActivityField: React.FC<
   );
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText="Custom group"
+        startText='Custom group'
         activityName={oldValues.internalName.name}
-        eventType="updated"
+        eventType='updated'
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
       />
       <ActivityFieldState
-        stateDirection="row"
+        stateDirection='row'
         isDetailsOpen={isDetailsOpen}
-        oldStateChildren={
-          !isEmpty(oldValues) && renderGroupItem(oldValues)
-        }
-        newStateChildren={
-          !isEmpty(newValues) && renderGroupItem(newValues)
-        }
+        oldStateChildren={!isEmpty(oldValues) && renderGroupItem(oldValues)}
+        newStateChildren={!isEmpty(newValues) && renderGroupItem(newValues)}
       />
     </Grid>
   );

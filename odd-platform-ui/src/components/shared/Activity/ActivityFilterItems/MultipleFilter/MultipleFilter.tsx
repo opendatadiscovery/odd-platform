@@ -5,18 +5,15 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
 import { Owner, Tag } from 'generated-sources';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
-import SelectedFilterOption from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOption';
-import MultipleFilterAutocomplete from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocomplete';
+import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
+import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 
 interface MultipleFilterProps {
   name: string;
   filterName: ActivityQueryName;
 }
 
-const MultipleFilter: React.FC<MultipleFilterProps> = ({
-  name,
-  filterName,
-}) => {
+const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName }) => {
   const dispatch = useAppDispatch();
 
   const [selectedOptions, setSelectedOptions] = React.useState<
@@ -61,13 +58,7 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
           selectedOptionIds={selectedOptionIds}
         />
       </Grid>
-      <Grid
-        display="inline-flex"
-        item
-        xs={12}
-        sx={{ my: 0.25, mx: -0.25 }}
-        container
-      >
+      <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
         {selectedOptions &&
           selectedOptions?.length > 0 &&
           selectedOptions.map(option => (

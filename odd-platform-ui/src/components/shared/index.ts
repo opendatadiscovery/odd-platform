@@ -29,6 +29,8 @@ export { default as AppCheckbox } from './AppCheckbox/AppCheckbox';
 export { default as EmptyContentPlaceholder } from './EmptyContentPlaceholder/EmptyContentPlaceholder';
 export { default as NamespaceAutocomplete } from './Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+export { default as OwnerAutocomplete } from './Autocomplete/OwnerAutocomplete/OwnerAutocomplete';
+export { default as OwnerTitleAutocomplete } from './Autocomplete/OwnerTitleAutocomplete/OwnerTitleAutocomplete';
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';
@@ -36,6 +38,7 @@ export { default as RestrictedRoute } from './RestrictedRoute/RestrictedRoute';
 export { default as AppRadio } from './AppRadio/AppRadio';
 export { default as AlertStatusItem } from './AlertStatusItem/AlertStatusItem';
 export { default as AppDatePicker } from './AppDatePicker/AppDatePicker';
+export { default as AppDateRangePicker } from './AppDateRangePicker/AppDateRangePicker';
 export { default as TermItem } from './TermItem/TermItem';
 export {
   maxDate,

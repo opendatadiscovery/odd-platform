@@ -12,13 +12,13 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.Role;
+import org.opendatadiscovery.oddplatform.api.contract.model.Title;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import reactor.core.publisher.Mono;
@@ -47,7 +47,7 @@ class OwnershipServiceImplTest {
 
     //mocks
     @Mock
-    private RoleService roleService;
+    private TitleService titleService;
     @Mock
     private OwnerService ownerService;
     @Mock
@@ -61,7 +61,7 @@ class OwnershipServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        ownershipService = new OwnershipServiceImpl(roleService, ownerService, ownershipRepository,
+        ownershipService = new OwnershipServiceImpl(titleService, ownerService, ownershipRepository,
             searchEntrypointRepository, dataEntityFilledService, ownershipMapper);
     }
 
@@ -69,21 +69,21 @@ class OwnershipServiceImplTest {
     @DisplayName("Creates ownership, expecting successfully created")
     void testCreateOwnership() {
         final String testOwnerName = UUID.randomUUID().toString();
-        final String testRoleName = UUID.randomUUID().toString();
+        final String testTitleName = UUID.randomUUID().toString();
         final long testOwnerId = 2L;
-        final long testRoleId = 3L;
+        final long testTitleId = 3L;
         final long testOwnershipId = 15L;
 
         final OwnershipFormData testOwnershipFromData = new OwnershipFormData()
             .ownerName(testOwnerName)
-            .roleName(testRoleName);
+            .titleName(testTitleName);
         final OwnerPojo owner = createTestOwner(testOwnerId, testOwnerName);
-        final RolePojo role = createTestRole(testRoleId, testRoleName);
-        final OwnershipPojo ownershipPojo = createTestOwnershipPojo(testOwnershipId, owner, role);
-        final Ownership ownership = createTestOwnership(testOwnershipId, owner, role);
+        final TitlePojo title = createTestTitle(testTitleId, testTitleName);
+        final OwnershipPojo ownershipPojo = createTestOwnershipPojo(testOwnershipId, owner, title);
+        final Ownership ownership = createTestOwnership(testOwnershipId, owner, title);
 
         when(ownerService.getOrCreate(anyString())).thenReturn(Mono.just(owner));
-        when(roleService.getOrCreate(anyString())).thenReturn(Mono.just(role));
+        when(titleService.getOrCreate(anyString())).thenReturn(Mono.just(title));
         when(ownershipRepository.create(any(OwnershipPojo.class))).thenReturn(Mono.just(ownershipPojo));
         when(searchEntrypointRepository.updateChangedOwnershipVectors(anyLong())).thenReturn(Mono.just(1));
         when(ownershipMapper.mapDto(any(OwnershipDto.class))).thenReturn(ownership);
@@ -98,12 +98,12 @@ class OwnershipServiceImplTest {
                 assertThat(o.getId()).isEqualTo(testOwnershipId);
                 assertThat(o.getOwner().getId()).isEqualTo(testOwnerId);
                 assertThat(o.getOwner().getName()).isEqualTo(testOwnerName);
-                assertThat(o.getRole().getId()).isEqualTo(testRoleId);
-                assertThat(o.getRole().getName()).isEqualTo(testRoleName);
+                assertThat(o.getTitle().getId()).isEqualTo(testTitleId);
+                assertThat(o.getTitle().getName()).isEqualTo(testTitleName);
             })
             .verifyComplete();
         verify(ownerService, only()).getOrCreate(any(String.class));
-        verify(roleService, only()).getOrCreate(any(String.class));
+        verify(titleService, only()).getOrCreate(any(String.class));
         verify(ownershipRepository, times(1)).create(any(OwnershipPojo.class));
         verify(searchEntrypointRepository, times(1))
             .updateChangedOwnershipVectors(testOwnershipId);
@@ -114,24 +114,24 @@ class OwnershipServiceImplTest {
     @DisplayName("Updates ownership, expecting successfully updated")
     void testUpdateOwnership() {
         final String testOwnerName = UUID.randomUUID().toString();
-        final String testRoleName = UUID.randomUUID().toString();
+        final String testTitleName = UUID.randomUUID().toString();
         final long testOwnerId = 2L;
-        final long testRoleId = 3L;
+        final long testTitleId = 3L;
         final long testOwnershipId = 15L;
 
         final OwnershipUpdateFormData ownershipUpdateFormData = new OwnershipUpdateFormData();
-        ownershipUpdateFormData.setRoleName(testRoleName);
+        ownershipUpdateFormData.setTitleName(testTitleName);
         final OwnershipPojo testOwnershipPojo = new OwnershipPojo();
         testOwnershipPojo.setId(testOwnershipId);
         final OwnerPojo owner = createTestOwner(testOwnerId, testOwnerName);
-        final RolePojo role = createTestRole(testRoleId, testRoleName);
-        final Ownership ownership = createTestOwnership(testOwnershipId, owner, role);
-        final RolePojo rolePojo = new RolePojo();
-        rolePojo.setId(testRoleId);
+        final TitlePojo title = createTestTitle(testTitleId, testTitleName);
+        final Ownership ownership = createTestOwnership(testOwnershipId, owner, title);
+        final TitlePojo titlePojo = new TitlePojo();
+        titlePojo.setId(testTitleId);
 
         when(ownershipRepository.get(testOwnershipId)).thenReturn(Mono.just(new OwnershipDto()));
-        when(roleService.getOrCreate(any(String.class))).thenReturn(Mono.just(rolePojo));
-        when(ownershipRepository.updateRole(testOwnershipId, testRoleId)).thenReturn(Mono.just(testOwnershipPojo));
+        when(titleService.getOrCreate(any(String.class))).thenReturn(Mono.just(titlePojo));
+        when(ownershipRepository.updateTitle(testOwnershipId, testTitleId)).thenReturn(Mono.just(testOwnershipPojo));
         when(searchEntrypointRepository.updateChangedOwnershipVectors(anyLong())).thenReturn(Mono.just(1));
         when(ownershipMapper.mapDto(any(OwnershipDto.class))).thenReturn(ownership);
 
@@ -143,16 +143,16 @@ class OwnershipServiceImplTest {
                 assertThat(o.getId()).isEqualTo(testOwnershipId);
                 assertThat(o.getOwner().getId()).isEqualTo(testOwnerId);
                 assertThat(o.getOwner().getName()).isEqualTo(testOwnerName);
-                assertThat(o.getRole().getId()).isEqualTo(testRoleId);
-                assertThat(o.getRole().getName()).isEqualTo(testRoleName);
+                assertThat(o.getTitle().getId()).isEqualTo(testTitleId);
+                assertThat(o.getTitle().getName()).isEqualTo(testTitleName);
             })
             .verifyComplete();
-        verify(ownershipRepository, times(1)).updateRole(testOwnershipId, testRoleId);
+        verify(ownershipRepository, times(1)).updateTitle(testOwnershipId, testTitleId);
         verify(ownershipRepository, times(2)).get(testOwnershipId);
         verify(searchEntrypointRepository, times(1))
             .updateChangedOwnershipVectors(testOwnershipId);
         verify(ownershipMapper, only()).mapDto(any(OwnershipDto.class));
-        verify(roleService, only()).getOrCreate(any(String.class));
+        verify(titleService, only()).getOrCreate(any(String.class));
     }
 
     /**
@@ -160,15 +160,15 @@ class OwnershipServiceImplTest {
      *
      * @param ownershipId - ownershipId
      * @param owner       - owner
-     * @param role        - role
+     * @param title       - title
      * @return {@link Ownership}
      */
     @NotNull
-    private Ownership createTestOwnership(final long ownershipId, final OwnerPojo owner, final RolePojo role) {
+    private Ownership createTestOwnership(final long ownershipId, final OwnerPojo owner, final TitlePojo title) {
         final Ownership ownership = new Ownership();
         ownership.setId(ownershipId);
         ownership.setOwner(new Owner().id(owner.getId()).name(owner.getName()));
-        ownership.setRole(new Role().id(role.getId()).name(role.getName()));
+        ownership.setTitle(new Title().id(title.getId()).name(title.getName()));
         return ownership;
     }
 
@@ -177,15 +177,16 @@ class OwnershipServiceImplTest {
      *
      * @param ownershipId - ownershipId
      * @param owner       - owner
-     * @param role        - role
+     * @param title       - title
      * @return {@link OwnershipPojo}
      */
     @NotNull
-    private OwnershipPojo createTestOwnershipPojo(final long ownershipId, final OwnerPojo owner, final RolePojo role) {
+    private OwnershipPojo createTestOwnershipPojo(final long ownershipId, final OwnerPojo owner,
+                                                  final TitlePojo title) {
         final OwnershipPojo ownershipPojo = new OwnershipPojo();
         ownershipPojo.setId(ownershipId);
         ownershipPojo.setOwnerId(owner.getId());
-        ownershipPojo.setRoleId(role.getId());
+        ownershipPojo.setTitleId(title.getId());
         return ownershipPojo;
     }
 
@@ -205,17 +206,17 @@ class OwnershipServiceImplTest {
     }
 
     /**
-     * Method for the testing purposes. Creates test {@link Role}
+     * Method for the testing purposes. Creates test {@link Title}
      *
-     * @param roleId   - roleId
-     * @param roleName - roleName
-     * @return {@link Role}
+     * @param titleId   - titleId
+     * @param titleName - titleName
+     * @return {@link Title}
      */
     @NotNull
-    private RolePojo createTestRole(final long roleId, final String roleName) {
-        final RolePojo role = new RolePojo();
-        role.setId(roleId);
-        role.setName(roleName);
-        return role;
+    private TitlePojo createTestTitle(final long titleId, final String titleName) {
+        final TitlePojo title = new TitlePojo();
+        title.setId(titleId);
+        title.setName(titleName);
+        return title;
     }
 }

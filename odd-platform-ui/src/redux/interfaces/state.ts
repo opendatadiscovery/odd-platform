@@ -1,4 +1,4 @@
-import { EntityState, ThunkAction } from '@reduxjs/toolkit';
+import { EntityState } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   Actions,
@@ -73,9 +73,7 @@ export interface NamespacesState extends EntityState<Namespace> {
 }
 
 export interface DataEntityGroupLinkedListState {
-  linkedItemsIdsByDataEntityGroupId: {
-    [dataEntityGroupId: string]: number[];
-  };
+  linkedItemsIdsByDataEntityGroupId: { [dataEntityGroupId: string]: number[] };
   pageInfo?: CurrentPageInfo;
 }
 
@@ -90,13 +88,9 @@ export interface MetaDataState {
 }
 
 export interface DatasetStructureState {
-  fieldById: {
-    [fieldId: number]: DataSetField;
-  };
+  fieldById: { [fieldId: number]: DataSetField };
   allFieldIdsByVersion: {
-    [versionId: number]: {
-      [parentFieldId: number]: DataSetField['id'][];
-    };
+    [versionId: number]: { [parentFieldId: number]: DataSetField['id'][] };
   };
   statsByVersionId: {
     [versionId: number]: {
@@ -104,33 +98,19 @@ export interface DatasetStructureState {
       isUniqueStatsExist: boolean;
     };
   };
-  latestVersionByDataset: {
-    [datasetId: string]: DataSetVersion['id'];
-  };
-  fieldEnumsByFieldId: {
-    [fieldId: number]: EnumValue[];
-  };
+  latestVersionByDataset: { [datasetId: string]: DataSetVersion['id'] };
+  fieldEnumsByFieldId: { [fieldId: number]: EnumValue[] };
 }
 
 export interface DataQualityTestState {
-  qualityTestsById: {
-    [qualityTestId: string]: DataQualityTest;
-  };
+  qualityTestsById: { [qualityTestId: string]: DataQualityTest };
   allSuiteNamesByDatasetId: {
-    [datasetId: string]: {
-      [suiteName: string]: DataQualityTest['id'][];
-    };
+    [datasetId: string]: { [suiteName: string]: DataQualityTest['id'][] };
   };
   qualityTestRunsPageInfo: CurrentPageInfo;
-  datasetTestReportByEntityId: {
-    [dataEntityId: string]: DataSetTestReport;
-  };
-  datasetSLAReportByEntityId: {
-    [dataEntityId: string]: DataSetSLAReport;
-  };
-  testReportBySuiteName: {
-    [suiteName: string]: DataSetQualityTestsStatusCount;
-  };
+  datasetTestReportByEntityId: { [dataEntityId: string]: DataSetTestReport };
+  datasetSLAReportByEntityId: { [dataEntityId: string]: DataSetSLAReport };
+  testReportBySuiteName: { [suiteName: string]: DataSetQualityTestsStatusCount };
 }
 
 export interface DataEntityRunState extends EntityState<DataEntityRun> {
@@ -160,9 +140,7 @@ export interface OwnersState {
 }
 
 export interface DataEntitiesState {
-  byId: {
-    [dataEntityId: string]: DataEntity & DataEntityDetailsState;
-  };
+  byId: { [dataEntityId: string]: DataEntity & DataEntityDetailsState };
   allIds: number[];
   my: DataEntityRef[];
   myUpstream: DataEntityRef[];
@@ -182,10 +160,7 @@ export interface DataEntitySearchState {
   facets: FacetOptionsByName;
   isFacetsStateSynced: boolean;
   totals: SearchTotalsByName;
-  results: {
-    items: DataEntity[];
-    pageInfo: CurrentPageInfo;
-  };
+  results: { items: DataEntity[]; pageInfo: CurrentPageInfo };
   suggestions: DataEntityRef[];
   facetState: SearchFacetsByName;
 }
@@ -201,12 +176,8 @@ export interface ProfileState {
 }
 
 export interface OwnerAssociationState {
-  newRequests: {
-    pageInfo: CurrentPageInfo;
-  } & EntityState<OwnerAssociationRequest>;
-  resolvedRequests: {
-    pageInfo: CurrentPageInfo;
-  } & EntityState<OwnerAssociationRequest>;
+  newRequests: { pageInfo: CurrentPageInfo } & EntityState<OwnerAssociationRequest>;
+  resolvedRequests: { pageInfo: CurrentPageInfo } & EntityState<OwnerAssociationRequest>;
 }
 
 export interface AppInfoState {
@@ -224,30 +195,19 @@ export interface TermSearchState {
   query: string;
   facets: TermSearchFacetOptionsByName;
   isFacetsStateSynced: boolean;
-  results: {
-    items: Term[];
-    pageInfo: CurrentPageInfo;
-  };
+  results: { items: Term[]; pageInfo: CurrentPageInfo };
   suggestions: TermRef[];
   facetState: TermSearchFacetsByName;
 }
 
 export interface TermLinkedListState {
-  linkedItemsIdsByTermId: {
-    [termId: string]: number[];
-  };
+  linkedItemsIdsByTermId: { [termId: string]: number[] };
   pageInfo?: CurrentPageInfo;
 }
 
 export interface ActivitiesState {
-  activitiesByDate: {
-    [date: string]: Activity[];
-  };
-  pageInfo: {
-    hasNext: boolean;
-    lastEventId?: number;
-    lastEventDateTime?: number;
-  };
+  activitiesByDate: { [date: string]: Activity[] };
+  pageInfo: { hasNext: boolean; lastEventId?: number; lastEventDateTime?: number };
   counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
 }
@@ -256,14 +216,3 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
-
-// export type ThunkResult<ReturnType = void> = ThunkAction<
-//   ReturnType,
-//   RootState,
-//   undefined,
-//   Action
-// >;
-
-// export type PromiseThunkResult<ReturnType = void> = ThunkResult<
-//   Promise<ReturnType>
-// >;

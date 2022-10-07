@@ -12,7 +12,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TermOwnershipPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.OwnerService;
-import org.opendatadiscovery.oddplatform.service.RoleService;
+import org.opendatadiscovery.oddplatform.service.TitleService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
@@ -26,24 +26,24 @@ public class TermOwnershipServiceImpl implements TermOwnershipService {
     private final ReactiveTermOwnershipRepository termOwnershipRepository;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final OwnerService ownerService;
-    private final RoleService roleService;
+    private final TitleService titleService;
     private final OwnershipMapper ownershipMapper;
 
     @Override
     @ReactiveTransactional
     public Mono<Ownership> create(final long termId, final OwnershipFormData formData) {
         return Mono.zip(ownerService.getOrCreate(formData.getOwnerName()),
-                roleService.getOrCreate(formData.getRoleName()))
-            .map(function((owner, role) -> Tuples.of(owner, role, new TermOwnershipPojo()
+                titleService.getOrCreate(formData.getTitleName()))
+            .map(function((owner, title) -> Tuples.of(owner, title, new TermOwnershipPojo()
                 .setTermId(termId)
                 .setOwnerId(owner.getId())
-                .setRoleId(role.getId())
+                .setTitleId(title.getId())
             )))
-            .flatMap(function((owner, role, ownership) -> termOwnershipRepository.create(ownership)
-                .map(pojo -> Tuples.of(owner, role, pojo))))
-            .flatMap(function((owner, role, ownership) -> termSearchEntrypointRepository
+            .flatMap(function((owner, title, ownership) -> termOwnershipRepository.create(ownership)
+                .map(pojo -> Tuples.of(owner, title, pojo))))
+            .flatMap(function((owner, title, ownership) -> termSearchEntrypointRepository
                 .updateChangedOwnershipVectors(ownership.getId())
-                .thenReturn(new TermOwnershipDto(ownership, owner, role))))
+                .thenReturn(new TermOwnershipDto(ownership, owner, title))))
             .map(ownershipMapper::mapDto);
     }
 
@@ -60,8 +60,8 @@ public class TermOwnershipServiceImpl implements TermOwnershipService {
     public Mono<Ownership> update(final long termOwnershipId, final OwnershipUpdateFormData formData) {
         return termOwnershipRepository.get(termOwnershipId)
             .switchIfEmpty(Mono.error(new NotFoundException("Ownership with id = [%s] was not found", termOwnershipId)))
-            .then(roleService.getOrCreate(formData.getRoleName()))
-            .flatMap(rolePojo -> termOwnershipRepository.updateRole(termOwnershipId, rolePojo.getId()))
+            .then(titleService.getOrCreate(formData.getTitleName()))
+            .flatMap(titlePojo -> termOwnershipRepository.updateTitle(termOwnershipId, titlePojo.getId()))
             .then(termOwnershipRepository.get(termOwnershipId))
             .flatMap(dto -> termSearchEntrypointRepository.updateChangedOwnershipVectors(dto.owner().getId())
                 .thenReturn(dto))
