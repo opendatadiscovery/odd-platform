@@ -86,8 +86,6 @@ export const UserName = styled('p')(({ theme }) => ({
   margin: theme.spacing(0, 1),
 }));
 
-export const CaptionsWrapper = styled('div')(() => ({}));
-
 export const CaptionsTypographyWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',

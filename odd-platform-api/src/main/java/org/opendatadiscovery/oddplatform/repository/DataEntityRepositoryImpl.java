@@ -62,9 +62,9 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
@@ -97,10 +97,10 @@ import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
@@ -118,7 +118,7 @@ public class DataEntityRepositoryImpl
     private static final String AGG_TAGS_FIELD = "tag";
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
-    private static final String AGG_ROLE_FIELD = "role";
+    private static final String AGG_TITLE_FIELD = "title";
     private static final String HAS_ALERTS_FIELD = "has_alerts";
     private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
     private final JooqFTSHelper jooqFTSHelper;
@@ -551,7 +551,7 @@ public class DataEntityRepositoryImpl
                 .select(jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD))
                 .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
                 .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
-                .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+                .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD))
                 .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
                 .select(hasAlerts(deCte));
         }
@@ -569,7 +569,7 @@ public class DataEntityRepositoryImpl
                 .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
                 .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
                 .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-                .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
+                .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
                 .leftJoin(DATA_ENTITY_TO_TERM)
                 .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
                 .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
@@ -835,9 +835,9 @@ public class DataEntityRepositoryImpl
             .stream()
             .collect(Collectors.toMap(OwnerPojo::getId, identity()));
 
-        final Map<Long, RolePojo> roleDict = jooqRecordHelper.extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class)
+        final Map<Long, TitlePojo> titleDict = jooqRecordHelper.extractAggRelation(r, AGG_TITLE_FIELD, TitlePojo.class)
             .stream()
-            .collect(Collectors.toMap(RolePojo::getId, identity()));
+            .collect(Collectors.toMap(TitlePojo::getId, identity()));
 
         return jooqRecordHelper.extractAggRelation(r, AGG_OWNERSHIP_FIELD, OwnershipPojo.class)
             .stream()
@@ -848,16 +848,16 @@ public class DataEntityRepositoryImpl
                         String.format("There's no owner with id %s found in ownerDict", os.getOwnerId()));
                 }
 
-                final RolePojo role = roleDict.get(os.getRoleId());
-                if (role == null) {
+                final TitlePojo title = titleDict.get(os.getTitleId());
+                if (title == null) {
                     throw new IllegalArgumentException(
-                        String.format("There's no role with id %s found in roleDict", os.getRoleId()));
+                        String.format("There's no title with id %s found in titleDict", os.getTitleId()));
                 }
 
                 return OwnershipDto.builder()
                     .ownership(os)
                     .owner(owner)
-                    .role(role)
+                    .title(title)
                     .build();
             })
             .collect(toList());

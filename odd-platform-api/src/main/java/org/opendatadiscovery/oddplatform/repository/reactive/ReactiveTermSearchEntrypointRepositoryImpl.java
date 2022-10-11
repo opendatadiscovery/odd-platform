@@ -18,12 +18,12 @@ import reactor.core.publisher.Mono;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CONFIG_DETAILS_MAP;
 
 @Repository
@@ -170,11 +170,11 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
         final Field<Long> termIdField = field("term_id", Long.class);
 
         final Field<String> ownerNameAlias = field("owner_name", String.class);
-        final Field<String> roleNameAlias = field("role_name", String.class);
+        final Field<String> titleNameAlias = field("title_name", String.class);
 
         final List<Field<?>> vectorFields = List.of(
             OWNER.NAME.as(ownerNameAlias),
-            ROLE.NAME.as(roleNameAlias)
+            TITLE.NAME.as(titleNameAlias)
         );
 
         final var cteSelect = DSL.select(TERM_OWNERSHIP.TERM_ID)
@@ -191,7 +191,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             .from(TERM)
             .join(cte).on(cte.field(termIdField).eq(TERM.ID))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
-            .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
 
         final Insert<? extends Record> ownershipQuery = jooqFTSHelper.buildVectorUpsert(
@@ -201,7 +201,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             TERM_SEARCH_ENTRYPOINT.OWNER_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.TERM),
             true,
-            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
+            Map.of(ownerNameAlias, OWNER.NAME, titleNameAlias, TITLE.NAME)
         );
 
         return jooqReactiveOperations.mono(ownershipQuery);
@@ -212,11 +212,11 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
         final Field<Long> termIdField = field("term_id", Long.class);
 
         final Field<String> ownerNameAlias = field("owner_name", String.class);
-        final Field<String> roleNameAlias = field("role_name", String.class);
+        final Field<String> titleNameAlias = field("title_name", String.class);
 
         final List<Field<?>> vectorFields = List.of(
             OWNER.NAME.as(ownerNameAlias),
-            ROLE.NAME.as(roleNameAlias)
+            TITLE.NAME.as(titleNameAlias)
         );
 
         final var cteSelect = DSL.select(TERM_OWNERSHIP.TERM_ID)
@@ -233,7 +233,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             .from(TERM)
             .join(cte).on(cte.field(termIdField).eq(TERM.ID))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
-            .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
 
         final Insert<? extends Record> ownershipQuery = jooqFTSHelper.buildVectorUpsert(
@@ -243,7 +243,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             TERM_SEARCH_ENTRYPOINT.OWNER_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.TERM),
             true,
-            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
+            Map.of(ownerNameAlias, OWNER.NAME, titleNameAlias, TITLE.NAME)
         );
 
         return jooqReactiveOperations.mono(ownershipQuery);

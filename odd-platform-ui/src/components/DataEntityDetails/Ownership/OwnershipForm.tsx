@@ -6,15 +6,12 @@ import {
   AppButton,
   DialogWrapper,
   LabeledInfoItem,
+  OwnerAutocomplete,
+  OwnerTitleAutocomplete,
 } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  createDataEntityOwnership,
-  updateDataEntityOwnership,
-} from 'redux/thunks';
+import { createDataEntityOwnership, updateDataEntityOwnership } from 'redux/thunks';
 import { getDataEntityOwnerUpdatingStatuses } from 'redux/selectors';
-import OwnershipFormRoleAutocomplete from './OwnershipFormRoleAutocomplete/OwnershipFormRoleAutocomplete';
-import OwnershipFormOwnerAutocomplete from './OwnershipFormOwnerAutocomplete/OwnershipFormOwnerAutocomplete';
 
 interface OwnershipFormProps {
   dataEntityId: number;
@@ -35,16 +32,10 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const methods = useForm<OwnershipFormData>({
     mode: 'onChange',
-    defaultValues: {
-      ownerName: '',
-      roleName: dataEntityOwnership?.role?.name || '',
-    },
+    defaultValues: { ownerName: '', titleName: dataEntityOwnership?.title?.name || '' },
   });
   const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialFormState);
+  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState(initialFormState);
 
   const resetState = React.useCallback(() => {
     setFormState(initialFormState);
@@ -57,15 +48,10 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           updateDataEntityOwnership({
             dataEntityId,
             ownershipId: dataEntityOwnership.id,
-            ownershipUpdateFormData: { roleName: data.roleName },
+            ownershipUpdateFormData: { titleName: data.titleName },
           })
         )
-      : dispatch(
-          createDataEntityOwnership({
-            dataEntityId,
-            ownershipFormData: data,
-          })
-        )
+      : dispatch(createDataEntityOwnership({ dataEntityId, ownershipFormData: data }))
     ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
@@ -81,49 +67,42 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {dataEntityOwnership ? 'Edit' : 'Add'} owner
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="owner-add-form"
-      onSubmit={methods.handleSubmit(ownershipUpdate)}
-    >
+    <form id='owner-add-form' onSubmit={methods.handleSubmit(ownershipUpdate)}>
       {dataEntityOwnership ? (
-        <LabeledInfoItem inline label="Owner:" labelWidth={2}>
+        <LabeledInfoItem inline label='Owner:' labelWidth={1.7}>
           {dataEntityOwnership.owner.name}
         </LabeledInfoItem>
       ) : (
         <Controller
-          name="ownerName"
+          name='ownerName'
           control={methods.control}
-          defaultValue=""
+          defaultValue=''
           rules={{ required: true }}
-          render={({ field }) => (
-            <OwnershipFormOwnerAutocomplete field={field} />
-          )}
+          render={({ field }) => <OwnerAutocomplete field={field} />}
         />
       )}
       <Controller
-        name="roleName"
+        name='titleName'
         control={methods.control}
-        defaultValue={dataEntityOwnership?.role?.name || ''}
+        defaultValue={dataEntityOwnership?.title?.name || ''}
         rules={{ required: true, validate: value => !!value?.trim() }}
-        render={({ field }) => (
-          <OwnershipFormRoleAutocomplete field={field} />
-        )}
+        render={({ field }) => <OwnerTitleAutocomplete field={field} />}
       />
     </form>
   );
 
   const ownerEditDialogActions = () => (
     <AppButton
-      size="large"
-      color="primary"
-      type="submit"
-      form="owner-add-form"
+      size='large'
+      color='primary'
+      type='submit'
+      form='owner-add-form'
       fullWidth
       disabled={!methods.formState.isValid}
     >
@@ -133,7 +112,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(ownerEditBtn, { onClick: handleOpen })
       }

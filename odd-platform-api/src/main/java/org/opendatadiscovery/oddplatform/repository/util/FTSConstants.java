@@ -20,9 +20,9 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 
 public class FTSConstants {
     public static final Field<Object> RANK_FIELD_ALIAS = field("rank", Object.class);
@@ -43,7 +43,7 @@ public class FTSConstants {
         Map.entry(DATASET_FIELD.INTERNAL_DESCRIPTION, "C"),
         Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
         Map.entry(LABEL.NAME, "C"),
-        Map.entry(ROLE.NAME, "D"),
+        Map.entry(TITLE.NAME, "D"),
         Map.entry(OWNER.NAME, "C")
     );
 
@@ -53,7 +53,7 @@ public class FTSConstants {
         Map.entry(NAMESPACE.NAME, "B"),
         Map.entry(TAG.NAME, "B"),
         Map.entry(OWNER.NAME, "C"),
-        Map.entry(ROLE.NAME, "D")
+        Map.entry(TITLE.NAME, "D")
     );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> DATA_ENTITY_CONDITIONS =

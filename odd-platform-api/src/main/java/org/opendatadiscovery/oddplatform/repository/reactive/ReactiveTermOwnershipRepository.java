@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import org.opendatadiscovery.oddplatform.dto.term.TermOwnershipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermOwnershipPojo;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveTermOwnershipRepository {
@@ -12,7 +11,7 @@ public interface ReactiveTermOwnershipRepository {
 
     Mono<TermOwnershipPojo> delete(final long ownershipId);
 
-    Mono<TermOwnershipPojo> updateRole(final long ownershipId, final long roleId);
+    Mono<TermOwnershipPojo> updateTitle(final long ownershipId, final long titleId);
 
     Mono<Boolean> existsByOwner(final long ownerId);
 }

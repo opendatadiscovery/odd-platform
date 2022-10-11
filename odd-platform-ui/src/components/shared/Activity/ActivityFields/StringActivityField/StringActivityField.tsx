@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
 import { CRUDType } from 'lib/interfaces';
 
 interface ActivityFieldData {
@@ -28,15 +27,13 @@ const StringActivityField: React.FC<StringActivityFieldProps> = ({
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
-  const [
-    { oldValue, newValue, showDetails, activityEvent },
-    setFieldData,
-  ] = React.useState<ActivityFieldData>({
-    oldValue: '',
-    newValue: '',
-    activityEvent: 'created',
-    showDetails: false,
-  });
+  const [{ oldValue, newValue, showDetails, activityEvent }, setFieldData] =
+    React.useState<ActivityFieldData>({
+      oldValue: '',
+      newValue: '',
+      activityEvent: 'created',
+      showDetails: false,
+    });
 
   React.useEffect(() => {
     if (newState && (oldState === undefined || oldState.length === 0)) {
@@ -68,9 +65,9 @@ const StringActivityField: React.FC<StringActivityFieldProps> = ({
   }, [oldState, newState]);
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText=""
+        startText=''
         activityName={activityName}
         eventType={activityEvent}
         showDetailsBtn={showDetails}
@@ -80,13 +77,9 @@ const StringActivityField: React.FC<StringActivityFieldProps> = ({
       <ActivityFieldState
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
-          oldValue && (
-            <Typography variant="subtitle1">{oldValue}</Typography>
-          )
+          oldValue && <Typography variant='subtitle1'>{oldValue}</Typography>
         }
-        newStateChildren={
-          newValue && <Typography variant="body1">{newValue}</Typography>
-        }
+        newStateChildren={newValue && <Typography variant='body1'>{newValue}</Typography>}
       />
     </Grid>
   );

@@ -1,7 +1,6 @@
 import React from 'react';
-import SystemIcon from 'components/shared/Icons/SystemIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { SystemIcon, ClearIcon } from 'components/shared/Icons';
+import { AppIconButton } from 'components/shared';
 import { Theme, TypographyProps } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { Container } from './LabelItemStyles';
@@ -41,8 +40,8 @@ const LabelItem: React.FC<LabelItemProps> = ({
     {removable && !systemLabel && (
       <AppIconButton
         sx={{ ml: 0.25 }}
-        size="small"
-        color="unfilled"
+        size='small'
+        color='unfilled'
         icon={<ClearIcon />}
         onClick={onRemoveClick}
       />

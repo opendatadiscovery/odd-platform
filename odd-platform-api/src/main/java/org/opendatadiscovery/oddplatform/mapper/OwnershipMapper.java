@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermOwnershipDto;
 
 @Mapper(config = MapperConfig.class, uses = {
-    OwnerMapper.class, RoleMapper.class
+    OwnerMapper.class, TitleMapper.class
 })
 public interface OwnershipMapper {
 

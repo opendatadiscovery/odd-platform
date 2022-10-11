@@ -27,10 +27,10 @@ import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermOwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -49,12 +49,12 @@ import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.TERM_CONDITIONS;
 
@@ -65,7 +65,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     private static final int SUGGESTION_LIMIT = 5;
     private static final String AGG_OWNERS_FIELD = "owners";
     private static final String AGG_OWNERSHIPS_FIELD = "ownerships";
-    private static final String AGG_ROLES_FIELD = "roles";
+    private static final String AGG_TITLES_FIELD = "titles";
     private static final String AGG_TAGS_FIELD = "tags";
     private static final String ENTITIES_COUNT = "entities_count";
 
@@ -154,14 +154,14 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(NAMESPACE.fields())
             .select(jsonArrayAgg(field(TERM_OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIPS_FIELD))
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
-            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLES_FIELD))
+            .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
-            .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID)
@@ -304,14 +304,14 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(NAMESPACE.fields())
             .select(jsonArrayAgg(field(TERM_OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIPS_FIELD))
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
-            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLES_FIELD))
+            .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .from(termCTE.getName())
             .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(termCTE.field(TERM.ID))
                 .and(TERM_OWNERSHIP.DELETED_AT.isNull()))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
-            .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID))
                 .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
@@ -405,9 +405,9 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .stream()
             .collect(Collectors.toMap(OwnerPojo::getId, identity()));
 
-        final Map<Long, RolePojo> roleDict = jooqRecordHelper.extractAggRelation(r, AGG_ROLES_FIELD, RolePojo.class)
+        final Map<Long, TitlePojo> titleDict = jooqRecordHelper.extractAggRelation(r, AGG_TITLES_FIELD, TitlePojo.class)
             .stream()
-            .collect(Collectors.toMap(RolePojo::getId, identity()));
+            .collect(Collectors.toMap(TitlePojo::getId, identity()));
 
         return jooqRecordHelper.extractAggRelation(r, AGG_OWNERSHIPS_FIELD, TermOwnershipPojo.class)
             .stream()
@@ -418,13 +418,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                         String.format("There's no owner with id %s found in ownerDict", os.getOwnerId()));
                 }
 
-                final RolePojo role = roleDict.get(os.getRoleId());
-                if (role == null) {
+                final TitlePojo title = titleDict.get(os.getTitleId());
+                if (title == null) {
                     throw new IllegalArgumentException(
-                        String.format("There's no role with id %s found in roleDict", os.getRoleId()));
+                        String.format("There's no title with id %s found in titleDict", os.getTitleId()));
                 }
 
-                return new TermOwnershipDto(os, owner, role);
+                return new TermOwnershipDto(os, owner, title);
             })
             .collect(Collectors.toSet());
     }

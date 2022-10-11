@@ -152,17 +152,17 @@ public class ActivityMapperTest {
             .containsExactlyInAnyOrder(
                 oldState.stream().map(OwnershipActivityStateDto::ownerName).toArray(String[]::new));
         assertThat(oldOwnerships)
-            .extracting(OwnershipActivityState::getRoleName)
+            .extracting(OwnershipActivityState::getTitleName)
             .containsExactlyInAnyOrder(
-                oldState.stream().map(OwnershipActivityStateDto::roleName).toArray(String[]::new));
+                oldState.stream().map(OwnershipActivityStateDto::titleName).toArray(String[]::new));
         assertThat(newOwnerships)
             .extracting(OwnershipActivityState::getOwnerName)
             .containsExactlyInAnyOrder(
                 newState.stream().map(OwnershipActivityStateDto::ownerName).toArray(String[]::new));
         assertThat(newOwnerships)
-            .extracting(OwnershipActivityState::getRoleName)
+            .extracting(OwnershipActivityState::getTitleName)
             .containsExactlyInAnyOrder(
-                newState.stream().map(OwnershipActivityStateDto::roleName).toArray(String[]::new));
+                newState.stream().map(OwnershipActivityStateDto::titleName).toArray(String[]::new));
     }
 
     private ActivityPojo createPojo(final ActivityEventTypeDto eventTypeDto) {

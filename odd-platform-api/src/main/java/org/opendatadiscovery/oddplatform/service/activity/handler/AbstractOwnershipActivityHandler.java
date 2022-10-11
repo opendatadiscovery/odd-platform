@@ -17,7 +17,7 @@ public abstract class AbstractOwnershipActivityHandler {
 
     protected Mono<String> getDataEntityOwnerships(final long dataEntityId) {
         return ownershipRepository.getOwnershipsByDataEntityId(dataEntityId)
-            .map(dto -> new OwnershipActivityStateDto(dto.getOwner().getName(), dto.getRole().getName()))
+            .map(dto -> new OwnershipActivityStateDto(dto.getOwner().getName(), dto.getTitle().getName()))
             .collectList()
             .map(this::getState);
     }
@@ -28,7 +28,7 @@ public abstract class AbstractOwnershipActivityHandler {
             .collectList()
             .map(list -> {
                 final List<OwnershipActivityStateDto> stateList = list.stream()
-                    .map(dto -> new OwnershipActivityStateDto(dto.getOwner().getName(), dto.getRole().getName()))
+                    .map(dto -> new OwnershipActivityStateDto(dto.getOwner().getName(), dto.getTitle().getName()))
                     .toList();
                 return Tuples.of(getState(stateList), list.get(0).getOwnership().getDataEntityId());
             })

@@ -34,7 +34,7 @@ A problem of observability lack starts when irrelevant data appears in one's pro
 Dive into ODD opportunities with a [list of ODD features](Features.md). 
 
 ## Use cases
-[Here](Use_cases.md) you can find most popular use cases for different roles of your data team.
+[Here](Use_cases.md) you can find most popular use cases for different titles of your data team.
 
 <!---
 > Open Data Discovery makes all your data entities reliable, observable, and easily discoverable.

@@ -39,7 +39,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -111,12 +111,12 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .select(fields)
             .select(jsonArrayAgg(jsonObject(
                 jsonEntry("owner_name", OWNER.NAME),
-                jsonEntry("role_name", ROLE.NAME))
+                jsonEntry("title_name", TITLE.NAME))
             ).as(OWNERS_FIELD_ALIAS))
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-            .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
             .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
             .leftJoin(NAMESPACE)
                 .on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
@@ -190,7 +190,7 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .extractAggRelation(record, OWNERS_FIELD_ALIAS, new TypeReference<OwnershipPair>() {
             })
             .stream()
-            .filter(o -> o.ownerName() != null && o.roleName() != null)
+            .filter(o -> o.ownerName() != null && o.titleName() != null)
             .collect(toSet());
 
         final Integer typeId = record.get(DATA_ENTITY.TYPE_ID, Integer.class);

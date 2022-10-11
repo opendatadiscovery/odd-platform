@@ -1,17 +1,12 @@
 import React, { PropsWithChildren } from 'react';
 import { Grid } from '@mui/material';
-import {
-  ActivityEventType,
-  DataSource,
-  Namespace,
-} from 'generated-sources';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { ActivityEventType, DataSource, Namespace } from 'generated-sources';
+import { AppMenuItem, AppSelect } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { stringFormatted } from 'lib/helpers';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 interface SingleFilterProps<OptionType> {
   name: string;
@@ -19,17 +14,13 @@ interface SingleFilterProps<OptionType> {
   filterName: ActivityQueryName;
 }
 
-const SingleFilter = <
-  OptionType extends DataSource | Namespace | ActivityEventType
->({
+const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventType>({
   name,
   filterOptions,
   filterName,
 }: PropsWithChildren<SingleFilterProps<OptionType>>) => {
   const dispatch = useAppDispatch();
-  const dispatchQueryParam = (
-    queryData: null | number | ActivityEventType
-  ) =>
+  const dispatchQueryParam = (queryData: null | number | ActivityEventType) =>
     dispatch(
       setActivityQueryParam({
         queryName: filterName,
@@ -37,9 +28,7 @@ const SingleFilter = <
       })
     );
 
-  const selectedParam = useAppSelector(
-    getActivitiesQueryParamsByName(filterName)
-  );
+  const selectedParam = useAppSelector(getActivitiesQueryParamsByName(filterName));
 
   const [selectedOption, setSelectedOption] = React.useState('All');
 
@@ -107,16 +96,13 @@ const SingleFilter = <
     <Grid container>
       <Grid container item xs={12}>
         <AppSelect
-          defaultValue="All"
+          defaultValue='All'
           sx={{ mt: 2 }}
           label={name}
           id={`filter-${filterName}`}
           value={selectedOption}
         >
-          <AppMenuItem
-            value="All"
-            onClick={() => handleFilterSelect('All')}
-          >
+          <AppMenuItem value='All' onClick={() => handleFilterSelect('All')}>
             All
           </AppMenuItem>
           {optionsList}

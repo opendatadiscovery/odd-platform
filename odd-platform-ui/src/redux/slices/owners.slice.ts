@@ -45,13 +45,7 @@ export const ownersSlice = createSlice({
     builder.addCase(thunks.updateOwner.fulfilled, (state, { payload }): OwnersState => {
       const { ownerId, owner } = payload;
 
-      return {
-        ...state,
-        byId: {
-          ...state.byId,
-          [ownerId]: owner,
-        },
-      };
+      return { ...state, byId: { ...state.byId, [ownerId]: owner } };
     });
 
     // get ownership from data entity details

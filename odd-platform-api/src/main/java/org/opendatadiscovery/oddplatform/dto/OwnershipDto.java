@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 
 @Data
 @NoArgsConstructor
@@ -15,5 +15,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 public class OwnershipDto {
     private OwnershipPojo ownership;
     private OwnerPojo owner;
-    private RolePojo role;
+    private TitlePojo title;
 }
