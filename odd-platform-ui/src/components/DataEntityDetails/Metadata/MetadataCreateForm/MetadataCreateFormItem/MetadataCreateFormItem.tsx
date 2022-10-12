@@ -130,6 +130,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemInd
   ) => {
     setSelectedType(event.target.value as MetadataFieldType);
     onChange(selectedType);
+    onChange(event.target.value);
   };
 
   return (
