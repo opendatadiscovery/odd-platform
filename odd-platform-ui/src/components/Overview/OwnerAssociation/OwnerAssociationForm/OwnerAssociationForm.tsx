@@ -87,7 +87,7 @@ const OwnerAssociationForm: React.FC = () => {
     return filtered;
   };
 
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
     if (typeof option === 'string') {
       return option;
     }
@@ -98,7 +98,7 @@ const OwnerAssociationForm: React.FC = () => {
   }, []);
 
   const onAutocompleteChange = (
-    field: ControllerRenderProps<OwnerFormData>,
+    field: ControllerRenderProps<Omit<OwnerFormData, 'roles'>>,
     option: FilterOption | string | null
   ) => {
     if (!option || typeof option === 'string') {
