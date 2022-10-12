@@ -262,6 +262,16 @@ ODD Platform works with many of the tools you're already using:
             <td><a href="https://github.com/opendatadiscovery/odd-collector#presto">Presto</a>
             </td>
         </tr>
+        <tr>
+            <td><img height="40" img src="./images/mariadb.svg" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#mariadb">MariaDB</a>
+            </td>
+        </tr>
+        <tr>
+            <td><img height="40" img src="./images/superset.svg" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#superset">SuperSet</a>
+            </td>
+        </tr>
     </tbody>
 </table>
 
