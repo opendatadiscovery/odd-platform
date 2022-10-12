@@ -133,6 +133,10 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private Stream<AlertPojo> locateAlertsInDSDelta(final Map.Entry<String, DatasetStructureDelta> e) {
+        if (CollectionUtils.isEmpty(e.getValue().getPenultimate())) {
+            return Stream.empty();
+        }
+
         final Map<DatasetFieldKey, DatasetFieldPojo> latestVersionFields = e.getValue().getLatest()
             .stream()
             .collect(Collectors.toMap(f -> new DatasetFieldKey(f.getOddrn(), f.getType().data()), identity()));
