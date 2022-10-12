@@ -33,6 +33,8 @@ tags:
   - name: term
   - name: activity
   - name: ownerAssociationRequest
+  - name: policy
+  - name: role
 paths:
   /api/identity/whoami:
     get:
@@ -2238,3 +2240,171 @@ paths:
                 $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
       tags:
         - ownerAssociationRequest
+
+  /api/policies:
+    get:
+      summary: List of policies
+      description: Gets the list of existing policies
+      operationId: getPolicyList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/PolicyList'
+      tags:
+        - policy
+    post:
+      summary: Create policy
+      description: Creates new policy
+      operationId: createPolicy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/PolicyFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Policy'
+      tags:
+        - policy
+
+  /api/policies/{policy_id}:
+    get:
+      summary: Get policy details
+      description: Get policy representation
+      operationId: getPolicyDetails
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PolicyIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/PolicyDetails'
+      tags:
+        - policy
+    put:
+      summary: Update policy
+      description: Update existing policy
+      operationId: updatePolicy
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PolicyIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/PolicyFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/PolicyDetails'
+      tags:
+        - policy
+    delete:
+      summary: Delete policy
+      description: Deletes policy
+      operationId: deletePolicy
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PolicyIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - policy
+
+  /api/roles:
+    get:
+      summary: List of roles
+      description: Gets the list of existing roles
+      operationId: getRolesList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/IdsParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/RoleList'
+      tags:
+        - role
+    post:
+      summary: Create role
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/RoleFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Role'
+      tags:
+        - role
+  /api/roles/{role_id}:
+    put:
+      summary: Update role
+      description: Updates existing role
+      operationId: updateRole
+      parameters:
+        - name: role_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/RoleFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Role'
+      tags:
+        - role
+    delete:
+      summary: Delete role
+      description: Deletes existing role
+      operationId: deleteRole
+      parameters:
+        - name: role_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - role

@@ -8,7 +8,7 @@ components:
         actions:
           $ref: '#/components/schemas/Actions'
       required:
-      - username
+        - username
 
     AssociatedOwner:
       type: object
@@ -20,7 +20,7 @@ components:
         association_request:
           $ref: '#/components/schemas/OwnerAssociationRequest'
       required:
-      - identity
+        - identity
 
     Permission:
       type: string
@@ -51,8 +51,8 @@ components:
         name:
           type: string
       required:
-      - id
-      - name
+        - id
+        - name
 
     NamespaceList:
       type: object
@@ -64,8 +64,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     NamespaceFormData:
       type: object
@@ -73,7 +73,7 @@ components:
         name:
           type: string
       required:
-      - name
+        - name
 
     NamespaceUpdateFormData:
       type: object
@@ -81,7 +81,7 @@ components:
         name:
           type: string
       required:
-      - name
+        - name
 
     Title:
       type: object
@@ -92,8 +92,8 @@ components:
         name:
           type: string
       required:
-      - id
-      - name
+        - id
+        - name
 
     TitleList:
       type: object
@@ -105,7 +105,7 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
+        - items
 
     Tag:
       type: object
@@ -123,8 +123,8 @@ components:
           type: integer
           format: int64
       required:
-      - id
-      - name
+        - id
+        - name
 
     TagList:
       type: array
@@ -139,8 +139,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     TagFormData:
       type: object
@@ -150,7 +150,7 @@ components:
         important:
           type: boolean
       required:
-      - name
+        - name
 
     BulkTagFormData:
       type: array
@@ -165,9 +165,13 @@ components:
           format: int64
         name:
           type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
       required:
-      - id
-      - name
+        - id
+        - name
 
     OwnerList:
       type: object
@@ -179,16 +183,20 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     OwnerFormData:
       type: object
       properties:
         name:
           type: string
+        roles:
+          type: array
+          items:
+              $ref: '#/components/schemas/Role'
       required:
-      - name
+        - name
 
     Ownership:
       type: object
@@ -201,8 +209,8 @@ components:
         title:
           $ref: '#/components/schemas/Title'
       required:
-      - id
-      - owner
+        - id
+        - owner
 
     OwnershipList:
       type: array
@@ -275,9 +283,9 @@ components:
           type: string
           format: date-time
       required:
-      - id
-      - oddrn
-      - name
+        - id
+        - oddrn
+        - name
 
     DataEntityBaseObject:
       type: object
@@ -315,13 +323,13 @@ components:
           type: integer
           format: int64
       required:
-      - id
-      - oddrn
-      - external_name
-      - data_source
-      - types
-      - namespace
-      - view_count
+        - id
+        - oddrn
+        - external_name
+        - data_source
+        - types
+        - namespace
+        - view_count
 
     DataEntityDetailsBaseObject:
       type: object
@@ -342,30 +350,30 @@ components:
           items:
             $ref: '#/components/schemas/TermRef'
       required:
-      - metadata_field_values
-      - external_description
-      - internal_description
-      - view_count
+        - metadata_field_values
+        - external_description
+        - internal_description
+        - view_count
 
     DataEntityDetails:
       type: object
       anyOf:
-      - $ref: '#/components/schemas/DataSetDetails'
-      - $ref: '#/components/schemas/DataTransformerDetails'
-      - $ref: '#/components/schemas/DataInputDetails'
-      - $ref: '#/components/schemas/DataConsumerDetails'
-      - $ref: '#/components/schemas/DataQualityTestDetails'
-      - $ref: '#/components/schemas/DataEntityGroupDetails'
+        - $ref: '#/components/schemas/DataSetDetails'
+        - $ref: '#/components/schemas/DataTransformerDetails'
+        - $ref: '#/components/schemas/DataInputDetails'
+        - $ref: '#/components/schemas/DataConsumerDetails'
+        - $ref: '#/components/schemas/DataQualityTestDetails'
+        - $ref: '#/components/schemas/DataEntityGroupDetails'
 
     DataEntity:
       type: object
       anyOf:
-      - $ref: '#/components/schemas/DataSet'
-      - $ref: '#/components/schemas/DataTransformer'
-      - $ref: '#/components/schemas/DataConsumer'
-      - $ref: '#/components/schemas/DataInput'
-      - $ref: '#/components/schemas/DataQualityTest'
-      - $ref: '#/components/schemas/DataEntityGroup'
+        - $ref: '#/components/schemas/DataSet'
+        - $ref: '#/components/schemas/DataTransformer'
+        - $ref: '#/components/schemas/DataConsumer'
+        - $ref: '#/components/schemas/DataInput'
+        - $ref: '#/components/schemas/DataQualityTest'
+        - $ref: '#/components/schemas/DataEntityGroup'
 
     DataEntityClass:
       type: object
@@ -376,22 +384,22 @@ components:
         name:
           type: string
           enum:
-          - DATA_SET
-          - DATA_TRANSFORMER
-          - DATA_TRANSFORMER_RUN
-          - DATA_CONSUMER
-          - DATA_INPUT
-          - DATA_QUALITY_TEST
-          - DATA_QUALITY_TEST_RUN
-          - DATA_ENTITY_GROUP
+            - DATA_SET
+            - DATA_TRANSFORMER
+            - DATA_TRANSFORMER_RUN
+            - DATA_CONSUMER
+            - DATA_INPUT
+            - DATA_QUALITY_TEST
+            - DATA_QUALITY_TEST_RUN
+            - DATA_ENTITY_GROUP
         types:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityType'
       required:
-      - id
-      - name
-      - types
+        - id
+        - name
+        - types
 
     DataEntityType:
       type: object
@@ -402,29 +410,29 @@ components:
         name:
           type: string
           enum:
-          - TABLE
-          - FILE
-          - FEATURE_GROUP
-          - KAFKA_TOPIC
-          - JOB
-          - JOB_RUN
-          - ML_EXPERIMENT
-          - ML_MODEL_TRAINING
-          - ML_MODEL_INSTANCE
-          - DASHBOARD
-          - ML_MODEL_ARTIFACT
-          - VIEW
-          - DAG
-          - GRAPH_NODE
-          - API_CALL
-          - MICROSERVICE
-          - DATABASE_SERVICE
-          - API_SERVICE
-          - KAFKA_SERVICE
-          - DOMAIN
+            - TABLE
+            - FILE
+            - FEATURE_GROUP
+            - KAFKA_TOPIC
+            - JOB
+            - JOB_RUN
+            - ML_EXPERIMENT
+            - ML_MODEL_TRAINING
+            - ML_MODEL_INSTANCE
+            - DASHBOARD
+            - ML_MODEL_ARTIFACT
+            - VIEW
+            - DAG
+            - GRAPH_NODE
+            - API_CALL
+            - MICROSERVICE
+            - DATABASE_SERVICE
+            - API_SERVICE
+            - KAFKA_SERVICE
+            - DOMAIN
       required:
-      - id
-      - name
+        - id
+        - name
 
     DataSetStats:
       type: object
@@ -439,9 +447,9 @@ components:
           type: integer
           format: int64
       required:
-      - rows_count
-      - fields_count
-      - consumers_count
+        - rows_count
+        - fields_count
+        - consumers_count
 
     DataSetVersion:
       type: object
@@ -456,9 +464,9 @@ components:
           type: string
           format: date-time
       required:
-      - id
-      - version
-      - created_at
+        - id
+        - version
+        - created_at
 
     DataSetVersionList:
       type: array
@@ -467,22 +475,22 @@ components:
 
     DataSet:
       allOf:
-      - $ref: '#/components/schemas/DataEntityBaseObject'
-      - type: object
-        properties:
-          stats:
-            $ref: '#/components/schemas/DataSetStats'
-        required:
-        - stats
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            stats:
+              $ref: '#/components/schemas/DataSetStats'
+          required:
+            - stats
 
     DataSetDetails:
       allOf:
-      - $ref: '#/components/schemas/DataSet'
-      - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
-      - type: object
-        properties:
-          version_list:
-            $ref: '#/components/schemas/DataSetVersionList'
+        - $ref: '#/components/schemas/DataSet'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - type: object
+          properties:
+            version_list:
+              $ref: '#/components/schemas/DataSetVersionList'
 
     DataSetTestReports:
       type: object
@@ -521,7 +529,7 @@ components:
         manually_created:
           type: boolean
       required:
-      - id
+        - id
 
     DataEntityRefList:
       type: array
@@ -530,54 +538,54 @@ components:
 
     DataTransformer:
       allOf:
-      - $ref: '#/components/schemas/DataEntityBaseObject'
-      - type: object
-        properties:
-          source_list:
-            $ref: '#/components/schemas/DataEntityRefList'
-          target_list:
-            $ref: '#/components/schemas/DataEntityRefList'
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            source_list:
+              $ref: '#/components/schemas/DataEntityRefList'
+            target_list:
+              $ref: '#/components/schemas/DataEntityRefList'
 
     DataTransformerDetails:
       allOf:
-      - $ref: '#/components/schemas/DataTransformer'
-      - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - $ref: '#/components/schemas/DataTransformer'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
     DataInput:
       allOf:
-      - $ref: '#/components/schemas/DataEntityBaseObject'
-      - type: object
-        properties:
-          output_list:
-            type: array
-            items:
-              $ref: '#/components/schemas/DataEntityRef'
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            output_list:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataEntityRef'
 
     DataInputDetails:
       allOf:
-      - $ref: '#/components/schemas/DataInput'
-      - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - $ref: '#/components/schemas/DataInput'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
     DataEntityRun:
       allOf:
-      - $ref: '#/components/schemas/DataEntityRunBaseObject'
-      - type: object
-        properties:
-          data_entity_id:
-            type: integer
-            format: int64
-          start_time:
-            type: string
-            format: date-time
-          end_time:
-            type: string
-            format: date-time
-          status_reason:
-            type: string
-          status:
-            $ref: '#/components/schemas/DataEntityRunStatus'
-        required:
-        - status
+        - $ref: '#/components/schemas/DataEntityRunBaseObject'
+        - type: object
+          properties:
+            data_entity_id:
+              type: integer
+              format: int64
+            start_time:
+              type: string
+              format: date-time
+            end_time:
+              type: string
+              format: date-time
+            status_reason:
+              type: string
+            status:
+              $ref: '#/components/schemas/DataEntityRunStatus'
+          required:
+            - status
 
     DataQualityTestExpectation:
       type: object
@@ -593,36 +601,36 @@ components:
         severity:
           $ref: '#/components/schemas/DataQualityTestSeverity'
       required:
-      - severity
+        - severity
 
     DataQualityTestSeverity:
       type: string
       enum:
-      - MINOR
-      - MAJOR
-      - CRITICAL
+        - MINOR
+        - MAJOR
+        - CRITICAL
 
     DataQualityTest:
       allOf:
-      - $ref: '#/components/schemas/DataEntityBaseObject'
-      - type: object
-        properties:
-          suite_name:
-            type: string
-          suite_url:
-            type: string
-          expectation:
-            $ref: '#/components/schemas/DataQualityTestExpectation'
-          severity:
-            $ref: '#/components/schemas/DataQualityTestSeverity'
-          datasets_list:
-            $ref: '#/components/schemas/DataEntityRefList'
-          linked_url_list:
-            type: array
-            items:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            suite_name:
               type: string
-          latest_run:
-            $ref: '#/components/schemas/DataEntityRun'
+            suite_url:
+              type: string
+            expectation:
+              $ref: '#/components/schemas/DataQualityTestExpectation'
+            severity:
+              $ref: '#/components/schemas/DataQualityTestSeverity'
+            datasets_list:
+              $ref: '#/components/schemas/DataEntityRefList'
+            linked_url_list:
+              type: array
+              items:
+                type: string
+            latest_run:
+              $ref: '#/components/schemas/DataEntityRun'
 
     DataEntityRunList:
       type: object
@@ -634,29 +642,29 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     DataEntityGroup:
       allOf:
-      - $ref: '#/components/schemas/DataEntityBaseObject'
-      - type: object
-        properties:
-          items_count:
-            type: integer
-          entities:
-            $ref: '#/components/schemas/DataEntityRefList'
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            items_count:
+              type: integer
+            entities:
+              $ref: '#/components/schemas/DataEntityRefList'
 
     DataEntityGroupDetails:
       allOf:
-      - $ref: '#/components/schemas/DataEntityGroup'
-      - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
-      - type: object
-        properties:
-          has_children:
-            type: boolean
-          manually_created:
-            type: boolean
+        - $ref: '#/components/schemas/DataEntityGroup'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - type: object
+          properties:
+            has_children:
+              type: boolean
+            manually_created:
+              type: boolean
 
     DataEntityGroupFormData:
       type: object
@@ -670,9 +678,9 @@ components:
         entities:
           $ref: '#/components/schemas/DataEntityRefList'
       required:
-      - name
-      - type
-      - entities
+        - name
+        - type
+        - entities
 
     DataEntityDataEntityGroupFormData:
       type: object
@@ -699,18 +707,18 @@ components:
         sla_ref:
           type: string
       required:
-      - total
-      - success
-      - sla_colour
-      - severity_weights
-      - sla_ref
+        - total
+        - success
+        - sla_colour
+        - severity_weights
+        - sla_ref
 
     SLAColour:
       type: string
       enum:
-      - GREEN
-      - YELLOW
-      - RED
+        - GREEN
+        - YELLOW
+        - RED
 
     DataSetSLASeverityWeight:
       type: object
@@ -721,8 +729,8 @@ components:
           type: integer
           format: int64
       required:
-      - severity
-      - count
+        - severity
+        - count
 
     DataSetTestReport:
       type: object
@@ -754,21 +762,21 @@ components:
 
     DataQualityTestDetails:
       allOf:
-      - $ref: '#/components/schemas/DataQualityTest'
-      - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - $ref: '#/components/schemas/DataQualityTest'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
     DataConsumer:
       allOf:
-      - $ref: '#/components/schemas/DataEntityBaseObject'
-      - type: object
-        properties:
-          input_list:
-            $ref: '#/components/schemas/DataEntityRefList'
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            input_list:
+              $ref: '#/components/schemas/DataEntityRefList'
 
     DataConsumerDetails:
       allOf:
-      - $ref: '#/components/schemas/DataConsumer'
-      - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - $ref: '#/components/schemas/DataConsumer'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
     DataEntityList:
       type: object
@@ -780,8 +788,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     DataSource:
       type: object
@@ -808,11 +816,11 @@ components:
           format: int32
           description: Pulling interval in seconds
       required:
-      - id
-      - token
-      - oddrn
-      - name
-      - active
+        - id
+        - token
+        - oddrn
+        - name
+        - active
 
     DataSourceList:
       type: object
@@ -824,8 +832,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     DataSourceFormData:
       type: object
@@ -847,7 +855,7 @@ components:
           format: int32
           description: Pulling interval in seconds
       required:
-      - name
+        - name
 
     DataSourceUpdateFormData:
       type: object
@@ -886,10 +894,10 @@ components:
           type: string
           format: date-time
       required:
-      - id
-      - value
-      - created_at
-      - updated_at
+        - id
+        - value
+        - created_at
+        - updated_at
 
     CollectorList:
       type: object
@@ -901,8 +909,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     Collector:
       type: object
@@ -919,9 +927,9 @@ components:
         description:
           type: string
       required:
-      - id
-      - name
-      - token
+        - id
+        - name
+        - token
 
     CollectorFormData:
       type: object
@@ -933,7 +941,7 @@ components:
         description:
           type: string
       required:
-      - name
+        - name
 
     CollectorUpdateFormData:
       type: object
@@ -954,25 +962,25 @@ components:
         hasNext:
           type: boolean
       required:
-      - total
-      - hasNext
+        - total
+        - hasNext
 
     DataEntityRunStatus:
       type: string
       enum:
-      - SUCCESS
-      - FAILED
-      - SKIPPED
-      - BROKEN
-      - ABORTED
-      - UNKNOWN
+        - SUCCESS
+        - FAILED
+        - SKIPPED
+        - BROKEN
+        - ABORTED
+        - UNKNOWN
 
     MultipleFacetType:
       type: string
       enum:
-      - owners
-      - tags
-      - types
+        - owners
+        - tags
+        - types
 
     SearchFilter:
       type: object
@@ -983,21 +991,21 @@ components:
         name:
           type: string
       required:
-      - id
-      - name
+        - id
+        - name
 
     CountableSearchFilter:
       allOf:
-      - $ref: '#/components/schemas/SearchFilter'
-      - type: object
-        properties:
-          count:
-            type: integer
-            format: int64
-          selected:
-            type: boolean
-        required:
-        - stats
+        - $ref: '#/components/schemas/SearchFilter'
+        - type: object
+          properties:
+            count:
+              type: integer
+              format: int64
+            selected:
+              type: boolean
+          required:
+            - stats
 
     FacetState:
       type: object
@@ -1027,7 +1035,7 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
       required:
-      - entity_classes
+        - entity_classes
 
     SearchFacetsData:
       type: object
@@ -1048,9 +1056,9 @@ components:
         my_objects:
           type: boolean
       required:
-      - search_id
-      - query
-      - facet_state
+        - search_id
+        - query
+        - facet_state
 
     SearchResponse:
       type: object
@@ -1060,8 +1068,8 @@ components:
         facets_data:
           $ref: '#/components/schemas/SearchFacetsData'
       required:
-      - results
-      - facets_data
+        - results
+        - facets_data
 
     DataSetFieldStat:
       type: object
@@ -1081,7 +1089,7 @@ components:
         datetime_stats:
           $ref: '#/components/schemas/DateTimeFieldStat'
       required:
-      - name
+        - name
 
     BooleanFieldStat:
       type: object
@@ -1096,9 +1104,9 @@ components:
           type: integer
           format: int64
       required:
-      - true_count
-      - false_count
-      - nulls_count
+        - true_count
+        - false_count
+        - nulls_count
 
     ComplexFieldStat:
       type: object
@@ -1110,8 +1118,8 @@ components:
           type: integer
           format: int64
       required:
-      - nulls_count
-      - unique_count
+        - nulls_count
+        - unique_count
 
     NumberFieldStat:
       type: object
@@ -1131,10 +1139,10 @@ components:
           type: integer
           format: int64
       required:
-      - low_value
-      - high_value
-      - nulls_count
-      - unique_count
+        - low_value
+        - high_value
+        - nulls_count
+        - unique_count
 
     StringFieldStat:
       type: object
@@ -1150,10 +1158,10 @@ components:
           type: integer
           format: int64
       required:
-      - max_length
-      - avg_length
-      - nulls_count
-      - unique_count
+        - max_length
+        - avg_length
+        - nulls_count
+        - unique_count
 
     BinaryFieldStat:
       type: object
@@ -1169,10 +1177,10 @@ components:
           type: integer
           format: int64
       required:
-      - max_length
-      - avg_length
-      - nulls_count
-      - unique_count
+        - max_length
+        - avg_length
+        - nulls_count
+        - unique_count
 
     DateTimeFieldStat:
       type: object
@@ -1196,10 +1204,10 @@ components:
           type: integer
           format: int64
       required:
-      - low_value
-      - high_value
-      - nulls_count
-      - unique_count
+        - low_value
+        - high_value
+        - nulls_count
+        - unique_count
 
     DataSetField:
       type: object
@@ -1237,10 +1245,10 @@ components:
         enum_value_count:
           type: integer
       required:
-      - id
-      - oddrn
-      - name
-      - type
+        - id
+        - oddrn
+        - name
+        - type
 
     DataSetFieldType:
       type: object
@@ -1248,27 +1256,27 @@ components:
         type:
           type: string
           enum:
-          - TYPE_STRING
-          - TYPE_NUMBER
-          - TYPE_INTEGER
-          - TYPE_BOOLEAN
-          - TYPE_CHAR
-          - TYPE_DATETIME
-          - TYPE_TIME
-          - TYPE_STRUCT
-          - TYPE_BINARY
-          - TYPE_LIST
-          - TYPE_MAP
-          - TYPE_UNION
-          - TYPE_DURATION
-          - TYPE_UNKNOWN
+            - TYPE_STRING
+            - TYPE_NUMBER
+            - TYPE_INTEGER
+            - TYPE_BOOLEAN
+            - TYPE_CHAR
+            - TYPE_DATETIME
+            - TYPE_TIME
+            - TYPE_STRUCT
+            - TYPE_BINARY
+            - TYPE_LIST
+            - TYPE_MAP
+            - TYPE_UNION
+            - TYPE_DURATION
+            - TYPE_UNKNOWN
         logical_type:
           type: string
         is_nullable:
           type: boolean
       required:
-      - type
-      - is_nullable
+        - type
+        - is_nullable
 
     DatasetFieldUpdateFormData:
       type: object
@@ -1290,8 +1298,8 @@ components:
         data_set_version:
           $ref: '#/components/schemas/DataSetVersion'
       required:
-      - field_list
-      - data_set_version
+        - field_list
+        - data_set_version
 
     EnumValueList:
       type: object
@@ -1313,8 +1321,8 @@ components:
         description:
           type: string
       required:
-      - id
-      - name
+        - id
+        - name
 
     EnumValueFormData:
       type: object
@@ -1327,7 +1335,7 @@ components:
         description:
           type: string
       required:
-      - name
+        - name
 
     BulkEnumValueFormData:
       type: object
@@ -1349,8 +1357,8 @@ components:
         external:
           type: boolean
       required:
-      - id
-      - name
+        - id
+        - name
 
     LabelList:
       type: array
@@ -1365,8 +1373,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     LabelFormData:
       type: object
@@ -1374,7 +1382,7 @@ components:
         name:
           type: string
       required:
-      - name
+        - name
 
     BulkLabelFormData:
       type: array
@@ -1407,9 +1415,9 @@ components:
         children_count:
           type: integer
       required:
-      - id
-      - name
-      - type
+        - id
+        - name
+        - type
 
     DataEntityLineageEdge:
       type: object
@@ -1421,8 +1429,8 @@ components:
           type: integer
           format: int64
       required:
-      - source_id
-      - target_id
+        - source_id
+        - target_id
 
     DataEntityLineageStream:
       type: object
@@ -1440,9 +1448,9 @@ components:
           items:
             $ref: '#/components/schemas/DataEntityLineageNode'
       required:
-      - nodes
-      - edges
-      - groups
+        - nodes
+        - edges
+        - groups
 
     DataEntityLineage:
       type: object
@@ -1454,9 +1462,9 @@ components:
         root:
           $ref: '#/components/schemas/DataEntityLineageNode'
       required:
-      - root
-      - upstream
-      - downstream
+        - root
+        - upstream
+        - downstream
 
     DataEntityGroupLineageList:
       type: object
@@ -1466,24 +1474,24 @@ components:
           items:
             $ref: '#/components/schemas/DataEntityLineageStream'
       required:
-      - items
+        - items
 
     MetadataFieldType:
       type: string
       enum:
-      - INTEGER
-      - STRING
-      - DATETIME
-      - FLOAT
-      - BOOLEAN
-      - ARRAY
-      - JSON
+        - INTEGER
+        - STRING
+        - DATETIME
+        - FLOAT
+        - BOOLEAN
+        - ARRAY
+        - JSON
 
     MetadataFieldOrigin:
       type: string
       enum:
-      - EXTERNAL
-      - INTERNAL
+        - EXTERNAL
+        - INTERNAL
 
     MetadataField:
       type: object
@@ -1498,9 +1506,9 @@ components:
         origin:
           $ref: '#/components/schemas/MetadataFieldOrigin'
       required:
-      - id
-      - name
-      - type
+        - id
+        - name
+        - type
 
     MetadataFieldList:
       type: object
@@ -1512,7 +1520,7 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
+        - items
 
     MetadataFieldValue:
       type: object
@@ -1522,8 +1530,8 @@ components:
         value:
           type: string
       required:
-      - field
-      - value
+        - field
+        - value
 
     MetadataFieldValueList:
       type: object
@@ -1533,7 +1541,7 @@ components:
           items:
             $ref: '#/components/schemas/MetadataFieldValue'
       required:
-      - items
+        - items
 
     MetadataFieldValueUpdateFormData:
       type: object
@@ -1543,7 +1551,7 @@ components:
         origin:
           $ref: '#/components/schemas/MetadataFieldOrigin'
       required:
-      - value
+        - value
 
     MetadataFieldFormData:
       type: object
@@ -1553,13 +1561,13 @@ components:
         type:
           $ref: '#/components/schemas/MetadataFieldType'
       required:
-      - name
-      - type
+        - name
+        - type
 
     MetadataObject:
       allOf:
-      - $ref: '#/components/schemas/MetadataFieldFormData'
-      - $ref: '#/components/schemas/MetadataFieldValueUpdateFormData'
+        - $ref: '#/components/schemas/MetadataFieldFormData'
+        - $ref: '#/components/schemas/MetadataFieldValueUpdateFormData'
 
     MetadataFieldValueFormData:
       type: array
@@ -1572,7 +1580,7 @@ components:
         internal_description:
           type: string
       required:
-      - internal_description
+        - internal_description
 
     InternalDescriptionFormData:
       type: object
@@ -1580,7 +1588,7 @@ components:
         internal_description:
           type: string
       required:
-      - internal_description
+        - internal_description
 
     InternalName:
       type: object
@@ -1588,7 +1596,7 @@ components:
         internal_name:
           type: string
       required:
-      - internal_name
+        - internal_name
 
     InternalNameFormData:
       type: object
@@ -1596,7 +1604,7 @@ components:
         internal_name:
           type: string
       required:
-      - internal_name
+        - internal_name
 
     TagsFormData:
       type: object
@@ -1606,7 +1614,7 @@ components:
           items:
             type: string
       required:
-      - tag_name_list
+        - tag_name_list
 
     MetadataUpdateCustomFieldFormData:
       type: object
@@ -1614,7 +1622,7 @@ components:
         name:
           type: string
       required:
-      - name
+        - name
 
     SearchFilterState:
       properties:
@@ -1626,9 +1634,9 @@ components:
         selected:
           type: boolean
       required:
-      - entity_id
-      - name
-      - selected
+        - entity_id
+        - name
+        - selected
 
     SearchFormData:
       type: object
@@ -1665,7 +1673,7 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
       required:
-      - filters
+        - filters
 
     Alert:
       type: object
@@ -1690,25 +1698,25 @@ components:
           type: string
           format: date-time
       required:
-      - id
-      - type
-      - description
-      - status
-      - created_at
+        - id
+        - type
+        - description
+        - status
+        - created_at
 
     AlertType:
       type: string
       enum:
-      - DISTRIBUTION_ANOMALY
-      - BACKWARDS_INCOMPATIBLE_SCHEMA
-      - FAILED_DQ_TEST
-      - FAILED_JOB
+        - DISTRIBUTION_ANOMALY
+        - BACKWARDS_INCOMPATIBLE_SCHEMA
+        - FAILED_DQ_TEST
+        - FAILED_JOB
 
     AlertStatus:
       type: string
       enum:
-      - OPEN
-      - RESOLVED
+        - OPEN
+        - RESOLVED
 
     AlertStatusFormData:
       type: object
@@ -1726,8 +1734,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     AlertTotals:
       type: object
@@ -1758,8 +1766,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     TermRefList:
       type: object
@@ -1771,8 +1779,8 @@ components:
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
-      - items
-      - page_info
+        - items
+        - page_info
 
     TermRef:
       type: object
@@ -1787,37 +1795,37 @@ components:
         namespace:
           $ref: '#/components/schemas/Namespace'
       required:
-      - id
-      - name
-      - definition
-      - namespace
+        - id
+        - name
+        - definition
+        - namespace
 
     Term:
       allOf:
-      - $ref: '#/components/schemas/TermRef'
-      - type: object
-        properties:
-          ownership:
-            $ref: '#/components/schemas/OwnershipList'
-          entities_using_count:
-            type: integer
-          created_at:
-            type: string
-            format: date-time
-          updated_at:
-            type: string
-            format: date-time
-        required:
-        - created_at
-        - updated_at
+        - $ref: '#/components/schemas/TermRef'
+        - type: object
+          properties:
+            ownership:
+              $ref: '#/components/schemas/OwnershipList'
+            entities_using_count:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+          required:
+            - created_at
+            - updated_at
 
     TermDetails:
       allOf:
-      - $ref: '#/components/schemas/Term'
-      - type: object
-        properties:
-          tags:
-            $ref: '#/components/schemas/TagList'
+        - $ref: '#/components/schemas/Term'
+        - type: object
+          properties:
+            tags:
+              $ref: '#/components/schemas/TagList'
 
     TermFormData:
       type: object
@@ -1829,9 +1837,9 @@ components:
         definition:
           type: string
       required:
-      - name
-      - namespace_name
-      - definition
+        - name
+        - namespace_name
+        - definition
 
     DataEntityTermFormData:
       type: object
@@ -1840,7 +1848,7 @@ components:
           type: integer
           format: int64
       required:
-      - term_id
+        - term_id
 
     TermSearchFormData:
       type: object
@@ -1863,7 +1871,7 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
       required:
-      - filters
+        - filters
 
     TermSearchFacetsData:
       type: object
@@ -1879,9 +1887,9 @@ components:
           type: integer
           format: int64
       required:
-      - search_id
-      - query
-      - facet_state
+        - search_id
+        - query
+        - facet_state
 
     TermFacetState:
       type: object
@@ -1915,10 +1923,10 @@ components:
           type: integer
           format: int64
       required:
-      - total_count
-      - my_objects_count
-      - downstream_count
-      - upstream_count
+        - total_count
+        - my_objects_count
+        - downstream_count
+        - upstream_count
 
     Activity:
       type: object
@@ -1942,13 +1950,13 @@ components:
         system_event:
           type: boolean
       required:
-      - id
-      - event_type
-      - created_at
-      - data_entity
-      - old_state
-      - new_state
-      - system_event
+        - id
+        - event_type
+        - created_at
+        - data_entity
+        - old_state
+        - new_state
+        - system_event
 
     ActivityState:
       type: object
@@ -2145,36 +2153,36 @@ components:
     ActivityType:
       type: string
       enum:
-      - ALL
-      - MY_OBJECTS
-      - DOWNSTREAM
-      - UPSTREAM
+        - ALL
+        - MY_OBJECTS
+        - DOWNSTREAM
+        - UPSTREAM
 
     ActivityEventType:
       type: string
       enum:
-      - OWNERSHIP_CREATED
-      - OWNERSHIP_UPDATED
-      - OWNERSHIP_DELETED
-      - TAGS_ASSOCIATION_UPDATED
-      - DATA_ENTITY_CREATED
-      - DATA_ENTITY_OVERVIEW_UPDATED
-      - DATA_ENTITY_METADATA_UPDATED
-      - DATA_ENTITY_SCHEMA_UPDATED
-      - DATA_ENTITY_RELATION_UPDATED
-      - TERM_ASSIGNED
-      - TERM_ASSIGNMENT_DELETED
-      - DESCRIPTION_UPDATED
-      - BUSINESS_NAME_UPDATED
-      - CUSTOM_METADATA_CREATED
-      - CUSTOM_METADATA_UPDATED
-      - CUSTOM_METADATA_DELETED
-      - DATASET_FIELD_VALUES_UPDATED
-      - DATASET_FIELD_DESCRIPTION_UPDATED
-      - DATASET_FIELD_LABELS_UPDATED
-      - CUSTOM_GROUP_CREATED
-      - CUSTOM_GROUP_UPDATED
-      - CUSTOM_GROUP_DELETED
+        - OWNERSHIP_CREATED
+        - OWNERSHIP_UPDATED
+        - OWNERSHIP_DELETED
+        - TAGS_ASSOCIATION_UPDATED
+        - DATA_ENTITY_CREATED
+        - DATA_ENTITY_OVERVIEW_UPDATED
+        - DATA_ENTITY_METADATA_UPDATED
+        - DATA_ENTITY_SCHEMA_UPDATED
+        - DATA_ENTITY_RELATION_UPDATED
+        - TERM_ASSIGNED
+        - TERM_ASSIGNMENT_DELETED
+        - DESCRIPTION_UPDATED
+        - BUSINESS_NAME_UPDATED
+        - CUSTOM_METADATA_CREATED
+        - CUSTOM_METADATA_UPDATED
+        - CUSTOM_METADATA_DELETED
+        - DATASET_FIELD_VALUES_UPDATED
+        - DATASET_FIELD_DESCRIPTION_UPDATED
+        - DATASET_FIELD_LABELS_UPDATED
+        - CUSTOM_GROUP_CREATED
+        - CUSTOM_GROUP_UPDATED
+        - CUSTOM_GROUP_DELETED
 
     OwnerAssociationRequestList:
       type: object
@@ -2223,6 +2231,102 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/OwnerAssociationRequestStatus'
+
+    Policy:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+
+    PolicyList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    PolicyFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        policy:
+          type: string
+      required:
+        - name
+
+    PolicyDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        policy:
+          type: string
+      required:
+        - id
+        - name
+        - policy
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+      required:
+        - id
+        - name
+        - policies
+
+    RoleList:
+        type: object
+        properties:
+          items:
+            type: array
+            items:
+                $ref: '#/components/schemas/Role'
+          page_info:
+            $ref: '#/components/schemas/PageInfo'
+        required:
+            - items
+            - page_info
+
+    RoleFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+      required:
+        - name
+        - policies
 
   parameters:
     PageParam:
@@ -2328,6 +2432,14 @@ components:
 
     TermIdParam:
       name: term_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    PolicyIdParam:
+      name: policy_id
       in: path
       required: true
       schema:
