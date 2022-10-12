@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Autocomplete,
-  Box,
-  SelectChangeEvent,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Box, SelectChangeEvent, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
@@ -26,22 +21,17 @@ interface MetadataCreateFormItemProps {
   itemIndex: number;
 }
 
-const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
-  itemIndex,
-}) => {
+const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemIndex }) => {
   const dispatch = useAppDispatch();
 
-  const { register, control } = useFormContext();
+  const { control, setValue } = useFormContext();
   // Autocomplete
-  type FilterOption = Omit<MetadataField, 'id' | 'type'> &
-    Partial<MetadataField>;
+  type FilterOption = Omit<MetadataField, 'id' | 'type'> & Partial<MetadataField>;
   type FilterChangeOption = FilterOption | string | { inputValue: string };
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [selectedField, setSelectedField] = React.useState<FilterOption>();
-  const [selectedType, setSelectedType] = React.useState<
-    MetadataFieldType | ''
-  >('');
+  const [selectedType, setSelectedType] = React.useState<MetadataFieldType | ''>('');
   const filter = createFilterOptions<FilterOption>();
   const [searchText, setSearchText] = React.useState<string>('');
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -66,19 +56,13 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
     }
   }, [autocompleteOpen, searchText]);
 
-  const handleInputChange = (
-    _: React.ChangeEvent<unknown>,
-    query: string
-  ) => {
+  const handleInputChange = (_: React.ChangeEvent<unknown>, query: string) => {
     setSearchText(query);
   };
 
   const handleOptionChange = React.useCallback(
-    (onChange: (val?: string) => void) =>
-      (
-        _: React.ChangeEvent<unknown>,
-        newValue: FilterChangeOption | null
-      ) => {
+    (onChange: (val: unknown) => void) =>
+      (_: React.SyntheticEvent, newValue: FilterChangeOption | null) => {
         let newType: MetadataFieldType | '' = '';
         let newField;
         if (newValue && typeof newValue === 'object') {
@@ -99,6 +83,8 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
         }
         setSelectedType(newType);
         setSelectedField(newField);
+        setValue(`metadata.${itemIndex}.type`, newField?.type);
+        setValue(`metadata.${itemIndex}.value`, '');
         onChange(newField?.name);
       },
     [setSelectedType, setSelectedField]
@@ -143,22 +129,21 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
     onChange: (val: unknown) => void
   ) => {
     setSelectedType(event.target.value as MetadataFieldType);
-    onChange(event.target.value);
+    onChange(selectedType);
   };
 
   return (
     <>
       <Controller
         name={`metadata.${itemIndex}.name`}
-        defaultValue=""
+        defaultValue=''
         rules={{ required: true }}
         control={control}
         render={({ field }) => (
           <Autocomplete
-            // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             fullWidth
-            id="metadata-name-search"
+            id='metadata-name-search'
             open={autocompleteOpen}
             onOpen={() => {
               setAutocompleteOpen(true);
@@ -179,11 +164,8 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
             renderInput={params => (
               <AppInput
                 {...params}
-                {...register(`metadata[${itemIndex}].name`, {
-                  required: true,
-                })}
                 ref={params.InputProps.ref}
-                placeholder="Metadata Name"
+                placeholder='Metadata Name'
                 customEndAdornment={{
                   variant: 'loader',
                   showAdornment: loading,
@@ -193,12 +175,12 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
             )}
             renderOption={(props, option) => (
               <li {...props}>
-                <Typography variant="body2">
+                <Typography variant='body2'>
                   {option.id ? (
                     option.name
                   ) : (
                     <AutocompleteSuggestion
-                      optionLabel="custom data"
+                      optionLabel='custom data'
                       optionName={option.name}
                     />
                   )}
@@ -219,8 +201,8 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
               render={({ field }) => (
                 <AppSelect
                   {...field}
-                  label="Type"
-                  placeholder="Type"
+                  label='Type'
+                  placeholder='Type'
                   disabled={!!selectedField?.type}
                   onChange={e => handleMetadataChange(e, field.onChange)}
                   value={selectedType}
@@ -236,9 +218,9 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
           </Box>
           <Box sx={{ mt: 1.5 }} display={selectedField.type ? '' : 'none'}>
             <Typography
-              variant="body2"
-              color="texts.secondary"
-              component="span"
+              variant='body2'
+              color='texts.secondary'
+              component='span'
               sx={{ mr: 0.5 }}
             >
               Type:
