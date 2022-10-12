@@ -2240,8 +2240,6 @@ components:
           format: int64
         name:
           type: string
-        description:
-          type: string
 
     PolicyList:
       type: object
@@ -2261,8 +2259,6 @@ components:
       properties:
         name:
           type: string
-        description:
-          type: string
         policy:
           type: string
       required:
@@ -2275,8 +2271,6 @@ components:
           type: integer
           format: int64
         name:
-          type: string
-        description:
           type: string
         policy:
           type: string
