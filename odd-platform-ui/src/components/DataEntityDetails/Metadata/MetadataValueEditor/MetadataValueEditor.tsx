@@ -35,6 +35,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   if (metadataType === MetadataFieldType.DATETIME) {
     return (
       <Controller
+        shouldUnregister
         control={control}
         name={fieldName}
         defaultValue={

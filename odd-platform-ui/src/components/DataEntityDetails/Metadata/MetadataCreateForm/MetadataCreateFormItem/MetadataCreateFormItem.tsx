@@ -17,11 +17,7 @@ import {
 } from 'components/shared';
 import MetadataValueEditField from '../../MetadataValueEditor/MetadataValueEditor';
 
-interface MetadataCreateFormItemProps {
-  itemIndex: number;
-}
-
-const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemIndex }) => {
+const MetadataCreateFormItem: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const { control, setValue } = useFormContext();
@@ -83,8 +79,8 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemInd
         }
         setSelectedType(newType);
         setSelectedField(newField);
-        setValue(`metadata.${itemIndex}.type`, newField?.type);
-        setValue(`metadata.${itemIndex}.value`, '');
+        setValue(`metadata.type`, newField?.type);
+        setValue(`metadata.value`, '');
         onChange(newField?.name);
       },
     [setSelectedType, setSelectedField]
@@ -99,12 +95,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemInd
         !loading &&
         !options.some(option => option.name === params.inputValue)
       ) {
-        return [
-          ...options,
-          {
-            name: params.inputValue,
-          },
-        ];
+        return [...options, { name: params.inputValue }];
       }
 
       return filtered;
@@ -136,7 +127,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemInd
   return (
     <>
       <Controller
-        name={`metadata.${itemIndex}.name`}
+        name='metadata.name'
         defaultValue=''
         rules={{ required: true }}
         control={control}
@@ -195,7 +186,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemInd
         <>
           <Box sx={{ mt: 1.5 }} display={selectedField.type ? 'none' : ''}>
             <Controller
-              name={`metadata.${itemIndex}.type`}
+              name='metadata.type'
               control={control}
               defaultValue={selectedType}
               rules={{ required: true }}
@@ -230,7 +221,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({ itemInd
           </Box>
           <Box sx={{ mt: 1.5 }}>
             <MetadataValueEditField
-              fieldName={`metadata.${itemIndex}.value`}
+              fieldName='metadata.value'
               metadataType={selectedType}
               labeled
             />
