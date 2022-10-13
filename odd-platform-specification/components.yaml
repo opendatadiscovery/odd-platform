@@ -2205,6 +2205,8 @@ components:
           format: int64
         username:
           type: string
+        provider:
+          type: string
         owner_name:
           type: string
         status:
