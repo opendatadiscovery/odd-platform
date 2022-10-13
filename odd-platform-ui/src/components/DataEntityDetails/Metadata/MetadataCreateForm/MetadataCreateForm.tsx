@@ -66,17 +66,14 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Add Custom Metadata
     </Typography>
   );
 
   const formContent = () => (
     <FormProvider {...methods}>
-      <form
-        id="metadata-create-form"
-        onSubmit={methods.handleSubmit(createMetadata)}
-      >
+      <form id='metadata-create-form' onSubmit={methods.handleSubmit(createMetadata)}>
         {fields.map((item, index) => (
           <MetadataCreateFormItem key={item.id} itemIndex={index} />
         ))}
@@ -86,10 +83,10 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="metadata-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='metadata-create-form'
+      color='primary'
       fullWidth
       disabled={!methods.formState.isValid}
     >
@@ -99,7 +96,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }
