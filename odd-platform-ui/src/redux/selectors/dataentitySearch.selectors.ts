@@ -19,9 +19,8 @@ import * as actions from 'redux/actions';
 import compact from 'lodash/compact';
 import { emptyArr } from 'lib/constants';
 
-const searchState = ({
-  dataEntitySearch,
-}: RootState): DataEntitySearchState => dataEntitySearch;
+const searchState = ({ dataEntitySearch }: RootState): DataEntitySearchState =>
+  dataEntitySearch;
 
 export const getSearchCreatingStatuses = createStatusesSelector(
   actions.createDataEntitySearchActionType
@@ -80,20 +79,11 @@ export const getSearchIsCreatingAndFetching = createSelector(
     compact([isSearchCreating, isSearchFetching]).length > 0
 );
 
-export const getSearchId = createSelector(
-  searchState,
-  search => search.searchId
-);
+export const getSearchId = createSelector(searchState, search => search.searchId);
 
-export const getSearchQuery = createSelector(
-  searchState,
-  search => search.query
-);
+export const getSearchQuery = createSelector(searchState, search => search.query);
 
-export const getSearchMyObjects = createSelector(
-  searchState,
-  search => search.myObjects
-);
+export const getSearchMyObjects = createSelector(searchState, search => search.myObjects);
 
 export const getSearchFacetsByType = (facetName: OptionalFacetNames) =>
   createSelector(
@@ -112,9 +102,7 @@ export const getSearchEntityClass = createSelector(searchState, search => {
     'all') as SearchClass;
 });
 
-export const getSelectedSearchFacetOptions = (
-  facetName: OptionalFacetNames
-) =>
+export const getSelectedSearchFacetOptions = (facetName: OptionalFacetNames) =>
   createSelector(searchState, search => {
     if (!search.facetState[facetName]) return emptyArr;
     return transform<SearchFacetStateById, SearchFilterStateSynced[]>(
@@ -133,10 +121,7 @@ export const getSearchFacetsData = createSelector(searchState, search =>
   )
 );
 
-export const getSearchTotals = createSelector(
-  searchState,
-  search => search.totals
-);
+export const getSearchTotals = createSelector(searchState, search => search.totals);
 
 export const getSearchResults = createSelector(
   searchState,

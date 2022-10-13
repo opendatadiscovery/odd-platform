@@ -1,6 +1,7 @@
 import React, { HTMLAttributeAnchorTarget } from 'react';
-import { Box, ButtonProps } from '@mui/material';
+import { Box, ButtonProps, Theme } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { SxProps } from '@mui/system';
 import { ButtonColors, Loader, StyledAppButton } from './AppButtonStyles';
 
 interface AppButtonProps
@@ -26,10 +27,14 @@ interface AppButtonProps
   truncate?: boolean;
   linkTarget?: HTMLAttributeAnchorTarget;
   isLoading?: boolean;
+  containerSx?: SxProps<Theme>;
 }
 
 const AppButton: React.FC<AppButtonProps> = React.forwardRef(
-  ({ color, children, truncate, to, linkTarget, isLoading, ...props }, ref) => {
+  (
+    { color, children, truncate, to, linkTarget, isLoading, containerSx, ...props },
+    ref
+  ) => {
     const [isOverflowed, setIsOverflowed] = React.useState(truncate);
     const buttonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -43,7 +48,7 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
 
     if (to) {
       return (
-        <Box sx={props.sx} width='100%'>
+        <Box sx={containerSx}>
           <Link to={to} style={{ width: 'inherit' }} target={linkTarget}>
             <StyledAppButton
               {...props}

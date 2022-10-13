@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   textDecoration: 'none',
   cursor: 'pointer',
   alignItems: 'center',
+  flexWrap: 'nowrap',
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   '& > *': { padding: theme.spacing(1.25, 1) },
 }));
@@ -17,4 +18,10 @@ export const ItemLink = styled(Link)(() => ({
   textDecoration: 'none',
   flexGrow: 1,
   overflow: 'hidden',
+}));
+
+export const RCContainer = styled(Typography)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 }));

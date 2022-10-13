@@ -2,26 +2,33 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
-import { SearchClass, SearchTotalsByName } from 'redux/interfaces';
 import {
   AppTooltip,
   EntityClassItem,
   NumberFormatted,
   TruncatedCell,
 } from 'components/shared';
-import { InformationIcon } from 'components/shared/Icons';
+import { ColumnsIcon, InformationIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
-import { ColContainer, NameContainer } from '../ResultsStyles';
+import * as S from 'components/Search/Results/ResultsStyles';
+import RowsIcon from 'components/shared/Icons/RowsIcon';
+import { GridSizesByBreakpoints, NameContainer, SearchCol } from '../ResultsStyles';
 import ResultItemPreview from './ResultItemPreview/ResultItemPreview';
-import { Container, ItemLink } from './ResultItemStyles';
+import { Container, ItemLink, RCContainer } from './ResultItemStyles';
 
 interface ResultItemProps {
-  searchClass?: SearchClass;
-  totals: SearchTotalsByName;
   searchResult: DataEntity;
+  gridSizes: GridSizesByBreakpoints;
+  searchClassIdPredicate: (totalName: DataEntityClassNameEnum) => boolean;
+  showClassIcons: boolean;
 }
 
-const ResultItem: React.FC<ResultItemProps> = ({ searchResult, searchClass, totals }) => {
+const ResultItem: React.FC<ResultItemProps> = ({
+  searchResult,
+  gridSizes: grid,
+  searchClassIdPredicate,
+  showClassIcons,
+}) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
@@ -42,8 +49,8 @@ const ResultItem: React.FC<ResultItemProps> = ({ searchResult, searchClass, tota
   return (
     <ItemLink to={detailsLink}>
       <Container container>
-        <ColContainer
-          $colType='collg'
+        <SearchCol
+          lg={grid.lg.nm}
           item
           container
           justifyContent='space-between'
@@ -62,101 +69,103 @@ const ResultItem: React.FC<ResultItemProps> = ({ searchResult, searchClass, tota
             </AppTooltip>
           </NameContainer>
           <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
-            {!searchClass ||
-              (typeof searchClass === 'string' &&
-                searchResult.entityClasses?.map(entityClass => (
-                  <EntityClassItem
-                    sx={{ ml: 0.5 }}
-                    key={entityClass.id}
-                    entityClassName={entityClass.name}
-                  />
-                )))}
+            {showClassIcons &&
+              searchResult.entityClasses?.map(entityClass => (
+                <EntityClassItem
+                  sx={{ ml: 0.5 }}
+                  key={entityClass.id}
+                  entityClassName={entityClass.name}
+                />
+              ))}
           </Grid>
-        </ColContainer>
-        {searchClass && searchClass === totals[DataEntityClassNameEnum.SET]?.id ? (
+        </SearchCol>
+        {searchClassIdPredicate(DataEntityClassNameEnum.SET) ? (
           <>
-            <ColContainer item $colType='colxs'>
+            <SearchCol item lg={grid.lg.us}>
               <Typography variant='body1' noWrap>
                 {searchResult.stats?.consumersCount}
               </Typography>
-            </ColContainer>
-            <ColContainer item $colType='colxs'>
-              <Typography variant='body1' noWrap>
+            </SearchCol>
+            <SearchCol item lg={grid.lg.rc}>
+              <RCContainer variant='body1' noWrap mr={1}>
+                <RowsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
                 <NumberFormatted value={searchResult.stats?.rowsCount} />
-              </Typography>
-            </ColContainer>
-            <ColContainer item $colType='colxs'>
-              <Typography variant='body1' noWrap>
+              </RCContainer>
+              <RCContainer variant='body1' noWrap>
+                <ColumnsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
                 {searchResult.stats?.fieldsCount}
-              </Typography>
-            </ColContainer>
+              </RCContainer>
+            </SearchCol>
           </>
         ) : null}
-        {searchClass &&
-        searchClass === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
+        {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) ? (
           <>
-            <ColContainer $colType='collg' item container wrap='wrap'>
+            <SearchCol lg={grid.lg.sr} item container wrap='wrap'>
               <TruncatedCell
                 dataList={searchResult.sourceList}
                 externalEntityId={searchResult.id}
               />
-            </ColContainer>
-            <ColContainer item $colType='collg'>
+            </SearchCol>
+            <SearchCol item lg={grid.lg.tr}>
               <TruncatedCell
                 dataList={searchResult.targetList}
                 externalEntityId={searchResult.id}
               />
-            </ColContainer>
+            </SearchCol>
           </>
         ) : null}
-        {searchClass && searchClass === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
-          <ColContainer item $colType='collg'>
+        {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) ? (
+          <SearchCol item lg={grid.lg.sr}>
             <TruncatedCell
               dataList={searchResult.inputList}
               externalEntityId={searchResult.id}
             />
-          </ColContainer>
+          </SearchCol>
         ) : null}
-        {searchClass &&
-        searchClass === totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
+        {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) ? (
           <>
-            <ColContainer item container wrap='wrap' $colType='collg'>
+            <SearchCol item container wrap='wrap' lg={grid.lg.en}>
               <TruncatedCell
                 dataList={searchResult.datasetsList}
                 externalEntityId={searchResult.id}
               />
-            </ColContainer>
-            <ColContainer item $colType='collg'>
+            </SearchCol>
+            <SearchCol item lg={grid.lg.su}>
               <TruncatedCell
                 dataList={searchResult.linkedUrlList}
                 externalEntityId={searchResult.id}
               />
-            </ColContainer>
+            </SearchCol>
           </>
         ) : null}
-        {searchClass &&
-        searchClass === totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
-          <ColContainer item $colType='colsm'>
+        {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) ? (
+          <SearchCol item lg={grid.lg.ne}>
             <Typography variant='body1' noWrap>
               {searchResult?.itemsCount}
             </Typography>
-          </ColContainer>
+          </SearchCol>
         ) : null}
-        <ColContainer item $colType='colmd'>
-          <Typography
-            variant='body1'
-            title={searchResult.dataSource.namespace?.name}
-            noWrap
-          >
-            {searchResult.dataSource.namespace?.name}
-          </Typography>
-        </ColContainer>
-        <ColContainer item $colType='colmd'>
-          <Typography variant='body1' title={searchResult.dataSource?.name} noWrap>
-            {searchResult.dataSource?.name}
-          </Typography>
-        </ColContainer>
-        <ColContainer item $colType='colmd'>
+        <SearchCol item lg={grid.lg.nd} flexDirection='column'>
+          {searchResult.dataSource.namespace?.name ? (
+            <Typography
+              variant='body1'
+              title={searchResult.dataSource.namespace?.name}
+              noWrap
+            >
+              {searchResult.dataSource.namespace?.name}
+            </Typography>
+          ) : (
+            <Typography variant='subtitle2'>not in any namespace</Typography>
+          )}
+          {searchResult.dataSource?.name ? (
+            <Typography variant='body1' title={searchResult.dataSource?.name} noWrap>
+              {searchResult.dataSource?.name}
+            </Typography>
+          ) : (
+            <Typography variant='subtitle2'>manually created</Typography>
+          )}
+        </SearchCol>
+        <SearchCol item lg={grid.lg.ow}>
           <Grid container direction='column' alignItems='flex-start'>
             {searchResult.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
@@ -166,17 +175,23 @@ const ResultItem: React.FC<ResultItemProps> = ({ searchResult, searchClass, tota
               </Grid>
             ))}
           </Grid>
-        </ColContainer>
-        <ColContainer item $colType='colsm'>
+        </SearchCol>
+        <S.SearchCol item lg={grid.lg.gr}>
+          <TruncatedCell
+            dataList={searchResult.dataEntityGroups}
+            externalEntityId={searchResult.id}
+          />
+        </S.SearchCol>
+        <SearchCol item lg={grid.lg.cr}>
           <Typography variant='body1' title={createdAt} noWrap>
             {createdAt}
           </Typography>
-        </ColContainer>
-        <ColContainer item $colType='colsm'>
+        </SearchCol>
+        <SearchCol item lg={grid.lg.up}>
           <Typography variant='body1' title={updatedAt} noWrap>
             {updatedAt}
           </Typography>
-        </ColContainer>
+        </SearchCol>
       </Container>
     </ItemLink>
   );

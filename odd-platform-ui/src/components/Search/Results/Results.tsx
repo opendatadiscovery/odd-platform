@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
 import { useScrollBarWidth } from 'lib/hooks';
-import { DataEntityClassNameEnum } from 'generated-sources';
+import { CountableSearchFilter, DataEntityClassNameEnum } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityClassesDict,
@@ -24,6 +24,7 @@ import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice
 import { SearchClass } from 'redux/interfaces';
 import { AppButton, EmptyContentPlaceholder } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
+import findKey from 'lodash/findKey';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import ResultItem from './ResultItem/ResultItem';
@@ -71,8 +72,10 @@ const Results: React.FC = () => {
   React.useEffect(() => fetchPageAfterDEGDeleting(), [isDataEntityGroupDeleted]);
 
   const [showDEGBtn, setShowDEGBtn] = React.useState(false);
-  const searchClassIdPredicate = (totalName: DataEntityClassNameEnum) =>
-    searchClass === totals[totalName]?.id;
+  const searchClassIdPredicate = React.useCallback(
+    (totalName: DataEntityClassNameEnum) => searchClass === totals[totalName]?.id,
+    [searchClass, totals]
+  );
 
   React.useEffect(
     () => setShowDEGBtn(searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP)),
@@ -100,6 +103,20 @@ const Results: React.FC = () => {
     [dataEntityClassesDict]
   );
 
+  const grid = React.useMemo(() => {
+    let key: S.SearchTabsNames = 'all';
+
+    if (typeof searchClass === 'string') key = searchClass;
+    if (typeof searchClass === 'number') {
+      key = findKey(
+        totals,
+        total => (total as CountableSearchFilter)?.id === searchClass
+      ) as S.SearchTabsNames;
+    }
+
+    return S.gridSizes[key];
+  }, [searchClass, totals]);
+
   return (
     <Grid sx={{ mt: 2 }}>
       <SearchResultsTabs
@@ -124,67 +141,65 @@ const Results: React.FC = () => {
         />
       )}
       <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
-        <S.ColContainer item $colType='collg'>
+        <S.SearchCol item lg={grid.lg.nm}>
           <Typography variant='caption'>Name</Typography>
-        </S.ColContainer>
+        </S.SearchCol>
         {searchClassIdPredicate(DataEntityClassNameEnum.SET) && (
           <>
-            <S.ColContainer item $colType='colxs'>
+            <S.SearchCol item lg={grid.lg.us}>
               <Typography variant='caption'>Use</Typography>
-            </S.ColContainer>
-            <S.ColContainer item $colType='colxs'>
-              <Typography variant='caption'>Rows</Typography>
-            </S.ColContainer>
-            <S.ColContainer item $colType='colxs'>
-              <Typography variant='caption'>Columns</Typography>
-            </S.ColContainer>
+            </S.SearchCol>
+            <S.SearchCol item lg={grid.lg.rc}>
+              <Typography variant='caption'>Rows/Columns</Typography>
+            </S.SearchCol>
           </>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) && (
           <>
-            <S.ColContainer item $colType='collg'>
+            <S.SearchCol item lg={grid.lg.sr}>
               <Typography variant='caption'>Sources</Typography>
-            </S.ColContainer>
-            <S.ColContainer item $colType='collg'>
+            </S.SearchCol>
+            <S.SearchCol item lg={grid.lg.tr}>
               <Typography variant='caption'>Targets</Typography>
-            </S.ColContainer>
-          </>
-        )}
-        {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) && (
-          <>
-            <S.ColContainer item $colType='collg'>
-              <Typography variant='caption'>Entities</Typography>
-            </S.ColContainer>
-            <S.ColContainer item $colType='collg'>
-              <Typography variant='caption'>Suite URL</Typography>
-            </S.ColContainer>
+            </S.SearchCol>
           </>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) && (
-          <S.ColContainer item $colType='collg'>
+          <S.SearchCol item lg={grid.lg.sr}>
             <Typography variant='caption'>Source</Typography>
-          </S.ColContainer>
+          </S.SearchCol>
         )}
+        {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) && (
+          <>
+            <S.SearchCol item lg={grid.lg.en}>
+              <Typography variant='caption'>Entities</Typography>
+            </S.SearchCol>
+            <S.SearchCol item lg={grid.lg.su}>
+              <Typography variant='caption'>Suite URL</Typography>
+            </S.SearchCol>
+          </>
+        )}
+
         {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) && (
-          <S.ColContainer item $colType='colsm'>
+          <S.SearchCol item lg={grid.lg.ne}>
             <Typography variant='caption'>Number of entities</Typography>
-          </S.ColContainer>
+          </S.SearchCol>
         )}
-        <S.ColContainer item $colType='colmd'>
-          <Typography variant='caption'>Namespace</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='colmd'>
-          <Typography variant='caption'>Datasource</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='colmd'>
+        <S.SearchCol item lg={grid.lg.nd}>
+          <Typography variant='caption'>Namespace, Datasource</Typography>
+        </S.SearchCol>
+        <S.SearchCol item lg={grid.lg.ow}>
           <Typography variant='caption'>Owners</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='colsm'>
+        </S.SearchCol>
+        <S.SearchCol item lg={grid.lg.gr}>
+          <Typography variant='caption'>Groups</Typography>
+        </S.SearchCol>
+        <S.SearchCol item lg={grid.lg.cr}>
           <Typography variant='caption'>Created</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='colsm'>
+        </S.SearchCol>
+        <S.SearchCol item lg={grid.lg.up}>
           <Typography variant='caption'>Last Update</Typography>
-        </S.ColContainer>
+        </S.SearchCol>
       </S.ResultsTableHeader>
       {isSearchCreating ? (
         <SearchResultsSkeleton />
@@ -201,9 +216,10 @@ const Results: React.FC = () => {
             {searchResults.map(searchResult => (
               <ResultItem
                 key={searchResult.id}
-                searchClass={searchClass}
                 searchResult={searchResult}
-                totals={totals}
+                gridSizes={grid}
+                searchClassIdPredicate={searchClassIdPredicate}
+                showClassIcons={!searchClass || typeof searchClass === 'string'}
               />
             ))}
           </InfiniteScroll>

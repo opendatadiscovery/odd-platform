@@ -18,39 +18,35 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
     <ItemLink to={detailsLink}>
       <Container container>
         <ColContainer
-          $colType="colmd"
+          $colType='colmd'
           item
           container
-          justifyContent="space-between"
-          wrap="nowrap"
+          justifyContent='space-between'
+          wrap='nowrap'
         >
           <Typography
-            variant="body1"
+            variant='body1'
             noWrap
             title={linkedItem.internalName || linkedItem.externalName}
           >
             {linkedItem.internalName || linkedItem.externalName}
           </Typography>
         </ColContainer>
-        <ColContainer $colType="collg" item container wrap="wrap" />
-        <ColContainer item $colType="colsm">
-          <Grid container direction="column" alignItems="flex-start">
+        <ColContainer $colType='collg' item container wrap='wrap' />
+        <ColContainer item $colType='colsm'>
+          <Grid container direction='column' alignItems='flex-start'>
             {linkedItem.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
-                <Typography
-                  variant="body1"
-                  title={ownership.owner.name}
-                  noWrap
-                >
+                <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
               </Grid>
             ))}
           </Grid>
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Typography
-            variant="body1"
+            variant='body1'
             title={
               linkedItem.createdAt
                 ? format(linkedItem.createdAt, 'd MMM yyyy')
@@ -58,14 +54,12 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             }
             noWrap
           >
-            {linkedItem.createdAt
-              ? format(linkedItem.createdAt, 'd MMM yyyy')
-              : null}
+            {linkedItem.createdAt ? format(linkedItem.createdAt, 'd MMM yyyy') : null}
           </Typography>
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Typography
-            variant="body1"
+            variant='body1'
             title={
               linkedItem.updatedAt
                 ? formatDistanceToNowStrict(linkedItem.updatedAt, {
