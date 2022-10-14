@@ -140,7 +140,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
   );
 
   const handleOnOpen = React.useCallback(
-    (handleOpen: () => void) => {
+    (handleOpen: () => void) => () => {
       clearState();
       handleOpen();
     },
