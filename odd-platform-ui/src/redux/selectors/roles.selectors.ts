@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors';
-import { RolesState, RootState } from 'redux/interfaces';
+import { CurrentPageInfo, RolesState, RootState } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { rolesAdapter } from 'redux/slices/roles.slice';
 
@@ -17,5 +17,5 @@ export const { selectAll: getRolesList } = rolesAdapter.getSelectors<RootState>(
 
 export const getRolesPageInfo = createSelector(
   rolesState,
-  rolesList => rolesList.pageInfo
+  (rolesList): CurrentPageInfo => rolesList.pageInfo
 );

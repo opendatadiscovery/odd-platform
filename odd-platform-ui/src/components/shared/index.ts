@@ -31,6 +31,7 @@ export { default as NamespaceAutocomplete } from './Autocomplete/NamespaceAutoco
 export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 export { default as OwnerAutocomplete } from './Autocomplete/OwnerAutocomplete/OwnerAutocomplete';
 export { default as OwnerTitleAutocomplete } from './Autocomplete/OwnerTitleAutocomplete/OwnerTitleAutocomplete';
+export { default as PolicyAutocomplete } from './Autocomplete/PolicyAutocomplete/PolicyAutocomplete';
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';

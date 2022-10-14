@@ -2,11 +2,8 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { Owner, OwnerFormData } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { DialogWrapper, AppInput, AppButton } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 import { getOwnerCreatingStatuses } from 'redux/selectors';
@@ -18,18 +15,13 @@ interface OwnerFormProps {
 
 const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isOwnerCreating } = useAppSelector(
-    getOwnerCreatingStatuses
-  );
+  const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
 
-  const { handleSubmit, control, reset, formState } =
-    useForm<OwnerFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-      defaultValues: {
-        name: owner?.name || '',
-      },
-    });
+  const { handleSubmit, control, reset, formState } = useForm<OwnerFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: { name: owner?.name || '' },
+  });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -42,10 +34,10 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
     reset({ name: owner?.name || '' });
   }, [owner]);
 
-  const handleOwnerFormSubmit = async (data: OwnerFormData) => {
+  const handleOwnerFormSubmit = async (ownerFormData: OwnerFormData) => {
     (owner
-      ? dispatch(updateOwner({ ownerId: owner.id, ownerFormData: data }))
-      : dispatch(createOwner({ ownerFormData: data }))
+      ? dispatch(updateOwner({ ownerId: owner.id, ownerFormData }))
+      : dispatch(createOwner({ ownerFormData }))
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -64,25 +56,22 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {owner ? 'Edit' : 'Add'} Owner
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="owner-create-form"
-      onSubmit={handleSubmit(handleOwnerFormSubmit)}
-    >
+    <form id='owner-create-form' onSubmit={handleSubmit(handleOwnerFormSubmit)}>
       <Controller
-        name="name"
+        name='name'
         control={control}
         defaultValue={owner?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Owner Name"
+            placeholder='Owner Name'
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -97,10 +86,10 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="owner-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='owner-create-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
@@ -110,7 +99,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, {
           onClick: () => {

@@ -6,10 +6,7 @@ import { AppButton, DialogWrapper, TagItem } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityTags } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
-import {
-  getDataEntityTags,
-  getDataEntityTagsUpdatingStatuses,
-} from 'redux/selectors';
+import { getDataEntityTags, getDataEntityTagsUpdatingStatuses } from 'redux/selectors';
 import { TagListContainer } from './TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
@@ -30,14 +27,10 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const { dataEntityId } = useAppParams();
 
   const dataEntityTags = useAppSelector(getDataEntityTags(dataEntityId));
-  const { isLoading: isTagsUpdating } = useAppSelector(
-    getDataEntityTagsUpdatingStatuses
-  );
+  const { isLoading: isTagsUpdating } = useAppSelector(getDataEntityTagsUpdatingStatuses);
 
   const methods = useForm<DataEntityTagsFormType>({
-    defaultValues: {
-      tagNameList: [{ name: '' }],
-    },
+    defaultValues: { tagNameList: [{ name: '' }] },
   });
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -87,12 +80,15 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     );
   };
 
-  const handleRemove = (index: number) => () => {
-    remove(index);
-  };
+  const handleRemove = React.useCallback(
+    (index: number) => () => {
+      remove(index);
+    },
+    [remove]
+  );
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Edit Tags
     </Typography>
   );
@@ -101,10 +97,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     <>
       <TagsEditFormAutocomplete append={append} />
       <FormProvider {...methods}>
-        <form
-          id="tags-create-form"
-          onSubmit={methods.handleSubmit(handleSubmit)}
-        >
+        <form id='tags-create-form' onSubmit={methods.handleSubmit(handleSubmit)}>
           <TagListContainer sx={{ mt: 1 }}>
             {fields?.map((field, index) => (
               <TagItem
@@ -125,10 +118,10 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="tags-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='tags-create-form'
+      color='primary'
       fullWidth
     >
       Save

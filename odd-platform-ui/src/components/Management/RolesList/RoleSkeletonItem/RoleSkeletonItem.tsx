@@ -8,7 +8,7 @@ interface SkeletonProps {
   length: number;
 }
 
-const TagsSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
+const RoleSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
     renderContent={({ randWidth, key }) => (
@@ -23,4 +23,4 @@ const TagsSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
     )}
   />
 );
-export default TagsSkeletonItem;
+export default RoleSkeletonItem;
