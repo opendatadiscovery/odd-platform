@@ -2337,7 +2337,6 @@ paths:
         - $ref: './components.yaml/#/components/parameters/SearchParam'
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
-        - $ref: './components.yaml/#/components/parameters/IdsParam'
       responses:
         '200':
           description: OK
