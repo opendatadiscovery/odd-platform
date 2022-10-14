@@ -27,6 +27,9 @@ import {
   Owner,
   OwnerAssociationRequest,
   Ownership,
+  Policy,
+  PolicyDetails,
+  Role,
   Tag,
   Term,
   TermDetails,
@@ -210,6 +213,15 @@ export interface ActivitiesState {
   pageInfo: { hasNext: boolean; lastEventId?: number; lastEventDateTime?: number };
   counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
+}
+
+export interface RolesState extends EntityState<Role> {
+  pageInfo: CurrentPageInfo;
+}
+
+export interface PoliciesState {
+  policies: { pageInfo: CurrentPageInfo } & EntityState<Policy>;
+  policyDetails: EntityState<PolicyDetails>;
 }
 
 export type RootState = ReturnType<typeof store.getState>;

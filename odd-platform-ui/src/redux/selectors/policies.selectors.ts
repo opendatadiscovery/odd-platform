@@ -1,0 +1,32 @@
+import { createSelector } from '@reduxjs/toolkit';
+import { createStatusesSelector } from 'redux/selectors';
+import { PoliciesState, RootState } from 'redux/interfaces';
+import * as actions from 'redux/actions';
+import { policyAdapter, policyDetailsAdapter } from 'redux/slices/policy.slice';
+
+export const policiesState = ({ policies }: RootState): PoliciesState => policies;
+
+export const getPoliciesFetchingStatuses = createStatusesSelector(
+  actions.fetchPolicyListActType
+);
+export const getPolicyCreatingStatuses = createStatusesSelector(
+  actions.createPolicyActType
+);
+export const getPolicyUpdatingStatuses = createStatusesSelector(
+  actions.updatePolicyActType
+);
+export const getPolicyDeletingStatuses = createStatusesSelector(
+  actions.deletePolicyActType
+);
+
+export const { selectAll: getPoliciesList } = policyAdapter.getSelectors<RootState>(
+  state => state.policies.policies
+);
+
+export const getPoliciesListPageInfo = createSelector(
+  policiesState,
+  policyList => policyList.policies.pageInfo
+);
+
+export const { selectById: getPolicyDetails } =
+  policyDetailsAdapter.getSelectors<RootState>(state => state.policies.policyDetails);

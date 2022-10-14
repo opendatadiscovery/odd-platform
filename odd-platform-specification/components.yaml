@@ -2242,6 +2242,9 @@ components:
           format: int64
         name:
           type: string
+      required:
+        - id
+        - name
 
     PolicyList:
       type: object
@@ -2265,6 +2268,7 @@ components:
           type: string
       required:
         - name
+        - policy
 
     PolicyDetails:
       type: object
