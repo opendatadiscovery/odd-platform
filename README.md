@@ -242,6 +242,36 @@ ODD Platform works with many of the tools you're already using:
             <td><a href="https://github.com/opendatadiscovery/odd-collector-gcp#biquery">BigQuery</a>
             </td>
         </tr>
+        <tr>
+            <td><img height="40" img src="./images/cube-logo.svg" /> </td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#cubejs">Cube</a>
+            </td>
+        </tr>
+        <tr>
+            <td><img height="40" img src="./images/vertica-logo.svg" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#vertica">Vertica</a>
+            </td>
+        </tr>
+        <tr>
+            <td><img height="40" img src="./images/trino-og.png" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#trino">Trino</a>
+            </td>
+        </tr>
+        <tr>
+            <td><img height="40" img src="./images/presto-logo.svg" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#presto">Presto</a>
+            </td>
+        </tr>
+        <tr>
+            <td><img height="40" img src="./images/mariadb.svg" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#mariadb">MariaDB</a>
+            </td>
+        </tr>
+        <tr>
+            <td><img height="40" img src="./images/superset.svg" /></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#superset">SuperSet</a>
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -266,14 +296,14 @@ For more information, please check **[specification.md](https://github.com/opend
 If you have any questions or ideas, please don't hesitate to drop a line to any of us. 
 
 
-| Team Member               | LinkedIn                                                                     | GitHub                                              |
-| ------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------- |
-| German Osin               | [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)                 | [germanosin](https://github.com/germanosin)         |
-| Nikita Dementev           | [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)                     | [DementevNikita](https://github.com/DementevNikita) |
-| Damir Abdullin            | [LinkedIn](https://www.linkedin.com/in/dabdullin/)                           | [damirabdul](https://github.com/damirabdul)         |
-| Alexey Kozyurov           | [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)           | [Leshe4ka](https://github.com/Leshe4ka)             |
-| Pavel Makarichev          | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/)           | [vixtir](https://github.com/vixtir)                 |
-| Roman Zabaluev            | [LinkedIn](https://www.linkedin.com/in/haarolean/)                           | [Haarolean](https://github.com/haarolean)           |
+| Team Member      | LinkedIn                                                           | GitHub                                              |
+| ---------------- | ------------------------------------------------------------------ | --------------------------------------------------- |
+| German Osin      | [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)       | [germanosin](https://github.com/germanosin)         |
+| Nikita Dementev  | [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)           | [DementevNikita](https://github.com/DementevNikita) |
+| Damir Abdullin   | [LinkedIn](https://www.linkedin.com/in/dabdullin/)                 | [damirabdul](https://github.com/damirabdul)         |
+| Alexey Kozyurov  | [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/) | [Leshe4ka](https://github.com/Leshe4ka)             |
+| Pavel Makarichev | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/) | [vixtir](https://github.com/vixtir)                 |
+| Roman Zabaluev   | [LinkedIn](https://www.linkedin.com/in/haarolean/)                 | [Haarolean](https://github.com/haarolean)           |
 ## License
 
 ODD Platform uses the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.txt).

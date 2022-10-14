@@ -22,15 +22,9 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
     getDataEntityMetadataCreatingStatuses
   );
 
-  const methods = useForm<{ metadata: MetadataObject[] }>({
+  const methods = useForm<{ metadata: MetadataObject }>({
     mode: 'onChange',
-    defaultValues: {
-      metadata: [{}],
-    },
-  });
-  const { fields } = useFieldArray({
-    control: methods.control,
-    name: 'metadata',
+    defaultValues: { metadata: {} },
   });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
@@ -45,11 +39,11 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
     methods.reset();
   };
 
-  const createMetadata = (data: { metadata: MetadataObject[] }) => {
+  const createMetadata = (data: { metadata: MetadataObject }) => {
     dispatch(
       createDataEntityCustomMetadata({
         dataEntityId,
-        metadataObject: data.metadata,
+        metadataObject: [data.metadata],
       })
     ).then(
       () => {
@@ -66,30 +60,25 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Add Custom Metadata
     </Typography>
   );
 
   const formContent = () => (
     <FormProvider {...methods}>
-      <form
-        id="metadata-create-form"
-        onSubmit={methods.handleSubmit(createMetadata)}
-      >
-        {fields.map((item, index) => (
-          <MetadataCreateFormItem key={item.id} itemIndex={index} />
-        ))}
+      <form id='metadata-create-form' onSubmit={methods.handleSubmit(createMetadata)}>
+        <MetadataCreateFormItem />
       </form>
     </FormProvider>
   );
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="metadata-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='metadata-create-form'
+      color='primary'
       fullWidth
       disabled={!methods.formState.isValid}
     >
@@ -99,7 +88,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }
