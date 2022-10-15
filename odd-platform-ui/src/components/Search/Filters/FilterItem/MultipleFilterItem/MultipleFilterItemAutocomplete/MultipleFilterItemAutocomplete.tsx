@@ -1,9 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import {
-  Autocomplete,
-  AutocompleteRenderOptionState,
-  Grid,
-} from '@mui/material';
+import { Autocomplete, AutocompleteRenderOptionState, Grid } from '@mui/material';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -28,9 +24,10 @@ interface MultipleFilterItemAutocompleteProps {
   facetName: OptionalFacetNames;
 }
 
-const MultipleFilterItemAutocomplete: React.FC<
-  MultipleFilterItemAutocompleteProps
-> = ({ name, facetName }) => {
+const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompleteProps> = ({
+  name,
+  facetName,
+}) => {
   const dispatch = useAppDispatch();
 
   const searchId = useAppSelector(getSearchId);
@@ -40,7 +37,8 @@ const MultipleFilterItemAutocomplete: React.FC<
     Partial<CountableSearchFilter>;
 
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [searchText, setSearchText] = React.useState<string>('');
+  const [facetOptionsLoading, setFacetOptionsLoading] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
   const [facetOptions, setFacetOptions] = React.useState<FilterOption[]>(
     facetOptionsAll || []
   );
@@ -88,18 +86,14 @@ const MultipleFilterItemAutocomplete: React.FC<
         searchText
           ? facetOptions.filter(
               option =>
-                option.name
-                  .toLocaleLowerCase()
-                  .indexOf(searchText.toLocaleLowerCase()) >= 0
+                option.name.toLocaleLowerCase().indexOf(searchText.toLocaleLowerCase()) >=
+                0
             )
           : facetOptions,
         params
       ),
     [searchText, facetOptions]
   );
-
-  const [facetOptionsLoading, setFacetOptionsLoading] =
-    React.useState<boolean>(false);
 
   const handleFacetSearch = React.useCallback(
     useDebouncedCallback(() => {
@@ -117,21 +111,11 @@ const MultipleFilterItemAutocomplete: React.FC<
         .then(response => {
           setFacetOptionsLoading(false);
           setFacetOptions(response.facetOptions);
+          setAutocompleteOpen(true);
         });
     }, 500),
-    [
-      getDataEntitySearchFacetOptions,
-      setFacetOptionsLoading,
-      setFacetOptions,
-      searchText,
-    ]
+    [getDataEntitySearchFacetOptions, setFacetOptionsLoading, setFacetOptions, searchText]
   );
-
-  React.useEffect(() => {
-    if (!autocompleteOpen) return;
-    setFacetOptionsLoading(true);
-    handleFacetSearch();
-  }, [searchText, autocompleteOpen]);
 
   const fillOptionMatches = (
     props: HTMLAttributes<HTMLLIElement>,
@@ -139,13 +123,11 @@ const MultipleFilterItemAutocomplete: React.FC<
     state: AutocompleteRenderOptionState
   ) => {
     const formattedOptionName =
-      facetName === 'types'
-        ? option.name.replaceAll('_', ' ')
-        : option.name;
+      facetName === 'types' ? option.name.replaceAll('_', ' ') : option.name;
     if (!state.inputValue) {
       return (
         <li {...props}>
-          <Grid container justifyContent="space-between">
+          <Grid container justifyContent='space-between' flexWrap='nowrap'>
             <span>{formattedOptionName}</span>
             <S.FilterCount>{option.count}</S.FilterCount>
           </Grid>
@@ -161,9 +143,7 @@ const MultipleFilterItemAutocomplete: React.FC<
             <S.HighlightedTextPart
               // eslint-disable-next-line react/no-array-index-key
               key={i}
-              isHighlighted={
-                part.toLowerCase() === highlight.toLowerCase()
-              }
+              isHighlighted={part.toLowerCase() === highlight.toLowerCase()}
             >
               {part}
             </S.HighlightedTextPart>
@@ -174,7 +154,7 @@ const MultipleFilterItemAutocomplete: React.FC<
 
     return (
       <li {...props}>
-        <Grid container justifyContent="space-between">
+        <Grid container justifyContent='space-between' flexWrap='nowrap'>
           {highlightedText(formattedOptionName, state.inputValue)}
           <S.FilterCount>{option.count}</S.FilterCount>
         </Grid>
@@ -182,13 +162,16 @@ const MultipleFilterItemAutocomplete: React.FC<
     );
   };
 
+  const handleOpen = () => handleFacetSearch();
+  const handleClose = () => setAutocompleteOpen(false);
+
   return (
     <Autocomplete
       fullWidth
       id={`filter-${facetName}`}
       open={autocompleteOpen}
-      onOpen={() => setAutocompleteOpen(true)}
-      onClose={() => setAutocompleteOpen(false)}
+      onOpen={handleOpen}
+      onClose={handleClose}
       onChange={handleAutocompleteSelect}
       options={facetOptions}
       onInputChange={searchInputChange}
@@ -196,6 +179,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       filterOptions={getFilterOptions}
       handleHomeEndKeys
       selectOnFocus
+      componentsProps={{ popper: { sx: S.popperStyles, placement: 'bottom-start' } }}
       blurOnSelect
       value={{ name: searchText }}
       noOptionsText={facetOptionsLoading ? '' : 'No options'}
@@ -206,12 +190,12 @@ const MultipleFilterItemAutocomplete: React.FC<
         <AppInput
           {...params}
           sx={{ mt: 2 }}
-          placeholder="Search by name"
+          placeholder='Search by name'
           label={name}
           ref={params.InputProps.ref}
           customEndAdornment={{
             variant: 'loader',
-            showAdornment: autocompleteOpen && facetOptionsLoading,
+            showAdornment: facetOptionsLoading,
             position: { mr: -2 },
           }}
         />

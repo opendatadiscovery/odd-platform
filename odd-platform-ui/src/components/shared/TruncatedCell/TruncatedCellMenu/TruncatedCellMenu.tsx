@@ -13,10 +13,7 @@ interface TruncatedCellMenuProps {
   menuId: number;
 }
 
-const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
-  dataList,
-  menuId,
-}) => {
+const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({ dataList, menuId }) => {
   const { dataEntityDetailsPath } = useAppPaths();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -33,13 +30,14 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
   return (
     <>
       <AppIconButton
-        color="expand"
+        sx={{ height: 'auto !important' }}
+        color='expand'
         icon={<MoreIcon />}
-        id="menu-open-btn"
-        edge="end"
+        id='menu-open-btn'
+        edge='end'
         ariaControls={open ? `menu-${menuId}` : undefined}
         ariaExpanded={open ? 'true' : undefined}
-        ariaHaspopup="true"
+        ariaHaspopup='true'
         onClick={handleMenuOpen}
         height={20}
       />
@@ -50,9 +48,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
         id={`menu-${menuId}`}
         keepMounted
         open={open}
-        MenuListProps={{
-          'aria-labelledby': 'menu-open-btn',
-        }}
+        MenuListProps={{ 'aria-labelledby': 'menu-open-btn' }}
         onClose={handleMenuClose}
         maxHeight={300}
         maxWidth={240}
@@ -64,13 +60,13 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
             <Link
               key={item.id}
               to={dataEntityDetailsPath(item.id)}
-              target="_blank"
+              target='_blank'
               onClick={handleMenuClose}
             >
               <AppMenuItem>
                 <Typography
-                  variant="body1"
-                  color="texts.action"
+                  variant='body1'
+                  color='texts.action'
                   noWrap
                   title={item.internalName || item.externalName}
                 >

@@ -30,4 +30,9 @@ public interface SearchFacetRepository {
                                           final int page,
                                           final int size,
                                           final FacetStateDto state);
+
+    Map<SearchFilterId, Long> getGroupFacet(final String facetQuery,
+                                            final int page,
+                                            final int size,
+                                            final FacetStateDto state);
 }

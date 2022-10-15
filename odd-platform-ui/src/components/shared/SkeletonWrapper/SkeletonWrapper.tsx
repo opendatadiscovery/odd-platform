@@ -1,18 +1,13 @@
 import React from 'react';
+import { pseudoRandNum } from 'lib/helpers';
 
 interface SkeletonProps {
-  renderContent: (contentProps: {
-    randWidth: () => string;
-    key?: number;
-  }) => JSX.Element;
+  renderContent: (contentProps: { randWidth: () => string; key?: number }) => JSX.Element;
   length?: number;
 }
 
-const SkeletonWrapper: React.FC<SkeletonProps> = ({
-  length = 1,
-  renderContent,
-}) => {
-  const randWidth = () => `${Math.round(75 + Math.random() * 15)}%`;
+const SkeletonWrapper: React.FC<SkeletonProps> = ({ length = 1, renderContent }) => {
+  const randWidth = () => `${Math.round(75 + pseudoRandNum() * 15)}%`;
 
   return (
     <>

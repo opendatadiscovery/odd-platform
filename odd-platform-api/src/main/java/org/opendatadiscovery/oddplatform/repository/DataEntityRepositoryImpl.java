@@ -35,7 +35,6 @@ import org.jooq.SelectOrderByStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -160,7 +159,7 @@ public class DataEntityRepositoryImpl
 
         return dataEntitySelect(config)
             .fetchOptional(this::mapDimensionRecord)
-            .map(this::enrichDataEntityDimensionsDto);
+            .flatMap(dto -> enrichDataEntityDimensionsDto(List.of(dto)).stream().findFirst());
     }
 
     @Override
@@ -231,6 +230,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .leftJoin(GROUP_ENTITY_RELATIONS).on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN))
             .where(jooqFTSHelper.facetStateConditions(state, DATA_ENTITY_CONDITIONS,
                 List.of(FacetType.ENTITY_CLASSES)))
             .and(DATA_ENTITY.HOLLOW.isFalse())
@@ -394,7 +394,6 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @BlockingTransactional
     public Optional<DataEntityDetailsDto> getDetails(final long id) {
         final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
@@ -402,7 +401,7 @@ public class DataEntityRepositoryImpl
 
         return dataEntitySelect(config)
             .fetchOptional(this::mapDetailsRecord)
-            .map(this::enrichDataEntityDimensionsDto)
+            .flatMap(dto -> enrichDataEntityDimensionsDto(List.of(dto)).stream().findFirst())
             .map(this::enrichDataEntityDetailsDto);
     }
 
@@ -433,7 +432,6 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @BlockingTransactional
     public Page<DataEntityDimensionsDto> findByState(final FacetStateDto state,
                                                      final int page,
                                                      final int size,
@@ -574,7 +572,9 @@ public class DataEntityRepositoryImpl
                 .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
                 .leftJoin(DATA_ENTITY_TO_TERM)
                 .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull());
+                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
+                .leftJoin(GROUP_ENTITY_RELATIONS)
+                .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)));
         }
 
         final SelectHavingStep<Record> groupByStep = fromStep
@@ -612,35 +612,6 @@ public class DataEntityRepositoryImpl
 
     private void enrichDetailsWithTerms(final DataEntityDetailsDto dto) {
         dto.setTerms(termRepository.findTermsByDataEntityId(dto.getDataEntity().getId()));
-    }
-
-    private <T extends DataEntityDimensionsDto> void enrichDEGDetails(final T dto) {
-        if (!ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(),
-            DataEntityClassDto.DATA_ENTITY_GROUP.getId())) {
-            return;
-        }
-
-        final List<DataEntityPojo> entities = dslContext.select(DATA_ENTITY.fields())
-            .from(GROUP_ENTITY_RELATIONS)
-            .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
-            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(dto.getDataEntity().getOddrn()))
-            .fetchStreamInto(DataEntityPojo.class)
-            .toList();
-
-        Long childrenCount = dslContext.selectCount()
-            .from(GROUP_PARENT_GROUP_RELATIONS)
-            .where(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.eq(dto.getDataEntity().getOddrn()))
-            .fetchOneInto(Long.class);
-
-        if (childrenCount == null) {
-            childrenCount = 0L;
-        }
-
-        dto.setGroupsDto(new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
-            entities,
-            entities.size() + childrenCount.intValue(),
-            childrenCount != 0L
-        ));
     }
 
     private <T extends DataEntityDimensionsDto> void enrichDEGDetails(final List<T> dtos) {
@@ -690,31 +661,6 @@ public class DataEntityRepositoryImpl
         }
     }
 
-    private <T extends DataEntityDimensionsDto> void enrichParentDEGs(final T dto) {
-        final Field<String> degOddrnField = field("deg_oddrn", String.class);
-        final String cteName = "cte";
-
-        final SelectOrderByStep<Record1<String>> cteSelect =
-            dslContext.select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.as(degOddrnField))
-                .from(GROUP_ENTITY_RELATIONS)
-                .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(dto.getDataEntity().getOddrn()))
-                .union(dslContext.select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.as(degOddrnField))
-                    .from(GROUP_PARENT_GROUP_RELATIONS)
-                    .where(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.eq(dto.getDataEntity().getOddrn())));
-
-        final Table<Record1<String>> selectTable = cteSelect.asTable(cteName);
-
-        final List<DataEntityPojo> parentGroups = dslContext.with(cteName)
-            .as(cteSelect)
-            .select(DATA_ENTITY.fields())
-            .from(cteName)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(jooqQueryHelper.getField(selectTable, degOddrnField)))
-            .fetchStreamInto(DataEntityPojo.class)
-            .toList();
-
-        dto.setParentGroups(parentGroups);
-    }
-
     private <T extends DataEntityDimensionsDto> void enrichParentDEGs(final List<T> dto) {
         final Set<String> oddrns = dto.stream()
             .map(d -> d.getDataEntity().getOddrn())
@@ -756,23 +702,6 @@ public class DataEntityRepositoryImpl
         enrichDetailsWithMetadata(dto);
         enrichDatasetVersions(dto);
         enrichDetailsWithTerms(dto);
-        return dto;
-    }
-
-    private <T extends DataEntityDimensionsDto> T enrichDataEntityDimensionsDto(final T dto) {
-        final Set<String> deps = dto.getSpecificAttributes().values().stream()
-            .map(DataEntityAttributes::getDependentOddrns)
-            .flatMap(Set::stream)
-            .collect(Collectors.toSet());
-
-        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps, false)
-            .stream()
-            .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
-
-        enrichDataEntityDimensionsDto(dto, depsRepository);
-        enrichDEGDetails(dto);
-        enrichParentDEGs(dto);
-
         return dto;
     }
 
