@@ -2,15 +2,15 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  getRoleCreatingStatuses,
-  getRoleDeletingStatuses,
-  getRolesFetchingStatuses,
-  getRolesList,
-  getRolesPageInfo,
+  getPoliciesFetchingStatuses,
+  getPoliciesList,
+  getPoliciesListPageInfo,
+  getPolicyCreatingStatuses,
+  getPolicyDeletingStatuses,
 } from 'redux/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchRolesList } from 'redux/thunks';
+import { fetchPolicyList } from 'redux/thunks';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
 import {
   AppButton,
@@ -18,47 +18,49 @@ import {
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { usePermissions } from 'lib/hooks';
-import RoleForm from './RoleForm/RoleForm';
-import RoleItem from './RoleItem/RoleItem';
-import * as S from './RolesListStyles';
-import RoleSkeletonItem from './RoleSkeletonItem/RoleSkeletonItem';
+import { useAppPaths, usePermissions } from 'lib/hooks';
+import { Policy } from 'generated-sources';
+import PolicyItem from './PolicyItem/PolicyItem';
+import * as S from './PolicyListStyles';
+import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
 
-const RolesList: React.FC = () => {
+const PolicyList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isAdmin } = usePermissions({});
+  const { createPolicyPath } = useAppPaths();
+  const createPolicyLink = createPolicyPath();
 
-  const { isLoading: isRoleCreating } = useAppSelector(getRoleCreatingStatuses);
+  const { isLoading: isPolicyCreating } = useAppSelector(getPolicyCreatingStatuses);
 
-  const { isLoading: isRoleDeleting } = useAppSelector(getRoleDeletingStatuses);
+  const { isLoading: isPolicyDeleting } = useAppSelector(getPolicyDeletingStatuses);
 
-  const { isLoading: isRolesFetching } = useAppSelector(getRolesFetchingStatuses);
+  const { isLoading: isPoliciesFetching } = useAppSelector(getPoliciesFetchingStatuses);
 
-  const rolesList = useAppSelector(getRolesList);
-  const { page, hasNext, total } = useAppSelector(getRolesPageInfo);
+  const policyList = useAppSelector(getPoliciesList);
+  const { page, hasNext, total } = useAppSelector(getPoliciesListPageInfo);
 
   const size = 100;
   const [query, setQuery] = React.useState('');
-  const [totalRoles, setTotalRoles] = React.useState<number | undefined>(total);
+  const [totalPolicies, setTotalPolicies] = React.useState(total);
 
   React.useEffect(() => {
-    if (!query) dispatch(fetchRolesList({ page: 1, size }));
-  }, [fetchRolesList, query]);
+    if (!query) dispatch(fetchPolicyList({ page: 1, size }));
+  }, [fetchPolicyList, query]);
 
   React.useEffect(() => {
-    if (!query) setTotalRoles(total);
+    if (!query) setTotalPolicies(total);
   }, [total]);
 
   const fetchNextPage = () => {
     if (!hasNext) return;
-    dispatch(fetchRolesList({ page: page + 1, size, query }));
+    dispatch(fetchPolicyList({ page: page + 1, size, query }));
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(fetchRolesList({ page: 1, size, query }));
+      dispatch(fetchPolicyList({ page: 1, size, query }));
     }, 500),
-    [query, size, fetchRolesList]
+    [query, size, fetchPolicyList]
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,21 +73,21 @@ const RolesList: React.FC = () => {
   };
 
   const contentNotExists = React.useMemo(
-    () => !isRolesFetching && !rolesList.length,
-    [isRolesFetching, rolesList.length]
+    () => !isPoliciesFetching && !policyList.length,
+    [isPoliciesFetching, policyList.length]
   );
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Roles</Typography>
+        <Typography variant='h1'>Policy</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalRoles} /> roles overall
+          <NumberFormatted value={totalPolicies} /> policies overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search roles...'
+          placeholder='Search policies...'
           value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -105,43 +107,36 @@ const RolesList: React.FC = () => {
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <RoleForm
-          openBtn={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              disabled={!isAdmin}
-            >
-              Create role
-            </AppButton>
-          }
-        />
+        <AppButton
+          to={createPolicyLink}
+          size='medium'
+          color='primaryLight'
+          startIcon={<AddIcon />}
+          disabled={!isAdmin}
+        >
+          Create policy
+        </AppButton>
       </S.Caption>
       <S.TableHeader container flexWrap='nowrap'>
         <Grid item lg={3.53}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Role name
+            Policy name
           </Typography>
         </Grid>
-        <Grid item lg={6.73}>
-          <Typography variant='subtitle2' color='texts.hint'>
-            Policy
-          </Typography>
-        </Grid>
+        <Grid item lg={6.73} />
         <Grid item lg={1.74} />
       </S.TableHeader>
-      <S.ScrollContainer $isContentExists={!contentNotExists} id='roles-list'>
+      <S.ScrollContainer $isContentExists={!contentNotExists} id='policy-list'>
         <InfiniteScroll
           next={fetchNextPage}
           hasMore={hasNext}
-          dataLength={rolesList.length}
+          dataLength={policyList.length}
           scrollThreshold='200px'
-          scrollableTarget='roles-list'
-          loader={isRolesFetching && <RoleSkeletonItem length={5} />}
+          scrollableTarget='policy-list'
+          loader={isPoliciesFetching && <PolicyListSkeleton length={5} />}
         >
-          {rolesList?.map(({ id, name, policies }) => (
-            <RoleItem key={id} roleId={id} name={name} policies={policies} />
+          {policyList?.map(({ id, name }) => (
+            <PolicyItem key={id} policyId={id} name={name} />
           ))}
         </InfiniteScroll>
       </S.ScrollContainer>
@@ -150,4 +145,4 @@ const RolesList: React.FC = () => {
   );
 };
 
-export default RolesList;
+export default PolicyList;

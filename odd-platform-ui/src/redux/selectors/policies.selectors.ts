@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors';
-import { PoliciesState, RootState } from 'redux/interfaces';
+import { CurrentPageInfo, PoliciesState, RootState } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { policyAdapter, policyDetailsAdapter } from 'redux/slices/policy.slice';
 
@@ -25,7 +25,7 @@ export const { selectAll: getPoliciesList } = policyAdapter.getSelectors<RootSta
 
 export const getPoliciesListPageInfo = createSelector(
   policiesState,
-  policyList => policyList.policies.pageInfo
+  (policyList): CurrentPageInfo => policyList.policies.pageInfo
 );
 
 export const { selectById: getPolicyDetails } =

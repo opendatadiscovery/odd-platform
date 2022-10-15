@@ -10,7 +10,8 @@ export type ManagementViewType =
   | 'tags'
   | 'labels'
   | 'associations'
-  | 'roles';
+  | 'roles'
+  | 'policies';
 
 export type OwnerAssociationRequestsViewType = 'New' | 'Resolved';
 

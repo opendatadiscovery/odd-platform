@@ -16,6 +16,10 @@ const OwnerAssociationsList = React.lazy(
   () => import('./OwnerAssociations/OwnerAssociations')
 );
 const RolesList = React.lazy(() => import('./RolesList/RolesList'));
+const PolicyList = React.lazy(() => import('./PolicyList/PolicyList'));
+const PolicyDetails = React.lazy(
+  () => import('./PolicyList/PolicyDetails/PolicyDetails')
+);
 
 const Management: React.FC = () => {
   const { viewType } = useAppParams();
@@ -37,6 +41,11 @@ const Management: React.FC = () => {
     {
       name: 'Roles',
       link: managementPath('roles'),
+      hidden: !isAdmin,
+    },
+    {
+      name: 'Policies',
+      link: managementPath('policies'),
       hidden: !isAdmin,
     },
   ]);
@@ -86,6 +95,23 @@ const Management: React.FC = () => {
               exact
               path='/management/roles'
               component={RolesList}
+            />
+            <RestrictedRoute
+              isAllowedTo={isAdmin}
+              redirectTo='/management/namespaces'
+              exact
+              path='/management/policies'
+              component={PolicyList}
+            />
+            <RestrictedRoute
+              isAllowedTo={isAdmin}
+              redirectTo='/management/namespaces'
+              exact
+              path={[
+                '/management/policies/:policyId',
+                '/management/policies/createPolicy',
+              ]}
+              component={PolicyDetails}
             />
             <Redirect exact from='/management' to='/management/namespaces' />
           </Switch>
