@@ -9,7 +9,5 @@ export const Caption = styled(Grid)(() => ({
 export const TableHeader = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
-  '& > *': {
-    padding: theme.spacing(0, 1),
-  },
+  '& > *': { padding: theme.spacing(0, 1) },
 }));

@@ -127,7 +127,7 @@ export interface DataEntityLineageState {
 export interface OwnersState {
   byId: { [ownerId: number]: Owner };
   allIds: number[];
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
   ownershipDataEntity: {
     [dataEntityId: string]: {
       byId: { [ownershipId: string]: Ownership };

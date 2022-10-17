@@ -10,17 +10,18 @@ import { getOwnerCreatingStatuses } from 'redux/selectors';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;
-  owner?: Owner;
+  ownerId?: Owner['id'];
+  name?: Owner['name'];
 }
 
-const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
+const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name }) => {
   const dispatch = useAppDispatch();
   const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
 
   const { handleSubmit, control, reset, formState } = useForm<OwnerFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: { name: owner?.name || '' },
+    defaultValues: { name: name || '' },
   });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
@@ -31,12 +32,12 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
 
   const clearState = React.useCallback(() => {
     setState(initialState);
-    reset({ name: owner?.name || '' });
-  }, [owner]);
+    reset({ name: name || '' });
+  }, [name]);
 
   const handleOwnerFormSubmit = async (ownerFormData: OwnerFormData) => {
-    (owner
-      ? dispatch(updateOwner({ ownerId: owner.id, ownerFormData }))
+    (ownerId
+      ? dispatch(updateOwner({ ownerId, ownerFormData }))
       : dispatch(createOwner({ ownerFormData }))
     ).then(
       () => {
@@ -47,7 +48,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
         setState({
           ...initialState,
           error:
-            response.statusText || owner
+            response.statusText || ownerId
               ? 'Unable to update owner'
               : 'Owner already exists',
         });
@@ -57,7 +58,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {owner ? 'Edit' : 'Add'} Owner
+      {ownerId ? 'Edit' : 'Add'} Owner
     </Typography>
   );
 
@@ -66,7 +67,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
       <Controller
         name='name'
         control={control}
-        defaultValue={owner?.name || ''}
+        defaultValue={name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
@@ -93,7 +94,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
       fullWidth
       disabled={!formState.isValid}
     >
-      {owner ? 'Save' : 'Add new owner'}
+      {ownerId ? 'Save' : 'Add new owner'}
     </AppButton>
   );
 

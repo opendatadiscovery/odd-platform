@@ -12,12 +12,19 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import * as S from './AssociationRequestStyles';
 
 interface Props {
-  request: OwnerAssociationRequest;
+  id: OwnerAssociationRequest['id'];
+  ownerName: OwnerAssociationRequest['ownerName'];
+  username: OwnerAssociationRequest['username'];
+  provider?: OwnerAssociationRequest['provider'];
 }
 
-const ActiveAssociationRequest: React.FC<Props> = ({ request }) => {
+const ActiveAssociationRequest: React.FC<Props> = ({
+  id,
+  ownerName,
+  username,
+  provider,
+}) => {
   const dispatch = useAppDispatch();
-  const { id, ownerName, username } = request;
 
   const dispatchedRequest = (
     params: OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
@@ -52,12 +59,15 @@ const ActiveAssociationRequest: React.FC<Props> = ({ request }) => {
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={4}>
+      <Grid item lg={3}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <S.ActionsContainer container item lg={4}>
+      <Grid item lg={3}>
+        {provider}
+      </Grid>
+      <S.ActionsContainer container item lg={2}>
         <ConfirmationDialog
           actionTitle='Are you sure you want to accept association request?'
           actionName='Accept'
