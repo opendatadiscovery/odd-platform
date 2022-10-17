@@ -39,7 +39,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
             .zipWith(ownerService.getOrCreate(ownerName))
             .flatMap(function((user, ownerPojo) -> {
                 if (user.permissions().contains(DIRECT_OWNER_SYNC)) {
-                    return createRelation(user.username(), ownerPojo.getId())
+                    return createRelation(user.username(), user.provider(), ownerPojo.getId())
                         .thenReturn(mapper.mapToApprovedRequest(user.username(), ownerPojo.getName()));
                 } else {
                     return Mono.just(mapper.mapToPojo(user.username(), ownerPojo.getId()))
@@ -81,11 +81,13 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
         if (!pojo.getStatus().equals(OwnerAssociationRequestStatus.APPROVED.getValue())) {
             return Mono.just(pojo);
         }
-        return createRelation(pojo.getUsername(), pojo.getOwnerId()).thenReturn(pojo);
+        return createRelation(pojo.getUsername(), pojo.getProvider(), pojo.getOwnerId()).thenReturn(pojo);
     }
 
-    private Mono<UserOwnerMappingPojo> createRelation(final String username, final Long ownerId) {
-        return userOwnerMappingRepository.deleteRelation(username)
-            .then(userOwnerMappingRepository.createRelation(username, ownerId));
+    private Mono<UserOwnerMappingPojo> createRelation(final String username,
+                                                      final String provider,
+                                                      final Long ownerId) {
+        return userOwnerMappingRepository.deleteRelation(username, provider)
+            .then(userOwnerMappingRepository.createRelation(username, provider, ownerId));
     }
 }

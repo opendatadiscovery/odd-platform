@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -16,6 +17,7 @@ import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSeekStep2;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -68,7 +70,7 @@ public class ReactiveAlertRepositoryImpl
             new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
         final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
         final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
+        final var query = createAlertOuterSelect(alertSelect, alertCte);
 
         return jooqReactiveOperations
             .flux(query)
@@ -93,7 +95,7 @@ public class ReactiveAlertRepositoryImpl
             new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
         final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
         final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
+        final var query = createAlertOuterSelect(alertSelect, alertCte);
 
         return jooqReactiveOperations
             .flux(query)
@@ -142,7 +144,7 @@ public class ReactiveAlertRepositoryImpl
             new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
         final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
         final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
+        final var query = createAlertOuterSelect(alertSelect, alertCte);
 
         return jooqReactiveOperations
             .flux(query)
@@ -328,5 +330,6 @@ public class ReactiveAlertRepositoryImpl
             .leftJoin(USER_OWNER_MAPPING)
             .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
+            //.orderBy(alertCte.field(ALERT.CREATED_AT).desc(), alertCte.field(ALERT.ID).desc());
     }
 }

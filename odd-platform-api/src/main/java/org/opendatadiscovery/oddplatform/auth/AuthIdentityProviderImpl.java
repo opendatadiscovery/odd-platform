@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMa
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -31,14 +32,18 @@ public class AuthIdentityProviderImpl implements AuthIdentityProvider {
                 final Set<UserPermission> permissions = Optional.ofNullable(authentication.getAuthorities())
                     .map(this::mapAuthorities)
                     .orElse(Set.of());
-                return new UserDto(username, permissions);
+                if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
+                    return new UserDto(username, oauthToken.getAuthorizedClientRegistrationId(), permissions);
+                } else {
+                    return new UserDto(username, null, permissions);
+                }
             });
     }
 
     @Override
     public Mono<OwnerPojo> fetchAssociatedOwner() {
         return getCurrentUser()
-            .flatMap(user -> userOwnerMappingRepository.getAssociatedOwner(user.username()));
+            .flatMap(user -> userOwnerMappingRepository.getAssociatedOwner(user.username(), user.provider()));
     }
 
     private Set<UserPermission> mapAuthorities(final Collection<? extends GrantedAuthority> authorities) {

@@ -46,7 +46,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImplTest extends BaseInteg
         final OwnerPojo ownerPojo = ownerRepository.create(createOwnerPojo()).block();
         final OwnerPojo adminOwnerPojo = ownerRepository.create(createOwnerPojo()).block();
         final String adminUsername = UUID.randomUUID().toString();
-        userOwnerMappingRepository.createRelation(adminUsername, adminOwnerPojo.getId()).block();
+        userOwnerMappingRepository.createRelation(adminUsername, "COGNITO", adminOwnerPojo.getId()).block();
         final OwnerAssociationRequestPojo pojo =
             createPojos(OwnerAssociationRequestStatus.APPROVED, adminUsername, List.of(ownerPojo)).get(0);
 

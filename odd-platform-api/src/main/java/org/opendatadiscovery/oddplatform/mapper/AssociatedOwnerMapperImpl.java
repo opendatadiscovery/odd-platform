@@ -24,7 +24,7 @@ public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
             .actions(actionsMapper.mapToActions(dto.permissions()))
             .username(dto.username());
         return new AssociatedOwner()
-            .owner(dto.owner() != null ? ownerMapper.mapToOwner(dto.owner()) : null)
+            .owner(dto.owner() != null ? ownerMapper.mapFromPojo(dto.owner()) : null)
             .identity(identity)
             .associationRequest(mapAssociationRequest(dto.lastRequestDto()));
     }

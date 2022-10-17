@@ -32,7 +32,7 @@ public class IdentityServiceImpl implements IdentityService {
 
     private Mono<AssociatedOwner> getAssociatedOwner(final UserDto userDto) {
         return Mono.zip(
-                userOwnerMappingRepository.getAssociatedOwner(userDto.username())
+                userOwnerMappingRepository.getAssociatedOwner(userDto.username(), userDto.provider())
                     .defaultIfEmpty(new OwnerPojo()),
                 ownerAssociationRequestRepository.getLastRequestForUsername(userDto.username())
                     .defaultIfEmpty(new OwnerAssociationRequestDto(null, null, null)))
