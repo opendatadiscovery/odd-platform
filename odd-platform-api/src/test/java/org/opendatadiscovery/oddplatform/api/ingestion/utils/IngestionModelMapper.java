@@ -12,6 +12,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DateTimeFieldStat;
+import org.opendatadiscovery.oddplatform.api.contract.model.IntegerFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldOrigin;
@@ -49,6 +50,15 @@ public class IngestionModelMapper {
             .isNullable(field.getType().getIsNullable());
 
         final DataSetFieldStat stats = new DataSetFieldStat()
+            .integerStats(
+                new IntegerFieldStat()
+                    .highValue(field.getStats().getIntegerStats().getHighValue())
+                    .lowValue(field.getStats().getIntegerStats().getLowValue())
+                    .meanValue(field.getStats().getIntegerStats().getMeanValue())
+                    .medianValue(field.getStats().getIntegerStats().getMedianValue())
+                    .nullsCount(field.getStats().getIntegerStats().getNullsCount())
+                    .uniqueCount(field.getStats().getIntegerStats().getUniqueCount())
+            )
             .stringStats(
                 new StringFieldStat()
                     .avgLength(field.getStats().getStringStats().getAvgLength())
