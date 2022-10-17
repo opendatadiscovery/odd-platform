@@ -62,7 +62,7 @@ const OverviewDescription: React.FC = () => {
 
   return (
     <>
-      <div>
+      <div data-color-mode='light'>
         <S.CaptionContainer>
           <Typography variant='h4'>Custom</Typography>
           {editMode ? null : (
