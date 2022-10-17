@@ -9,32 +9,32 @@ const SearchResultsSkeleton: React.FC = () => (
   <SkeletonWrapper
     length={10}
     renderContent={({ randWidth, key }) => (
-      <Grid container sx={{ py: 1.25 }} key={key} wrap="nowrap">
-        <ColContainer item $colType="collg">
+      <Grid container sx={{ py: 1.25 }} key={key} wrap='nowrap'>
+        <ColContainer item $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colmd">
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colmd">
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colmd">
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colsm">
+        <ColContainer item $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colsm">
+        <ColContainer item $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
       </Grid>

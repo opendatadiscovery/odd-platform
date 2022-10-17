@@ -981,6 +981,7 @@ components:
         - owners
         - tags
         - types
+        - groups
 
     SearchFilter:
       type: object
@@ -1031,6 +1032,10 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
         owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        groups:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -1669,6 +1674,10 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
             datasources:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            groups:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'

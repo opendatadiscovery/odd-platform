@@ -15,6 +15,4 @@ export const AboutContainer = styled(Grid)(({ theme }) => ({
   paddingTop: theme.spacing(2),
 }));
 
-export const AboutText = styled(Typography)(() => ({
-  width: '100%',
-}));
+export const AboutText = styled(Typography)(() => ({ width: '100%' }));

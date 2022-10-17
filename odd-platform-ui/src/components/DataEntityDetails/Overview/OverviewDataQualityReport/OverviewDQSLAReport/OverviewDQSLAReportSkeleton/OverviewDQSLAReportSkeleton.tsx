@@ -1,6 +1,7 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
+import { pseudoRandNum } from 'lib/helpers';
 
 interface SkeletonProps {
   length?: number;
@@ -8,7 +9,7 @@ interface SkeletonProps {
 
 const OverviewDQSLAReportSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   const randomSkeletonWidth = () => {
-    const rand = 75 + Math.random() * 15;
+    const rand = 75 + pseudoRandNum() * 15;
     return Math.round(rand);
   };
 

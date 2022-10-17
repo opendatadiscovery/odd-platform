@@ -1,6 +1,5 @@
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
-import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppPaths } from 'lib/hooks';
@@ -12,49 +11,38 @@ interface TruncatedCellProps {
   dataList: DataEntityRef[] | string[] | undefined;
 }
 
-const TruncatedCell: React.FC<TruncatedCellProps> = ({
-  dataList,
-  externalEntityId,
-}) => {
+const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityId }) => {
   const { dataEntityDetailsPath } = useAppPaths();
 
   const getTruncateMarkupAtom = (item: DataEntityRef | string) => {
     const key = typeof item === 'string' ? item : item.id;
-    const linkTo =
-      typeof item === 'string' ? item : dataEntityDetailsPath(item.id);
+    const linkTo = typeof item === 'string' ? item : dataEntityDetailsPath(item.id);
     const linkContent =
-      typeof item === 'string'
-        ? item
-        : item.internalName || item.externalName;
+      typeof item === 'string' ? item : item.internalName || item.externalName;
     return (
       <TruncateMarkup.Atom key={key}>
-        <Link
+        <AppButton
+          onClick={e => {
+            e.stopPropagation();
+          }}
           to={linkTo}
-          target="_blank"
-          onClick={(e: MouseEvent) => e.stopPropagation()}
+          linkTarget='_blank'
+          color='primaryLight'
+          size='small'
+          fullWidth={linkContent ? linkContent.length > 30 : false}
         >
-          <AppButton
-            color="primaryLight"
-            size="small"
-            fullWidth={linkContent ? linkContent.length > 30 : false}
-          >
-            <S.LinkContent noWrap>{linkContent}</S.LinkContent>
-          </AppButton>
-        </Link>
+          <S.LinkContent noWrap>{linkContent}</S.LinkContent>
+        </AppButton>
       </TruncateMarkup.Atom>
     );
   };
 
   return (
     <TruncateMarkup
-      lines={2}
-      ellipsis={
-        <TruncatedCellMenu dataList={dataList} menuId={externalEntityId} />
-      }
+      lines={3}
+      ellipsis={<TruncatedCellMenu dataList={dataList} menuId={externalEntityId} />}
     >
-      <S.TruncatedList>
-        {dataList?.map(getTruncateMarkupAtom)}
-      </S.TruncatedList>
+      <S.TruncatedList>{dataList?.map(getTruncateMarkupAtom)}</S.TruncatedList>
     </TruncateMarkup>
   );
 };

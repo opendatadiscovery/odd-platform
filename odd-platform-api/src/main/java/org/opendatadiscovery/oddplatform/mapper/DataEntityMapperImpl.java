@@ -60,13 +60,11 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntity mapPojo(final DataEntityDimensionsDto dto) {
         final Set<DataEntityClassDto> entityClasses =
             DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds());
-
-        final Integer typeId = dto.getDataEntity().getTypeId();
-
-        final DataEntityType type = DataEntityTypeDto.findById(typeId)
-            .map(this::mapType)
-            .orElseThrow(() -> new IllegalArgumentException(
-                String.format("No type with id %d for entity %s was found", typeId, dto.getDataEntity().getOddrn())));
+        final DataEntityType type = getDataEntityType(dto.getDataEntity());
+        final List<DataEntityRef> groups = Optional.ofNullable(dto.getParentGroups()).stream()
+            .flatMap(Collection::stream)
+            .map(this::mapReference)
+            .toList();
 
         final DataEntity entity = mapPojo(dto.getDataEntity())
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
@@ -75,7 +73,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags() != null
                 ? dto.getTags().stream().map(tagMapper::mapToTag).collect(Collectors.toList())
-                : null);
+                : null)
+            .dataEntityGroups(groups);
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
             entity.setStats(mapStats(dto.getDataSetDetailsDto()));
@@ -193,17 +192,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dto) {
         final DataEntityPojo pojo = dto.getDataEntity();
-        final Integer typeId = dto.getDataEntity().getTypeId();
-
         final Set<DataEntityClassDto> entityClasses =
             DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds());
-
-        final DataEntityType type = DataEntityTypeDto.findById(typeId)
-            .map(this::mapType)
-            .orElseThrow(() -> new IllegalArgumentException(
-                String.format("No type with id %d for entity %s was found", typeId,
-                    dto.getDataEntity().getOddrn())));
-
+        final DataEntityType type = getDataEntityType(pojo);
         final List<DataEntityRef> groups = Optional.ofNullable(dto.getParentGroups()).stream()
             .flatMap(Collection::stream)
             .map(this::mapReference)
@@ -456,5 +447,14 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         final DataQualityTestExpectation expectation = new DataQualityTestExpectation().type(dto.expectationType());
         expectation.putAll(MapUtils.emptyIfNull(dto.expectationParameters()));
         return expectation;
+    }
+
+    private DataEntityType getDataEntityType(final DataEntityPojo pojo) {
+        final Integer typeId = pojo.getTypeId();
+
+        return DataEntityTypeDto.findById(typeId)
+            .map(this::mapType)
+            .orElseThrow(() -> new IllegalArgumentException(
+                String.format("No type with id %d for entity %s was found", typeId, pojo.getOddrn())));
     }
 }
