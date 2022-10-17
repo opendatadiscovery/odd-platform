@@ -1,0 +1,115 @@
+{
+  "$id": "https://ditro.io/policy.json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Policy",
+  "type": "object",
+  "properties": {
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/policy_resource"
+      },
+      "minItems": 1
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/policy_permission"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "resources",
+    "permissions"
+  ],
+  "$defs": {
+    "policy_resource": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/policy_resource_type"
+        },
+        "name": {
+          "type": "string"
+        },
+        "conditions": {
+          "$ref": "#/$defs/policy_resource_condition"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "policy_resource_condition": {
+      "type": "object",
+      "properties": {
+        "all": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/policy_resource_condition"
+          }
+        },
+        "any": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/policy_resource_condition"
+          }
+        },
+        "eq": {
+          "$ref": "#/$defs/policy_resource_condition_unary"
+        },
+        "not_eq": {
+          "$ref": "#/$defs/policy_resource_condition_unary"
+        },
+        "match": {
+          "$ref": "#/$defs/policy_resource_condition_unary"
+        },
+        "not_match": {
+          "$ref": "#/$defs/policy_resource_condition_unary"
+        },
+        "is": {
+          "$ref": "#/$defs/policy_resource_condition_key"
+        },
+        "not_is": {
+          "$ref": "#/$defs/policy_resource_condition_key"
+        }
+      }
+    },
+    "policy_resource_condition_unary": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/policy_resource_condition_key"
+      },
+      "maxProperties": 1,
+      "minProperties": 1
+    },
+    "policy_resource_condition_key": {
+      "type": "string",
+      "enum": [
+        "dataEntity:oddrn",
+        "dataEntity:internalName",
+        "dataEntity:externalName"
+      ]
+    },
+    "policy_permission": {
+      "enum": [
+        "DATA_ENTITY_TAG_UPDATE",
+        "DATA_ENTITY_DESCRIPTION_UPDATE"
+      ]
+    },
+    "policy_resource_type": {
+      "type": "string",
+      "enum": [
+        "DATA_ENTITY",
+        "TERM",
+        "DATASOURCE",
+        "NAMESPACE",
+        "COLLECTOR",
+        "TAG",
+        "LABEL"
+      ]
+    }
+  }
+}
