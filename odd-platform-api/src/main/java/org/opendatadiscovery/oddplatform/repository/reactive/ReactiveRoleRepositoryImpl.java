@@ -63,13 +63,14 @@ public class ReactiveRoleRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
         final Table<? extends Record> roleCTE = roleSelect.asTable("role_cte");
 
-        final SelectOnConditionStep<Record> query = DSL.with(roleCTE.getName())
+        final var query = DSL.with(roleCTE.getName())
             .as(roleSelect)
             .select(roleCTE.fields())
             .select(jsonArrayAgg(field(POLICY.asterisk().toString())).as(AGG_POLICY_FIELD))
             .from(roleCTE.getName())
             .leftJoin(ROLE_TO_POLICY).on(ROLE_TO_POLICY.ROLE_ID.eq(roleCTE.field(ROLE.ID)))
-            .leftJoin(POLICY).on(POLICY.ID.eq(ROLE_TO_POLICY.POLICY_ID));
+            .leftJoin(POLICY).on(POLICY.ID.eq(ROLE_TO_POLICY.POLICY_ID))
+            .groupBy(roleCTE.fields());
 
         return jooqReactiveOperations.flux(query)
             .collectList()

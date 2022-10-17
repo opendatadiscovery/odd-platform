@@ -40,10 +40,12 @@ public class OwnerAssociationRequestMapperTest {
     public void mapToPojo() {
         final String username = UUID.randomUUID().toString();
         final Long ownerId = 1L;
-        final OwnerAssociationRequestPojo pojo = mapper.mapToPojo(username, ownerId);
+        final String provider = UUID.randomUUID().toString();
+        final OwnerAssociationRequestPojo pojo = mapper.mapToPojo(username, provider, ownerId);
         assertThat(pojo.getId()).isNull();
         assertThat(pojo.getOwnerId()).isEqualTo(ownerId);
         assertThat(pojo.getStatus()).isEqualTo(OwnerAssociationRequestStatus.PENDING.getValue());
+        assertThat(pojo.getProvider()).isEqualTo(provider);
         assertThat(pojo.getCreatedAt()).isNull();
         assertThat(pojo.getUsername()).isEqualTo(username);
         assertThat(pojo.getStatusUpdatedAt()).isNull();
