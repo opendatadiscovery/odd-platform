@@ -70,6 +70,8 @@ public class IngestionController implements IngestionApi {
         @Valid final Mono<DatasetStatisticsList> datasetStatisticsList,
         final ServerWebExchange exchange
     ) {
-        return Mono.just(ResponseEntity.status(HttpStatus.CREATED).build());
+        return datasetStatisticsList
+            .flatMap(ingestionService::ingestStats)
+            .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
     }
 }

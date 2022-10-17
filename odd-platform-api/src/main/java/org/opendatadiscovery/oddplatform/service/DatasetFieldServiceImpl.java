@@ -1,28 +1,34 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
@@ -100,6 +106,32 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                     .concatWith(reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate))
                     .collectList();
             });
+    }
+
+    @Override
+    public Mono<Void> updateStatistics(final Map<String, DataSetFieldStat> stats) {
+        return reactiveDatasetFieldRepository.getExistingFieldsByOddrn(stats.keySet())
+            .collectList()
+            .map(fields -> {
+                final List<DatasetFieldPojo> fieldsToUpdate = new ArrayList<>();
+
+                for (final DatasetFieldPojo field : fields) {
+                    final DataSetFieldStat stat = stats.get(field.getOddrn());
+                    if (stat == null) {
+                        log.error("Unexpected behaviour while building an update object for datasetField {}",
+                            field.getOddrn());
+
+                        continue;
+                    }
+
+                    field.setStats(JSONB.jsonb(JSONSerDeUtils.serializeJson(stat)));
+                    fieldsToUpdate.add(field);
+                }
+
+                return fieldsToUpdate;
+            })
+            .flatMapMany(reactiveDatasetFieldRepository::bulkUpdate)
+            .then();
     }
 
     private Mono<List<LabelDto>> updateDatasetFieldLabels(final long datasetFieldId,
