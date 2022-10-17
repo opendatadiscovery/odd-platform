@@ -42,7 +42,7 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
                     return createRelation(user.username(), user.provider(), ownerPojo.getId())
                         .thenReturn(mapper.mapToApprovedRequest(user.username(), ownerPojo.getName()));
                 } else {
-                    return Mono.just(mapper.mapToPojo(user.username(), ownerPojo.getId()))
+                    return Mono.just(mapper.mapToPojo(user.username(), user.provider(), ownerPojo.getId()))
                         .flatMap(ownerAssociationRequestRepository::create)
                         .map(pojo -> mapper.mapToOwnerAssociationRequest(
                             new OwnerAssociationRequestDto(pojo, ownerName, null)));
