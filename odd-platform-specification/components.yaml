@@ -194,7 +194,7 @@ components:
         roles:
           type: array
           items:
-              $ref: '#/components/schemas/Role'
+            $ref: '#/components/schemas/Role'
       required:
         - name
 
@@ -2303,17 +2303,17 @@ components:
         - policies
 
     RoleList:
-        type: object
-        properties:
+      type: object
+      properties:
+        items:
+          type: array
           items:
-            type: array
-            items:
-                $ref: '#/components/schemas/Role'
-          page_info:
-            $ref: '#/components/schemas/PageInfo'
-        required:
-            - items
-            - page_info
+            $ref: '#/components/schemas/Role'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
 
     RoleFormData:
       type: object
