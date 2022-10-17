@@ -37,9 +37,26 @@
           "$ref": "#/$defs/policy_resource_condition"
         }
       },
-      "required": [
-        "type",
-        "name"
+      "allOf": [
+        {
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "anyOf": [
+            {
+              "required": [
+                "name"
+              ]
+            },
+            {
+              "required": [
+                "conditions"
+              ]
+            }
+          ]
+        }
       ]
     },
     "policy_resource_condition": {
@@ -75,7 +92,49 @@
         "not_is": {
           "$ref": "#/$defs/policy_resource_condition_key"
         }
-      }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "all"
+          ]
+        },
+        {
+          "required": [
+            "any"
+          ]
+        },
+        {
+          "required": [
+            "eq"
+          ]
+        },
+        {
+          "required": [
+            "not_eq"
+          ]
+        },
+        {
+          "required": [
+            "match"
+          ]
+        },
+        {
+          "required": [
+            "not_match"
+          ]
+        },
+        {
+          "required": [
+            "is"
+          ]
+        },
+        {
+          "required": [
+            "not_is"
+          ]
+        }
+      ]
     },
     "policy_resource_condition_unary": {
       "type": "object",
@@ -90,13 +149,37 @@
       "enum": [
         "dataEntity:oddrn",
         "dataEntity:internalName",
-        "dataEntity:externalName"
+        "dataEntity:externalName",
+        "dataEntity:type",
+        "dataEntity:class",
+        "dataEntity:datasource:oddrn",
+        "dataEntity:datasource:name",
+        "dataEntity:namespace:name",
+        "dataEntity:tag:name",
+        "dataEntity:owner",
+        "dataEntity:owner:title:"
       ]
     },
     "policy_permission": {
       "enum": [
-        "DATA_ENTITY_TAG_UPDATE",
-        "DATA_ENTITY_DESCRIPTION_UPDATE"
+        "DATA_ENTITY_INTERNAL_NAME_UPDATE",
+        "DATA_ENTITY_CUSTOM_METADATA_CREATE",
+        "DATA_ENTITY_CUSTOM_METADATA_UPDATE",
+        "DATA_ENTITY_CUSTOM_METADATA_DELETE",
+        "DATA_ENTITY_DESCRIPTION_UPDATE",
+        "DATA_ENTITY_OWNERSHIP_CREATE",
+        "DATA_ENTITY_OWNERSHIP_UPDATE",
+        "DATA_ENTITY_OWNERSHIP_DELETE",
+        "DATA_ENTITY_GROUPS_ADD",
+        "DATA_ENTITY_GROUPS_DELETE",
+        "DATA_ENTITY_TAGS_UPDATE",
+        "DATA_ENTITY_TERMS_ADD",
+        "DATA_ENTITY_TERMS_DELETE",
+        "DATASET_DESCRIPTION_UPDATE",
+        "DATASET_LABELS_UPDATE",
+        "DATASET_ENUMS_ADD",
+        "DATASET_ENUMS_UPDATE",
+        "DATASET_ENUMS_DELETE"
       ]
     },
     "policy_resource_type": {

@@ -1,0 +1,26 @@
+{
+  "resources": [
+    {
+      "type": "DATA_ENTITY",
+      "conditions": {
+        "all": [
+          {
+            "is": "dataEntity:owner"
+          },
+          {
+            "eq": {
+              "dataEntity:namespace:name": "QA"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "permissions": [
+    "DATA_ENTITY_INTERNAL_NAME_UPDATE",
+    "DATA_ENTITY_CUSTOM_METADATA_CREATE",
+    "DATA_ENTITY_CUSTOM_METADATA_UPDATE",
+    "DATA_ENTITY_CUSTOM_METADATA_DELETE",
+    "DATA_ENTITY_DESCRIPTION_UPDATE"
+  ]
+}
