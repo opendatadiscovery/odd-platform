@@ -86,5 +86,47 @@
     "active": true,
     "pulling_interval": "60",
     "connection_url": ""
+  },
+  {
+    "name": "Oracle",
+    "oddrn": "//oracle/host/1.2.3.4/databases/bookshop_postcards_aqa",
+    "namespace_name": "Samples",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Kinesis AQA",
+    "oddrn": "//kinesis/cloud/aws/account/13/region/us-west-2/",
+    "namespace_name": "Messaging",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Book_ETL_aqa",
+    "oddrn": "//airflow/host/2.1.3.5",
+    "description": "Airflow ETL DAGs",
+    "namespace_name": "ETL",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Air_flights",
+    "oddrn": "//airflow/host/aws.airflow.aws.com/",
+    "description": "_!+AirFlights",
+    "namespace_name": "ETL",
+    "active": true,
+    "pulling_interval": 60,
+    "connection_url": ""
+  },
+  {
+    "name": "Oracle_airplanes",
+    "oddrn": "//oracle/host/1.2.3.7/databases/airplanes",
+    "namespace_name": "AQA",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
   }
 ]
