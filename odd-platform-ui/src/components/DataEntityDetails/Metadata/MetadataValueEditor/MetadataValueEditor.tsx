@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  FormControlLabel,
-  Grid,
-  RadioGroup,
-  TextFieldProps,
-} from '@mui/material';
+import { FormControlLabel, Grid, RadioGroup, TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { format, isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
@@ -40,11 +35,11 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   if (metadataType === MetadataFieldType.DATETIME) {
     return (
       <Controller
+        shouldUnregister
         control={control}
         name={fieldName}
         defaultValue={
-          metadataValue &&
-          format(new Date(metadataValue), metadataDatePickerInputFormat)
+          metadataValue && format(new Date(metadataValue), metadataDatePickerInputFormat)
         }
         rules={{
           required: true,
@@ -83,23 +78,19 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         control={control}
         defaultValue={metadataValue || 'true'}
         render={({ field }) => (
-          <RadioGroup
-            {...field}
-            defaultValue={metadataValue || 'true'}
-            sx={{ ml: 0.5 }}
-          >
-            <Grid container wrap="nowrap">
+          <RadioGroup {...field} defaultValue={metadataValue || 'true'} sx={{ ml: 0.5 }}>
+            <Grid container wrap='nowrap'>
               <FormControlLabel
-                key="true"
-                value="true"
+                key='true'
+                value='true'
                 control={<AppRadio />}
-                label="Yes"
+                label='Yes'
               />
               <FormControlLabel
-                key="false"
-                value="false"
+                key='false'
+                value='false'
                 control={<AppRadio />}
-                label="No"
+                label='No'
               />
             </Grid>
           </RadioGroup>
@@ -125,10 +116,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           inputProps={{
             type:
               metadataType &&
-              [
-                MetadataFieldType.INTEGER,
-                MetadataFieldType.FLOAT,
-              ].includes(metadataType)
+              [MetadataFieldType.INTEGER, MetadataFieldType.FLOAT].includes(metadataType)
                 ? 'number'
                 : 'text',
             step: metadataType === MetadataFieldType.FLOAT ? 'any' : '1',

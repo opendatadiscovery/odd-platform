@@ -61,3 +61,22 @@ export const setActivityBackgroundColor = (
 export const hasDataQualityTestExpectations = (
   expectations?: DataQualityTestExpectation
 ) => expectations && Object.keys(expectations).some(key => expectations[key]);
+
+export const pseudoRandNum = (function xoshiro128p() {
+  let a = Date.now();
+  let b = Date.now();
+  let c = Date.now();
+  let d = Date.now();
+  return () => {
+    /* eslint-disable no-bitwise */
+    const t = b << 9;
+    const r = a + d;
+    c ^= a;
+    d ^= b;
+    b ^= c;
+    a ^= d;
+    c ^= t;
+    d = (d << 11) | (d >>> 21);
+    return (r >>> 0) / 4294967296;
+  };
+})();

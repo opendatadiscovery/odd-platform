@@ -8,7 +8,5 @@ export const Container = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(0, 0.5, 0, 0.5),
   alignItems: 'center',
   justifyContent: 'space-between',
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.secondary,
-  },
+  '&:hover': { backgroundColor: theme.palette.backgrounds.secondary },
 }));

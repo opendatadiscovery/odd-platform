@@ -12,7 +12,7 @@ public interface ReactiveOwnershipRepository {
 
     Mono<OwnershipPojo> delete(final long ownershipId);
 
-    Mono<OwnershipPojo> updateRole(final long ownershipId, final long roleId);
+    Mono<OwnershipPojo> updateTitle(final long ownershipId, final long titleId);
 
     Mono<Boolean> existsByOwner(final long ownerId);
 

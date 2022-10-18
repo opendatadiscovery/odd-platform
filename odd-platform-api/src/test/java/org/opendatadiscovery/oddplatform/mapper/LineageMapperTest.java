@@ -48,7 +48,7 @@ class LineageMapperTest {
                 ),
                 new OwnershipMapperImpl(
                     new OwnerMapperImpl(),
-                    new RoleMapperImpl()
+                    new TitleMapperImpl()
                 ),
                 new TagMapperImpl(),
                 new MetadataFieldValueMapperImpl(
@@ -68,7 +68,7 @@ class LineageMapperTest {
                     new OffsetDateTimeMapperImpl(),
                     new OwnershipMapperImpl(
                         new OwnerMapperImpl(),
-                        new RoleMapperImpl()
+                        new TitleMapperImpl()
                     )
                 )
             )

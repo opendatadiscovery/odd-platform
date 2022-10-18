@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AppButton } from 'components/shared';
 import { CRUDType } from 'lib/interfaces';
 import { useSetActivityHeaderIcon } from 'lib/hooks';
 import * as S from './ActivityFieldHeaderStyles';
@@ -30,19 +30,21 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
     <S.FieldHeader container>
       {icon}
       {startText && (
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='subtitle1' color='texts.info'>
           {startText}
         </Typography>
       )}
-      <Typography variant="h4">{activityName}</Typography>
-      <Typography variant="subtitle1" color="texts.info">
+      <Typography variant='h4'>{activityName}</Typography>
+      <Typography variant='subtitle1' color='texts.info'>
         {plural ? 'were' : 'was'}
       </Typography>
-      <Typography variant="h4">{eventType}</Typography>
+      <Typography ml={0.5} variant='h4'>
+        {eventType}
+      </Typography>
       {showDetailsBtn && (
         <AppButton
-          size="small"
-          color="tertiary"
+          size='small'
+          color='tertiary'
           onClick={detailsBtnOnClick}
           sx={{ position: 'inherit' }}
         >

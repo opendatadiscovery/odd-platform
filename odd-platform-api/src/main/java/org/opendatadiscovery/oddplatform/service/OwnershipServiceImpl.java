@@ -29,7 +29,7 @@ import static reactor.function.TupleUtils.function;
 @Service
 @RequiredArgsConstructor
 public class OwnershipServiceImpl implements OwnershipService {
-    private final RoleService roleService;
+    private final TitleService titleService;
     private final OwnerService ownerService;
     private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
@@ -42,17 +42,17 @@ public class OwnershipServiceImpl implements OwnershipService {
     public Mono<Ownership> create(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                   final OwnershipFormData formData) {
         return Mono.zip(ownerService.getOrCreate(formData.getOwnerName()),
-                roleService.getOrCreate(formData.getRoleName()))
-            .map(function((owner, role) -> Tuples.of(owner, role, new OwnershipPojo()
+                titleService.getOrCreate(formData.getTitleName()))
+            .map(function((owner, title) -> Tuples.of(owner, title, new OwnershipPojo()
                 .setDataEntityId(dataEntityId)
                 .setOwnerId(owner.getId())
-                .setRoleId(role.getId())
+                .setTitleId(title.getId())
             )))
-            .flatMap(function((owner, role, ownership) -> ownershipRepository.create(ownership)
-                .map(pojo -> Tuples.of(owner, role, pojo))))
-            .flatMap(function((owner, role, ownership) -> searchEntrypointRepository
+            .flatMap(function((owner, title, ownership) -> ownershipRepository.create(ownership)
+                .map(pojo -> Tuples.of(owner, title, pojo))))
+            .flatMap(function((owner, title, ownership) -> searchEntrypointRepository
                 .updateChangedOwnershipVectors(ownership.getId())
-                .thenReturn(new OwnershipDto(ownership, owner, role))))
+                .thenReturn(new OwnershipDto(ownership, owner, title))))
             .flatMap(
                 ownershipDto -> dataEntityFilledService.markEntityFilled(dataEntityId, OWNERS).thenReturn(ownershipDto))
             .map(ownershipMapper::mapDto);
@@ -83,8 +83,8 @@ public class OwnershipServiceImpl implements OwnershipService {
         final OwnershipUpdateFormData formData) {
         return ownershipRepository.get(ownershipId)
             .switchIfEmpty(Mono.error(new NotFoundException("Ownership with id = [%s] was not found", ownershipId)))
-            .then(roleService.getOrCreate(formData.getRoleName()))
-            .flatMap(rolePojo -> ownershipRepository.updateRole(ownershipId, rolePojo.getId()))
+            .then(titleService.getOrCreate(formData.getTitleName()))
+            .flatMap(titlePojo -> ownershipRepository.updateTitle(ownershipId, titlePojo.getId()))
             .then(ownershipRepository.get(ownershipId))
             .flatMap(dto -> searchEntrypointRepository.updateChangedOwnershipVectors(ownershipId)
                 .thenReturn(dto))

@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 
@@ -13,14 +14,15 @@ import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 
 public class FTSConstants {
     public static final Field<Object> RANK_FIELD_ALIAS = field("rank", Object.class);
@@ -41,7 +43,7 @@ public class FTSConstants {
         Map.entry(DATASET_FIELD.INTERNAL_DESCRIPTION, "C"),
         Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
         Map.entry(LABEL.NAME, "C"),
-        Map.entry(ROLE.NAME, "D"),
+        Map.entry(TITLE.NAME, "D"),
         Map.entry(OWNER.NAME, "C")
     );
 
@@ -51,7 +53,7 @@ public class FTSConstants {
         Map.entry(NAMESPACE.NAME, "B"),
         Map.entry(TAG.NAME, "B"),
         Map.entry(OWNER.NAME, "C"),
-        Map.entry(ROLE.NAME, "D")
+        Map.entry(TITLE.NAME, "D")
     );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> DATA_ENTITY_CONDITIONS =
@@ -62,7 +64,13 @@ public class FTSConstants {
             FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
             FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-            FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
+            FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters)),
+            FacetType.GROUPS, filters -> {
+                final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
+                    .from(DATA_ENTITY)
+                    .where(DATA_ENTITY.ID.in(extractFilterId(filters)));
+                return GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns);
+            }
         );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> TERM_CONDITIONS = Map.of(
@@ -71,7 +79,7 @@ public class FTSConstants {
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
 
-    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
+    public static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
             .map(SearchFilterDto::getEntityId)
             .collect(Collectors.toList());

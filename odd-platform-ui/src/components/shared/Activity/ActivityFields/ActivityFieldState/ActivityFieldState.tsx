@@ -15,13 +15,8 @@ const ActivityFieldState: React.FC<ActivityFieldProps> = ({
   newStateChildren,
   stateDirection = 'column',
 }) => (
-  <Grid container flexDirection="column">
-    <Collapse
-      in={isDetailsOpen}
-      timeout="auto"
-      unmountOnExit
-      sx={{ mt: 0.5 }}
-    >
+  <Grid container flexDirection='column'>
+    <Collapse in={isDetailsOpen} timeout='auto' unmountOnExit sx={{ mt: 0.5 }}>
       {isDetailsOpen ? (
         <S.Container container>
           {oldStateChildren && (

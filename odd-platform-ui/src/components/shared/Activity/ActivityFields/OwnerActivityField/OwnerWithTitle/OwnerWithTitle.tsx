@@ -1,9 +1,9 @@
 import { Variant } from '@mui/material/styles/createTypography';
 import { Typography } from '@mui/material';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
+import { LabelItem } from 'components/shared';
 import React from 'react';
 import { CRUDType } from 'lib/interfaces';
-import * as S from './OwnerWithRoleStyles';
+import * as S from './OwnerWithTitleStyles';
 
 export interface OwnerWithRoleProps {
   ownerName?: string;
@@ -12,7 +12,7 @@ export interface OwnerWithRoleProps {
   typeOfChange?: CRUDType;
 }
 
-const OwnerWithRole: React.FC<OwnerWithRoleProps> = ({
+const OwnerWithTitle: React.FC<OwnerWithRoleProps> = ({
   ownerName,
   roleName,
   ownerTypographyVariant = 'body1',
@@ -26,4 +26,4 @@ const OwnerWithRole: React.FC<OwnerWithRoleProps> = ({
   </S.Container>
 );
 
-export default OwnerWithRole;
+export default OwnerWithTitle;

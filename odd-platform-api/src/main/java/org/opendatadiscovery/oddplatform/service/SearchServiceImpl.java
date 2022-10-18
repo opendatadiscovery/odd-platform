@@ -34,6 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
@@ -132,13 +133,13 @@ public class SearchServiceImpl implements SearchService {
 
         final Mono<Long> allCount = Mono.fromCallable(() -> dataEntityRepository.countByState(state));
 
-        final Mono<Long> myObjectsTotal = authIdentityProvider.fetchAssociatedOwner()
+        final Mono<Long> myObjectsCount = authIdentityProvider.fetchAssociatedOwner()
             .map(owner -> dataEntityRepository.countByState(state, owner))
             .switchIfEmpty(Mono.just(0L));
 
-        return Mono.zip(entityClassFacet, allCount, myObjectsTotal)
-            .map(tuple -> {
-                final List<CountableSearchFilter> entityClasses = tuple.getT1().entrySet().stream()
+        return Mono.zip(entityClassFacet, allCount, myObjectsCount).map(
+            function((entityClassFacetMap, totalCount, myObjectsTotalCount) -> {
+                final List<CountableSearchFilter> entityClasses = entityClassFacetMap.entrySet().stream()
                     .map(e -> searchMapper.mapCountableSearchFilter(e.getKey(), e.getValue()))
                     .sorted(Comparator.comparing(CountableSearchFilter::getCount).reversed())
                     .toList();
@@ -154,11 +155,11 @@ public class SearchServiceImpl implements SearchService {
                 return new SearchFacetsData()
                     .searchId(searchId)
                     .query(state.getQuery())
-                    .total(tuple.getT2())
-                    .myObjectsTotal(tuple.getT3())
+                    .total(totalCount)
+                    .myObjectsTotal(myObjectsTotalCount)
                     .myObjects(state.isMyObjects())
                     .facetState(facetStateMapper.mapDto(entityClasses, state));
-            });
+            }));
     }
 
     private Mono<Map<SearchFilterId, Long>> fetchEntityClassFacet(final FacetStateDto state) {
@@ -183,6 +184,7 @@ public class SearchServiceImpl implements SearchService {
             case TAGS -> s -> searchFacetRepository.getTagFacet(query, page, size, s);
             case OWNERS -> s -> searchFacetRepository.getOwnerFacet(query, page, size, s);
             case TYPES -> s -> searchFacetRepository.getTypeFacet(query, page, size, s);
+            case GROUPS -> s -> searchFacetRepository.getGroupFacet(query, page, size, s);
         };
     }
 }

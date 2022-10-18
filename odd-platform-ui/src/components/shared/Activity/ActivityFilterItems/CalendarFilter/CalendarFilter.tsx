@@ -3,7 +3,7 @@ import { formatISO } from 'date-fns';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
-import AppDateRangePicker from 'components/shared/AppDateRangePicker/AppDateRangePicker';
+import { AppDateRangePicker } from 'components/shared';
 
 const CalendarFilter: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ const CalendarFilter: React.FC = () => {
   return (
     <AppDateRangePicker
       defaultRange={defaultRange}
-      label="Period"
+      label='Period'
       setCurrentRange={setQueryDateParams}
     />
   );
