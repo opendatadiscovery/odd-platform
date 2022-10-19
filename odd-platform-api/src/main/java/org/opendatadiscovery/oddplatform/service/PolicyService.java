@@ -16,4 +16,6 @@ public interface PolicyService {
     Mono<PolicyDetails> update(final long id, final PolicyFormData formData);
 
     Mono<Policy> delete(final long id);
+
+    Mono<String> getPolicySchema();
 }

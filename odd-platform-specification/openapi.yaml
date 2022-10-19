@@ -2328,6 +2328,21 @@ paths:
       tags:
         - policy
 
+  /api/policies/schema:
+    get:
+      summary: Get policy schema
+      description: Get policy schema
+      operationId: getPolicySchema
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      tags:
+        - policy
+
   /api/roles:
     get:
       summary: List of roles

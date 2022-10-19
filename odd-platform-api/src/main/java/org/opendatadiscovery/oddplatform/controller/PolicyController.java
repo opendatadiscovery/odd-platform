@@ -55,4 +55,10 @@ public class PolicyController implements PolicyApi {
         return policyService.delete(policyId)
             .thenReturn(ResponseEntity.noContent().build());
     }
+
+    @Override
+    public Mono<ResponseEntity<String>> getPolicySchema(final ServerWebExchange exchange) {
+        return policyService.getPolicySchema()
+            .map(ResponseEntity::ok);
+    }
 }

@@ -4,59 +4,349 @@
   "title": "Policy",
   "type": "object",
   "properties": {
-    "resources": {
+    "statements": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/policy_resource"
-      },
-      "minItems": 1
-    },
-    "permissions": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/policy_permission"
+        "$ref": "#/$defs/policy_statement"
       },
       "minItems": 1
     }
   },
   "required": [
-    "resources",
-    "permissions"
+    "statements"
   ],
   "$defs": {
+    "policy_statement": {
+      "type": "object",
+      "properties": {
+        "resource": {
+          "$ref": "#/$defs/policy_resource"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/term_permissions"
+              },
+              {
+                "$ref": "#/$defs/data_entity_permission"
+              },
+              {
+                "$ref": "#/$defs/datasource_permissions"
+              },
+              {
+                "$ref": "#/$defs/collector_permissions"
+              },
+              {
+                "$ref": "#/$defs/namespace_permissions"
+              },
+              {
+                "$ref": "#/$defs/tag_permissions"
+              },
+              {
+                "$ref": "#/$defs/label_permissions"
+              },
+              {
+                "$ref": "#/$defs/owner_association_permissions"
+              },
+              {
+                "$ref": "#/$defs/owner_permissions"
+              }
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "resource",
+        "permissions"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "DATA_ENTITY"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/data_entity_permission"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "TERM"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/term_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "DATA_SOURCE"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/datasource_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "COLLECTOR"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/collector_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "NAMESPACE"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/namespace_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "TAG"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/tag_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "LABEL"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/label_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "OWNER"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/owner_permissions"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "const": "OWNER_ASSOCIATION"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            },
+            "required": [
+              "resource"
+            ]
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "items": {
+                  "$ref": "#/$defs/owner_association_permissions"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "policy_resource": {
       "type": "object",
       "properties": {
         "type": {
           "$ref": "#/$defs/policy_resource_type"
         },
-        "name": {
-          "type": "string"
-        },
         "conditions": {
           "$ref": "#/$defs/policy_resource_condition"
         }
       },
-      "allOf": [
-        {
-          "required": [
-            "type"
-          ]
-        },
-        {
-          "anyOf": [
-            {
-              "required": [
-                "name"
-              ]
-            },
-            {
-              "required": [
-                "conditions"
-              ]
-            }
-          ]
-        }
+      "required": [
+        "type"
       ]
     },
     "policy_resource_condition": {
@@ -157,10 +447,22 @@
         "dataEntity:namespace:name",
         "dataEntity:tag:name",
         "dataEntity:owner",
-        "dataEntity:owner:title:"
+        "dataEntity:owner:name",
+        "dataEntity:owner:title",
+        "term:name",
+        "term:namespace:name",
+        "term:tag:name",
+        "term:owner",
+        "term:owner:name",
+        "term:owner:title",
+        "datasource:oddrn",
+        "datasource:namespace:name",
+        "collector:oddrn",
+        "collector:namespace:name"
       ]
     },
-    "policy_permission": {
+    "data_entity_permission": {
+      "type": "string",
       "enum": [
         "DATA_ENTITY_INTERNAL_NAME_UPDATE",
         "DATA_ENTITY_CUSTOM_METADATA_CREATE",
@@ -170,16 +472,87 @@
         "DATA_ENTITY_OWNERSHIP_CREATE",
         "DATA_ENTITY_OWNERSHIP_UPDATE",
         "DATA_ENTITY_OWNERSHIP_DELETE",
-        "DATA_ENTITY_GROUPS_ADD",
-        "DATA_ENTITY_GROUPS_DELETE",
+        "DATA_ENTITY_ADD_TO_GROUP",
+        "DATA_ENTITY_DELETE_FROM_GROUP",
         "DATA_ENTITY_TAGS_UPDATE",
-        "DATA_ENTITY_TERMS_ADD",
-        "DATA_ENTITY_TERMS_DELETE",
+        "DATA_ENTITY_ADD_TERM",
+        "DATA_ENTITY_DELETE_TERM",
         "DATASET_DESCRIPTION_UPDATE",
         "DATASET_LABELS_UPDATE",
         "DATASET_ENUMS_ADD",
         "DATASET_ENUMS_UPDATE",
-        "DATASET_ENUMS_DELETE"
+        "DATASET_ENUMS_DELETE",
+        "DATA_ENTITY_GROUP_CREATE",
+        "DATA_ENTITY_GROUP_UPDATE",
+        "DATA_ENTITY_GROUP_DELETE"
+      ]
+    },
+    "term_permissions": {
+      "type": "string",
+      "enum": [
+        "TERM_CREATE",
+        "TERM_UPDATE",
+        "TERM_DELETE",
+        "TERM_TAGS_UPDATE",
+        "TERM_OWNERSHIP_CREATE",
+        "TERM_OWNERSHIP_UPDATE",
+        "TERM_OWNERSHIP_DELETE"
+      ]
+    },
+    "datasource_permissions": {
+      "type": "string",
+      "enum": [
+        "DATASOURCE_CREATE",
+        "DATASOURCE_UPDATE",
+        "DATASOURCE_DELETE",
+        "DATA_SOURCE_TOKEN_REGENERATE"
+      ]
+    },
+    "collector_permissions": {
+      "type": "string",
+      "enum": [
+        "COLLECTOR_CREATE",
+        "COLLECTOR_UPDATE",
+        "COLLECTOR_DELETE",
+        "COLLECTOR_TOKEN_REGENERATE"
+      ]
+    },
+    "namespace_permissions": {
+      "type": "string",
+      "enum": [
+        "NAMESPACE_CREATE",
+        "NAMESPACE_UPDATE",
+        "NAMESPACE_DELETE"
+      ]
+    },
+    "tag_permissions": {
+      "type": "string",
+      "enum": [
+        "TAG_CREATE",
+        "TAG_UPDATE",
+        "TAG_DELETE"
+      ]
+    },
+    "label_permissions": {
+      "type": "string",
+      "enum": [
+        "LABEL_CREATE",
+        "LABEL_UPDATE",
+        "LABEL_DELETE"
+      ]
+    },
+    "owner_permissions": {
+      "type": "string",
+      "enum": [
+        "OWNER_CREATE",
+        "OWNER_UPDATE",
+        "OWNER_DELETE"
+      ]
+    },
+    "owner_association_permissions": {
+      "type": "string",
+      "enum": [
+        "OWNER_ASSOCIATION_MANAGE"
       ]
     },
     "policy_resource_type": {
@@ -191,7 +564,9 @@
         "NAMESPACE",
         "COLLECTOR",
         "TAG",
-        "LABEL"
+        "LABEL",
+        "OWNER",
+        "OWNER_ASSOCIATION"
       ]
     }
   }
