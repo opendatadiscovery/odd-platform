@@ -24,7 +24,8 @@ public class PolicyDeserializerTest {
 //        assertThat(resource.getName()).isNull();
 //        assertThat(resource.getConditions()).isNotNull();
 //        assertThat(resource.getConditions().getAll()).hasSize(2);
-//        assertThat(resource.getConditions().getAll().get(0).getIs()).isEqualTo(PolicyConditionKeyDto.DATA_ENTITY_OWNER);
+//        assertThat(resource.getConditions().getAll().get(0).getIs())
+//        .isEqualTo(PolicyConditionKeyDto.DATA_ENTITY_OWNER);
 //        final PolicyConditionUnaryDto eq = resource.getConditions().getAll().get(1).getEq();
 //        assertThat(eq).isNotNull();
 //        assertThat(eq.getCondition()).hasSize(1);
