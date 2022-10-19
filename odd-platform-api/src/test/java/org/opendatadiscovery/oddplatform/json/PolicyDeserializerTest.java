@@ -2,20 +2,7 @@ package org.opendatadiscovery.oddplatform.json;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionKeyDto;
-import org.opendatadiscovery.oddplatform.dto.policy.PolicyConditionUnaryDto;
-import org.opendatadiscovery.oddplatform.dto.policy.PolicyDto;
-import org.opendatadiscovery.oddplatform.dto.policy.PolicyResourceDto;
-import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
-import org.springframework.core.io.ClassPathResource;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_CREATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_DELETE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DESCRIPTION_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_INTERNAL_NAME_UPDATE;
 
 public class PolicyDeserializerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
