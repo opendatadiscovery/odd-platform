@@ -98,6 +98,12 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                         final DatasetFieldPojo copyNew = datasetFieldApiMapper.copy(newField);
                         copyNew.setId(previousVersion.getId());
                         copyNew.setInternalDescription(previousVersion.getInternalDescription());
+
+                        // TODO: controversial
+                        if (copyNew.getStats() == null || copyNew.getStats().data().equals("{}")) {
+                            copyNew.setStats(previousVersion.getStats());
+                        }
+
                         return copyNew;
                     })
                     .toList();
