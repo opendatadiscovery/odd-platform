@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Policy;
 import org.opendatadiscovery.oddplatform.api.contract.model.PolicyDetails;
@@ -9,16 +10,27 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactivePolicyRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRoleToPolicyRepository;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class PolicyServiceImpl implements PolicyService {
+    private static final String POLICY_SCHEMA = loadPolicySchema();
+
     private final ReactivePolicyRepository policyRepository;
     private final ReactiveRoleToPolicyRepository roleToPolicyRepository;
     private final PolicyValidator policyValidator;
     private final PolicyMapper policyMapper;
+
+    private static String loadPolicySchema() {
+        try (final InputStream is = new ClassPathResource("schema/policy_schema.json").getInputStream()) {
+            return new String(is.readAllBytes());
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public Mono<PolicyDetails> getPolicyDetails(final long id) {
@@ -59,5 +71,10 @@ public class PolicyServiceImpl implements PolicyService {
                 new IllegalStateException("Policy with id %d is attached to a role".formatted(id))))
             .then(policyRepository.delete(id))
             .map(policyMapper::mapToPolicy);
+    }
+
+    @Override
+    public Mono<String> getPolicySchema() {
+        return Mono.just(POLICY_SCHEMA);
     }
 }
