@@ -21,8 +21,14 @@ export const rolesSlice = createSlice({
     builder.addCase(thunks.fetchRolesList.fulfilled, (state, { payload }) => {
       const { items, pageInfo } = payload;
 
-      rolesAdapter.setMany(state, items);
       state.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        rolesAdapter.setMany(state, items);
+        return state;
+      }
+      rolesAdapter.setAll(state, items);
+      return state;
     });
     builder.addCase(thunks.createRole.fulfilled, (state, { payload }) => {
       rolesAdapter.addOne(state, payload);

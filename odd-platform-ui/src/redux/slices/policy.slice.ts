@@ -28,8 +28,14 @@ export const policiesSlice = createSlice({
     builder.addCase(thunks.fetchPolicyList.fulfilled, (state, { payload }) => {
       const { items, pageInfo } = payload;
 
-      policyAdapter.setMany(state.policies, items);
       state.policies.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        policyAdapter.setMany(state.policies, items);
+        return state;
+      }
+      policyAdapter.setAll(state.policies, items);
+      return state;
     });
     builder.addCase(thunks.createPolicy.fulfilled, (state, { payload }) => {
       policyAdapter.addOne(state.policies, payload);

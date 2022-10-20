@@ -16,3 +16,11 @@ export type ManagementViewType =
 export type OwnerAssociationRequestsViewType = 'New' | 'Resolved';
 
 export type CRUDType = 'created' | 'updated' | 'deleted';
+
+export type JSONValue =
+  | string
+  | number
+  | boolean
+  | undefined
+  | { [x: string]: JSONValue }
+  | Array<JSONValue>;

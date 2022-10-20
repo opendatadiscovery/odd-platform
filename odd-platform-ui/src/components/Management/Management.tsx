@@ -108,8 +108,8 @@ const Management: React.FC = () => {
               redirectTo='/management/namespaces'
               exact
               path={[
-                '/management/policies/:policyId',
                 '/management/policies/createPolicy',
+                '/management/policies/:policyId',
               ]}
               component={PolicyDetails}
             />

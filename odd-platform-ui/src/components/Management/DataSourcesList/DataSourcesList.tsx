@@ -28,7 +28,7 @@ const DataSourcesListView: React.FC = () => {
   const { isAdmin } = usePermissions({});
 
   const dataSourcesList = useAppSelector(getDataSourcesList);
-  const pageInfo = useAppSelector(getDataSourcesListPage);
+  const { page, total, hasNext } = useAppSelector(getDataSourcesListPage);
 
   const { isLoading: isDataSourcesListFetching } = useAppSelector(
     getIsDataSourcesListFetching
@@ -37,39 +37,31 @@ const DataSourcesListView: React.FC = () => {
     getDatasourceDeletingStatuses
   );
 
-  const pageSize = 30;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalDataSources, setTotalDataSources] = React.useState<
-    number | undefined
-  >(pageInfo?.total);
+  const size = 3;
+  const [query, setQuery] = React.useState<string>('');
+  const [totalDataSources, setTotalDataSources] = React.useState<number | undefined>(
+    total
+  );
 
   React.useEffect(() => {
-    if (!searchText) {
-      dispatch(fetchDataSourcesList({ page: 1, size: pageSize }));
+    if (!query) {
+      dispatch(fetchDataSourcesList({ page: 1, size }));
     }
-  }, [isDataSourceDeleting, searchText]);
+  }, [isDataSourceDeleting, query]);
 
   React.useEffect(() => {
-    if (!searchText) setTotalDataSources(pageInfo?.total);
-  }, [pageInfo]);
+    if (!query) setTotalDataSources(total);
+  }, [total, query]);
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(
-        fetchDataSourcesList({
-          page: 1,
-          size: pageSize,
-          query: searchText,
-        })
-      );
+      dispatch(fetchDataSourcesList({ page: 1, size, query }));
     }, 500),
-    [searchText]
+    [query]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchText(event.target.value);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
     handleSearch();
   };
 
@@ -80,30 +72,24 @@ const DataSourcesListView: React.FC = () => {
   };
 
   const fetchNextPage = () => {
-    if (!pageInfo?.hasNext) return;
-    dispatch(
-      fetchDataSourcesList({
-        page: pageInfo.page + 1,
-        size: pageSize,
-        query: searchText,
-      })
-    );
+    if (!hasNext) return;
+    dispatch(fetchDataSourcesList({ page: page + 1, size, query }));
   };
 
   return (
-    <Grid container flexDirection="column" alignItems="center">
+    <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant="h1">Datasources</Typography>
-        <Typography variant="subtitle1" color="texts.info">
+        <Typography variant='h1'>Datasources</Typography>
+        <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalDataSources} /> datasources overall
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder="Search datasource..."
+          placeholder='Search datasource...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
-          value={searchText}
+          value={query}
           customStartAdornment={{
             variant: 'search',
             showAdornment: true,
@@ -112,8 +98,8 @@ const DataSourcesListView: React.FC = () => {
           }}
           customEndAdornment={{
             variant: 'clear',
-            showAdornment: !!searchText,
-            onCLick: () => setSearchText(''),
+            showAdornment: !!query,
+            onCLick: () => setQuery(''),
             icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
@@ -123,8 +109,8 @@ const DataSourcesListView: React.FC = () => {
         <DataSourceForm
           btnCreateEl={
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               startIcon={<AddIcon />}
               disabled={!isAdmin}
             >
@@ -137,20 +123,13 @@ const DataSourcesListView: React.FC = () => {
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            loader={
-              isDataSourcesListFetching && (
-                <DataSourceSkeletonItem length={5} />
-              )
-            }
+            hasMore={hasNext}
+            loader={isDataSourcesListFetching && <DataSourceSkeletonItem length={5} />}
             dataLength={dataSourcesList.length}
           >
             {dataSourcesList.map(dataSource => (
               <Grid key={dataSource.id} sx={{ mb: 1 }}>
-                <DataSourceItem
-                  key={dataSource.id}
-                  dataSource={dataSource}
-                />
+                <DataSourceItem key={dataSource.id} dataSource={dataSource} />
               </Grid>
             ))}
           </InfiniteScroll>
