@@ -127,6 +127,10 @@ notifications:
 #    webhook:
 #      url:
 
+datacollaboration:
+  enabled: true
+  slack-oauth-token: xoxb-3651903323686-4262798389121-IF7gihb9mMx34t6XTVFG7qqT
+
 management:
   endpoints:
     enabled-by-default: false

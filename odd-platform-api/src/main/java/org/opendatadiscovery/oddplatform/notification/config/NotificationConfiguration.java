@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnProperty(value = "notifications.enabled", havingValue = "true")
-@Slf4j
 public class NotificationConfiguration {
     @Bean
     public HttpClient httpClient() {

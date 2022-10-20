@@ -1,0 +1,58 @@
+package org.opendatadiscovery.oddplatform.datacollaboration.client;
+
+import com.slack.api.methods.AsyncMethodsClient;
+import com.slack.api.methods.request.conversations.ConversationsListRequest;
+import com.slack.api.methods.response.conversations.ConversationsListResponse;
+import com.slack.api.model.Conversation;
+import com.slack.api.model.ConversationType;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.datacollaboration.exception.SlackAPIException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@RequiredArgsConstructor
+@Slf4j
+public class SlackAPIClientImpl implements SlackAPIClient {
+    private static final int LIMIT_SIZE = 200;
+
+    private final AsyncMethodsClient asyncMethodsClient;
+
+    @Override
+    public Flux<String> getChannelNames() {
+        return requestConversationList()
+            .expand(response -> {
+                if (!response.isOk()) {
+                    return Mono.error(new SlackAPIException(response.getError()));
+                }
+
+                if (StringUtils.isNotEmpty(response.getResponseMetadata().getNextCursor())) {
+                    return requestConversationList(response.getResponseMetadata().getNextCursor());
+                }
+
+                return Mono.empty();
+            })
+            .flatMap(response -> Flux.fromIterable(response.getChannels()))
+            .map(Conversation::getName);
+    }
+
+    private Mono<ConversationsListResponse> requestConversationList() {
+        return requestConversationList(null);
+    }
+
+    private Mono<ConversationsListResponse> requestConversationList(final String cursor) {
+        final ConversationsListRequest request = ConversationsListRequest.builder()
+            .excludeArchived(true)
+            .types(List.of(ConversationType.PUBLIC_CHANNEL))
+            .limit(LIMIT_SIZE)
+            .build();
+
+        if (cursor != null) {
+            request.setCursor(cursor);
+        }
+
+        return Mono.fromFuture(asyncMethodsClient.conversationsList(request));
+    }
+}

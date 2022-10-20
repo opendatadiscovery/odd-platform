@@ -38,6 +38,8 @@ dependencies {
     implementation libs.shedlock
     implementation libs.shedlock.jdbc.lock.provider
 
+    implementation 'com.slack.api:slack-api-client:1.26.1'
+
     compileOnly libs.lombok
 
     annotationProcessor libs.lombok
