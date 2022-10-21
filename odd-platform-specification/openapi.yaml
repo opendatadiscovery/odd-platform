@@ -34,11 +34,12 @@ tags:
   - name: term
   - name: activity
   - name: ownerAssociationRequest
+  - name: data_collaboration
 paths:
   /api/features/active:
     get:
       summary: Active features
-      description: Get features that are currently enabled
+      description: Gets features that are currently enabled
       operationId: getActiveFeatures
       responses:
         '200':
@@ -49,6 +50,22 @@ paths:
                 $ref: './components.yaml/#/components/schemas/FeatureList'
       tags:
         - feature
+
+  /api/features/datacollaboration/providers/slack/channels:
+    get:
+      summary: Public Slack channels ready to be written to
+      description: Gets Slack active channels ready to be written to
+      operationId: getSlackChannels
+      responses:
+        # TODO: add code if feature is disabled
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SlackChannelList'
+      tags:
+        - data_collaboration
 
   /api/identity/whoami:
     get:

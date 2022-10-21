@@ -2248,6 +2248,27 @@ components:
         status:
           $ref: '#/components/schemas/OwnerAssociationRequestStatus'
 
+    SlackChannel:
+      type: object
+      properties:
+        channel_id:
+          type: string
+        name:
+          type: string
+      required:
+        - channel_id
+        - name
+
+    SlackChannelList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlackChannel'
+      required:
+        - items
+
   parameters:
     PageParam:
       name: page
