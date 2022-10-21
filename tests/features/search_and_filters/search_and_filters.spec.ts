@@ -59,7 +59,7 @@ test.describe('Check filters and search', () => {
           })
           await test.step('I click Type filer', async () => {
               await pages.catalog.openFilterWithInput(`Type`);
-              await pages.catalog.chooseOptionJobInTypeFilter;
+              await pages.catalog.chooseOptionJobInTypeFilter();
               expect(await pages.catalog.isVisible('Book_ETL')).toBeTruthy();
           });
       });

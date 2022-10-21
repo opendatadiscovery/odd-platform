@@ -30,9 +30,10 @@ export default class CatalogPage extends BasePage {
   async chooseOption(optionOfFilter: string) {
     await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.filterOption}:has-text('${optionOfFilter}')`);
   }
-    async chooseOptionJobInTypeFilter() {
-        await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.optionJobInTypeFilter}`);
-    }
+
+  async chooseOptionJobInTypeFilter() {
+      await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.optionJobInTypeFilter}`);
+  }
 
   async openFilterWithInput(nameOfFilter: string) {
     await this.page.click(`${SELECTORS.filterWithInput(nameOfFilter)} >> ${SELECTORS.filterInput}`);
