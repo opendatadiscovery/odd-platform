@@ -10,10 +10,11 @@ const SELECTORS = {
   filterInput: `[type="text"]`,
   searchBar: `[placeholder="Search"]`,
   searchButton: `.sc-kDDrLX.gpLWbw > div > div > div > div > [type="button"]`,
-  listOfFilters: `[role="presentation"]`,
-  itemString: name => `p:has-text('${name}')`,
-  tabAll: `[role="tab"]:has-text('All')`,
-  amountInTab: amount => `.sc-idiyUo.dZSeSb:has-text('${amount}')`,
+  listOfFilters: `[role="listbox"]`,
+    filterOption: `[role="option"]`,
+  itemString: name => `a:has-text('${name}')`,
+  tab: name => `[role="tab"]:has-text('${name}')`,
+    optionJobInTypeFilter: `[aria-activedescendant="filter-types-option-1]`,
 };
 export default class CatalogPage extends BasePage {
   get clearAll() {
@@ -21,28 +22,37 @@ export default class CatalogPage extends BasePage {
   }
 
   async openFilterWithSelect(nameOfFilter: string) {
+      await this.page.waitForLoadState("networkidle");
     await this.page.click(
-      `${SELECTORS.filterWithSelect(nameOfFilter)} >> ${SELECTORS.filterSelect}`,
-    );
+      `${SELECTORS.filterWithSelect(nameOfFilter)}`);
   }
 
   async chooseOption(optionOfFilter: string) {
-    await this.page.click(`${SELECTORS.listOfFilters}:has-text('${optionOfFilter}')`);
+    await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.filterOption}:has-text('${optionOfFilter}')`);
   }
+    async chooseOptionJobInTypeFilter() {
+        await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.optionJobInTypeFilter}`);
+    }
 
   async openFilterWithInput(nameOfFilter: string) {
     await this.page.click(`${SELECTORS.filterWithInput(nameOfFilter)} >> ${SELECTORS.filterInput}`);
   }
 
-  async isVisible(name: string) {
-    await this.page.locator(SELECTORS.itemString(name)).isVisible();
+  async isVisible(name: string): Promise <boolean> {
+      await this.page.locator(SELECTORS.itemString(name)).waitFor({state:"visible"});
+      return this.page.locator(SELECTORS.itemString(name)).isVisible();
   }
 
   async openDataEntity(name: string) {
     await this.page.locator(SELECTORS.itemString(name)).click();
   }
 
-  async checkAmountDataEntityTabAll(amount: string) {
-    return this.page.locator(`${SELECTORS.tabAll} >> ${SELECTORS.amountInTab(amount)}`).isVisible();
+  async clickTab(name:string) {
+    return this.page.locator(SELECTORS.tab(name)).click();
+  }
+
+  async fillSearchString(text: string) {
+      await this.page.locator(SELECTORS.searchBar).fill(text);
+      await this.page.locator(SELECTORS.searchBar).press('Enter')
   }
 }

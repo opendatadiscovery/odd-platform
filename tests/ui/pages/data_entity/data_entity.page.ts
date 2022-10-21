@@ -3,14 +3,16 @@ import BasePage from '../base-page';
 const SELECTORS = {
   addOwner: `text=Add Owner`,
   inputName: `[placeholder="Search name"]`,
-  inputRole: `[placeholder="Search role"]`,
+  inputRole: `[placeholder="Search title"]`,
   autocomplete: text => `[role="presentation"]:has-text('${text}')`,
   addOwnerButton: `[type="submit"]`,
   addTag: `.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add Tags')`,
   inputTagName: `[role="combobox"]`,
   saveButton: `[type="submit"]`,
-  ownerString: text => `.sc-caXVBt.jknPKd:has-text('${text}')`,
+  ownerString: text => `.sc-dxtBLK.hWlgkE:has-text('${text}')`,
   tagString: text => `.MuiTypography-root.MuiTypography-body1.sc-jdAMXn:has-text('${text}')`,
+    tag: text => `p:has-text('${text}')`,
+    addGroup: `.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add to group')`
 };
 
 export default class DataEntityPage extends BasePage {
@@ -28,13 +30,13 @@ export default class DataEntityPage extends BasePage {
     await this.page.locator(SELECTORS.autocomplete(text)).click();
   }
 
-  async createOwner(name: string, textName: string, role: string, textRole: string) {
+  async createOwner(name: string, textName: string, title: string, textTitle: string) {
     await this.openAddOwnerModal();
     await this.fillInputOwnerName(name, textName);
-    await this.fillInputOwnerRole(role, textRole);
+    await this.fillInputOwnerRole(title, textTitle);
     await this.page.locator(SELECTORS.addOwnerButton).click();
     await this.locator(SELECTORS.ownerString(name)).waitFor({ state: 'visible' });
-    await this.locator(SELECTORS.ownerString(role)).waitFor({ state: 'visible' });
+    await this.locator(SELECTORS.ownerString(title)).waitFor({ state: 'visible' });
   }
 
   async openAddTagModal() {
@@ -50,6 +52,6 @@ export default class DataEntityPage extends BasePage {
     await this.openAddTagModal();
     await this.fillInputTagName(name, text);
     await this.page.locator(SELECTORS.saveButton).click();
-    await this.page.locator(SELECTORS.tagString(name)).waitFor({ state: 'visible' });
+    await this.page.locator(SELECTORS.tag(name)).waitFor({ state: 'visible' });
   }
 }

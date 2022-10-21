@@ -226,6 +226,17 @@
       "data_input": null,
       "data_consumer": null,
       "data_entity_group": null
+    },
+    {
+      "oddrn" : "//oracle/host/1.2.3.4/databases/group_bookshop",
+      "name" : "group_bookshop",
+      "type" : "DAG",
+      "data_entity_group" : {
+        "entities_list" : [
+          "//oracle/host/1.2.3.4/databases/bookshop/tables/postcards_aqa",
+          "//airflow/host/2.1.3.4/jobs/BookETL"
+        ]
+      }
     }
   ]
 }
