@@ -1,5 +1,20 @@
 components:
   schemas:
+    Feature:
+      type: string
+      enum:
+        - DATA_COLLABORATION_SLACK
+
+    FeatureList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+      required:
+        - items
+
     Identity:
       type: object
       properties:

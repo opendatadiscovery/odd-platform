@@ -1,6 +1,9 @@
 housekeeping:
   enabled: false
 
+datacollaboration:
+  enabled: false
+
 logging:
   level:
     org.springframework.transaction.interceptor: debug

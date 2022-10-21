@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.client;
 
 import com.slack.api.methods.AsyncMethodsClient;
+import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.Conversation;
@@ -12,6 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.SlackAPIException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static com.slack.api.model.block.Blocks.section;
+import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -36,6 +40,24 @@ public class SlackAPIClientImpl implements SlackAPIClient {
             })
             .flatMap(response -> Flux.fromIterable(response.getChannels()))
             .map(Conversation::getName);
+    }
+
+    @Override
+    public Mono<Void> postMessage(final String channelId, final String string) {
+        final ChatPostMessageRequest req = ChatPostMessageRequest.builder()
+            .blocks(List.of(section(b -> b.text(markdownText("Hello world from " + string)))))
+            .channel(channelId)
+            .build();
+
+        return Mono.fromFuture(asyncMethodsClient.chatPostMessage(req))
+            .handle((response, sink) -> {
+                if (!response.isOk()) {
+                    sink.error(new SlackAPIException(response.getError()));
+                    return;
+                }
+
+                sink.complete();
+            });
     }
 
     private Mono<ConversationsListResponse> requestConversationList() {
