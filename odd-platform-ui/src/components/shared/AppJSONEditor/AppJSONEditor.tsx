@@ -1,17 +1,57 @@
 import React, { FC } from 'react';
 import {
-  createAjvValidator,
   JSONEditor,
   type JSONEditorPropsOptional,
   JSONValue,
   Mode,
+  parsePath,
   TextContent,
+  type ValidationError,
+  ValidationSeverity,
 } from 'vanilla-jsoneditor';
-import { JSONValue as AppJSONValue } from 'lib/interfaces';
+import Ajv2019 from 'ajv/dist/2019';
+import './AppJSONEditorStyles.css';
+
+interface DefaultSchemaObject {
+  id?: string;
+  $id?: string;
+  $schema?: string;
+  [x: string]: unknown;
+}
+
+export interface SchemaObject {
+  id?: string;
+  $id?: string;
+  $schema?: string;
+  $async?: false;
+  [x: string]: unknown;
+}
+
+export interface AsyncSchema extends DefaultSchemaObject {
+  $async: true;
+}
+
+export type AnySchemaObject = SchemaObject | AsyncSchema;
+
+interface ErrorObject<
+  K extends string = string,
+  P = Record<string, unknown>,
+  S = unknown
+> {
+  keyword: K;
+  instancePath: string;
+  schemaPath: string;
+  params: P;
+  propertyName?: string;
+  message?: string;
+  schema?: S;
+  parentSchema?: AnySchemaObject;
+  data?: unknown;
+}
 
 interface JSONEditorProps extends JSONEditorPropsOptional {
   onValidate: (isValid: boolean, result: string) => void;
-  schema: AppJSONValue;
+  schema: Record<string, unknown>;
 }
 
 const AppJSONEditor: FC<JSONEditorProps> = ({
@@ -22,7 +62,46 @@ const AppJSONEditor: FC<JSONEditorProps> = ({
 }) => {
   const refContainer = React.useRef<HTMLDivElement>(null);
   const refEditor = React.useRef<JSONEditor | null>(null);
-  const validator = createAjvValidator(schema as JSONValue, {}, { allErrors: true });
+  const ajv = new Ajv2019({ allErrors: true });
+  const validate = ajv.compile(schema);
+
+  const improveAjvError = (ajvError: ErrorObject) => {
+    if (ajvError.keyword === 'enum' && Array.isArray(ajvError.schema)) {
+      let enums = ajvError.schema;
+      if (enums) {
+        enums = enums.map(value => JSON.stringify(value));
+
+        if (enums.length > 5) {
+          const more = [`(${enums.length - 5} more...)`];
+          enums = enums.slice(0, 5);
+          enums.push(more);
+        }
+        ajvError.message = `Should be equal to one of: ${enums.join(', ')}`;
+      }
+    }
+
+    if (ajvError.keyword === 'additionalProperties') {
+      ajvError.message = `Should NOT have additional property: ${ajvError.params.additionalProperty}`;
+    }
+
+    return ajvError;
+  };
+
+  const normalizeAjvError = (
+    json: JSONValue,
+    ajvError: ErrorObject
+  ): ValidationError => ({
+    path: parsePath(json, ajvError.instancePath),
+    message: ajvError.message || 'error',
+    severity: ValidationSeverity.warning,
+  });
+
+  const validator = (json: JSONValue): ValidationError[] => {
+    validate(json);
+    const ajvErrors = validate.errors || [];
+
+    return ajvErrors.map(improveAjvError).map(error => normalizeAjvError(json, error));
+  };
 
   const valid = () => {
     const errors = refEditor.current?.validate();
@@ -40,6 +119,7 @@ const AppJSONEditor: FC<JSONEditorProps> = ({
         props: {
           validator,
           mode: Mode.text,
+          navigationBar: false,
           onChange: (content, previousContent, OnChangeStatus) => {
             if (onChange) {
               onChange(content, previousContent, OnChangeStatus);

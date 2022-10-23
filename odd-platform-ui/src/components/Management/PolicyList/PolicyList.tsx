@@ -80,7 +80,7 @@ const PolicyList: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Policy</Typography>
+        <Typography variant='h1'>Policies</Typography>
         <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalPolicies} /> policies overall
         </Typography>

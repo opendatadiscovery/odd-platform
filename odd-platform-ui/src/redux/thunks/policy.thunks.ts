@@ -52,3 +52,15 @@ export const fetchPolicyDetails = createAsyncThunk<
 >(actions.fetchPolicyDetailsActType, async ({ policyId }) =>
   policyApi.getPolicyDetails({ policyId })
 );
+
+export const fetchPolicySchema = createAsyncThunk<Record<string, unknown>, void>(
+  actions.fetchPolicySchemaActType,
+  async () => {
+    const schema = await policyApi.getPolicySchema();
+    try {
+      return JSON.parse(schema);
+    } catch (e) {
+      throw new Error(e?.toString());
+    }
+  }
+);

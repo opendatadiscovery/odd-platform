@@ -29,8 +29,17 @@ export const { selectAll: getPoliciesList } = policyAdapter.getSelectors<RootSta
 
 export const getPoliciesListPageInfo = createSelector(
   policiesState,
-  (policyList): CurrentPageInfo => policyList.policies.pageInfo
+  (policyState): CurrentPageInfo => policyState.policies.pageInfo
 );
 
 export const { selectById: getPolicyDetails } =
   policyDetailsAdapter.getSelectors<RootState>(state => state.policies.policyDetails);
+
+export const getPolicySchema = createSelector(
+  policiesState,
+  policyState => policyState.policySchema
+);
+
+export const getPolicySchemaFetchingStatuses = createStatusesSelector(
+  actions.fetchPolicySchemaActType
+);

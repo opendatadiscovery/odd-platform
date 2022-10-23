@@ -18,6 +18,7 @@ export const initialState: PoliciesState = {
     ...policyAdapter.getInitialState(),
   },
   policyDetails: { ...policyDetailsAdapter.getInitialState() },
+  policySchema: {},
 };
 
 export const policiesSlice = createSlice({
@@ -48,6 +49,9 @@ export const policiesSlice = createSlice({
     });
     builder.addCase(thunks.fetchPolicyDetails.fulfilled, (state, { payload }) => {
       policyDetailsAdapter.setOne(state.policyDetails, payload);
+    });
+    builder.addCase(thunks.fetchPolicySchema.fulfilled, (state, { payload }) => {
+      state.policySchema = payload;
     });
   },
 });
