@@ -7,12 +7,7 @@ import {
 } from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  AppButton,
-  AppInput,
-  DialogWrapper,
-  LabelItem,
-} from 'components/shared';
+import { AppButton, AppInput, DialogWrapper, LabelItem } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
@@ -27,16 +22,13 @@ type DatasetFieldInfoFormType = {
   internalDescription: string;
 };
 
-const DatasetFieldInfoEditForm: React.FC<
-  DataSetFieldInfoEditFormProps
-> = ({ datasetFieldId, btnCreateEl }) => {
+const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
+  datasetFieldId,
+  btnCreateEl,
+}) => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector(
-    getDatasetFieldFormDataUpdatingStatus
-  );
-  const datasetFieldFormData = useAppSelector(
-    getDatasetFieldData(datasetFieldId)
-  );
+  const { isLoading } = useAppSelector(getDatasetFieldFormDataUpdatingStatus);
+  const datasetFieldFormData = useAppSelector(getDatasetFieldData(datasetFieldId));
 
   const methods = useForm<DatasetFieldInfoFormType>({
     defaultValues: {
@@ -100,17 +92,14 @@ const DatasetFieldInfoEditForm: React.FC<
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Edit information
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="dataset-field-info-form"
-      onSubmit={methods.handleSubmit(handleFormSubmit)}
-    >
-      <Typography variant="h5" color="texts.info">
+    <form id='dataset-field-info-form' onSubmit={methods.handleSubmit(handleFormSubmit)}>
+      <Typography variant='h5' color='texts.info'>
         Add or edit labels and description
       </Typography>
       <LabelsAutocomplete appendLabel={append} />
@@ -128,13 +117,13 @@ const DatasetFieldInfoEditForm: React.FC<
       </S.LabelItemsContainer>
       <Controller
         control={methods.control}
-        name="internalDescription"
+        name='internalDescription'
         defaultValue={datasetFieldFormData.internalDescription || ''}
         render={({ field }) => (
           <AppInput
             {...field}
-            label="Description"
-            placeholder="Enter description"
+            label='Description'
+            placeholder='Enter description'
             multiline
             maxRows={4}
             customEndAdornment={{
@@ -151,10 +140,10 @@ const DatasetFieldInfoEditForm: React.FC<
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="dataset-field-info-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='dataset-field-info-form'
+      color='primary'
       fullWidth
     >
       Save

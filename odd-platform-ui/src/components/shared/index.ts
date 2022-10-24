@@ -51,3 +51,4 @@ export { default as AppPaper } from './AppPaper/AppPaper';
 export { default as TestRunStatusItem } from './TestRunStatusItem/TestRunStatusItem';
 export { default as TestRunStatusIcon } from './TestRunStatusIcon/TestRunStatusIcon';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';
+export { default as AppJSONEditor } from './AppJSONEditor/AppJSONEditor';

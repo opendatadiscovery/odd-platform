@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState, OwnersState, CurrentPageInfo } from 'redux/interfaces';
+import { getTermId } from 'redux/selectors/terms.selectors';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { Owner } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { getTermId } from 'redux/selectors/terms.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 

@@ -77,6 +77,7 @@ const useAppPaths = () => {
 
   const policyDetailsPath = (policyId: number) =>
     `${managementPath('policies')}/${policyId}`;
+
   const createPolicyPath = () => `${managementPath('policies')}/createPolicy`;
 
   // Activity

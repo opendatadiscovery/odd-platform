@@ -18,6 +18,7 @@ export const initialState: PoliciesState = {
     ...policyAdapter.getInitialState(),
   },
   policyDetails: { ...policyDetailsAdapter.getInitialState() },
+  policySchema: {},
 };
 
 export const policiesSlice = createSlice({
@@ -28,8 +29,14 @@ export const policiesSlice = createSlice({
     builder.addCase(thunks.fetchPolicyList.fulfilled, (state, { payload }) => {
       const { items, pageInfo } = payload;
 
-      policyAdapter.setMany(state.policies, items);
       state.policies.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        policyAdapter.setMany(state.policies, items);
+        return state;
+      }
+      policyAdapter.setAll(state.policies, items);
+      return state;
     });
     builder.addCase(thunks.createPolicy.fulfilled, (state, { payload }) => {
       policyAdapter.addOne(state.policies, payload);
@@ -42,6 +49,9 @@ export const policiesSlice = createSlice({
     });
     builder.addCase(thunks.fetchPolicyDetails.fulfilled, (state, { payload }) => {
       policyDetailsAdapter.setOne(state.policyDetails, payload);
+    });
+    builder.addCase(thunks.fetchPolicySchema.fulfilled, (state, { payload }) => {
+      state.policySchema = payload;
     });
   },
 });

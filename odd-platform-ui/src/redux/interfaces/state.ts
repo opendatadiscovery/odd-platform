@@ -56,7 +56,7 @@ import {
 } from 'redux/interfaces';
 
 export interface DataSourcesState extends EntityState<DataSource> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface CollectorsState extends EntityState<Collector> {
@@ -222,6 +222,7 @@ export interface RolesState extends EntityState<Role> {
 export interface PoliciesState {
   policies: { pageInfo: CurrentPageInfo } & EntityState<Policy>;
   policyDetails: EntityState<PolicyDetails>;
+  policySchema: Record<string, unknown>;
 }
 
 export type RootState = ReturnType<typeof store.getState>;

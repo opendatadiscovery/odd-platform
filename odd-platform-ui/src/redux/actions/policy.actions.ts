@@ -13,3 +13,7 @@ export const fetchPolicyDetailsActType = createActionType(
   policyActTypePrefix,
   'fetchPolicyDetails'
 );
+export const fetchPolicySchemaActType = createActionType(
+  policyActTypePrefix,
+  'fetchPolicySchema'
+);
