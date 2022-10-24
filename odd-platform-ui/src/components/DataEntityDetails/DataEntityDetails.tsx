@@ -21,7 +21,6 @@ import {
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
   fetchDataSetQualitySLAReport,
-  fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
@@ -94,7 +93,7 @@ const DataEntityDetails: React.FC = () => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
-    dispatch(fetchDataEntityPermissions({ dataEntityId }));
+    // dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
 
   const handleEntityGroupDelete = React.useCallback(
@@ -288,9 +287,9 @@ const DataEntityDetails: React.FC = () => {
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
               render={() => (
-                <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
-                  <DataEntityAlerts />
-                </PermissionProvider>
+                // <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
+                <DataEntityAlerts />
+                // </PermissionProvider>
               )}
             />
             <Route

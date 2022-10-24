@@ -1,5 +1,4 @@
 import {
-  Actions,
   Configuration,
   DataEntityApi,
   DataEntityApiAddDataEntityDataEntityGroupRequest,
@@ -10,7 +9,6 @@ import {
   DataEntityApiDeleteDataEntityGroupRequest,
   DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApiGetDataEntityDetailsRequest,
-  DataEntityApiGetDataEntityPermissionsRequest,
   DataEntityApiGetMyObjectsRequest,
   DataEntityApiGetMyObjectsWithDownstreamRequest,
   DataEntityApiGetMyObjectsWithUpstreamRequest,
@@ -214,13 +212,13 @@ export const fetchDataEntitiesUsageInfo = createAsyncThunk<DataEntityUsageInfo, 
   async () => dataEntityApi.getDataEntitiesUsage()
 );
 
-export const fetchDataEntityPermissions = createAsyncThunk<
-  { dataEntityId: number; permissions: Actions },
-  DataEntityApiGetDataEntityPermissionsRequest
->(actions.fetchDataEntityPermissionsActionType, async ({ dataEntityId }) => {
-  const permissions = await dataEntityApi.getDataEntityPermissions({
-    dataEntityId,
-  });
-
-  return { dataEntityId, permissions };
-});
+// export const fetchDataEntityPermissions = createAsyncThunk<
+//   { dataEntityId: number; permissions: Actions },
+//   DataEntityApiGetDataEntityPermissionsRequest
+// >(actions.fetchDataEntityPermissionsActionType, async ({ dataEntityId }) => {
+//   const permissions = await dataEntityApi.getDataEntityPermissions({
+//     dataEntityId,
+//   });
+//
+//   return { dataEntityId, permissions };
+// });

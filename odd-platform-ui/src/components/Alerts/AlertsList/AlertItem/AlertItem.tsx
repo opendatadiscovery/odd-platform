@@ -15,7 +15,7 @@ import { useAppPaths, usePermissions } from 'lib/hooks';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
 import { AlertStatus } from 'generated-sources';
-import { fetchDataEntityPermissions } from 'redux/thunks';
+// import { fetchDataEntityPermissions } from 'redux/thunks';
 import {
   getDataEntityPermissionsFetchingStatuses,
   isDataEntityPermissionsAlreadyFetched,
@@ -48,9 +48,9 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, alertStatusHandler }) => {
     e: React.MouseEvent<HTMLButtonElement>,
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
   ) => {
-    if (alert.dataEntity?.id && !isPermFetched) {
-      dispatch(fetchDataEntityPermissions({ dataEntityId: alert.dataEntity.id }));
-    }
+    // if (alert.dataEntity?.id && !isPermFetched) {
+    //   dispatch(fetchDataEntityPermissions({ dataEntityId: alert.dataEntity.id }));
+    // }
     onClick(e);
   };
 

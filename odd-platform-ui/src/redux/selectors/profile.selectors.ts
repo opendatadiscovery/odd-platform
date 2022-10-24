@@ -15,12 +15,12 @@ export const getOwnership = createSelector(profileState, profile => profile.owne
 
 export const getGlobalPermissions = createSelector(
   profileState,
-  profile => profile.owner?.identity.actions?.allowed || emptyArr
+  profile => profile.owner?.identity.permissions || emptyArr
 );
 
 export const getDataEntityPermissions = (dataEntityId?: number) =>
   createSelector(profileState, profile =>
-    dataEntityId ? profile.permissions.byDataEntityId[dataEntityId]?.allowed : emptyArr
+    dataEntityId ? profile.permissions.byDataEntityId[dataEntityId] : emptyArr
   );
 
 export const isDataEntityPermissionsAlreadyFetched = (dataEntityId?: number) =>
