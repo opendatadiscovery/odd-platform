@@ -24,6 +24,17 @@ def read_datasources_json() -> List[Dict[str, Any]]:
         return json.loads(f.read())
 
 
+def fetch_existing_datasources() -> List[Dict[str, Any]]:
+    response = requests.get(
+        url=f"{platform_host_url}/api/datasources?page=1&size=1000",
+    )
+
+    if response.status_code != 200:
+        raise Exception(f"Couldn't fetch data sources")
+
+    return response.json()['items']
+
+
 def create_data_source_and_retrieve_token(ds: Dict[str, Union[str, bool]]) -> str:
     response = requests.post(
         url=f"{platform_host_url}/api/datasources",
@@ -79,16 +90,26 @@ for i in range(0, REACH_TRIES_NUMBER):
 if not healthy:
     raise Exception(f"Couldn't reach the platform in {REACH_TRIES_NUMBER} tries")
 
-print("Starting to inject samples")
+print("Starting to injecting metadata")
+existing_datasources_grouped = {ds['oddrn']: ds for ds in fetch_existing_datasources()}
+
 for oddrn, ds in ingestion_samples_grouped.items():
     ds_form = data_sources_grouped.get(oddrn)
     if not ds_form:
         print(f"Skipping {oddrn}. Define DataSourceFormData in order to inject from the json file")
         continue
 
-    ds_token = create_data_source_and_retrieve_token(ds_form)
-    print(f"{oddrn}: Data source has been created")
+    ds_token = "None"
+    if ds_form['oddrn'] in existing_datasources_grouped:
+        print(f"Data source already exists: {ds_form}")
+    else:
+        ds_token = create_data_source_and_retrieve_token(ds_form)
+        print(f"{oddrn}: Data source has been created")
 
     if not DATA_SOURCES_ONLY:
-        inject_data(ds, ds_token)
-        print(f"{oddrn}: Data source has been injected with JSON sample")
+        try:
+            inject_data(ds, ds_token)
+            print(f"{oddrn}: Data source has been injected with JSON sample")
+        except:
+            print(f"Couldn't inject data for {oddrn}. "
+                  f"Possibly the 'ingestion.filter.enabled' property is set to 'true'")
