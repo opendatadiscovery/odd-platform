@@ -27,10 +27,10 @@ export const profileSlice = createSlice({
         state.owner.associationRequest = payload;
       }
     );
-    builder.addCase(thunks.fetchDataEntityPermissions.fulfilled, (state, { payload }) => {
-      const { dataEntityId, permissions } = payload;
-      state.permissions.byDataEntityId[dataEntityId] = permissions;
-    });
+    // builder.addCase(thunks.fetchDataEntityPermissions.fulfilled, (state, { payload }) => {
+    //   const { dataEntityId, permissions } = payload;
+    //   state.permissions.byDataEntityId[dataEntityId] = permissions;
+    // });
   },
 });
 

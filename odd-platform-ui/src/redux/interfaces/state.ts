@@ -1,7 +1,6 @@
 import { EntityState } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
-  Actions,
   ActivityCountInfo,
   AlertTotals,
   AppInfo,
@@ -34,6 +33,7 @@ import {
   Term,
   TermDetails,
   TermRef,
+  Permission,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -175,7 +175,7 @@ export interface AlertsState extends EntityState<Alert> {
 
 export interface ProfileState {
   owner: AssociatedOwner;
-  permissions: { byDataEntityId: { [entityId: number]: Actions } };
+  permissions: { byDataEntityId: { [entityId: number]: Permission[] } };
 }
 
 export interface OwnerAssociationState {
