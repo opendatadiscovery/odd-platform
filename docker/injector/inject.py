@@ -61,13 +61,6 @@ def inject_data(data: Dict[str, Any], token: str):
 
 data_sources_grouped = {ds["oddrn"]: ds for ds in read_datasources_json()}
 
-ingestion_samples_grouped = {
-    sample[0]: sample[1]
-    for sample in [
-        read_sample_json(json_filename) for json_filename in glob.glob(f"{APP_PATH}/samples/*.json")
-    ]
-}
-
 healthy = False
 for i in range(0, REACH_TRIES_NUMBER):
     print(f"Waiting for the platform to be able to receive requests: {REACH_TRIES_NUMBER - i}")
@@ -93,10 +86,13 @@ if not healthy:
 print("Starting to injecting metadata")
 existing_datasources_grouped = {ds['oddrn']: ds for ds in fetch_existing_datasources()}
 
-for oddrn, ds in ingestion_samples_grouped.items():
-    ds_form = data_sources_grouped.get(oddrn)
+payload_files = sorted(glob.glob(f"{APP_PATH}/samples/*.json"))
+
+for payload_file in payload_files:
+    ds_oddrn, metadata = read_sample_json(payload_file)
+    ds_form = data_sources_grouped.get(ds_oddrn)
     if not ds_form:
-        print(f"Skipping {oddrn}. Define DataSourceFormData in order to inject from the json file")
+        print(f"Skipping {ds_oddrn}. Define DataSourceFormData in order to inject from the json file")
         continue
 
     ds_token = "None"
@@ -104,12 +100,12 @@ for oddrn, ds in ingestion_samples_grouped.items():
         print(f"Data source already exists: {ds_form}")
     else:
         ds_token = create_data_source_and_retrieve_token(ds_form)
-        print(f"{oddrn}: Data source has been created")
+        print(f"{ds_oddrn}: Data source has been created")
 
     if not DATA_SOURCES_ONLY:
         try:
-            inject_data(ds, ds_token)
-            print(f"{oddrn}: Data source has been injected with JSON sample")
+            inject_data(metadata, ds_token)
+            print(f"{ds_oddrn}: Data source has been injected with JSON sample from {payload_file}")
         except:
-            print(f"Couldn't inject data for {oddrn}. "
+            print(f"Couldn't inject data for {ds_oddrn} from {payload_file}. "
                   f"Possibly the 'ingestion.filter.enabled' property is set to 'true'")
