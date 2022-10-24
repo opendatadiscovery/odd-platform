@@ -35,6 +35,7 @@ tags:
   - name: ownerAssociationRequest
   - name: policy
   - name: role
+  - name: permission
 paths:
   /api/identity/whoami:
     get:
@@ -873,22 +874,6 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataEntityDetails'
-      tags:
-        - dataEntity
-  /api/dataentities/{data_entity_id}/permission:
-    get:
-      summary: Get DataEntity permissions
-      description: "Gets DataEntity's permissions for current user"
-      operationId: getDataEntityPermissions
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/Actions'
       tags:
         - dataEntity
   /api/dataentities/{data_entity_id}/description:
@@ -2422,3 +2407,26 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - role
+
+  /api/resource/{permission_resource_type}/{resource_id}/permissions:
+    get:
+      summary: Get resource permissions
+      description: "Gets permissions for current user for given resource"
+      operationId: getResourcePermissions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PermissionResourceTypeParam'
+        - name: resource_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/PermissionList'
+      tags:
+        - permission

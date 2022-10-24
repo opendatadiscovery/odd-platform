@@ -5,8 +5,8 @@ components:
       properties:
         username:
           type: string
-        actions:
-          $ref: '#/components/schemas/Actions'
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
       required:
         - username
 
@@ -22,13 +22,14 @@ components:
       required:
         - identity
 
+    PermissionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Permission'
+
     Permission:
       type: string
       enum:
-        - ALERT_PROCESSING
-        - MANAGEMENT_CONTROL
-        - DATA_ENTITY_EDIT
-        - DIRECT_OWNER_SYNC
         - DATA_ENTITY_INTERNAL_NAME_UPDATE,
         - DATA_ENTITY_CUSTOM_METADATA_CREATE,
         - DATA_ENTITY_CUSTOM_METADATA_UPDATE,
@@ -78,18 +79,6 @@ components:
         - OWNER_UPDATE,
         - OWNER_DELETE,
         - OWNER_ASSOCIATION_MANAGE
-
-    Actions:
-      type: object
-      properties:
-        allowed:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
-        forbidden:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
 
     Namespace:
       type: object
@@ -864,6 +853,8 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
       required:
         - id
         - token
@@ -975,6 +966,8 @@ components:
           type: string
         description:
           type: string
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
       required:
         - id
         - name
@@ -2386,6 +2379,14 @@ components:
         - name
         - policies
 
+    PermissionResourceType:
+      type: string
+      enum:
+        - DATA_ENTITY
+        - TERM
+        - DATASOURCE
+        - COLLECTOR
+
   parameters:
     PageParam:
       name: page
@@ -2503,6 +2504,13 @@ components:
       schema:
         type: integer
         format: int64
+
+    PermissionResourceTypeParam:
+      name: permission_resource_type
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/PermissionResourceType'
 
   responses:
     Deleted:
