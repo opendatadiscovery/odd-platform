@@ -16,6 +16,6 @@ public class FeatureController implements FeatureApi {
 
     @Override
     public Mono<ResponseEntity<FeatureList>> getActiveFeatures(final ServerWebExchange exchange) {
-        return featureResolver.resolveActiveFeatures().map(ResponseEntity::ok);
+        return Mono.just(featureResolver.resolveActiveFeatures()).map(ResponseEntity::ok);
     }
 }

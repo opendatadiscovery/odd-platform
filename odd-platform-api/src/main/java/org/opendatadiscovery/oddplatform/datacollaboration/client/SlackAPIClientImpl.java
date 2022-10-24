@@ -4,12 +4,12 @@ import com.slack.api.methods.AsyncMethodsClient;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
-import com.slack.api.model.Conversation;
 import com.slack.api.model.ConversationType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.SlackChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.SlackAPIException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,7 +25,7 @@ public class SlackAPIClientImpl implements SlackAPIClient {
     private final AsyncMethodsClient asyncMethodsClient;
 
     @Override
-    public Flux<String> getChannelNames() {
+    public Flux<SlackChannelDto> getSlackChannels() {
         return requestConversationList()
             .expand(response -> {
                 if (!response.isOk()) {
@@ -39,7 +39,7 @@ public class SlackAPIClientImpl implements SlackAPIClient {
                 return Mono.empty();
             })
             .flatMap(response -> Flux.fromIterable(response.getChannels()))
-            .map(Conversation::getName);
+            .map(c -> SlackChannelDto.builder().id(c.getId()).name(c.getName()).build());
     }
 
     @Override
