@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
     private final OwnerMapper ownerMapper;
-    private final ActionsMapper actionsMapper;
 
     @Override
     public AssociatedOwner mapAssociatedOwner(final AssociatedOwnerDto dto) {
@@ -21,7 +20,7 @@ public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
             return null;
         }
         final Identity identity = new Identity()
-            .actions(actionsMapper.mapToActions(dto.permissions()))
+            //.actions(actionsMapper.mapToActions(dto.permissions()))
             .username(dto.username());
         return new AssociatedOwner()
             .owner(dto.owner() != null ? ownerMapper.mapFromPojo(dto.owner()) : null)
