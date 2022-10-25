@@ -81,6 +81,8 @@ components:
         - OWNER_DELETE,
         - OWNER_ASSOCIATION_MANAGE
         - DIRECT_OWNER_SYNC
+        - POLICY_MANAGEMENT
+        - ROLE_MANAGEMENT
 
     Namespace:
       type: object
