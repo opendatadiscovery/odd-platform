@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -66,7 +67,7 @@ class DatasetVersionMapperTest {
         datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
         datasetFieldDto.setParentFieldId(1L);
         datasetFieldDto.setEnumValueCount(2);
-        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL)));
         datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
 

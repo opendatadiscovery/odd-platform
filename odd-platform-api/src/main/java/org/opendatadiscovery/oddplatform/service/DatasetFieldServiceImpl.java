@@ -1,12 +1,10 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +18,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFo
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -31,6 +30,7 @@ import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
 import static reactor.function.TupleUtils.function;
 
@@ -53,7 +53,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .switchIfEmpty(Mono.error(
                 new IllegalArgumentException(String.format("DatasetField not found by id = %s", datasetFieldId))))
             .flatMap(dto -> updateDescription(datasetFieldId, datasetFieldUpdateFormData, dto))
-            .zipWith(Mono.defer(() -> updateDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData)))
+            .zipWith(Mono.defer(() -> updateInternalDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData)))
             .map(tuple -> {
                 final DatasetFieldDto dto = tuple.getT1();
                 final List<LabelDto> labels = tuple.getT2();
@@ -64,7 +64,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 .ignoreElement().thenReturn(dto))
             .flatMap(dto -> {
                 final List<LabelDto> internalLabels = dto.getLabels().stream()
-                    .filter(l -> !l.external())
+                    .filter(l -> l.origin().equals(LabelOrigin.INTERNAL))
                     .toList();
                 if (CollectionUtils.isEmpty(internalLabels)) {
                     return dataEntityFilledService
@@ -99,7 +99,6 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                         copyNew.setId(previousVersion.getId());
                         copyNew.setInternalDescription(previousVersion.getInternalDescription());
 
-                        // TODO: controversial
                         if (copyNew.getStats() == null || copyNew.getStats().data().equals("{}")) {
                             copyNew.setStats(previousVersion.getStats());
                         }
@@ -116,6 +115,12 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     public Mono<Void> updateStatistics(final Map<String, DataSetFieldStat> stats) {
+        // TODO: also handle labels
+
+        reactiveDatasetFieldRepository
+            .getExistingFieldsByOddrn(stats.keySet())
+            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
+
         return reactiveDatasetFieldRepository.getExistingFieldsByOddrn(stats.keySet())
             .collectList()
             .map(fields -> {
@@ -140,22 +145,22 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .then();
     }
 
-    private Mono<List<LabelDto>> updateDatasetFieldLabels(final long datasetFieldId,
-                                                          final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
+    private Mono<List<LabelDto>> updateInternalDatasetFieldLabels(
+        final long datasetFieldId,
+        final DatasetFieldUpdateFormData datasetFieldUpdateFormData
+    ) {
         final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());
 
-        return getCurrentRelations(List.of(datasetFieldId)).zipWith(getUpdatedRelations(names, datasetFieldId))
-            .flatMap((function(
-                (current, updated) -> {
-                    if (labelsAreTheSame(current, updated)) {
-                        return reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId);
-                    }
-                    final List<LabelToDatasetFieldPojo> currentInternalRelations = current.stream()
-                        .filter(pojo -> !pojo.getExternal())
-                        .toList();
-                    return labelService.updateDatasetFieldLabels(datasetFieldId, currentInternalRelations, updated);
+        return reactiveLabelRepository.listLabelRelations(List.of(datasetFieldId), LabelOrigin.INTERNAL)
+            .collectList()
+            .zipWith(getUpdatedRelations(names, datasetFieldId))
+            .flatMap((function((current, updated) -> {
+                if (labelsAreTheSame(current, updated)) {
+                    return reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId);
                 }
-            )));
+
+                return labelService.updateDatasetFieldLabels(datasetFieldId, current, updated);
+            })));
     }
 
     @NotNull
@@ -181,18 +186,13 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         return Mono.just(dto);
     }
 
-    private Mono<List<LabelToDatasetFieldPojo>> getCurrentRelations(final Collection<Long> datasetFieldIds) {
-        return reactiveLabelRepository.listLabelRelations(datasetFieldIds)
-            .collectList();
-    }
-
     private Mono<List<LabelToDatasetFieldPojo>> getUpdatedRelations(final Set<String> labelNames,
                                                                     final long datasetFieldId) {
         return labelService.getOrCreateLabelsByName(labelNames)
             .map(pojo -> new LabelToDatasetFieldPojo()
                 .setLabelId(pojo.getId())
                 .setDatasetFieldId(datasetFieldId)
-                .setExternal(false))
+                .setOrigin(LabelOrigin.INTERNAL.toString()))
             .collectList();
     }
 

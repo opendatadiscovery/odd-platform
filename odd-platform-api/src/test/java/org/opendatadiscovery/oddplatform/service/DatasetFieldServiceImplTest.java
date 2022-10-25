@@ -15,12 +15,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -36,6 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,14 +83,15 @@ class DatasetFieldServiceImplTest {
 
         when(reactiveDatasetFieldRepository.getDto(anyLong()))
             .thenReturn(Mono.just(datasetFieldDto));
-        when(reactiveLabelRepository.listLabelRelations(any()))
-            .thenReturn(Flux.just(EASY_RANDOM.nextObject(LabelToDatasetFieldPojo.class)));
+        when(reactiveLabelRepository.listLabelRelations(any(), eq(LabelOrigin.INTERNAL)))
+            .thenReturn(Flux.just(
+                EASY_RANDOM.nextObject(LabelToDatasetFieldPojo.class).setOrigin(LabelOrigin.INTERNAL.toString())));
         when(reactiveLabelService.getOrCreateLabelsByName(any()))
             .thenReturn(Flux.just(labelPojo));
         when(reactiveDatasetFieldRepository.updateDescription(anyLong(), anyString()))
             .thenReturn(Mono.just(datasetFieldDto.getDatasetFieldPojo()));
         when(reactiveLabelService.updateDatasetFieldLabels(anyLong(), anyList(), anyList())).thenReturn(
-            Mono.just(List.of(new LabelDto(labelPojo, false))));
+            Mono.just(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL))));
         when(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(anyLong())).thenReturn(Mono.just(1));
         when(dataEntityFilledService.markEntityFilledByDatasetFieldId(anyLong(), any()))
             .thenReturn(Mono.just(new DataEntityFilledPojo()));
@@ -129,7 +131,7 @@ class DatasetFieldServiceImplTest {
         datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
         datasetFieldDto.setParentFieldId(1L);
         datasetFieldDto.setEnumValueCount(2);
-        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL)));
         datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
         return datasetFieldDto;

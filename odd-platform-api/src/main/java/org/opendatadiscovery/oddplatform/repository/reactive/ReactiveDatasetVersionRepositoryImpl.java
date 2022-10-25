@@ -19,6 +19,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
@@ -234,11 +235,17 @@ public class ReactiveDatasetVersionRepositoryImpl
 
     private List<LabelDto> extractLabels(final Record record) {
         final Set<LabelPojo> labels = jooqRecordHelper.extractAggRelation(record, LABELS, LabelPojo.class);
-        final Map<Long, LabelToDatasetFieldPojo> relations =
-            jooqRecordHelper.extractAggRelation(record, LABEL_RELATIONS, LabelToDatasetFieldPojo.class).stream()
-                .collect(Collectors.toMap(LabelToDatasetFieldPojo::getLabelId, identity()));
+
+        final Map<Long, LabelToDatasetFieldPojo> relations = jooqRecordHelper
+            .extractAggRelation(record, LABEL_RELATIONS, LabelToDatasetFieldPojo.class)
+            .stream()
+            .collect(Collectors.toMap(LabelToDatasetFieldPojo::getLabelId, identity()));
+
         return labels.stream()
-            .map(labelPojo -> new LabelDto(labelPojo, relations.get(labelPojo.getId()).getExternal()))
+            .map(labelPojo -> new LabelDto(
+                labelPojo,
+                LabelOrigin.valueOf(relations.get(labelPojo.getId()).getOrigin())
+            ))
             .toList();
     }
 }

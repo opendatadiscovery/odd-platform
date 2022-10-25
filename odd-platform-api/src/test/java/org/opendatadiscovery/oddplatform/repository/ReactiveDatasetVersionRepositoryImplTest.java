@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -227,7 +228,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
         datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
         datasetFieldDto.setParentFieldId(1L);
         datasetFieldDto.setEnumValueCount(2);
-        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL)));
         datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
         return datasetFieldDto;
