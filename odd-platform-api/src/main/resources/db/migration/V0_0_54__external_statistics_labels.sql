@@ -10,4 +10,5 @@ SET origin = (
 
 ALTER TABLE label_to_dataset_field
     ALTER COLUMN origin SET NOT NULL,
+    ALTER COLUMN origin SET DEFAULT 'INTERNAL',
     DROP COLUMN external;
