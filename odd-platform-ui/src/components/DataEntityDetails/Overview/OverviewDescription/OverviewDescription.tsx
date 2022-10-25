@@ -15,7 +15,7 @@ import * as S from './OverviewDescriptionStyles';
 const OverviewDescription: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { isAllowedTo: editDescription } = usePermissions({ resourceId: dataEntityId });
 
   const DEInternalDescription = useAppSelector(
     getDataEntityInternalDescription(dataEntityId)
@@ -24,8 +24,8 @@ const OverviewDescription: React.FC = () => {
     getDataEntityExternalDescription(dataEntityId)
   );
 
-  const [editMode, setEditMode] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<string>('');
+  const [editMode, setEditMode] = React.useState(false);
+  const [error, setError] = React.useState('');
   const [internalDescription, setInternalDescription] = React.useState<
     string | undefined
   >(DEInternalDescription || '');
@@ -70,7 +70,7 @@ const OverviewDescription: React.FC = () => {
               onClick={onEditClick}
               size='medium'
               color='primaryLight'
-              disabled={!editDataEntity}
+              disabled={!editDescription}
               startIcon={DEInternalDescription ? <EditIcon /> : <AddIcon />}
             >
               {DEInternalDescription ? 'Edit' : 'Add'} description
@@ -124,7 +124,7 @@ const OverviewDescription: React.FC = () => {
                   onClick={onEditClick}
                   size='small'
                   color='tertiary'
-                  disabled={!editDataEntity}
+                  disabled={!editDescription}
                 >
                   Add Description
                 </AppButton>

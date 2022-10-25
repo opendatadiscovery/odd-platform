@@ -10,15 +10,16 @@ import {
   getLabelsListPage,
 } from 'redux/selectors';
 import { fetchLabelsList } from 'redux/thunks';
-import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
 import {
-  NumberFormatted,
   AppButton,
   AppInput,
   EmptyContentPlaceholder,
+  NumberFormatted,
 } from 'components/shared';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { Permission } from 'generated-sources';
 import LabelsSkeletonItem from './LabelsSkeletonItem/LabelsSkeletonItem';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateForm from './LabelCreateForm/LabelCreateForm';
@@ -26,7 +27,7 @@ import * as S from './LabelsListStyles';
 
 const LabelsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const labelsList = useAppSelector(getLabelsList);
   const pageInfo = useAppSelector(getLabelsListPage);
@@ -113,7 +114,7 @@ const LabelsListView: React.FC = () => {
               size='medium'
               color='primaryLight'
               startIcon={<AddIcon />}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.LABEL_CREATE)}
             >
               Create label
             </AppButton>

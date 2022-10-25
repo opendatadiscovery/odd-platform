@@ -14,10 +14,14 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 
 interface OwnerAutocompleteProps {
+  disableOwnerCreating?: boolean;
   field: ControllerRenderProps<OwnershipFormData, 'ownerName'>;
 }
 
-const OwnerAutocomplete: React.FC<OwnerAutocompleteProps> = ({ field }) => {
+const OwnerAutocomplete: React.FC<OwnerAutocompleteProps> = ({
+  field,
+  disableOwnerCreating = false,
+}) => {
   const dispatch = useAppDispatch();
   const searchOwners = fetchOwnersList;
 
@@ -110,17 +114,19 @@ const OwnerAutocomplete: React.FC<OwnerAutocompleteProps> = ({ field }) => {
   const renderOption = (
     props: HTMLAttributes<HTMLLIElement>,
     option: OwnerFilterOption
-  ) => (
-    <li {...props}>
-      <Typography variant='body2'>
-        {option.id ? (
-          option.name
-        ) : (
+  ) =>
+    option.id ? (
+      <li {...props}>
+        <Typography variant='body2'>{option.name}</Typography>
+      </li>
+    ) : (
+      // eslint-disable-next-line jsx-a11y/role-supports-aria-props
+      <li {...props} aria-disabled={disableOwnerCreating}>
+        <Typography variant='body2'>
           <AutocompleteSuggestion optionLabel='owner' optionName={option.name} />
-        )}
-      </Typography>
-    </li>
-  );
+        </Typography>
+      </li>
+    );
 
   return (
     <Autocomplete

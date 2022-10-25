@@ -1,16 +1,16 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
-import { DataSource } from 'generated-sources';
+import { DataSource, Permission } from 'generated-sources';
 import { deleteDataSource } from 'redux/thunks';
 import {
-  LabeledInfoItem,
-  ConfirmationDialog,
-  BooleanFormatted,
   AppButton,
   AppTooltip,
+  BooleanFormatted,
+  ConfirmationDialog,
+  LabeledInfoItem,
 } from 'components/shared';
-import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';
@@ -23,7 +23,7 @@ interface DataSourceItemProps {
 
 const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const onDelete = React.useCallback(
     () => dispatch(deleteDataSource({ dataSourceId: dataSource.id })),
@@ -47,7 +47,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
                 color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.DATA_SOURCE_UPDATE)}
               >
                 Edit
               </AppButton>
@@ -67,7 +67,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.DATA_SOURCE_DELETE)}
               >
                 Delete
               </AppButton>

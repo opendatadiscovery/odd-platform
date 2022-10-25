@@ -1,11 +1,11 @@
 import React from 'react';
-import { DataSource } from 'generated-sources';
+import { DataSource, Permission } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
-import { ConfirmationDialog, AppButton, CopyButton } from 'components/shared';
+import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared';
 import { Typography } from '@mui/material';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { TokenContainer, Token } from './DataSourceItemTokenStyles';
+import { Token, TokenContainer } from './DataSourceItemTokenStyles';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
@@ -13,7 +13,7 @@ interface DataSourceItemProps {
 
 const DataSourceItemToken: React.FC<DataSourceItemProps> = ({ dataSource }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
@@ -40,7 +40,11 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({ dataSource }) => {
           }
           onConfirm={onTokenRegenerate}
           actionBtn={
-            <AppButton size='medium' color='primaryLight' disabled={!isAdmin}>
+            <AppButton
+              size='medium'
+              color='primaryLight'
+              disabled={!hasAccessTo(Permission.DATA_SOURCE_TOKEN_REGENERATE)}
+            >
               Regenerate
             </AppButton>
           }

@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { AppLoadingPage, AppTabItem, AppTabs, RestrictedRoute } from 'components/shared';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
+import { Permission } from 'generated-sources';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -24,7 +25,7 @@ const PolicyDetails = React.lazy(
 const Management: React.FC = () => {
   const { viewType } = useAppParams();
   const { managementPath } = useAppPaths();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: managementPath('namespaces') },
@@ -36,17 +37,17 @@ const Management: React.FC = () => {
     {
       name: 'Associations',
       link: managementPath('associations'),
-      hidden: !isAdmin,
+      hidden: !hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE),
     },
     {
       name: 'Roles',
       link: managementPath('roles'),
-      hidden: !isAdmin,
+      hidden: !hasAccessTo(Permission.ROLE_MANAGEMENT),
     },
     {
       name: 'Policies',
       link: managementPath('policies'),
-      hidden: !isAdmin,
+      hidden: !hasAccessTo(Permission.POLICY_MANAGEMENT),
     },
   ]);
 
@@ -83,28 +84,28 @@ const Management: React.FC = () => {
             <Route exact path='/management/tags' component={TagsList} />
             <Route exact path='/management/labels' component={LabelsList} />
             <RestrictedRoute
-              isAllowedTo={isAdmin}
+              isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
               redirectTo='/management/namespaces'
               exact
               path='/management/associations/:viewType?'
               component={OwnerAssociationsList}
             />
             <RestrictedRoute
-              isAllowedTo={isAdmin}
+              isAllowedTo={hasAccessTo(Permission.ROLE_MANAGEMENT)}
               redirectTo='/management/namespaces'
               exact
               path='/management/roles'
               component={RolesList}
             />
             <RestrictedRoute
-              isAllowedTo={isAdmin}
+              isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
               redirectTo='/management/namespaces'
               exact
               path='/management/policies'
               component={PolicyList}
             />
             <RestrictedRoute
-              isAllowedTo={isAdmin}
+              isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
               redirectTo='/management/namespaces'
               exact
               path={[

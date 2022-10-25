@@ -1,9 +1,9 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { deleteTag } from 'redux/thunks';
-import { Tag } from 'generated-sources';
-import { ConfirmationDialog, AppButton } from 'components/shared';
-import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { Permission, Tag } from 'generated-sources';
+import { AppButton, ConfirmationDialog } from 'components/shared';
+import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TagEditForm from '../TagEditForm/TagEditForm';
@@ -15,7 +15,7 @@ interface EditableTagItemProps {
 
 const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteTag({ tagId: tag.id })),
@@ -42,7 +42,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
                 color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.TAG_UPDATE)}
               >
                 Edit
               </AppButton>
@@ -58,7 +58,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.TAG_DELETE)}
               >
                 Delete
               </AppButton>

@@ -9,6 +9,9 @@ import { updateDataSetFieldFormData } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AppButton, AppInput, DialogWrapper, LabelItem } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
+import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
+import { useAppParams } from 'lib/hooks';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
 
@@ -27,6 +30,7 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
   const { isLoading } = useAppSelector(getDatasetFieldFormDataUpdatingStatus);
   const datasetFieldFormData = useAppSelector(getDatasetFieldData(datasetFieldId));
 
@@ -102,39 +106,59 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       <Typography variant='h5' color='texts.info'>
         Add or edit labels and description
       </Typography>
-      <LabelsAutocomplete appendLabel={append} />
-      <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
-        {fields.map((label, index) => (
-          <LabelItem
-            systemLabel={label.external}
-            key={label.id}
-            labelName={label.name}
-            removable
-            unfilled
-            onRemoveClick={() => remove(index)}
-          />
-        ))}
-      </S.LabelItemsContainer>
-      <Controller
-        control={methods.control}
-        name='internalDescription'
-        defaultValue={datasetFieldFormData.internalDescription || ''}
-        render={({ field }) => (
-          <AppInput
-            {...field}
-            label='Description'
-            placeholder='Enter description'
-            multiline
-            maxRows={4}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => methods.setValue('internalDescription', ''),
-              icon: <ClearIcon />,
-            }}
-          />
-        )}
-      />
+      <PermissionProvider permissions={[Permission.DATASET_LABELS_UPDATE]}>
+        <WithPermissions
+          resourceId={dataEntityId}
+          renderContent={({ isAllowedTo: editLabels }) => (
+            <LabelsAutocomplete appendLabel={append} labelsEditing={editLabels} />
+          )}
+        />
+        <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
+          {fields.map((label, index) => (
+            <WithPermissions
+              resourceId={dataEntityId}
+              renderContent={({ isAllowedTo: editLabels }) => (
+                <LabelItem
+                  systemLabel={label.external}
+                  key={label.id}
+                  labelName={label.name}
+                  removable={editLabels}
+                  unfilled
+                  onRemoveClick={() => remove(index)}
+                />
+              )}
+            />
+          ))}
+        </S.LabelItemsContainer>
+      </PermissionProvider>
+      <PermissionProvider permissions={[Permission.DATASET_DESCRIPTION_UPDATE]}>
+        <WithPermissions
+          resourceId={dataEntityId}
+          renderContent={({ isAllowedTo: editDescription }) => (
+            <Controller
+              control={methods.control}
+              name='internalDescription'
+              defaultValue={datasetFieldFormData.internalDescription || ''}
+              render={({ field }) => (
+                <AppInput
+                  {...field}
+                  label='Description'
+                  placeholder='Enter description'
+                  multiline
+                  maxRows={4}
+                  disabled={!editDescription}
+                  customEndAdornment={{
+                    variant: 'clear',
+                    showAdornment: !!field.value,
+                    onCLick: () => methods.setValue('internalDescription', ''),
+                    icon: <ClearIcon />,
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+      </PermissionProvider>
     </form>
   );
 

@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
-import { Permission } from 'generated-sources';
-import { getDataEntityPermissions, getGlobalPermissions } from 'redux/selectors';
-import { emptyArr } from 'lib/constants';
+import React from 'react';
+import { Permission, PermissionResourceType } from 'generated-sources';
+import { getGlobalPermissions, getResourcePermissions } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import PermissionContext, { PermissionContextProps } from './PermissionContext';
 
@@ -9,24 +8,36 @@ interface PermissionProviderProps {
   permissions: Permission[];
 }
 
+const getPermissions = (resourceType?: PermissionResourceType, resourceId?: number) =>
+  resourceType && resourceId
+    ? useAppSelector(getResourcePermissions(resourceType, resourceId))
+    : [];
+
 const PermissionProvider: React.FunctionComponent<PermissionProviderProps> = ({
   permissions,
   children,
 }) => {
   const globalPermissions = useAppSelector(getGlobalPermissions);
-  const dataEntityPermissions = (dataEntityId?: number): Permission[] =>
-    useAppSelector(getDataEntityPermissions(dataEntityId)) || emptyArr;
 
-  const providerValue = useMemo<PermissionContextProps>(() => {
-    const getIsAllowedTo = (dataEntityId?: number) =>
+  const getIsAllowedTo = React.useCallback(
+    (resourceType?: PermissionResourceType, resourceId?: number) =>
       permissions.every(perm =>
-        [...globalPermissions, ...dataEntityPermissions(dataEntityId)].includes(perm)
-      );
-    // const isAdmin = globalPermissions.includes(Permission.MANAGEMENT_CONTROL);
-    const isAdmin = true;
+        [...globalPermissions, ...getPermissions(resourceType, resourceId)].includes(perm)
+      ),
+    [permissions, getPermissions, globalPermissions]
+  );
 
-    return { getIsAllowedTo, isAdmin };
-  }, [permissions, globalPermissions, dataEntityPermissions]);
+  const getHasAccessTo = React.useCallback(
+    (resourceType?: PermissionResourceType, resourceId?: number) => (to: Permission) =>
+      [...globalPermissions, ...getPermissions(resourceType, resourceId)].includes(to) &&
+      permissions.includes(to),
+    [permissions, getPermissions, globalPermissions]
+  );
+
+  const providerValue = React.useMemo<PermissionContextProps>(
+    () => ({ getIsAllowedTo, getHasAccessTo }),
+    [getIsAllowedTo]
+  );
 
   return (
     <PermissionContext.Provider value={providerValue}>

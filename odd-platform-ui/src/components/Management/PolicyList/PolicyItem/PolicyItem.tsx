@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { deletePolicy, deleteRole } from 'redux/thunks';
-import { Policy } from 'generated-sources';
+import { Permission, Policy } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { useAppPaths, usePermissions } from 'lib/hooks';
@@ -15,7 +15,7 @@ interface PolicyItemProps {
 
 const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const { policyDetailsPath } = useAppPaths();
   const policyDetailsLink = policyDetailsPath(policyId);
@@ -41,7 +41,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
             color='primaryLight'
             startIcon={<EditIcon />}
             sx={{ mr: 1 }}
-            disabled={!isAdmin}
+            disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
           >
             Edit
           </AppButton>
@@ -55,7 +55,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
               >
                 Delete
               </AppButton>

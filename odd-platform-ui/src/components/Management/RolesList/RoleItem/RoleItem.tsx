@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { deleteRole } from 'redux/thunks';
-import { Role } from 'generated-sources';
+import { Permission, Role } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
@@ -18,7 +18,7 @@ interface RoleItemProps {
 
 const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteRole({ roleId })),
@@ -57,7 +57,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
                 color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
               >
                 Edit
               </AppButton>
@@ -73,7 +73,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
               >
                 Delete
               </AppButton>

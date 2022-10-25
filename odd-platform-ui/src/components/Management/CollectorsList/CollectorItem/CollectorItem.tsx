@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Collector } from 'generated-sources';
+import { Collector, Permission } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
-import { LabeledInfoItem, ConfirmationDialog, AppButton } from 'components/shared';
-import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { AppButton, ConfirmationDialog, LabeledInfoItem } from 'components/shared';
+import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import CollectorFormDialog from '../CollectorForm/CollectorForm';
@@ -16,7 +16,7 @@ interface CollectorItemProps {
 
 const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const onDelete = React.useCallback(
     () => dispatch(deleteCollector({ collectorId: collector.id })),
@@ -40,7 +40,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
                 color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.COLLECTOR_UPDATE)}
               >
                 Edit
               </AppButton>
@@ -60,7 +60,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.COLLECTOR_DELETE)}
               >
                 Delete
               </AppButton>

@@ -5,3 +5,8 @@ export const fetchIdentityActionType = createActionType(
   profileActionPrefix,
   'fetchIdentity'
 );
+
+export const fetchResourcePermissionsActionType = createActionType(
+  profileActionPrefix,
+  'fetchResourcePermissions'
+);

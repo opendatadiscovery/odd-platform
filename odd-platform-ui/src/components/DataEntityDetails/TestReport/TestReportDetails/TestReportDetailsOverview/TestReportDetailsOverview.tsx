@@ -19,7 +19,6 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
 
@@ -77,7 +76,6 @@ const TestReportDetailsOverview: React.FC = () => {
             >
               <AppSelect
                 size='small'
-                disabled={!editDataEntity}
                 defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
                 onChange={handleSeverityChange}
               >

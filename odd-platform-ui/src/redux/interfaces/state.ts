@@ -34,9 +34,11 @@ import {
   TermDetails,
   TermRef,
   Permission,
+  PermissionResourceType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
+import rootReducer from 'redux/slices';
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
@@ -175,7 +177,9 @@ export interface AlertsState extends EntityState<Alert> {
 
 export interface ProfileState {
   owner: AssociatedOwner;
-  permissions: { byDataEntityId: { [entityId: number]: Permission[] } };
+  permissions: {
+    [key in PermissionResourceType]: { [resourceId: number]: Permission[] };
+  };
 }
 
 export interface OwnerAssociationState {
@@ -225,7 +229,7 @@ export interface PoliciesState {
   policySchema: Record<string, unknown>;
 }
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;

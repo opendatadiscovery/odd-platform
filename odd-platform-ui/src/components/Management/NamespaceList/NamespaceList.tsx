@@ -1,12 +1,12 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
 import {
-  EmptyContentPlaceholder,
-  NumberFormatted,
   AppButton,
   AppInput,
+  EmptyContentPlaceholder,
+  NumberFormatted,
   SkeletonWrapper,
 } from 'components/shared';
 import { Grid, Typography } from '@mui/material';
@@ -20,6 +20,7 @@ import {
 import { fetchNamespaceList } from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { Permission } from 'generated-sources';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceForm from './NamespaceForm/NamespaceForm';
 import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
@@ -27,7 +28,7 @@ import * as S from './NamespaceListStyles';
 
 const NamespaceList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const namespacesList = useAppSelector(getNamespaceList);
   const pageInfo = useAppSelector(getNamespaceListPageInfo);
@@ -124,7 +125,7 @@ const NamespaceList: React.FC = () => {
               size='medium'
               color='primaryLight'
               startIcon={<AddIcon />}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.NAMESPACE_CREATE)}
             >
               Create namespace
             </AppButton>

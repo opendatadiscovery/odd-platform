@@ -20,17 +20,19 @@ type DatasetFieldInfoFormType = {
 
 interface LabelsAutocompleteProps {
   appendLabel: UseFieldArrayAppend<DatasetFieldInfoFormType, 'labels'>;
+  labelsEditing?: boolean;
 }
 
 const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   appendLabel,
+  labelsEditing,
 }) => {
   const dispatch = useAppDispatch();
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [searchText, setSearchText] = React.useState<string>('');
+  const [loading, setLoading] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
   const filter = createFilterOptions<FilterOption>();
 
   const handleSearch = React.useCallback(
@@ -46,18 +48,15 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
     [searchLabels, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback(
-    (option: FilterOption | string) => {
-      if (typeof option === 'string') {
-        return option;
-      }
-      if ('name' in option && option.name) {
-        return option.name;
-      }
-      return '';
-    },
-    []
-  );
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
+    if (typeof option === 'string') {
+      return option;
+    }
+    if ('name' in option && option.name) {
+      return option.name;
+    }
+    return '';
+  }, []);
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -66,9 +65,7 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
         searchText !== '' &&
         !loading &&
         !options.find(
-          option =>
-            option.name.toLocaleLowerCase() ===
-            searchText.toLocaleLowerCase()
+          option => option.name.toLocaleLowerCase() === searchText.toLocaleLowerCase()
         )
       ) {
         return [...options, { name: searchText }];
@@ -107,21 +104,20 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
     if (!value) return;
     setSearchText(''); // Clear input on select
     appendLabel(
-      typeof value === 'string'
-        ? { name: value }
-        : { ...value, external: false }
+      typeof value === 'string' ? { name: value } : { ...value, external: false }
     );
   };
 
   return (
     <Autocomplete
       fullWidth
-      id="datasetfield-label-add-name-search"
+      id='datasetfield-label-add-name-search'
       open={autocompleteOpen}
       onOpen={() => setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
       onChange={handleAutocompleteSelect}
       options={options}
+      disabled={!labelsEditing}
       onInputChange={searchInputChange}
       getOptionLabel={getOptionLabel}
       filterOptions={getFilterOptions}
@@ -137,8 +133,8 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
           {...params}
           sx={{ mt: 1.5 }}
           ref={params.InputProps.ref}
-          placeholder="Enter label name…"
-          label="Label"
+          placeholder='Enter label name…'
+          label='Label'
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,
@@ -148,14 +144,11 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
       )}
       renderOption={(props, option) => (
         <li {...props}>
-          <Typography variant="body1">
+          <Typography variant='body1'>
             {option.id ? (
               option.name
             ) : (
-              <AutocompleteSuggestion
-                optionLabel="label"
-                optionName={option.name}
-              />
+              <AutocompleteSuggestion optionLabel='label' optionName={option.name} />
             )}
           </Typography>
         </li>

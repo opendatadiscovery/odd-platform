@@ -19,6 +19,7 @@ import {
   NumberFormatted,
 } from 'components/shared';
 import { usePermissions } from 'lib/hooks';
+import { Permission } from 'generated-sources';
 import RoleForm from './RoleForm/RoleForm';
 import RoleItem from './RoleItem/RoleItem';
 import * as S from './RolesListStyles';
@@ -26,11 +27,7 @@ import RoleSkeletonItem from './RoleSkeletonItem/RoleSkeletonItem';
 
 const RolesList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
-
-  const { isLoading: isRoleCreating } = useAppSelector(getRoleCreatingStatuses);
-
-  const { isLoading: isRoleDeleting } = useAppSelector(getRoleDeletingStatuses);
+  const { hasAccessTo } = usePermissions({});
 
   const { isLoading: isRolesFetching } = useAppSelector(getRolesFetchingStatuses);
 
@@ -111,7 +108,7 @@ const RolesList: React.FC = () => {
               size='medium'
               color='primaryLight'
               startIcon={<AddIcon />}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
             >
               Create role
             </AppButton>

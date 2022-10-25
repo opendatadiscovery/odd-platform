@@ -23,10 +23,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   versionId,
   indexToScroll,
 }) => {
-  const cache = new CellMeasurerCache({
-    defaultHeight: 50,
-    fixedWidth: true,
-  });
+  const cache = new CellMeasurerCache({ defaultHeight: 50, fixedWidth: true });
 
   const rootStructureItems = React.useMemo(
     () => datasetStructureRoot.filter(field => !field.parentFieldId),
@@ -69,12 +66,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
     >
       {({ measure }) => (
         <div style={style}>
-          {renderStructureItem(
-            rootStructureItems[index],
-            0,
-            measure,
-            style.height
-          )}
+          {renderStructureItem(rootStructureItems[index], 0, measure, style.height)}
         </div>
       )}
     </CellMeasurer>
@@ -93,7 +85,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
             rowRenderer={renderListItem}
             scrollToIndex={indexToScroll}
             deferredMeasurementCache={cache}
-            scrollToAlignment="start"
+            scrollToAlignment='start'
           />
         )}
       </AutoSizer>

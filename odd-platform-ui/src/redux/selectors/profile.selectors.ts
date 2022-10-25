@@ -3,6 +3,7 @@ import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { ProfileState, RootState } from 'redux/interfaces';
 import { emptyArr } from 'lib/constants';
+import { PermissionResourceType } from 'generated-sources';
 
 const profileState = ({ profile }: RootState): ProfileState => profile;
 
@@ -18,17 +19,26 @@ export const getGlobalPermissions = createSelector(
   profile => profile.owner?.identity.permissions || emptyArr
 );
 
-export const getDataEntityPermissions = (dataEntityId?: number) =>
-  createSelector(profileState, profile =>
-    dataEntityId ? profile.permissions.byDataEntityId[dataEntityId] : emptyArr
+export const getResourcePermissions = (
+  resourceType: PermissionResourceType,
+  resourceId: number
+) =>
+  createSelector(
+    profileState,
+    profile => profile.permissions[resourceType][resourceId] || emptyArr
   );
 
-export const isDataEntityPermissionsAlreadyFetched = (dataEntityId?: number) =>
+export const isResourcePermissionsAlreadyFetched = (
+  resourceType: PermissionResourceType,
+  resourceId?: number
+) =>
   createSelector(profileState, profile =>
-    dataEntityId
-      ? Object.keys(profile.permissions.byDataEntityId).includes(String(dataEntityId))
-      : false
+    Object.keys(profile.permissions[resourceType]).includes(String(resourceId))
   );
+
+export const getResourcePermissionsFetchingStatuses = createStatusesSelector(
+  actions.fetchResourcePermissionsActionType
+);
 
 export const getAssociationRequestStatus = createSelector(
   profileState,

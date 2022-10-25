@@ -19,48 +19,46 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   alertStatusHandler,
 }) => {
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { isAllowedTo: resolveAlerts } = usePermissions({ resourceId: dataEntityId });
 
   return (
     <S.Container container>
-      <ColContainer item $colType="date">
-        <Typography variant="body1">
+      <ColContainer item $colType='date'>
+        <Typography variant='body1'>
           {alert.createdAt && format(alert.createdAt, alertDateFormat)}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType="type">
+      <ColContainer item $colType='type'>
         <AppTooltip title={() => lowerCase(alert.type)}>
-          <Typography variant="body1" title={alert.type} noWrap>
+          <Typography variant='body1' title={alert.type} noWrap>
             {lowerCase(alert.type)}
           </Typography>
         </AppTooltip>
       </ColContainer>
-      <ColContainer item $colType="description">
-        <Typography variant="body1" title={alert.description} noWrap>
+      <ColContainer item $colType='description'>
+        <Typography variant='body1' title={alert.description} noWrap>
           {alert.description}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType="status">
+      <ColContainer item $colType='status'>
         <AlertStatusItem typeName={alert.status} />
       </ColContainer>
-      <ColContainer item $colType="updatedBy">
-        <Typography variant="body1">
-          {alert.statusUpdatedBy?.owner?.name ||
-            alert.statusUpdatedBy?.identity.username}
+      <ColContainer item $colType='updatedBy'>
+        <Typography variant='body1'>
+          {alert.statusUpdatedBy?.owner?.name || alert.statusUpdatedBy?.identity.username}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType="updatedTime">
-        <Typography variant="body1">
-          {alert.statusUpdatedAt &&
-            format(alert.statusUpdatedAt, alertDateFormat)}
+      <ColContainer item $colType='updatedTime'>
+        <Typography variant='body1'>
+          {alert.statusUpdatedAt && format(alert.statusUpdatedAt, alertDateFormat)}
         </Typography>
       </ColContainer>
-      <S.ActionButtonsContainer item $colType="actionBtn">
+      <S.ActionButtonsContainer item $colType='actionBtn'>
         <AppButton
-          size="medium"
-          color="primaryLight"
+          size='medium'
+          color='primaryLight'
           onClick={alertStatusHandler}
-          disabled={!editDataEntity}
+          disabled={!resolveAlerts}
         >
           {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'}
         </AppButton>

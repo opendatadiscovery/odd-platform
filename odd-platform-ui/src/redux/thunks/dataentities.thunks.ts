@@ -211,14 +211,3 @@ export const fetchDataEntitiesUsageInfo = createAsyncThunk<DataEntityUsageInfo, 
   actions.fetchDataEntitiesUsageActionType,
   async () => dataEntityApi.getDataEntitiesUsage()
 );
-
-// export const fetchDataEntityPermissions = createAsyncThunk<
-//   { dataEntityId: number; permissions: Actions },
-//   DataEntityApiGetDataEntityPermissionsRequest
-// >(actions.fetchDataEntityPermissionsActionType, async ({ dataEntityId }) => {
-//   const permissions = await dataEntityApi.getDataEntityPermissions({
-//     dataEntityId,
-//   });
-//
-//   return { dataEntityId, permissions };
-// });

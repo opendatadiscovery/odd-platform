@@ -1,11 +1,11 @@
 import React from 'react';
-import { Collector } from 'generated-sources';
+import { Collector, Permission } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
-import { ConfirmationDialog, AppButton, CopyButton } from 'components/shared';
+import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared';
 import { Typography } from '@mui/material';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { TokenContainer, Token } from './CollectorItemTokenStyles';
+import { Token, TokenContainer } from './CollectorItemTokenStyles';
 
 interface CollectorItemProps {
   collector: Collector;
@@ -13,7 +13,7 @@ interface CollectorItemProps {
 
 const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
@@ -45,7 +45,11 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
           }
           onConfirm={onTokenRegenerate}
           actionBtn={
-            <AppButton size='medium' color='primaryLight' disabled={!isAdmin}>
+            <AppButton
+              size='medium'
+              color='primaryLight'
+              disabled={!hasAccessTo(Permission.COLLECTOR_TOKEN_REGENERATE)}
+            >
               Regenerate
             </AppButton>
           }

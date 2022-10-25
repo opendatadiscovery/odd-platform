@@ -82,9 +82,9 @@ const Overview: React.FC = () => {
           </Grid>
         </>
       )}
-      {/* <PermissionProvider permissions={[Permission.DIRECT_OWNER_SYNC]}> */}
-      <OwnerAssociation />
-      {/* </PermissionProvider> */}
+      <PermissionProvider permissions={[Permission.DIRECT_OWNER_SYNC]}>
+        <OwnerAssociation />
+      </PermissionProvider>
     </S.Container>
   );
 };

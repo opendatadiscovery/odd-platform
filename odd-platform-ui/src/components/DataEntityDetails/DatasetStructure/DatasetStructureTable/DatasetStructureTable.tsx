@@ -20,16 +20,13 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   datasetStructureRoot,
 }) => {
   const isUniqStatsExist = useAppSelector(
-    getIsUniqStatsExist({
-      datasetId: dataEntityId,
-      versionId,
-    })
+    getIsUniqStatsExist({ datasetId: dataEntityId, versionId })
   );
 
   return (
     <S.Container container>
       <S.TableHeader container>
-        <S.TableCell item lg={8} flexBasis="54.5% !important">
+        <S.TableCell item lg={8} flexBasis='54.5% !important'>
           Column
         </S.TableCell>
         {isUniqStatsExist && (

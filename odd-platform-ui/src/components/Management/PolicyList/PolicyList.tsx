@@ -19,20 +19,16 @@ import {
   NumberFormatted,
 } from 'components/shared';
 import { useAppPaths, usePermissions } from 'lib/hooks';
-import { Policy } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import PolicyItem from './PolicyItem/PolicyItem';
 import * as S from './PolicyListStyles';
 import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
 
 const PolicyList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
   const { createPolicyPath } = useAppPaths();
   const createPolicyLink = createPolicyPath();
-
-  const { isLoading: isPolicyCreating } = useAppSelector(getPolicyCreatingStatuses);
-
-  const { isLoading: isPolicyDeleting } = useAppSelector(getPolicyDeletingStatuses);
 
   const { isLoading: isPoliciesFetching } = useAppSelector(getPoliciesFetchingStatuses);
 
@@ -112,7 +108,7 @@ const PolicyList: React.FC = () => {
           size='medium'
           color='primaryLight'
           startIcon={<AddIcon />}
-          disabled={!isAdmin}
+          disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
         >
           Create policy
         </AppButton>

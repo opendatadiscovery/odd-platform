@@ -56,7 +56,7 @@ const Alerts: React.FC = () => {
     },
   ];
 
-  const [selectedTab] = React.useState<number>(() =>
+  const [selectedTab] = React.useState(() =>
     viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
   );
 
@@ -73,9 +73,9 @@ const Alerts: React.FC = () => {
       Record<string, unknown>
     >
   ) => (
-    // <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
-    <AlertsList fetchAlerts={fetchAlerts} />
-    // </PermissionProvider>
+    <PermissionProvider permissions={[Permission.DATA_ENTITY_ALERT_RESOLVE]}>
+      <AlertsList fetchAlerts={fetchAlerts} />
+    </PermissionProvider>
   );
 
   return (

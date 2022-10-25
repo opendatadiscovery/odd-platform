@@ -1,9 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { AppIconButton, EntityClassItem } from 'components/shared';
 import { DataEntityRef } from 'generated-sources';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
+import { DeleteIcon } from 'components/shared/Icons';
 import { Container } from './EntityItemStyles';
 
 interface TagItemProps {
@@ -11,13 +10,10 @@ interface TagItemProps {
   entity: DataEntityRef;
 }
 
-const EntityItem: React.FC<TagItemProps> = ({
-  onRemoveClick = () => {},
-  entity,
-}) => (
+const EntityItem: React.FC<TagItemProps> = ({ onRemoveClick = () => {}, entity }) => (
   <Container container>
-    <Grid container flexWrap="nowrap" sx={{ width: 'calc(100% - 24px)' }}>
-      <Typography variant="body1" sx={{ mr: 1 }} noWrap>
+    <Grid container flexWrap='nowrap' sx={{ width: 'calc(100% - 24px)' }}>
+      <Typography variant='body1' sx={{ mr: 1 }} noWrap>
         {entity.internalName || entity.externalName}
       </Typography>
       {entity.entityClasses?.map(entityClass => (
@@ -29,8 +25,8 @@ const EntityItem: React.FC<TagItemProps> = ({
       ))}
     </Grid>
     <AppIconButton
-      size="small"
-      color="tertiary"
+      size='small'
+      color='tertiary'
       icon={<DeleteIcon />}
       sx={{ ml: 0.5 }}
       onClick={onRemoveClick}

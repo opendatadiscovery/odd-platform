@@ -9,15 +9,15 @@ import {
   getTermDetails,
   getTermDetailsFetchingStatuses,
 } from 'redux/selectors/terms.selectors';
+import { Permission } from 'generated-sources';
+import { PermissionProvider } from 'components/shared/contexts';
 import { SectionContainer, SectionFlexContainer } from './OverviewStyles';
 import OverviewTags from './OverviewTags/OverviewTags';
 
 const Overview: React.FC = () => {
   const { termId } = useAppParams();
 
-  const termDetails = useAppSelector(state =>
-    getTermDetails(state, termId)
-  );
+  const termDetails = useAppSelector(state => getTermDetails(state, termId));
 
   const { isLoading: isTermDetailsFetching } = useAppSelector(
     getTermDetailsFetchingStatuses
@@ -29,11 +29,9 @@ const Overview: React.FC = () => {
         <Grid container spacing={2} sx={{ mt: 0 }}>
           <Grid item xs={8}>
             <SectionFlexContainer elevation={9}>
-              <Typography variant="h4">{termDetails.name}</Typography>
-              <Typography variant="body1">-</Typography>
-              <Typography variant="body1">
-                {termDetails.definition}
-              </Typography>
+              <Typography variant='h4'>{termDetails.name}</Typography>
+              <Typography variant='body1'>-</Typography>
+              <Typography variant='body1'>{termDetails.definition}</Typography>
             </SectionFlexContainer>
           </Grid>
           <Grid item xs={4}>
@@ -41,16 +39,16 @@ const Overview: React.FC = () => {
               <OverviewGeneral />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewTags tags={termDetails.tags} />
+              <PermissionProvider permissions={[Permission.TERM_TAGS_UPDATE]}>
+                <OverviewTags tags={termDetails.tags} />
+              </PermissionProvider>
             </SectionContainer>
           </Grid>
         </Grid>
       )}
       {isTermDetailsFetching && (
         <SkeletonWrapper
-          renderContent={({ randWidth }) => (
-            <OverviewSkeleton width={randWidth()} />
-          )}
+          renderContent={({ randWidth }) => <OverviewSkeleton width={randWidth()} />}
         />
       )}
     </>

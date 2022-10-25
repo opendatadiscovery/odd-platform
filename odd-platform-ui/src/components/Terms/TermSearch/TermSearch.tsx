@@ -16,6 +16,8 @@ import {
 } from 'redux/selectors';
 import { createTermSearch, getTermsSearch, updateTermSearch } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { Permission, PermissionResourceType } from 'generated-sources';
 import TermSearchInput from './TermSearchInput/TermSearchInput';
 import TermSearchFilters from './TermSearchFilters/TermSearchFilters';
 import TermsSearchResults from './TermSearchResults/TermSearchResults';
@@ -79,13 +81,25 @@ const TermSearch: React.FC = () => {
         <PageWithLeftSidebar.ListContainer item xs={9}>
           <Grid container justifyContent='space-between' alignItems='center' mt={1.5}>
             <TermSearchInput />
-            <TermsForm
-              btnCreateEl={
-                <AppButton size='large' color='primary' startIcon={<AddIcon />}>
-                  Add term
-                </AppButton>
-              }
-            />
+            <PermissionProvider permissions={[Permission.TERM_CREATE]}>
+              <WithPermissions
+                resourceType={PermissionResourceType.TERM}
+                renderContent={({ isAllowedTo: addTerm }) => (
+                  <TermsForm
+                    btnCreateEl={
+                      <AppButton
+                        size='large'
+                        color='primary'
+                        disabled={!addTerm}
+                        startIcon={<AddIcon />}
+                      >
+                        Add term
+                      </AppButton>
+                    }
+                  />
+                )}
+              />
+            </PermissionProvider>
           </Grid>
           <TermsSearchResults />
         </PageWithLeftSidebar.ListContainer>

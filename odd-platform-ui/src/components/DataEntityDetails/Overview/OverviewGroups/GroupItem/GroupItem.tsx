@@ -17,36 +17,28 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
   const groupDetailsLink = dataEntityDetailsPath(group.id);
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { isAllowedTo: deleteFromGroup } = usePermissions({ resourceId: dataEntityId });
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     return dispatch(
-      deleteDataEntityFromGroup({
-        dataEntityId,
-        dataEntityGroupId: group.id,
-      })
+      deleteDataEntityFromGroup({ dataEntityId, dataEntityGroupId: group.id })
     );
   };
 
   return (
     <S.GroupItemContainer to={groupDetailsLink}>
-      <Grid
-        sx={{ my: 0.5 }}
-        container
-        flexWrap="nowrap"
-        justifyContent="space-between"
-      >
-        <Grid container flexDirection="column">
-          <Typography variant="body1" color="texts.action">
+      <Grid sx={{ my: 0.5 }} container flexWrap='nowrap' justifyContent='space-between'>
+        <Grid container flexDirection='column'>
+          <Typography variant='body1' color='texts.action'>
             {group.internalName || group.externalName}
           </Typography>
         </Grid>
         <S.ActionsContainer>
-          {group.manuallyCreated && editDataEntity && (
+          {group.manuallyCreated && deleteFromGroup && (
             <AppIconButton
-              size="small"
-              color="unfilled"
+              size='small'
+              color='unfilled'
               icon={<CloseIcon />}
               onClick={handleDelete}
               sx={{ ml: 0.25 }}

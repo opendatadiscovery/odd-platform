@@ -17,7 +17,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
   const dispatch = useAppDispatch();
   const { termDetailsOverviewPath } = useAppPaths();
   const termDetailsLink = termDetailsOverviewPath(term.id);
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { isAllowedTo: deleteTerm } = usePermissions({ resourceId: dataEntityId });
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
           <S.TermDefinition variant='subtitle2'>{term.definition}</S.TermDefinition>
         </Grid>
         <S.ActionsContainer>
-          {editDataEntity && (
+          {deleteTerm && (
             <AppIconButton
               size='small'
               color='unfilled'

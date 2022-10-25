@@ -3,7 +3,11 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
 import { useScrollBarWidth } from 'lib/hooks';
-import { CountableSearchFilter, DataEntityClassNameEnum } from 'generated-sources';
+import {
+  CountableSearchFilter,
+  DataEntityClassNameEnum,
+  Permission,
+} from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityClassesDict,
@@ -25,7 +29,8 @@ import { SearchClass } from 'redux/interfaces';
 import { AppButton, EmptyContentPlaceholder } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import findKey from 'lodash/findKey';
-import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
+import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import ResultItem from './ResultItem/ResultItem';
 import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton';
@@ -126,20 +131,29 @@ const Results: React.FC = () => {
         searchClass={searchClass}
         onSearchClassChange={onSearchClassChange}
       />
-      {showDEGBtn && (
-        <DataEntityGroupForm
-          btnCreateEl={
-            <AppButton
-              sx={{ mt: 2 }}
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-            >
-              Add group
-            </AppButton>
-          }
+      <PermissionProvider permissions={[Permission.DATA_ENTITY_GROUP_CREATE]}>
+        <WithPermissions
+          renderContent={({ isAllowedTo: createGroup }) => (
+            <>
+              {showDEGBtn && (
+                <DataEntityGroupForm
+                  btnCreateEl={
+                    <AppButton
+                      sx={{ mt: 2 }}
+                      size='medium'
+                      color='primaryLight'
+                      startIcon={<AddIcon />}
+                      disabled={!createGroup}
+                    >
+                      Add group
+                    </AppButton>
+                  }
+                />
+              )}
+            </>
+          )}
         />
-      )}
+      </PermissionProvider>
       <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
         <S.SearchCol item lg={grid.lg.nm}>
           <Typography variant='caption'>Name</Typography>

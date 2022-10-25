@@ -4,8 +4,8 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getTagCreatingStatuses,
   getTagDeletingStatuses,
-  getTagsList,
   getTagListFetchingStatuses,
+  getTagsList,
   getTagsListPage,
 } from 'redux/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -19,6 +19,7 @@ import {
   NumberFormatted,
 } from 'components/shared';
 import { usePermissions } from 'lib/hooks';
+import { Permission } from 'generated-sources';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
@@ -26,7 +27,7 @@ import * as S from './TagsListStyles';
 
 const TagsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const { isLoading: isTagCreating } = useAppSelector(getTagCreatingStatuses);
 
@@ -114,7 +115,7 @@ const TagsListView: React.FC = () => {
               size='medium'
               color='primaryLight'
               startIcon={<AddIcon />}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.TAG_CREATE)}
             >
               Create tag
             </AppButton>

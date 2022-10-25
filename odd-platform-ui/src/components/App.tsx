@@ -30,7 +30,6 @@ const App: React.FC = () => {
   const { isPathEmbedded } = useAppPaths();
 
   return (
-    // <PermissionProvider permissions={[Permission.MANAGEMENT_CONTROL]}>
     <div className='App'>
       {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
@@ -38,7 +37,40 @@ const App: React.FC = () => {
           <Switch>
             <Route exact path='/' component={Overview} />
             <Route path='/alerts/:viewType?' component={Alerts} />
-            <Route path='/management/:viewType?' component={Management} />
+            <Route
+              path='/management/:viewType?'
+              render={() => (
+                <PermissionProvider
+                  permissions={[
+                    Permission.ROLE_MANAGEMENT,
+                    Permission.NAMESPACE_CREATE,
+                    Permission.NAMESPACE_UPDATE,
+                    Permission.NAMESPACE_DELETE,
+                    Permission.POLICY_MANAGEMENT,
+                    Permission.OWNER_ASSOCIATION_MANAGE,
+                    Permission.TAG_UPDATE,
+                    Permission.TAG_CREATE,
+                    Permission.TAG_DELETE,
+                    Permission.OWNER_CREATE,
+                    Permission.OWNER_UPDATE,
+                    Permission.OWNER_DELETE,
+                    Permission.LABEL_CREATE,
+                    Permission.LABEL_UPDATE,
+                    Permission.LABEL_DELETE,
+                    Permission.DATA_SOURCE_CREATE,
+                    Permission.DATA_SOURCE_UPDATE,
+                    Permission.DATA_SOURCE_DELETE,
+                    Permission.DATA_SOURCE_TOKEN_REGENERATE,
+                    Permission.COLLECTOR_CREATE,
+                    Permission.COLLECTOR_DELETE,
+                    Permission.COLLECTOR_UPDATE,
+                    Permission.COLLECTOR_TOKEN_REGENERATE,
+                  ]}
+                >
+                  <Management />
+                </PermissionProvider>
+              )}
+            />
             <Route exact path='/termsearch/:termSearchId?' component={TermSearch} />
             <Route
               exact
@@ -51,18 +83,13 @@ const App: React.FC = () => {
                 '/dataentities/:dataEntityId/:viewType?',
                 '/embedded/dataentities/:dataEntityId/:viewType?',
               ]}
-              render={() => (
-                // <PermissionProvider permissions={[Permission.DATA_ENTITY_EDIT]}>
-                <DataEntityDetails />
-                // </PermissionProvider>
-              )}
+              component={DataEntityDetails}
             />
             <Route path='/activity' component={Activity} />
           </Switch>
         </React.Suspense>
       </div>
     </div>
-    // </PermissionProvider>
   );
 };
 

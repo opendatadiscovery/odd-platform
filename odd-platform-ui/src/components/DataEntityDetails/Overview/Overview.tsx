@@ -10,6 +10,8 @@ import {
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
 import { useAppSelector } from 'redux/lib/hooks';
+import { PermissionProvider } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
 import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
 import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
@@ -59,13 +61,21 @@ const Overview: React.FC = () => {
               Metadata
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewMetadata dataEntityId={dataEntityId} />
+              <PermissionProvider
+                permissions={[Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE]}
+              >
+                <OverviewMetadata dataEntityId={dataEntityId} />
+              </PermissionProvider>
             </SectionContainer>
             <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
               About
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewDescription />
+              <PermissionProvider
+                permissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
+              >
+                <OverviewDescription />
+              </PermissionProvider>
             </SectionContainer>
           </Grid>
           <Grid item lg={3}>
@@ -85,7 +95,9 @@ const Overview: React.FC = () => {
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewTags tags={dataEntityDetails.tags} />
+              <PermissionProvider permissions={[Permission.DATA_ENTITY_TAGS_UPDATE]}>
+                <OverviewTags tags={dataEntityDetails.tags} />
+              </PermissionProvider>
             </SectionContainer>
             <SectionContainer square elevation={0}>
               <OverviewTerms

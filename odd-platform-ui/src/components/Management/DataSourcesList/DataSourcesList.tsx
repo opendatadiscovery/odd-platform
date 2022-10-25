@@ -1,23 +1,24 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  getDataSourcesListPage,
-  getDataSourcesList,
   getDatasourceDeletingStatuses,
+  getDataSourcesList,
+  getDataSourcesListPage,
   getIsDataSourcesListFetching,
 } from 'redux/selectors';
 import { fetchDataSourcesList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
 import {
-  NumberFormatted,
   AppButton,
   AppInput,
   EmptyContentPlaceholder,
+  NumberFormatted,
 } from 'components/shared';
 import { usePermissions } from 'lib/hooks';
+import { Permission } from 'generated-sources';
 import DataSourceForm from './DataSourceForm/DataSourceForm';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItem from './DataSourceItem/DataSourceItem';
@@ -25,7 +26,7 @@ import * as S from './DataSourcesListStyles';
 
 const DataSourcesListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const dataSourcesList = useAppSelector(getDataSourcesList);
   const { page, total, hasNext } = useAppSelector(getDataSourcesListPage);
@@ -37,7 +38,7 @@ const DataSourcesListView: React.FC = () => {
     getDatasourceDeletingStatuses
   );
 
-  const size = 3;
+  const size = 30;
   const [query, setQuery] = React.useState<string>('');
   const [totalDataSources, setTotalDataSources] = React.useState<number | undefined>(
     total
@@ -112,7 +113,7 @@ const DataSourcesListView: React.FC = () => {
               size='medium'
               color='primaryLight'
               startIcon={<AddIcon />}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.DATA_SOURCE_CREATE)}
             >
               Add datasource
             </AppButton>

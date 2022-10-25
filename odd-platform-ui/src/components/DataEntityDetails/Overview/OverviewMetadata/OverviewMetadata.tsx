@@ -17,7 +17,7 @@ interface Props {
 }
 
 const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { isAllowedTo: createMetadata } = usePermissions({ resourceId: dataEntityId });
 
   const predefinedMetadata = useAppSelector(
     getDataEntityPredefinedMetadataList(dataEntityId)
@@ -100,7 +100,7 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
                     size='medium'
                     color='primaryLight'
                     startIcon={<AddIcon />}
-                    disabled={!editDataEntity}
+                    disabled={!createMetadata}
                   >
                     Add metadata
                   </AppButton>
@@ -135,7 +135,7 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
                     sx={{ ml: 0.5 }}
                     size='small'
                     color='tertiary'
-                    disabled={!editDataEntity}
+                    disabled={!createMetadata}
                   >
                     Add Metadata
                   </AppButton>

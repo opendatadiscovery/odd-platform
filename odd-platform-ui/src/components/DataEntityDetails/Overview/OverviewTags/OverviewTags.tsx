@@ -13,7 +13,7 @@ interface OverviewTagsProps {
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { isAllowedTo: editTags } = usePermissions({ resourceId: dataEntityId });
 
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
@@ -29,13 +29,13 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   return (
     <div>
       <CaptionContainer>
-        <Typography variant="h4">Tags</Typography>
+        <Typography variant='h4'>Tags</Typography>
         <TagsEditForm
           btnEditEl={
             <AppButton
-              size="medium"
-              color="primaryLight"
-              disabled={!editDataEntity}
+              size='medium'
+              color='primaryLight'
+              disabled={!editTags}
               startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
             >
               {tags?.length ? 'Edit' : 'Add'} tags
@@ -58,8 +58,8 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
               />
             ))}
           {tags?.length > visibleLimit ? (
-            <Grid container flexDirection="column" alignItems="flex-start">
-              <Collapse in={viewAll} timeout="auto" unmountOnExit>
+            <Grid container flexDirection='column' alignItems='flex-start'>
+              <Collapse in={viewAll} timeout='auto' unmountOnExit>
                 {viewAll
                   ? tags
                       ?.slice(visibleLimit)
@@ -76,8 +76,8 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
                   : null}
               </Collapse>
               <AppButton
-                size="small"
-                color="tertiary"
+                size='small'
+                color='tertiary'
                 sx={{ ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
               >
@@ -91,18 +91,14 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           item
           xs={12}
           container
-          alignItems="center"
-          justifyContent="flex-start"
-          wrap="nowrap"
+          alignItems='center'
+          justifyContent='flex-start'
+          wrap='nowrap'
         >
-          <Typography variant="subtitle2">Not created.</Typography>
+          <Typography variant='subtitle2'>Not created.</Typography>
           <TagsEditForm
             btnEditEl={
-              <AppButton
-                size="small"
-                color="tertiary"
-                disabled={!editDataEntity}
-              >
+              <AppButton size='small' color='tertiary' disabled={!editTags}>
                 Add tags
               </AppButton>
             }

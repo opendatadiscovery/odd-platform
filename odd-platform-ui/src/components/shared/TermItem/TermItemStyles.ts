@@ -15,9 +15,7 @@ export const TermItemContainer = styled(Link)(({ theme }) => ({
     background: theme.palette.backgrounds.primary,
     [`${ActionsContainer}`]: { opacity: 1 },
   },
-  '&:active': {
-    background: theme.palette.backgrounds.secondary,
-  },
+  '&:active': { background: theme.palette.backgrounds.secondary },
 }));
 
 export const TermDefinition = styled(Typography)(() => ({

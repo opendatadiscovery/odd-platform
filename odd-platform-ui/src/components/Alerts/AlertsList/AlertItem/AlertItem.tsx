@@ -14,13 +14,13 @@ import { KebabIcon } from 'components/shared/Icons';
 import { useAppPaths, usePermissions } from 'lib/hooks';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
-import { AlertStatus } from 'generated-sources';
-// import { fetchDataEntityPermissions } from 'redux/thunks';
+import { AlertStatus, PermissionResourceType } from 'generated-sources';
 import {
-  getDataEntityPermissionsFetchingStatuses,
-  isDataEntityPermissionsAlreadyFetched,
+  getResourcePermissionsFetchingStatuses,
+  isResourcePermissionsAlreadyFetched,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { fetchResourcePermissions } from 'redux/thunks';
 import { ColContainer } from '../AlertsListStyles';
 import * as S from './AlertItemStyles';
 
@@ -33,24 +33,32 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, alertStatusHandler }) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const dispatch = useAppDispatch();
   const { isAllowedTo: alertProcessing } = usePermissions({
-    dataEntityId: alert.dataEntity?.id,
+    resourceId: alert.dataEntity?.id,
   });
 
   const isPermFetched = useAppSelector(
-    isDataEntityPermissionsAlreadyFetched(alert.dataEntity?.id)
+    isResourcePermissionsAlreadyFetched(
+      PermissionResourceType.DATA_ENTITY,
+      alert.dataEntity?.id
+    )
   );
 
   const { isLoading: isPermissionsFetching } = useAppSelector(
-    getDataEntityPermissionsFetchingStatuses
+    getResourcePermissionsFetchingStatuses
   );
 
   const alertOnClickHandle = (
     e: React.MouseEvent<HTMLButtonElement>,
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
   ) => {
-    // if (alert.dataEntity?.id && !isPermFetched) {
-    //   dispatch(fetchDataEntityPermissions({ dataEntityId: alert.dataEntity.id }));
-    // }
+    if (alert.dataEntity?.id && !isPermFetched) {
+      dispatch(
+        fetchResourcePermissions({
+          resourceId: alert.dataEntity.id,
+          permissionResourceType: PermissionResourceType.DATA_ENTITY,
+        })
+      );
+    }
     onClick(e);
   };
 

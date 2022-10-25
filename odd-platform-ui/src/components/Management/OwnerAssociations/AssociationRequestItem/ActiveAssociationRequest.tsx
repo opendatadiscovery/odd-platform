@@ -4,11 +4,13 @@ import {
   OwnerAssociationRequest,
   OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
   OwnerAssociationRequestStatus,
+  Permission,
 } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { AcceptIcon, RejectIcon } from 'components/shared/Icons';
 import { updateOwnerAssociationRequest } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { usePermissions } from 'lib/hooks';
 import * as S from './AssociationRequestStyles';
 
 interface Props {
@@ -25,6 +27,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
   provider,
 }) => {
   const dispatch = useAppDispatch();
+  const { hasAccessTo } = usePermissions({});
 
   const dispatchedRequest = (
     params: OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
@@ -74,7 +77,12 @@ const ActiveAssociationRequest: React.FC<Props> = ({
           actionText={<>{`User "${username}" will be map to owner "${ownerName}"`}</>}
           onConfirm={handleAccept}
           actionBtn={
-            <AppButton size='medium' color='secondarySuccess' startIcon={<AcceptIcon />}>
+            <AppButton
+              size='medium'
+              color='secondarySuccess'
+              startIcon={<AcceptIcon />}
+              disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
+            >
               Accept
             </AppButton>
           }
@@ -90,6 +98,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
               size='medium'
               color='secondaryWarn'
               startIcon={<RejectIcon />}
+              disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
             >
               Reject
             </AppButton>

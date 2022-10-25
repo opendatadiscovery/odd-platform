@@ -1,10 +1,7 @@
 import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import {
-  fetchDataSetStructure,
-  fetchDataSetStructureLatest,
-} from 'redux/thunks';
+import { fetchDataSetStructure, fetchDataSetStructureLatest } from 'redux/thunks';
 import {
   getDatasetStats,
   getDatasetStructure,
@@ -15,12 +12,7 @@ import {
   getDatasetVersions,
 } from 'redux/selectors';
 import { ClearIcon, ColumnsIcon } from 'components/shared/Icons';
-import {
-  AppInput,
-  AppSelect,
-  NumberFormatted,
-  SkeletonWrapper,
-} from 'components/shared';
+import { AppInput, AppSelect, NumberFormatted, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
@@ -58,12 +50,7 @@ const DatasetStructure: React.FC = () => {
 
   React.useEffect(() => {
     if (versionId) {
-      dispatch(
-        fetchDataSetStructure({
-          dataEntityId,
-          versionId,
-        })
-      );
+      dispatch(fetchDataSetStructure({ dataEntityId, versionId }));
     } else {
       dispatch(fetchDataSetStructureLatest({ dataEntityId }));
     }
@@ -71,12 +58,7 @@ const DatasetStructure: React.FC = () => {
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
-    dispatch(
-      fetchDataSetStructure({
-        dataEntityId,
-        versionId: newVersionId,
-      })
-    );
+    dispatch(fetchDataSetStructure({ dataEntityId, versionId: newVersionId }));
     history.push(datasetStructurePath(dataEntityId, newVersionId));
   };
 
@@ -90,9 +72,7 @@ const DatasetStructure: React.FC = () => {
     [searchText]
   );
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
     handleSearch();
   };
@@ -123,24 +103,21 @@ const DatasetStructure: React.FC = () => {
           <Grid
             item
             xs={12}
-            justifyContent="space-between"
+            justifyContent='space-between'
             alignItems={labelsListOpened ? 'flex-start' : 'center'}
             container
-            flexWrap="nowrap"
+            flexWrap='nowrap'
           >
             <Grid item xs={0.8}>
-              <Typography variant="h5" sx={{ display: 'flex' }}>
+              <Typography variant='h5' sx={{ display: 'flex' }}>
                 <ColumnsIcon />
-                <NumberFormatted
-                  sx={{ mx: 0.5 }}
-                  value={datasetStats?.fieldsCount}
-                />
-                <Typography variant="body2" color="texts.hint">
+                <NumberFormatted sx={{ mx: 0.5 }} value={datasetStats?.fieldsCount} />
+                <Typography variant='body2' color='texts.hint'>
                   columns
                 </Typography>
               </Typography>
             </Grid>
-            <Grid item xs={7.7} container flexWrap="nowrap">
+            <Grid item xs={7.7} container flexWrap='nowrap'>
               <DatasetStructureTypeCountLabelList
                 fieldsCount={datasetStats.fieldsCount}
                 typesCount={typesCount}
@@ -151,12 +128,12 @@ const DatasetStructure: React.FC = () => {
               item
               xs={3.5}
               container
-              flexWrap="nowrap"
-              alignItems="center"
-              justifyContent="flex-end"
+              flexWrap='nowrap'
+              alignItems='center'
+              justifyContent='flex-end'
             >
               <AppInput
-                placeholder="Search"
+                placeholder='Search'
                 sx={{ minWidth: '250px', mr: 1 }}
                 fullWidth={false}
                 value={searchText}
@@ -172,13 +149,11 @@ const DatasetStructure: React.FC = () => {
               />
               {datasetStructureVersion ? (
                 <>
-                  <Typography variant="subtitle2">
-                    Current Revision:
-                  </Typography>
+                  <Typography variant='subtitle2'>Current Revision:</Typography>
                   <AppSelect
                     sx={{ width: 52, ml: 1 }}
                     fullWidth={false}
-                    type="number"
+                    type='number'
                     native
                     defaultValue={datasetStructureVersion}
                     onChange={handleRevisionChange}

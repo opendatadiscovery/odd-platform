@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Label } from 'generated-sources';
-import { EditIcon, DeleteIcon } from 'components/shared/Icons';
-import { ConfirmationDialog, AppButton } from 'components/shared';
+import { Label, Permission } from 'generated-sources';
+import { DeleteIcon, EditIcon } from 'components/shared/Icons';
+import { AppButton, ConfirmationDialog } from 'components/shared';
 import { deleteLabel } from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -15,7 +15,7 @@ interface EditableLabelItemProps {
 
 const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteLabel({ labelId: label.id })),
@@ -39,7 +39,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
                 color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.LABEL_UPDATE)}
               >
                 Edit
               </AppButton>
@@ -55,7 +55,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
+                disabled={!hasAccessTo(Permission.LABEL_DELETE)}
               >
                 Delete
               </AppButton>

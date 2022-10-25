@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Namespace } from 'generated-sources';
-import { EditIcon, DeleteIcon } from 'components/shared/Icons';
-import { ConfirmationDialog, AppButton } from 'components/shared';
+import { Namespace, Permission } from 'generated-sources';
+import { DeleteIcon, EditIcon } from 'components/shared/Icons';
+import { AppButton, ConfirmationDialog } from 'components/shared';
 import { deleteNamespace } from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -15,7 +15,7 @@ interface EditableNamespaceItemProps {
 
 const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
+  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteNamespace({ namespaceId: namespace.id })),
@@ -38,7 +38,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
               color='primaryLight'
               startIcon={<EditIcon />}
               sx={{ mr: 0.5 }}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.NAMESPACE_UPDATE)}
             >
               Edit
             </AppButton>
@@ -54,7 +54,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
               size='medium'
               color='primaryLight'
               startIcon={<DeleteIcon />}
-              disabled={!isAdmin}
+              disabled={!hasAccessTo(Permission.NAMESPACE_DELETE)}
             >
               Delete
             </AppButton>
