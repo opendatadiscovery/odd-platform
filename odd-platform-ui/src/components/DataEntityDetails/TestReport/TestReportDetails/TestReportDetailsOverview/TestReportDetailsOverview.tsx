@@ -2,7 +2,11 @@ import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { AppButton, AppMenuItem, AppSelect, LabeledInfoItem } from 'components/shared';
 import { format, formatDistanceStrict } from 'date-fns';
-import { DataQualityTestExpectation, DataQualityTestSeverity } from 'generated-sources';
+import {
+  DataQualityTestExpectation,
+  DataQualityTestSeverity,
+  Permission,
+} from 'generated-sources';
 import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
@@ -19,6 +23,7 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
+  const { hasAccessTo } = usePermissions({ resourceId: dataEntityId });
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
 
@@ -75,7 +80,9 @@ const TestReportDetailsOverview: React.FC = () => {
               valueComponent='div'
             >
               <AppSelect
+                disabled={!hasAccessTo(Permission.DATASET_TEST_RUN_SET_SEVERITY)}
                 size='small'
+                sx={{ width: 'fit-content' }}
                 defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
                 onChange={handleSeverityChange}
               >

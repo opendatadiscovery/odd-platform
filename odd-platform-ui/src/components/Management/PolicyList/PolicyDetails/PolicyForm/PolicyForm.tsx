@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { createPolicy, updatePolicy } from 'redux/thunks';
 import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { PolicyDetails, PolicyFormData } from 'generated-sources';
+import { Permission, PolicyDetails, PolicyFormData } from 'generated-sources';
 import { Link, useHistory } from 'react-router-dom';
 
 interface PolicyFormProps {
@@ -20,7 +20,9 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { managementPath } = useAppPaths();
+  const { hasAccessTo } = usePermissions({});
 
+  const isAdministrator = name === 'Administrator';
   const toPolicies = managementPath('policies');
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
@@ -69,6 +71,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
           rules={{ required: true }}
           render={({ field }) => (
             <AppJSONEditor
+              readOnly={!hasAccessTo(Permission.POLICY_UPDATE) || isAdministrator}
               schema={schema}
               onValidate={(isJSONValid, result) =>
                 handleOnValidate(isJSONValid, result, field.onChange)
@@ -105,6 +108,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
           render={({ field }) => (
             <AppInput
               {...field}
+              disabled={!hasAccessTo(Permission.POLICY_UPDATE) || isAdministrator}
               sx={{ mt: 3 }}
               label='Name'
               placeholder='Enter policy name'
@@ -126,7 +130,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         color='primary'
         fullWidth
         sx={{ mt: 3, width: 'fit-content' }}
-        disabled={!(formState.isValid && isValid)}
+        disabled={!(formState.isValid && isValid && !isAdministrator)}
       >
         {policyId ? 'Save changes' : 'Create'}
       </AppButton>

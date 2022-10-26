@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Controller, FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { Role, RoleFormData } from 'generated-sources';
 import {
   AppButton,
@@ -23,17 +23,25 @@ interface RoleFormProps {
 
 const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) => {
   const dispatch = useAppDispatch();
+
+  const isUser = name === 'User';
+
   const { isLoading: isRoleCreating } = useAppSelector(getRoleCreatingStatuses);
   const { isLoading: isRoleUpdating } = useAppSelector(getRoleUpdatingStatuses);
 
-  const methods = useForm<RoleFormData>({
+  const getDefaultValues = React.useCallback(
+    (): RoleFormData => ({ name: name || '', policies: policies || [] }),
+    [name, policies]
+  );
+
+  const { control, formState, reset, handleSubmit } = useForm<RoleFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: { name, policies },
+    defaultValues: getDefaultValues(),
   });
 
   const { fields, append, remove } = useFieldArray({
-    control: methods.control,
+    control,
     name: 'policies',
     rules: { required: true },
   });
@@ -46,8 +54,10 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
 
   const clearState = React.useCallback(() => {
     setState(initialState);
-    methods.reset({ name, policies });
-  }, [name, policies]);
+    reset();
+  }, [setState, initialState]);
+
+  const updateState = () => reset({ name, policies });
 
   const handleRoleFormSubmit = (roleFormData: RoleFormData) => {
     (roleId
@@ -82,47 +92,46 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
   );
 
   const formContent = () => (
-    <FormProvider {...methods}>
-      <form id='role-form' onSubmit={methods.handleSubmit(handleRoleFormSubmit)}>
-        <Controller
-          name='name'
-          control={methods.control}
-          defaultValue={name}
-          rules={{ required: true, validate: value => !!value.trim() }}
-          render={({ field }) => (
-            <AppInput
-              {...field}
-              label='Name'
-              placeholder='Enter role name'
-              customEndAdornment={{
-                variant: 'clear',
-                showAdornment: !!field.value,
-                onCLick: () => field.onChange(''),
-                icon: <ClearIcon />,
-              }}
-            />
-          )}
-        />
-        <PolicyAutocomplete append={append} sx={{ mt: 1.5 }} />
-        <Grid
-          container
-          alignItems='center'
-          justifyContent='flex-start'
-          flexWrap='wrap'
-          mt={1.5}
-        >
-          {fields.map((field, idx) => (
-            <TagItem
-              sx={{ my: 0.5, mr: 0.5 }}
-              key={field.id}
-              label={field.name}
-              removable
-              onRemoveClick={handleRemove(idx)}
-            />
-          ))}
-        </Grid>
-      </form>
-    </FormProvider>
+    <form id='role-form' onSubmit={handleSubmit(handleRoleFormSubmit)}>
+      <Controller
+        name='name'
+        control={control}
+        defaultValue={name}
+        rules={{ required: true, validate: value => !!value.trim() }}
+        render={({ field }) => (
+          <AppInput
+            {...field}
+            disabled={isUser}
+            label='Name'
+            placeholder='Enter role name'
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
+            }}
+          />
+        )}
+      />
+      <PolicyAutocomplete append={append} sx={{ mt: 1.5 }} />
+      <Grid
+        container
+        alignItems='center'
+        justifyContent='flex-start'
+        flexWrap='wrap'
+        mt={1.5}
+      >
+        {fields.map((field, idx) => (
+          <TagItem
+            sx={{ my: 0.5, mr: 0.5 }}
+            key={field.id}
+            label={field.name}
+            removable
+            onRemoveClick={handleRemove(idx)}
+          />
+        ))}
+      </Grid>
+    </form>
   );
 
   const formActionButtons = () => (
@@ -132,7 +141,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
       form='role-form'
       color='primary'
       fullWidth
-      disabled={!methods.formState.isValid}
+      disabled={!formState.isValid}
       isLoading={roleId ? isRoleUpdating : isRoleCreating}
     >
       {roleId ? 'Save' : 'Create role'}
@@ -141,7 +150,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
 
   const handleOnOpen = React.useCallback(
     (handleOpen: () => void) => () => {
-      clearState();
+      if (roleId) updateState();
+      else clearState();
       handleOpen();
     },
     [clearState]

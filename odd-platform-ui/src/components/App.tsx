@@ -42,11 +42,15 @@ const App: React.FC = () => {
               render={() => (
                 <PermissionProvider
                   permissions={[
-                    // Permission.ROLE_MANAGEMENT,
+                    Permission.ROLE_CREATE,
+                    Permission.ROLE_UPDATE,
+                    Permission.ROLE_DELETE,
                     Permission.NAMESPACE_CREATE,
                     Permission.NAMESPACE_UPDATE,
                     Permission.NAMESPACE_DELETE,
-                    // Permission.POLICY_MANAGEMENT,
+                    Permission.POLICY_CREATE,
+                    Permission.POLICY_UPDATE,
+                    Permission.POLICY_DELETE,
                     Permission.OWNER_ASSOCIATION_MANAGE,
                     Permission.TAG_UPDATE,
                     Permission.TAG_CREATE,

@@ -7,11 +7,12 @@ export const ActionsContainer = styled(Grid)(() => ({
 }));
 
 export const Container = styled(Grid)(({ theme }) => ({
-  padding: theme.spacing(1.5, 1, 1.5, 1),
+  padding: theme.spacing(1.5, 0),
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
   flexWrap: 'nowrap',
   alignItems: 'center',
+  '& > *': { padding: theme.spacing(0, 1) },
   '&:hover': {
     backgroundColor: theme.palette.backgrounds.primary,
     [`${ActionsContainer}`]: { opacity: 1 },

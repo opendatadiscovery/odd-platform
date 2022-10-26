@@ -108,7 +108,7 @@ const RolesList: React.FC = () => {
               size='medium'
               color='primaryLight'
               startIcon={<AddIcon />}
-              // disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
+              disabled={!hasAccessTo(Permission.ROLE_CREATE)}
             >
               Create role
             </AppButton>

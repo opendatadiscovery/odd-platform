@@ -17,6 +17,8 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
   const dispatch = useAppDispatch();
   const { hasAccessTo } = usePermissions({});
 
+  const isAdministrator = name === 'Administrator';
+
   const { policyDetailsPath } = useAppPaths();
   const policyDetailsLink = policyDetailsPath(policyId);
 
@@ -41,7 +43,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
             color='primaryLight'
             startIcon={<EditIcon />}
             sx={{ mr: 1 }}
-            // disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
+            disabled={!hasAccessTo(Permission.POLICY_UPDATE) && !isAdministrator}
           >
             Edit
           </AppButton>
@@ -55,7 +57,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                // disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
+                disabled={!hasAccessTo(Permission.POLICY_DELETE)}
               >
                 Delete
               </AppButton>

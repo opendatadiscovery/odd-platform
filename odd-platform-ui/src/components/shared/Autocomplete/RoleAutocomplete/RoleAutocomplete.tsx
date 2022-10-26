@@ -6,7 +6,7 @@ import {
   Theme,
   Typography,
 } from '@mui/material';
-import { Policy, RoleFormData } from 'generated-sources';
+import { OwnerFormData, Role } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -15,40 +15,41 @@ import {
 import { AppInput } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { fetchPolicyList } from 'redux/thunks';
+import { fetchRolesList } from 'redux/thunks';
 import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { SxProps } from '@mui/system';
 
-interface PolicyAutocompleteProps {
-  append: UseFieldArrayAppend<RoleFormData, 'policies'>;
+interface RoleAutocompleteProps {
+  append: UseFieldArrayAppend<OwnerFormData, 'roles'>;
   sx?: SxProps<Theme>;
 }
 
-const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) => {
+const RoleAutocomplete: React.FC<RoleAutocompleteProps> = ({ append, sx }) => {
   const dispatch = useAppDispatch();
-  const searchPolicies = fetchPolicyList;
+  const searchRoles = fetchRolesList;
 
-  type PolicyFilterOption = Omit<Policy, 'id'> & Partial<Pick<Policy, 'id'>>;
-  const [policyOptions, setPolicyOptions] = React.useState<PolicyFilterOption[]>([]);
+  type RoleFilterOption = Omit<Role, 'id' | 'policies'> &
+    Partial<Pick<Role, 'id' | 'policies'>>;
+  const [roleOptions, setRoleOptions] = React.useState<RoleFilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [policiesLoading, setPoliciesLoading] = React.useState(false);
+  const [rolesLoading, setRolesLoading] = React.useState(false);
   const [query, setQuery] = React.useState('');
-  const policiesFilter = createFilterOptions<PolicyFilterOption>();
+  const rolesFilter = createFilterOptions<RoleFilterOption>();
 
-  const handlePoliciesSearch = React.useCallback(
+  const handleRolesSearch = React.useCallback(
     useDebouncedCallback(() => {
-      setPoliciesLoading(true);
-      dispatch(searchPolicies({ page: 1, size: 30, query }))
+      setRolesLoading(true);
+      dispatch(searchRoles({ page: 1, size: 30, query }))
         .unwrap()
         .then(({ items }) => {
-          setPoliciesLoading(false);
-          setPolicyOptions(items);
+          setRolesLoading(false);
+          setRoleOptions(items);
         });
     }, 500),
-    [searchPolicies, setPoliciesLoading, setPolicyOptions, query]
+    [searchRoles, setRolesLoading, setRoleOptions, query]
   );
 
-  const onPoliciesSearchInputChange = React.useCallback(
+  const onRolesSearchInputChange = React.useCallback(
     (
       _: React.ChangeEvent<unknown>,
       inputQuery: string,
@@ -60,17 +61,17 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
     [setQuery]
   );
 
-  const getPolicyFilterOptions = (
-    filterOptions: PolicyFilterOption[],
-    params: FilterOptionsState<PolicyFilterOption>
-  ) => policiesFilter(filterOptions, params);
+  const getRoleFilterOptions = (
+    filterOptions: RoleFilterOption[],
+    params: FilterOptionsState<RoleFilterOption>
+  ) => rolesFilter(filterOptions, params);
 
   React.useEffect(() => {
-    setPoliciesLoading(autocompleteOpen);
-    if (autocompleteOpen) handlePoliciesSearch();
-  }, [autocompleteOpen, handlePoliciesSearch]);
+    setRolesLoading(autocompleteOpen);
+    if (autocompleteOpen) handleRolesSearch();
+  }, [autocompleteOpen, handleRolesSearch]);
 
-  const getOptionLabel = React.useCallback((option: PolicyFilterOption | string) => {
+  const getOptionLabel = React.useCallback((option: RoleFilterOption | string) => {
     if (typeof option === 'string') return option;
     if ('name' in option && option.name) return option.name;
     return '';
@@ -78,15 +79,14 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
 
   const onAutocompleteChange = (
     _: React.SyntheticEvent,
-    value: null | string | PolicyFilterOption
+    value: null | string | RoleFilterOption
   ): void => {
     if (value === null) return;
     if (typeof value === 'string') return;
 
-    const isPolicy = (policy: Policy | PolicyFilterOption): policy is Policy =>
-      'id' in policy;
+    const isRole = (role: Role | RoleFilterOption): role is Role => 'id' in role;
 
-    if (isPolicy(value)) {
+    if (isRole(value)) {
       setQuery('');
       append(value);
     }
@@ -95,18 +95,18 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
   const handleOpen = () => setAutocompleteOpen(true);
   const handleClose = () => setAutocompleteOpen(false);
 
-  const isOptionEqualToValue = (option: PolicyFilterOption, value: PolicyFilterOption) =>
+  const isOptionEqualToValue = (option: RoleFilterOption, value: RoleFilterOption) =>
     option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
     <AppInput
       {...params}
       ref={params.InputProps.ref}
-      label='Policy'
+      label='Role'
       placeholder='Search by name'
       customEndAdornment={{
         variant: 'loader',
-        showAdornment: policiesLoading,
+        showAdornment: rolesLoading,
         position: { mr: 4 },
       }}
     />
@@ -114,7 +114,7 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
 
   const renderOption = (
     props: HTMLAttributes<HTMLLIElement>,
-    option: PolicyFilterOption
+    option: RoleFilterOption
   ) => (
     <li {...props}>
       <Typography variant='body2'>{option.name}</Typography>
@@ -130,11 +130,11 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
       onOpen={handleOpen}
       onClose={handleClose}
       onChange={onAutocompleteChange}
-      onInputChange={onPoliciesSearchInputChange}
+      onInputChange={onRolesSearchInputChange}
       getOptionLabel={getOptionLabel}
-      options={policyOptions}
-      filterOptions={getPolicyFilterOptions}
-      loading={policiesLoading}
+      options={roleOptions}
+      filterOptions={getRoleFilterOptions}
+      loading={rolesLoading}
       isOptionEqualToValue={isOptionEqualToValue}
       handleHomeEndKeys
       selectOnFocus
@@ -147,4 +147,4 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
   );
 };
 
-export default PolicyAutocomplete;
+export default RoleAutocomplete;

@@ -51,6 +51,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
         <OwnerForm
           ownerId={ownerId}
           name={name}
+          roles={roles}
           btnCreateEl={
             <AppButton
               color='primaryLight'

@@ -5,8 +5,6 @@ import {
   getPoliciesFetchingStatuses,
   getPoliciesList,
   getPoliciesListPageInfo,
-  getPolicyCreatingStatuses,
-  getPolicyDeletingStatuses,
 } from 'redux/selectors';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
@@ -108,7 +106,7 @@ const PolicyList: React.FC = () => {
           size='medium'
           color='primaryLight'
           startIcon={<AddIcon />}
-          // disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
+          disabled={!hasAccessTo(Permission.POLICY_CREATE)}
         >
           Create policy
         </AppButton>

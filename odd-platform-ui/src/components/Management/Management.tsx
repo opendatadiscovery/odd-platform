@@ -39,16 +39,8 @@ const Management: React.FC = () => {
       link: managementPath('associations'),
       hidden: !hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE),
     },
-    {
-      name: 'Roles',
-      link: managementPath('roles'),
-      // hidden: !hasAccessTo(Permission.ROLE_MANAGEMENT),
-    },
-    {
-      name: 'Policies',
-      link: managementPath('policies'),
-      // hidden: !hasAccessTo(Permission.POLICY_MANAGEMENT),
-    },
+    { name: 'Roles', link: managementPath('roles') },
+    { name: 'Policies', link: managementPath('policies') },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -90,26 +82,9 @@ const Management: React.FC = () => {
               path='/management/associations/:viewType?'
               component={OwnerAssociationsList}
             />
-            <RestrictedRoute
-              // isAllowedTo={hasAccessTo(Permission.ROLE_MANAGEMENT)}
-              isAllowedTo
-              redirectTo='/management/namespaces'
-              exact
-              path='/management/roles'
-              component={RolesList}
-            />
-            <RestrictedRoute
-              // isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
-              isAllowedTo
-              redirectTo='/management/namespaces'
-              exact
-              path='/management/policies'
-              component={PolicyList}
-            />
-            <RestrictedRoute
-              // isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
-              isAllowedTo
-              redirectTo='/management/namespaces'
+            <Route exact path='/management/roles' component={RolesList} />
+            <Route exact path='/management/policies' component={PolicyList} />
+            <Route
               exact
               path={[
                 '/management/policies/createPolicy',
