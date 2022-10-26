@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-import CatalogPage from './catalog/catalog_page';
+import CatalogPage from './catalog/catalog-page';
 import DataEntityPage from './data_entity/data_entity.page';
 import OverviewPage from './data_entity/overview.page';
 import LoginPage from './login-page';
