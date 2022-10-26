@@ -22,7 +22,7 @@ const CONSTANTS = {
   firstOwner: 'firstOwner',
   role: 'admin',
   noResultsOwnerText: 'No result. Create new owner "firstOwner"',
-  noResultsTitleText: 'No result. Create new role "admin"',
+  noResultsTitleText: 'No result. Create new title "admin"',
   noResultsTagText: 'No result. Create new tag "aqa_tag"',
 };
 

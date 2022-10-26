@@ -5,7 +5,7 @@ import DataEntityPage from './data_entity.page';
 const SELECTORS = {
   addOwnerButton: `text=Add Owner`,
   inputOwnerName: `[placeholder="Search name"]`,
-  inputOwnerRole: `[placeholder="Search role"]`,
+  inputOwnerTitle: `[placeholder="Search title"]`,
   autocomplete: text => `[role="presentation"]:has-text('${text}')`,
   saveNewOwnerButton: `[type="submit"]`,
   addTagButton: `.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add Tags')`,
@@ -25,23 +25,23 @@ export default class OverviewPage extends DataEntityPage {
     return new InputField(this.page, SELECTORS.inputOwnerName);
   }
 
-  get inputRole() {
-    return new InputField(this.page, SELECTORS.inputOwnerRole);
+  get inputTitle() {
+    return new InputField(this.page, SELECTORS.inputOwnerTitle);
   }
 
   get inputTag() {
     return new InputField(this.page, SELECTORS.inputTagName);
   }
 
-  async getField(inputName: 'Name' | 'Tag' | 'Role', name: string, text: string) {
-    await this[`input${inputName}`].fill(name);
+  async getField(inputName: 'Name' | 'Tag' | 'Title', name: string, text: string) {
+    await (this[`input${inputName}`] ).fill(name);
     await this.page.locator(SELECTORS.autocomplete(text)).click();
   }
 
-  async createOwner(name: string, textName: string, title: string, textRole: string) {
+  async createOwner(name: string, textName: string, title: string, textTitle: string) {
     await this.addOwner.click();
     await this.getField('Name', name, textName);
-    await this.getField('Role', title, textRole);
+    await this.getField('Title', title, textTitle);
     await this.page.locator(SELECTORS.saveNewOwnerButton).click();
   }
 

@@ -9,7 +9,7 @@ const SELECTORS = {
   searchBar: `[placeholder="Search"]`,
   searchButton: `.sc-kDDrLX.gpLWbw button[type="button"]`,
   listOfFilters: `[role="listbox"]`,
-  filterOption: `[role="menuitem"]`,
+  filterOption: `[role="option"]`,
   listItemName: name => `a:has-text('${name}')`,
   tab: name => `[role="tab"]:has-text('${name}')`,
 };
@@ -25,6 +25,7 @@ export default class CatalogPage extends BasePage {
   }
 
   async searchByTextInFilter(filter: string, text: string) {
+    await this.page.waitForLoadState('networkidle');
     await this.page
       .locator(`${SELECTORS.filterWithInput(filter)} >> ${SELECTORS.filterInput}`)
       .fill(text);
