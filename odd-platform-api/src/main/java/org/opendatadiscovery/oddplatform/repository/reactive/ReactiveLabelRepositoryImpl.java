@@ -2,9 +2,11 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.DeleteResultStep;
+import org.jooq.Field;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -34,7 +36,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FI
 public class ReactiveLabelRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<LabelRecord, LabelPojo>
     implements ReactiveLabelRepository {
-    private static final String ORIGIN_FIELD = "origin";
+    private static final String HAS_EXTERNAL_RELATIONS_FIELD = "has_external_relations";
 
     public ReactiveLabelRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                        final JooqQueryHelper jooqQueryHelper) {
@@ -44,7 +46,10 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<LabelDto> getDto(final long id) {
         final var query = DSL.select(LABEL.fields())
-            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
+//            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
+            .select(DSL
+                .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(LABEL)
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(idCondition(id))
@@ -57,7 +62,10 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<List<LabelDto>> listDatasetFieldDtos(final Long datasetFieldId) {
         final var query = DSL.select(LABEL.fields())
-            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
+//            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
+            .select(DSL
+                .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(LABEL)
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(addSoftDeleteFilter(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)))
@@ -78,13 +86,20 @@ public class ReactiveLabelRepositoryImpl
 
         final Table<? extends Record> labelCte = select.asTable("label_cte");
 
+        final List<Field<?>> groupByFields = Stream
+            .concat(labelCte.fieldStream(), Stream.of(LABEL_TO_DATASET_FIELD.ORIGIN))
+            .toList();
+
         final var cteSelect = DSL.with(labelCte.getName())
             .as(select)
             .select(labelCte.fields())
-            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
+//            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
+            .select(DSL
+                .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(labelCte.getName())
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(labelCte.field(LABEL.ID)))
-            .groupBy(labelCte.fields());
+            .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(cteSelect)
             .collectList()
@@ -176,9 +191,12 @@ public class ReactiveLabelRepositoryImpl
     }
 
     private LabelDto mapLabel(final Record jooqRecord) {
-        return new LabelDto(
-            jooqRecord.into(LabelPojo.class),
-            LabelOrigin.valueOf(jooqRecord.get(ORIGIN_FIELD, String.class))
-        );
+        final Boolean hasExternalRelations = jooqRecord.get(HAS_EXTERNAL_RELATIONS_FIELD, Boolean.class);
+
+        if (hasExternalRelations == null) {
+            throw new IllegalStateException("hasExternalRelations field cannot be null");
+        }
+
+        return new LabelDto(jooqRecord.into(LabelPojo.class), hasExternalRelations);
     }
 }

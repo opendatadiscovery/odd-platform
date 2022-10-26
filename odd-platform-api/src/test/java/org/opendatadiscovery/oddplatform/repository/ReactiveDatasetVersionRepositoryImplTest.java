@@ -228,7 +228,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
         datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
         datasetFieldDto.setParentFieldId(1L);
         datasetFieldDto.setEnumValueCount(2);
-        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL)));
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
         datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
         return datasetFieldDto;
