@@ -214,7 +214,6 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             final Map<? extends Field<?>, Field<?>> fields = Arrays
                 .stream(recordTable.fields())
                 .filter(f -> !nonUpdatableFields.contains(f))
-                // TODO: extract logic of map into collect, no Pair model is needed here
                 .map(r -> Pair.of(r, table.field(r.getName())))
                 .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
