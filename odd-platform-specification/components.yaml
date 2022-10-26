@@ -30,59 +30,64 @@ components:
     Permission:
       type: string
       enum:
-        - DATA_ENTITY_INTERNAL_NAME_UPDATE,
-        - DATA_ENTITY_CUSTOM_METADATA_CREATE,
-        - DATA_ENTITY_CUSTOM_METADATA_UPDATE,
-        - DATA_ENTITY_CUSTOM_METADATA_DELETE,
-        - DATA_ENTITY_DESCRIPTION_UPDATE,
-        - DATA_ENTITY_OWNERSHIP_CREATE,
-        - DATA_ENTITY_OWNERSHIP_UPDATE,
-        - DATA_ENTITY_OWNERSHIP_DELETE,
-        - DATA_ENTITY_ADD_TO_GROUP,
-        - DATA_ENTITY_DELETE_FROM_GROUP,
-        - DATA_ENTITY_TAGS_UPDATE,
-        - DATA_ENTITY_ADD_TERM,
-        - DATA_ENTITY_DELETE_TERM,
-        - DATA_ENTITY_ALERT_RESOLVE,
-        - DATASET_DESCRIPTION_UPDATE,
-        - DATASET_LABELS_UPDATE,
-        - DATASET_ENUMS_ADD,
-        - DATASET_ENUMS_UPDATE,
-        - DATASET_ENUMS_DELETE,
-        - DATA_ENTITY_GROUP_CREATE,
-        - DATA_ENTITY_GROUP_UPDATE,
-        - DATA_ENTITY_GROUP_DELETE,
-        - TERM_CREATE,
-        - TERM_UPDATE,
-        - TERM_DELETE,
-        - TERM_OWNERSHIP_CREATE,
-        - TERM_OWNERSHIP_UPDATE,
-        - TERM_OWNERSHIP_DELETE,
-        - TERM_TAGS_UPDATE,
-        - DATA_SOURCE_CREATE,
-        - DATA_SOURCE_UPDATE,
-        - DATA_SOURCE_DELETE,
-        - DATA_SOURCE_TOKEN_REGENERATE,
-        - COLLECTOR_CREATE,
-        - COLLECTOR_UPDATE,
-        - COLLECTOR_DELETE,
-        - COLLECTOR_TOKEN_REGENERATE,
-        - NAMESPACE_CREATE,
-        - NAMESPACE_UPDATE,
-        - NAMESPACE_DELETE,
-        - TAG_CREATE,
-        - TAG_UPDATE,
-        - TAG_DELETE,
-        - LABEL_CREATE,
-        - LABEL_UPDATE,
-        - LABEL_DELETE,
-        - OWNER_CREATE,
-        - OWNER_UPDATE,
-        - OWNER_DELETE,
+        - DATA_ENTITY_INTERNAL_NAME_UPDATE
+        - DATA_ENTITY_CUSTOM_METADATA_CREATE
+        - DATA_ENTITY_CUSTOM_METADATA_UPDATE
+        - DATA_ENTITY_CUSTOM_METADATA_DELETE
+        - DATA_ENTITY_DESCRIPTION_UPDATE
+        - DATA_ENTITY_OWNERSHIP_CREATE
+        - DATA_ENTITY_OWNERSHIP_UPDATE
+        - DATA_ENTITY_OWNERSHIP_DELETE
+        - DATA_ENTITY_ADD_TO_GROUP
+        - DATA_ENTITY_DELETE_FROM_GROUP
+        - DATA_ENTITY_TAGS_UPDATE
+        - DATA_ENTITY_ADD_TERM
+        - DATA_ENTITY_DELETE_TERM
+        - DATA_ENTITY_ALERT_RESOLVE
+        - DATASET_TEST_RUN_SET_SEVERITY
+        - DATASET_DESCRIPTION_UPDATE
+        - DATASET_LABELS_UPDATE
+        - DATASET_ENUMS_ADD
+        - DATASET_ENUMS_UPDATE
+        - DATASET_ENUMS_DELETE
+        - DATA_ENTITY_GROUP_CREATE
+        - DATA_ENTITY_GROUP_UPDATE
+        - DATA_ENTITY_GROUP_DELETE
+        - TERM_CREATE
+        - TERM_UPDATE
+        - TERM_DELETE
+        - TERM_OWNERSHIP_CREATE
+        - TERM_OWNERSHIP_UPDATE
+        - TERM_OWNERSHIP_DELETE
+        - TERM_TAGS_UPDATE
+        - DATA_SOURCE_CREATE
+        - DATA_SOURCE_UPDATE
+        - DATA_SOURCE_DELETE
+        - DATA_SOURCE_TOKEN_REGENERATE
+        - COLLECTOR_CREATE
+        - COLLECTOR_UPDATE
+        - COLLECTOR_DELETE
+        - COLLECTOR_TOKEN_REGENERATE
+        - NAMESPACE_CREATE
+        - NAMESPACE_UPDATE
+        - NAMESPACE_DELETE
+        - TAG_CREATE
+        - TAG_UPDATE
+        - TAG_DELETE
+        - LABEL_CREATE
+        - LABEL_UPDATE
+        - LABEL_DELETE
+        - OWNER_CREATE
+        - OWNER_UPDATE
+        - OWNER_DELETE
         - OWNER_ASSOCIATION_MANAGE
         - DIRECT_OWNER_SYNC
-        - POLICY_MANAGEMENT
-        - ROLE_MANAGEMENT
+        - POLICY_CREATE
+        - POLICY_UPDATE
+        - POLICY_DELETE
+        - ROLE_CREATE
+        - ROLE_UPDATE
+        - ROLE_DELETE
 
     Namespace:
       type: object
@@ -857,8 +862,6 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
-        permissions:
-          $ref: '#/components/schemas/PermissionList'
       required:
         - id
         - token
@@ -970,8 +973,6 @@ components:
           type: string
         description:
           type: string
-        permissions:
-          $ref: '#/components/schemas/PermissionList'
       required:
         - id
         - name
@@ -2388,8 +2389,7 @@ components:
       enum:
         - DATA_ENTITY
         - TERM
-        - DATASOURCE
-        - COLLECTOR
+        - MANAGEMENT
 
   parameters:
     PageParam:
