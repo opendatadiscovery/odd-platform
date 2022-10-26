@@ -2,7 +2,6 @@ import InputField from '../../elements/input-field';
 import BasePage from '../base-page';
 
 const SELECTORS = {
-  clearAll: `button:has-text('Clear All')`,
   filterWithSelect: filterName => `.MuiGrid-root.css-19dbjmo:has-text('${filterName}')`,
   filterWithInput: filterName =>
     `.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.css-1vkoyw5:has-text('${filterName}')`,
@@ -10,13 +9,12 @@ const SELECTORS = {
   searchBar: `[placeholder="Search"]`,
   searchButton: `.sc-kDDrLX.gpLWbw button[type="button"]`,
   listOfFilters: `[role="listbox"]`,
-  filterOption: `[role="option"]`,
+  filterOption: `[role="menuitem"]`,
   listItemName: name => `a:has-text('${name}')`,
   tab: name => `[role="tab"]:has-text('${name}')`,
 };
 export default class CatalogPage extends BasePage {
   async openFilterWithSelect(filterName: string) {
-    await this.page.waitForLoadState('networkidle');
     await this.page.click(`${SELECTORS.filterWithSelect(filterName)}`);
   }
 

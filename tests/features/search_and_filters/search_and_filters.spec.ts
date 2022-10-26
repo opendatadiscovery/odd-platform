@@ -22,27 +22,29 @@ const CONSTANTS = {
   firstOwner: 'firstOwner',
   role: 'admin',
   noResultsOwnerText: 'No result. Create new owner "firstOwner"',
-  noResultsTitleText: 'No result. Create new title "admin"',
+  noResultsTitleText: 'No result. Create new role "admin"',
   noResultsTagText: 'No result. Create new tag "aqa_tag"',
 };
 
 test.describe('Check filters', () => {
-  test.describe('Apply single filter', () => {
+  test.describe('when apply single filter', () => {
     test.beforeEach(async ({ steps: { pages }, page }) => {
       await test.step(`I open catalog page`, async () => {
         await page.goto('');
-        await pages.topPanel.goToCatalog();
+        await pages.topPanel.clickTab('Catalog');
       });
     });
-    test('Check filter Datasource', async ({ steps: { pages } }) => {
-      await test.step('I click Datasource filter', async () => {
+    test('should display the expected item with Datasource filter', async ({
+      steps: { pages },
+    }) => {
+      await test.step('apply filter Datasource', async () => {
         await pages.catalog.openFilterWithSelect(CONSTANTS.datasourceFilter);
         await pages.catalog.chooseOption(CONSTANTS.datasourceOptionAirFlights);
         expect(await pages.catalog.isListItemVisible(CONSTANTS.airFlightsDataEntity)).toBeTruthy();
       });
     });
-    test('Check filter Namespace', async ({ steps: { pages } }) => {
-      await test.step('I click Namespace filter', async () => {
+    test('should display the expected item with Namespace filter', async ({ steps: { pages } }) => {
+      await test.step('apply filter Namespace', async () => {
         await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
         await pages.catalog.chooseOption(CONSTANTS.namespaceOption);
         expect(await pages.catalog.isListItemVisible(CONSTANTS.airFlightsDataEntity)).toBeTruthy();
@@ -53,45 +55,43 @@ test.describe('Check filters', () => {
         ).toBeTruthy();
       });
     });
-    test('Check filter Owner', async ({ steps: { pages } }) => {
-      await test.step('I click owner filter', async () => {
+    test('should display the expected item with Owner filter', async ({ steps: { pages } }) => {
+      await test.step('apply filter Owner', async () => {
         await pages.catalog.searchByText(CONSTANTS.bookETLDataEntity);
         await pages.catalog.clickOnListItem(CONSTANTS.bookETLDataEntity);
-        await pages.dataEntity.createOwner(
+        await pages.overview.createOwner(
           CONSTANTS.firstOwner,
           CONSTANTS.noResultsOwnerText,
           CONSTANTS.role,
           CONSTANTS.noResultsTitleText,
         );
-        await pages.topPanel.goToCatalog();
-        await pages.catalog.openFilterWithInput(CONSTANTS.ownerFilter);
-        await pages.catalog.chooseOption(CONSTANTS.firstOwner);
+        await pages.topPanel.clickTab('Catalog');
+        await pages.catalog.searchByTextInFilter('Owner', 'firstOwner');
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
-    test('Check filter Tag', async ({ steps: { pages } }) => {
-      await test.step('I click Tag filer', async () => {
+    test('should display the expected item with Tag filter', async ({ steps: { pages } }) => {
+      await test.step('apply filter Tag', async () => {
         await pages.catalog.searchByText(CONSTANTS.bookETLDataEntity);
         await pages.catalog.clickOnListItem(CONSTANTS.bookETLDataEntity);
-        await pages.dataEntity.createTag(CONSTANTS.tagFilterOption, CONSTANTS.noResultsTagText);
-        await pages.topPanel.goToCatalog();
-        await pages.catalog.openFilterWithInput(CONSTANTS.tagFilter);
-        await pages.catalog.chooseOption(CONSTANTS.tagFilterOption);
+        await pages.overview.createTag(CONSTANTS.tagFilterOption, CONSTANTS.noResultsTagText);
+        await pages.topPanel.clickTab('Catalog');
+        await pages.catalog.searchByTextInFilter('Tag', 'aqa_tag');
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
-    test('Check filter Type', async ({ steps: { pages } }) => {
-      await test.step('I click Transformers tab', async () => {
+    test('should display the expected item with Type filter', async ({ steps: { pages } }) => {
+      await test.step('I go to the Transformers tab', async () => {
         await pages.catalog.clickTab(CONSTANTS.transformersTag);
       });
-      await test.step('I click Type filer', async () => {
+      await test.step('apply filter Type', async () => {
         await pages.catalog.openFilterWithInput(CONSTANTS.typeFilter);
         await pages.catalog.searchByTextInFilter('Type', 'JOB');
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
-    test('Check filter Group', async ({ steps: { pages } }) => {
-      await test.step('I click filter Group', async () => {
+    test('should display the expected item with Group filter', async ({ steps: { pages } }) => {
+      await test.step('apply filter Group', async () => {
         await pages.catalog.openFilterWithInput(CONSTANTS.groupsFilter);
         await pages.catalog.chooseOption(CONSTANTS.groupsOption);
         expect(
@@ -100,15 +100,17 @@ test.describe('Check filters', () => {
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
-    test.describe('Apply multiply filter', () => {
+    test.describe('when apply multiply filter', () => {
       test.beforeEach(async ({ steps: { pages }, page }) => {
         await test.step(`I open catalog page`, async () => {
           await page.goto('');
-          await pages.topPanel.goToCatalog();
+          await pages.topPanel.clickTab('Catalog');
         });
       });
-      test('Different filter types', async ({ steps: { pages } }) => {
-        await test.step('I click Tag filer', async () => {
+      test('should display the expected item with different types of filters', async ({
+        steps: { pages },
+      }) => {
+        await test.step('apply filter Tag', async () => {
           await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
           await pages.catalog.chooseOption(CONSTANTS.namespaceOption);
           expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
@@ -116,26 +118,26 @@ test.describe('Check filters', () => {
             await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataAQAEntity),
           ).toBeTruthy();
         });
-        await test.step('I click Owner filter', async () => {
+        await test.step('apply filter Owner', async () => {
           await pages.catalog.openFilterWithInput(CONSTANTS.ownerFilter);
           await pages.catalog.chooseOption(CONSTANTS.firstOwner);
           expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
         });
       });
-      test('Check all filters', async ({ steps: { pages } }) => {
-        await test.step('I click Datasource filter', async () => {
+      test('should display the expected item with all filters', async ({ steps: { pages } }) => {
+        await test.step('apply filter Datasource', async () => {
           await pages.catalog.openFilterWithSelect(CONSTANTS.datasourceFilter);
           await pages.catalog.chooseOption(CONSTANTS.datasourceOptionBookETL);
         });
-        await test.step('I click Tag filer', async () => {
+        await test.step('apply filter Namespace', async () => {
           await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
           await pages.catalog.chooseOption(CONSTANTS.namespaceOption);
         });
-        await test.step('I click Tag filer', async () => {
+        await test.step('apply filter Tag', async () => {
           await pages.catalog.openFilterWithInput(CONSTANTS.tagFilter);
           await pages.catalog.chooseOption(CONSTANTS.tagFilterOption);
         });
-        await test.step('I click filter Group', async () => {
+        await test.step('apply filter Group', async () => {
           await pages.catalog.openFilterWithInput(CONSTANTS.groupsFilter);
           await pages.catalog.chooseOption(CONSTANTS.groupsOption);
           expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();

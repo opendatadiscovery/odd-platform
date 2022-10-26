@@ -8,7 +8,7 @@ test.describe('Owners', () => {
 
     await test.step('I open Owners page', async () => {
       await goToPage(page, 'http://localhost:8080/');
-      await pages.topPanel.goToManagement();
+      await pages.topPanel.clickTab('Management');
       await pages.management.owners.click();
     });
     await test.step("And click on 'Create Owner' button", async () => {
