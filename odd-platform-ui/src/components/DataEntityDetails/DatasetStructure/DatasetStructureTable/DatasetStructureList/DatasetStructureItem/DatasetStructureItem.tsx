@@ -124,7 +124,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         <Grid
           container
           item
-          lg={isUniqStatsExist ? 8 : 12}
+          lg={isUniqStatsExist ? 6 : 12}
           sx={{ p: 1 }}
           flexWrap='nowrap'
         >
@@ -226,7 +226,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
           </S.RowInfoWrapper>
         </Grid>
         {isUniqStatsExist && (
-          <DatasetFieldStats datasetField={datasetField} rowsCount={rowsCount} />
+          <Grid container lg={6} flexWrap='nowrap'>
+            <DatasetFieldStats datasetField={datasetField} rowsCount={rowsCount} />
+          </Grid>
         )}
       </S.RowContainer>
       <Grid item lg={12}>
