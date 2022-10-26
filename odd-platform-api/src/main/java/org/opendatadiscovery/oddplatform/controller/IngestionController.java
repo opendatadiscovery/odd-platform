@@ -9,9 +9,11 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.IngestionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -61,5 +63,15 @@ public class IngestionController implements IngestionApi {
     public Mono<ResponseEntity<CompactDataEntityList>> getDataEntitiesByDEGOddrn(@NotNull @Valid final String degOddrn,
                                                                                  final ServerWebExchange exchange) {
         return dataEntityService.listEntitiesWithinDEG(degOddrn).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> postDataSetStatsList(
+        @Valid final Mono<DatasetStatisticsList> datasetStatisticsList,
+        final ServerWebExchange exchange
+    ) {
+        return datasetStatisticsList
+            .flatMap(ingestionService::ingestStats)
+            .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
     }
 }

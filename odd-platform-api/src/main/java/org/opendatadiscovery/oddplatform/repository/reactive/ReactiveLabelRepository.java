@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -18,7 +19,7 @@ public interface ReactiveLabelRepository extends ReactiveCRUDRepository<LabelPoj
 
     Flux<LabelPojo> listByNames(final Collection<String> names);
 
-    Flux<LabelToDatasetFieldPojo> listLabelRelations(final Collection<Long> datasetFieldIds);
+    Flux<LabelToDatasetFieldPojo> listLabelRelations(final Collection<Long> datasetFieldIds, final LabelOrigin origin);
 
     Flux<LabelToDatasetFieldPojo> createRelations(final Collection<LabelToDatasetFieldPojo> pojos);
 

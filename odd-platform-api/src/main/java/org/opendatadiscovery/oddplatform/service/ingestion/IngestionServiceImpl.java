@@ -26,6 +26,9 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
@@ -34,6 +37,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRela
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.ingestion.processor.IngestionProcessorChain;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.springframework.stereotype.Service;
@@ -50,6 +54,7 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEnt
 public class IngestionServiceImpl implements IngestionService {
     private final IngestionProcessorChain ingestionProcessorChain;
     private final MetricService metricService;
+    private final DatasetFieldService datasetFieldService;
 
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final ReactiveDataSourceRepository dataSourceRepository;
@@ -67,6 +72,19 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(ingestionProcessorChain::processIngestionRequest)
             .flatMap(metricService::exportMetrics)
             .then();
+    }
+
+    @Override
+    public Mono<Void> ingestStats(final DatasetStatisticsList datasetStatisticsList) {
+        final Map<String, DataSetFieldStat> statistics = datasetStatisticsList.getItems()
+            .stream()
+            .map(DataSetStatistics::getFields)
+            .reduce(new HashMap<>(), (acc, fields) -> {
+                acc.putAll(fields);
+                return acc;
+            });
+
+        return datasetFieldService.updateStatistics(statistics);
     }
 
     private Mono<IngestionRequest> persistDataEntities(final long dataSourceId,

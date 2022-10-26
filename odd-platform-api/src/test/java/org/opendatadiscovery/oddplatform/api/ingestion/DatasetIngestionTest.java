@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.api.ingestion;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
@@ -234,43 +232,5 @@ public class DatasetIngestionTest extends BaseIngestionTest {
                 });
             }
         });
-    }
-
-    private void assertDatasetStructuresEqual(final long dataEntityId, final DataSetStructure expected) {
-        webTestClient.get()
-            .uri("/api/datasets/{dataset_id}/structure", dataEntityId)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(DataSetStructure.class)
-            .value(actual -> {
-                assertThat(expected.getDataSetVersion())
-                    .usingRecursiveComparison()
-                    .ignoringFields("id", "createdAt")
-                    .isEqualTo(actual.getDataSetVersion());
-
-                assertThat(actual.getFieldList()).hasSize(expected.getFieldList().size());
-
-                final List<DataSetField> sortedActualFields = actual.getFieldList().stream()
-                    .sorted(Comparator.comparing(DataSetField::getOddrn))
-                    .toList();
-
-                final List<DataSetField> sortedExpectedFields = expected.getFieldList().stream()
-                    .sorted(Comparator.comparing(DataSetField::getOddrn))
-                    .toList();
-
-                for (int i = 0; i < sortedActualFields.size(); i++) {
-                    final DataSetField expectedField = sortedExpectedFields.get(i);
-                    final DataSetField actualField = sortedActualFields.get(i);
-
-                    assertThat(actualField)
-                        .usingRecursiveComparison()
-                        .ignoringFields("id", "labels")
-                        .isEqualTo(expectedField);
-
-                    assertThat(actualField.getLabels())
-                        .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
-                        .hasSameElementsAs(expectedField.getLabels());
-                }
-            });
     }
 }

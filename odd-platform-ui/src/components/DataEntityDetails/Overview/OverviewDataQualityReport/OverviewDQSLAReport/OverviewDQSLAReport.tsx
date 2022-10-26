@@ -24,8 +24,8 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
 
   const slaBarValue = ((dqSLAReport?.success || 0) * 100) / (dqSLAReport?.total || 1);
 
-  const slaRef = dqSLAReport.slaRef
-    ? `${window.location.protocol}//${window.location.host}${dqSLAReport.slaRef}`
+  const slaRef = dqSLAReport?.slaRef
+    ? `${window.location.protocol}//${window.location.host}${dqSLAReport?.slaRef}`
     : '';
 
   const renderSeverityWeightsBar = React.useMemo(() => {
