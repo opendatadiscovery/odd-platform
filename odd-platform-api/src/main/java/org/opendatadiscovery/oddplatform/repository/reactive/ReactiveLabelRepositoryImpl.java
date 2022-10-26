@@ -84,10 +84,6 @@ public class ReactiveLabelRepositoryImpl
 
         final Table<? extends Record> labelCte = select.asTable("label_cte");
 
-        final List<Field<?>> groupByFields = Stream
-            .concat(labelCte.fieldStream(), Stream.of(LABEL_TO_DATASET_FIELD.ORIGIN))
-            .toList();
-
         final var cteSelect = DSL.with(labelCte.getName())
             .as(select)
             .select(labelCte.fields())
@@ -96,7 +92,7 @@ public class ReactiveLabelRepositoryImpl
                 .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(labelCte.getName())
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(labelCte.field(LABEL.ID)))
-            .groupBy(groupByFields);
+            .groupBy(labelCte.fields());
 
         return jooqReactiveOperations.flux(cteSelect)
             .collectList()
