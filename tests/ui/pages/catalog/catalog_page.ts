@@ -1,4 +1,4 @@
-import Button from '../../elements/button';
+import InputField from '../../elements/input-field';
 import BasePage from '../base-page';
 
 const SELECTORS = {
@@ -6,54 +6,56 @@ const SELECTORS = {
   filterWithSelect: filterName => `.MuiGrid-root.css-19dbjmo:has-text('${filterName}')`,
   filterWithInput: filterName =>
     `.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.css-1vkoyw5:has-text('${filterName}')`,
-  filterSelect: `[role="button"]`,
   filterInput: `[type="text"]`,
   searchBar: `[placeholder="Search"]`,
-  searchButton: `.sc-kDDrLX.gpLWbw > div > div > div > div > [type="button"]`,
+  searchButton: `.sc-kDDrLX.gpLWbw button[type="button"]`,
   listOfFilters: `[role="listbox"]`,
-    filterOption: `[role="option"]`,
-  itemString: name => `a:has-text('${name}')`,
+  filterOption: `[role="option"]`,
+  listItemName: name => `a:has-text('${name}')`,
   tab: name => `[role="tab"]:has-text('${name}')`,
-    optionJobInTypeFilter: `[aria-activedescendant="filter-types-option-1]`,
 };
 export default class CatalogPage extends BasePage {
-  get clearAll() {
-    return new Button(this.page, SELECTORS.clearAll);
+  async openFilterWithSelect(filterName: string) {
+    await this.page.waitForLoadState('networkidle');
+    await this.page.click(`${SELECTORS.filterWithSelect(filterName)}`);
   }
 
-  async openFilterWithSelect(nameOfFilter: string) {
-      await this.page.waitForLoadState("networkidle");
+  async chooseOption(option: string) {
     await this.page.click(
-      `${SELECTORS.filterWithSelect(nameOfFilter)}`);
+      `${SELECTORS.listOfFilters} >> ${SELECTORS.filterOption}:has-text('${option}')`,
+    );
   }
 
-  async chooseOption(optionOfFilter: string) {
-    await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.filterOption}:has-text('${optionOfFilter}')`);
-  }
-
-  async chooseOptionJobInTypeFilter() {
-      await this.page.click(`${SELECTORS.listOfFilters} >> ${SELECTORS.optionJobInTypeFilter}`);
+  async searchByTextInFilter(filter: string, text: string) {
+    await this.page
+      .locator(`${SELECTORS.filterWithInput(filter)} >> ${SELECTORS.filterInput}`)
+      .fill(text);
+    await this.page.locator(SELECTORS.filterWithInput(filter)).press('Enter');
   }
 
   async openFilterWithInput(nameOfFilter: string) {
     await this.page.click(`${SELECTORS.filterWithInput(nameOfFilter)} >> ${SELECTORS.filterInput}`);
   }
 
-  async isVisible(name: string): Promise <boolean> {
-      await this.page.locator(SELECTORS.itemString(name)).waitFor({state:"visible"});
-      return this.page.locator(SELECTORS.itemString(name)).isVisible();
+  async isListItemVisible(name: string): Promise<boolean> {
+    await this.page.locator(SELECTORS.listItemName(name)).waitFor({ state: 'visible' });
+    return this.page.locator(SELECTORS.listItemName(name)).isVisible();
   }
 
-  async openDataEntity(name: string) {
-    await this.page.locator(SELECTORS.itemString(name)).click();
+  async clickOnListItem(name: string) {
+    await this.page.locator(SELECTORS.listItemName(name)).click();
   }
 
-  async clickTab(name:string) {
+  async clickTab(name: string) {
     return this.page.locator(SELECTORS.tab(name)).click();
   }
 
-  async fillSearchString(text: string) {
-      await this.page.locator(SELECTORS.searchBar).fill(text);
-      await this.page.locator(SELECTORS.searchBar).press('Enter')
+  get searchBar() {
+    return new InputField(this.page, SELECTORS.searchBar);
+  }
+
+  async searchByText(text: string) {
+    await this.searchBar.fill(text);
+    await this.page.locator(SELECTORS.searchBar).press('Enter');
   }
 }
