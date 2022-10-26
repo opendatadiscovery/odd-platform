@@ -41,6 +41,64 @@ public class IngestionModelMapper {
             .type(new DataEntityType().name(DataEntityType.NameEnum.fromValue(dataEntity.getType().getValue())));
     }
 
+    public static DataSetFieldStat buildExpectedDataSetFieldStat(
+        final org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat stat
+    ) {
+        return new DataSetFieldStat()
+            .integerStats(
+                new IntegerFieldStat()
+                    .highValue(stat.getIntegerStats().getHighValue())
+                    .lowValue(stat.getIntegerStats().getLowValue())
+                    .meanValue(stat.getIntegerStats().getMeanValue())
+                    .medianValue(stat.getIntegerStats().getMedianValue())
+                    .nullsCount(stat.getIntegerStats().getNullsCount())
+                    .uniqueCount(stat.getIntegerStats().getUniqueCount())
+            )
+            .stringStats(
+                new StringFieldStat()
+                    .avgLength(stat.getStringStats().getAvgLength())
+                    .maxLength(stat.getStringStats().getMaxLength())
+                    .nullsCount(stat.getStringStats().getNullsCount())
+                    .uniqueCount(stat.getStringStats().getUniqueCount())
+            )
+            .binaryStats(
+                new BinaryFieldStat()
+                    .avgLength(stat.getBinaryStats().getAvgLength())
+                    .maxLength(stat.getBinaryStats().getMaxLength())
+                    .nullsCount(stat.getBinaryStats().getNullsCount())
+                    .uniqueCount(stat.getBinaryStats().getUniqueCount())
+            )
+            .booleanStats(
+                new BooleanFieldStat()
+                    .falseCount(stat.getBooleanStats().getFalseCount())
+                    .nullsCount(stat.getBooleanStats().getNullsCount())
+                    .trueCount(stat.getBooleanStats().getTrueCount())
+            )
+            .complexStats(
+                new ComplexFieldStat()
+                    .nullsCount(stat.getComplexStats().getNullsCount())
+                    .uniqueCount(stat.getComplexStats().getUniqueCount())
+            )
+            .datetimeStats(
+                new DateTimeFieldStat()
+                    .nullsCount(stat.getDatetimeStats().getNullsCount())
+                    .uniqueCount(stat.getDatetimeStats().getUniqueCount())
+                    .highValue(stat.getDatetimeStats().getHighValue())
+                    .lowValue(stat.getDatetimeStats().getLowValue())
+                    .meanValue(stat.getDatetimeStats().getMeanValue())
+                    .medianValue(stat.getDatetimeStats().getMedianValue())
+            )
+            .numberStats(
+                new NumberFieldStat()
+                    .highValue(stat.getNumberStats().getHighValue())
+                    .lowValue(stat.getNumberStats().getLowValue())
+                    .meanValue(stat.getNumberStats().getMeanValue())
+                    .medianValue(stat.getNumberStats().getMedianValue())
+                    .nullsCount(stat.getNumberStats().getNullsCount())
+                    .uniqueCount(stat.getNumberStats().getUniqueCount())
+            );
+    }
+
     public static DataSetField buildExpectedDataSetField(
         final org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField field
     ) {
@@ -49,59 +107,7 @@ public class IngestionModelMapper {
             .type(DataSetFieldType.TypeEnum.fromValue(field.getType().getType().getValue()))
             .isNullable(field.getType().getIsNullable());
 
-        final DataSetFieldStat stats = new DataSetFieldStat()
-            .integerStats(
-                new IntegerFieldStat()
-                    .highValue(field.getStats().getIntegerStats().getHighValue())
-                    .lowValue(field.getStats().getIntegerStats().getLowValue())
-                    .meanValue(field.getStats().getIntegerStats().getMeanValue())
-                    .medianValue(field.getStats().getIntegerStats().getMedianValue())
-                    .nullsCount(field.getStats().getIntegerStats().getNullsCount())
-                    .uniqueCount(field.getStats().getIntegerStats().getUniqueCount())
-            )
-            .stringStats(
-                new StringFieldStat()
-                    .avgLength(field.getStats().getStringStats().getAvgLength())
-                    .maxLength(field.getStats().getStringStats().getMaxLength())
-                    .nullsCount(field.getStats().getStringStats().getNullsCount())
-                    .uniqueCount(field.getStats().getStringStats().getUniqueCount())
-            )
-            .binaryStats(
-                new BinaryFieldStat()
-                    .avgLength(field.getStats().getBinaryStats().getAvgLength())
-                    .maxLength(field.getStats().getBinaryStats().getMaxLength())
-                    .nullsCount(field.getStats().getBinaryStats().getNullsCount())
-                    .uniqueCount(field.getStats().getBinaryStats().getUniqueCount())
-            )
-            .booleanStats(
-                new BooleanFieldStat()
-                    .falseCount(field.getStats().getBooleanStats().getFalseCount())
-                    .nullsCount(field.getStats().getBooleanStats().getNullsCount())
-                    .trueCount(field.getStats().getBooleanStats().getTrueCount())
-            )
-            .complexStats(
-                new ComplexFieldStat()
-                    .nullsCount(field.getStats().getComplexStats().getNullsCount())
-                    .uniqueCount(field.getStats().getComplexStats().getUniqueCount())
-            )
-            .datetimeStats(
-                new DateTimeFieldStat()
-                    .nullsCount(field.getStats().getDatetimeStats().getNullsCount())
-                    .uniqueCount(field.getStats().getDatetimeStats().getUniqueCount())
-                    .highValue(field.getStats().getDatetimeStats().getHighValue())
-                    .lowValue(field.getStats().getDatetimeStats().getLowValue())
-                    .meanValue(field.getStats().getDatetimeStats().getMeanValue())
-                    .medianValue(field.getStats().getDatetimeStats().getMedianValue())
-            )
-            .numberStats(
-                new NumberFieldStat()
-                    .highValue(field.getStats().getNumberStats().getHighValue())
-                    .lowValue(field.getStats().getNumberStats().getLowValue())
-                    .meanValue(field.getStats().getNumberStats().getMeanValue())
-                    .medianValue(field.getStats().getNumberStats().getMedianValue())
-                    .nullsCount(field.getStats().getNumberStats().getNullsCount())
-                    .uniqueCount(field.getStats().getNumberStats().getUniqueCount())
-            );
+        final DataSetFieldStat stats = buildExpectedDataSetFieldStat(field.getStats());
 
         final List<Label> labels = field.getTags().stream()
             .map(d -> new Label().name(d.getName()).external(true))

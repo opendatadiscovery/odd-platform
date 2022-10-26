@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -121,7 +122,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     @ReactiveTransactional
     public Mono<Void> updateStatistics(final Map<String, DataSetFieldStat> stats) {
         final Set<String> labelNames = stats.values().stream()
-            .flatMap(stat -> stat.getTags().stream())
+            .flatMap(stat -> stat.getTags() != null ? stat.getTags().stream() : Stream.empty())
             .map(Tag::getName)
             .collect(Collectors.toSet());
 
@@ -162,8 +163,10 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 final HashSetValuedHashMap<String, String> map = new HashSetValuedHashMap<>();
 
                 stats.forEach((datasetOddrn, stat) -> {
-                    for (final Tag tag : stat.getTags()) {
-                        map.put(tag.getName(), datasetOddrn);
+                    if (stat.getTags() != null) {
+                        for (final Tag tag : stat.getTags()) {
+                            map.put(tag.getName(), datasetOddrn);
+                        }
                     }
                 });
 

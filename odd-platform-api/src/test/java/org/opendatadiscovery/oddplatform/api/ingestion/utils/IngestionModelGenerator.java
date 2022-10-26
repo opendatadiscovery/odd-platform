@@ -7,14 +7,21 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.randomizers.collection.MapRandomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
+
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.toMap;
 
 public class IngestionModelGenerator {
     private static final EasyRandom EASY_RANDOM = new EasyRandom();
@@ -37,10 +44,44 @@ public class IngestionModelGenerator {
         return MAP_RANDOMIZER.getRandomValue()
             .entrySet()
             .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static List<DataSetField> generateDatasetFields(final int size) {
         return EASY_RANDOM.objects(DataSetField.class, size).toList();
+    }
+
+    public static DataSetFieldStat generateDataSetFieldStat(final List<String> labels) {
+        return EASY_RANDOM
+            .nextObject(DataSetFieldStat.class)
+            .tags(labels.stream().map(l -> new Tag().name(l)).toList());
+    }
+
+    public static DatasetStatisticsList generateNullableDatasetStatisticsList(
+        final String datasetOddrn,
+        final List<String> datasetFieldOddrns
+    ) {
+        final Map<String, DataSetFieldStat> fieldStats = datasetFieldOddrns
+            .stream()
+            .collect(toMap(identity(), ignored -> new DataSetFieldStat()));
+
+        return new DatasetStatisticsList()
+            .items(List.of(new DataSetStatistics().datasetOddrn(datasetOddrn).fields(fieldStats)));
+    }
+
+    public static DatasetStatisticsList generateDatasetStatisticsList(
+        final String datasetOddrn,
+        final Map<String, List<String>> fieldsToLabelNames
+    ) {
+        final Map<String, DataSetFieldStat> fieldStats = fieldsToLabelNames.entrySet()
+            .stream()
+            .collect(toMap(Map.Entry::getKey, e -> generateDataSetFieldStat(e.getValue())));
+
+        return new DatasetStatisticsList()
+            .items(List.of(new DataSetStatistics().datasetOddrn(datasetOddrn).fields(fieldStats)));
+    }
+
+    public static List<Tag> generateDataSetFieldLabels(final int count) {
+        return EASY_RANDOM.objects(Tag.class, count).toList();
     }
 }
