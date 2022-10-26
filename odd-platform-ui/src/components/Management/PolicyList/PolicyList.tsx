@@ -108,7 +108,7 @@ const PolicyList: React.FC = () => {
           size='medium'
           color='primaryLight'
           startIcon={<AddIcon />}
-          disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
+          // disabled={!hasAccessTo(Permission.POLICY_MANAGEMENT)}
         >
           Create policy
         </AppButton>

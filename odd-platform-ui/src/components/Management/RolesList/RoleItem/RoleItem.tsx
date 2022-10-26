@@ -57,7 +57,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
                 color='primaryLight'
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
-                disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
+                // disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
               >
                 Edit
               </AppButton>
@@ -73,7 +73,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
+                // disabled={!hasAccessTo(Permission.ROLE_MANAGEMENT)}
               >
                 Delete
               </AppButton>

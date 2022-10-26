@@ -42,12 +42,12 @@ const Management: React.FC = () => {
     {
       name: 'Roles',
       link: managementPath('roles'),
-      hidden: !hasAccessTo(Permission.ROLE_MANAGEMENT),
+      // hidden: !hasAccessTo(Permission.ROLE_MANAGEMENT),
     },
     {
       name: 'Policies',
       link: managementPath('policies'),
-      hidden: !hasAccessTo(Permission.POLICY_MANAGEMENT),
+      // hidden: !hasAccessTo(Permission.POLICY_MANAGEMENT),
     },
   ]);
 
@@ -91,21 +91,24 @@ const Management: React.FC = () => {
               component={OwnerAssociationsList}
             />
             <RestrictedRoute
-              isAllowedTo={hasAccessTo(Permission.ROLE_MANAGEMENT)}
+              // isAllowedTo={hasAccessTo(Permission.ROLE_MANAGEMENT)}
+              isAllowedTo
               redirectTo='/management/namespaces'
               exact
               path='/management/roles'
               component={RolesList}
             />
             <RestrictedRoute
-              isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
+              // isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
+              isAllowedTo
               redirectTo='/management/namespaces'
               exact
               path='/management/policies'
               component={PolicyList}
             />
             <RestrictedRoute
-              isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
+              // isAllowedTo={hasAccessTo(Permission.POLICY_MANAGEMENT)}
+              isAllowedTo
               redirectTo='/management/namespaces'
               exact
               path={[
