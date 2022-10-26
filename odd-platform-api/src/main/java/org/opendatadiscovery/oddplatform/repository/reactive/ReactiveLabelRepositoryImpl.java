@@ -46,7 +46,6 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<LabelDto> getDto(final long id) {
         final var query = DSL.select(LABEL.fields())
-//            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
             .select(DSL
                 .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
                 .as(HAS_EXTERNAL_RELATIONS_FIELD))
@@ -62,7 +61,6 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<List<LabelDto>> listDatasetFieldDtos(final Long datasetFieldId) {
         final var query = DSL.select(LABEL.fields())
-//            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
             .select(DSL
                 .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
                 .as(HAS_EXTERNAL_RELATIONS_FIELD))
@@ -93,7 +91,6 @@ public class ReactiveLabelRepositoryImpl
         final var cteSelect = DSL.with(labelCte.getName())
             .as(select)
             .select(labelCte.fields())
-//            .select(DSL.coalesce(LABEL_TO_DATASET_FIELD.ORIGIN).as(ORIGIN_FIELD))
             .select(DSL
                 .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
                 .as(HAS_EXTERNAL_RELATIONS_FIELD))
