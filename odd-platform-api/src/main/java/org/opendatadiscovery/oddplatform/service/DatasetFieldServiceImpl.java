@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +36,8 @@ import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
 import static reactor.function.TupleUtils.function;
 
@@ -121,81 +123,76 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     @Override
     @ReactiveTransactional
     public Mono<Void> updateStatistics(final Map<String, DataSetFieldStat> stats) {
-        final Set<String> labelNames = stats.values().stream()
+        return reactiveDatasetFieldRepository
+            .getExistingFieldsByOddrn(stats.keySet())
+            .collectList()
+            .flatMap(existingFields -> Mono.zipDelayError(
+                updateFieldsStatistics(stats, existingFields),
+                updateFieldsLabels(stats, existingFields)
+            ))
+            .then();
+    }
+
+    private Mono<Void> updateFieldsLabels(final Map<String, DataSetFieldStat> statisticsDict,
+                                          final List<DatasetFieldPojo> existingFields) {
+        final Set<String> labelNames = statisticsDict.values().stream()
             .flatMap(stat -> stat.getTags() != null ? stat.getTags().stream() : Stream.empty())
             .map(Tag::getName)
-            .collect(Collectors.toSet());
+            .collect(toSet());
 
-        final Mono<Map<String, DatasetFieldPojo>> cache = reactiveDatasetFieldRepository
-            .getExistingFieldsByOddrn(stats.keySet())
-            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()))
-            .cache();
+        final Map<String, DatasetFieldPojo> datasetFieldDict = existingFields.stream()
+            .collect(toMap(DatasetFieldPojo::getOddrn, identity()));
 
-        final Mono<List<DatasetFieldPojo>> fieldsMono = cache
-            .map(Map::values)
-            .map(fields -> {
-                final List<DatasetFieldPojo> fieldsToUpdate = new ArrayList<>();
-
-                for (final DatasetFieldPojo field : fields) {
-                    final DataSetFieldStat stat = stats.get(field.getOddrn());
-                    if (stat == null) {
-                        log.error("Unexpected behaviour while building an update object for datasetField {}",
-                            field.getOddrn());
-
-                        continue;
-                    }
-
-                    field.setStats(JSONB.jsonb(JSONSerDeUtils.serializeJson(stat)));
-                    fieldsToUpdate.add(field);
-                }
-
-                return fieldsToUpdate;
-            })
-            .flatMapMany(reactiveDatasetFieldRepository::bulkUpdate)
-            .collectList();
-
-        final Mono<Map<String, LabelPojo>> createdLabels = labelService
+        return labelService
             .getOrCreateLabelsByName(labelNames)
-            .collectMap(LabelPojo::getName, identity());
+            .collectMap(LabelPojo::getName, identity())
+            .flatMap(labels -> {
+                final Set<LabelToDatasetFieldPojo> relationsToCreate = pivotDatasetStatisticsDict(statisticsDict)
+                    .entries().stream()
+                    .map(e -> createExternalStatisticsRelation(
+                        labels.get(e.getKey()).getId(),
+                        datasetFieldDict.get(e.getValue()).getId()
+                    ))
+                    .collect(toSet());
 
-        final Mono<List<LabelToDatasetFieldPojo>> labelsMono = Mono.zip(cache, createdLabels)
-            .flatMap(function((datasetFields, labels) -> {
-                final HashSetValuedHashMap<String, String> map = new HashSetValuedHashMap<>();
-
-                stats.forEach((datasetOddrn, stat) -> {
-                    if (stat.getTags() != null) {
-                        for (final Tag tag : stat.getTags()) {
-                            map.put(tag.getName(), datasetOddrn);
-                        }
-                    }
-                });
-
-                final Set<LabelToDatasetFieldPojo> relations = map.entries().stream()
-                    .map(e -> new LabelToDatasetFieldPojo()
-                        .setLabelId(labels.get(e.getKey()).getId())
-                        .setDatasetFieldId(datasetFields.get(e.getValue()).getId())
-                        .setOrigin(LabelOrigin.EXTERNAL_STATISTICS.toString()))
-                    .collect(Collectors.toSet());
-
-                final List<Long> datasetFieldIds = datasetFields.values().stream()
+                final List<Long> datasetFieldIds = datasetFieldDict.values().stream()
                     .map(DatasetFieldPojo::getId)
                     .toList();
 
                 return reactiveLabelRepository
                     .listLabelRelations(datasetFieldIds, LabelOrigin.EXTERNAL_STATISTICS)
                     .collectList()
-                    .flatMap(currentRelations -> {
-                        final List<LabelToDatasetFieldPojo> pojosToDelete = currentRelations.stream()
-                            .filter(r -> !relations.contains(r))
+                    .flatMap(existingRelations -> {
+                        final List<LabelToDatasetFieldPojo> relationsToDelete = existingRelations.stream()
+                            .filter(r -> !relationsToCreate.contains(r))
                             .toList();
 
                         return reactiveLabelRepository
-                            .deleteRelations(pojosToDelete)
-                            .then(reactiveLabelRepository.createRelations(relations).collectList());
+                            .deleteRelations(relationsToDelete)
+                            .then(reactiveLabelRepository.createRelations(relationsToCreate).collectList());
                     });
-            }));
+            })
+            .then();
+    }
 
-        return Mono.zipDelayError(fieldsMono, labelsMono).then();
+    private Mono<Void> updateFieldsStatistics(final Map<String, DataSetFieldStat> statisticsDict,
+                                              final List<DatasetFieldPojo> existingFields) {
+        final List<DatasetFieldPojo> fieldsToUpdate = new ArrayList<>();
+
+        for (final DatasetFieldPojo field : existingFields) {
+            final DataSetFieldStat stat = statisticsDict.get(field.getOddrn());
+            if (stat == null) {
+                log.error("Unexpected behaviour while building an update object for datasetField {}",
+                    field.getOddrn());
+
+                continue;
+            }
+
+            field.setStats(JSONB.jsonb(JSONSerDeUtils.serializeJson(stat)));
+            fieldsToUpdate.add(field);
+        }
+
+        return reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate).then();
     }
 
     private Mono<List<LabelDto>> updateInternalDatasetFieldLabels(
@@ -247,6 +244,29 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 .setDatasetFieldId(datasetFieldId)
                 .setOrigin(LabelOrigin.INTERNAL.toString()))
             .collectList();
+    }
+
+    private LabelToDatasetFieldPojo createExternalStatisticsRelation(final long labelId, final long datasetFieldId) {
+        return new LabelToDatasetFieldPojo()
+            .setLabelId(labelId)
+            .setDatasetFieldId(datasetFieldId)
+            .setOrigin(LabelOrigin.EXTERNAL_STATISTICS.toString());
+    }
+
+    private MultiValuedMap<String, String> pivotDatasetStatisticsDict(
+        final Map<String, DataSetFieldStat> statisticsDict
+    ) {
+        final MultiValuedMap<String, String> result = new HashSetValuedHashMap<>();
+
+        statisticsDict.forEach((datasetOddrn, stat) -> {
+            if (stat.getTags() != null) {
+                for (final Tag tag : stat.getTags()) {
+                    result.put(tag.getName(), datasetOddrn);
+                }
+            }
+        });
+
+        return result;
     }
 
     private boolean labelsAreTheSame(final List<LabelToDatasetFieldPojo> current,

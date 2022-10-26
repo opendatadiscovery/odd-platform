@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.randomizers.collection.MapRandomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
@@ -20,7 +19,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatist
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 
-import static java.util.function.Function.*;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public class IngestionModelGenerator {

@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class ExternalStatisticsIngestionTest extends BaseIngestionTest {
     /**
-     * Preserve external labels state from different ingestion endpoints test
+     * Preserve external labels state from different ingestion endpoints test.
      *
      * <p>Test ingests metadata with statistics and tags via standard Ingestion API endpoint
      * and asserts correct ingestion process
