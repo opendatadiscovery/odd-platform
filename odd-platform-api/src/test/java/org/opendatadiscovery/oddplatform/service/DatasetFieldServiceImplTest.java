@@ -91,7 +91,7 @@ class DatasetFieldServiceImplTest {
         when(reactiveDatasetFieldRepository.updateDescription(anyLong(), anyString()))
             .thenReturn(Mono.just(datasetFieldDto.getDatasetFieldPojo()));
         when(reactiveLabelService.updateDatasetFieldLabels(anyLong(), anyList(), anyList())).thenReturn(
-            Mono.just(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL))));
+            Mono.just(List.of(new LabelDto(labelPojo, false))));
         when(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(anyLong())).thenReturn(Mono.just(1));
         when(dataEntityFilledService.markEntityFilledByDatasetFieldId(anyLong(), any()))
             .thenReturn(Mono.just(new DataEntityFilledPojo()));
@@ -131,7 +131,7 @@ class DatasetFieldServiceImplTest {
         datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
         datasetFieldDto.setParentFieldId(1L);
         datasetFieldDto.setEnumValueCount(2);
-        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, LabelOrigin.INTERNAL)));
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
         datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
         return datasetFieldDto;

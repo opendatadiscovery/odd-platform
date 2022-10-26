@@ -144,7 +144,7 @@ public class ReactiveDatasetFieldRepositoryImpl
             .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
         return DatasetFieldDto.builder()
             .datasetFieldPojo(pojo)
-            .labels(labels.stream().map(l -> new LabelDto(l, null)).toList())
+            .labels(labels.stream().map(l -> new LabelDto(l, false)).toList())
             .parentFieldId(parentFieldId)
             .build();
     }

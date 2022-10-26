@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
+import static java.util.function.Predicate.not;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
 import static reactor.function.TupleUtils.function;
 
@@ -67,7 +68,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 .ignoreElement().thenReturn(dto))
             .flatMap(dto -> {
                 final List<LabelDto> internalLabels = dto.getLabels().stream()
-                    .filter(l -> l.origin().equals(LabelOrigin.INTERNAL))
+                    .filter(not(LabelDto::hasExternalRelations))
                     .toList();
                 if (CollectionUtils.isEmpty(internalLabels)) {
                     return dataEntityFilledService
@@ -191,7 +192,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                     });
             }));
 
-        return Mono.zip(fieldsMono, labelsMono).then();
+        return Mono.zipDelayError(fieldsMono, labelsMono).then();
     }
 
     private Mono<List<LabelDto>> updateInternalDatasetFieldLabels(
