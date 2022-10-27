@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -8,6 +9,8 @@ import java.util.stream.Collectors;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
@@ -15,6 +18,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -52,6 +57,14 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
             .expectStatus().isOk();
     }
 
+    protected void ingestStatistics(final DatasetStatisticsList statistics) {
+        webTestClient.post()
+            .uri("/ingestion/entities/datasets/stats")
+            .body(Mono.just(statistics), DatasetStatisticsList.class)
+            .exchange()
+            .expectStatus().isCreated();
+    }
+
     protected long extractIngestedEntityIdAndAssert(final DataSource createdDataSource) {
         return (long) extractIngestedEntitiesAndAssert(createdDataSource, 1).values().toArray()[0];
     }
@@ -86,6 +99,44 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
 
                 if (additionalAssertions != null) {
                     additionalAssertions.accept(expected, actual);
+                }
+            });
+    }
+
+    protected void assertDatasetStructuresEqual(final long dataEntityId, final DataSetStructure expected) {
+        webTestClient.get()
+            .uri("/api/datasets/{dataset_id}/structure", dataEntityId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(DataSetStructure.class)
+            .value(actual -> {
+                assertThat(expected.getDataSetVersion())
+                    .usingRecursiveComparison()
+                    .ignoringFields("id", "createdAt")
+                    .isEqualTo(actual.getDataSetVersion());
+
+                assertThat(actual.getFieldList()).hasSize(expected.getFieldList().size());
+
+                final List<DataSetField> sortedActualFields = actual.getFieldList().stream()
+                    .sorted(Comparator.comparing(DataSetField::getOddrn))
+                    .toList();
+
+                final List<DataSetField> sortedExpectedFields = expected.getFieldList().stream()
+                    .sorted(Comparator.comparing(DataSetField::getOddrn))
+                    .toList();
+
+                for (int i = 0; i < sortedActualFields.size(); i++) {
+                    final DataSetField expectedField = sortedExpectedFields.get(i);
+                    final DataSetField actualField = sortedActualFields.get(i);
+
+                    assertThat(actualField)
+                        .usingRecursiveComparison()
+                        .ignoringFields("id", "labels")
+                        .isEqualTo(expectedField);
+
+                    assertThat(actualField.getLabels())
+                        .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
+                        .hasSameElementsAs(expectedField.getLabels());
                 }
             });
     }

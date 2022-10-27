@@ -6,6 +6,7 @@ venv/
 Thumbs.db
 .DS_Store
 .gradle
+.fleet
 *.iml
 *.ipr
 *.iws

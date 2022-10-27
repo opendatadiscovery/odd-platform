@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Predicate.not;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
@@ -82,7 +83,7 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     public Mono<Label> update(final long id, final LabelFormData form) {
         return labelRepository.getDto(id)
             .switchIfEmpty(Mono.error(new NotFoundException("No label with id %d was found".formatted(id))))
-            .filter(dto -> !dto.external())
+            .filter(not(LabelDto::hasExternalRelations))
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update label which has external relations")))
             .flatMap(dto -> labelRepository.update(labelMapper.applyToPojo(dto.pojo(), form)))
             .flatMap(label -> searchEntrypointRepository.updateChangedLabelVector(label.getId()).thenReturn(label))
@@ -95,7 +96,7 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     public Mono<Label> delete(final long id) {
         return labelRepository.getDto(id)
             .switchIfEmpty(Mono.error(new NotFoundException("No label with id %d was found".formatted(id))))
-            .filter(dto -> !dto.external())
+            .filter(not(LabelDto::hasExternalRelations))
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't delete label which has external relations")))
             .thenMany(labelRepository.deleteRelations(id))
             .then(labelRepository.delete(id))

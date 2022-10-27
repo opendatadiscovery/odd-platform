@@ -10,6 +10,7 @@ import {
   Label,
   NumberFieldStat,
   StringFieldStat,
+  IntegerFieldStat,
 } from 'generated-sources';
 
 export type DataSetFormattedStats = StringFieldStat &
@@ -17,7 +18,8 @@ export type DataSetFormattedStats = StringFieldStat &
   BinaryFieldStat &
   NumberFieldStat &
   DateTimeFieldStat &
-  ComplexFieldStat;
+  ComplexFieldStat &
+  IntegerFieldStat;
 
 export const DatasetTypeLabelMap: Map<
   DataSetFieldTypeTypeEnum,

@@ -1134,6 +1134,8 @@ components:
           $ref: '#/components/schemas/BooleanFieldStat'
         number_stats:
           $ref: '#/components/schemas/NumberFieldStat'
+        integer_stats:
+          $ref: '#/components/schemas/IntegerFieldStat'
         string_stats:
           $ref: '#/components/schemas/StringFieldStat'
         binary_stats:
@@ -1184,6 +1186,33 @@ components:
           type: number
         median_value:
           type: number
+        nulls_count:
+          type: integer
+          format: int64
+        unique_count:
+          type: integer
+          format: int64
+      required:
+        - low_value
+        - high_value
+        - nulls_count
+        - unique_count
+
+    IntegerFieldStat:
+      type: object
+      properties:
+        low_value:
+          type: integer
+          format: int64
+        high_value:
+          type: integer
+          format: int64
+        mean_value:
+          type: integer
+          format: int64
+        median_value:
+          type: integer
+          format: int64
         nulls_count:
           type: integer
           format: int64
