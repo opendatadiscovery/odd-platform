@@ -8,7 +8,7 @@ interface WithPermissionsProps {
   extraCheck?: boolean;
   resourceId?: number;
   resourceType?: PermissionResourceType;
-  renderContent?: ({ isAllowedTo }: { isAllowedTo: boolean }) => JSX.Element;
+  renderContent?: ({ isAllowedTo }: { isAllowedTo: boolean }) => JSX.Element | null;
 }
 
 const WithPermissions: React.FC<WithPermissionsProps> = ({

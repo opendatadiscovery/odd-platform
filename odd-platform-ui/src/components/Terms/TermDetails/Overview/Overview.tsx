@@ -10,7 +10,7 @@ import {
   getTermDetailsFetchingStatuses,
 } from 'redux/selectors/terms.selectors';
 import { Permission } from 'generated-sources';
-import { PermissionProvider } from 'components/shared/contexts';
+import WithPermissionsProvider from 'components/shared/contexts/Permission/WithPermissionsProvider';
 import { SectionContainer, SectionFlexContainer } from './OverviewStyles';
 import OverviewTags from './OverviewTags/OverviewTags';
 
@@ -36,12 +36,20 @@ const Overview: React.FC = () => {
           </Grid>
           <Grid item xs={4}>
             <SectionContainer square elevation={0}>
-              <OverviewGeneral />
+              <WithPermissionsProvider
+                permissions={[
+                  Permission.TERM_OWNERSHIP_CREATE,
+                  Permission.TERM_OWNERSHIP_UPDATE,
+                  Permission.TERM_OWNERSHIP_DELETE,
+                ]}
+                Component={OverviewGeneral}
+              />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <PermissionProvider permissions={[Permission.TERM_TAGS_UPDATE]}>
-                <OverviewTags tags={termDetails.tags} />
-              </PermissionProvider>
+              <WithPermissionsProvider
+                permissions={[Permission.TERM_TAGS_UPDATE]}
+                render={() => <OverviewTags tags={termDetails.tags} />}
+              />
             </SectionContainer>
           </Grid>
         </Grid>

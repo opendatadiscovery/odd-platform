@@ -1,9 +1,10 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { PermissionResourceType, Tag } from 'generated-sources';
-import { EditIcon, AddIcon } from 'components/shared/Icons';
+import { Permission, PermissionResourceType, Tag } from 'generated-sources';
+import { AddIcon, EditIcon } from 'components/shared/Icons';
 import { AppButton, TagItem } from 'components/shared';
-import { useAppParams, usePermissions } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer } from './OverviewTagsStyles';
 
@@ -13,10 +14,6 @@ interface OverviewTagsProps {
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   const { termId } = useAppParams();
-  const { isAllowedTo: editTags } = usePermissions({
-    resourceId: termId,
-    resourceType: PermissionResourceType.TERM,
-  });
 
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
@@ -33,19 +30,24 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
     <div>
       <CaptionContainer>
         <Typography variant='h3'>Tags</Typography>
-        <TagsEditForm
-          btnEditEl={
-            <AppButton
-              disabled={!editTags}
-              size='medium'
-              color='primaryLight'
-              onClick={() => {}}
-              startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
-            >
-              {tags?.length ? 'Edit' : 'Add'} tags
-            </AppButton>
-          }
-        />
+        <WithPermissions
+          permissionTo={Permission.TERM_TAGS_UPDATE}
+          resourceId={termId}
+          resourceType={PermissionResourceType.TERM}
+        >
+          <TagsEditForm
+            btnEditEl={
+              <AppButton
+                size='medium'
+                color='primaryLight'
+                onClick={() => {}}
+                startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
+              >
+                {tags?.length ? 'Edit' : 'Add'} tags
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </CaptionContainer>
       {tags?.length ? (
         <Box sx={{ mx: -0.5, my: 0 }}>
@@ -98,13 +100,19 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           wrap='nowrap'
         >
           <Typography variant='subtitle2'>Not created.</Typography>
-          <TagsEditForm
-            btnEditEl={
-              <AppButton disabled={!editTags} size='small' color='tertiary'>
-                Add tags
-              </AppButton>
-            }
-          />
+          <WithPermissions
+            permissionTo={Permission.TERM_TAGS_UPDATE}
+            resourceId={termId}
+            resourceType={PermissionResourceType.TERM}
+          >
+            <TagsEditForm
+              btnEditEl={
+                <AppButton size='small' color='tertiary'>
+                  Add tags
+                </AppButton>
+              }
+            />
+          </WithPermissions>
         </Grid>
       )}
     </div>

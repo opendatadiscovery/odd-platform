@@ -12,7 +12,7 @@ interface UsePermissionReturn {
   hasAccessTo: (to: Permission) => boolean;
 }
 
-const usePermission = ({
+const usePermissions = ({
   resourceId = undefined,
   resourceType = PermissionResourceType.DATA_ENTITY,
 }: UsePermissionProps): UsePermissionReturn => {
@@ -23,4 +23,4 @@ const usePermission = ({
   return { isAllowedTo, hasAccessTo };
 };
 
-export default usePermission;
+export default usePermissions;

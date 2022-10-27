@@ -1,8 +1,5 @@
-import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { formatDistanceToNowStrict } from 'date-fns';
-import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
 import {
   AppButton,
   AppIconButton,
@@ -10,10 +7,9 @@ import {
   AppMenuItem,
   AppPopover,
   AppTabItem,
-  AppTabs,
   ConfirmationDialog,
   EntityTypeItem,
-  SkeletonWrapper,
+  AppTabs,
 } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
@@ -23,10 +19,12 @@ import {
 } from 'redux/selectors';
 import { deleteTerm, fetchResourcePermissions, fetchTermDetails } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import TermsForm from '../TermSearch/TermForm/TermsForm';
-import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
+import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
+import { Grid, Typography } from '@mui/material';
+import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
 
 // lazy components
@@ -44,13 +42,6 @@ const TermDetailsView: React.FC = () => {
   const { termSearchPath, termDetailsOverviewPath, termDetailsLinkedItemsPath } =
     useAppPaths();
 
-  const { isLoading: isTermDetailsFetching, isNotLoaded: isTermDetailsNotFetched } =
-    useAppSelector(getTermDetailsFetchingStatuses);
-
-  const termSearchId = useAppSelector(getTermSearchId);
-
-  const termDetails = useAppSelector(state => getTermDetails(state, termId));
-
   React.useEffect(() => {
     dispatch(fetchTermDetails({ termId }));
     dispatch(
@@ -60,6 +51,13 @@ const TermDetailsView: React.FC = () => {
       })
     );
   }, [fetchTermDetails, termId, fetchResourcePermissions]);
+
+  const { isLoading: isTermDetailsFetching, isNotLoaded: isTermDetailsNotFetched } =
+    useAppSelector(getTermDetailsFetchingStatuses);
+
+  const termSearchId = useAppSelector(getTermSearchId);
+
+  const termDetails = useAppSelector(state => getTermDetails(state, termId));
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
@@ -117,56 +115,61 @@ const TermDetailsView: React.FC = () => {
                 <WithPermissions
                   resourceId={termId}
                   resourceType={PermissionResourceType.TERM}
-                  renderContent={({ isAllowedTo: editTerm }) => (
-                    <TermsForm
-                      term={termDetails}
-                      btnCreateEl={
-                        <AppButton
-                          size='medium'
-                          color='primaryLight'
-                          startIcon={<EditIcon />}
-                          sx={{ ml: 1 }}
-                          disabled={!editTerm}
-                        >
-                          Edit
-                        </AppButton>
-                      }
-                    />
-                  )}
+                  renderContent={({ isAllowedTo: editTerm }) =>
+                    editTerm ? (
+                      <TermsForm
+                        term={termDetails}
+                        btnCreateEl={
+                          <AppButton
+                            size='medium'
+                            color='primaryLight'
+                            startIcon={<EditIcon />}
+                            sx={{ ml: 1 }}
+                          >
+                            Edit
+                          </AppButton>
+                        }
+                      />
+                    ) : null
+                  }
                 />
               </PermissionProvider>
-              <AppPopover
-                renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-                  <AppIconButton
-                    ariaDescribedBy={ariaDescribedBy}
-                    size='medium'
-                    color='primaryLight'
-                    icon={<KebabIcon />}
-                    onClick={onClick}
-                    sx={{ ml: 1 }}
-                  />
-                )}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                transformOrigin={{ vertical: -5, horizontal: 67 }}
-              >
-                <PermissionProvider permissions={[Permission.TERM_DELETE]}>
-                  <WithPermissions
-                    resourceId={termId}
-                    resourceType={PermissionResourceType.TERM}
-                    renderContent={({ isAllowedTo: delTerm }) => (
-                      <ConfirmationDialog
-                        actionTitle='Are you sure you want to delete this term?'
-                        actionName='Delete term'
-                        actionText={
-                          <>&quot;{termDetails.name}&quot; will be deleted permanently.</>
-                        }
-                        onConfirm={handleTermDelete(termDetails.id)}
-                        actionBtn={<AppMenuItem disabled={!delTerm}>Delete</AppMenuItem>}
-                      />
-                    )}
-                  />
-                </PermissionProvider>
-              </AppPopover>
+              <PermissionProvider permissions={[Permission.TERM_DELETE]}>
+                <WithPermissions
+                  resourceId={termId}
+                  resourceType={PermissionResourceType.TERM}
+                  renderContent={({ isAllowedTo: delTerm }) =>
+                    delTerm ? (
+                      <AppPopover
+                        renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                          <AppIconButton
+                            ariaDescribedBy={ariaDescribedBy}
+                            size='medium'
+                            color='primaryLight'
+                            icon={<KebabIcon />}
+                            onClick={onClick}
+                            sx={{ ml: 1 }}
+                          />
+                        )}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                        transformOrigin={{ vertical: -5, horizontal: 67 }}
+                      >
+                        <ConfirmationDialog
+                          actionTitle='Are you sure you want to delete this term?'
+                          actionName='Delete term'
+                          actionText={
+                            <>
+                              &quot;{termDetails.name}&quot; will be deleted permanently.
+                            </>
+                          }
+                          onConfirm={handleTermDelete(termDetails.id)}
+                          actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                        />
+                      </AppPopover>
+                    ) : null
+                  }
+                />
+              </PermissionProvider>
             </Grid>
           </Grid>
           {tabs.length && selectedTab >= 0 && (
@@ -179,11 +182,6 @@ const TermDetailsView: React.FC = () => {
             />
           )}
         </>
-      )}
-      {isTermDetailsFetching && (
-        <SkeletonWrapper
-          renderContent={({ randWidth }) => <TermDetailsSkeleton width={randWidth()} />}
-        />
       )}
       {!isTermDetailsNotFetched && (
         <React.Suspense fallback={<AppLoadingPage />}>

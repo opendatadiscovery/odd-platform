@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import OwnershipForm from '../../Ownership/OwnershipForm';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
@@ -51,78 +51,69 @@ const OverviewGeneral: React.FC = () => {
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.title?.name} />
                 <OwnerActionBtns>
-                  <PermissionProvider permissions={[Permission.TERM_OWNERSHIP_UPDATE]}>
-                    <WithPermissions
-                      resourceId={termId}
-                      resourceType={PermissionResourceType.TERM}
-                      renderContent={({ isAllowedTo: editOwner }) => (
-                        <OwnershipForm
-                          termDetailsOwnership={ownershipItem}
-                          ownerEditBtn={
-                            <AppIconButton
-                              disabled={!editOwner}
-                              size='small'
-                              color='tertiary'
-                              icon={<EditIcon />}
-                              sx={{ ml: 1 }}
-                            />
-                          }
+                  <WithPermissions
+                    resourceId={termId}
+                    resourceType={PermissionResourceType.TERM}
+                    permissionTo={Permission.TERM_OWNERSHIP_UPDATE}
+                  >
+                    <OwnershipForm
+                      termDetailsOwnership={ownershipItem}
+                      ownerEditBtn={
+                        <AppIconButton
+                          size='small'
+                          color='tertiary'
+                          icon={<EditIcon />}
+                          sx={{ ml: 1 }}
                         />
-                      )}
+                      }
                     />
-                  </PermissionProvider>
-                  <PermissionProvider permissions={[Permission.TERM_OWNERSHIP_DELETE]}>
-                    <WithPermissions
-                      resourceId={termId}
-                      resourceType={PermissionResourceType.TERM}
-                      renderContent={({ isAllowedTo: deleteOwner }) => (
-                        <ConfirmationDialog
-                          actionTitle='Are you sure you want to delete this owner?'
-                          actionName='Delete Owner'
-                          actionText={
-                            <>
-                              &quot;{ownershipItem.owner.name}&quot; will be deleted
-                              permanently.
-                            </>
-                          }
-                          onConfirm={handleOwnershipDelete(ownershipItem.id)}
-                          actionBtn={
-                            <AppIconButton
-                              disabled={!deleteOwner}
-                              size='small'
-                              color='tertiary'
-                              icon={<DeleteIcon />}
-                              sx={{ ml: 0.5 }}
-                            />
-                          }
+                  </WithPermissions>
+                  <WithPermissions
+                    resourceId={termId}
+                    resourceType={PermissionResourceType.TERM}
+                    permissionTo={Permission.TERM_OWNERSHIP_DELETE}
+                  >
+                    <ConfirmationDialog
+                      actionTitle='Are you sure you want to delete this owner?'
+                      actionName='Delete Owner'
+                      actionText={
+                        <>
+                          &quot;{ownershipItem.owner.name}&quot; will be deleted
+                          permanently.
+                        </>
+                      }
+                      onConfirm={handleOwnershipDelete(ownershipItem.id)}
+                      actionBtn={
+                        <AppIconButton
+                          size='small'
+                          color='tertiary'
+                          icon={<DeleteIcon />}
+                          sx={{ ml: 0.5 }}
                         />
-                      )}
+                      }
                     />
-                  </PermissionProvider>
+                  </WithPermissions>
                 </OwnerActionBtns>
               </OwnerItem>
             ))}
-            <PermissionProvider permissions={[Permission.TERM_OWNERSHIP_CREATE]}>
-              <WithPermissions
-                resourceId={termId}
-                resourceType={PermissionResourceType.TERM}
-                renderContent={({ isAllowedTo: addOwner }) => (
-                  <OwnershipForm
-                    ownerEditBtn={
-                      <AppButton
-                        disabled={!addOwner}
-                        sx={{ mt: 0.25 }}
-                        size='medium'
-                        color='tertiary'
-                        startIcon={<AddIcon />}
-                      >
-                        Add Owner
-                      </AppButton>
-                    }
-                  />
-                )}
+            <WithPermissions
+              permissionTo={Permission.TERM_OWNERSHIP_CREATE}
+              resourceId={termId}
+              resourceType={PermissionResourceType.TERM}
+            >
+              <OwnershipForm
+                ownerEditBtn={
+                  <AppButton
+                    sx={{ mt: 0.25 }}
+                    size='medium'
+                    color='tertiary'
+                    startIcon={<AddIcon />}
+                  >
+                    Add Owner
+                  </AppButton>
+                }
               />
-            </PermissionProvider>
+            </WithPermissions>
           </LabeledInfoItem>
         </Grid>
       </Grid>

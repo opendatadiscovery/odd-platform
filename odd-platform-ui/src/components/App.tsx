@@ -46,7 +46,16 @@ const App: React.FC = () => {
                 />
               )}
             />
-            <Route exact path='/termsearch/:termSearchId?' component={TermSearch} />
+            <Route
+              exact
+              path='/termsearch/:termSearchId?'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[Permission.TERM_CREATE]}
+                  Component={TermSearch}
+                />
+              )}
+            />
             <Route
               exact
               path={['/search/:searchId?', '/embedded/search/:searchId?']}
