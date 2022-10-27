@@ -2,12 +2,9 @@ import InputField from '../../elements/input-field';
 import BasePage from '../base-page';
 
 const SELECTORS = {
-  filterWithSelect: filterName => `.MuiGrid-root.css-19dbjmo:has-text('${filterName}')`,
-  filterWithInput: filterName =>
-    `.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-12.css-1vkoyw5:has-text('${filterName}')`,
-  filterInput: `[type="text"]`,
+  filterWithSelect: filterName => `#select-label-id:has-text('${filterName}')`,
+  filterWithInput: filterName => `label:text-is("${filterName}") >> ..`,
   searchBar: `[placeholder="Search"]`,
-  searchButton: `.sc-kDDrLX.gpLWbw button[type="button"]`,
   listOfFilters: `[role="listbox"]`,
   filterOption: `[role="option"]`,
   filterWithInputOption: `[role="presentation"]`,
@@ -16,7 +13,8 @@ const SELECTORS = {
 };
 export default class CatalogPage extends BasePage {
   async openFilterWithSelect(filterName: string) {
-    await this.page.click(`${SELECTORS.filterWithSelect(filterName)}`);
+    const filterElement = this.page.locator(SELECTORS.filterWithSelect(filterName)).locator('..');
+    await filterElement.click();
   }
 
   async chooseOption(option: string) {
@@ -26,14 +24,12 @@ export default class CatalogPage extends BasePage {
   }
 
   async searchByTextInFilter(filter: string, text: string) {
-    await this.page
-      .locator(`${SELECTORS.filterWithInput(filter)} >> ${SELECTORS.filterInput}`)
-      .fill(text);
+    await this.page.locator(`${SELECTORS.filterWithInput(filter)} >> input`).fill(text);
     await this.page.locator(`${SELECTORS.filterWithInputOption}:has-text('${text}')`).click();
   }
 
   async openFilterWithInput(nameOfFilter: string) {
-    await this.page.click(`${SELECTORS.filterWithInput(nameOfFilter)} >> ${SELECTORS.filterInput}`);
+    await this.page.locator(SELECTORS.filterWithInput(nameOfFilter)).click();
   }
 
   async isListItemVisible(name: string): Promise<boolean> {

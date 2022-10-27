@@ -11,7 +11,6 @@ const SELECTORS = {
   addTagButton: `.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add Tags')`,
   inputTagName: `[role="combobox"]`,
   saveButton: `[type="submit"]`,
-  addGroup: `.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add to group')`,
 };
 
 export default class OverviewPage extends DataEntityPage {
