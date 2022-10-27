@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -122,14 +125,27 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     @ReactiveTransactional
-    public Mono<Void> updateStatistics(final Map<String, DataSetFieldStat> stats) {
+    public Mono<Void> updateStatistics(final DatasetStatisticsList datasetStatisticsList) {
+        final Map<String, DataSetFieldStat> statistics = datasetStatisticsList.getItems()
+            .stream()
+            .map(DataSetStatistics::getFields)
+            .reduce(new HashMap<>(), (acc, fields) -> {
+                acc.putAll(fields);
+                return acc;
+            });
+
+        final Set<String> datasetOddrns = datasetStatisticsList.getItems().stream()
+            .map(DataSetStatistics::getDatasetOddrn)
+            .collect(toSet());
+
         return reactiveDatasetFieldRepository
-            .getExistingFieldsByOddrn(stats.keySet())
+            .getExistingFieldsByOddrn(statistics.keySet())
             .collectList()
             .flatMap(existingFields -> Mono.zipDelayError(
-                updateFieldsStatistics(stats, existingFields),
-                updateFieldsLabels(stats, existingFields)
+                updateFieldsStatistics(statistics, existingFields),
+                updateFieldsLabels(statistics, existingFields)
             ))
+            .then(reactiveSearchEntrypointRepository.updateStructureVectorForDataEntitiesByOddrns(datasetOddrns))
             .then();
     }
 
