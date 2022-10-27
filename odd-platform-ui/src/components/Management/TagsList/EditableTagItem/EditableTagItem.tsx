@@ -4,8 +4,8 @@ import { deleteTag } from 'redux/thunks';
 import { Permission, Tag } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
-import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import TagEditForm from '../TagEditForm/TagEditForm';
 import * as S from './EditableTagItemStyles';
 
@@ -15,7 +15,6 @@ interface EditableTagItemProps {
 
 const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteTag({ tagId: tag.id })),
@@ -34,36 +33,34 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
       </S.Col>
       {!tag.external && (
         <S.ActionsContainer container item>
-          <TagEditForm
-            tag={tag}
-            editBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<EditIcon />}
-                sx={{ mr: 1 }}
-                disabled={!hasAccessTo(Permission.TAG_UPDATE)}
-              >
-                Edit
-              </AppButton>
-            }
-          />
-          <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this tag?'
-            actionName='Delete Tag'
-            actionText={<>&quot;{tag.name}&quot; will be deleted permanently.</>}
-            onConfirm={handleDelete}
-            actionBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.TAG_DELETE)}
-              >
-                Delete
-              </AppButton>
-            }
-          />
+          <WithPermissions permissionTo={Permission.TAG_UPDATE}>
+            <TagEditForm
+              tag={tag}
+              editBtn={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<EditIcon />}
+                  sx={{ mr: 1 }}
+                >
+                  Edit
+                </AppButton>
+              }
+            />
+          </WithPermissions>
+          <WithPermissions permissionTo={Permission.TAG_DELETE}>
+            <ConfirmationDialog
+              actionTitle='Are you sure you want to delete this tag?'
+              actionName='Delete Tag'
+              actionText={<>&quot;{tag.name}&quot; will be deleted permanently.</>}
+              onConfirm={handleDelete}
+              actionBtn={
+                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
+                  Delete
+                </AppButton>
+              }
+            />
+          </WithPermissions>
         </S.ActionsContainer>
       )}
     </S.Container>

@@ -5,8 +5,8 @@ import { AppLoadingPage, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { PermissionProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import WithPermissionsProvider from 'components/shared/contexts/Permission/WithPermissionsProvider';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -40,39 +40,10 @@ const App: React.FC = () => {
             <Route
               path='/management/:viewType?'
               render={() => (
-                <PermissionProvider
-                  permissions={[
-                    Permission.ROLE_CREATE,
-                    Permission.ROLE_UPDATE,
-                    Permission.ROLE_DELETE,
-                    Permission.NAMESPACE_CREATE,
-                    Permission.NAMESPACE_UPDATE,
-                    Permission.NAMESPACE_DELETE,
-                    Permission.POLICY_CREATE,
-                    Permission.POLICY_UPDATE,
-                    Permission.POLICY_DELETE,
-                    Permission.OWNER_ASSOCIATION_MANAGE,
-                    Permission.TAG_UPDATE,
-                    Permission.TAG_CREATE,
-                    Permission.TAG_DELETE,
-                    Permission.OWNER_CREATE,
-                    Permission.OWNER_UPDATE,
-                    Permission.OWNER_DELETE,
-                    Permission.LABEL_CREATE,
-                    Permission.LABEL_UPDATE,
-                    Permission.LABEL_DELETE,
-                    Permission.DATA_SOURCE_CREATE,
-                    Permission.DATA_SOURCE_UPDATE,
-                    Permission.DATA_SOURCE_DELETE,
-                    Permission.DATA_SOURCE_TOKEN_REGENERATE,
-                    Permission.COLLECTOR_CREATE,
-                    Permission.COLLECTOR_DELETE,
-                    Permission.COLLECTOR_UPDATE,
-                    Permission.COLLECTOR_TOKEN_REGENERATE,
-                  ]}
-                >
-                  <Management />
-                </PermissionProvider>
+                <WithPermissionsProvider
+                  permissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
+                  Component={Management}
+                />
               )}
             />
             <Route exact path='/termsearch/:termSearchId?' component={TermSearch} />

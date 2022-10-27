@@ -4,8 +4,8 @@ import { Label, Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { deleteLabel } from 'redux/thunks';
-import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import LabelEditForm from '../LabelEditForm/LabelEditForm';
 import * as S from './EditableLabelItemStyles';
 
@@ -15,7 +15,6 @@ interface EditableLabelItemProps {
 
 const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteLabel({ labelId: label.id })),
@@ -31,36 +30,34 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
       </Grid>
       {!label.external && (
         <S.ActionsContainer item>
-          <LabelEditForm
-            label={label}
-            editBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<EditIcon />}
-                sx={{ mr: 1 }}
-                disabled={!hasAccessTo(Permission.LABEL_UPDATE)}
-              >
-                Edit
-              </AppButton>
-            }
-          />
-          <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this label?'
-            actionName='Delete Label'
-            actionText={<>&quot;{label.name}&quot; will be deleted permanently.</>}
-            onConfirm={handleDelete}
-            actionBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.LABEL_DELETE)}
-              >
-                Delete
-              </AppButton>
-            }
-          />
+          <WithPermissions permissionTo={Permission.LABEL_UPDATE}>
+            <LabelEditForm
+              label={label}
+              editBtn={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<EditIcon />}
+                  sx={{ mr: 1 }}
+                >
+                  Edit
+                </AppButton>
+              }
+            />
+          </WithPermissions>
+          <WithPermissions permissionTo={Permission.LABEL_DELETE}>
+            <ConfirmationDialog
+              actionTitle='Are you sure you want to delete this label?'
+              actionName='Delete Label'
+              actionText={<>&quot;{label.name}&quot; will be deleted permanently.</>}
+              onConfirm={handleDelete}
+              actionBtn={
+                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
+                  Delete
+                </AppButton>
+              }
+            />
+          </WithPermissions>
         </S.ActionsContainer>
       )}
     </S.Container>

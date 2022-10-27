@@ -4,9 +4,9 @@ import { deleteRole } from 'redux/thunks';
 import { Permission, Role } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
-import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TruncateMarkup from 'react-truncate-markup';
+import { WithPermissions } from 'components/shared/contexts';
 import RoleForm from '../RoleForm/RoleForm';
 import * as S from './RoleItemStyles';
 
@@ -18,7 +18,6 @@ interface RoleItemProps {
 
 const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const isUser = name === 'User';
   const isAdministrator = name === 'Administrator';
@@ -50,7 +49,10 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
       </Grid>
       <Grid item lg={1.74}>
         <S.ActionsContainer container item>
-          {!isAdministrator && (
+          <WithPermissions
+            permissionTo={Permission.ROLE_UPDATE}
+            extraCheck={!isAdministrator}
+          >
             <RoleForm
               roleId={roleId}
               name={name}
@@ -61,31 +63,28 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
                   color='primaryLight'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
-                  disabled={!hasAccessTo(Permission.ROLE_UPDATE)}
                 >
                   Edit
                 </AppButton>
               }
             />
-          )}
-          {!(isUser || isAdministrator) && (
+          </WithPermissions>
+          <WithPermissions
+            permissionTo={Permission.ROLE_DELETE}
+            extraCheck={!(isUser || isAdministrator)}
+          >
             <ConfirmationDialog
               actionTitle='Are you sure you want to delete this role?'
               actionName='Delete Role'
               actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
-                  startIcon={<DeleteIcon />}
-                  disabled={!hasAccessTo(Permission.ROLE_DELETE)}
-                >
+                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
                   Delete
                 </AppButton>
               }
             />
-          )}
+          </WithPermissions>
         </S.ActionsContainer>
       </Grid>
     </S.Container>

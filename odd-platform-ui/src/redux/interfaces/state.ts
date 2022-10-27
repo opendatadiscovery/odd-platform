@@ -62,15 +62,15 @@ export interface DataSourcesState extends EntityState<DataSource> {
 }
 
 export interface CollectorsState extends EntityState<Collector> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface TagsState extends EntityState<Tag> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface LabelsState extends EntityState<Label> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface NamespacesState extends EntityState<Namespace> {

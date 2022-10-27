@@ -18,8 +18,8 @@ import {
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
@@ -27,56 +27,45 @@ import * as S from './TagsListStyles';
 
 const TagsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const { isLoading: isTagCreating } = useAppSelector(getTagCreatingStatuses);
-
   const { isLoading: isTagDeleting } = useAppSelector(getTagDeletingStatuses);
-
   const { isLoading: isTagsFetching } = useAppSelector(getTagListFetchingStatuses);
 
   const tagsList = useAppSelector(getTagsList);
-  const pageInfo = useAppSelector(getTagsListPage);
+  const { page, total, hasNext } = useAppSelector(getTagsListPage);
 
-  const pageSize = 100;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalTags, setTotalTags] = React.useState<number | undefined>(pageInfo?.total);
-
-  React.useEffect(() => {
-    if (!searchText) dispatch(fetchTagsList({ page: 1, size: pageSize }));
-  }, [fetchTagsList, isTagCreating, isTagDeleting, searchText]);
+  const size = 100;
+  const [query, setQuery] = React.useState('');
+  const [totalTags, setTotalTags] = React.useState(total);
 
   React.useEffect(() => {
-    if (!searchText) setTotalTags(pageInfo?.total);
-  }, [pageInfo]);
+    if (!query) dispatch(fetchTagsList({ page: 1, size }));
+  }, [fetchTagsList, isTagCreating, isTagDeleting, query]);
+
+  React.useEffect(() => {
+    if (!query) setTotalTags(total);
+  }, [total]);
 
   const fetchNextPage = () => {
-    if (!pageInfo?.hasNext) return;
-    dispatch(
-      fetchTagsList({
-        page: pageInfo.page + 1,
-        size: pageSize,
-        query: searchText,
-      })
-    );
+    if (!hasNext) return;
+    dispatch(fetchTagsList({ page: page + 1, size, query }));
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(fetchTagsList({ page: 1, size: pageSize, query: searchText }));
+      dispatch(fetchTagsList({ page: 1, size, query }));
     }, 500),
-    [searchText]
+    [query]
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+    setQuery(event.target.value);
     handleSearch();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    if (event.key === 'Enter') handleSearch();
   };
 
   return (
@@ -90,7 +79,7 @@ const TagsListView: React.FC = () => {
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
           placeholder='Search tag...'
-          value={searchText}
+          value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           customStartAdornment={{
@@ -101,26 +90,23 @@ const TagsListView: React.FC = () => {
           }}
           customEndAdornment={{
             variant: 'clear',
-            showAdornment: !!searchText,
-            onCLick: () => setSearchText(''),
+            showAdornment: !!query,
+            onCLick: () => setQuery(''),
             icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <TagCreateForm
-          btnCreateEl={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              disabled={!hasAccessTo(Permission.TAG_CREATE)}
-            >
-              Create tag
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.TAG_CREATE}>
+          <TagCreateForm
+            btnCreateEl={
+              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                Create tag
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </S.Caption>
       <S.TableHeader container>
         <S.Col item>
@@ -138,7 +124,7 @@ const TagsListView: React.FC = () => {
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
+            hasMore={hasNext}
             dataLength={tagsList.length}
             scrollThreshold='200px'
             loader={isTagsFetching && <TagsSkeletonItem length={5} />}

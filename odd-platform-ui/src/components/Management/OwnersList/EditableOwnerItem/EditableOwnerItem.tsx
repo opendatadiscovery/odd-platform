@@ -4,9 +4,9 @@ import { Owner, Permission } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { deleteOwner } from 'redux/thunks';
-import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TruncateMarkup from 'react-truncate-markup';
+import { WithPermissions } from 'components/shared/contexts';
 import * as S from './EditableOwnerItemStyles';
 import OwnerForm from '../OwnerForm/OwnerForm';
 
@@ -22,7 +22,6 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   roles,
 }) => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteOwner({ ownerId })),
@@ -48,39 +47,41 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
         </TruncateMarkup>
       </Grid>
       <S.ActionsContainer item lg={1.74}>
-        <OwnerForm
-          ownerId={ownerId}
-          name={name}
-          roles={roles}
-          btnCreateEl={
-            <AppButton
-              color='primaryLight'
-              size='medium'
-              startIcon={<EditIcon />}
-              sx={{ mr: 0.5 }}
-              disabled={!hasAccessTo(Permission.OWNER_UPDATE)}
-            >
-              Edit
-            </AppButton>
-          }
-        />
-        <ConfirmationDialog
-          actionTitle='Are you sure you want to delete this owner?'
-          actionName='Delete Owner'
-          actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
-          onConfirm={handleDelete}
-          actionBtn={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<DeleteIcon />}
-              sx={{ ml: 1 }}
-              disabled={!hasAccessTo(Permission.OWNER_DELETE)}
-            >
-              Delete
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.OWNER_UPDATE}>
+          <OwnerForm
+            ownerId={ownerId}
+            name={name}
+            roles={roles}
+            btnCreateEl={
+              <AppButton
+                color='primaryLight'
+                size='medium'
+                startIcon={<EditIcon />}
+                sx={{ mr: 0.5 }}
+              >
+                Edit
+              </AppButton>
+            }
+          />
+        </WithPermissions>
+        <WithPermissions permissionTo={Permission.OWNER_DELETE}>
+          <ConfirmationDialog
+            actionTitle='Are you sure you want to delete this owner?'
+            actionName='Delete Owner'
+            actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+            onConfirm={handleDelete}
+            actionBtn={
+              <AppButton
+                size='medium'
+                color='primaryLight'
+                startIcon={<DeleteIcon />}
+                sx={{ ml: 1 }}
+              >
+                Delete
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </S.ActionsContainer>
     </S.Container>
   );

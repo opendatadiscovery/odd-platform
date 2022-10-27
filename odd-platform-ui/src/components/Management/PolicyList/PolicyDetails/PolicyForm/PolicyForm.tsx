@@ -21,6 +21,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
   const history = useHistory();
   const { managementPath } = useAppPaths();
   const { hasAccessTo } = usePermissions({});
+  const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';
   const toPolicies = managementPath('policies');
@@ -71,7 +72,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
           rules={{ required: true }}
           render={({ field }) => (
             <AppJSONEditor
-              readOnly={!hasAccessTo(Permission.POLICY_UPDATE) || isAdministrator}
+              readOnly={!canUpdatePolicy || isAdministrator}
               schema={schema}
               onValidate={(isJSONValid, result) =>
                 handleOnValidate(isJSONValid, result, field.onChange)
@@ -90,7 +91,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
           {policyId
-            ? `${isAdministrator ? 'View' : 'Edit'} policy ${name}`
+            ? `${isAdministrator || !canUpdatePolicy ? 'View' : 'Edit'} policy ${name}`
             : 'Create policy'}
         </Typography>
         <Link to={toPolicies}>
@@ -110,7 +111,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
           render={({ field }) => (
             <AppInput
               {...field}
-              disabled={!hasAccessTo(Permission.POLICY_UPDATE) || isAdministrator}
+              disabled={isAdministrator || !canUpdatePolicy}
               sx={{ mt: 3 }}
               label='Name'
               placeholder='Enter policy name'
@@ -125,7 +126,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         />
         {policyController}
       </form>
-      {!isAdministrator && (
+      {canUpdatePolicy && !isAdministrator && (
         <AppButton
           size='large'
           type='submit'

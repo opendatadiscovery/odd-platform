@@ -17,8 +17,8 @@ import {
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import CollectorForm from './CollectorForm/CollectorForm';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
 import CollectorItem from './CollectorItem/CollectorItem';
@@ -26,9 +26,8 @@ import { CollectorCaption } from './CollectorsListStyles';
 
 const CollectorsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
-  const pageInfo = useAppSelector(getCollectorsListPage);
+  const { page, hasNext, total } = useAppSelector(getCollectorsListPage);
   const collectorsList = useAppSelector(getCollectorsList);
 
   const { isLoading: isCollectorDeleting } = useAppSelector(getCollectorDeletingStatuses);
@@ -36,49 +35,37 @@ const CollectorsListView: React.FC = () => {
     getCollectorsListFetchingStatuses
   );
 
-  const pageSize = 30;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalCollectors, setTotalCollectors] = React.useState<number | undefined>(
-    pageInfo?.total
-  );
+  const size = 30;
+  const [query, setQuery] = React.useState('');
+  const [totalCollectors, setTotalCollectors] = React.useState(total);
 
   React.useEffect(() => {
-    if (!searchText) {
-      dispatch(fetchCollectorsList({ page: 1, size: pageSize }));
-    }
-  }, [isCollectorDeleting, searchText]);
+    if (!query) dispatch(fetchCollectorsList({ page: 1, size }));
+  }, [isCollectorDeleting, query, size]);
 
   React.useEffect(() => {
-    if (!searchText) setTotalCollectors(pageInfo?.total);
-  }, [pageInfo]);
+    if (!query) setTotalCollectors(total);
+  }, [query, total]);
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(fetchCollectorsList({ page: 1, size: pageSize, query: searchText }));
+      dispatch(fetchCollectorsList({ page: 1, size, query }));
     }, 500),
-    [searchText]
+    [query, size]
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+    setQuery(event.target.value);
     handleSearch();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    if (event.key === 'Enter') handleSearch();
   };
 
   const fetchNextPage = () => {
-    if (!pageInfo?.hasNext) return;
-    dispatch(
-      fetchCollectorsList({
-        page: pageInfo.page + 1,
-        size: pageSize,
-        query: searchText,
-      })
-    );
+    if (!hasNext) return;
+    dispatch(fetchCollectorsList({ page: page + 1, size, query }));
   };
 
   return (
@@ -94,7 +81,7 @@ const CollectorsListView: React.FC = () => {
           placeholder='Search collector...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
-          value={searchText}
+          value={query}
           customStartAdornment={{
             variant: 'search',
             showAdornment: true,
@@ -103,32 +90,29 @@ const CollectorsListView: React.FC = () => {
           }}
           customEndAdornment={{
             variant: 'clear',
-            showAdornment: !!searchText,
-            onCLick: () => setSearchText(''),
+            showAdornment: !!query,
+            onCLick: () => setQuery(''),
             icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <CollectorForm
-          btnCreateEl={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              disabled={!hasAccessTo(Permission.COLLECTOR_CREATE)}
-            >
-              Add collector
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.COLLECTOR_CREATE}>
+          <CollectorForm
+            btnCreateEl={
+              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                Add collector
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </CollectorCaption>
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
+            hasMore={hasNext}
             dataLength={collectorsList.length}
             loader={isCollectorsListFetching && <CollectorSkeletonItem length={5} />}
           >

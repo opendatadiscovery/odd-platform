@@ -17,8 +17,8 @@ import {
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import DataSourceForm from './DataSourceForm/DataSourceForm';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItem from './DataSourceItem/DataSourceItem';
@@ -26,7 +26,6 @@ import * as S from './DataSourcesListStyles';
 
 const DataSourcesListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const dataSourcesList = useAppSelector(getDataSourcesList);
   const { page, total, hasNext } = useAppSelector(getDataSourcesListPage);
@@ -39,15 +38,11 @@ const DataSourcesListView: React.FC = () => {
   );
 
   const size = 30;
-  const [query, setQuery] = React.useState<string>('');
-  const [totalDataSources, setTotalDataSources] = React.useState<number | undefined>(
-    total
-  );
+  const [query, setQuery] = React.useState('');
+  const [totalDataSources, setTotalDataSources] = React.useState(total);
 
   React.useEffect(() => {
-    if (!query) {
-      dispatch(fetchDataSourcesList({ page: 1, size }));
-    }
+    if (!query) dispatch(fetchDataSourcesList({ page: 1, size }));
   }, [isDataSourceDeleting, query]);
 
   React.useEffect(() => {
@@ -67,9 +62,7 @@ const DataSourcesListView: React.FC = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    if (event.key === 'Enter') handleSearch();
   };
 
   const fetchNextPage = () => {
@@ -107,18 +100,15 @@ const DataSourcesListView: React.FC = () => {
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <DataSourceForm
-          btnCreateEl={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              disabled={!hasAccessTo(Permission.DATA_SOURCE_CREATE)}
-            >
-              Add datasource
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.DATA_SOURCE_CREATE}>
+          <DataSourceForm
+            btnCreateEl={
+              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                Add datasource
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </S.Caption>
       <Grid container>
         <Grid item xs={12}>

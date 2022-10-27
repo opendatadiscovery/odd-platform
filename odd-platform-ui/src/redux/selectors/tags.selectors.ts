@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors';
-import { RootState, TagsState } from 'redux/interfaces';
+import { CurrentPageInfo, RootState, TagsState } from 'redux/interfaces';
 import { tagsAdapter } from 'redux/slices/tags.slice';
 import * as actions from 'redux/actions';
 
@@ -17,4 +17,7 @@ export const { selectAll: getTagsList } = tagsAdapter.getSelectors<RootState>(
   state => state.tags
 );
 
-export const getTagsListPage = createSelector(tagsState, tagsList => tagsList.pageInfo);
+export const getTagsListPage = createSelector(
+  tagsState,
+  (tagsList): CurrentPageInfo => tagsList.pageInfo
+);

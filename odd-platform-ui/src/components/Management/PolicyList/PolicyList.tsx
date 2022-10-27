@@ -16,16 +16,17 @@ import {
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { useAppPaths, usePermissions } from 'lib/hooks';
+import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import PolicyItem from './PolicyItem/PolicyItem';
 import * as S from './PolicyListStyles';
 import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
 
 const PolicyList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
   const { createPolicyPath } = useAppPaths();
+
   const createPolicyLink = createPolicyPath();
 
   const { isLoading: isPoliciesFetching } = useAppSelector(getPoliciesFetchingStatuses);
@@ -101,15 +102,16 @@ const PolicyList: React.FC = () => {
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <AppButton
-          to={createPolicyLink}
-          size='medium'
-          color='primaryLight'
-          startIcon={<AddIcon />}
-          disabled={!hasAccessTo(Permission.POLICY_CREATE)}
-        >
-          Create policy
-        </AppButton>
+        <WithPermissions permissionTo={Permission.POLICY_CREATE}>
+          <AppButton
+            to={createPolicyLink}
+            size='medium'
+            color='primaryLight'
+            startIcon={<AddIcon />}
+          >
+            Create policy
+          </AppButton>
+        </WithPermissions>
       </S.Caption>
       <S.TableHeader container flexWrap='nowrap'>
         <Grid item lg={3.53}>

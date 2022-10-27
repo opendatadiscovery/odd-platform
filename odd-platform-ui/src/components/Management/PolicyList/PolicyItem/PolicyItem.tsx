@@ -6,6 +6,7 @@ import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { useAppPaths, usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import * as S from './PolicyItemStyles';
 
 interface PolicyItemProps {
@@ -41,30 +42,29 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
             to={policyDetailsLink}
             size='medium'
             color='primaryLight'
-            startIcon={!isAdministrator && <EditIcon />}
+            startIcon={
+              hasAccessTo(Permission.POLICY_UPDATE) && !isAdministrator && <EditIcon />
+            }
             sx={{ mr: 1 }}
-            disabled={!hasAccessTo(Permission.POLICY_UPDATE) && !isAdministrator}
           >
-            {isAdministrator ? 'View' : 'Edit'}
+            {isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE) ? 'View' : 'Edit'}
           </AppButton>
-          {!isAdministrator && (
+          <WithPermissions
+            permissionTo={Permission.POLICY_DELETE}
+            extraCheck={!isAdministrator}
+          >
             <ConfirmationDialog
               actionTitle='Are you sure you want to delete this policy?'
               actionName='Delete Policy'
               actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
-                  startIcon={<DeleteIcon />}
-                  disabled={!hasAccessTo(Permission.POLICY_DELETE)}
-                >
+                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
                   Delete
                 </AppButton>
               }
             />
-          )}
+          </WithPermissions>
         </S.ActionsContainer>
       </Grid>
     </S.Container>

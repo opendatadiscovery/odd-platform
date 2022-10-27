@@ -4,6 +4,7 @@ import { Grid } from '@mui/material';
 import { AppLoadingPage, AppTabItem, AppTabs, RestrictedRoute } from 'components/shared';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
+import WithPermissionsProvider from 'components/shared/contexts/Permission/WithPermissionsProvider';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -69,12 +70,92 @@ const Management: React.FC = () => {
       <S.ContentContainer item xs={9}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route exact path='/management/namespaces' component={NamespaceList} />
-            <Route exact path='/management/datasources' component={DataSourcesList} />
-            <Route exact path='/management/collectors' component={CollectorsList} />
-            <Route exact path='/management/owners' component={OwnersList} />
-            <Route exact path='/management/tags' component={TagsList} />
-            <Route exact path='/management/labels' component={LabelsList} />
+            <Route
+              exact
+              path='/management/namespaces'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.NAMESPACE_UPDATE,
+                    Permission.NAMESPACE_DELETE,
+                    Permission.NAMESPACE_CREATE,
+                  ]}
+                  Component={NamespaceList}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/management/datasources'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.DATA_SOURCE_CREATE,
+                    Permission.DATA_SOURCE_UPDATE,
+                    Permission.DATA_SOURCE_DELETE,
+                    Permission.DATA_SOURCE_TOKEN_REGENERATE,
+                  ]}
+                  Component={DataSourcesList}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/management/collectors'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.COLLECTOR_CREATE,
+                    Permission.COLLECTOR_UPDATE,
+                    Permission.COLLECTOR_DELETE,
+                    Permission.COLLECTOR_TOKEN_REGENERATE,
+                  ]}
+                  Component={CollectorsList}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/management/owners'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.OWNER_CREATE,
+                    Permission.OWNER_UPDATE,
+                    Permission.OWNER_DELETE,
+                  ]}
+                  Component={OwnersList}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/management/tags'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.TAG_CREATE,
+                    Permission.TAG_UPDATE,
+                    Permission.TAG_DELETE,
+                  ]}
+                  Component={TagsList}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/management/labels'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.LABEL_CREATE,
+                    Permission.LABEL_UPDATE,
+                    Permission.LABEL_DELETE,
+                  ]}
+                  Component={LabelsList}
+                />
+              )}
+            />
             <RestrictedRoute
               isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
               redirectTo='/management/namespaces'
@@ -82,15 +163,46 @@ const Management: React.FC = () => {
               path='/management/associations/:viewType?'
               component={OwnerAssociationsList}
             />
-            <Route exact path='/management/roles' component={RolesList} />
-            <Route exact path='/management/policies' component={PolicyList} />
+            <Route
+              exact
+              path='/management/roles'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.ROLE_CREATE,
+                    Permission.ROLE_UPDATE,
+                    Permission.ROLE_DELETE,
+                  ]}
+                  Component={RolesList}
+                />
+              )}
+            />
+            <Route
+              exact
+              path='/management/policies'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[
+                    Permission.POLICY_CREATE,
+                    Permission.POLICY_UPDATE,
+                    Permission.POLICY_DELETE,
+                  ]}
+                  Component={PolicyList}
+                />
+              )}
+            />
             <Route
               exact
               path={[
                 '/management/policies/createPolicy',
                 '/management/policies/:policyId',
               ]}
-              component={PolicyDetails}
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[Permission.POLICY_UPDATE]}
+                  Component={PolicyDetails}
+                />
+              )}
             />
             <Redirect exact from='/management' to='/management/namespaces' />
           </Switch>

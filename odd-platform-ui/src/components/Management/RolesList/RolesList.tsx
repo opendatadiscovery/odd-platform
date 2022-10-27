@@ -2,8 +2,6 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  getRoleCreatingStatuses,
-  getRoleDeletingStatuses,
   getRolesFetchingStatuses,
   getRolesList,
   getRolesPageInfo,
@@ -18,8 +16,8 @@ import {
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import RoleForm from './RoleForm/RoleForm';
 import RoleItem from './RoleItem/RoleItem';
 import * as S from './RolesListStyles';
@@ -27,7 +25,6 @@ import RoleSkeletonItem from './RoleSkeletonItem/RoleSkeletonItem';
 
 const RolesList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const { isLoading: isRolesFetching } = useAppSelector(getRolesFetchingStatuses);
 
@@ -36,7 +33,7 @@ const RolesList: React.FC = () => {
 
   const size = 100;
   const [query, setQuery] = React.useState('');
-  const [totalRoles, setTotalRoles] = React.useState<number | undefined>(total);
+  const [totalRoles, setTotalRoles] = React.useState(total);
 
   React.useEffect(() => {
     if (!query) dispatch(fetchRolesList({ page: 1, size }));
@@ -102,18 +99,15 @@ const RolesList: React.FC = () => {
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <RoleForm
-          openBtn={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              disabled={!hasAccessTo(Permission.ROLE_CREATE)}
-            >
-              Create role
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.ROLE_CREATE}>
+          <RoleForm
+            openBtn={
+              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                Create role
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </S.Caption>
       <S.TableHeader container flexWrap='nowrap'>
         <Grid item lg={3.53}>

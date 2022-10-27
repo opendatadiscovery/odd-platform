@@ -18,9 +18,9 @@ import {
   getNamespaceListPageInfo,
 } from 'redux/selectors';
 import { fetchNamespaceList } from 'redux/thunks';
-import { usePermissions } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceForm from './NamespaceForm/NamespaceForm';
 import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
@@ -28,7 +28,6 @@ import * as S from './NamespaceListStyles';
 
 const NamespaceList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
 
   const namespacesList = useAppSelector(getNamespaceList);
   const pageInfo = useAppSelector(getNamespaceListPageInfo);
@@ -119,18 +118,15 @@ const NamespaceList: React.FC = () => {
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <NamespaceForm
-          btnEl={
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              disabled={!hasAccessTo(Permission.NAMESPACE_CREATE)}
-            >
-              Create namespace
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.NAMESPACE_CREATE}>
+          <NamespaceForm
+            btnEl={
+              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                Create namespace
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </S.Caption>
       <S.TableHeader container>
         <Grid item xs={12}>
