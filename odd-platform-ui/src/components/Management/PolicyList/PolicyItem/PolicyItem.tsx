@@ -57,7 +57,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.POLICY_DELETE)}
+                disabled={!hasAccessTo(Permission.POLICY_DELETE) || isAdministrator}
               >
                 Delete
               </AppButton>

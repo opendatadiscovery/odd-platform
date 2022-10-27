@@ -20,6 +20,8 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
   const dispatch = useAppDispatch();
   const { hasAccessTo } = usePermissions({});
 
+  const isUser = name === 'User';
+
   const handleDelete = React.useCallback(
     () => dispatch(deleteRole({ roleId })),
     [roleId, deleteRole]
@@ -73,7 +75,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
                 size='medium'
                 color='primaryLight'
                 startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.ROLE_DELETE)}
+                disabled={!hasAccessTo(Permission.ROLE_DELETE) || isUser}
               >
                 Delete
               </AppButton>
