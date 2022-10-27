@@ -114,7 +114,7 @@
   },
   {
     "name": "Air_flights",
-    "oddrn": "//airflow/host/aws.airflow.aws.com/",
+    "oddrn": "//airflow/host/aws.airflow.aws.com/air",
     "description": "_!+AirFlights",
     "namespace_name": "ETL",
     "active": true,

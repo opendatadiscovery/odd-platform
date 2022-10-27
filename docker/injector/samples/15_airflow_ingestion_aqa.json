@@ -1,5 +1,5 @@
 {
-  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com/",
+  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com/air",
   "items": [
     {
       "oddrn": "//airflow/host/aws.airflow.aws.com/flights/_!+AirFlights",
