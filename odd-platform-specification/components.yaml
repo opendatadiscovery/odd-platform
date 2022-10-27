@@ -2313,12 +2313,12 @@ components:
         - channel_id
         - text
 
-    MessageStatus:
+    MessageState:
       type: string
       enum:
-        - SENDING
+        - PENDING_SEND
         - SENT
-        - SEND_FAILED
+        - ERROR_SENDING
 
     Message:
       type: object
@@ -2341,8 +2341,8 @@ components:
           type: string
         channel:
           $ref: '#/components/schemas/MessageChannel'
-        status:
-          type: string
+        state:
+          $ref: '#/components/schemas/MessageState'
         children_messages_count:
           type: integer
           format: int64

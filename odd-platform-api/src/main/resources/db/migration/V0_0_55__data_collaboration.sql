@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS message
     message_text   TEXT                     NOT NULL,
     created_at     TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc'),
     sent_at        TIMESTAMP WITH TIME ZONE NULL,
+    state          VARCHAR(64)              NOT NULL,
+    provider       VARCHAR(64)              NOT NULL,
 
     CONSTRAINT fk_message_data_entity_id FOREIGN KEY (data_entity_id) REFERENCES data_entity (id)
 );
