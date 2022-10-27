@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 @Mapper(config = MapperConfig.class)
 public interface LabelMapper {
     @Mapping(source = "dto.pojo", target = ".")
+    @Mapping(source = "dto.hasExternalRelations", target = "external")
     Label mapToLabel(final LabelDto dto);
 
     Label mapToLabel(final LabelPojo pojo);

@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
@@ -91,6 +93,15 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
+    public Flux<DatasetFieldPojo> getExistingFieldsByOddrn(final Collection<String> oddrns) {
+        final SelectConditionStep<DatasetFieldRecord> selectConditionStep = DSL
+            .selectFrom(DATASET_FIELD)
+            .where(DATASET_FIELD.ODDRN.in(oddrns));
+
+        return jooqReactiveOperations.flux(selectConditionStep).map(r -> r.into(DatasetFieldPojo.class));
+    }
+
+    @Override
     public Mono<Long> getDataEntityIdByDatasetFieldId(final long datasetFieldId) {
         final var query = DSL.select(DATA_ENTITY.ID)
             .from(DATASET_FIELD)
@@ -133,7 +144,7 @@ public class ReactiveDatasetFieldRepositoryImpl
             .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
         return DatasetFieldDto.builder()
             .datasetFieldPojo(pojo)
-            .labels(labels.stream().map(l -> new LabelDto(l, null)).toList())
+            .labels(labels.stream().map(l -> new LabelDto(l, false)).toList())
             .parentFieldId(parentFieldId)
             .build();
     }

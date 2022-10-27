@@ -174,6 +174,7 @@ const DatasetStructure: React.FC = () => {
               dataEntityId={dataEntityId}
               versionId={versionId}
               indexToScroll={indexToScroll}
+              datasetRowsCount={datasetStats.rowsCount}
             />
           ) : null}
         </Grid>

@@ -5,20 +5,22 @@ import {
 } from 'react-virtualized/dist/commonjs/CellMeasurer';
 import { List, ListRowProps } from 'react-virtualized/dist/commonjs/List';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
-import { DataSetField } from 'generated-sources';
+import { DataSetField, DataSetStats } from 'generated-sources';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 
 interface DatasetStructureListProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureRoot: DataSetField[];
-  datasetRowsCount: number;
+  datasetRowsCount: DataSetStats['rowsCount'];
+  datasetColumnsCount: number;
   indexToScroll: number;
 }
 
 const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   dataEntityId,
   datasetRowsCount,
+  datasetColumnsCount,
   datasetStructureRoot,
   versionId,
   indexToScroll,
@@ -80,7 +82,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
             height={height}
             width={width}
             overscanRowCount={4}
-            rowCount={datasetRowsCount}
+            rowCount={datasetColumnsCount}
             rowHeight={cache.rowHeight}
             rowRenderer={renderListItem}
             scrollToIndex={indexToScroll}

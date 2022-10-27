@@ -2,9 +2,11 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.DeleteResultStep;
+import org.jooq.Field;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -14,6 +16,7 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.LabelRecord;
@@ -33,7 +36,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FI
 public class ReactiveLabelRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<LabelRecord, LabelPojo>
     implements ReactiveLabelRepository {
-    private static final String EXTERNAL_FIELD = "external";
+    private static final String HAS_EXTERNAL_RELATIONS_FIELD = "has_external_relations";
 
     public ReactiveLabelRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                        final JooqQueryHelper jooqQueryHelper) {
@@ -43,7 +46,9 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<LabelDto> getDto(final long id) {
         final var query = DSL.select(LABEL.fields())
-            .select(DSL.coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL), false).as(EXTERNAL_FIELD))
+            .select(DSL
+                .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(LABEL)
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(idCondition(id))
@@ -56,7 +61,9 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<List<LabelDto>> listDatasetFieldDtos(final Long datasetFieldId) {
         final var query = DSL.select(LABEL.fields())
-            .select(DSL.coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL), false).as(EXTERNAL_FIELD))
+            .select(DSL
+                .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(LABEL)
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(addSoftDeleteFilter(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)))
@@ -80,7 +87,9 @@ public class ReactiveLabelRepositoryImpl
         final var cteSelect = DSL.with(labelCte.getName())
             .as(select)
             .select(labelCte.fields())
-            .select(DSL.coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL), false).as(EXTERNAL_FIELD))
+            .select(DSL
+                .coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.ORIGIN.ne(LabelOrigin.INTERNAL.toString())), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .from(labelCte.getName())
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(labelCte.field(LABEL.ID)))
             .groupBy(labelCte.fields());
@@ -105,16 +114,22 @@ public class ReactiveLabelRepositoryImpl
     }
 
     @Override
-    public Flux<LabelToDatasetFieldPojo> listLabelRelations(final Collection<Long> datasetFieldIds) {
+    public Flux<LabelToDatasetFieldPojo> listLabelRelations(final Collection<Long> datasetFieldIds,
+                                                            final LabelOrigin origin) {
         if (CollectionUtils.isEmpty(datasetFieldIds)) {
             return Flux.just();
         }
-        final var query = DSL.select(LABEL_TO_DATASET_FIELD.fields())
+
+        var query = DSL.select(LABEL_TO_DATASET_FIELD.fields())
             .from(LABEL_TO_DATASET_FIELD)
             .join(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
             .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds).and(LABEL.IS_DELETED.isFalse()));
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(LabelToDatasetFieldPojo.class));
+
+        if (origin != null && !origin.equals(LabelOrigin.ALL)) {
+            query = query.and(LABEL_TO_DATASET_FIELD.ORIGIN.eq(origin.toString()));
+        }
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(LabelToDatasetFieldPojo.class));
     }
 
     @Override
@@ -169,9 +184,12 @@ public class ReactiveLabelRepositoryImpl
     }
 
     private LabelDto mapLabel(final Record jooqRecord) {
-        return new LabelDto(
-            jooqRecord.into(LabelPojo.class),
-            jooqRecord.get(EXTERNAL_FIELD, Boolean.class)
-        );
+        final Boolean hasExternalRelations = jooqRecord.get(HAS_EXTERNAL_RELATIONS_FIELD, Boolean.class);
+
+        if (hasExternalRelations == null) {
+            throw new IllegalStateException("hasExternalRelations field cannot be null");
+        }
+
+        return new LabelDto(jooqRecord.into(LabelPojo.class), hasExternalRelations);
     }
 }
