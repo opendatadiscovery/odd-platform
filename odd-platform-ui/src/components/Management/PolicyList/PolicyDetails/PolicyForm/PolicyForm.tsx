@@ -89,7 +89,9 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
     <Grid container flexDirection='column' flexWrap='nowrap'>
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
-          {policyId ? `Edit policy ${name}` : 'Create policy'}
+          {policyId
+            ? `${isAdministrator ? 'View' : 'Edit'} policy ${name}`
+            : 'Create policy'}
         </Typography>
         <Link to={toPolicies}>
           <AppIconButton
@@ -123,17 +125,19 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         />
         {policyController}
       </form>
-      <AppButton
-        size='large'
-        type='submit'
-        form='policy-form'
-        color='primary'
-        fullWidth
-        sx={{ mt: 3, width: 'fit-content' }}
-        disabled={!(formState.isValid && isValid && !isAdministrator)}
-      >
-        {policyId ? 'Save changes' : 'Create'}
-      </AppButton>
+      {!isAdministrator && (
+        <AppButton
+          size='large'
+          type='submit'
+          form='policy-form'
+          color='primary'
+          fullWidth
+          sx={{ mt: 3, width: 'fit-content' }}
+          disabled={!(formState.isValid && isValid && !isAdministrator)}
+        >
+          {policyId ? 'Save changes' : 'Create'}
+        </AppButton>
+      )}
     </Grid>
   );
 };

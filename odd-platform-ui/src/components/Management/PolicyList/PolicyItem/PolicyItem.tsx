@@ -47,22 +47,24 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
           >
             {isAdministrator ? 'View' : 'Edit'}
           </AppButton>
-          <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this policy?'
-            actionName='Delete Policy'
-            actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
-            onConfirm={handleDelete}
-            actionBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.POLICY_DELETE) || isAdministrator}
-              >
-                Delete
-              </AppButton>
-            }
-          />
+          {!isAdministrator && (
+            <ConfirmationDialog
+              actionTitle='Are you sure you want to delete this policy?'
+              actionName='Delete Policy'
+              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              onConfirm={handleDelete}
+              actionBtn={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<DeleteIcon />}
+                  disabled={!hasAccessTo(Permission.POLICY_DELETE)}
+                >
+                  Delete
+                </AppButton>
+              }
+            />
+          )}
         </S.ActionsContainer>
       </Grid>
     </S.Container>
