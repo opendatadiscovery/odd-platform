@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
 import com.nimbusds.jose.shaded.json.JSONArray;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +11,9 @@ import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.CognitoCondition;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
-import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -44,7 +41,7 @@ public class CognitoUserHandler implements OAuthUserHandler<OidcUser, OidcUserRe
                                                             final OidcUserRequest request) {
         final String registrationId = request.getClientRegistration().getRegistrationId();
         final ODDOAuth2Properties.OAuth2Provider provider = oAuth2Properties.getClient().get(registrationId);
-        final Set<UserRole> roles = new HashSet<>();
+        boolean isAdmin = false;
         final OidcIdToken token = oidcUser.getIdToken();
         if (CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
             final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute())
@@ -52,7 +49,7 @@ public class CognitoUserHandler implements OAuthUserHandler<OidcUser, OidcUserRe
             final String username = token.getClaim(adminPrincipalAttribute);
             final boolean containsUsername = containsIgnoreCase(provider.getAdminPrincipals(), username);
             if (containsUsername) {
-                roles.add(UserRole.ROLE_ADMIN);
+                isAdmin = true;
             }
         }
         if (CollectionUtils.isNotEmpty(provider.getAdminGroups())) {
@@ -63,11 +60,11 @@ public class CognitoUserHandler implements OAuthUserHandler<OidcUser, OidcUserRe
                     .map(String.class::cast)
                     .anyMatch(g -> containsIgnoreCase(provider.getAdminGroups(), g));
                 if (containsGroup) {
-                    roles.add(UserRole.ROLE_ADMIN);
+                    isAdmin = true;
                 }
             }
         }
-        final Set<GrantedAuthority> authorities = authorityExtractor.getAuthoritiesByUserRoles(roles);
+        final Set<GrantedAuthority> authorities = authorityExtractor.getAuthorities(isAdmin);
         final String userNameAttributeName = provider.getUserNameAttribute();
         final String userNameAttribute = Objects.requireNonNullElse(userNameAttributeName, COGNITO_USERNAME);
         final DefaultOidcUser enrichedUser =

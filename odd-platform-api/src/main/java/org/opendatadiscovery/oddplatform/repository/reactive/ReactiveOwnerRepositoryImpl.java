@@ -6,7 +6,6 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
-import org.jooq.SelectOnConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;

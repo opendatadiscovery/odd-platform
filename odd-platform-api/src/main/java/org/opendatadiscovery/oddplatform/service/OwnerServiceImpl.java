@@ -18,6 +18,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -25,8 +26,8 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
-
     private final ReactiveOwnerRepository ownerRepository;
+    private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
     private final OwnerMapper ownerMapper;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
@@ -51,7 +52,6 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Owner> create(final OwnerFormData formData) {
         final List<Long> roleIds = getRoleIdsList(formData);
@@ -66,7 +66,6 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Owner> update(final long id, final OwnerFormData updateEntityForm) {
         final List<Long> newRoles = getRoleIdsList(updateEntityForm);
@@ -86,11 +85,12 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Void> delete(final long id) {
-        return Mono.zip(termOwnershipRepository.existsByOwner(id), ownershipRepository.existsByOwner(id))
-            .map(t -> BooleanUtils.toBoolean(t.getT1()) || BooleanUtils.toBoolean(t.getT2()))
+        return Mono.zip(termOwnershipRepository.existsByOwner(id), ownershipRepository.existsByOwner(id),
+                userOwnerMappingRepository.isOwnerAssociated(id))
+            .map(t -> BooleanUtils.toBoolean(t.getT1()) || BooleanUtils.toBoolean(t.getT2())
+                || BooleanUtils.toBoolean(t.getT3()))
             .filter(exists -> !exists)
             .switchIfEmpty(Mono.error(new IllegalStateException(
                 "Owner with ID %d cannot be deleted: there are still resources attached".formatted(id))))

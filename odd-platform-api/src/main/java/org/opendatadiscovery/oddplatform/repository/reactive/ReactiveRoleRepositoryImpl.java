@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import org.jooq.Record;
 import org.jooq.Select;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -79,6 +79,14 @@ public class ReactiveRoleRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                 r -> mapRecordToDto(r, roleCTE.getName()),
                 fetchCount(nameQuery)
             ));
+    }
+
+    @Override
+    public Mono<RolePojo> getByName(final String name) {
+        final SelectConditionStep<RoleRecord> query = DSL.selectFrom(ROLE)
+            .where(addSoftDeleteFilter(ROLE.NAME.eq(name)));
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(RolePojo.class));
     }
 
     private RoleDto mapRecordToDto(final Record r) {

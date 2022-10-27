@@ -34,7 +34,6 @@ public class TagServiceImpl implements TagService {
     private final ReactiveTermSearchEntrypointRepository reactiveTermSearchEntrypointRepository;
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Flux<Tag> bulkCreate(final List<TagFormData> tags) {
         final List<TagPojo> pojos = tags.stream().map(tagMapper::mapToPojo).toList();
         return reactiveTagRepository.bulkCreate(pojos)
@@ -42,7 +41,6 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Tag> update(final long tagId, final TagFormData formData) {
         return reactiveTagRepository.getDto(tagId)
@@ -56,7 +54,6 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Tag> delete(final long tagId) {
         return reactiveTagRepository.getDto(tagId)

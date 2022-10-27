@@ -11,11 +11,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PolicyValidator {
+public class PolicyJSONValidator {
     private final JsonSchema jsonSchema;
     private final ObjectMapper objectMapper;
 
-    public PolicyValidator(final ObjectMapper objectMapper) throws IOException {
+    public PolicyJSONValidator(final ObjectMapper objectMapper) throws IOException {
         final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
         this.jsonSchema = factory.getSchema(new ClassPathResource("schema/policy_schema.json").getInputStream());
         this.objectMapper = objectMapper;

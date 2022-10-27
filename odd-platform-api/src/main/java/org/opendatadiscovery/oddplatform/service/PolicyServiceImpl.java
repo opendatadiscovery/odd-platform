@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.io.InputStream;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Policy;
 import org.opendatadiscovery.oddplatform.api.contract.model.PolicyDetails;
@@ -8,6 +9,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.PolicyFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PolicyList;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.PolicyPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactivePolicyRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRoleToPolicyRepository;
 import org.springframework.core.io.ClassPathResource;
@@ -21,8 +24,9 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final ReactivePolicyRepository policyRepository;
     private final ReactiveRoleToPolicyRepository roleToPolicyRepository;
-    private final PolicyValidator policyValidator;
+    private final PolicyJSONValidator policyJSONValidator;
     private final PolicyMapper policyMapper;
+    private final RoleService roleService;
 
     private static String loadPolicySchema() {
         try (final InputStream is = new ClassPathResource("schema/policy_schema.json").getInputStream()) {
@@ -46,7 +50,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public Mono<PolicyDetails> create(final PolicyFormData formData) {
-        policyValidator.validate(formData.getPolicy());
+        policyJSONValidator.validate(formData.getPolicy());
         return Mono.just(formData)
             .map(policyMapper::mapToPojo)
             .flatMap(policyRepository::create)
@@ -55,7 +59,7 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public Mono<PolicyDetails> update(final long id, final PolicyFormData formData) {
-        policyValidator.validate(formData.getPolicy());
+        policyJSONValidator.validate(formData.getPolicy());
         return policyRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Policy with id %d hasn't been found".formatted(id))))
             .map(pojo -> policyMapper.applyToPojo(formData, pojo))
@@ -76,5 +80,12 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Mono<String> getPolicySchema() {
         return Mono.just(POLICY_SCHEMA);
+    }
+
+    @Override
+    public Mono<List<PolicyPojo>> getCurrentUserPolicies() {
+        return roleService.getCurrentUserRoles()
+            .map(roles -> roles.stream().map(RolePojo::getId).toList())
+            .flatMap(policyRepository::getRolesPolicies);
     }
 }

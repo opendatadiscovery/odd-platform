@@ -4,16 +4,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.ODDOAuth2Properties;
 import org.opendatadiscovery.oddplatform.auth.ODDOAuth2PropertiesConverter;
 import org.opendatadiscovery.oddplatform.auth.Provider;
+import org.opendatadiscovery.oddplatform.auth.authorization.AuthorizationCustomizer;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
-import org.opendatadiscovery.oddplatform.auth.manager.OwnerBasedReactiveAuthorizationManager;
-import org.opendatadiscovery.oddplatform.auth.util.SecurityConstants;
+import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
+import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesRegistrationAdapter;
@@ -28,6 +33,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
@@ -50,6 +58,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.context.webflux.SpringWebFluxContext;
 import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.dto.security.UserProviderRole.USER;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
@@ -69,7 +78,7 @@ public class OAuthSecurityConfiguration {
         final ServerHttpSecurity http,
         final OAuthLogoutSuccessHandler logoutHandler,
         final ReactiveClientRegistrationRepository repo,
-        final OwnerBasedReactiveAuthorizationManager authManager,
+        final PermissionService permissionService,
         final TemplateEngine templateEngine) {
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
@@ -78,12 +87,7 @@ public class OAuthSecurityConfiguration {
             .cors().and()
             .csrf().disable()
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
-            .authorizeExchange(e -> e
-                .pathMatchers(SecurityConstants.WHITELIST_PATHS)
-                .permitAll()
-                .matchers(SecurityConstants.OWNER_ACCESS_PATHS)
-                .access(authManager)
-                .pathMatchers("/**").authenticated())
+            .authorizeExchange(new AuthorizationCustomizer(permissionService))
             .oauth2Login(withDefaults())
             .logout()
             .logoutSuccessHandler(logoutHandler)
@@ -122,6 +126,25 @@ public class OAuthSecurityConfiguration {
                 }
                 return handler.get().enrichUserWithProviderInformation(user, request);
             });
+    }
+
+    @Bean
+    public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
+        return authorities -> {
+            if (CollectionUtils.isEmpty(authorities)) {
+                return Set.of(new SimpleGrantedAuthority(USER.name()));
+            }
+            final Set<String> grantedAuthorities = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+            final boolean containsProviderRole = Stream.of(UserProviderRole.values())
+                .map(UserProviderRole::name)
+                .anyMatch(grantedAuthorities::contains);
+            if (containsProviderRole) {
+                return authorities;
+            }
+            return Set.of(new SimpleGrantedAuthority(USER.name()));
+        };
     }
 
     @Bean

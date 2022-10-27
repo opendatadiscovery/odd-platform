@@ -1,11 +1,9 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +12,6 @@ import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.GithubCondition;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
-import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -54,7 +51,6 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
         final String registrationId = request.getClientRegistration().getRegistrationId();
         final ODDOAuth2Properties.OAuth2Provider provider = oAuth2Properties.getClient().get(registrationId);
         final String userNameAttributeName = provider.getUserNameAttribute();
-        final Set<UserRole> roles = new HashSet<>();
         if (CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
             final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute())
                 ? provider.getAdminAttribute() : USER_LOGIN;
@@ -63,12 +59,15 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
                 .map(name -> containsIgnoreCase(provider.getAdminPrincipals(), name))
                 .orElse(false);
             if (containsUsername) {
-                roles.add(UserRole.ROLE_ADMIN);
+                return Mono.just(new DefaultOAuth2User(grantedAuthorityExtractor.getAuthorities(true),
+                    user.getAttributes(),
+                    userNameAttributeName)
+                );
             }
         }
         if (StringUtils.isEmpty(provider.getOrganizationName())) {
             return Mono.just(
-                new DefaultOAuth2User(grantedAuthorityExtractor.getAuthoritiesByUserRoles(roles),
+                new DefaultOAuth2User(grantedAuthorityExtractor.getAuthorities(false),
                     user.getAttributes(),
                     userNameAttributeName)
             );
@@ -90,21 +89,17 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
             .filter(belongs -> belongs)
             .switchIfEmpty(Mono.error(() -> new OAuth2AuthenticationException(new OAuth2Error("invalid_token",
                 String.format("User doesn't belong to organization %s", provider.getOrganizationName()), ""))))
-            .then(Mono.defer(() -> getTeamRoles(request, provider)))
-            .map(teamRoles -> {
-                roles.addAll(teamRoles);
-                return roles;
-            })
-            .map(r -> new DefaultOAuth2User(grantedAuthorityExtractor.getAuthoritiesByUserRoles(r),
+            .then(Mono.defer(() -> determineAdminUser(request, provider)))
+            .map(isAdmin -> new DefaultOAuth2User(grantedAuthorityExtractor.getAuthorities(isAdmin),
                 user.getAttributes(),
                 userNameAttributeName)
             );
     }
 
-    private Mono<Set<UserRole>> getTeamRoles(final OAuth2UserRequest request,
+    private Mono<Boolean> determineAdminUser(final OAuth2UserRequest request,
                                              final ODDOAuth2Properties.OAuth2Provider provider) {
         if (CollectionUtils.isEmpty(provider.getAdminGroups())) {
-            return Mono.just(Set.of());
+            return Mono.just(false);
         }
         final Mono<List<Map<String, Object>>> userTeamsRequest = webClient
             .get()
@@ -116,19 +111,12 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<>() {
             });
-        return userTeamsRequest.map(teams -> {
-            final boolean isUserInAdminGroup = teams.stream()
-                .filter(team -> teamBelongsToOrganization(team, provider.getOrganizationName()))
-                .map(t -> t.get(TEAM_NAME))
-                .filter(Objects::nonNull)
-                .map(Object::toString)
-                .anyMatch(userTeam -> containsIgnoreCase(provider.getAdminGroups(), userTeam));
-            final Set<UserRole> roles = new HashSet<>();
-            if (isUserInAdminGroup) {
-                roles.add(UserRole.ROLE_ADMIN);
-            }
-            return roles;
-        });
+        return userTeamsRequest.map(teams -> teams.stream()
+            .filter(team -> teamBelongsToOrganization(team, provider.getOrganizationName()))
+            .map(t -> t.get(TEAM_NAME))
+            .filter(Objects::nonNull)
+            .map(Object::toString)
+            .anyMatch(userTeam -> containsIgnoreCase(provider.getAdminGroups(), userTeam)));
     }
 
     @SuppressWarnings("unchecked")

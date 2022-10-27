@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,7 +28,6 @@ public abstract class AlertMapper {
         return associatedOwnerMapper.mapAssociatedOwner(
             new AssociatedOwnerDto(alertDto.getAlert().getStatusUpdatedBy(),
                 alertDto.getUpdatedByOwner(),
-                Set.of(),
                 null)
         );
     }

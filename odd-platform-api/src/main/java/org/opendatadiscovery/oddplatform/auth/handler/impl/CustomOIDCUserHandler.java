@@ -1,10 +1,10 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +13,6 @@ import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.CustomProviderCondition;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
-import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -35,7 +34,7 @@ public class CustomOIDCUserHandler implements OAuthUserHandler<OidcUser, OidcUse
 
     @Override
     public boolean shouldHandle(final String provider) {
-        final Set<String> providers = Arrays.stream(Provider.values())
+        final Set<String> providers = Stream.of(Provider.values())
             .map(Enum::name)
             .map(String::toLowerCase)
             .collect(Collectors.toSet());
@@ -48,17 +47,17 @@ public class CustomOIDCUserHandler implements OAuthUserHandler<OidcUser, OidcUse
         final ODDOAuth2Properties.OAuth2Provider provider = oAuth2Properties.getClient().get(registrationId);
         final String userNameAttributeName = provider.getUserNameAttribute();
         final String userNameAttribute = Objects.requireNonNullElse(userNameAttributeName, IdTokenClaimNames.SUB);
-        final Set<UserRole> roles = new HashSet<>();
+        boolean isAdmin = false;
         final OidcIdToken token = oidcUser.getIdToken();
         if (StringUtils.isNotEmpty(provider.getAdminAttribute())
             && CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
             final String adminAttribute = token.getClaim(provider.getAdminAttribute());
             final boolean containsUsername = containsIgnoreCase(provider.getAdminPrincipals(), adminAttribute);
             if (containsUsername) {
-                roles.add(UserRole.ROLE_ADMIN);
+                isAdmin = true;
             }
         }
-        final Set<GrantedAuthority> authorities = authorityExtractor.getAuthoritiesByUserRoles(roles);
+        final Set<GrantedAuthority> authorities = authorityExtractor.getAuthorities(isAdmin);
         final DefaultOidcUser enrichedUser =
             new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), userNameAttribute);
         return Mono.just(enrichedUser);

@@ -12,18 +12,16 @@ public final class SecurityConstants {
         "/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**"
     };
 
-    public static final ServerWebExchangeMatcher[] OWNER_ACCESS_PATHS = {
-        new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
-            HttpMethod.POST),
-        new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
-            HttpMethod.PUT),
-        new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
-            HttpMethod.DELETE),
-        new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/**",
-            HttpMethod.POST),
-        new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/**",
-            HttpMethod.PUT),
-        new PathPatternParserServerWebExchangeMatcher("/api/alerts/{alert_id}/**",
-            HttpMethod.PUT)
-    };
+    public static final ServerWebExchangeMatcher NAMESPACE_CREATE =
+        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.POST);
+    public static final ServerWebExchangeMatcher NAMESPACE_UPDATE =
+        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.PUT);
+    public static final ServerWebExchangeMatcher NAMESPACE_DELETE =
+        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
+    public static final ServerWebExchangeMatcher DATA_ENTITY_GROUP_CREATE =
+        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
+    public static final ServerWebExchangeMatcher TERM_CREATE =
+        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
+    public static final ServerWebExchangeMatcher DATA_SOURCE_CREATE =
+        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
 }

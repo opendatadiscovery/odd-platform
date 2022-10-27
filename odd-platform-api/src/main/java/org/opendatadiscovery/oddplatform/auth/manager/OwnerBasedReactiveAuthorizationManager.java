@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.auth.condition.AuthorizationManagerCondition;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
-import org.opendatadiscovery.oddplatform.service.PermissionService;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -25,7 +24,7 @@ public class OwnerBasedReactiveAuthorizationManager implements ReactiveAuthoriza
     private static final String DATASET_FIELD_ID = "dataset_field_id";
     private static final String ALERT_ID = "alert_id";
 
-    private final PermissionService securityService;
+    //private final PermissionService securityService;
     private final ReactiveDatasetFieldRepository datasetFieldRepository;
     private final ReactiveAlertRepository alertRepository;
 

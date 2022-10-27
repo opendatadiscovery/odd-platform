@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
@@ -9,22 +9,26 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Policy;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
 import org.opendatadiscovery.oddplatform.api.contract.model.RoleFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.RoleList;
+import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
+import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
 import org.opendatadiscovery.oddplatform.mapper.RoleMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerToRoleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRoleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRoleToPolicyRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
-    private static final Set<String> PREDEFINED_ROLES = Set.of("admin", "user");
-
     private final RoleMapper roleMapper;
     private final ReactiveRoleRepository roleRepository;
     private final ReactiveRoleToPolicyRepository roleToPolicyRepository;
     private final ReactiveOwnerToRoleRepository ownerToRoleRepository;
+    private final AuthIdentityProvider authIdentityProvider;
+    private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
 
     @Override
     public Mono<RoleList> list(final int page, final int size, final String query) {
@@ -46,6 +50,7 @@ public class RoleServiceImpl implements RoleService {
             .map(roleMapper::mapFromDto);
     }
 
+    //todo don't allow to update predefined roles
     @Override
     @ReactiveTransactional
     public Mono<Role> update(final long id, final RoleFormData formData) {
@@ -64,12 +69,14 @@ public class RoleServiceImpl implements RoleService {
             .map(roleMapper::mapFromDto);
     }
 
+    //todo don't allow to delete predefined roles
     @Override
     @ReactiveTransactional
     public Mono<Void> delete(final long id) {
         return roleRepository.get(id)
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Role with id %s not found".formatted(id))))
-            .filter(role -> !PREDEFINED_ROLES.contains(role.getName()))
+            .filter(role -> Stream.of(UserProviderRole.values())
+                .noneMatch(r -> r.getValue().equalsIgnoreCase(role.getName())))
             .switchIfEmpty(Mono.error(
                 new IllegalArgumentException("Role with id %s is predefined and cannot be deleted".formatted(id))))
             .then(ownerToRoleRepository.isRoleAttachedToOwner(id))
@@ -79,6 +86,20 @@ public class RoleServiceImpl implements RoleService {
             .then(roleToPolicyRepository.deleteRoleRelationsExcept(id, List.of()))
             .then(roleRepository.delete(id))
             .then();
+    }
+
+    @Override
+    public Mono<List<RolePojo>> getCurrentUserRoles() {
+        return authIdentityProvider.getCurrentUser()
+            .flatMap(user -> userOwnerMappingRepository.getUserRolesByOwner(user.username(), user.provider()))
+            .filter(CollectionUtils::isNotEmpty)
+            .switchIfEmpty(Mono.defer(() -> getUserProviderRole().map(List::of)))
+            .switchIfEmpty(Mono.just(List.of()));
+    }
+
+    private Mono<RolePojo> getUserProviderRole() {
+        return authIdentityProvider.getCurrentUserProviderRole()
+            .flatMap(role -> roleRepository.getByName(role.getValue()));
     }
 
     private List<Long> getPolicyIdsList(final RoleFormData formData) {

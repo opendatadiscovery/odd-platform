@@ -9,4 +9,6 @@ public interface ReactiveRoleRepository extends ReactiveCRUDRepository<RolePojo>
     Mono<RoleDto> getDto(final long id);
 
     Mono<Page<RoleDto>> listDto(final int page, final int size, final String nameQuery);
+
+    Mono<RolePojo> getByName(final String name);
 }

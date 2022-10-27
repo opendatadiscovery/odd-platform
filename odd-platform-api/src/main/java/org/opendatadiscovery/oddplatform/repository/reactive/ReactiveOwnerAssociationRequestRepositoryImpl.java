@@ -160,7 +160,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
         final OwnerPojo statusOwner = jooqRecordHelper.extractRelation(statusUpdatedRecord, OWNER, OwnerPojo.class);
 
         final AssociatedOwnerDto associatedOwnerDto = pojo.getStatusUpdatedBy() != null
-            ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner, Set.of(), null) : null;
+            ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner, null) : null;
         return new OwnerAssociationRequestDto(pojo, requestOwner.getName(), associatedOwnerDto);
     }
 }
