@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
@@ -61,27 +62,21 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
                 final List<Long> datasetFieldIds = datasetFieldMap.values().stream()
                     .map(DatasetFieldPojo::getId)
                     .toList();
-                return Mono.zip(getExternalRelations(datasetFieldIds),
-                    labelService.getOrCreateLabelsByName(externalLabelNames)
-                        .collectMap(LabelPojo::getName, identity())
-                        .map(labelsMap -> getUpdatedRelations(labelsMap, datasetFieldMap, datasetEntities)));
+
+                return labelService.getOrCreateLabelsByName(externalLabelNames)
+                    .collectMap(LabelPojo::getName, identity())
+                    .map(labelsMap -> getUpdatedRelations(labelsMap, datasetFieldMap, datasetEntities))
+                    .zipWith(labelRepository.listLabelRelations(datasetFieldIds, LabelOrigin.EXTERNAL).collectList());
             })
-            .flatMap((function((current, updated) -> {
+            .flatMap((function((updated, current) -> {
                 final List<LabelToDatasetFieldPojo> pojosToDelete = current.stream()
                     .filter(r -> !updated.contains(r))
                     .toList();
-                return labelRepository.deleteRelations(pojosToDelete)
-                    .then(Mono.just(updated));
+
+                return labelRepository.deleteRelations(pojosToDelete).then(Mono.just(updated));
             })))
             .flatMapMany(labelRepository::createRelations)
             .then();
-    }
-
-    private Mono<List<LabelToDatasetFieldPojo>> getExternalRelations(final Collection<Long> datasetFieldIds) {
-        return labelRepository.listLabelRelations(datasetFieldIds)
-            // TODO: filter in database?
-            .filter(LabelToDatasetFieldPojo::getExternal)
-            .collectList();
     }
 
     private List<LabelToDatasetFieldPojo> getUpdatedRelations(final Map<String, LabelPojo> labelsMap,
@@ -93,7 +88,7 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
                 .map(label -> new LabelToDatasetFieldPojo()
                     .setLabelId(labelsMap.get(label).getId())
                     .setDatasetFieldId(datasetFieldMap.get(ds.field().getOddrn()).getId())
-                    .setExternal(true)
+                    .setOrigin(LabelOrigin.EXTERNAL.toString())
                 )).toList();
     }
 

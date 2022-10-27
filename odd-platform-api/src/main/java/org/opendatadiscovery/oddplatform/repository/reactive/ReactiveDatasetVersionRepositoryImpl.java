@@ -19,6 +19,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
@@ -32,7 +33,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
@@ -67,7 +70,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     public Mono<DatasetStructureDto> getDatasetVersion(final long datasetVersionId) {
         final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
             .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
@@ -86,9 +89,7 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         return jooqReactiveOperations
             .flux(selectHavingStep)
-            .collect(Collectors
-                .groupingBy(this::extractDatasetVersion,
-                    Collectors.mapping(this::extractDatasetFieldDto, Collectors.toList())))
+            .collect(groupingBy(this::extractDatasetVersion, mapping(this::extractDatasetFieldDto, toList())))
             .flatMap(m -> m.entrySet().stream()
                 .findFirst()
                 .map(e -> Mono.just(DatasetStructureDto.builder()
@@ -112,7 +113,7 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
             .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
@@ -133,9 +134,8 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         return jooqReactiveOperations
             .flux(selectHavingStep)
-            .collect(Collectors
-                .groupingBy(this::extractDatasetVersion,
-                    Collectors.mapping(this::extractDatasetFieldDto, Collectors.toList())))
+            .collect(groupingBy(this::extractDatasetVersion,
+                mapping(this::extractDatasetFieldDto, toList())))
             .flatMap(m -> m.entrySet().stream()
                 .findFirst()
                 .map(e -> Mono.just(DatasetStructureDto.builder()
@@ -211,9 +211,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(dataVersionPojoIds));
 
         return jooqReactiveOperations.flux(vidToFieldsSelect)
-            .collect(Collectors.groupingBy(
+            .collect(groupingBy(
                 r -> r.get(DATASET_STRUCTURE.DATASET_VERSION_ID),
-                mapping(this::extractDatasetField, Collectors.toList())));
+                mapping(this::extractDatasetField, toList())));
     }
 
     private DatasetVersionPojo extractDatasetVersion(final Record datasetVersionRecord) {
@@ -234,11 +234,17 @@ public class ReactiveDatasetVersionRepositoryImpl
 
     private List<LabelDto> extractLabels(final Record record) {
         final Set<LabelPojo> labels = jooqRecordHelper.extractAggRelation(record, LABELS, LabelPojo.class);
-        final Map<Long, LabelToDatasetFieldPojo> relations =
-            jooqRecordHelper.extractAggRelation(record, LABEL_RELATIONS, LabelToDatasetFieldPojo.class).stream()
-                .collect(Collectors.toMap(LabelToDatasetFieldPojo::getLabelId, identity()));
+
+        final Map<Long, LabelToDatasetFieldPojo> relations = jooqRecordHelper
+            .extractAggRelation(record, LABEL_RELATIONS, LabelToDatasetFieldPojo.class)
+            .stream()
+            .collect(Collectors.toMap(LabelToDatasetFieldPojo::getLabelId, identity()));
+
         return labels.stream()
-            .map(labelPojo -> new LabelDto(labelPojo, relations.get(labelPojo.getId()).getExternal()))
+            .map(labelPojo -> new LabelDto(
+                labelPojo,
+                !LabelOrigin.INTERNAL.equals(LabelOrigin.valueOf(relations.get(labelPojo.getId()).getOrigin()))
+            ))
             .toList();
     }
 }
