@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties;
 import org.opendatadiscovery.oddplatform.notification.processor.AlertNotificationMessageProcessor;
 import org.opendatadiscovery.oddplatform.notification.wal.PostgresWALMessageDecoder;
@@ -21,7 +22,7 @@ public class NotificationSubscriberStarter {
         r -> new Thread(r, "notification-subscriber-thread")
     );
 
-    private final PGConnectionFactory pgConnectionFactory;
+    private final PostgreSQLLeaderElectionManager leaderElectionManager;
     private final PostgresWALMessageDecoder messageDecoder;
     private final NotificationsProperties notificationsProperties;
     private final AlertNotificationMessageProcessor messageProcessor;
@@ -30,6 +31,6 @@ public class NotificationSubscriberStarter {
     public void runNotificationSubscriber() {
         log.debug("Notification subscription is enabled, starting WAL parser");
         executorService.submit(new NotificationSubscriber(
-            notificationsProperties.getWal(), pgConnectionFactory, messageDecoder, messageProcessor));
+            notificationsProperties.getWal(), leaderElectionManager, messageDecoder, messageProcessor));
     }
 }

@@ -5,4 +5,8 @@ import reactor.core.publisher.Mono;
 
 public interface MessageRepository {
     Mono<MessagePojo> create(final MessagePojo message);
+
+    Mono<MessagePojo> getSendingCandidate();
+
+    Mono<MessagePojo> markMessageAsSent(final long messageId);
 }

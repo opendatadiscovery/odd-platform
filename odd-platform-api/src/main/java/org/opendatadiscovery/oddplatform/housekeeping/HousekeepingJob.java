@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.housekeeping;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,23 +34,27 @@ public class HousekeepingJob {
 
         log.debug("Running housekeeping jobs");
 
-        final DSLContext dslContext = DSL.using(pgConnectionFactory.getConnection());
+        try (final Connection connection = pgConnectionFactory.getConnection()) {
+            final DSLContext dslContext = DSL.using(connection);
 
-        final int deletedSearchFacets = dslContext
-            .deleteFrom(SEARCH_FACETS)
-            .where(SEARCH_FACETS.LAST_ACCESSED_AT.lessOrEqual(
-                DSL.currentOffsetDateTime().minus(housekeepingTTLProperties.getSearchFacetsDays())))
-            .execute();
+            final int deletedSearchFacets = dslContext
+                .deleteFrom(SEARCH_FACETS)
+                .where(SEARCH_FACETS.LAST_ACCESSED_AT.lessOrEqual(
+                    DSL.currentOffsetDateTime().minus(housekeepingTTLProperties.getSearchFacetsDays())))
+                .execute();
 
-        log.debug("Housekeeping job deleted {} outdated search facets", deletedSearchFacets);
+            log.debug("Housekeeping job deleted {} outdated search facets", deletedSearchFacets);
 
-        final int deletedResolvedAlerts = dslContext
-            .deleteFrom(ALERT)
-            .where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.toString()))
-            .and(ALERT.STATUS_UPDATED_AT.lessOrEqual(
-                DSL.currentLocalDateTime().minus(housekeepingTTLProperties.getResolvedAlertsDays())))
-            .execute();
+            final int deletedResolvedAlerts = dslContext
+                .deleteFrom(ALERT)
+                .where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.toString()))
+                .and(ALERT.STATUS_UPDATED_AT.lessOrEqual(
+                    DSL.currentLocalDateTime().minus(housekeepingTTLProperties.getResolvedAlertsDays())))
+                .execute();
 
-        log.debug("Housekeeping job deleted {} resolved alerts", deletedResolvedAlerts);
+            log.debug("Housekeeping job deleted {} resolved alerts", deletedResolvedAlerts);
+        } catch (final SQLException e) {
+            log.error("Failed to run a housekeeping job", e);
+        }
     }
 }

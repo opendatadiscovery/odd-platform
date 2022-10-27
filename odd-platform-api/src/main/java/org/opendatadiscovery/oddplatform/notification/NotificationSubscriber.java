@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Table;
+import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties.WalProperties;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
@@ -30,7 +31,7 @@ public class NotificationSubscriber extends Thread {
 
     private final WalProperties walProperties;
 
-    private final PGConnectionFactory connectionFactory;
+    private final PostgreSQLLeaderElectionManager leaderElectionManager;
     private final PostgresWALMessageDecoder messageDecoder;
     private final PostgresWALMessageProcessor messageProcessor;
 
@@ -43,15 +44,11 @@ public class NotificationSubscriber extends Thread {
         ));
 
         while (!Thread.interrupted()) {
-            final Connection replicationConnection = connectionFactory.getConnection(true);
+            try (final Connection connection = leaderElectionManager.acquire(walProperties.getAdvisoryLockId(), true)) {
+                final PGConnection pgReplicationConnection = connection.unwrap(PGConnection.class);
 
-            try {
-                acquireAdvisoryLock(replicationConnection);
-
-                final PGConnection pgReplicationConnection = replicationConnection.unwrap(PGConnection.class);
-
-                registerReplicationSlot(replicationConnection, pgReplicationConnection);
-                registerPublication(replicationConnection, Tables.ALERT);
+                registerReplicationSlot(connection, pgReplicationConnection);
+                registerPublication(connection, Tables.ALERT);
 
                 final ChainedLogicalStreamBuilder streamBuilder =
                     pgReplicationConnection.getReplicationAPI()
@@ -92,12 +89,6 @@ public class NotificationSubscriber extends Thread {
                 throw new NotificationSubscriberException(e);
             } catch (final Exception e) {
                 log.error("Error occurred while subscribing", e);
-            } finally {
-                try {
-                    replicationConnection.close();
-                } catch (final SQLException e) {
-                    log.error("Error while trying to close JDBC replication connection", e);
-                }
             }
 
             log.debug("Released a lock, waiting 10 seconds for next iteration");
@@ -108,15 +99,6 @@ public class NotificationSubscriber extends Thread {
                 throw new NotificationSubscriberException(e);
             }
         }
-    }
-
-    private void acquireAdvisoryLock(final Connection replicationConnection) throws SQLException {
-        try (final Statement advisoryLockStatement = replicationConnection.createStatement()) {
-            advisoryLockStatement.execute(
-                "SELECT pg_advisory_lock(%d)".formatted(walProperties.getAdvisoryLockId()));
-        }
-
-        log.debug("Acquired advisory lock on id = {}", walProperties.getAdvisoryLockId());
     }
 
     private void registerReplicationSlot(final Connection connection,

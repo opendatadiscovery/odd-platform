@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 public interface SlackAPIClient {
     Flux<SlackChannelDto> getSlackChannels();
 
-    Mono<Void> postMessage(final String channelId, final String string);
+    Mono<String> postMessage(final String channelId, final String string);
 }

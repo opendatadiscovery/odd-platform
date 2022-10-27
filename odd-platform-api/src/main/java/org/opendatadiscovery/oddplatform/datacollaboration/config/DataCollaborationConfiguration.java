@@ -9,12 +9,14 @@ import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient
 import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClientImpl;
 import org.opendatadiscovery.oddplatform.datacollaboration.mapper.DataCollaborationMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnDataCollaboration
+@EnableConfigurationProperties(DataCollaborationProperties.class)
 public class DataCollaborationConfiguration {
     @Bean
     public DataCollaborationMapper dataCollaborationMapper() {

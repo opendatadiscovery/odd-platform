@@ -43,9 +43,9 @@ public class SlackAPIClientImpl implements SlackAPIClient {
     }
 
     @Override
-    public Mono<Void> postMessage(final String channelId, final String string) {
+    public Mono<String> postMessage(final String channelId, final String string) {
         final ChatPostMessageRequest req = ChatPostMessageRequest.builder()
-            .blocks(List.of(section(b -> b.text(markdownText("Hello world from " + string)))))
+            .blocks(List.of(section(b -> b.text(markdownText(string)))))
             .channel(channelId)
             .build();
 
@@ -56,7 +56,7 @@ public class SlackAPIClientImpl implements SlackAPIClient {
                     return;
                 }
 
-                sink.complete();
+                sink.next(response.getTs());
             });
     }
 

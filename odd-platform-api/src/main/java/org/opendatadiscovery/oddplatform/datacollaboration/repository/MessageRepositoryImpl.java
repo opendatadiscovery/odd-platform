@@ -2,7 +2,11 @@ package org.opendatadiscovery.oddplatform.datacollaboration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.InsertResultStep;
+import org.jooq.Record;
+import org.jooq.SelectLimitPercentStep;
+import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -20,6 +24,30 @@ public class MessageRepositoryImpl implements MessageRepository {
     public Mono<MessagePojo> create(final MessagePojo message) {
         final InsertResultStep<MessageRecord> query = DSL.insertInto(MESSAGE)
             .set(jooqReactiveOperations.newRecord(MESSAGE, message))
+            .returning();
+
+        return jooqReactiveOperations.mono(query).map(r -> r.into(MessagePojo.class));
+    }
+
+    @Override
+    public Mono<MessagePojo> getSendingCandidate() {
+        // TODO: index on created_at ??
+        // TODO: max instead of orderby + limit?
+        // TODO: another message state = SENDING?
+        final SelectLimitPercentStep<Record> query = DSL.select(MESSAGE.fields())
+            .from(MESSAGE)
+            .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.toString()))
+            .orderBy(MESSAGE.CREATED_AT.desc())
+            .limit(1);
+
+        return jooqReactiveOperations.mono(query).map(r -> r.into(MessagePojo.class));
+    }
+
+    @Override
+    public Mono<MessagePojo> markMessageAsSent(final long messageId) {
+        final UpdateResultStep<MessageRecord> query = DSL.update(MESSAGE)
+            .set(MESSAGE.STATE, MessageStateDto.SENT.toString())
+            .where(MESSAGE.ID.eq(messageId))
             .returning();
 
         return jooqReactiveOperations.mono(query).map(r -> r.into(MessagePojo.class));

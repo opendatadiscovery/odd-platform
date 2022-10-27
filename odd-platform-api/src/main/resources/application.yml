@@ -10,7 +10,7 @@ spring:
 
 springdoc:
   swagger-ui:
-#    enabled: true
+    #    enabled: true
     disable-swagger-default-url: true
     path: swagger-ui.html
 
@@ -134,6 +134,7 @@ notifications:
 #      url:
 
 datacollaboration:
+  advisory-lock-id: 110
   enabled: false
 #  slack-oauth-token:
 
@@ -170,4 +171,5 @@ logging:
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
     org.opendatadiscovery.oddplatform.housekeeping: info
+    org.opendatadiscovery.oddplatform.datacollaboration.job: debug
     org.opendatadiscovery.oddplatform.service.ingestion: info
