@@ -1375,8 +1375,7 @@ paths:
 
   /api/dataentities/{data_entity_id}/messages/{message_id}:
     get:
-#      summary:
-#      description: xxx
+      summary: Get messages for data entity
       operationId: getMessages
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
@@ -1407,6 +1406,28 @@ paths:
                 type: array
                 items:
                   $ref: './components.yaml/#/components/schemas/MessageList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/channels:
+    get:
+      summary: Get top X channels in which there are messages about this data entity
+      operationId: getMessage
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: channel_name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/MessageChannelList'
       tags:
         - dataEntity
 
