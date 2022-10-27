@@ -34,6 +34,9 @@ test.describe('Check filters', () => {
         await pages.topPanel.clickTab('Catalog');
       });
     });
+    /**
+     * /project/1/test-cases/23
+     */
     test('should display the expected item with Datasource filter', async ({
       steps: { pages },
     }) => {
@@ -43,6 +46,9 @@ test.describe('Check filters', () => {
         expect(await pages.catalog.isListItemVisible(CONSTANTS.airFlightsDataEntity)).toBeTruthy();
       });
     });
+    /**
+     * /project/1/test-cases/24
+     */
     test('should display the expected item with Namespace filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Namespace', async () => {
         await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
@@ -55,6 +61,9 @@ test.describe('Check filters', () => {
         ).toBeTruthy();
       });
     });
+    /**
+     * /project/1/test-cases/25
+     */
     test('should display the expected item with Owner filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Owner', async () => {
         await pages.catalog.searchByText(CONSTANTS.bookETLDataEntity);
@@ -70,6 +79,9 @@ test.describe('Check filters', () => {
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
+    /**
+     * /project/1/test-cases/26
+     */
     test('should display the expected item with Tag filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Tag', async () => {
         await pages.catalog.searchByText(CONSTANTS.bookETLDataEntity);
@@ -80,6 +92,9 @@ test.describe('Check filters', () => {
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
+    /**
+     * /project/1/test-cases/70
+     */
     test('should display the expected item with Type filter', async ({ steps: { pages } }) => {
       await test.step('I go to the Transformers tab', async () => {
         await pages.catalog.clickTab(CONSTANTS.transformersTag);
@@ -90,6 +105,9 @@ test.describe('Check filters', () => {
         expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
       });
     });
+    /**
+     * /project/1/test-cases/71
+     */
     test('should display the expected item with Group filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Group', async () => {
         await pages.catalog.openFilterWithInput(CONSTANTS.groupsFilter);
@@ -107,6 +125,9 @@ test.describe('Check filters', () => {
           await pages.topPanel.clickTab('Catalog');
         });
       });
+      /**
+       * /project/1/test-cases/28
+       */
       test('should display the expected item with different types of filters', async ({
         steps: { pages },
       }) => {
@@ -124,6 +145,9 @@ test.describe('Check filters', () => {
           expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
         });
       });
+      /**
+       * /project/1/test-cases/28
+       */
       test('should display the expected item with all filters', async ({ steps: { pages } }) => {
         await test.step('apply filter Datasource', async () => {
           await pages.catalog.openFilterWithSelect(CONSTANTS.datasourceFilter);

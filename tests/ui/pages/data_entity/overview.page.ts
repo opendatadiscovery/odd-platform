@@ -11,8 +11,6 @@ const SELECTORS = {
   addTagButton: `.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add Tags')`,
   inputTagName: `[role="combobox"]`,
   saveButton: `[type="submit"]`,
-  addedOwner: text => `.sc-dxtBLK.hWlgkE:has-text('${text}')`,
-  addedTag: text => `p:has-text('${text}')`,
   addGroup: `.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add to group')`,
 };
 
@@ -34,7 +32,7 @@ export default class OverviewPage extends DataEntityPage {
   }
 
   async getField(inputName: 'Name' | 'Tag' | 'Title', name: string, text: string) {
-    await (this[`input${inputName}`] ).fill(name);
+    await this[`input${inputName}`].fill(name);
     await this.page.locator(SELECTORS.autocomplete(text)).click();
   }
 
@@ -53,6 +51,5 @@ export default class OverviewPage extends DataEntityPage {
     await this.addTag.click();
     await this.getField('Tag', name, text);
     await this.page.locator(SELECTORS.saveButton).click();
-    await this.page.locator(SELECTORS.addedTag(name)).waitFor({ state: 'visible' });
   }
 }
