@@ -51,22 +51,6 @@ paths:
       tags:
         - feature
 
-  /api/features/datacollaboration/providers/slack/channels:
-    get:
-      summary: Public Slack channels ready to be written to
-      description: Gets Slack active channels ready to be written to
-      operationId: getSlackChannels
-      responses:
-        # TODO: add code if feature is disabled
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/SlackChannelList'
-      tags:
-        - data_collaboration
-
   /api/identity/whoami:
     get:
       summary: whoami
@@ -1354,6 +1338,78 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/messages:
+    get:
+      summary: xxx
+      description: xxx
+      operationId: xxx
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: channel_id
+          in: query
+          schema:
+            type: string
+        - name: last_message_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        # TODO: check if I need this parameter
+        - name: last_message_date_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/MessageList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/messages/{message_id}:
+    get:
+#      summary:
+#      description: xxx
+      operationId: getMessages
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: message_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - name: last_message_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        # TODO: check if I need this parameter
+        - name: last_message_date_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/MessageList'
+      tags:
+        - dataEntity
+
   /api/datasets/{data_entity_id}/structure:
     get:
       summary: Get latest version's DataSet structure information
@@ -2310,3 +2366,44 @@ paths:
                 $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
       tags:
         - ownerAssociationRequest
+
+  /api/datacollaboration/providers/slack/channels:
+    get:
+      summary: Public Slack channels ready to be written to
+      description: Gets Slack active channels ready to be written to
+      operationId: getSlackChannels
+      parameters:
+        - name: channel_name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MessageChannelList'
+      tags:
+        - data_collaboration
+
+  /api/datacollaboration/providers/slack/messages:
+    post:
+      summary: Post a message in Slack
+      description: Posts a message in Slack
+      operationId: postMessageInSlack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/MessageRequest'
+      responses:
+        '202':
+          description: The message has been queued for posting
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Message'
+      tags:
+        - data_collaboration

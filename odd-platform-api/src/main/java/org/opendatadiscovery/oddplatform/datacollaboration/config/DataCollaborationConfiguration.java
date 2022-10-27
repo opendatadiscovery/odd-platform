@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnDataCollaboration
-public class DataCollaborationConfig {
+public class DataCollaborationConfiguration {
     @Bean
     public DataCollaborationMapper dataCollaborationMapper() {
         return Mappers.getMapper(DataCollaborationMapper.class);
