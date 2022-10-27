@@ -76,15 +76,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     public Mono<Void> ingestStats(final DatasetStatisticsList datasetStatisticsList) {
-        final Map<String, DataSetFieldStat> statistics = datasetStatisticsList.getItems()
-            .stream()
-            .map(DataSetStatistics::getFields)
-            .reduce(new HashMap<>(), (acc, fields) -> {
-                acc.putAll(fields);
-                return acc;
-            });
-
-        return datasetFieldService.updateStatistics(statistics);
+        return datasetFieldService.updateStatistics(datasetStatisticsList);
     }
 
     private Mono<IngestionRequest> persistDataEntities(final long dataSourceId,

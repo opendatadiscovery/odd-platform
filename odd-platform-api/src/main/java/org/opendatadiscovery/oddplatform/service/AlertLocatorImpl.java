@@ -63,6 +63,10 @@ public class AlertLocatorImpl implements AlertLocator {
 
     public Flux<AlertPojo> locateBackIncSchemaChanged(final List<Long> changedDatasetIds,
                                                       final List<DataEntitySpecificAttributesDelta> deltas) {
+        if (CollectionUtils.isEmpty(changedDatasetIds)) {
+            return Flux.just();
+        }
+
         final Flux<AlertPojo> datasetAlerts = datasetStructureService
             .getLastDatasetStructureVersionDelta(changedDatasetIds)
             .flatMapMany(delta -> Flux.fromStream(delta.entrySet()
