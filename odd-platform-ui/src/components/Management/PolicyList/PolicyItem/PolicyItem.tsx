@@ -41,11 +41,11 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
             to={policyDetailsLink}
             size='medium'
             color='primaryLight'
-            startIcon={<EditIcon />}
+            startIcon={!isAdministrator && <EditIcon />}
             sx={{ mr: 1 }}
             disabled={!hasAccessTo(Permission.POLICY_UPDATE) && !isAdministrator}
           >
-            Edit
+            {isAdministrator ? 'View' : 'Edit'}
           </AppButton>
           <ConfirmationDialog
             actionTitle='Are you sure you want to delete this policy?'

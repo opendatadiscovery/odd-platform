@@ -21,6 +21,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
   const { hasAccessTo } = usePermissions({});
 
   const isUser = name === 'User';
+  const isAdministrator = name === 'Administrator';
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteRole({ roleId })),
@@ -49,38 +50,42 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
       </Grid>
       <Grid item lg={1.74}>
         <S.ActionsContainer container item>
-          <RoleForm
-            roleId={roleId}
-            name={name}
-            policies={policies}
-            openBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<EditIcon />}
-                sx={{ mr: 1 }}
-                disabled={!hasAccessTo(Permission.ROLE_UPDATE)}
-              >
-                Edit
-              </AppButton>
-            }
-          />
-          <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this role?'
-            actionName='Delete Role'
-            actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
-            onConfirm={handleDelete}
-            actionBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<DeleteIcon />}
-                disabled={!hasAccessTo(Permission.ROLE_DELETE) || isUser}
-              >
-                Delete
-              </AppButton>
-            }
-          />
+          {!isAdministrator && (
+            <RoleForm
+              roleId={roleId}
+              name={name}
+              policies={policies}
+              openBtn={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<EditIcon />}
+                  sx={{ mr: 1 }}
+                  disabled={!hasAccessTo(Permission.ROLE_UPDATE)}
+                >
+                  Edit
+                </AppButton>
+              }
+            />
+          )}
+          {!(isUser || isAdministrator) && (
+            <ConfirmationDialog
+              actionTitle='Are you sure you want to delete this role?'
+              actionName='Delete Role'
+              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              onConfirm={handleDelete}
+              actionBtn={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<DeleteIcon />}
+                  disabled={!hasAccessTo(Permission.ROLE_DELETE)}
+                >
+                  Delete
+                </AppButton>
+              }
+            />
+          )}
         </S.ActionsContainer>
       </Grid>
     </S.Container>
