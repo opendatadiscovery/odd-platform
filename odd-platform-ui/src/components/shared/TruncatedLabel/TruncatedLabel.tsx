@@ -17,7 +17,7 @@ const TruncatedLabel: React.FC<TruncatedLabelProps> = ({ labelList, onSizeChange
       onTruncate={() => onSizeChange()}
       ellipsis={<TruncatedLabelMenu labelList={labelList} />}
     >
-      <Grid container alignItems='center'>
+      <Grid container alignItems='center' style={{ display: 'flex !important' }}>
         {labelList?.map(label => (
           <TruncateMarkup.Atom key={label.id}>
             <LabelItem systemLabel={label.external} labelName={label.name} />
