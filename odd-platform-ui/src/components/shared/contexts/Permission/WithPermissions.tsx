@@ -3,8 +3,7 @@ import { Permission, PermissionResourceType } from 'generated-sources';
 import { usePermissions } from 'lib/hooks';
 
 interface WithPermissionsProps {
-  // TODO change permissionTo to required prop
-  permissionTo?: Permission;
+  permissionTo: Permission;
   extraCheck?: boolean;
   resourceId?: number;
   resourceType?: PermissionResourceType;

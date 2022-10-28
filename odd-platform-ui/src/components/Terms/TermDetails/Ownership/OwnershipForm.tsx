@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { createTermOwnership, updateTermOwnership } from 'redux/thunks';
 import { getTermDetailsOwnerUpdatingStatuses } from 'redux/selectors';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 
 interface OwnershipFormProps {
   termDetailsOwnership?: Ownership;
@@ -91,15 +91,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           defaultValue=''
           rules={{ required: true }}
           render={({ field }) => (
-            <PermissionProvider permissions={[Permission.OWNER_CREATE]}>
-              <WithPermissions
-                resourceId={termId}
-                resourceType={PermissionResourceType.TERM}
-                renderContent={({ isAllowedTo: createOwner }) => (
-                  <OwnerAutocomplete field={field} disableOwnerCreating={!createOwner} />
-                )}
-              />
-            </PermissionProvider>
+            <WithPermissions
+              resourceId={termId}
+              permissionTo={Permission.OWNER_CREATE}
+              resourceType={PermissionResourceType.TERM}
+              renderContent={({ isAllowedTo: createOwner }) => (
+                <OwnerAutocomplete field={field} disableOwnerCreating={!createOwner} />
+              )}
+            />
           )}
         />
       )}

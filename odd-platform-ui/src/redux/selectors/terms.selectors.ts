@@ -2,16 +2,14 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState, TermsState } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import { emptyObj } from 'lib/constants';
 
 const termsState = ({ terms }: RootState): TermsState => terms;
 
 export const getTermId = (_: RootState, termId: number | string) => termId;
 
-export const getTermDetails = createSelector(
-  termsState,
-  getTermId,
-  (terms, termId) => terms.byId[termId]
-);
+export const getTermDetails = (termId: number) =>
+  createSelector(termsState, terms => terms.byId[termId] || emptyObj);
 
 // Tags
 export const getTermDetailsTags = createSelector(

@@ -1,8 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import OverviewGeneral from 'components/Terms/TermDetails/Overview/OverviewGeneral/OverviewGeneral';
+import { SkeletonWrapper } from 'components/shared';
 import { useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -10,14 +8,16 @@ import {
   getTermDetailsFetchingStatuses,
 } from 'redux/selectors/terms.selectors';
 import { Permission } from 'generated-sources';
-import WithPermissionsProvider from 'components/shared/contexts/Permission/WithPermissionsProvider';
+import { WithPermissionsProvider } from 'components/shared/contexts';
+import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
+import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import { SectionContainer, SectionFlexContainer } from './OverviewStyles';
 import OverviewTags from './OverviewTags/OverviewTags';
 
 const Overview: React.FC = () => {
   const { termId } = useAppParams();
 
-  const termDetails = useAppSelector(state => getTermDetails(state, termId));
+  const termDetails = useAppSelector(getTermDetails(termId));
 
   const { isLoading: isTermDetailsFetching } = useAppSelector(
     getTermDetailsFetchingStatuses

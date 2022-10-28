@@ -15,7 +15,7 @@ import { createDataSetFieldEnum, fetchDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AppButton, AppCircularProgress, DialogWrapper } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 import { useAppParams } from 'lib/hooks';
 import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 import {
@@ -142,22 +142,19 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
           Custom values
         </Typography>
       </TitleContainer>
-      <PermissionProvider permissions={[Permission.DATASET_ENUMS_ADD]}>
-        <WithPermissions
-          resourceId={dataEntityId}
-          renderContent={({ isAllowedTo: addEnums }) => (
-            <AppButton
-              size='medium'
-              color='primaryLight'
-              startIcon={<AddIcon />}
-              onClick={handleAppend}
-              disabled={!addEnums}
-            >
-              Add value
-            </AppButton>
-          )}
-        />
-      </PermissionProvider>
+      <WithPermissions
+        permissionTo={Permission.DATASET_ENUMS_ADD}
+        resourceId={dataEntityId}
+      >
+        <AppButton
+          size='medium'
+          color='primaryLight'
+          startIcon={<AddIcon />}
+          onClick={handleAppend}
+        >
+          Add value
+        </AppButton>
+      </WithPermissions>
     </HeaderContainer>
   );
 

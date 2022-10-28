@@ -6,18 +6,16 @@ import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors';
-import { usePermissions } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import { SubtitleContainer } from './OverviewMetadataStyles';
 
-interface Props {
-  dataEntityId: number;
-}
-
-const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
-  const { isAllowedTo: createMetadata } = usePermissions({ resourceId: dataEntityId });
+const OverviewMetadata: React.FC = () => {
+  const { dataEntityId } = useAppParams();
 
   const predefinedMetadata = useAppSelector(
     getDataEntityPredefinedMetadataList(dataEntityId)
@@ -93,19 +91,19 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
           <Grid item xs={12}>
             <SubtitleContainer>
               <Typography variant='h4'>Custom</Typography>
-              <MetadataCreateForm
-                dataEntityId={dataEntityId}
-                btnCreateEl={
-                  <AppButton
-                    size='medium'
-                    color='primaryLight'
-                    startIcon={<AddIcon />}
-                    disabled={!createMetadata}
-                  >
-                    Add metadata
-                  </AppButton>
-                }
-              />
+              <WithPermissions
+                resourceId={dataEntityId}
+                permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
+              >
+                <MetadataCreateForm
+                  dataEntityId={dataEntityId}
+                  btnCreateEl={
+                    <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                      Add metadata
+                    </AppButton>
+                  }
+                />
+              </WithPermissions>
             </SubtitleContainer>
           </Grid>
           {customMetadata.length ? (
@@ -128,19 +126,24 @@ const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
               wrap='nowrap'
             >
               <Typography variant='subtitle2'>Not created.</Typography>
-              <MetadataCreateForm
-                dataEntityId={dataEntityId}
-                btnCreateEl={
-                  <AppButton
-                    sx={{ ml: 0.5 }}
-                    size='small'
-                    color='tertiary'
-                    disabled={!createMetadata}
-                  >
-                    Add Metadata
-                  </AppButton>
-                }
-              />
+              <WithPermissions
+                resourceId={dataEntityId}
+                permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
+              >
+                <MetadataCreateForm
+                  dataEntityId={dataEntityId}
+                  btnCreateEl={
+                    <MetadataCreateForm
+                      dataEntityId={dataEntityId}
+                      btnCreateEl={
+                        <AppButton sx={{ ml: 0.5 }} size='small' color='tertiary'>
+                          Add Metadata
+                        </AppButton>
+                      }
+                    />
+                  }
+                />
+              </WithPermissions>
             </Grid>
           )}
         </Grid>

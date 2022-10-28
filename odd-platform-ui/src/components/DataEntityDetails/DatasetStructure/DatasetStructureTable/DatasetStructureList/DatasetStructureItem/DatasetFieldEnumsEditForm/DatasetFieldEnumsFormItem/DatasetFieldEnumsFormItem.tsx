@@ -5,7 +5,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { DataSetFieldTypeTypeEnum, Permission } from 'generated-sources';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 import { useAppParams } from 'lib/hooks';
 import {
   Container,
@@ -52,78 +52,71 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
     <Container container>
       {editMode ? (
         <>
-          <PermissionProvider permissions={[Permission.DATASET_ENUMS_UPDATE]}>
-            <WithPermissions
-              resourceId={dataEntityId}
-              renderContent={({ isAllowedTo: editEnum }) => (
-                <Controller
-                  name={`enums.${itemIndex}.name`}
-                  control={control}
-                  defaultValue={getValues(`enums.${itemIndex}.name`)}
-                  rules={{ required: true, validate: setTextValidationByType }}
-                  render={({ field }) => (
-                    <ValueNameContainer sx={{ mr: 1 }}>
-                      <AppInput
-                        {...field}
-                        disabled={!editEnum}
-                        placeholder='Name of value'
-                        name={`enums.${itemIndex}.name`}
-                        type={setTextFieldType()}
-                        customEndAdornment={{
-                          variant: 'clear',
-                          showAdornment: !!field.value,
-                          onCLick: () => field.onChange(''),
-                          icon: <ClearIcon />,
-                        }}
-                      />
-                    </ValueNameContainer>
-                  )}
-                />
-              )}
-            />
-            <WithPermissions
-              resourceId={dataEntityId}
-              renderContent={({ isAllowedTo: editEnum }) => (
-                <Controller
-                  name={`enums.${itemIndex}.description`}
-                  defaultValue={getValues(`enums.${itemIndex}.description`)}
-                  control={control}
-                  render={({ field }) => (
-                    <ValueDescriptionContainer sx={{ mr: 1 }}>
-                      <AppInput
-                        {...field}
-                        sx={{ mr: 1 }}
-                        disabled={!editEnum}
-                        placeholder='Description'
-                        name={`enums.${itemIndex}.description`}
-                        customEndAdornment={{
-                          variant: 'clear',
-                          showAdornment: !!field.value,
-                          onCLick: () => field.onChange(''),
-                          icon: <ClearIcon />,
-                        }}
-                      />
-                    </ValueDescriptionContainer>
-                  )}
-                />
-              )}
-            />
-          </PermissionProvider>
-          <PermissionProvider permissions={[Permission.DATASET_ENUMS_DELETE]}>
-            <WithPermissions
-              resourceId={dataEntityId}
-              renderContent={({ isAllowedTo: deleteEnum }) => (
-                <AppButton
-                  size='small'
-                  color='dropdown'
-                  disabled={!deleteEnum}
-                  onClick={onItemRemove}
-                >
-                  Delete
-                </AppButton>
-              )}
-            />
-          </PermissionProvider>
+          <Controller
+            name={`enums.${itemIndex}.name`}
+            control={control}
+            defaultValue={getValues(`enums.${itemIndex}.name`)}
+            rules={{ required: true, validate: setTextValidationByType }}
+            render={({ field }) => (
+              <WithPermissions
+                permissionTo={Permission.DATASET_ENUMS_UPDATE}
+                resourceId={dataEntityId}
+                renderContent={({ isAllowedTo: editEnum }) => (
+                  <ValueNameContainer sx={{ mr: 1 }}>
+                    <AppInput
+                      {...field}
+                      disabled={!editEnum}
+                      placeholder='Name of value'
+                      name={`enums.${itemIndex}.name`}
+                      type={setTextFieldType()}
+                      customEndAdornment={{
+                        variant: 'clear',
+                        showAdornment: !!field.value,
+                        onCLick: () => field.onChange(''),
+                        icon: <ClearIcon />,
+                      }}
+                    />
+                  </ValueNameContainer>
+                )}
+              />
+            )}
+          />
+          <Controller
+            name={`enums.${itemIndex}.description`}
+            defaultValue={getValues(`enums.${itemIndex}.description`)}
+            control={control}
+            render={({ field }) => (
+              <WithPermissions
+                permissionTo={Permission.DATASET_ENUMS_UPDATE}
+                resourceId={dataEntityId}
+                renderContent={({ isAllowedTo: editEnum }) => (
+                  <ValueDescriptionContainer sx={{ mr: 1 }}>
+                    <AppInput
+                      {...field}
+                      sx={{ mr: 1 }}
+                      disabled={!editEnum}
+                      placeholder='Description'
+                      name={`enums.${itemIndex}.description`}
+                      customEndAdornment={{
+                        variant: 'clear',
+                        showAdornment: !!field.value,
+                        onCLick: () => field.onChange(''),
+                        icon: <ClearIcon />,
+                      }}
+                    />
+                  </ValueDescriptionContainer>
+                )}
+              />
+            )}
+          />
+          <WithPermissions
+            permissionTo={Permission.DATASET_ENUMS_DELETE}
+            resourceId={dataEntityId}
+          >
+            <AppButton size='small' color='dropdown' onClick={onItemRemove}>
+              Delete
+            </AppButton>
+          </WithPermissions>
         </>
       ) : (
         <>

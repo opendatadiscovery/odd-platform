@@ -1,11 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { CloseIcon } from 'components/shared/Icons';
-import { AppIconButton } from 'components/shared';
-import { DataEntityRef } from 'generated-sources';
+import { DataEntityRef, Permission } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
-import { useAppPaths, usePermissions } from 'lib/hooks';
+import { useAppPaths } from 'lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
+import { AppIconButton } from 'components/shared';
+import { CloseIcon } from 'components/shared/Icons';
 import * as S from './GroupItemStyles';
 
 interface GroupItemProps {
@@ -17,7 +18,6 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
   const groupDetailsLink = dataEntityDetailsPath(group.id);
-  const { isAllowedTo: deleteFromGroup } = usePermissions({ resourceId: dataEntityId });
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -35,15 +35,20 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
           </Typography>
         </Grid>
         <S.ActionsContainer>
-          {group.manuallyCreated && deleteFromGroup && (
-            <AppIconButton
-              size='small'
-              color='unfilled'
-              icon={<CloseIcon />}
-              onClick={handleDelete}
-              sx={{ ml: 0.25 }}
-            />
-          )}
+          <WithPermissions
+            permissionTo={Permission.DATA_ENTITY_DELETE_FROM_GROUP}
+            resourceId={dataEntityId}
+          >
+            {group.manuallyCreated && (
+              <AppIconButton
+                size='small'
+                color='unfilled'
+                icon={<CloseIcon />}
+                onClick={handleDelete}
+                sx={{ ml: 0.25 }}
+              />
+            )}
+          </WithPermissions>
         </S.ActionsContainer>
       </Grid>
     </S.GroupItemContainer>

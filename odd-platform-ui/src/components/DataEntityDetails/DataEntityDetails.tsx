@@ -28,7 +28,11 @@ import {
 } from 'redux/selectors';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import {
+  PermissionProvider,
+  WithPermissions,
+  WithPermissionsProvider,
+} from 'components/shared/contexts';
 import DataEntityGroupControls from './DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
@@ -112,9 +116,7 @@ const DataEntityDetails: React.FC = () => {
         <>
           <TimeGapIcon />
           <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-            {formatDistanceToNowStrict(details.updatedAt, {
-              addSuffix: true,
-            })}
+            {formatDistanceToNowStrict(details.updatedAt, { addSuffix: true })}
           </Typography>
         </>
       ),
@@ -142,33 +144,23 @@ const DataEntityDetails: React.FC = () => {
                   <EntityTypeItem sx={{ ml: 1 }} entityTypeName={details.type.name} />
                 )}
                 <S.InternalNameEditBtnContainer>
-                  <PermissionProvider
-                    permissions={[Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE]}
+                  <WithPermissions
+                    resourceId={dataEntityId}
+                    permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}
                   >
-                    <WithPermissions
-                      resourceId={dataEntityId}
-                      resourceType={PermissionResourceType.DATA_ENTITY}
-                      renderContent={({ isAllowedTo: editInternalName }) => (
-                        <InternalNameFormDialog
-                          btnCreateEl={
-                            <AppButton
-                              size='small'
-                              color='tertiary'
-                              sx={{ ml: 1 }}
-                              disabled={!editInternalName}
-                              startIcon={
-                                details.internalName ? <EditIcon /> : <AddIcon />
-                              }
-                            >
-                              {`${
-                                details.internalName ? 'Edit custom' : 'Add custom'
-                              } name`}
-                            </AppButton>
-                          }
-                        />
-                      )}
+                    <InternalNameFormDialog
+                      btnCreateEl={
+                        <AppButton
+                          size='small'
+                          color='tertiary'
+                          sx={{ ml: 1 }}
+                          startIcon={details.internalName ? <EditIcon /> : <AddIcon />}
+                        >
+                          {`${details.internalName ? 'Edit custom' : 'Add custom'} name`}
+                        </AppButton>
+                      }
                     />
-                  </PermissionProvider>
+                  </WithPermissions>
                 </S.InternalNameEditBtnContainer>
               </Grid>
               <Grid
@@ -181,9 +173,17 @@ const DataEntityDetails: React.FC = () => {
               >
                 {updatedAt}
                 {details.manuallyCreated && (
-                  <DataEntityGroupControls
-                    internalName={details.internalName}
-                    externalName={details.externalName}
+                  <WithPermissionsProvider
+                    permissions={[
+                      Permission.DATA_ENTITY_GROUP_UPDATE,
+                      Permission.DATA_ENTITY_GROUP_DELETE,
+                    ]}
+                    render={() => (
+                      <DataEntityGroupControls
+                        internalName={details.internalName}
+                        externalName={details.externalName}
+                      />
+                    )}
                   />
                 )}
               </Grid>
@@ -219,7 +219,19 @@ const DataEntityDetails: React.FC = () => {
                 '/dataentities/:dataEntityId/structure/:versionId?',
                 '/embedded/dataentities/:dataEntityId/structure/:versionId?',
               ]}
-              component={DatasetStructure}
+              render={() => (
+                <PermissionProvider
+                  permissions={[
+                    Permission.DATASET_ENUMS_DELETE,
+                    Permission.DATASET_ENUMS_UPDATE,
+                    Permission.DATASET_LABELS_UPDATE,
+                    Permission.DATASET_ENUMS_ADD,
+                    Permission.DATASET_DESCRIPTION_UPDATE,
+                  ]}
+                >
+                  <DatasetStructure />
+                </PermissionProvider>
+              )}
             />
             <Route
               exact

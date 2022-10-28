@@ -11,9 +11,9 @@ import { KebabIcon } from 'components/shared/Icons';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { deleteDataEntityGroup } from 'redux/thunks';
 import { getSearchId } from 'redux/selectors';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 import DataEntityGroupForm from '../DataEntityGroupForm/DataEntityGroupForm';
 
 interface DataEntityGroupControlsProps {
@@ -66,39 +66,30 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
           horizontal: 65,
         }}
       >
-        <PermissionProvider permissions={[Permission.DATA_ENTITY_GROUP_UPDATE]}>
-          <WithPermissions
-            resourceId={dataEntityId}
-            resourceType={PermissionResourceType.DATA_ENTITY}
-            renderContent={({ isAllowedTo: editGroup }) => (
-              <DataEntityGroupForm
-                btnCreateEl={<AppMenuItem disabled={!editGroup}>Edit</AppMenuItem>}
-              />
-            )}
+        <WithPermissions
+          resourceId={dataEntityId}
+          permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}
+        >
+          <DataEntityGroupForm btnCreateEl={<AppMenuItem>Edit</AppMenuItem>} />
+        </WithPermissions>
+        <WithPermissions
+          resourceId={dataEntityId}
+          permissionTo={Permission.DATA_ENTITY_GROUP_DELETE}
+        >
+          <ConfirmationDialog
+            actionTitle='Are you sure you want to delete this data entity group?'
+            actionName='Delete Data Entity Group'
+            actionText={
+              <>
+                &quot;
+                {internalName || externalName}
+                &quot; will be deleted permanently.
+              </>
+            }
+            onConfirm={handleEntityGroupDelete}
+            actionBtn={<AppMenuItem>Delete</AppMenuItem>}
           />
-        </PermissionProvider>
-
-        <PermissionProvider permissions={[Permission.DATA_ENTITY_GROUP_DELETE]}>
-          <WithPermissions
-            resourceId={dataEntityId}
-            resourceType={PermissionResourceType.DATA_ENTITY}
-            renderContent={({ isAllowedTo: deleteGroup }) => (
-              <ConfirmationDialog
-                actionTitle='Are you sure you want to delete this data entity group?'
-                actionName='Delete Data Entity Group'
-                actionText={
-                  <>
-                    &quot;
-                    {internalName || externalName}
-                    &quot; will be deleted permanently.
-                  </>
-                }
-                onConfirm={handleEntityGroupDelete}
-                actionBtn={<AppMenuItem disabled={!deleteGroup}>Delete</AppMenuItem>}
-              />
-            )}
-          />
-        </PermissionProvider>
+        </WithPermissions>
       </AppPopover>
     </Grid>
   );

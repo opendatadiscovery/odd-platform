@@ -29,7 +29,7 @@ import { SearchClass } from 'redux/interfaces';
 import { AppButton, EmptyContentPlaceholder } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import findKey from 'lodash/findKey';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import ResultItem from './ResultItem/ResultItem';
@@ -131,29 +131,24 @@ const Results: React.FC = () => {
         searchClass={searchClass}
         onSearchClassChange={onSearchClassChange}
       />
-      <PermissionProvider permissions={[Permission.DATA_ENTITY_GROUP_CREATE]}>
-        <WithPermissions
-          renderContent={({ isAllowedTo: createGroup }) => (
-            <>
-              {showDEGBtn && (
-                <DataEntityGroupForm
-                  btnCreateEl={
-                    <AppButton
-                      sx={{ mt: 2 }}
-                      size='medium'
-                      color='primaryLight'
-                      startIcon={<AddIcon />}
-                      disabled={!createGroup}
-                    >
-                      Add group
-                    </AppButton>
-                  }
-                />
-              )}
-            </>
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_CREATE}>
+        <>
+          {showDEGBtn && (
+            <DataEntityGroupForm
+              btnCreateEl={
+                <AppButton
+                  sx={{ mt: 2 }}
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<AddIcon />}
+                >
+                  Add group
+                </AppButton>
+              }
+            />
           )}
-        />
-      </PermissionProvider>
+        </>
+      </WithPermissions>
       <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
         <S.SearchCol item lg={grid.lg.nm}>
           <Typography variant='caption'>Name</Typography>

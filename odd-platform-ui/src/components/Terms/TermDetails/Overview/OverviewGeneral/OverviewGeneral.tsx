@@ -23,7 +23,7 @@ const OverviewGeneral: React.FC = () => {
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
-  const termDetails = useAppSelector(state => getTermDetails(state, termId));
+  const termDetails = useAppSelector(getTermDetails(termId));
   const ownership = useAppSelector(state => getTermOwnership(state, termId));
 
   const handleOwnershipDelete = (ownershipId: number) => () =>

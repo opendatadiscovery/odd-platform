@@ -2,10 +2,12 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
-import { AppTooltip, AppButton, AlertStatusItem } from 'components/shared';
+import { AlertStatusItem, AppButton, AppTooltip } from 'components/shared';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
-import { useAppParams, usePermissions } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import { ColContainer } from '../DataEntityAlertsStyles';
 import * as S from './DataEntityAlertItemStyles';
 
@@ -19,7 +21,6 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   alertStatusHandler,
 }) => {
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: resolveAlerts } = usePermissions({ resourceId: dataEntityId });
 
   return (
     <S.Container container>
@@ -54,14 +55,14 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
         </Typography>
       </ColContainer>
       <S.ActionButtonsContainer item $colType='actionBtn'>
-        <AppButton
-          size='medium'
-          color='primaryLight'
-          onClick={alertStatusHandler}
-          disabled={!resolveAlerts}
+        <WithPermissions
+          permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}
+          resourceId={dataEntityId}
         >
-          {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'}
-        </AppButton>
+          <AppButton size='medium' color='primaryLight' onClick={alertStatusHandler}>
+            {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'}
+          </AppButton>
+        </WithPermissions>
       </S.ActionButtonsContainer>
     </S.Container>
   );

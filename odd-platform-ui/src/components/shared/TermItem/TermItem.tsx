@@ -1,11 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { CloseIcon } from 'components/shared/Icons';
-import { AppIconButton } from 'components/shared';
-import { TermRef } from 'generated-sources';
+import { Permission, TermRef } from 'generated-sources';
 import { deleteDataEntityTerm } from 'redux/thunks';
-import { useAppPaths, usePermissions } from 'lib/hooks';
+import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
+import { CloseIcon } from 'components/shared/Icons';
+import { AppIconButton } from 'components/shared/index';
 import * as S from './TermItemStyles';
 
 interface TermItemProps {
@@ -17,7 +18,6 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
   const dispatch = useAppDispatch();
   const { termDetailsOverviewPath } = useAppPaths();
   const termDetailsLink = termDetailsOverviewPath(term.id);
-  const { isAllowedTo: deleteTerm } = usePermissions({ resourceId: dataEntityId });
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -34,7 +34,10 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
           <S.TermDefinition variant='subtitle2'>{term.definition}</S.TermDefinition>
         </Grid>
         <S.ActionsContainer>
-          {deleteTerm && (
+          <WithPermissions
+            permissionTo={Permission.DATA_ENTITY_DELETE_TERM}
+            resourceId={dataEntityId}
+          >
             <AppIconButton
               size='small'
               color='unfilled'
@@ -42,7 +45,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
               onClick={handleDelete}
               sx={{ ml: 0.25 }}
             />
-          )}
+          </WithPermissions>
         </S.ActionsContainer>
       </Grid>
     </S.TermItemContainer>

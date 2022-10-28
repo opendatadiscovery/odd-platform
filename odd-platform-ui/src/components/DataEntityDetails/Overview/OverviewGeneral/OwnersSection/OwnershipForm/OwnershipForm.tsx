@@ -12,7 +12,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityOwnership, updateDataEntityOwnership } from 'redux/thunks';
 import { getDataEntityOwnerUpdatingStatuses } from 'redux/selectors';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 
 interface OwnershipFormProps {
   dataEntityId: number;
@@ -86,14 +86,13 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           defaultValue=''
           rules={{ required: true }}
           render={({ field }) => (
-            <PermissionProvider permissions={[Permission.OWNER_CREATE]}>
-              <WithPermissions
-                resourceId={dataEntityId}
-                renderContent={({ isAllowedTo: createOwner }) => (
-                  <OwnerAutocomplete field={field} disableOwnerCreating={!createOwner} />
-                )}
-              />
-            </PermissionProvider>
+            <WithPermissions
+              permissionTo={Permission.OWNER_CREATE}
+              resourceId={dataEntityId}
+              renderContent={({ isAllowedTo: createOwner }) => (
+                <OwnerAutocomplete field={field} disableOwnerCreating={!createOwner} />
+              )}
+            />
           )}
         />
       )}

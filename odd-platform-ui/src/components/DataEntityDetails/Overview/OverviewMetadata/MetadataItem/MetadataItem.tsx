@@ -23,7 +23,7 @@ import {
   deleteDataEntityCustomMetadata,
   updateDataEntityCustomMetadata,
 } from 'redux/thunks';
-import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
+import { WithPermissions } from 'components/shared/contexts';
 import MetadataValueEditor from '../../../Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
 
@@ -155,56 +155,45 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
             </S.ValueLeftContainer>
             {isCustom ? (
               <S.Actions>
-                <PermissionProvider
-                  permissions={[Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE]}
+                <WithPermissions
+                  resourceId={dataEntityId}
+                  permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE}
                 >
-                  <WithPermissions
-                    resourceId={dataEntityId}
-                    renderContent={({ isAllowedTo: updateMetadata }) => (
-                      <AppIconButton
-                        size='small'
-                        color='tertiary'
-                        icon={<EditIcon />}
-                        disabled={!updateMetadata}
-                        onClick={() => {
-                          setEditMode(true);
-                        }}
-                      />
-                    )}
+                  <AppIconButton
+                    size='small'
+                    color='tertiary'
+                    icon={<EditIcon />}
+                    onClick={() => {
+                      setEditMode(true);
+                    }}
                   />
-                </PermissionProvider>
+                </WithPermissions>
                 {metadataVal && (
                   <CopyButton stringToCopy={metadataVal} sx={{ ml: 0.5 }} />
                 )}
-                <PermissionProvider
-                  permissions={[Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE]}
+                <WithPermissions
+                  resourceId={dataEntityId}
+                  permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE}
                 >
-                  <WithPermissions
-                    resourceId={dataEntityId}
-                    renderContent={({ isAllowedTo: deleteMetadata }) => (
-                      <ConfirmationDialog
-                        actionTitle='Are you sure you want to delete this Metadata?'
-                        actionName='Delete Metadata'
-                        actionText={
-                          <>
-                            &quot;{metadataItem.field.name}&quot; will be deleted
-                            permanently.
-                          </>
-                        }
-                        onConfirm={handleDelete}
-                        actionBtn={
-                          <AppIconButton
-                            size='small'
-                            color='tertiary'
-                            icon={<DeleteIcon />}
-                            disabled={!deleteMetadata}
-                            sx={{ ml: 0.5 }}
-                          />
-                        }
+                  <ConfirmationDialog
+                    actionTitle='Are you sure you want to delete this Metadata?'
+                    actionName='Delete Metadata'
+                    actionText={
+                      <>
+                        &quot;{metadataItem.field.name}&quot; will be deleted permanently.
+                      </>
+                    }
+                    onConfirm={handleDelete}
+                    actionBtn={
+                      <AppIconButton
+                        size='small'
+                        color='tertiary'
+                        icon={<DeleteIcon />}
+                        sx={{ ml: 0.5 }}
                       />
-                    )}
+                    }
                   />
-                </PermissionProvider>
+                </WithPermissions>
               </S.Actions>
             ) : null}
           </S.ValueContainer>

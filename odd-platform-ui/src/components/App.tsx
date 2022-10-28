@@ -61,13 +61,26 @@ const App: React.FC = () => {
               path={['/search/:searchId?', '/embedded/search/:searchId?']}
               component={Search}
             />
-            <Route path='/terms/:termId/:viewType?' component={TermDetails} />
+            <Route
+              path='/terms/:termId/:viewType?'
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[Permission.TERM_UPDATE, Permission.TERM_DELETE]}
+                  Component={TermDetails}
+                />
+              )}
+            />
             <Route
               path={[
                 '/dataentities/:dataEntityId/:viewType?',
                 '/embedded/dataentities/:dataEntityId/:viewType?',
               ]}
-              component={DataEntityDetails}
+              render={() => (
+                <WithPermissionsProvider
+                  permissions={[Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE]}
+                  Component={DataEntityDetails}
+                />
+              )}
             />
             <Route path='/activity' component={Activity} />
           </Switch>

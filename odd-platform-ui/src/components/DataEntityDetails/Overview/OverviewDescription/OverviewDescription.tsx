@@ -4,18 +4,19 @@ import { AddIcon, EditIcon } from 'components/shared/Icons';
 import { AppButton } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
-import { useAppParams, usePermissions } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityExternalDescription,
   getDataEntityInternalDescription,
 } from 'redux/selectors';
 import MDEditor from '@uiw/react-md-editor';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import * as S from './OverviewDescriptionStyles';
 
 const OverviewDescription: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: editDescription } = usePermissions({ resourceId: dataEntityId });
 
   const DEInternalDescription = useAppSelector(
     getDataEntityInternalDescription(dataEntityId)
@@ -66,15 +67,19 @@ const OverviewDescription: React.FC = () => {
         <S.CaptionContainer>
           <Typography variant='h4'>Custom</Typography>
           {editMode ? null : (
-            <AppButton
-              onClick={onEditClick}
-              size='medium'
-              color='primaryLight'
-              disabled={!editDescription}
-              startIcon={DEInternalDescription ? <EditIcon /> : <AddIcon />}
+            <WithPermissions
+              resourceId={dataEntityId}
+              permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}
             >
-              {DEInternalDescription ? 'Edit' : 'Add'} description
-            </AppButton>
+              <AppButton
+                onClick={onEditClick}
+                size='medium'
+                color='primaryLight'
+                startIcon={DEInternalDescription ? <EditIcon /> : <AddIcon />}
+              >
+                {DEInternalDescription ? 'Edit' : 'Add'} description
+              </AppButton>
+            </WithPermissions>
           )}
         </S.CaptionContainer>
         {editMode ? (
@@ -120,14 +125,14 @@ const OverviewDescription: React.FC = () => {
                 wrap='nowrap'
               >
                 <Typography variant='subtitle2'>Not created.</Typography>
-                <AppButton
-                  onClick={onEditClick}
-                  size='small'
-                  color='tertiary'
-                  disabled={!editDescription}
+                <WithPermissions
+                  resourceId={dataEntityId}
+                  permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}
                 >
-                  Add Description
-                </AppButton>
+                  <AppButton onClick={onEditClick} size='small' color='tertiary'>
+                    Add Description
+                  </AppButton>
+                </WithPermissions>
               </Grid>
             )}
           </div>
