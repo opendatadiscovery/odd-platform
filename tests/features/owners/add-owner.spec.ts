@@ -1,13 +1,11 @@
 import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
-import { goToPage } from '../../ui/steps/login';
 
 test.describe('Owners', () => {
-  test('Add new Owner', async ({ steps: { pages }, page }) => {
+  test('Add new Owner', async ({ steps: { pages } }) => {
     const ownerName = 'Test_ownerName';
 
     await test.step('I open Owners page', async () => {
-      await goToPage(page, 'http://localhost:8080/');
       await pages.topPanel.clickTab('Management');
       await pages.management.owners.click();
     });

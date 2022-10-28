@@ -1,36 +1,33 @@
 import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
-const CONSTANTS = {
-  datasourceFilter: 'Datasource',
-  namespaceFilter: 'Namespace',
-  ownerFilter: 'Owner',
-  typeFilter: 'Type',
-  tagFilter: 'Tag',
-  groupsFilter: 'Groups',
-  datasourceOptionAirFlights: 'Air_flights',
-  datasourceOptionBookETL: 'Bookshop ETL',
-  namespaceOption: 'ETL',
-  airFlightsDataEntity: '_!+AirFlights',
-  bookETLDataEntity: 'BookETL',
-  bookETLDataAQAEntity: 'Book_ETL_aqa',
-  kdsClickstreamDataEntity: 'kds_clickstream_consumer',
-  postcardsAQADataEntity: 'postcards_aqa',
-  tagFilterOption: 'aqa_tag',
-  groupsOption: 'group_bookshop',
-  transformersTag: 'Transformers',
-  firstOwner: 'firstOwner',
-  role: 'admin',
-  noResultsOwnerText: 'No result. Create new owner "firstOwner"',
-  noResultsTitleText: 'No result. Create new title "admin"',
-  noResultsTagText: 'No result. Create new tag "aqa_tag"',
-};
+const datasourceFilter = 'Datasource';
+const namespaceFilter = 'Namespace';
+const ownerFilter = 'Owner';
+const typeFilter = 'Type';
+const tagFilter = 'Tag';
+const groupsFilter = 'Groups';
+const datasourceOptionAirFlights = 'Air_flights';
+const datasourceOptionBookETL = 'Bookshop ETL';
+const namespaceOption = 'ETL';
+const entityNameWithSpecialChars = '_!+AirFlights';
+const bookETLDataEntity = 'BookETL';
+const bookETLDataAQAEntity = 'Book_ETL_aqa';
+const kdsClickstreamDataEntity = 'kds_clickstream_consumer';
+const postcardsAQADataEntity = 'postcards_aqa';
+const tagFilterOption = 'aqa_tag';
+const groupsOption = 'group_bookshop';
+const transformersTag = 'Transformers';
+const firstOwner = 'firstOwner';
+const titleAdmin = 'admin';
+const noResultsOwnerText = 'No result. Create new owner "firstOwner"';
+const noResultsTitleText = 'No result. Create new title "admin"';
+const noResultsTagText = 'No result. Create new tag "aqa_tag"';
 
 test.describe('Check filters', () => {
   test.describe('when apply single filter', () => {
-    test.beforeEach(async ({ steps: { pages }, page }) => {
+    test.beforeEach(async ({ steps: { pages } }) => {
       await test.step(`I open catalog page`, async () => {
-        await page.goto('');
         await pages.topPanel.clickTab('Catalog');
       });
     });
@@ -41,9 +38,9 @@ test.describe('Check filters', () => {
       steps: { pages },
     }) => {
       await test.step('apply filter Datasource', async () => {
-        await pages.catalog.openFilterWithSelect(CONSTANTS.datasourceFilter);
-        await pages.catalog.chooseOption(CONSTANTS.datasourceOptionAirFlights);
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.airFlightsDataEntity)).toBeTruthy();
+        await pages.catalog.openFilterWithSelect(datasourceFilter);
+        await pages.catalog.chooseOption(datasourceOptionAirFlights);
+        expect(await pages.catalog.isListItemVisible(entityNameWithSpecialChars)).toBeTruthy();
       });
     });
     /**
@@ -51,14 +48,12 @@ test.describe('Check filters', () => {
      */
     test('should display the expected item with Namespace filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Namespace', async () => {
-        await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
-        await pages.catalog.chooseOption(CONSTANTS.namespaceOption);
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.airFlightsDataEntity)).toBeTruthy();
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataAQAEntity)).toBeTruthy();
-        expect(
-          await pages.catalog.isListItemVisible(CONSTANTS.kdsClickstreamDataEntity),
-        ).toBeTruthy();
+        await pages.catalog.openFilterWithSelect(namespaceFilter);
+        await pages.catalog.chooseOption(namespaceOption);
+        expect(await pages.catalog.isListItemVisible(entityNameWithSpecialChars)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataAQAEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(kdsClickstreamDataEntity)).toBeTruthy();
       });
     });
     /**
@@ -66,17 +61,17 @@ test.describe('Check filters', () => {
      */
     test('should display the expected item with Owner filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Owner', async () => {
-        await pages.catalog.searchByText(CONSTANTS.bookETLDataEntity);
-        await pages.catalog.clickOnListItem(CONSTANTS.bookETLDataEntity);
+        await pages.catalog.searchByText(bookETLDataEntity);
+        await pages.catalog.clickOnListItem(bookETLDataEntity);
         await pages.overview.createOwner(
-          CONSTANTS.firstOwner,
-          CONSTANTS.noResultsOwnerText,
-          CONSTANTS.role,
-          CONSTANTS.noResultsTitleText,
+          firstOwner,
+          noResultsOwnerText,
+          titleAdmin,
+          noResultsTitleText,
         );
         await pages.topPanel.clickTab('Catalog');
         await pages.catalog.searchByTextInFilter('Owner', 'firstOwner');
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
     /**
@@ -84,12 +79,12 @@ test.describe('Check filters', () => {
      */
     test('should display the expected item with Tag filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Tag', async () => {
-        await pages.catalog.searchByText(CONSTANTS.bookETLDataEntity);
-        await pages.catalog.clickOnListItem(CONSTANTS.bookETLDataEntity);
-        await pages.overview.createTag(CONSTANTS.tagFilterOption, CONSTANTS.noResultsTagText);
+        await pages.catalog.searchByText(bookETLDataEntity);
+        await pages.catalog.clickOnListItem(bookETLDataEntity);
+        await pages.overview.createTag(tagFilterOption, noResultsTagText);
         await pages.topPanel.clickTab('Catalog');
         await pages.catalog.searchByTextInFilter('Tag', 'aqa_tag');
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
     /**
@@ -97,12 +92,12 @@ test.describe('Check filters', () => {
      */
     test('should display the expected item with Type filter', async ({ steps: { pages } }) => {
       await test.step('I go to the Transformers tab', async () => {
-        await pages.catalog.clickTab(CONSTANTS.transformersTag);
+        await pages.catalog.clickTab(transformersTag);
       });
       await test.step('apply filter Type', async () => {
-        await pages.catalog.openFilterWithInput(CONSTANTS.typeFilter);
+        await pages.catalog.openFilterWithInput(typeFilter);
         await pages.catalog.searchByTextInFilter('Type', 'JOB');
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
     /**
@@ -110,12 +105,10 @@ test.describe('Check filters', () => {
      */
     test('should display the expected item with Group filter', async ({ steps: { pages } }) => {
       await test.step('apply filter Group', async () => {
-        await pages.catalog.openFilterWithInput(CONSTANTS.groupsFilter);
-        await pages.catalog.chooseOption(CONSTANTS.groupsOption);
-        expect(
-          await pages.catalog.isListItemVisible(CONSTANTS.postcardsAQADataEntity),
-        ).toBeTruthy();
-        expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
+        await pages.catalog.openFilterWithInput(groupsFilter);
+        await pages.catalog.chooseOption(groupsOption);
+        expect(await pages.catalog.isListItemVisible(postcardsAQADataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
     test.describe('when apply multiply filter', () => {
@@ -132,17 +125,15 @@ test.describe('Check filters', () => {
         steps: { pages },
       }) => {
         await test.step('apply filter Tag', async () => {
-          await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
-          await pages.catalog.chooseOption(CONSTANTS.namespaceOption);
-          expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
-          expect(
-            await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataAQAEntity),
-          ).toBeTruthy();
+          await pages.catalog.openFilterWithSelect(namespaceFilter);
+          await pages.catalog.chooseOption(namespaceOption);
+          expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
+          expect(await pages.catalog.isListItemVisible(bookETLDataAQAEntity)).toBeTruthy();
         });
         await test.step('apply filter Owner', async () => {
-          await pages.catalog.openFilterWithInput(CONSTANTS.ownerFilter);
-          await pages.catalog.chooseOption(CONSTANTS.firstOwner);
-          expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
+          await pages.catalog.openFilterWithInput(ownerFilter);
+          await pages.catalog.chooseOption(firstOwner);
+          expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
         });
       });
       /**
@@ -150,21 +141,21 @@ test.describe('Check filters', () => {
        */
       test('should display the expected item with all filters', async ({ steps: { pages } }) => {
         await test.step('apply filter Datasource', async () => {
-          await pages.catalog.openFilterWithSelect(CONSTANTS.datasourceFilter);
-          await pages.catalog.chooseOption(CONSTANTS.datasourceOptionBookETL);
+          await pages.catalog.openFilterWithSelect(datasourceFilter);
+          await pages.catalog.chooseOption(datasourceOptionBookETL);
         });
         await test.step('apply filter Namespace', async () => {
-          await pages.catalog.openFilterWithSelect(CONSTANTS.namespaceFilter);
-          await pages.catalog.chooseOption(CONSTANTS.namespaceOption);
+          await pages.catalog.openFilterWithSelect(namespaceFilter);
+          await pages.catalog.chooseOption(namespaceOption);
         });
         await test.step('apply filter Tag', async () => {
-          await pages.catalog.openFilterWithInput(CONSTANTS.tagFilter);
-          await pages.catalog.chooseOption(CONSTANTS.tagFilterOption);
+          await pages.catalog.openFilterWithInput(tagFilter);
+          await pages.catalog.chooseOption(tagFilterOption);
         });
         await test.step('apply filter Group', async () => {
-          await pages.catalog.openFilterWithInput(CONSTANTS.groupsFilter);
-          await pages.catalog.chooseOption(CONSTANTS.groupsOption);
-          expect(await pages.catalog.isListItemVisible(CONSTANTS.bookETLDataEntity)).toBeTruthy();
+          await pages.catalog.openFilterWithInput(groupsFilter);
+          await pages.catalog.chooseOption(groupsOption);
+          expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
         });
       });
     });

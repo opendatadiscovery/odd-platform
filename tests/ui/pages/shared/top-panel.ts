@@ -21,6 +21,7 @@ export default class TopPanel extends BasePage {
    * @param tab
    */
   async clickTab(tab: Tab) {
+    await this.page.goto('');
     await this.page.click(SELECTORS.sharedNavigation(tab));
   }
 }

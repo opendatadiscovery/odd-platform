@@ -2,9 +2,8 @@ import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
 test.describe(() => {
-  test.beforeEach(async ({ steps: { pages }, page }) => {
+  test.beforeEach(async ({ steps: { pages } }) => {
     await test.step(`I open Tags page`, async () => {
-      await page.goto('');
       await pages.topPanel.clickTab('Management');
       await pages.management.tags.click();
     });
