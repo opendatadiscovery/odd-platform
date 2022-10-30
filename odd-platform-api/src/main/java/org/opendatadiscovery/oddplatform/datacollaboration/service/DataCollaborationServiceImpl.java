@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Service
 @ConditionalOnDataCollaboration
+@Slf4j
 public class DataCollaborationServiceImpl implements DataCollaborationService {
     private final SlackAPIClient slackAPIClient;
     private final MessageRepository messageRepository;
@@ -40,7 +42,8 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     }
 
     @Override
-    public Mono<Message> createMessage(final MessageRequest messageRequest, final MessageProviderDto messageProvider) {
+    public Mono<Message> createAndSendMessage(final MessageRequest messageRequest,
+                                              final MessageProviderDto messageProvider) {
         final MessagePojo messagePojo = new MessagePojo()
             .setDataEntityId(messageRequest.getDataEntityId())
             .setState(MessageStateDto.PENDING_SEND.toString())
@@ -55,5 +58,12 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
                 .createdAt(pojo.getCreatedAt())
                 .state(MessageState.fromValue(pojo.getState()))
             );
+    }
+
+    @Override
+    public Mono<Void> enqueueMessageEvent(final String messageEvent, final MessageProviderDto messageProvider) {
+        return messageRepository
+            .createMessageEvent(messageEvent, messageProvider)
+            .then();
     }
 }

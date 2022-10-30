@@ -11,5 +11,7 @@ public interface DataCollaborationService {
 
     Mono<MessageChannelList> getSlackChannels(final String channelNameStartsWith);
 
-    Mono<Message> createMessage(final MessageRequest message, final MessageProviderDto messageProvider);
+    Mono<Message> createAndSendMessage(final MessageRequest message, final MessageProviderDto messageProvider);
+
+    Mono<Void> enqueueMessageEvent(final String messageEvent, final MessageProviderDto messageProvider);
 }

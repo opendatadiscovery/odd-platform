@@ -12,3 +12,12 @@ CREATE TABLE IF NOT EXISTS message
 
     CONSTRAINT fk_message_data_entity_id FOREIGN KEY (data_entity_id) REFERENCES data_entity (id)
 );
+
+CREATE TABLE IF NOT EXISTS message_provider_event
+(
+    id         BIGSERIAL PRIMARY KEY,
+    provider   VARCHAR(64)              NOT NULL,
+    event      JSONB,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc'),
+    state      VARCHAR(64)
+)

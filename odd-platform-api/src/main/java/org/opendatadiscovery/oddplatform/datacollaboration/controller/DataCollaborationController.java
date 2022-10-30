@@ -34,7 +34,7 @@ public class DataCollaborationController implements DataCollaborationApi {
     public Mono<ResponseEntity<Message>> postMessageInSlack(final Mono<MessageRequest> messageRequest,
                                                             final ServerWebExchange exchange) {
         return messageRequest
-            .flatMap(mr -> dataCollaborationService.createMessage(mr, MessageProviderDto.SLACK))
+            .flatMap(mr -> dataCollaborationService.createAndSendMessage(mr, MessageProviderDto.SLACK))
             .map(message -> ResponseEntity.status(HttpStatus.ACCEPTED).body(message));
     }
 }
