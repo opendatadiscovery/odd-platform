@@ -1,8 +1,10 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Insert;
 import org.jooq.Record;
@@ -58,7 +60,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             updateDataSourceVectorsForDataEntities(dataEntityIds),
             updateNamespaceVectorForDataEntities(dataEntityIds),
             updateMetadataVectors(dataEntityIds),
-            updateStructureVectorForDataEntities(dataEntityIds),
+            updateStructureVectorForDataEntitiesByIds(dataEntityIds),
             updateTagVectorsForDataEntities(dataEntityIds)
         ).then();
     }
@@ -214,52 +216,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     }
 
     @Override
-    public Mono<Integer> updateStructureVectorForDataEntities(final List<Long> dataEntityIds) {
-        final String dsOddrnAlias = "dsv_dataset_oddrn";
+    public Mono<Integer> updateStructureVectorForDataEntitiesByIds(final List<Long> dataEntityIds) {
+        return updateStructureVectorForDataEntities(DATA_ENTITY.ID.in(dataEntityIds));
+    }
 
-        final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
-        final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
-
-        final SelectHavingStep<Record3<Long, String, Long>> subquery = DSL
-            .select(DATA_ENTITY.ID, datasetOddrnField, dsvMaxField)
-            .from(DATASET_VERSION)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .groupBy(DATA_ENTITY.ID, DATASET_VERSION.DATASET_ODDRN);
-
-        final Field<Long> dataEntityIdField = subquery.field(DATA_ENTITY.ID);
-
-        final Field<String> labelName = LABEL.NAME.as("label_name");
-
-        final List<Field<?>> vectorFields = List.of(
-            DATASET_FIELD.NAME,
-            DATASET_FIELD.INTERNAL_DESCRIPTION,
-            DATASET_FIELD.EXTERNAL_DESCRIPTION,
-            labelName
-        );
-
-        final SelectOnConditionStep<Record> vectorSelect = DSL
-            .select(vectorFields)
-            .select(dataEntityIdField)
-            .from(subquery)
-            .join(DATASET_VERSION)
-            .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(dsOddrnAlias, String.class)))
-            .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
-            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
-            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
-
-        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
-            vectorSelect,
-            dataEntityIdField,
-            vectorFields,
-            SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
-            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
-            true
-        );
-
-        return jooqReactiveOperations.mono(insertQuery);
+    @Override
+    public Mono<Integer> updateStructureVectorForDataEntitiesByOddrns(final Collection<String> dataEntityOddrns) {
+        return updateStructureVectorForDataEntities(DATA_ENTITY.ODDRN.in(dataEntityOddrns));
     }
 
     @Override
@@ -293,7 +256,29 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
      */
     @Override
     public Mono<Integer> updateTagVectorsForDataEntity(final long dataEntityId) {
-        return updateStructureVectorForDataEntities(singletonList(dataEntityId));
+        final Field<Long> deId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(TAG.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(deId))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .and(TAG.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> tagQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            deId,
+            vectorFields,
+            SEARCH_ENTRYPOINT.TAG_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true
+        );
+
+        return jooqReactiveOperations.mono(tagQuery);
     }
 
     @Override
@@ -526,7 +511,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED);
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
 
         final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -576,5 +561,54 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         );
 
         return jooqReactiveOperations.mono(datasetFieldQuery);
+    }
+
+    private Mono<Integer> updateStructureVectorForDataEntities(final Condition datasetQueryCondition) {
+        final String dsOddrnAlias = "dsv_dataset_oddrn";
+
+        final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
+        final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
+
+        final SelectHavingStep<Record3<Long, String, Long>> subquery = DSL
+            .select(DATA_ENTITY.ID, datasetOddrnField, dsvMaxField)
+            .from(DATASET_VERSION)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+            .where(datasetQueryCondition)
+            .groupBy(DATA_ENTITY.ID, DATASET_VERSION.DATASET_ODDRN);
+
+        final Field<Long> dataEntityIdField = subquery.field(DATA_ENTITY.ID);
+
+        final Field<String> labelName = LABEL.NAME.as("label_name");
+
+        final List<Field<?>> vectorFields = List.of(
+            DATASET_FIELD.NAME,
+            DATASET_FIELD.INTERNAL_DESCRIPTION,
+            DATASET_FIELD.EXTERNAL_DESCRIPTION,
+            labelName
+        );
+
+        final SelectOnConditionStep<Record> vectorSelect = DSL
+            .select(vectorFields)
+            .select(dataEntityIdField)
+            .from(subquery)
+            .join(DATASET_VERSION)
+            .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(dsOddrnAlias, String.class)))
+            .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
+            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityIdField,
+            vectorFields,
+            SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true,
+            Map.of(labelName, LABEL.NAME)
+        );
+
+        return jooqReactiveOperations.mono(insertQuery);
     }
 }

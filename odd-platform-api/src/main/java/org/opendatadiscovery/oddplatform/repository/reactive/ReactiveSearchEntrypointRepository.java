@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import reactor.core.publisher.Mono;
 
@@ -20,7 +21,9 @@ public interface ReactiveSearchEntrypointRepository {
 
     Mono<Integer> clearNamespaceVector(final long dataSourceId);
 
-    Mono<Integer> updateStructureVectorForDataEntities(final List<Long> dataEntityIds);
+    Mono<Integer> updateStructureVectorForDataEntitiesByIds(final List<Long> dataEntityIds);
+
+    Mono<Integer> updateStructureVectorForDataEntitiesByOddrns(final Collection<String> dataEntityOddrns);
 
     Mono<Integer> updateChangedDataSourceVector(final long dataSourceId);
 
