@@ -1366,9 +1366,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components.yaml/#/components/schemas/MessageList'
+                $ref: './components.yaml/#/components/schemas/MessageList'
       tags:
         - dataEntity
 
@@ -1402,16 +1400,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components.yaml/#/components/schemas/MessageList'
+                $ref: './components.yaml/#/components/schemas/MessageList'
       tags:
         - dataEntity
 
   /api/dataentities/{data_entity_id}/channels:
     get:
       summary: Get top X channels in which there are messages about this data entity
-      operationId: getMessage
+      operationId: getChannels
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - name: channel_name
@@ -1424,9 +1420,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components.yaml/#/components/schemas/MessageChannelList'
+                $ref: './components.yaml/#/components/schemas/MessageChannelList'
       tags:
         - dataEntity
 
