@@ -34,7 +34,7 @@ const setActivitiesPageInfo = (
   maxActivityListSize: number
 ): ActivityPageInfo => {
   const lastActivity = activities.slice(-1);
-  let pageInfo: ActivityPageInfo = { hasNext: true };
+  let pageInfo: ActivityPageInfo;
   if (activities.length < maxActivityListSize) {
     pageInfo = { hasNext: false };
     return pageInfo;

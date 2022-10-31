@@ -20,3 +20,4 @@ export * from './metadata.thunks';
 export * from './dataEntityRun.thunk';
 export * from './activity.thunks';
 export * from './ownerAssociation.thunks';
+export * from './dataCollaboration.thunks';

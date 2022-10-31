@@ -49,10 +49,7 @@ export interface DataEntityActivityQueryParams
 }
 
 export interface ActivityCountParamsRequest
-  extends Omit<
-    ActivityApiGetActivityCountsRequest,
-    'beginDate' | 'endDate'
-  > {
+  extends Omit<ActivityApiGetActivityCountsRequest, 'beginDate' | 'endDate'> {
   beginDate: number;
   endDate: number;
 }

@@ -21,6 +21,7 @@ import {
   DataSource,
   EnumValue,
   Label,
+  MessageChannel,
   MetadataField,
   MetadataFieldValue,
   Namespace,
@@ -39,6 +40,7 @@ import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
 import {
   Activity,
+  ActivityPageInfo,
   ActivityQueryParams,
   Alert,
   CurrentPageInfo,
@@ -46,6 +48,8 @@ import {
   DataEntityLineageById,
   DataSetStructureTypesCount,
   FacetOptionsByName,
+  Message,
+  PageInfo,
   SearchFacetsByName,
   SearchTotalsByName,
   TermSearchFacetOptionsByName,
@@ -139,6 +143,12 @@ export interface OwnersState {
   };
 }
 
+export interface DataCollaborationState {
+  channels: MessageChannel[];
+  messages: { messagesByDate: { [date: string]: Message[] }; pageInfo: PageInfo };
+  relatedMessages: { messages: Message[]; pageInfo: PageInfo };
+}
+
 export interface DataEntitiesState {
   byId: { [dataEntityId: string]: DataEntity & DataEntityDetailsState };
   allIds: number[];
@@ -207,7 +217,7 @@ export interface TermLinkedListState {
 
 export interface ActivitiesState {
   activitiesByDate: { [date: string]: Activity[] };
-  pageInfo: { hasNext: boolean; lastEventId?: number; lastEventDateTime?: number };
+  pageInfo: ActivityPageInfo;
   counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
 }
