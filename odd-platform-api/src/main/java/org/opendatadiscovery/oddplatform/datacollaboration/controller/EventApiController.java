@@ -1,6 +1,9 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.gson.Gson;
+import com.slack.api.model.event.MessageEvent;
+import com.slack.api.util.json.GsonFactory;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class EventApiController {
+    private static final Gson GSON = GsonFactory.createSnakeCase();
+
     private final DataCollaborationService dataCollaborationService;
 
     @RequestMapping("/api/slack/events")
@@ -33,27 +38,40 @@ public class EventApiController {
 
             final String eventType = (String) requestMap.get("type");
             if (StringUtils.equals(eventType, "url_verification")) {
-                return Mono.just(SlackEventResponse.challengeResponse(((String) requestMap.get("challenge"))));
+                return SlackEventResponse.challengeResponse(((String) requestMap.get("challenge")));
             }
 
             if (!StringUtils.equals(eventType, "event_callback")) {
                 log.debug("Unknown event type: {}", eventType);
-                return Mono.just(SlackEventResponse.ack());
+                return SlackEventResponse.ack();
+            }
+
+            final MessageEvent messageEvent =
+                GSON.fromJson(JSONSerDeUtils.serializeJson(requestMap.get("event")), MessageEvent.class);
+
+            if (!"message".equals(messageEvent.getType())) {
+                log.debug("Unknown event inner type: {}", eventType);
+                return SlackEventResponse.ack();
+            }
+
+            if (messageEvent.getThreadTs() == null) {
+                log.debug("Message {} is not a thread reply", messageEvent);
+                return SlackEventResponse.ack();
             }
 
             return dataCollaborationService
-                .enqueueMessageEvent(JSONSerDeUtils.serializeJson(requestMap.get("event")), MessageProviderDto.SLACK)
-                .thenReturn(SlackEventResponse.ack());
+                .enqueueMessageEvent(messageEvent, MessageProviderDto.SLACK)
+                .then(SlackEventResponse.ack());
         });
     }
 
     record SlackEventResponse(String challenge) {
-        public static ResponseEntity<SlackEventResponse> challengeResponse(final String challenge) {
-            return ResponseEntity.ok(new SlackEventResponse(challenge));
+        public static Mono<ResponseEntity<SlackEventResponse>> challengeResponse(final String challenge) {
+            return Mono.just(ResponseEntity.ok(new SlackEventResponse(challenge)));
         }
 
-        public static ResponseEntity<SlackEventResponse> ack() {
-            return ResponseEntity.ok().build();
+        public static Mono<ResponseEntity<SlackEventResponse>> ack() {
+            return Mono.just(ResponseEntity.ok().build());
         }
     }
 }

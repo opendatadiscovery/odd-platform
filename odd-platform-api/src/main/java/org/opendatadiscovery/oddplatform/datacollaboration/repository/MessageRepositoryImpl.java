@@ -3,6 +3,8 @@ package org.opendatadiscovery.oddplatform.datacollaboration.repository;
 import lombok.RequiredArgsConstructor;
 import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderEventStateDto;
@@ -33,12 +35,15 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     @Override
     public Mono<MessageProviderEventPojo> createMessageEvent(final String event,
-                                                             final MessageProviderDto messageProvider) {
+                                                             final MessageProviderDto messageProvider,
+                                                             long parentMessageId) {
         final MessageProviderEventRecord record =
             jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
                 .setProvider(messageProvider.toString())
                 .setEvent(JSONB.jsonb(event))
-                .setState(MessageProviderEventStateDto.PENDING.toString()));
+                .setState(MessageProviderEventStateDto.PENDING.toString())
+                .setParentMessageId(parentMessageId)
+            );
 
         final InsertResultStep<MessageProviderEventRecord> query = DSL
             .insertInto(MESSAGE_PROVIDER_EVENT)
@@ -46,5 +51,14 @@ public class MessageRepositoryImpl implements MessageRepository {
             .returning();
 
         return jooqReactiveOperations.mono(query).map(r -> r.into(MessageProviderEventPojo.class));
+    }
+
+    @Override
+    public Mono<Long> getIdByProviderId(final String providerId) {
+        final SelectConditionStep<Record1<Long>> query = DSL.select(MESSAGE.ID)
+            .from(MESSAGE)
+            .where(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerId));
+
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 }

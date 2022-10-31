@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
+import com.slack.api.model.event.MessageEvent;
+import com.slack.api.util.json.GsonFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
@@ -61,9 +63,15 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     }
 
     @Override
-    public Mono<Void> enqueueMessageEvent(final String messageEvent, final MessageProviderDto messageProvider) {
-        return messageRepository
-            .createMessageEvent(messageEvent, messageProvider)
+    public Mono<Void> enqueueMessageEvent(final MessageEvent messageEvent, final MessageProviderDto messageProvider) {
+        final String event = GsonFactory.createSnakeCase().toJson(messageEvent);
+
+        return messageRepository.getIdByProviderId(messageEvent.getThreadTs())
+            .switchIfEmpty(Mono.defer(() -> {
+                log.debug("Message {} is not a reply thread for tracked messages", messageEvent);
+                return Mono.empty();
+            }))
+            .flatMap(parentMessageId -> messageRepository.createMessageEvent(event, messageProvider, parentMessageId))
             .then();
     }
 }

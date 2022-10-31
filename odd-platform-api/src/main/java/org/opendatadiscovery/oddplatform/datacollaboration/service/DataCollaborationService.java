@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
+import com.slack.api.model.event.MessageEvent;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
@@ -13,5 +14,5 @@ public interface DataCollaborationService {
 
     Mono<Message> createAndSendMessage(final MessageRequest message, final MessageProviderDto messageProvider);
 
-    Mono<Void> enqueueMessageEvent(final String messageEvent, final MessageProviderDto messageProvider);
+    Mono<Void> enqueueMessageEvent(final MessageEvent messageEvent, final MessageProviderDto messageProvider);
 }

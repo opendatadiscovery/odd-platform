@@ -8,5 +8,9 @@ import reactor.core.publisher.Mono;
 public interface MessageRepository {
     Mono<MessagePojo> create(final MessagePojo message);
 
-    Mono<MessageProviderEventPojo> createMessageEvent(final String event, final MessageProviderDto messageProvider);
+    Mono<MessageProviderEventPojo> createMessageEvent(final String event,
+                                                      final MessageProviderDto messageProvider,
+                                                      final long parentMessageId);
+
+    Mono<Long> getIdByProviderId(final String providerId);
 }
