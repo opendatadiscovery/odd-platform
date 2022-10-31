@@ -12,12 +12,14 @@
       "minItems": 1
     }
   },
+  "additionalProperties": false,
   "required": [
     "statements"
   ],
   "$defs": {
     "policy_statement": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "resource": {
           "$ref": "#/$defs/policy_resource"
@@ -44,6 +46,7 @@
         }
       },
       "required": [
+        "resource",
         "permissions"
       ],
       "allOf": [
@@ -162,50 +165,101 @@
     },
     "policy_resource": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "type": {
           "$ref": "#/$defs/policy_resource_type"
         },
         "conditions": {
-          "$ref": "#/$defs/policy_resource_condition"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/term_policy_resource_condition"
+            },
+            {
+              "$ref": "#/$defs/data_entity_policy_resource_condition"
+            }
+          ]
         }
       },
       "required": [
         "type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "MANAGEMENT"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "conditions"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "DATA_ENTITY"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "conditions": {
+                "$ref": "#/$defs/data_entity_policy_resource_condition"
+              }
+            }
+          }
+        }
       ]
     },
-    "policy_resource_condition": {
+    "data_entity_policy_resource_condition": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "all": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/policy_resource_condition"
+            "$ref": "#/$defs/data_entity_policy_resource_condition"
           }
         },
         "any": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/policy_resource_condition"
+            "$ref": "#/$defs/data_entity_policy_resource_condition"
           }
         },
         "eq": {
-          "$ref": "#/$defs/policy_resource_condition_unary"
+          "$ref": "#/$defs/data_entity_policy_resource_condition_unary"
         },
         "not_eq": {
-          "$ref": "#/$defs/policy_resource_condition_unary"
+          "$ref": "#/$defs/data_entity_policy_resource_condition_unary"
         },
         "match": {
-          "$ref": "#/$defs/policy_resource_condition_unary"
+          "$ref": "#/$defs/data_entity_policy_resource_condition_unary"
         },
         "not_match": {
-          "$ref": "#/$defs/policy_resource_condition_unary"
+          "$ref": "#/$defs/data_entity_policy_resource_condition_unary"
         },
         "is": {
-          "$ref": "#/$defs/policy_resource_condition_key"
+          "$ref": "#/$defs/data_entity_resource_condition_key"
         },
         "not_is": {
-          "$ref": "#/$defs/policy_resource_condition_key"
+          "$ref": "#/$defs/data_entity_resource_condition_key"
         }
       },
       "anyOf": [
@@ -251,15 +305,101 @@
         }
       ]
     },
-    "policy_resource_condition_unary": {
+    "data_entity_policy_resource_condition_unary": {
       "type": "object",
       "propertyNames": {
-        "$ref": "#/$defs/policy_resource_condition_key"
+        "$ref": "#/$defs/data_entity_resource_condition_key"
       },
       "maxProperties": 1,
       "minProperties": 1
     },
-    "policy_resource_condition_key": {
+    "term_policy_resource_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "all": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/term_policy_resource_condition"
+          }
+        },
+        "any": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/term_policy_resource_condition"
+          }
+        },
+        "eq": {
+          "$ref": "#/$defs/term_policy_resource_condition_unary"
+        },
+        "not_eq": {
+          "$ref": "#/$defs/term_policy_resource_condition_unary"
+        },
+        "match": {
+          "$ref": "#/$defs/term_policy_resource_condition_unary"
+        },
+        "not_match": {
+          "$ref": "#/$defs/term_policy_resource_condition_unary"
+        },
+        "is": {
+          "$ref": "#/$defs/term_resource_condition_key"
+        },
+        "not_is": {
+          "$ref": "#/$defs/term_resource_condition_key"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "all"
+          ]
+        },
+        {
+          "required": [
+            "any"
+          ]
+        },
+        {
+          "required": [
+            "eq"
+          ]
+        },
+        {
+          "required": [
+            "not_eq"
+          ]
+        },
+        {
+          "required": [
+            "match"
+          ]
+        },
+        {
+          "required": [
+            "not_match"
+          ]
+        },
+        {
+          "required": [
+            "is"
+          ]
+        },
+        {
+          "required": [
+            "not_is"
+          ]
+        }
+      ]
+    },
+    "term_policy_resource_condition_unary": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/term_resource_condition_key"
+      },
+      "maxProperties": 1,
+      "minProperties": 1
+    },
+    "data_entity_resource_condition_key": {
       "type": "string",
       "enum": [
         "dataEntity:oddrn",
@@ -272,7 +412,12 @@
         "dataEntity:namespace:name",
         "dataEntity:tag:name",
         "dataEntity:owner",
-        "dataEntity:owner:title",
+        "dataEntity:owner:title"
+      ]
+    },
+    "term_resource_condition_key": {
+      "type": "string",
+      "enum": [
         "term:name",
         "term:namespace:name",
         "term:tag:name",
@@ -297,11 +442,9 @@
         "DATA_ENTITY_ADD_TERM",
         "DATA_ENTITY_DELETE_TERM",
         "DATA_ENTITY_ALERT_RESOLVE",
-        "DATASET_DESCRIPTION_UPDATE",
-        "DATASET_LABELS_UPDATE",
-        "DATASET_ENUMS_ADD",
-        "DATASET_ENUMS_UPDATE",
-        "DATASET_ENUMS_DELETE",
+        "DATASET_TEST_RUN_SET_SEVERITY",
+        "DATASET_FIELD_INFO_UPDATE",
+        "DATASET_FIELD_ENUMS_UPDATE",
         "DATA_ENTITY_GROUP_UPDATE",
         "DATA_ENTITY_GROUP_DELETE"
       ]
@@ -344,8 +487,12 @@
         "OWNER_DELETE",
         "OWNER_ASSOCIATION_MANAGE",
         "DIRECT_OWNER_SYNC",
-        "POLICY_MANAGEMENT",
-        "ROLE_MANAGEMENT"
+        "POLICY_CREATE",
+        "POLICY_UPDATE",
+        "POLICY_DELETE",
+        "ROLE_CREATE",
+        "ROLE_UPDATE",
+        "ROLE_DELETE"
       ]
     },
     "all_permissions": {

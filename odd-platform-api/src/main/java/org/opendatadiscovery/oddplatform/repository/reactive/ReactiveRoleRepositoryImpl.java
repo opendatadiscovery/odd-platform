@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
-import java.util.Set;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
@@ -9,12 +8,11 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.RoleDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.PolicyPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.RoleRecord;
+import org.opendatadiscovery.oddplatform.repository.mapper.RoleRecordMapper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
@@ -30,13 +28,13 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ROLE_TO_POLICY;
 public class ReactiveRoleRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRepository<RoleRecord, RolePojo>
     implements ReactiveRoleRepository {
     private static final String AGG_POLICY_FIELD = "policy_relations";
-    private final JooqRecordHelper jooqRecordHelper;
+    private final RoleRecordMapper roleRecordMapper;
 
     public ReactiveRoleRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                       final JooqQueryHelper jooqQueryHelper,
-                                      final JooqRecordHelper jooqRecordHelper) {
+                                      final RoleRecordMapper roleRecordMapper) {
         super(jooqReactiveOperations, jooqQueryHelper, ROLE, RolePojo.class);
-        this.jooqRecordHelper = jooqRecordHelper;
+        this.roleRecordMapper = roleRecordMapper;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class ReactiveRoleRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .where(ROLE.ID.eq(id))
             .groupBy(ROLE.fields());
         return jooqReactiveOperations.mono(dtoQuery)
-            .map(this::mapRecordToDto);
+            .map(r -> roleRecordMapper.mapRecordToDto(r, AGG_POLICY_FIELD));
     }
 
     @Override
@@ -76,28 +74,20 @@ public class ReactiveRoleRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .collectList()
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
-                r -> mapRecordToDto(r, roleCTE.getName()),
+                r -> roleRecordMapper.mapCTERecordToDto(r, roleCTE.getName(), AGG_POLICY_FIELD),
                 fetchCount(nameQuery)
             ));
     }
 
     @Override
-    public Mono<RolePojo> getByName(final String name) {
-        final SelectConditionStep<RoleRecord> query = DSL.selectFrom(ROLE)
+    public Mono<RoleDto> getByName(final String name) {
+        final var query = DSL.select(ROLE.fields())
+            .select(jsonArrayAgg(field(POLICY.asterisk().toString())).as(AGG_POLICY_FIELD))
+            .from(ROLE)
+            .leftJoin(ROLE_TO_POLICY).on(ROLE.ID.eq(ROLE_TO_POLICY.ROLE_ID))
+            .leftJoin(POLICY).on(ROLE_TO_POLICY.POLICY_ID.eq(POLICY.ID))
             .where(addSoftDeleteFilter(ROLE.NAME.eq(name)));
         return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(RolePojo.class));
-    }
-
-    private RoleDto mapRecordToDto(final Record r) {
-        final RolePojo pojo = r.into(ROLE).into(RolePojo.class);
-        final Set<PolicyPojo> policies = jooqRecordHelper.extractAggRelation(r, AGG_POLICY_FIELD, PolicyPojo.class);
-        return new RoleDto(pojo, policies);
-    }
-
-    private RoleDto mapRecordToDto(final Record r, final String cteName) {
-        final RolePojo rolePojo = jooqRecordHelper.remapCte(r, cteName, ROLE).into(RolePojo.class);
-        final Set<PolicyPojo> policies = jooqRecordHelper.extractAggRelation(r, AGG_POLICY_FIELD, PolicyPojo.class);
-        return new RoleDto(rolePojo, policies);
+            .map(r -> roleRecordMapper.mapRecordToDto(r, AGG_POLICY_FIELD));
     }
 }

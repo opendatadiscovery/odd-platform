@@ -22,6 +22,9 @@ public class ReactiveResourcePermissionAuthorizationManager
     public Mono<AuthorizationDecision> check(final Mono<Authentication> authentication,
                                              final AuthorizationContext object) {
         final Long resourceId = resourceIdExtractor.apply(object);
+        if (resourceId == null) {
+            return Mono.just(new AuthorizationDecision(false));
+        }
         final PermissionResourceType type = PermissionResourceType.fromValue(permission.getType().name());
         return permissionService.getResourcePermissionsForCurrentUser(type, resourceId)
             .filter(p -> p.name().equals(permission.name()))

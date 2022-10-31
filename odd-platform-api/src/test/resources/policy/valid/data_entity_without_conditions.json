@@ -1,0 +1,12 @@
+{
+  "statements": [
+    {
+      "resource": {
+        "type": "DATA_ENTITY"
+      },
+      "permissions": [
+        "ALL"
+      ]
+    }
+  ]
+}

@@ -24,7 +24,7 @@ public class PolicyDeserializerTest {
     @Test
     public void testDeserialize() throws IOException {
         final PolicyDto policyDto = objectMapper.readValue(
-            new ClassPathResource("json/policy.json").getInputStream(), PolicyDto.class);
+            new ClassPathResource("policy/policy.json").getInputStream(), PolicyDto.class);
         assertThat(policyDto).isNotNull();
         assertThat(policyDto.getStatements()).hasSize(1);
         final PolicyStatementDto statementDto = policyDto.getStatements().get(0);
@@ -42,6 +42,7 @@ public class PolicyDeserializerTest {
         final PolicyConditionUnaryDto eq = resource.getConditions().getAll().get(1).getEq();
         assertThat(eq).isNotNull();
         assertThat(eq.getCondition()).hasSize(1);
-        assertThat(eq.getCondition().get(PolicyConditionKeyDto.DATA_ENTITY_NAMESPACE_NAME)).isEqualTo("QA");
+        assertThat(eq.getCondition().get(PolicyConditionKeyDto.DATA_ENTITY_NAMESPACE_NAME)).isEqualTo(
+            "Open Data Discovery");
     }
 }

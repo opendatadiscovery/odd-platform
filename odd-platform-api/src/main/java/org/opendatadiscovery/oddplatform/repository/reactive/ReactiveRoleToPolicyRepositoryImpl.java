@@ -49,9 +49,6 @@ public class ReactiveRoleToPolicyRepositoryImpl implements ReactiveRoleToPolicyR
 
     @Override
     public Mono<Void> deleteRoleRelationsExcept(final long roleId, final Collection<Long> policyIds) {
-        if (CollectionUtils.isEmpty(policyIds)) {
-            return Mono.empty();
-        }
         final var query = DSL.delete(ROLE_TO_POLICY)
             .where(ROLE_TO_POLICY.ROLE_ID.eq(roleId).and(ROLE_TO_POLICY.POLICY_ID.notIn(policyIds)));
         return jooqReactiveOperations.mono(query).then();

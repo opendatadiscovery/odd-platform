@@ -5,29 +5,34 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
-import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
-import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.RoleDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
+import org.opendatadiscovery.oddplatform.repository.mapper.RoleRecordMapper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER_TO_ROLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.POLICY;
 import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.ROLE_TO_POLICY;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
 @RequiredArgsConstructor
 public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwnerMappingRepository {
+    private static final String AGG_POLICY_FIELD = "policy_relations";
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqQueryHelper jooqQueryHelper;
+    private final RoleRecordMapper roleRecordMapper;
 
     @Override
     public Mono<UserOwnerMappingPojo> createRelation(final String oidcUsername,
@@ -77,14 +82,18 @@ public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwner
     }
 
     @Override
-    public Mono<List<RolePojo>> getUserRolesByOwner(final String username, final String provider) {
-        final SelectConditionStep<Record> query = DSL.select(ROLE.fields())
+    public Mono<List<RoleDto>> getUserRolesByOwner(final String username, final String provider) {
+        final var query = DSL.select(ROLE.fields())
+            .select(jsonArrayAgg(field(POLICY.asterisk().toString())).as(AGG_POLICY_FIELD))
             .from(ROLE)
+            .leftJoin(ROLE_TO_POLICY).on(ROLE.ID.eq(ROLE_TO_POLICY.ROLE_ID))
+            .leftJoin(POLICY).on(ROLE_TO_POLICY.POLICY_ID.eq(POLICY.ID))
             .join(OWNER_TO_ROLE).on(ROLE.ID.eq(OWNER_TO_ROLE.ROLE_ID))
             .join(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER_TO_ROLE.OWNER_ID))
-            .where(USER_OWNER_MAPPING.OIDC_USERNAME.eq(username).and(USER_OWNER_MAPPING.PROVIDER.eq(provider)));
+            .where(getConditions(username, provider))
+            .groupBy(ROLE.fields());
         return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(RolePojo.class))
+            .map(r -> roleRecordMapper.mapRecordToDto(r, AGG_POLICY_FIELD))
             .collectList();
     }
 

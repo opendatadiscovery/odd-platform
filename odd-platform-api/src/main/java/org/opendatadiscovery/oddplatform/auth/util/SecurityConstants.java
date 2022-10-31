@@ -1,27 +1,196 @@
 package org.opendatadiscovery.oddplatform.auth.util;
 
+import java.util.List;
 import lombok.experimental.UtilityClass;
+import org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
-import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
+
+import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.ALERT;
+import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.NO_CONTEXT;
+import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.TERM;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_TOKEN_REGENERATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_ENUMS_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_INFO_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_TEST_RUN_SET_SEVERITY;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TERM;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TO_GROUP;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_RESOLVE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DELETE_FROM_GROUP;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DELETE_TERM;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DESCRIPTION_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_INTERNAL_NAME_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_TAGS_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_TOKEN_REGENERATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_ASSOCIATION_MANAGE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.OWNER_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TAG_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TAG_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TAG_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_OWNERSHIP_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_OWNERSHIP_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_OWNERSHIP_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_TAGS_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_UPDATE;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 @UtilityClass
 public final class SecurityConstants {
 
-    public static final String[] WHITELIST_PATHS = {
-        "/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**"
-    };
+    public static final String[] WHITELIST_PATHS = {"/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**"};
 
-    public static final ServerWebExchangeMatcher NAMESPACE_CREATE =
-        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.POST);
-    public static final ServerWebExchangeMatcher NAMESPACE_UPDATE =
-        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.PUT);
-    public static final ServerWebExchangeMatcher NAMESPACE_DELETE =
-        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
-    public static final ServerWebExchangeMatcher DATA_ENTITY_GROUP_CREATE =
-        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
-    public static final ServerWebExchangeMatcher TERM_CREATE =
-        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
-    public static final ServerWebExchangeMatcher DATA_SOURCE_CREATE =
-        new PathPatternParserServerWebExchangeMatcher("/api/namespaces/**", HttpMethod.DELETE);
+    public static final List<SecurityRule> SECURITY_RULES = List.of(
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher("/api/namespaces", POST), NAMESPACE_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/namespaces", POST),
+            NAMESPACE_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/namespaces/*", PUT),
+            NAMESPACE_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/namespaces/*", DELETE),
+            NAMESPACE_DELETE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups", POST),
+            DATA_ENTITY_GROUP_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/terms", POST), TERM_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/datasources", POST),
+            DATA_SOURCE_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/datasources/*", PUT),
+            DATA_SOURCE_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/datasources/*", DELETE),
+            DATA_SOURCE_DELETE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/datasources/*/token", PUT),
+            DATA_SOURCE_TOKEN_REGENERATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/collectors", POST),
+            COLLECTOR_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/collectors/*", PUT),
+            COLLECTOR_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/collectors/*", DELETE),
+            COLLECTOR_DELETE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/collectors/*/token", PUT),
+            COLLECTOR_TOKEN_REGENERATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/tags", POST), TAG_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/tags/*", PUT), TAG_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/tags/*", DELETE), TAG_DELETE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels", POST), LABEL_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels/*", PUT), LABEL_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels/*", DELETE),
+            LABEL_DELETE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners", POST), OWNER_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners/*", PUT), OWNER_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners/*", DELETE),
+            OWNER_DELETE),
+        new SecurityRule(
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owner_association_request", HttpMethod.GET),
+            OWNER_ASSOCIATION_MANAGE),
+        new SecurityRule(
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owner_association_request/*", PUT),
+            OWNER_ASSOCIATION_MANAGE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies", POST),
+            POLICY_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies/*", PUT),
+            POLICY_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/policies/*", DELETE),
+            POLICY_DELETE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/roles", POST), ROLE_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/roles/*", PUT), ROLE_UPDATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/roles/*", DELETE),
+            ROLE_DELETE),
+        new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/*", PUT), TERM_UPDATE),
+        new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/*", DELETE), TERM_DELETE),
+        new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/*/ownership", POST),
+            TERM_OWNERSHIP_CREATE),
+        new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/*/ownership/*", PUT),
+            TERM_OWNERSHIP_UPDATE),
+        new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/*/ownership/*", DELETE),
+            TERM_OWNERSHIP_DELETE),
+        new SecurityRule(TERM, new PathPatternParserServerWebExchangeMatcher("/api/terms/*/tags", PUT),
+            TERM_TAGS_UPDATE),
+        new SecurityRule(
+            DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/description", PUT),
+            DATA_ENTITY_DESCRIPTION_UPDATE),
+        new SecurityRule(DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/name", PUT),
+            DATA_ENTITY_INTERNAL_NAME_UPDATE),
+        new SecurityRule(DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/metadata", POST),
+            DATA_ENTITY_CUSTOM_METADATA_CREATE),
+        new SecurityRule(DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/metadata/*", PUT),
+            DATA_ENTITY_CUSTOM_METADATA_UPDATE),
+        new SecurityRule(
+            DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/metadata/*", DELETE),
+            DATA_ENTITY_CUSTOM_METADATA_DELETE),
+        new SecurityRule(DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/tags", PUT),
+            DATA_ENTITY_TAGS_UPDATE),
+        new SecurityRule(DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/ownership", POST),
+            DATA_ENTITY_OWNERSHIP_CREATE),
+        new SecurityRule(
+            DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/ownership/*", PUT),
+            DATA_ENTITY_OWNERSHIP_UPDATE),
+        new SecurityRule(
+            DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/ownership/*", DELETE),
+            DATA_ENTITY_OWNERSHIP_DELETE),
+        new SecurityRule(
+            DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/data_entity_group", POST),
+            DATA_ENTITY_ADD_TO_GROUP),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/data_entity_group/*", DELETE),
+            DATA_ENTITY_DELETE_FROM_GROUP),
+        new SecurityRule(DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/term", POST),
+            DATA_ENTITY_ADD_TERM),
+        new SecurityRule(DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/*/term/*", DELETE),
+            DATA_ENTITY_DELETE_TERM),
+        new SecurityRule(
+            DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher("/api/datasets/*/dataqatests/*/severity", PUT),
+            DATASET_TEST_RUN_SET_SEVERITY),
+        new SecurityRule(DATASET_FIELD, new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/*", PUT),
+            DATASET_FIELD_INFO_UPDATE),
+        new SecurityRule(
+            DATASET_FIELD, new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/*/enum_values", POST),
+            DATASET_FIELD_ENUMS_UPDATE),
+        new SecurityRule(ALERT, new PathPatternParserServerWebExchangeMatcher("/api/alerts/*/status", PUT),
+            DATA_ENTITY_ALERT_RESOLVE),
+        new SecurityRule(
+            AuthorizationManagerType.DEG, new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/*", PUT),
+            DATA_ENTITY_GROUP_UPDATE),
+        new SecurityRule(AuthorizationManagerType.DEG,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/*", DELETE),
+            DATA_ENTITY_GROUP_DELETE)
+    );
 }

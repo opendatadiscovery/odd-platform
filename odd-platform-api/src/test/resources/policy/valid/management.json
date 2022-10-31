@@ -1,0 +1,41 @@
+{
+  "statements": [
+    {
+      "resource": {
+        "type": "MANAGEMENT"
+      },
+      "permissions": [
+        "DATA_ENTITY_GROUP_CREATE",
+        "TERM_CREATE",
+        "DATA_SOURCE_CREATE",
+        "DATA_SOURCE_UPDATE",
+        "DATA_SOURCE_DELETE",
+        "DATA_SOURCE_TOKEN_REGENERATE",
+        "COLLECTOR_CREATE",
+        "COLLECTOR_UPDATE",
+        "COLLECTOR_DELETE",
+        "COLLECTOR_TOKEN_REGENERATE",
+        "NAMESPACE_CREATE",
+        "NAMESPACE_UPDATE",
+        "NAMESPACE_DELETE",
+        "TAG_CREATE",
+        "TAG_UPDATE",
+        "TAG_DELETE",
+        "LABEL_CREATE",
+        "LABEL_UPDATE",
+        "LABEL_DELETE",
+        "OWNER_CREATE",
+        "OWNER_UPDATE",
+        "OWNER_DELETE",
+        "OWNER_ASSOCIATION_MANAGE",
+        "DIRECT_OWNER_SYNC",
+        "POLICY_CREATE",
+        "POLICY_UPDATE",
+        "POLICY_DELETE",
+        "ROLE_CREATE",
+        "ROLE_UPDATE",
+        "ROLE_DELETE"
+      ]
+    }
+  ]
+}
