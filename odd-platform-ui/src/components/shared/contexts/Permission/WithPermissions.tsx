@@ -24,11 +24,11 @@ const WithPermissions: React.FC<WithPermissionsProps> = ({
     return <>{renderContent({ isAllowedTo })}</>;
   }
 
-  if (children && permissionTo && extraCheck !== undefined) {
+  if (children && extraCheck !== undefined) {
     return hasAccessTo(permissionTo) && extraCheck ? <>{children}</> : null;
   }
 
-  if (children && permissionTo) {
+  if (children) {
     return hasAccessTo(permissionTo) ? <>{children}</> : null;
   }
 

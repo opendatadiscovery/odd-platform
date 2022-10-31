@@ -20,10 +20,10 @@ import { deleteTerm, fetchResourcePermissions, fetchTermDetails } from 'redux/th
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { PermissionProvider, WithPermissions } from 'components/shared/contexts';
-import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { Grid, Typography } from '@mui/material';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
 import { formatDistanceToNowStrict } from 'date-fns';
+import TermsForm from '../TermSearch/TermForm/TermsForm';
 import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
 import TermDetailsTabs from './TermDetailsTabs/TermDetailsTabs';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';

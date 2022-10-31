@@ -36,7 +36,7 @@ const PermissionProvider: React.FunctionComponent<PermissionProviderProps> = ({
 
   const providerValue = React.useMemo<PermissionContextProps>(
     () => ({ getIsAllowedTo, getHasAccessTo }),
-    [getIsAllowedTo]
+    [getIsAllowedTo, getHasAccessTo]
   );
 
   return (
