@@ -1340,9 +1340,8 @@ paths:
 
   /api/dataentities/{data_entity_id}/messages:
     get:
-      summary: xxx
-      description: xxx
-      operationId: xxx
+      summary: Get messages by data entity id
+      operationId: getDataEntityMessages
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
