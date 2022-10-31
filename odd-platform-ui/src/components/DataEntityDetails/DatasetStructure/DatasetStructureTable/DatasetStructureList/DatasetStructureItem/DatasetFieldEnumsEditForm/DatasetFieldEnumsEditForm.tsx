@@ -17,12 +17,15 @@ import { AppButton, AppCircularProgress, DialogWrapper } from 'components/shared
 import { AddIcon } from 'components/shared/Icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { useAppParams } from 'lib/hooks';
-import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
+import { ValueDescriptionContainer } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItemStyles';
+import AppInput from 'components/shared/AppInput/AppInput';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
   ActionsContainer,
   HeaderContainer,
   TitleContainer,
 } from './DatasetFieldEnumsEditFormStyles';
+import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 
 interface DataSetFieldEnumEditFormProps {
   datasetFieldId: number;
@@ -143,7 +146,7 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
         </Typography>
       </TitleContainer>
       <WithPermissions
-        permissionTo={Permission.DATASET_ENUMS_ADD}
+        permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
         resourceId={dataEntityId}
       >
         <AppButton
@@ -191,16 +194,22 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
 
   const formActionButtons = (handleClose: () => void) => (
     <ActionsContainer>
-      <AppButton
-        size='large'
-        type='submit'
-        form='dataset-field-enums-form'
-        color='primary'
-        disabled={!methods.formState.isValid}
-        sx={{ mr: 1 }}
-      >
-        Save
-      </AppButton>
+      <WithPermissions
+        permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+        resourceId={dataEntityId}
+        renderContent={({ isAllowedTo: editEnums }) => (
+          <AppButton
+            size='large'
+            type='submit'
+            form='dataset-field-enums-form'
+            color='primary'
+            disabled={!(methods.formState.isValid && editEnums)}
+            sx={{ mr: 1 }}
+          >
+            Save
+          </AppButton>
+        )}
+      />
       <AppButton size='large' color='primaryLight' onClick={handleClose}>
         Cancel
       </AppButton>

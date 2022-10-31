@@ -222,11 +222,8 @@ const DataEntityDetails: React.FC = () => {
               render={() => (
                 <PermissionProvider
                   permissions={[
-                    Permission.DATASET_ENUMS_DELETE,
-                    Permission.DATASET_ENUMS_UPDATE,
-                    Permission.DATASET_LABELS_UPDATE,
-                    Permission.DATASET_ENUMS_ADD,
-                    Permission.DATASET_DESCRIPTION_UPDATE,
+                    Permission.DATASET_FIELD_ENUMS_UPDATE,
+                    Permission.DATASET_FIELD_INFO_UPDATE,
                   ]}
                 >
                   <DatasetStructure />

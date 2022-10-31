@@ -107,7 +107,7 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
         Add or edit labels and description
       </Typography>
       <WithPermissions
-        permissionTo={Permission.DATASET_LABELS_UPDATE}
+        permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
         resourceId={dataEntityId}
         renderContent={({ isAllowedTo: editLabels }) => (
           <LabelsAutocomplete appendLabel={append} labelsEditing={editLabels} />
@@ -116,7 +116,7 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
         {fields.map((label, index) => (
           <WithPermissions
-            permissionTo={Permission.DATASET_LABELS_UPDATE}
+            permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
             resourceId={dataEntityId}
             renderContent={({ isAllowedTo: editLabels }) => (
               <LabelItem
@@ -137,7 +137,7 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
         defaultValue={datasetFieldFormData.internalDescription || ''}
         render={({ field }) => (
           <WithPermissions
-            permissionTo={Permission.DATASET_DESCRIPTION_UPDATE}
+            permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
             resourceId={dataEntityId}
             renderContent={({ isAllowedTo: editDescription }) => (
               <AppInput
@@ -162,15 +162,22 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
-      type='submit'
-      form='dataset-field-info-form'
-      color='primary'
-      fullWidth
-    >
-      Save
-    </AppButton>
+    <WithPermissions
+      permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
+      resourceId={dataEntityId}
+      renderContent={({ isAllowedTo: editInfo }) => (
+        <AppButton
+          size='large'
+          type='submit'
+          form='dataset-field-info-form'
+          color='primary'
+          fullWidth
+          disabled={!editInfo}
+        >
+          Save
+        </AppButton>
+      )}
+    />
   );
 
   return (

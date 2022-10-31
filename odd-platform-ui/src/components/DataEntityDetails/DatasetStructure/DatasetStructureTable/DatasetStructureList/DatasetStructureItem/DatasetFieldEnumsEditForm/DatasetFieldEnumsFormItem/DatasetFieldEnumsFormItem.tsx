@@ -59,7 +59,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             rules={{ required: true, validate: setTextValidationByType }}
             render={({ field }) => (
               <WithPermissions
-                permissionTo={Permission.DATASET_ENUMS_UPDATE}
+                permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
                 resourceId={dataEntityId}
                 renderContent={({ isAllowedTo: editEnum }) => (
                   <ValueNameContainer sx={{ mr: 1 }}>
@@ -87,7 +87,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             control={control}
             render={({ field }) => (
               <WithPermissions
-                permissionTo={Permission.DATASET_ENUMS_UPDATE}
+                permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
                 resourceId={dataEntityId}
                 renderContent={({ isAllowedTo: editEnum }) => (
                   <ValueDescriptionContainer sx={{ mr: 1 }}>
@@ -110,7 +110,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             )}
           />
           <WithPermissions
-            permissionTo={Permission.DATASET_ENUMS_DELETE}
+            permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
             resourceId={dataEntityId}
           >
             <AppButton size='small' color='dropdown' onClick={onItemRemove}>
