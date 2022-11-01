@@ -330,6 +330,5 @@ public class ReactiveAlertRepositoryImpl
             .leftJoin(USER_OWNER_MAPPING)
             .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
-            //.orderBy(alertCte.field(ALERT.CREATED_AT).desc(), alertCte.field(ALERT.ID).desc());
     }
 }
