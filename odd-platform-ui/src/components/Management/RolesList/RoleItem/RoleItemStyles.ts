@@ -1,10 +1,14 @@
 import { Grid } from '@mui/material';
-import styled from 'styled-components';
+import styled, { CSSObject } from 'styled-components';
 
-export const ActionsContainer = styled(Grid)(() => ({
-  justifyContent: 'flex-end',
-  opacity: 0,
-}));
+export const ActionsContainer = styled(Grid)(
+  () =>
+    ({
+      justifyContent: 'flex-end',
+      flexWrap: 'nowrap',
+      opacity: 0,
+    } as CSSObject)
+);
 
 export const Container = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(1.5, 0),

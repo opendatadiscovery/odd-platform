@@ -43,7 +43,6 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'policies',
-    rules: { required: true },
   });
 
   const initialState = { error: '', isSuccessfulSubmit: false };

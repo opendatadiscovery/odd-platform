@@ -46,7 +46,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
           </div>
         </TruncateMarkup>
       </Grid>
-      <S.ActionsContainer item lg={1.74}>
+      <S.ActionsContainer container item lg={1.74}>
         <WithPermissions permissionTo={Permission.OWNER_UPDATE}>
           <OwnerForm
             ownerId={ownerId}

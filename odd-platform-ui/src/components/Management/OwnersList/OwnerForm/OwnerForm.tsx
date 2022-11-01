@@ -34,7 +34,6 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'roles',
-    rules: { required: true },
   });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
