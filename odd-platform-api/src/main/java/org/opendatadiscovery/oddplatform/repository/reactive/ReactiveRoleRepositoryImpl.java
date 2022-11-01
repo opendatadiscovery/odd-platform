@@ -86,7 +86,8 @@ public class ReactiveRoleRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .from(ROLE)
             .leftJoin(ROLE_TO_POLICY).on(ROLE.ID.eq(ROLE_TO_POLICY.ROLE_ID))
             .leftJoin(POLICY).on(ROLE_TO_POLICY.POLICY_ID.eq(POLICY.ID))
-            .where(addSoftDeleteFilter(ROLE.NAME.eq(name)));
+            .where(addSoftDeleteFilter(ROLE.NAME.eq(name)))
+            .groupBy(ROLE.fields());
         return jooqReactiveOperations.mono(query)
             .map(r -> roleRecordMapper.mapRecordToDto(r, AGG_POLICY_FIELD));
     }
