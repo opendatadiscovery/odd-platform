@@ -71,7 +71,7 @@ test.describe('Check filters', () => {
      * /project/1/test-cases/26
      */
     test('Should display the expected item with Tag filter', async ({ steps: { pages } }) => {
-      await test.step('apply filter Tag', async () => {
+      await test.step('Apply filter Tag', async () => {
         await pages.catalog.searchByText(bookETLDataEntity);
         await pages.catalog.clickOnListItem(bookETLDataEntity);
         await pages.overview.createTag(tagFilterOption, noResultsTagText);
