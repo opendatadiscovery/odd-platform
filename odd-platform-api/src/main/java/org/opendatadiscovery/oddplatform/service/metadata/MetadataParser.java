@@ -61,7 +61,7 @@ public class MetadataParser {
         try {
             final JsonNode jsonNode = om.readTree(object.toString());
             return jsonNode.isContainerNode();
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             return false;
         }
     }

@@ -27,7 +27,7 @@ public class PolicyJSONValidator {
             if (!errors.isEmpty()) {
                 throw new IllegalArgumentException("Policy is not valid: " + errors);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("Policy is not valid: " + e.getMessage());
         }
     }
