@@ -2,12 +2,12 @@ package org.opendatadiscovery.oddplatform.service.permission.extractor;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.policy.DataEntityPolicyResolverContext;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
+import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
@@ -36,8 +36,8 @@ public class DataEntityPermissionExtractor
     }
 
     @Override
-    public PermissionResourceType getResourceType() {
-        return PermissionResourceType.DATA_ENTITY;
+    public PolicyTypeDto getResourceType() {
+        return PolicyTypeDto.DATA_ENTITY;
     }
 
     @Override

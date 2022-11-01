@@ -5,9 +5,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Permission;
-import org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
+import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.PolicyPojo;
 import org.opendatadiscovery.oddplatform.service.PolicyService;
@@ -24,8 +24,8 @@ public class ManagementPermissionExtractor implements NoContextPermissionExtract
     private final PolicyPermissionExtractor policyPermissionExtractor;
 
     @Override
-    public PermissionResourceType getResourceType() {
-        return PermissionResourceType.MANAGEMENT;
+    public PolicyTypeDto getResourceType() {
+        return PolicyTypeDto.MANAGEMENT;
     }
 
     @Override

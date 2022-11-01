@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.service.permission.extractor;
 
-import org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType;
+import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
 
 public interface PermissionExtractor {
-    PermissionResourceType getResourceType();
+    PolicyTypeDto getResourceType();
 }

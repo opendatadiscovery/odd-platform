@@ -1,10 +1,10 @@
 package org.opendatadiscovery.oddplatform.service.permission.extractor;
 
 import java.util.Collection;
-import org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
+import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
 import org.opendatadiscovery.oddplatform.dto.policy.TermPolicyResolverContext;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
@@ -33,8 +33,8 @@ public class TermPermissionExtractor extends AbstractContextualPermissionExtract
     }
 
     @Override
-    public PermissionResourceType getResourceType() {
-        return PermissionResourceType.TERM;
+    public PolicyTypeDto getResourceType() {
+        return PolicyTypeDto.TERM;
     }
 
     @Override
