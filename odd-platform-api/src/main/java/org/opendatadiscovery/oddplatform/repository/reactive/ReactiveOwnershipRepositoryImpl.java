@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import lombok.RequiredArgsConstructor;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -76,7 +77,7 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
                 .where(OWNERSHIP.OWNER_ID.eq(ownerId))
         );
 
-        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override

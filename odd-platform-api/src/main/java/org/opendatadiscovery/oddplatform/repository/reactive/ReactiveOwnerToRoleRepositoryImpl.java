@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerToRolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.OwnerToRoleRecord;
@@ -44,14 +45,11 @@ public class ReactiveOwnerToRoleRepositoryImpl implements ReactiveOwnerToRoleRep
         final var query = jooqQueryHelper.selectExists(
             DSL.selectFrom(OWNER_TO_ROLE).where(OWNER_TO_ROLE.ROLE_ID.eq(roleId))
         );
-        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override
     public Mono<Void> deleteOwnerRelationsExcept(final long ownerId, final Collection<Long> roleIds) {
-        if (CollectionUtils.isEmpty(roleIds)) {
-            return Mono.empty();
-        }
         final var query = DSL.delete(OWNER_TO_ROLE)
             .where(OWNER_TO_ROLE.OWNER_ID.eq(ownerId).and(OWNER_TO_ROLE.ROLE_ID.notIn(roleIds)));
         return jooqReactiveOperations.mono(query).then();

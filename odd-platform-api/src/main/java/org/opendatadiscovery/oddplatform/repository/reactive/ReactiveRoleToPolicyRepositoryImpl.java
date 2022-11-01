@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RoleToPolicyPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.RoleToPolicyRecord;
@@ -44,7 +45,7 @@ public class ReactiveRoleToPolicyRepositoryImpl implements ReactiveRoleToPolicyR
         final var query = jooqQueryHelper.selectExists(
             DSL.selectFrom(ROLE_TO_POLICY).where(ROLE_TO_POLICY.POLICY_ID.eq(policyId))
         );
-        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override

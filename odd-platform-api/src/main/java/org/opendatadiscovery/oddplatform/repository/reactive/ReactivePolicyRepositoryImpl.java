@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
@@ -25,6 +26,9 @@ public class ReactivePolicyRepositoryImpl extends ReactiveAbstractSoftDeleteCRUD
 
     @Override
     public Mono<List<PolicyPojo>> getRolesPolicies(final List<Long> roleIds) {
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return Mono.just(List.of());
+        }
         final SelectConditionStep<Record> query = DSL.select(POLICY.fields())
             .from(POLICY)
             .join(ROLE_TO_POLICY).on(ROLE_TO_POLICY.POLICY_ID.eq(POLICY.ID))

@@ -108,7 +108,7 @@ public class ReactiveDataSourceRepositoryImpl
                 .and(DATA_SOURCE.IS_DELETED.isFalse())
         );
 
-        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override
