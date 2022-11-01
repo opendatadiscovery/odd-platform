@@ -53,6 +53,15 @@ const useAppPaths = () => {
   const dataEntityActivityPath = (entityId: number, query?: string) =>
     `${dataEntityDetailsPath(entityId)}/activity?${query}`;
 
+  const dataEntityCollaborationPath = (entityId: number) =>
+    `${dataEntityDetailsPath(entityId)}/collaboration`;
+
+  const dataEntityCollaborationMessagePath = (entityId: number, messageId: number) =>
+    `${dataEntityDetailsPath(entityId)}/collaboration/${messageId}`;
+
+  const dataEntityCollaborationCreateMessagePath = (entityId: number) =>
+    `${dataEntityDetailsPath(entityId)}/collaboration/createMessage`;
+
   // Test reports details
   const testReportDetailsOverviewPath = (entityId: number, testId: number) =>
     `${dataEntityTestPath(entityId, testId)}/overview`;
@@ -101,6 +110,9 @@ const useAppPaths = () => {
     alertsPath,
     managementPath,
     activityPath,
+    dataEntityCollaborationPath,
+    dataEntityCollaborationMessagePath,
+    dataEntityCollaborationCreateMessagePath,
   };
 };
 

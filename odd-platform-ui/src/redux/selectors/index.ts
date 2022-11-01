@@ -22,3 +22,4 @@ export * from './termSearch.selectors';
 export * from './activities.selectors';
 export * from './ownerAssociation.selectors';
 export * from './dataEntityRun.selector';
+export * from './dataCollaboration.selectors';
