@@ -2,10 +2,11 @@ import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
 test.describe('Owners', () => {
-  test('Add new Owner', async ({ steps: { pages } }) => {
+  test('Add new Owner', async ({ steps: { pages }, page }) => {
     const ownerName = 'Test_ownerName';
 
     await test.step('I open Owners page', async () => {
+      await page.goto('');
       await pages.topPanel.clickTab('Management');
       await pages.management.owners.click();
     });

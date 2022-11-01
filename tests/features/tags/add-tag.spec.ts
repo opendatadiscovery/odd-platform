@@ -4,8 +4,9 @@ import { test } from '../../config/test-base';
 test.describe('Tags', () => {
   let tagName;
 
-  test.beforeEach(async ({ steps: { pages } }) => {
+  test.beforeEach(async ({ steps: { pages }, page }) => {
     await test.step(`I open Tags page`, async () => {
+      await page.goto('');
       await pages.topPanel.clickTab('Management');
       await pages.management.tags.click();
     });

@@ -2,7 +2,7 @@ import InputField from '../../elements/input-field';
 import BasePage from '../base-page';
 
 const SELECTORS = {
-  filterWithSelect: filterName => `#select-label-id:has-text('${filterName}')`,
+  filterWithSelect: filterName => `#select-label-id:has-text('${filterName}') >> ..`,
   filterWithInput: filterName => `label:text-is("${filterName}") >> ..`,
   searchBar: `[placeholder="Search"]`,
   listOfFilters: `[role="listbox"]`,
@@ -13,8 +13,7 @@ const SELECTORS = {
 };
 export default class CatalogPage extends BasePage {
   async openFilterWithSelect(filterName: string) {
-    const filterElement = this.page.locator(SELECTORS.filterWithSelect(filterName)).locator('..');
-    await filterElement.click();
+    await this.page.locator(SELECTORS.filterWithSelect(filterName)).click();
   }
 
   async chooseOption(option: string) {
