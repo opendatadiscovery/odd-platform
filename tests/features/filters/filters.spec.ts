@@ -104,7 +104,7 @@ test.describe('Check filters', () => {
       });
     });
   });
-  test.describe('When apply multiply filters', () => {
+  test.describe('When apply multiple filters', () => {
     test.beforeEach(async ({ steps: { pages }, page }) => {
       await test.step(`I open catalog page`, async () => {
         await page.goto('');
