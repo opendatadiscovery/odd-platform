@@ -41,14 +41,11 @@ export const dataCollaborationSlice = createSlice({
       return state;
     });
 
-    builder.addCase(
-      thunks.fetchMessagesRelatedToMessage.fulfilled,
-      (state, { payload }) => {
-        state.relatedMessages = payload;
+    builder.addCase(thunks.fetchRelatedMessages.fulfilled, (state, { payload }) => {
+      state.relatedMessages = payload;
 
-        return state;
-      }
-    );
+      return state;
+    });
   },
 });
 

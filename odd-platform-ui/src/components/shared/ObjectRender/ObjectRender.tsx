@@ -23,18 +23,13 @@ const ObjectRender: React.FC<ObjectRenderProps> = ({
   isPreview = false,
   onToggle = () => {},
 }) => {
-  const [isChildNodeOpen, setChildNodeOpen] = useState<
-    Record<string, boolean>
-  >({});
+  const [isChildNodeOpen, setChildNodeOpen] = useState<Record<string, boolean>>({});
 
-  const onToggleChildNode = useCallback(
-    (e: React.SyntheticEvent<HTMLSpanElement>) => {
-      const target = e.target as HTMLSpanElement;
-      const { key } = target.dataset;
-      if (key) setChildNodeOpen(s => ({ ...s, [key]: !s[key] }));
-    },
-    []
-  );
+  const onToggleChildNode = useCallback((e: React.SyntheticEvent<HTMLSpanElement>) => {
+    const target = e.target as HTMLSpanElement;
+    const { key } = target.dataset;
+    if (key) setChildNodeOpen(s => ({ ...s, [key]: !s[key] }));
+  }, []);
 
   const onOpenCurrentNode = useCallback(
     () => onToggle({ target: { dataset: { key: parentKey } } } as any),
@@ -46,29 +41,25 @@ const ObjectRender: React.FC<ObjectRenderProps> = ({
   }, [isOpen]);
 
   if (input == null)
-    return (
-      <S.ObjectRenderSpan color="texts.secondary">null</S.ObjectRenderSpan>
-    );
+    return <S.ObjectRenderSpan color='texts.secondary'>null</S.ObjectRenderSpan>;
 
   if (typeof input === 'object') {
     const isArray = input instanceof Array;
     const entries = Object.entries(input);
 
     const openBracket = (
-      <S.ObjectRenderSpan color="texts.secondary">
+      <S.ObjectRenderSpan color='texts.secondary'>
         {isArray ? '[' : '{'}
       </S.ObjectRenderSpan>
     );
 
     const closeBracket = (
-      <S.ObjectRenderSpan ml={isOpen ? deep : 0} color="texts.secondary">
+      <S.ObjectRenderSpan ml={isOpen ? deep : 0} color='texts.secondary'>
         {isArray ? ']' : '}'}
       </S.ObjectRenderSpan>
     );
 
-    const collapses = (
-      <S.ObjectRenderSpan color="texts.hint">...</S.ObjectRenderSpan>
-    );
+    const collapses = <S.ObjectRenderSpan color='texts.hint'>...</S.ObjectRenderSpan>;
 
     if (isOpen)
       return (
@@ -79,8 +70,8 @@ const ObjectRender: React.FC<ObjectRenderProps> = ({
             <React.Fragment key={key}>
               <S.ObjectRenderKey
                 $deep={deep}
-                variant="h4"
-                role="button"
+                variant='h4'
+                role='button'
                 data-key={key}
                 {...(isInteractiveNode(value) && {
                   $interactive: true,
@@ -120,13 +111,11 @@ const ObjectRender: React.FC<ObjectRenderProps> = ({
               i < PREVIEW_COUNT && (
                 <React.Fragment key={key}>
                   {!isArray && (
-                    <S.ObjectRenderSpan color="texts.hint">
-                      {key}:{' '}
-                    </S.ObjectRenderSpan>
+                    <S.ObjectRenderSpan color='texts.hint'>{key}: </S.ObjectRenderSpan>
                   )}
                   <ObjectRender input={value} deep={deep + 1} />
                   {i < entries.length - 1 && (
-                    <S.ObjectRenderSpan color="texts.secondary">
+                    <S.ObjectRenderSpan color='texts.secondary'>
                       {', '}
                     </S.ObjectRenderSpan>
                   )}
@@ -149,15 +138,11 @@ const ObjectRender: React.FC<ObjectRenderProps> = ({
 
   if (['number', 'boolean'].includes(typeof input))
     return (
-      <S.ObjectRenderSpan color="runStatus.BROKEN">
-        {input.toString()}
-      </S.ObjectRenderSpan>
+      <S.ObjectRenderSpan color='runStatus.BROKEN'>{input.toString()}</S.ObjectRenderSpan>
     );
 
   return (
-    <S.ObjectRenderSpan color="runStatus.SUCCESS">
-      &quot;{input}&quot;
-    </S.ObjectRenderSpan>
+    <S.ObjectRenderSpan color='runStatus.SUCCESS'>&quot;{input}&quot;</S.ObjectRenderSpan>
   );
 };
 

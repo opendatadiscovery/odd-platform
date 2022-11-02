@@ -44,7 +44,7 @@ const MessageForm: React.FC<MessageFormProps> = ({ dataEntityId }) => {
   };
 
   return (
-    <Grid container flexDirection='column' flexWrap='nowrap' p={2}>
+    <Grid container flexDirection='column' flexWrap='nowrap' pl={2} pt={2}>
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
           New message

@@ -1,8 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DataCollaborationState, RootState } from 'redux/interfaces';
+import { DataCollaborationState, Message, RootState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { emptyObj } from 'lib/constants';
+import { emptyArr, emptyObj } from 'lib/constants';
 
 const dataCollaborationState = ({
   dataCollaboration,
@@ -24,7 +24,7 @@ export const getDataEntityMessagesFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntityMessagesActionType
 );
 
-export const getMessagesRelatedToMessageFetchingStatuses = createStatusesSelector(
+export const getRelatedMessagesFetchingStatuses = createStatusesSelector(
   actions.fetchMessagesRelatedToMessageActionType
 );
 
@@ -42,9 +42,9 @@ export const getDataEntityMessage = (messageDate: string, messageId: number) =>
   createSelector(
     dataCollaborationState,
     dataCollaboration =>
-      dataCollaboration.messages.messagesByDate[messageDate].find(
+      dataCollaboration.messages.messagesByDate[messageDate]?.find(
         message => message.id === messageId
-      ) || emptyObj
+      ) || (emptyObj as Message)
   );
 
 export const getDataEntityMessagesPageInfo = createSelector(
@@ -62,7 +62,7 @@ export const getLengthOfDataEntityMessages = createSelector(
 
 export const getRelatedMessages = createSelector(
   dataCollaborationState,
-  dataCollaboration => dataCollaboration.relatedMessages.messages
+  dataCollaboration => dataCollaboration.relatedMessages.messages || emptyArr
 );
 
 export const getRelatedMessagesPageInfo = createSelector(
