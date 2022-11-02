@@ -25,3 +25,7 @@ export { default as UserSyncIcon } from './UserSyncIcon';
 export { default as CloseIcon } from './CloseIcon';
 export { default as CalendarIcon } from './CalendarIcon';
 export { default as SystemIcon } from './SystemIcon';
+export { default as MoreIcon } from './MoreIcon';
+export { default as ActivityCreatedIcon } from './ActivityCreatedIcon';
+export { default as ActivityUpdatedIcon } from './ActivityUpdatedIcon';
+export { default as ActivityDeletedIcon } from './ActivityDeletedIcon';

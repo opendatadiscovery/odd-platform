@@ -556,7 +556,7 @@ public class DataEntityServiceImpl
             return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
                 .id(pojo.getId())
                 .build(), "id");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
             throw new RuntimeException(e);
         }

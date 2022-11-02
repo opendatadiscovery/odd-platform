@@ -20,8 +20,14 @@ export const datasourceSlice = createSlice({
     builder.addCase(thunks.fetchDataSourcesList.fulfilled, (state, { payload }) => {
       const { datasourceList, pageInfo } = payload;
 
-      datasourceAdapter.setMany(state, datasourceList);
       state.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        datasourceAdapter.setMany(state, datasourceList);
+        return state;
+      }
+      datasourceAdapter.setAll(state, datasourceList);
+      return state;
     });
     builder.addCase(thunks.registerDataSource.fulfilled, (state, { payload }) => {
       datasourceAdapter.addOne(state, payload);

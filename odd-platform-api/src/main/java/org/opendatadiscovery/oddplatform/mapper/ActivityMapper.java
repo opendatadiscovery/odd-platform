@@ -230,6 +230,6 @@ public abstract class ActivityMapper {
     @Named("mapCreatedBy")
     AssociatedOwner mapUser(final ActivityDto activityDto) {
         return associatedOwnerMapper.mapAssociatedOwner(
-            new AssociatedOwnerDto(activityDto.activity().getCreatedBy(), activityDto.user(), Set.of(), null));
+            new AssociatedOwnerDto(activityDto.activity().getCreatedBy(), activityDto.user(), null));
     }
 }

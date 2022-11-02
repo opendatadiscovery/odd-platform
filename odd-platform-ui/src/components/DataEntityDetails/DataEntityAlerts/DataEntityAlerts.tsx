@@ -21,17 +21,10 @@ const DataEntityAlerts: React.FC = () => {
 
   const alertStatusHandler = React.useCallback(
     (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
-      dispatch(
-        updateAlertStatus({
-          alertId,
-          alertStatusFormData: {
-            status:
-              alertStatus === AlertStatus.OPEN
-                ? AlertStatus.RESOLVED
-                : AlertStatus.OPEN,
-          },
-        })
-      );
+      const status =
+        alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
+
+      dispatch(updateAlertStatus({ alertId, alertStatusFormData: { status } }));
     },
     [updateAlertStatus]
   );
@@ -39,25 +32,25 @@ const DataEntityAlerts: React.FC = () => {
   return (
     <Grid container sx={{ mt: 2 }}>
       <AlertsTableHeader container>
-        <ColContainer item $colType="date">
-          <Typography variant="caption">Date</Typography>
+        <ColContainer item $colType='date'>
+          <Typography variant='caption'>Date</Typography>
         </ColContainer>
-        <ColContainer item $colType="type">
-          <Typography variant="caption">Alert type</Typography>
+        <ColContainer item $colType='type'>
+          <Typography variant='caption'>Alert type</Typography>
         </ColContainer>
-        <ColContainer item $colType="description">
-          <Typography variant="caption">Description</Typography>
+        <ColContainer item $colType='description'>
+          <Typography variant='caption'>Description</Typography>
         </ColContainer>
-        <ColContainer item $colType="status">
-          <Typography variant="caption">Status</Typography>
+        <ColContainer item $colType='status'>
+          <Typography variant='caption'>Status</Typography>
         </ColContainer>
-        <ColContainer item $colType="updatedBy">
-          <Typography variant="caption">Status updated by</Typography>
+        <ColContainer item $colType='updatedBy'>
+          <Typography variant='caption'>Status updated by</Typography>
         </ColContainer>
-        <ColContainer item $colType="updatedTime">
-          <Typography variant="caption">Status updated time</Typography>
+        <ColContainer item $colType='updatedTime'>
+          <Typography variant='caption'>Status updated time</Typography>
         </ColContainer>
-        <ColContainer item $colType="actionBtn" />
+        <ColContainer item $colType='actionBtn' />
       </AlertsTableHeader>
       {isAlertsFetching ? (
         <DataEntityAlertsSkeleton length={5} />
@@ -66,18 +59,13 @@ const DataEntityAlerts: React.FC = () => {
           {alertsList.map(alert => (
             <DataEntityAlertItem
               key={alert.id}
-              alertStatusHandler={alertStatusHandler(
-                alert.id,
-                alert.status
-              )}
+              alertStatusHandler={alertStatusHandler(alert.id, alert.status)}
               alert={alert}
             />
           ))}
         </Grid>
       )}
-      {!isAlertsFetching && !alertsList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      {!isAlertsFetching && !alertsList.length ? <EmptyContentPlaceholder /> : null}
     </Grid>
   );
 };

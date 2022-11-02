@@ -10,6 +10,8 @@ import {
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
 import { useAppSelector } from 'redux/lib/hooks';
+import { WithPermissionsProvider } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
 import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
 import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
@@ -59,18 +61,35 @@ const Overview: React.FC = () => {
               Metadata
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewMetadata dataEntityId={dataEntityId} />
+              <WithPermissionsProvider
+                permissions={[
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE,
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE,
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE,
+                ]}
+                Component={OverviewMetadata}
+              />
             </SectionContainer>
             <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
               About
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewDescription />
+              <WithPermissionsProvider
+                permissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
+                Component={OverviewDescription}
+              />
             </SectionContainer>
           </Grid>
           <Grid item lg={3}>
             <SectionContainer square elevation={0}>
-              <OverviewGeneral />
+              <WithPermissionsProvider
+                permissions={[
+                  Permission.DATA_ENTITY_OWNERSHIP_CREATE,
+                  Permission.DATA_ENTITY_OWNERSHIP_UPDATE,
+                  Permission.DATA_ENTITY_OWNERSHIP_DELETE,
+                ]}
+                Component={OverviewGeneral}
+              />
             </SectionContainer>
             {isDataset && datasetQualityTestReport?.total ? (
               <SectionContainer square elevation={0}>
@@ -79,18 +98,37 @@ const Overview: React.FC = () => {
               </SectionContainer>
             ) : null}
             <SectionContainer square elevation={0}>
-              <OverviewGroups
-                dataEntityGroups={dataEntityDetails.dataEntityGroups}
-                dataEntityId={dataEntityId}
+              <WithPermissionsProvider
+                permissions={[
+                  Permission.DATA_ENTITY_ADD_TO_GROUP,
+                  Permission.DATA_ENTITY_DELETE_FROM_GROUP,
+                ]}
+                render={() => (
+                  <OverviewGroups
+                    dataEntityGroups={dataEntityDetails.dataEntityGroups}
+                    dataEntityId={dataEntityId}
+                  />
+                )}
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewTags tags={dataEntityDetails.tags} />
+              <WithPermissionsProvider
+                permissions={[Permission.DATA_ENTITY_TAGS_UPDATE]}
+                render={() => <OverviewTags tags={dataEntityDetails.tags} />}
+              />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewTerms
-                terms={dataEntityDetails.terms}
-                dataEntityId={dataEntityId}
+              <WithPermissionsProvider
+                permissions={[
+                  Permission.DATA_ENTITY_ADD_TERM,
+                  Permission.DATA_ENTITY_DELETE_TERM,
+                ]}
+                render={() => (
+                  <OverviewTerms
+                    terms={dataEntityDetails.terms}
+                    dataEntityId={dataEntityId}
+                  />
+                )}
               />
             </SectionContainer>
           </Grid>

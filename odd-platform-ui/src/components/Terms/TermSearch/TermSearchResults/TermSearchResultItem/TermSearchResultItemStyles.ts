@@ -2,10 +2,6 @@ import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const ActionsContainer = styled(Grid)(() => ({
-  opacity: 0,
-}));
-
 export const TermSearchResultsContainer = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
@@ -13,10 +9,7 @@ export const TermSearchResultsContainer = styled(Grid)(({ theme }) => ({
   textDecoration: 'none',
   cursor: 'pointer',
   alignItems: 'center',
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.primary,
-    [`${ActionsContainer}`]: { opacity: 1 },
-  },
+  '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
 }));
 
 export const TermSearchResultsItemLink = styled(Link)(() => ({

@@ -17,11 +17,10 @@ export const updateDataEntityTagsActionType = createActionType(
   'updateDataEntityTags'
 );
 
-export const updateDataEntityInternalDescriptionActionType =
-  createActionType(
-    dataEntitiesActionTypePrefix,
-    'updateDataEntityInternalDescription'
-  );
+export const updateDataEntityInternalDescriptionActionType = createActionType(
+  dataEntitiesActionTypePrefix,
+  'updateDataEntityInternalDescription'
+);
 
 export const updateDataEntityInternalNameActionType = createActionType(
   dataEntitiesActionTypePrefix,
@@ -74,9 +73,4 @@ export const deleteDataEntityFromGroupActionType = createActionType(
 export const fetchDataEntitiesUsageActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'dataEntitiesUsage'
-);
-
-export const fetchDataEntityPermissionsActionType = createActionType(
-  dataEntitiesActionTypePrefix,
-  'fetchDataEntityPermissions'
 );

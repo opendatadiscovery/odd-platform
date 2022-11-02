@@ -4,7 +4,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
+import { DataSetFieldTypeTypeEnum, Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
+import { useAppParams } from 'lib/hooks';
 import {
   Container,
   EditBtnContainer,
@@ -19,9 +21,13 @@ interface DatasetFieldEnumsFormItemProps {
   enumValueType: DataSetFieldTypeTypeEnum;
 }
 
-const DatasetFieldEnumsFormItem: React.FC<
-  DatasetFieldEnumsFormItemProps
-> = ({ itemIndex, onItemRemove, enumValueType, itemId }) => {
+const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
+  itemIndex,
+  onItemRemove,
+  enumValueType,
+  itemId,
+}) => {
+  const { dataEntityId } = useAppParams();
   const { control, getValues } = useFormContext();
   const [editMode, setEditMode] = React.useState<boolean>(false);
 
@@ -32,16 +38,12 @@ const DatasetFieldEnumsFormItem: React.FC<
   }, [itemIndex]);
 
   const setTextFieldType = (): HTMLInputTypeAttribute => {
-    if (enumValueType === DataSetFieldTypeTypeEnum.INTEGER)
-      return 'number';
+    if (enumValueType === DataSetFieldTypeTypeEnum.INTEGER) return 'number';
     return 'text';
   };
 
   const setTextValidationByType = (value: number | string) => {
-    if (
-      enumValueType === DataSetFieldTypeTypeEnum.STRING &&
-      typeof value === 'string'
-    )
+    if (enumValueType === DataSetFieldTypeTypeEnum.STRING && typeof value === 'string')
       return !!value.trim();
     return Number.isInteger(Number(value));
   };
@@ -54,25 +56,29 @@ const DatasetFieldEnumsFormItem: React.FC<
             name={`enums.${itemIndex}.name`}
             control={control}
             defaultValue={getValues(`enums.${itemIndex}.name`)}
-            rules={{
-              required: true,
-              validate: setTextValidationByType,
-            }}
+            rules={{ required: true, validate: setTextValidationByType }}
             render={({ field }) => (
-              <ValueNameContainer sx={{ mr: 1 }}>
-                <AppInput
-                  {...field}
-                  placeholder="Name of value"
-                  name={`enums.${itemIndex}.name`}
-                  type={setTextFieldType()}
-                  customEndAdornment={{
-                    variant: 'clear',
-                    showAdornment: !!field.value,
-                    onCLick: () => field.onChange(''),
-                    icon: <ClearIcon />,
-                  }}
-                />
-              </ValueNameContainer>
+              <WithPermissions
+                permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+                resourceId={dataEntityId}
+                renderContent={({ isAllowedTo: editEnum }) => (
+                  <ValueNameContainer sx={{ mr: 1 }}>
+                    <AppInput
+                      {...field}
+                      disabled={!editEnum}
+                      placeholder='Name of value'
+                      name={`enums.${itemIndex}.name`}
+                      type={setTextFieldType()}
+                      customEndAdornment={{
+                        variant: 'clear',
+                        showAdornment: !!field.value,
+                        onCLick: () => field.onChange(''),
+                        icon: <ClearIcon />,
+                      }}
+                    />
+                  </ValueNameContainer>
+                )}
+              />
             )}
           />
           <Controller
@@ -80,42 +86,54 @@ const DatasetFieldEnumsFormItem: React.FC<
             defaultValue={getValues(`enums.${itemIndex}.description`)}
             control={control}
             render={({ field }) => (
-              <ValueDescriptionContainer sx={{ mr: 1 }}>
-                <AppInput
-                  {...field}
-                  sx={{ mr: 1 }}
-                  placeholder="Description"
-                  name={`enums.${itemIndex}.description`}
-                  customEndAdornment={{
-                    variant: 'clear',
-                    showAdornment: !!field.value,
-                    onCLick: () => field.onChange(''),
-                    icon: <ClearIcon />,
-                  }}
-                />
-              </ValueDescriptionContainer>
+              <WithPermissions
+                permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+                resourceId={dataEntityId}
+                renderContent={({ isAllowedTo: editEnum }) => (
+                  <ValueDescriptionContainer sx={{ mr: 1 }}>
+                    <AppInput
+                      {...field}
+                      sx={{ mr: 1 }}
+                      disabled={!editEnum}
+                      placeholder='Description'
+                      name={`enums.${itemIndex}.description`}
+                      customEndAdornment={{
+                        variant: 'clear',
+                        showAdornment: !!field.value,
+                        onCLick: () => field.onChange(''),
+                        icon: <ClearIcon />,
+                      }}
+                    />
+                  </ValueDescriptionContainer>
+                )}
+              />
             )}
           />
-          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
-            Delete
-          </AppButton>
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+            resourceId={dataEntityId}
+          >
+            <AppButton size='small' color='dropdown' onClick={onItemRemove}>
+              Delete
+            </AppButton>
+          </WithPermissions>
         </>
       ) : (
         <>
           <ValueNameContainer sx={{ mr: 1, px: 1 }}>
-            <Typography variant="body1">
+            <Typography variant='body1'>
               {getValues(`enums.${itemIndex}.name`)}
             </Typography>
           </ValueNameContainer>
           <ValueDescriptionContainer sx={{ mr: 1, px: 1 }}>
-            <Typography variant="body1" color="texts.secondary">
+            <Typography variant='body1' color='texts.secondary'>
               {getValues(`enums.${itemIndex}.description`)}
             </Typography>
           </ValueDescriptionContainer>
           <EditBtnContainer>
             <AppButton
-              size="medium"
-              color="primaryLight"
+              size='medium'
+              color='primaryLight'
               onClick={() => setEditMode(true)}
             >
               Edit

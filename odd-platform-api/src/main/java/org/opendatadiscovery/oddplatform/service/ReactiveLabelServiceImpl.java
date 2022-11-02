@@ -70,7 +70,6 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Flux<Label> bulkUpsert(final List<LabelFormData> labelForms) {
         return labelRepository
             .bulkCreate(labelForms.stream().map(LabelFormData::getName).map(labelMapper::mapToPojo).toList())
@@ -78,7 +77,6 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Label> update(final long id, final LabelFormData form) {
         return labelRepository.getDto(id)
@@ -91,7 +89,6 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Label> delete(final long id) {
         return labelRepository.getDto(id)

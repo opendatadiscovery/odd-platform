@@ -22,9 +22,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
-  const dataEntityInternalName = useAppSelector(
-    getDataEntityInternalName(dataEntityId)
-  );
+  const dataEntityInternalName = useAppSelector(getDataEntityInternalName(dataEntityId));
   const { isLoading: isInternalNameUpdating } = useAppSelector(
     getDataEntityInternalNameUpdatingStatuses
   );
@@ -58,8 +56,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
       (response: Response) => {
         setState({
           ...initialState,
-          error:
-            response.statusText || 'Unable to add or edit custom name',
+          error: response.statusText || 'Unable to add or edit custom name',
         });
       }
     );
@@ -72,23 +69,23 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {dataEntityInternalName ? 'Edit ' : 'Add '}
       custom name
     </Typography>
   );
 
   const formContent = () => (
-    <form id="dataentity-internal-name" onSubmit={handleSubmit(onSubmit)}>
+    <form id='dataentity-internal-name' onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
-        name="internalName"
+        name='internalName'
         defaultValue={dataEntityInternalName || ''}
         render={({ field }) => (
           <AppInput
             {...field}
-            label="Custom name"
-            placeholder="Enter custom name"
+            label='Custom name'
+            placeholder='Enter custom name'
             onKeyDown={handleKeyDown}
             customEndAdornment={{
               variant: 'clear',
@@ -104,10 +101,10 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="dataentity-internal-name"
-      color="primary"
+      size='large'
+      type='submit'
+      form='dataentity-internal-name'
+      color='primary'
       fullWidth
     >
       Save

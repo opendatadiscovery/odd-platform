@@ -2,13 +2,12 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
 import {
-  NumberFormatted,
-  SkeletonWrapper,
-  EmptyContentPlaceholder,
-  AppInput,
   AppButton,
+  AppInput,
+  EmptyContentPlaceholder,
+  NumberFormatted,
 } from 'components/shared';
 import { fetchOwnersList } from 'redux/thunks';
 import {
@@ -18,8 +17,9 @@ import {
   getOwnersList,
   getOwnersListPageInfo,
 } from 'redux/selectors';
-import { usePermissions } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
 import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
@@ -27,54 +27,45 @@ import * as S from './OwnersListStyles';
 
 const OwnersList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
 
   const ownersList = useAppSelector(getOwnersList);
-  const pageInfo = useAppSelector(getOwnersListPageInfo);
+  const { total, hasNext, page } = useAppSelector(getOwnersListPageInfo);
 
   const { isLoading: isOwnerListFetching } = useAppSelector(getOwnerListFetchingStatuses);
   const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
   const { isLoading: isOwnerDeleting } = useAppSelector(getOwnerDeletingStatuses);
 
-  const pageSize = 100;
-  const [searchText, setSearchText] = React.useState('');
-  const [totalOwners, setTotalOwners] = React.useState(pageInfo?.total);
+  const size = 100;
+  const [query, setQuery] = React.useState('');
+  const [totalOwners, setTotalOwners] = React.useState(total);
 
   React.useEffect(() => {
-    if (!searchText) dispatch(fetchOwnersList({ page: 1, size: pageSize }));
-  }, [fetchOwnersList, isOwnerCreating, isOwnerDeleting, searchText]);
+    if (!query) dispatch(fetchOwnersList({ page: 1, size }));
+  }, [fetchOwnersList, isOwnerCreating, isOwnerDeleting, query]);
 
   React.useEffect(() => {
-    if (!searchText) setTotalOwners(pageInfo?.total);
-  }, [pageInfo]);
+    if (!query) setTotalOwners(total);
+  }, [total]);
 
   const fetchNextPage = () => {
-    if (!pageInfo?.hasNext) return;
-    dispatch(
-      fetchOwnersList({
-        page: pageInfo.page + 1,
-        size: pageSize,
-        query: searchText,
-      })
-    );
+    if (!hasNext) return;
+    dispatch(fetchOwnersList({ page: page + 1, size, query }));
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(fetchOwnersList({ page: 1, size: pageSize, query: searchText }));
+      dispatch(fetchOwnersList({ page: 1, size, query }));
     }, 500),
-    [searchText]
+    [query]
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+    setQuery(event.target.value);
     handleSearch();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    if (event.key === 'Enter') handleSearch();
   };
 
   return (
@@ -90,7 +81,7 @@ const OwnersList: React.FC = () => {
           placeholder='Search owner...'
           sx={{ minWidth: '340px' }}
           fullWidth={false}
-          value={searchText}
+          value={query}
           customStartAdornment={{
             variant: 'search',
             showAdornment: true,
@@ -99,54 +90,48 @@ const OwnersList: React.FC = () => {
           }}
           customEndAdornment={{
             variant: 'clear',
-            showAdornment: !!searchText,
-            onCLick: () => setSearchText(''),
+            showAdornment: !!query,
+            onCLick: () => setQuery(''),
             icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <OwnerForm
-          btnCreateEl={
-            <AppButton
-              color='primaryLight'
-              size='medium'
-              startIcon={<AddIcon />}
-              disabled={!isAdmin}
-            >
-              Create Owner
-            </AppButton>
-          }
-        />
+        <WithPermissions permissionTo={Permission.OWNER_CREATE}>
+          <OwnerForm
+            btnCreateEl={
+              <AppButton color='primaryLight' size='medium' startIcon={<AddIcon />}>
+                Create Owner
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </S.Caption>
       <S.TableHeader container>
-        <Grid item xs={12}>
+        <Grid item lg={3.53}>
           <Typography variant='subtitle2' color='texts.hint'>
             Name
           </Typography>
         </Grid>
+        <Grid item lg={6.73}>
+          <Typography variant='subtitle2' color='texts.hint'>
+            Roles
+          </Typography>
+        </Grid>
+        <Grid item lg={1.74} />
       </S.TableHeader>
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
+            hasMore={hasNext}
             dataLength={ownersList.length}
             scrollThreshold='200px'
-            loader={
-              isOwnerListFetching && (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randWidth, key }) => (
-                    <OwnersSkeletonItem width={randWidth()} key={key} />
-                  )}
-                />
-              )
-            }
+            loader={isOwnerListFetching && <OwnersSkeletonItem length={5} />}
           >
-            {ownersList?.map(owner => (
-              <EditableOwnerItem key={owner.id} owner={owner} />
+            {ownersList?.map(({ id, name, roles }) => (
+              <EditableOwnerItem key={id} ownerId={id} name={name} roles={roles} />
             ))}
           </InfiniteScroll>
         </Grid>

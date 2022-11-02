@@ -1,12 +1,26 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppTabs, AppTabItem, AppButton, AppTooltip } from 'components/shared';
+import {
+  AppButton,
+  AppCircularProgress,
+  AppTabItem,
+  AppTabs,
+  AppTooltip,
+} from 'components/shared';
 import { getQualityTestByTestId } from 'redux/selectors';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
-import TestReportDetailsOverview from './TestReportDetailsOverview/TestReportDetailsOverview';
-import TestReportDetailsHistory from './TestReportDetailsHistory/TestReportDetailsHistory';
+import { PermissionProvider } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
+
+// lazy components
+const TestReportDetailsOverview = React.lazy(
+  () => import('./TestReportDetailsOverview/TestReportDetailsOverview')
+);
+const TestReportDetailsHistory = React.lazy(
+  () => import('./TestReportDetailsHistory/TestReportDetailsHistory')
+);
 
 interface TestRunDetailsProps {
   dataQATestId: number;
@@ -74,7 +88,13 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
           Go to page
         </AppButton>
       </Grid>
-      <Grid container justifyContent='center' sx={{ mt: 2 }}>
+      <Grid
+        container
+        justifyContent='center'
+        alignItems='center'
+        flexDirection='column'
+        sx={{ mt: 2 }}
+      >
         {tabs.length && selectedTab >= 0 ? (
           <AppTabs
             type='secondary'
@@ -83,32 +103,40 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
             handleTabChange={() => {}}
           />
         ) : null}
-        <Switch>
-          <Route
-            exact
-            path={[
-              '/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
-              '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
-            ]}
-            component={TestReportDetailsOverview}
-          />
-          <Route
-            exact
-            path={[
-              '/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
-              '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
-            ]}
-            component={TestReportDetailsHistory}
-          />
-          <Redirect
-            from='/dataentities/:dataEntityId/test-reports/:dataQATestId?'
-            to='/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
-          />
-          <Redirect
-            from='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?'
-            to='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
-          />
-        </Switch>
+        <React.Suspense fallback={<AppCircularProgress sx={{ mt: 5 }} size={40} />}>
+          <Switch>
+            <Route
+              exact
+              path={[
+                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
+                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
+              ]}
+              render={() => (
+                <PermissionProvider
+                  permissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
+                >
+                  <TestReportDetailsOverview />
+                </PermissionProvider>
+              )}
+            />
+            <Route
+              exact
+              path={[
+                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
+                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
+              ]}
+              component={TestReportDetailsHistory}
+            />
+            <Redirect
+              from='/dataentities/:dataEntityId/test-reports/:dataQATestId?'
+              to='/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
+            />
+            <Redirect
+              from='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?'
+              to='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
+            />
+          </Switch>
+        </React.Suspense>
       </Grid>
     </Grid>
   );

@@ -1,16 +1,10 @@
-import {
-  DataEntityDetails,
-  DataEntityClassNameEnum,
-} from 'generated-sources';
+import { DataEntityDetails, DataEntityClassNameEnum } from 'generated-sources';
 
 export const DataEntityClassLabelMap: Map<
   DataEntityClassNameEnum,
   { short: string; normal: string; plural: string }
 > = new Map([
-  [
-    DataEntityClassNameEnum.SET,
-    { short: 'DS', normal: 'Dataset', plural: 'Datasets' },
-  ],
+  [DataEntityClassNameEnum.SET, { short: 'DS', normal: 'Dataset', plural: 'Datasets' }],
   [
     DataEntityClassNameEnum.CONSUMER,
     { short: 'DC', normal: 'Consumer', plural: 'Data Consumers' },

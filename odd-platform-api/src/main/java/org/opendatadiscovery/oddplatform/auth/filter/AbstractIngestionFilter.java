@@ -57,7 +57,7 @@ public abstract class AbstractIngestionFilter implements WebFilter {
                 channel.write(buffer.asByteBuffer().asReadOnlyBuffer());
             }
             return mapper.readValue(baos.toByteArray(), clazz);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Exception while parsing request body");
             throw new RuntimeException(e);
         }

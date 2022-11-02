@@ -25,10 +25,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   versionId,
   indexToScroll,
 }) => {
-  const cache = new CellMeasurerCache({
-    defaultHeight: 50,
-    fixedWidth: true,
-  });
+  const cache = new CellMeasurerCache({ defaultHeight: 50, fixedWidth: true });
 
   const rootStructureItems = React.useMemo(
     () => datasetStructureRoot.filter(field => !field.parentFieldId),

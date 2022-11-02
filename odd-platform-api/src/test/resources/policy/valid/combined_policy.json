@@ -1,0 +1,114 @@
+{
+  "statements": [
+    {
+      "resource": {
+        "type": "TERM",
+        "conditions": {
+          "all": [
+            {
+              "is": "term:owner"
+            },
+            {
+              "eq": {
+                "term:namespace:name": "Open Data Discovery"
+              }
+            },
+            {
+              "match": {
+                "term:tag:name": "Test"
+              }
+            }
+          ]
+        }
+      },
+      "permissions": [
+        "TERM_UPDATE",
+        "TERM_DELETE",
+        "TERM_TAGS_UPDATE",
+        "TERM_OWNERSHIP_CREATE",
+        "TERM_OWNERSHIP_UPDATE",
+        "TERM_OWNERSHIP_DELETE"
+      ]
+    },
+    {
+      "resource": {
+        "type": "DATA_ENTITY",
+        "conditions": {
+          "any": [
+            {
+              "is": "dataEntity:owner"
+            },
+            {
+              "eq": {
+                "dataEntity:namespace:name": "Open Data Discovery"
+              }
+            },
+            {
+              "match": {
+                "dataEntity:class": "DATA SET"
+              }
+            }
+          ]
+        }
+      },
+      "permissions": [
+        "DATA_ENTITY_INTERNAL_NAME_UPDATE",
+        "DATA_ENTITY_CUSTOM_METADATA_CREATE",
+        "DATA_ENTITY_CUSTOM_METADATA_UPDATE",
+        "DATA_ENTITY_CUSTOM_METADATA_DELETE",
+        "DATA_ENTITY_DESCRIPTION_UPDATE",
+        "DATA_ENTITY_OWNERSHIP_CREATE",
+        "DATA_ENTITY_OWNERSHIP_UPDATE",
+        "DATA_ENTITY_OWNERSHIP_DELETE",
+        "DATA_ENTITY_ADD_TO_GROUP",
+        "DATA_ENTITY_DELETE_FROM_GROUP",
+        "DATA_ENTITY_TAGS_UPDATE",
+        "DATA_ENTITY_ADD_TERM",
+        "DATA_ENTITY_DELETE_TERM",
+        "DATA_ENTITY_ALERT_RESOLVE",
+        "DATASET_TEST_RUN_SET_SEVERITY",
+        "DATASET_FIELD_INFO_UPDATE",
+        "DATASET_FIELD_ENUMS_UPDATE",
+        "DATA_ENTITY_GROUP_UPDATE",
+        "DATA_ENTITY_GROUP_DELETE"
+      ]
+    },
+    {
+      "resource": {
+        "type": "MANAGEMENT"
+      },
+      "permissions": [
+        "DATA_ENTITY_GROUP_CREATE",
+        "TERM_CREATE",
+        "DATA_SOURCE_CREATE",
+        "DATA_SOURCE_UPDATE",
+        "DATA_SOURCE_DELETE",
+        "DATA_SOURCE_TOKEN_REGENERATE",
+        "COLLECTOR_CREATE",
+        "COLLECTOR_UPDATE",
+        "COLLECTOR_DELETE",
+        "COLLECTOR_TOKEN_REGENERATE",
+        "NAMESPACE_CREATE",
+        "NAMESPACE_UPDATE",
+        "NAMESPACE_DELETE",
+        "TAG_CREATE",
+        "TAG_UPDATE",
+        "TAG_DELETE",
+        "LABEL_CREATE",
+        "LABEL_UPDATE",
+        "LABEL_DELETE",
+        "OWNER_CREATE",
+        "OWNER_UPDATE",
+        "OWNER_DELETE",
+        "OWNER_ASSOCIATION_MANAGE",
+        "DIRECT_OWNER_SYNC",
+        "POLICY_CREATE",
+        "POLICY_UPDATE",
+        "POLICY_DELETE",
+        "ROLE_CREATE",
+        "ROLE_UPDATE",
+        "ROLE_DELETE"
+      ]
+    }
+  ]
+}

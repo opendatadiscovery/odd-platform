@@ -1,0 +1,55 @@
+.jse-group-button, .jse-sort, .jse-transform, .jse-undo, .jse-redo {
+    display: none;
+}
+
+.jse-button {
+    color: #7A869A !important;
+}
+
+.jse-button:hover, .jse-button:focus {
+    background: none !important;
+}
+
+.jse-main {
+    border-radius: 4px;
+    border: 1px solid #C1C7D0 !important;
+}
+
+.cm-editor {
+    min-height: 400px !important;
+    max-height: calc(100vh - 328px) !important;
+}
+
+.jse-menu {
+    background-color: #EBECF0 !important;
+    border: none !important;
+}
+
+.jse-contents {
+    border: none !important;
+}
+
+.jse-separator:first-child, .jse-separator {
+    width: 0 !important;
+}
+
+.jse-validation-errors-overview {
+    background: #FFF7E6 !important;
+}
+
+.jse-message.jse-error {
+    background: #FFF0F0 !important;
+    color: #000000 !important;
+}
+
+.jse-validation-error .jse-validation-error-icon {
+    color: #E69900 !important;
+}
+
+.jse-text .fa-icon {
+    color: red !important;
+}
+
+.cm-tooltip-hover {
+    display: none;
+}

@@ -40,10 +40,12 @@ public class OwnerAssociationRequestMapperTest {
     public void mapToPojo() {
         final String username = UUID.randomUUID().toString();
         final Long ownerId = 1L;
-        final OwnerAssociationRequestPojo pojo = mapper.mapToPojo(username, ownerId);
+        final String provider = UUID.randomUUID().toString();
+        final OwnerAssociationRequestPojo pojo = mapper.mapToPojo(username, provider, ownerId);
         assertThat(pojo.getId()).isNull();
         assertThat(pojo.getOwnerId()).isEqualTo(ownerId);
         assertThat(pojo.getStatus()).isEqualTo(OwnerAssociationRequestStatus.PENDING.getValue());
+        assertThat(pojo.getProvider()).isEqualTo(provider);
         assertThat(pojo.getCreatedAt()).isNull();
         assertThat(pojo.getUsername()).isEqualTo(username);
         assertThat(pojo.getStatusUpdatedAt()).isNull();
@@ -90,7 +92,7 @@ public class OwnerAssociationRequestMapperTest {
         final String updatedUserOwnerName = UUID.randomUUID().toString();
         final OffsetDateTime offsetDateTime = pojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC);
         final AssociatedOwnerDto ownerDto = new AssociatedOwnerDto(pojo.getUsername(),
-            new OwnerPojo().setName(updatedUserOwnerName), Set.of(), null);
+            new OwnerPojo().setName(updatedUserOwnerName), null);
         final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, ownerDto);
 
         final AssociatedOwner identity = new AssociatedOwner()

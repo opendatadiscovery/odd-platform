@@ -7,19 +7,15 @@ import {
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { createStatusesSelector } from 'redux/selectors';
+import { emptyObj } from 'lib/constants';
 
-const dataEntitiesState = ({
-  dataEntities,
-}: RootState): DataEntitiesState => dataEntities;
+const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
+  dataEntities;
 
-export const getDataEntityId = (
-  _: RootState,
-  dataEntityId: number | string
-) => dataEntityId;
+export const getDataEntityId = (_: RootState, dataEntityId: number | string) =>
+  dataEntityId;
 
-export const getDataEntityTypesByClassName = (
-  entityClassName: DataEntityClassNameEnum
-) =>
+export const getDataEntityTypesByClassName = (entityClassName: DataEntityClassNameEnum) =>
   createSelector(
     dataEntitiesState,
     (dataEntities): Array<DataEntityType> =>
@@ -28,15 +24,11 @@ export const getDataEntityTypesByClassName = (
       )?.types || []
   );
 
-export const getIsDataEntityBelongsToClass = (
-  dataEntityId: number | string
-) =>
+export const getIsDataEntityBelongsToClass = (dataEntityId: number | string) =>
   createSelector(dataEntitiesState, dataEntities => {
-    const dataEntityClasses =
-      dataEntities.byId[dataEntityId]?.entityClasses;
+    const dataEntityClasses = dataEntities.byId[dataEntityId]?.entityClasses;
     const isClassesEquals =
-      (desiredClass: DataEntityClassNameEnum) =>
-      (entityClass: DataEntityClass) =>
+      (desiredClass: DataEntityClassNameEnum) => (entityClass: DataEntityClass) =>
         entityClass.name === desiredClass;
 
     const isDataset = dataEntityClasses?.some(
@@ -54,10 +46,8 @@ export const getIsDataEntityBelongsToClass = (
     return { isDataset, isQualityTest, isTransformer };
   });
 
-export const getDataEntityClassesList = createSelector(
-  dataEntitiesState,
-  dataEntities =>
-    Object.values(dataEntities.classesAndTypesDict.entityClasses)
+export const getDataEntityClassesList = createSelector(dataEntitiesState, dataEntities =>
+  Object.values(dataEntities.classesAndTypesDict.entityClasses)
 );
 
 export const getDataEntityClassesDict = createSelector(
@@ -104,7 +94,7 @@ export const getDataEntityClassesUsageInfo = createSelector(
 export const getDataEntityDetails = (dataEntityId: number) =>
   createSelector(
     dataEntitiesState,
-    dataEntities => dataEntities.byId[dataEntityId]
+    dataEntities => dataEntities.byId[dataEntityId] || emptyObj
   );
 
 export const getDataEntityInternalName = (dataEntityId: number) =>
@@ -149,22 +139,25 @@ export const getMyDataEntitiesFetchingStatuses = createStatusesSelector(
   actions.fetchMyDataEntitiesActionType
 );
 
-export const getMyUpstreamDataEntitiesFetchingStatuses =
-  createStatusesSelector(actions.fetchMyUpstreamDataEntitiesActionType);
+export const getMyUpstreamDataEntitiesFetchingStatuses = createStatusesSelector(
+  actions.fetchMyUpstreamDataEntitiesActionType
+);
 
 export const getMyDownstreamFetchingStatuses = createStatusesSelector(
   actions.fetchMyDownstreamDataEntitiesActionType
 );
 
-export const getPopularDataEntitiesFetchingStatuses =
-  createStatusesSelector(actions.fetchPopularDataEntitiesActionType);
+export const getPopularDataEntitiesFetchingStatuses = createStatusesSelector(
+  actions.fetchPopularDataEntitiesActionType
+);
 
 export const getDataEntityDetailsFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntityDetailsActionType
 );
 
-export const getDataEntityInternalNameUpdatingStatuses =
-  createStatusesSelector(actions.updateDataEntityInternalNameActionType);
+export const getDataEntityInternalNameUpdatingStatuses = createStatusesSelector(
+  actions.updateDataEntityInternalNameActionType
+);
 
 export const getDataEntityTagsUpdatingStatuses = createStatusesSelector(
   actions.updateDataEntityTagsActionType
@@ -193,6 +186,3 @@ export const getDataEntityAddToGroupStatuses = createStatusesSelector(
 export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
   actions.deleteDataEntityFromGroupActionType
 );
-
-export const getDataEntityPermissionsFetchingStatuses =
-  createStatusesSelector(actions.fetchDataEntityPermissionsActionType);

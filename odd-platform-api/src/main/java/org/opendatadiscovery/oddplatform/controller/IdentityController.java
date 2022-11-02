@@ -4,7 +4,6 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.IdentityApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.Actions;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
 import org.opendatadiscovery.oddplatform.api.contract.model.Permission;
@@ -30,8 +29,6 @@ public class IdentityController implements IdentityApi {
 
     private AssociatedOwner dummyOwner() {
         return new AssociatedOwner().identity(
-            new Identity().username("admin").actions(
-                new Actions().allowed(Arrays.asList(Permission.values()))
-            ));
+            new Identity().username("admin").permissions((Arrays.asList(Permission.values()))));
     }
 }

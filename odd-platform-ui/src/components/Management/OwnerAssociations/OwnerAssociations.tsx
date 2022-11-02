@@ -186,20 +186,26 @@ const OwnerAssociations: React.FC = () => {
             <Grid item lg={4}>
               {tableCellText('User name')}
             </Grid>
-            <Grid item lg={4}>
+            <Grid item lg={3}>
               {tableCellText('Owner name')}
             </Grid>
-            <Grid item lg={4} />
+            <Grid item lg={3}>
+              {tableCellText('Provider')}
+            </Grid>
+            <Grid item lg={2} />
           </>
         ) : (
           <>
             <Grid item lg={3}>
               {tableCellText('User name')}
             </Grid>
-            <Grid item lg={3}>
+            <Grid item lg={2}>
               {tableCellText('Owner name')}
             </Grid>
-            <Grid item lg={3}>
+            <Grid item lg={2}>
+              {tableCellText('Provider')}
+            </Grid>
+            <Grid item lg={2}>
               {tableCellText('Resolved by')}
             </Grid>
             <Grid item lg={1}>
@@ -222,9 +228,23 @@ const OwnerAssociations: React.FC = () => {
           >
             {requestList?.map(request =>
               active ? (
-                <ActiveAssociationRequest key={request.id} request={request} />
+                <ActiveAssociationRequest
+                  key={request.id}
+                  id={request.id}
+                  ownerName={request.ownerName}
+                  provider={request.provider}
+                  username={request.username}
+                />
               ) : (
-                <ResolvedAssociationRequest key={request.id} request={request} />
+                <ResolvedAssociationRequest
+                  key={request.id}
+                  ownerName={request.ownerName}
+                  provider={request.provider}
+                  username={request.username}
+                  status={request.status}
+                  statusUpdatedAt={request.statusUpdatedAt}
+                  statusUpdatedBy={request.statusUpdatedBy}
+                />
               )
             )}
           </InfiniteScroll>

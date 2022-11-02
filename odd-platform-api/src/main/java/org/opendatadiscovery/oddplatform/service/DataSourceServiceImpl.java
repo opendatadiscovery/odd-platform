@@ -43,7 +43,6 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<DataSource> create(final DataSourceFormData form) {
         if (StringUtils.isNotEmpty(form.getConnectionUrl()) && StringUtils.isNotEmpty(form.getOddrn())) {
@@ -66,7 +65,6 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<DataSource> update(final long id, final DataSourceUpdateFormData form) {
         return dataSourceRepository.getDto(id)
@@ -84,7 +82,6 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Long> delete(final long id) {
         return dataEntityRepository.existsByDataSourceId(id)
@@ -98,7 +95,6 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<DataSource> regenerateDataSourceToken(final long id) {
         return dataSourceRepository.getDto(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", id)))

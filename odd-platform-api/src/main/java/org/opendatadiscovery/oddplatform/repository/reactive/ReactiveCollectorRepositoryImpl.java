@@ -102,7 +102,7 @@ public class ReactiveCollectorRepositoryImpl
             DSL.selectFrom(COLLECTOR).where(addSoftDeleteFilter(COLLECTOR.NAMESPACE_ID.eq(namespaceId)))
         );
 
-        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     private CollectorDto mapRecordToDto(final Record record, final String collectorCteName) {

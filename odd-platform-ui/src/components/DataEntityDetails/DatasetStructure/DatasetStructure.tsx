@@ -50,12 +50,7 @@ const DatasetStructure: React.FC = () => {
 
   React.useEffect(() => {
     if (versionId) {
-      dispatch(
-        fetchDataSetStructure({
-          dataEntityId,
-          versionId,
-        })
-      );
+      dispatch(fetchDataSetStructure({ dataEntityId, versionId }));
     } else {
       dispatch(fetchDataSetStructureLatest({ dataEntityId }));
     }
@@ -63,12 +58,7 @@ const DatasetStructure: React.FC = () => {
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
-    dispatch(
-      fetchDataSetStructure({
-        dataEntityId,
-        versionId: newVersionId,
-      })
-    );
+    dispatch(fetchDataSetStructure({ dataEntityId, versionId: newVersionId }));
     history.push(datasetStructurePath(dataEntityId, newVersionId));
   };
 

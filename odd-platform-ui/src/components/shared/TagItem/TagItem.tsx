@@ -28,7 +28,7 @@ const TagItem: React.FC<TagItemProps> = ({
   systemTag,
 }) => (
   <S.Container
-    variant="body1"
+    variant='body1'
     $important={important}
     $systemTag={systemTag}
     $cursorPointer={cursorPointer}
@@ -39,8 +39,8 @@ const TagItem: React.FC<TagItemProps> = ({
     {label}
     {removable && !systemTag && (
       <AppIconButton
-        size="small"
-        color="unfilled"
+        size='small'
+        color='unfilled'
         icon={<ClearIcon />}
         onClick={onRemoveClick}
         sx={{ ml: 0.25 }}

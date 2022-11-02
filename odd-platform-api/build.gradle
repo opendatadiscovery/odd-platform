@@ -37,6 +37,7 @@ dependencies {
     implementation libs.slack.api.model
     implementation libs.shedlock
     implementation libs.shedlock.jdbc.lock.provider
+    implementation libs.json.schema.validator
 
     compileOnly libs.lombok
 

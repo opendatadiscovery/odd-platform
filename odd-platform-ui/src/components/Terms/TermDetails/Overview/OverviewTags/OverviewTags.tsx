@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { Tag } from 'generated-sources';
-import TagItem from 'components/shared/TagItem/TagItem';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import TagsEditForm from 'components/Terms/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { Permission, PermissionResourceType, Tag } from 'generated-sources';
+import { AddIcon, EditIcon } from 'components/shared/Icons';
+import { AppButton, TagItem } from 'components/shared';
+import { useAppParams } from 'lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
+import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer } from './OverviewTagsStyles';
 
 interface OverviewTagsProps {
@@ -13,6 +13,8 @@ interface OverviewTagsProps {
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
+  const { termId } = useAppParams();
+
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -27,19 +29,25 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   return (
     <div>
       <CaptionContainer>
-        <Typography variant="h3">Tags</Typography>
-        <TagsEditForm
-          btnEditEl={
-            <AppButton
-              size="medium"
-              color="primaryLight"
-              onClick={() => {}}
-              startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
-            >
-              {tags?.length ? 'Edit' : 'Add'} tags
-            </AppButton>
-          }
-        />
+        <Typography variant='h3'>Tags</Typography>
+        <WithPermissions
+          permissionTo={Permission.TERM_TAGS_UPDATE}
+          resourceId={termId}
+          resourceType={PermissionResourceType.TERM}
+        >
+          <TagsEditForm
+            btnEditEl={
+              <AppButton
+                size='medium'
+                color='primaryLight'
+                onClick={() => {}}
+                startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
+              >
+                {tags?.length ? 'Edit' : 'Add'} tags
+              </AppButton>
+            }
+          />
+        </WithPermissions>
       </CaptionContainer>
       {tags?.length ? (
         <Box sx={{ mx: -0.5, my: 0 }}>
@@ -56,7 +64,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
             ))}
           {tags?.length > visibleLimit ? (
             <>
-              <Collapse in={viewAll} timeout="auto" unmountOnExit>
+              <Collapse in={viewAll} timeout='auto' unmountOnExit>
                 {viewAll
                   ? tags
                       ?.slice(visibleLimit)
@@ -72,8 +80,8 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
                   : null}
               </Collapse>
               <AppButton
-                size="small"
-                color="tertiary"
+                size='small'
+                color='tertiary'
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
               >
@@ -87,18 +95,24 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           item
           xs={12}
           container
-          alignItems="center"
-          justifyContent="flex-start"
-          wrap="nowrap"
+          alignItems='center'
+          justifyContent='flex-start'
+          wrap='nowrap'
         >
-          <Typography variant="subtitle2">Not created.</Typography>
-          <TagsEditForm
-            btnEditEl={
-              <AppButton size="small" color="tertiary" onClick={() => {}}>
-                Add tags
-              </AppButton>
-            }
-          />
+          <Typography variant='subtitle2'>Not created.</Typography>
+          <WithPermissions
+            permissionTo={Permission.TERM_TAGS_UPDATE}
+            resourceId={termId}
+            resourceType={PermissionResourceType.TERM}
+          >
+            <TagsEditForm
+              btnEditEl={
+                <AppButton size='small' color='tertiary'>
+                  Add tags
+                </AppButton>
+              }
+            />
+          </WithPermissions>
         </Grid>
       )}
     </div>

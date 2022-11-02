@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-import static org.opendatadiscovery.oddplatform.auth.Provider.COGNITO;
 import static org.opendatadiscovery.oddplatform.auth.Provider.GITHUB;
 
 public class GithubCondition extends AbstractProviderCondition implements Condition {

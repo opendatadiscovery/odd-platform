@@ -45,6 +45,7 @@
     "@mui/x-date-pickers": "^5.0.3",
     "@reduxjs/toolkit": "^1.8.5",
     "@uiw/react-md-editor": "^3.19.0",
+    "ajv": "^8.11.0",
     "d3-hierarchy": "^3.1.1",
     "d3-interpolate": "^3.0.1",
     "d3-selection": "^2.0.0",
@@ -69,7 +70,8 @@
     "styled-components": "^5.3.5",
     "typesafe-actions": "^5.1.0",
     "use-debounce": "^8.0.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "vanilla-jsoneditor": "^0.7.11"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.10",

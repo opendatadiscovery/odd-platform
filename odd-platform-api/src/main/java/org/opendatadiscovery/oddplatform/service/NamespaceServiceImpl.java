@@ -52,7 +52,6 @@ public class NamespaceServiceImpl implements NamespaceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Namespace> create(final NamespaceFormData createEntityForm) {
         return Mono.just(createEntityForm)
             .map(namespaceMapper::mapForm)
@@ -61,7 +60,6 @@ public class NamespaceServiceImpl implements NamespaceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Namespace> update(final long id, final NamespaceUpdateFormData updateEntityForm) {
         return namespaceRepository.get(id)
@@ -73,7 +71,6 @@ public class NamespaceServiceImpl implements NamespaceService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Long> delete(final long id) {
         return Mono.zip(
                 dataSourceRepository.existsByNamespace(id),
