@@ -52,6 +52,7 @@ interface TextType {
 interface Border {
   primary: string;
   secondary: string;
+  element: string;
 }
 
 interface ButtonType {

@@ -5,7 +5,6 @@ import {
   DataCollaborationApiPostMessageInSlackRequest,
   DataEntityApi,
   DataEntityApiGetChannelsRequest,
-  DataEntityApiGetMessagesRequest,
   Message as GeneratedMessage,
   MessageChannel,
 } from 'generated-sources';
@@ -14,6 +13,7 @@ import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import {
   DataEntityApiGetDataEntityMessagesRequest,
+  DataEntityApiGetRelatedMessagesRequest,
   Message,
   PageInfo,
 } from 'redux/interfaces';
@@ -68,11 +68,17 @@ export const fetchDataEntityMessages = createAsyncThunk<
   return { messages, pageInfo };
 });
 
-export const fetchMessagesRelatedToMessage = createAsyncThunk<
+export const fetchRelatedMessages = createAsyncThunk<
   { messages: Message[]; pageInfo: PageInfo },
-  DataEntityApiGetMessagesRequest
+  DataEntityApiGetRelatedMessagesRequest
 >(actions.fetchMessagesRelatedToMessageActionType, async params => {
-  const { items } = await dataEntityApi.getMessages(params);
+  const castedMessageDateTime = params.lastMessageDateTime
+    ? new Date(params.lastMessageDateTime)
+    : undefined;
+
+  const reqParams = { ...params, lastMessageDateTime: castedMessageDateTime };
+
+  const { items } = await dataEntityApi.getMessages(reqParams);
 
   const messages = castDatesToTimestampInItemsArray<GeneratedMessage, Message>(items);
   const pageInfo = setPageInfo<Message>(messages, messagesListSize);

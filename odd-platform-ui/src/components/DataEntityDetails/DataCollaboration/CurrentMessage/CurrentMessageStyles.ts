@@ -7,4 +7,6 @@ export const Container = styled(Grid)(({ theme }) => ({
     8.5
   )})`,
   overflowY: 'scroll',
+  alignItems: 'center',
+  justifyContent: 'center',
 }));

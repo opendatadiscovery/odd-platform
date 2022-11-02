@@ -49,6 +49,7 @@ import {
   DataSetStructureTypesCount,
   FacetOptionsByName,
   Message,
+  MessagesByDate,
   PageInfo,
   SearchFacetsByName,
   SearchTotalsByName,
@@ -145,7 +146,7 @@ export interface OwnersState {
 
 export interface DataCollaborationState {
   channels: MessageChannel[];
-  messages: { messagesByDate: { [date: string]: Message[] }; pageInfo: PageInfo };
+  messages: { messagesByDate: MessagesByDate; pageInfo: PageInfo };
   relatedMessages: { messages: Message[]; pageInfo: PageInfo };
 }
 
