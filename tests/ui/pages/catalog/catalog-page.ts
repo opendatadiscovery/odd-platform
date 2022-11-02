@@ -5,7 +5,7 @@ const SELECTORS = {
   filterWithSelect: filterName => `#select-label-id:has-text('${filterName}') >> ..`,
   filterWithInput: filterName => `label:text-is("${filterName}") >> ..`,
   searchBar: `[placeholder="Search"]`,
-  listOfFilters: `[role="listbox"]`,
+  filterList: `[role="listbox"]`,
   filterOption: `[role="option"]`,
   filterWithInputOption: `[role="presentation"]`,
   listItemName: name => `a:has-text('${name}')`,
@@ -18,7 +18,7 @@ export default class CatalogPage extends BasePage {
 
   async chooseOption(option: string) {
     await this.page.click(
-      `${SELECTORS.listOfFilters} >> ${SELECTORS.filterOption}:has-text('${option}')`,
+      `${SELECTORS.filterList} >> ${SELECTORS.filterOption}:has-text('${option}')`,
     );
   }
 
@@ -27,8 +27,8 @@ export default class CatalogPage extends BasePage {
     await this.page.locator(`${SELECTORS.filterWithInputOption}:has-text('${text}')`).click();
   }
 
-  async openFilterWithInput(nameOfFilter: string) {
-    await this.page.locator(SELECTORS.filterWithInput(nameOfFilter)).click();
+  async openFilterWithInput(filterName: string) {
+    await this.page.locator(SELECTORS.filterWithInput(filterName)).click();
   }
 
   async isListItemVisible(name: string): Promise<boolean> {

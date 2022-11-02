@@ -12,7 +12,7 @@ const namespaceOption = 'ETL';
 const bookETLDataEntity = 'Book_ETL_aqa';
 const tagFilterOption = 'aqa_tag';
 const groupsOption = 'group_bookshop';
-const transformersTag = 'Transformers';
+const transformersTab = 'Transformers';
 const firstOwner = 'firstOwner';
 const titleAdmin = 'admin';
 const noResultsOwnerText = 'No result. Create new owner "firstOwner"';
@@ -84,8 +84,8 @@ test.describe('Check filters', () => {
      * /project/1/test-cases/70
      */
     test('Should display the expected item with Type filter', async ({ steps: { pages } }) => {
-      await test.step('I go to the Transformers tab', async () => {
-        await pages.catalog.clickTab(transformersTag);
+      await test.step('Go to the Transformers tab', async () => {
+        await pages.catalog.clickTab(transformersTab);
       });
       await test.step('Apply filter Type', async () => {
         await pages.catalog.openFilterWithInput(typeFilter);
@@ -104,7 +104,7 @@ test.describe('Check filters', () => {
       });
     });
   });
-  test.describe('When apply multiple filters', () => {
+  test.describe('Apply multiple filters', () => {
     test.beforeEach(async ({ steps: { pages }, page }) => {
       await test.step(`I open catalog page`, async () => {
         await page.goto('');
@@ -129,7 +129,7 @@ test.describe('Check filters', () => {
       });
     });
     /**
-     * /project/1/test-cases/28
+     * /project/1/test-cases/103
      */
     test('Should display the expected item with all filters', async ({ steps: { pages } }) => {
       await test.step('Apply filter Datasource', async () => {
