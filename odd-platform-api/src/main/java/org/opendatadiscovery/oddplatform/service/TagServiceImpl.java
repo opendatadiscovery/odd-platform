@@ -98,6 +98,25 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public Flux<TagPojo> getOrInjectTagByName(final Set<String> tagNames) {
+        return reactiveTagRepository.listByNames(tagNames)
+            .collectList()
+            .flatMapMany(existingTags -> {
+                final List<String> existingTagNames = existingTags.stream()
+                    .map(TagPojo::getName)
+                    .toList();
+
+                final List<TagPojo> tagToCreate = tagNames
+                    .stream()
+                    .filter(n -> !existingTagNames.contains(n))
+                    .map(n -> new TagPojo().setName(n).setImportant(false)).toList();
+
+                return reactiveTagRepository.ingestData(tagToCreate)
+                    .mergeWith(Flux.fromIterable(existingTags));
+            });
+    }
+
+    @Override
     @ReactiveTransactional
     public Mono<List<TagDto>> updateRelationsWithDataEntity(final long dataEntityId,
                                                             final Set<String> tagNames) {

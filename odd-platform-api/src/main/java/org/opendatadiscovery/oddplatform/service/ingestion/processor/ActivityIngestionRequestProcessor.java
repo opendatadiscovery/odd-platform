@@ -33,7 +33,8 @@ public class ActivityIngestionRequestProcessor implements IngestionRequestProces
 
     @Override
     public boolean shouldProcess(final IngestionRequest request) {
-        return CollectionUtils.isNotEmpty(request.getNewEntities());
+        return false;
+//        return CollectionUtils.isNotEmpty(request.getNewEntities());
     }
 
     @Override

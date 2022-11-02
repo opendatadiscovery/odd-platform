@@ -33,8 +33,8 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
             .filter(TagToDataEntityPojo::getExternal)
             .collectList();
 
-        final Mono<List<TagToDataEntityPojo>> updatedExternalRelations = tagService.getOrCreateTagsByName(tagNames)
-            .map(tags -> tags.stream().collect(Collectors.toMap(TagPojo::getName, identity())))
+        final Mono<List<TagToDataEntityPojo>> updatedExternalRelations = tagService.getOrInjectTagByName(tagNames)
+            .collectMap(TagPojo::getName, identity())
             .map(tagsMap -> getUpdatedRelations(tagsMap, request));
 
         return Mono.zip(currentExternalRelations, updatedExternalRelations)

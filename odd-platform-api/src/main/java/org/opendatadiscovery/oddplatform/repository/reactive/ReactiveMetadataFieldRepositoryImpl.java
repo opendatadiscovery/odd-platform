@@ -3,10 +3,15 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.InsertResultStep;
+import org.jooq.InsertSetStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
+import org.opendatadiscovery.oddplatform.model.Indexes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MetadataFieldRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -16,6 +21,7 @@ import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 
 @Repository
@@ -56,6 +62,47 @@ public class ReactiveMetadataFieldRepositoryImpl
 
         return jooqReactiveOperations
             .flux(DSL.selectFrom(METADATA_FIELD).where(addSoftDeleteFilter(condition)))
+            .map(this::recordToPojo);
+    }
+
+    @Override
+    public Flux<MetadataFieldPojo> ingestData(final List<MetadataFieldPojo> metadataFields) {
+        if (CollectionUtils.isEmpty(metadataFields)) {
+            return Flux.just();
+        }
+
+        final LocalDateTime now = LocalDateTime.now();
+
+        final List<MetadataFieldRecord> records = metadataFields.stream()
+            .map(e -> createRecord(e, now))
+            .toList();
+
+        return jooqReactiveOperations
+            .executeInPartitionReturning(records, rs -> {
+                InsertSetStep<MetadataFieldRecord> insertStep = DSL.insertInto(METADATA_FIELD);
+
+                for (int i = 0; i < rs.size() - 1; i++) {
+                    insertStep = insertStep.set(rs.get(i)).newRecord();
+                }
+
+                final List<Field<Object>> conflictFields = Indexes.IX_UNIQUE_EXTERNAL_NAME_TYPE.getFields()
+                    .stream()
+                    .map(of -> field(of.getName()))
+                    .toList();
+
+                final InsertResultStep<MetadataFieldRecord> query = insertStep
+                    .set(rs.get(rs.size() - 1))
+                    .onConflict(conflictFields)
+                    .where(METADATA_FIELD.ORIGIN.ne(MetadataOrigin.INTERNAL.toString()))
+                    .doUpdate()
+                    .set(
+                        METADATA_FIELD.NAME,
+                        jooqQueryHelper.excludedField(METADATA_FIELD.NAME, METADATA_FIELD.NAME.getType())
+                    )
+                    .returning();
+
+                return jooqReactiveOperations.flux(query);
+            })
             .map(this::recordToPojo);
     }
 }

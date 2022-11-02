@@ -24,6 +24,8 @@ public interface TagService {
 
     Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames);
 
+    Flux<TagPojo> getOrInjectTagByName(final Set<String> tagNames);
+
     Mono<List<TagDto>> updateRelationsWithDataEntity(final long dataEntityId,
                                                      final Set<String> tagNames);
 
