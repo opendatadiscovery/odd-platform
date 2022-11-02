@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.auth.manager;
 
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType;
+import org.opendatadiscovery.oddplatform.auth.manager.extractor.ResourceExtractor;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -15,20 +15,19 @@ import reactor.core.publisher.Mono;
 public class ReactiveResourcePermissionAuthorizationManager
     implements ReactiveAuthorizationManager<AuthorizationContext> {
     private final PermissionService permissionService;
-    private final Function<AuthorizationContext, Long> resourceIdExtractor;
+    private final ResourceExtractor resourceExtractor;
+    private final String resourceIdVariableName;
     private final PolicyPermissionDto permission;
 
     @Override
     public Mono<AuthorizationDecision> check(final Mono<Authentication> authentication,
                                              final AuthorizationContext object) {
-        final Long resourceId = resourceIdExtractor.apply(object);
-        if (resourceId == null) {
-            return Mono.just(new AuthorizationDecision(false));
-        }
         final PermissionResourceType type = PermissionResourceType.fromValue(permission.getType().name());
-        return permissionService.getResourcePermissionsForCurrentUser(type, resourceId)
+        return resourceExtractor.extractResourceId(object, resourceIdVariableName)
+            .flatMapMany(resourceId -> permissionService.getResourcePermissionsForCurrentUser(type, resourceId))
             .filter(p -> p.name().equals(permission.name()))
             .hasElements()
-            .map(AuthorizationDecision::new);
+            .map(AuthorizationDecision::new)
+            .switchIfEmpty(Mono.just(new AuthorizationDecision(false)));
     }
 }

@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.authorization.AuthorizationCustomizer;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
+import org.opendatadiscovery.oddplatform.auth.manager.extractor.ResourceExtractor;
 import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -79,6 +80,7 @@ public class OAuthSecurityConfiguration {
         final OAuthLogoutSuccessHandler logoutHandler,
         final ReactiveClientRegistrationRepository repo,
         final PermissionService permissionService,
+        final List<ResourceExtractor> extractors,
         final TemplateEngine templateEngine) {
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
@@ -87,7 +89,7 @@ public class OAuthSecurityConfiguration {
             .cors().and()
             .csrf().disable()
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
-            .authorizeExchange(new AuthorizationCustomizer(permissionService))
+            .authorizeExchange(new AuthorizationCustomizer(permissionService, extractors))
             .oauth2Login(withDefaults())
             .logout()
             .logoutSuccessHandler(logoutHandler)

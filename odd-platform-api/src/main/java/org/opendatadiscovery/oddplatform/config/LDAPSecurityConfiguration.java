@@ -8,6 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.ODDLDAPProperties;
 import org.opendatadiscovery.oddplatform.auth.authorization.AuthorizationCustomizer;
+import org.opendatadiscovery.oddplatform.auth.manager.extractor.ResourceExtractor;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -128,12 +129,13 @@ public class LDAPSecurityConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityWebFilterChain configureLdap(final ServerHttpSecurity http,
+                                                final List<ResourceExtractor> extractors,
                                                 final PermissionService permissionService) {
         return http
             .cors().and()
             .csrf().disable()
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
-            .authorizeExchange(new AuthorizationCustomizer(permissionService))
+            .authorizeExchange(new AuthorizationCustomizer(permissionService, extractors))
             .logout()
             .and()
             .formLogin()

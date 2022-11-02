@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.auth.manager;
 
-import java.util.function.Function;
+import java.util.List;
+import org.opendatadiscovery.oddplatform.auth.manager.extractor.ResourceExtractor;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -17,29 +18,41 @@ public final class ReactiveAuthorizationManagerFactory {
     }
 
     public static ReactiveAuthorizationManager<AuthorizationContext> manager(final AuthorizationManagerType type,
+                                                                             final List<ResourceExtractor> extractors,
                                                                              final PermissionService s,
                                                                              final PolicyPermissionDto p) {
         if (type == AuthorizationManagerType.NO_CONTEXT) {
             return new ReactiveNonContextPermissionAuthorizationManager(s, p);
         }
-        return resourceManager(type, s, p);
+        return resourceManager(type, s, extractors, p);
     }
 
     private static ReactiveAuthorizationManager<AuthorizationContext> resourceManager(
         final AuthorizationManagerType type,
         final PermissionService s,
+        final List<ResourceExtractor> extractors,
         final PolicyPermissionDto p) {
-        return new ReactiveResourcePermissionAuthorizationManager(s, resourceExtractor(type), p);
+        final ResourceExtractor resourceExtractor = getExtractor(extractors, type);
+        return new ReactiveResourcePermissionAuthorizationManager(s, resourceExtractor,
+            resourceExtractorVariableName(type), p);
     }
 
-    private static Function<AuthorizationContext, Long> resourceExtractor(final AuthorizationManagerType type) {
+    private static String resourceExtractorVariableName(final AuthorizationManagerType type) {
         return switch (type) {
-            case DATA_ENTITY -> c -> (Long) c.getVariables().get(DATA_ENTITY_ID);
-            case DATASET_FIELD -> c -> (Long) c.getVariables().get(DATASET_FIELD_ID);
-            case TERM -> c -> (Long) c.getVariables().get(TERM_ID);
-            case ALERT -> c -> (Long) c.getVariables().get(ALERT_ID);
-            case DEG -> c -> (Long) c.getVariables().get(DATA_ENTITY_GROUP_ID);
+            case DATA_ENTITY -> DATA_ENTITY_ID;
+            case DATASET_FIELD -> DATASET_FIELD_ID;
+            case TERM -> TERM_ID;
+            case ALERT -> ALERT_ID;
+            case DEG -> DATA_ENTITY_GROUP_ID;
             default -> throw new IllegalArgumentException("Unsupported resource type: " + type);
         };
+    }
+
+    private static ResourceExtractor getExtractor(final List<ResourceExtractor> extractors,
+                                                  final AuthorizationManagerType type) {
+        return extractors.stream()
+            .filter(e -> e.handles(type))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Unsupported resource type: " + type));
     }
 }
