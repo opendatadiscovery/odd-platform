@@ -1,5 +1,11 @@
-import { PageInfo } from 'generated-sources';
+import { PageInfo as GeneratedPageInfo } from 'generated-sources';
 
-export interface CurrentPageInfo extends PageInfo {
+export interface CurrentPageInfo extends GeneratedPageInfo {
   page: number;
+}
+
+export interface PageInfo {
+  hasNext: boolean;
+  lastId?: number;
+  lastDateTime?: number;
 }

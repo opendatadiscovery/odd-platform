@@ -1,8 +1,5 @@
 import { Grid } from '@mui/material';
-import {
-  maxContentWidthWithoutSidebar,
-  toolbarHeight,
-} from 'lib/constants';
+import { maxContentWidthWithoutSidebar, toolbarHeight } from 'lib/constants';
 import styled, { CSSObject } from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({

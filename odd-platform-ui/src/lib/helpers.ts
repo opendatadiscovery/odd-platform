@@ -2,6 +2,7 @@ import { DataQualityTestExpectation, DataSetFieldTypeTypeEnum } from 'generated-
 import capitalize from 'lodash/capitalize';
 import { Theme } from '@mui/material';
 import { CRUDType } from 'lib/interfaces';
+import { format } from 'date-fns';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
   [
@@ -30,6 +31,9 @@ export const stringFormatted = (
     .map(capitalizeBy)
     .join(' ');
 };
+
+export const formattedDate = (date: number, dateFormat: string) =>
+  format(date, dateFormat);
 
 export const toDateWithoutOffset = (dateToCast: number): Date => {
   const date = new Date(dateToCast);

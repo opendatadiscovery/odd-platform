@@ -15,6 +15,7 @@ export const ORDERED_SEVERITY = [
 // content width constants
 export const toolbarHeight = 49;
 export const maxSidebarWidth = 240;
+export const maxChannelsWidth = 200;
 export const activitySidebarWidth = 192;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;

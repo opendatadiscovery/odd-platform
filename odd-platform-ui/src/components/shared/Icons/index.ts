@@ -25,3 +25,4 @@ export { default as UserSyncIcon } from './UserSyncIcon';
 export { default as CloseIcon } from './CloseIcon';
 export { default as CalendarIcon } from './CalendarIcon';
 export { default as SystemIcon } from './SystemIcon';
+export { default as SlackIcon } from './SlackIcon';

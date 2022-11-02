@@ -11,3 +11,4 @@ export * from './termSearch';
 export * from './dataentityLineage';
 export * from './activities';
 export * from './alerts';
+export * from './dataCollaboration';
