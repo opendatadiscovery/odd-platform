@@ -34,7 +34,7 @@ tags:
   - name: term
   - name: activity
   - name: ownerAssociationRequest
-  - name: data_collaboration
+  - name: dataCollaboration
 paths:
   /api/features/active:
     get:
@@ -2405,7 +2405,7 @@ paths:
               schema:
                 $ref: './components.yaml/#/components/schemas/MessageChannelList'
       tags:
-        - data_collaboration
+        - dataCollaboration
 
   /api/datacollaboration/providers/slack/messages:
     post:
@@ -2426,4 +2426,4 @@ paths:
               schema:
                 $ref: './components.yaml/#/components/schemas/Message'
       tags:
-        - data_collaboration
+        - dataCollaboration

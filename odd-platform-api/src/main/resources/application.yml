@@ -8,12 +8,6 @@ spring:
   codec:
     max-in-memory-size: 20MB
 
-springdoc:
-  swagger-ui:
-    #    enabled: true
-    disable-swagger-default-url: true
-    path: swagger-ui.html
-
 session:
   # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
   provider: IN_MEMORY
@@ -134,7 +128,8 @@ notifications:
 #      url:
 
 datacollaboration:
-  advisory-lock-id: 110
+  receive-message-advisory-lock-id: 110
+  sender-message-advisory-lock-id: 120
   enabled: false
 #  slack-oauth-token:
 

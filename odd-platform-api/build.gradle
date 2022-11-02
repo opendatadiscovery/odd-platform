@@ -39,8 +39,6 @@ dependencies {
     implementation libs.shedlock.jdbc.lock.provider
 
     implementation 'com.slack.api:slack-api-client:1.26.1'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
-    implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.6.12'
 
     compileOnly libs.lombok
 
