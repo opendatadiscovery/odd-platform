@@ -1378,7 +1378,7 @@ paths:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - name: message_id
-          in: query
+          in: path
           schema:
             type: integer
             format: int64
