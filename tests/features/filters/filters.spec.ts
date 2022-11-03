@@ -140,6 +140,10 @@ test.describe('Check filters', () => {
         await pages.catalog.openFilterWithSelect(namespaceFilter);
         await pages.catalog.chooseOption(namespaceOption);
       });
+      await test.step('Apply filter Owner', async () => {
+        await pages.catalog.openFilterWithInput(ownerFilter);
+        await pages.catalog.chooseOption(firstOwner);
+      });
       await test.step('Apply filter Tag', async () => {
         await pages.catalog.openFilterWithInput(tagFilter);
         await pages.catalog.chooseOption(tagFilterOption);
