@@ -107,7 +107,7 @@ public class MetadataIngestionRequestProcessor implements IngestionRequestProces
             .toList();
 
         return metadataFieldRepository
-            .bulkCreate(newMetadataFields)
+            .ingestData(newMetadataFields)
             .mergeWith(Flux.fromIterable(existing.values()));
     }
 

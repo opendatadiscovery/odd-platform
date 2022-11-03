@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.LabelFormData;

@@ -11,4 +11,6 @@ public interface ReactiveMetadataFieldRepository extends ReactiveCRUDRepository<
     Mono<List<MetadataFieldPojo>> listInternalMetadata(final String query);
 
     Flux<MetadataFieldPojo> listByKey(final Collection<MetadataKey> keys);
+
+    Flux<MetadataFieldPojo> ingestData(final List<MetadataFieldPojo> metadataFields);
 }
