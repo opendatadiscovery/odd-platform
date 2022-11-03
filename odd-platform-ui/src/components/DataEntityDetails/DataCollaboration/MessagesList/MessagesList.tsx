@@ -31,8 +31,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
   const { dataEntityCollaborationMessagePath } = useAppPaths();
 
   const handleMessageOnClick = React.useCallback(
-    (messageId: number, date: string) => () => {
-      handleSetMessageDate(date);
+    (messageId: number) => () => {
       history.push(dataEntityCollaborationMessagePath(dataEntityId, messageId));
     },
     [dataEntityId]
@@ -40,32 +39,36 @@ const MessagesList: React.FC<MessagesListProps> = ({
 
   return (
     <S.Container>
-      {isMessagesLoading && messagesLength ? (
+      {!isMessagesLoading && messagesLength ? (
         <S.MessagesContainer container id='messages-list'>
           <InfiniteScroll
             dataLength={messagesLength}
             next={fetchNextMessages}
             hasMore={hasNext}
-            loader={true && <MessageSkeleton />}
+            loader={isMessagesLoading && <MessageSkeleton />}
             scrollThreshold='200px'
             scrollableTarget='messages-list'
           >
-            {Object.entries(messagesByDate).map(([messageDate, messages], index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Grid key={`${messageDate}-${index}`} container>
-                <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
-                  {messageDate}
-                </Typography>
-                {messages.map(message => (
-                  <Message
-                    key={message.id}
-                    message={message}
-                    isActive={routerMessageId === message.id}
-                    messageOnClick={handleMessageOnClick(message.id, messageDate)}
-                  />
-                ))}
-              </Grid>
-            ))}
+            {Object.entries(messagesByDate).map(([messageDate, messages], index) => {
+              handleSetMessageDate(messageDate);
+
+              return (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid key={`${messageDate}-${index}`} container>
+                  <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
+                    {messageDate}
+                  </Typography>
+                  {messages.map(message => (
+                    <Message
+                      key={message.id}
+                      message={message}
+                      isActive={routerMessageId === message.id}
+                      messageOnClick={handleMessageOnClick(message.id)}
+                    />
+                  ))}
+                </Grid>
+              );
+            })}
           </InfiniteScroll>
         </S.MessagesContainer>
       ) : (
