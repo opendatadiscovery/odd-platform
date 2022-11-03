@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.SlackChannelDto;
 
 @Mapper
 @MapperConfig(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+// TODO: delete this and move to the MessageMapper?
 public interface DataCollaborationMapper {
     @Mapping(source = "id", target = "channelId")
     MessageChannel mapSlackChannel(final SlackChannelDto slackChannel);

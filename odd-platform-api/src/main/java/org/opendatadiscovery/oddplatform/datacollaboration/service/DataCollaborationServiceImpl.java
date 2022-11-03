@@ -13,7 +13,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnD
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.mapper.DataCollaborationMapper;
-import org.opendatadiscovery.oddplatform.datacollaboration.repository.MessageRepository;
+import org.opendatadiscovery.oddplatform.repository.MessageRepository;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -51,12 +51,13 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
             .setState(MessageStateDto.PENDING_SEND.toString())
             .setProvider(messageProvider.toString())
             .setChannelId(messageRequest.getChannelId())
-            .setMessageText(messageRequest.getText());
+            .setText(messageRequest.getText());
 
         return messageRepository.create(messagePojo)
+            // TODO: mapper
             .map(pojo -> new Message()
                 .id(pojo.getId())
-                .text(pojo.getMessageText())
+                .text(pojo.getText())
                 .createdAt(pojo.getCreatedAt())
                 .state(MessageState.fromValue(pojo.getState()))
             );

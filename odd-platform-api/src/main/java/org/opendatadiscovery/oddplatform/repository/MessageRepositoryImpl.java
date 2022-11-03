@@ -1,8 +1,14 @@
-package org.opendatadiscovery.oddplatform.datacollaboration.repository;
+package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.Condition;
 import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
@@ -14,6 +20,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.MessageProviderEve
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
@@ -23,6 +30,39 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EV
 @RequiredArgsConstructor
 public class MessageRepositoryImpl implements MessageRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
+
+    @Override
+    public Flux<MessagePojo> listParentMessagesByDataEntityId(final long dataEntityId,
+                                                              final String channelId,
+                                                              final Long lastMessageId,
+                                                              final OffsetDateTime lastMessageDateTime,
+                                                              final int size) {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(MESSAGE.DATA_ENTITY_ID.eq(dataEntityId));
+        conditions.add(MESSAGE.PARENT_MESSAGE_ID.isNull());
+
+        if (StringUtils.isNotEmpty(channelId)) {
+            conditions.add(MESSAGE.CHANNEL_ID.startsWithIgnoreCase(channelId));
+        }
+
+        final SelectConditionStep<Record> query = DSL.select(MESSAGE.fields())
+            .from(MESSAGE)
+            .where(conditions);
+
+        return applySeekPagination(lastMessageId, lastMessageDateTime, query);
+    }
+
+    @Override
+    public Flux<MessagePojo> listChildrenMessages(final long messageId,
+                                                  final Long lastMessageId,
+                                                  final OffsetDateTime lastMessageDateTime,
+                                                  final int size) {
+        final SelectConditionStep<Record> query = DSL.select(MESSAGE.fields())
+            .from(MESSAGE)
+            .where(MESSAGE.PARENT_MESSAGE_ID.eq(messageId));
+
+        return applySeekPagination(lastMessageId, lastMessageDateTime, query);
+    }
 
     @Override
     public Mono<MessagePojo> create(final MessagePojo message) {
@@ -60,5 +100,19 @@ public class MessageRepositoryImpl implements MessageRepository {
             .where(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerId));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
+    private Flux<MessagePojo> applySeekPagination(final Long lastMessageId,
+                                                  final OffsetDateTime lastMessageDateTime,
+                                                  final SelectConditionStep<Record> query) {
+        if (lastMessageId != null && lastMessageId > 0 && lastMessageDateTime != null) {
+            return jooqReactiveOperations
+                .flux(query
+                    .orderBy(MESSAGE.CREATED_AT.desc(), MESSAGE.ID.desc())
+                    .seek(lastMessageDateTime, lastMessageId))
+                .map(r -> r.into(MessagePojo.class));
+        }
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(MessagePojo.class));
     }
 }

@@ -64,7 +64,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                                 .setParentMessageId(event.parentMessage().getId())
                                 .setChannelId(event.parentMessage().getChannelId())
                                 .setDataEntityId(event.parentMessage().getDataEntityId())
-                                .setMessageText(messageEvent.getText())
+                                .setText(messageEvent.getText())
                                 .setProviderMessageId(messageEvent.getTs())
                                 .setProvider(event.parentMessage().getProvider())
                                 .setState(MessageStateDto.EXTERNAL.toString());

@@ -24,6 +24,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
+import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
@@ -38,6 +40,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
+import org.opendatadiscovery.oddplatform.service.MessageService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
@@ -59,19 +62,22 @@ public class DataEntityController
     private final TermService termService;
     private final LineageService lineageService;
     private final ActivityService activityService;
+    private final MessageService messageService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
                                 final AlertService alertService,
                                 final TermService termService,
                                 final LineageService lineageService,
-                                final ActivityService activityService) {
+                                final ActivityService activityService,
+                                final MessageService messageService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
         this.termService = termService;
         this.lineageService = lineageService;
         this.activityService = activityService;
+        this.messageService = messageService;
     }
 
     @Override
@@ -348,6 +354,39 @@ public class DataEntityController
     @Override
     public Mono<ResponseEntity<DataEntityUsageInfo>> getDataEntitiesUsage(final ServerWebExchange exchange) {
         return entityService.getDataEntityUsageInfo()
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<MessageChannelList>> getChannels(final Long dataEntityId,
+                                                                final String channelName,
+                                                                final ServerWebExchange exchange) {
+        return messageService
+            .getExistingMessagesChannels(dataEntityId, channelName)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<MessageList>> getDataEntityMessages(final Long dataEntityId,
+                                                                   final Integer size,
+                                                                   final String channelId,
+                                                                   final Long lastMessageId,
+                                                                   final OffsetDateTime lastMessageDateTime,
+                                                                   final ServerWebExchange exchange) {
+        return messageService
+            .getMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, lastMessageDateTime, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<MessageList>> getMessages(final Long dataEntityId,
+                                                         final Integer size,
+                                                         final Long messageId,
+                                                         final Long lastMessageId,
+                                                         final OffsetDateTime lastMessageDateTime,
+                                                         final ServerWebExchange exchange) {
+        return messageService
+            .getChildrenMessages(messageId, lastMessageId, lastMessageDateTime, size)
             .map(ResponseEntity::ok);
     }
 }

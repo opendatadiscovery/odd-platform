@@ -37,7 +37,7 @@ public class DataCollaborationMessageSenderJob extends Thread {
                         .ifPresent(message -> {
                             // TODO: Slack API is Mono based. Redo to Future?
                             final String messageTs = slackAPIClient
-                                .postMessage(message.getChannelId(), message.getMessageText())
+                                .postMessage(message.getChannelId(), message.getText())
                                 .block();
 
                             updateMessage(dslContext, message.getId(), messageTs);
