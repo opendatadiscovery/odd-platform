@@ -16,8 +16,7 @@ const AppInfoMenu: React.FC = () => {
   const version = useAppSelector(getVersion);
 
   const gitbookLink = 'https://docs.opendatadiscovery.org/';
-  const slackLink =
-    'https://opendatadiscovery.slack.com/join/shared_invite/zt-xqs5etsh-tytjLsAJK7uX3JSYdqreyg';
+  const slackLink = 'https://go.opendatadiscovery.org/slack';
   const githubLink = 'https://github.com/opendatadiscovery/odd-platform';
 
   const menuId = 'app-info-menu';
