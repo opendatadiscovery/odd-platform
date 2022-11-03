@@ -21,8 +21,14 @@ export const namespaceSlice = createSlice({
     builder.addCase(thunks.fetchNamespaceList.fulfilled, (state, { payload }) => {
       const { namespaceList, pageInfo } = payload;
 
-      namespaceAdapter.setMany(state, namespaceList);
       state.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        namespaceAdapter.setMany(state, namespaceList);
+        return state;
+      }
+      namespaceAdapter.setAll(state, namespaceList);
+      return state;
     });
 
     builder.addCase(thunks.createNamespace.fulfilled, (state, { payload }) => {

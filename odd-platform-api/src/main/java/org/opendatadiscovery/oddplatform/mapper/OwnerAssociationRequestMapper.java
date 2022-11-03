@@ -19,6 +19,7 @@ public interface OwnerAssociationRequestMapper {
 
     @Mapping(target = "status", expression = "java(OwnerAssociationRequestStatus.PENDING.getValue())")
     OwnerAssociationRequestPojo mapToPojo(final String username,
+                                          final String provider,
                                           final Long ownerId);
 
     @Mapping(target = ".", source = "dto.pojo")

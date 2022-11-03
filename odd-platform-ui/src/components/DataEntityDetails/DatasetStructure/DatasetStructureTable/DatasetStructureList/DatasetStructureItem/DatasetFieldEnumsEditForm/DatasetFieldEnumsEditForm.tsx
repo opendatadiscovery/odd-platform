@@ -4,27 +4,28 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
   DataSetFieldTypeTypeEnum,
   EnumValueFormData,
+  Permission,
 } from 'generated-sources';
 import {
   getDatasetFieldEnums,
   getDatasetFieldEnumsCreatingStatus,
   getDatasetFieldEnumsFetchingStatus,
 } from 'redux/selectors';
-import {
-  createDataSetFieldEnum,
-  fetchDataSetFieldEnum,
-} from 'redux/thunks';
+import { createDataSetFieldEnum, fetchDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import DatasetFieldEnumsFormItem from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
-import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import { AppButton, AppCircularProgress, DialogWrapper } from 'components/shared';
+import { AddIcon } from 'components/shared/Icons';
+import { WithPermissions } from 'components/shared/contexts';
+import { useAppParams } from 'lib/hooks';
+import { ValueDescriptionContainer } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItemStyles';
+import AppInput from 'components/shared/AppInput/AppInput';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
   ActionsContainer,
   HeaderContainer,
   TitleContainer,
 } from './DatasetFieldEnumsEditFormStyles';
+import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 
 interface DataSetFieldEnumEditFormProps {
   datasetFieldId: number;
@@ -37,10 +38,14 @@ interface DatasetFieldEnumsFormData {
   enums: EnumValueFormData[];
 }
 
-const DatasetFieldEnumsEditForm: React.FC<
-  DataSetFieldEnumEditFormProps
-> = ({ datasetFieldId, datasetFieldName, btnCreateEl, enumValueType }) => {
+const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
+  datasetFieldId,
+  datasetFieldName,
+  btnCreateEl,
+  enumValueType,
+}) => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
 
   const { isLoading: isEnumsCreating } = useAppSelector(
     getDatasetFieldEnumsCreatingStatus
@@ -48,9 +53,7 @@ const DatasetFieldEnumsEditForm: React.FC<
   const { isLoading: isEnumsFetching } = useAppSelector(
     getDatasetFieldEnumsFetchingStatus
   );
-  const datasetFieldEnums = useAppSelector(
-    getDatasetFieldEnums(datasetFieldId)
-  );
+  const datasetFieldEnums = useAppSelector(getDatasetFieldEnums(datasetFieldId));
 
   const defaultEnums = React.useMemo(() => {
     if (datasetFieldEnums[0] && 'id' in datasetFieldEnums[0]) {
@@ -124,10 +127,7 @@ const DatasetFieldEnumsEditForm: React.FC<
   };
 
   const handleAppend = () => {
-    append({
-      name: '',
-      description: '',
-    });
+    append({ name: '', description: '' });
   };
 
   const handleRemove = React.useCallback(
@@ -140,38 +140,41 @@ const DatasetFieldEnumsEditForm: React.FC<
   const formTitle = (
     <HeaderContainer container>
       <TitleContainer container>
-        <Typography variant="h3">
-          {`Values for ${datasetFieldName}`}
-        </Typography>
-        <Typography variant="body2" color="texts.secondary">
+        <Typography variant='h3'>{`Values for ${datasetFieldName}`}</Typography>
+        <Typography variant='body2' color='texts.secondary'>
           Custom values
         </Typography>
       </TitleContainer>
-      <AppButton
-        size="medium"
-        color="primaryLight"
-        startIcon={<AddIcon />}
-        onClick={handleAppend}
+      <WithPermissions
+        permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+        resourceId={dataEntityId}
       >
-        Add value
-      </AppButton>
+        <AppButton
+          size='medium'
+          color='primaryLight'
+          startIcon={<AddIcon />}
+          onClick={handleAppend}
+        >
+          Add value
+        </AppButton>
+      </WithPermissions>
     </HeaderContainer>
   );
 
   const formContent = () => (
     <>
       {isEnumsFetching ? (
-        <Grid container justifyContent="center">
+        <Grid container justifyContent='center'>
           <AppCircularProgress
-            background="transparent"
-            progressBackground="dark"
+            background='transparent'
+            progressBackground='dark'
             size={30}
           />
         </Grid>
       ) : (
         <FormProvider {...methods}>
           <form
-            id="dataset-field-enums-form"
+            id='dataset-field-enums-form'
             onSubmit={methods.handleSubmit(handleFormSubmit)}
           >
             {fields.map((item, idx) => (
@@ -191,17 +194,23 @@ const DatasetFieldEnumsEditForm: React.FC<
 
   const formActionButtons = (handleClose: () => void) => (
     <ActionsContainer>
-      <AppButton
-        size="large"
-        type="submit"
-        form="dataset-field-enums-form"
-        color="primary"
-        disabled={!methods.formState.isValid}
-        sx={{ mr: 1 }}
-      >
-        Save
-      </AppButton>
-      <AppButton size="large" color="primaryLight" onClick={handleClose}>
+      <WithPermissions
+        permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+        resourceId={dataEntityId}
+        renderContent={({ isAllowedTo: editEnums }) => (
+          <AppButton
+            size='large'
+            type='submit'
+            form='dataset-field-enums-form'
+            color='primary'
+            disabled={!(methods.formState.isValid && editEnums)}
+            sx={{ mr: 1 }}
+          >
+            Save
+          </AppButton>
+        )}
+      />
+      <AppButton size='large' color='primaryLight' onClick={handleClose}>
         Cancel
       </AppButton>
     </ActionsContainer>
@@ -218,7 +227,7 @@ const DatasetFieldEnumsEditForm: React.FC<
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isEnumsCreating}
       errorText={error}
-      maxWidth="xl"
+      maxWidth='xl'
       clearState={clearFormState}
     />
   );

@@ -11,7 +11,11 @@ import {
 import { Owner, OwnerAssociationRequestStatus, OwnerFormData } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/Icons';
 import { AppButton, AppInput, AutocompleteSuggestion } from 'components/shared';
-import { createOwnerAssociationRequest, fetchOwnersList } from 'redux/thunks';
+import {
+  createOwnerAssociationRequest,
+  fetchIdentity,
+  fetchOwnersList,
+} from 'redux/thunks';
 import { usePermissions } from 'lib/hooks';
 import { setProfileOwnerName } from 'redux/slices/profile.slice';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -87,7 +91,7 @@ const OwnerAssociationForm: React.FC = () => {
     return filtered;
   };
 
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
     if (typeof option === 'string') {
       return option;
     }
@@ -98,7 +102,7 @@ const OwnerAssociationForm: React.FC = () => {
   }, []);
 
   const onAutocompleteChange = (
-    field: ControllerRenderProps<OwnerFormData>,
+    field: ControllerRenderProps<Omit<OwnerFormData, 'roles'>>,
     option: FilterOption | string | null
   ) => {
     if (!option || typeof option === 'string') {
@@ -122,6 +126,7 @@ const OwnerAssociationForm: React.FC = () => {
         if (associateImmediately && status === OwnerAssociationRequestStatus.APPROVED) {
           dispatch(setProfileOwnerName(ownerName));
         }
+        dispatch(fetchIdentity());
       });
   };
 

@@ -14,30 +14,24 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTerm, updateTerm } from 'redux/thunks';
 import {
   getTermCreatingStatuses,
+  getTermDetails,
   getTermUpdatingStatuses,
 } from 'redux/selectors';
-import { useAppPaths } from 'lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
-  term?: TermDetails;
 }
 
-const TermsForm: React.FC<TermsFormDialogProps> = ({
-  term,
-  btnCreateEl,
-}) => {
+const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { termId } = useAppParams();
   const { termDetailsOverviewPath } = useAppPaths();
 
-  const { isLoading: isTermCreating } = useAppSelector(
-    getTermCreatingStatuses
-  );
-
-  const { isLoading: isTermUpdating } = useAppSelector(
-    getTermUpdatingStatuses
-  );
+  const term = useAppSelector(getTermDetails(termId));
+  const { isLoading: isTermCreating } = useAppSelector(getTermCreatingStatuses);
+  const { isLoading: isTermUpdating } = useAppSelector(getTermUpdatingStatuses);
 
   const getDefaultValues = React.useCallback(
     (): TermFormData => ({
@@ -48,12 +42,11 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
     [term]
   );
 
-  const { handleSubmit, control, reset, formState } =
-    useForm<TermFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-      defaultValues: getDefaultValues(),
-    });
+  const { handleSubmit, control, reset, formState } = useForm<TermFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: getDefaultValues(),
+  });
 
   React.useEffect(() => {
     reset(getDefaultValues());
@@ -98,21 +91,21 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
   };
 
   const termFormTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {term ? 'Edit ' : 'Add '}
       term
     </Typography>
   );
 
   const termFormContent = () => (
-    <form id="term-create-form" onSubmit={handleSubmit(onSubmit)}>
+    <form id='term-create-form' onSubmit={handleSubmit(onSubmit)}>
       {!term && (
-        <Typography variant="subtitle2" fontSize="0.73rem">
+        <Typography variant='subtitle2' fontSize='0.73rem'>
           Select a term from the dictionary or create a new term.
         </Typography>
       )}
       <Controller
-        name="name"
+        name='name'
         control={control}
         rules={{
           required: true,
@@ -122,8 +115,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.5 }}
-            label="Name"
-            placeholder="Start enter the name"
+            label='Name'
+            placeholder='Start enter the name'
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -135,15 +128,13 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
       />
       <Controller
         control={control}
-        name="namespaceName"
+        name='namespaceName'
         defaultValue={term?.namespace?.name}
         rules={{ required: true }}
-        render={({ field }) => (
-          <NamespaceAutocomplete controllerProps={field} />
-        )}
+        render={({ field }) => <NamespaceAutocomplete controllerProps={field} />}
       />
       <Controller
-        name="definition"
+        name='definition'
         control={control}
         defaultValue={term?.definition}
         rules={{
@@ -154,8 +145,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.25 }}
-            label="Definition"
-            placeholder="Term definition"
+            label='Definition'
+            placeholder='Term definition'
             multiline
             minRows={4}
             maxRows={6}
@@ -173,10 +164,10 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
 
   const termFormActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="term-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='term-create-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >

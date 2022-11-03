@@ -1,7 +1,6 @@
 import { EntityState } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
-  Actions,
   ActivityCountInfo,
   AlertTotals,
   AppInfo,
@@ -28,13 +27,19 @@ import {
   Owner,
   OwnerAssociationRequest,
   Ownership,
+  Policy,
+  PolicyDetails,
+  Role,
   Tag,
   Term,
   TermDetails,
   TermRef,
+  Permission,
+  PermissionResourceType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
+import rootReducer from 'redux/slices';
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
@@ -58,19 +63,19 @@ import {
 } from 'redux/interfaces';
 
 export interface DataSourcesState extends EntityState<DataSource> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface CollectorsState extends EntityState<Collector> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface TagsState extends EntityState<Tag> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface LabelsState extends EntityState<Label> {
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface NamespacesState extends EntityState<Namespace> {
@@ -129,7 +134,7 @@ export interface DataEntityLineageState {
 export interface OwnersState {
   byId: { [ownerId: number]: Owner };
   allIds: number[];
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
   ownershipDataEntity: {
     [dataEntityId: string]: {
       byId: { [ownershipId: string]: Ownership };
@@ -183,7 +188,9 @@ export interface AlertsState extends EntityState<Alert> {
 
 export interface ProfileState {
   owner: AssociatedOwner;
-  permissions: { byDataEntityId: { [entityId: number]: Actions } };
+  permissions: {
+    [key in PermissionResourceType]: { [resourceId: number]: Permission[] };
+  };
 }
 
 export interface OwnerAssociationState {
@@ -223,7 +230,17 @@ export interface ActivitiesState {
   queryParams: ActivityQueryParams;
 }
 
-export type RootState = ReturnType<typeof store.getState>;
+export interface RolesState extends EntityState<Role> {
+  pageInfo: CurrentPageInfo;
+}
+
+export interface PoliciesState {
+  policies: { pageInfo: CurrentPageInfo } & EntityState<Policy>;
+  policyDetails: EntityState<PolicyDetails>;
+  policySchema: Record<string, unknown>;
+}
+
+export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;

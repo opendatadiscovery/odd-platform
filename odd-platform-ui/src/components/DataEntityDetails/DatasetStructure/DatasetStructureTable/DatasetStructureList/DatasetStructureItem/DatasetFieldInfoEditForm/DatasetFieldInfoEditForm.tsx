@@ -7,13 +7,11 @@ import {
 } from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  AppButton,
-  AppInput,
-  DialogWrapper,
-  LabelItem,
-} from 'components/shared';
+import { AppButton, AppInput, DialogWrapper, LabelItem } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
+import { useAppParams } from 'lib/hooks';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
 
@@ -27,16 +25,14 @@ type DatasetFieldInfoFormType = {
   internalDescription: string;
 };
 
-const DatasetFieldInfoEditForm: React.FC<
-  DataSetFieldInfoEditFormProps
-> = ({ datasetFieldId, btnCreateEl }) => {
+const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
+  datasetFieldId,
+  btnCreateEl,
+}) => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector(
-    getDatasetFieldFormDataUpdatingStatus
-  );
-  const datasetFieldFormData = useAppSelector(
-    getDatasetFieldData(datasetFieldId)
-  );
+  const { dataEntityId } = useAppParams();
+  const { isLoading } = useAppSelector(getDatasetFieldFormDataUpdatingStatus);
+  const datasetFieldFormData = useAppSelector(getDatasetFieldData(datasetFieldId));
 
   const methods = useForm<DatasetFieldInfoFormType>({
     defaultValues: {
@@ -100,49 +96,65 @@ const DatasetFieldInfoEditForm: React.FC<
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Edit information
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="dataset-field-info-form"
-      onSubmit={methods.handleSubmit(handleFormSubmit)}
-    >
-      <Typography variant="h5" color="texts.info">
+    <form id='dataset-field-info-form' onSubmit={methods.handleSubmit(handleFormSubmit)}>
+      <Typography variant='h5' color='texts.info'>
         Add or edit labels and description
       </Typography>
-      <LabelsAutocomplete appendLabel={append} />
+      <WithPermissions
+        permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
+        resourceId={dataEntityId}
+        renderContent={({ isAllowedTo: editLabels }) => (
+          <LabelsAutocomplete appendLabel={append} labelsEditing={editLabels} />
+        )}
+      />
       <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
         {fields.map((label, index) => (
-          <LabelItem
-            systemLabel={label.external}
-            key={label.id}
-            labelName={label.name}
-            removable
-            unfilled
-            onRemoveClick={() => remove(index)}
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
+            resourceId={dataEntityId}
+            renderContent={({ isAllowedTo: editLabels }) => (
+              <LabelItem
+                systemLabel={label.external}
+                key={label.id}
+                labelName={label.name}
+                removable={editLabels}
+                unfilled
+                onRemoveClick={() => remove(index)}
+              />
+            )}
           />
         ))}
       </S.LabelItemsContainer>
       <Controller
         control={methods.control}
-        name="internalDescription"
+        name='internalDescription'
         defaultValue={datasetFieldFormData.internalDescription || ''}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            label="Description"
-            placeholder="Enter description"
-            multiline
-            maxRows={4}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => methods.setValue('internalDescription', ''),
-              icon: <ClearIcon />,
-            }}
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
+            resourceId={dataEntityId}
+            renderContent={({ isAllowedTo: editDescription }) => (
+              <AppInput
+                {...field}
+                label='Description'
+                placeholder='Enter description'
+                multiline
+                maxRows={4}
+                disabled={!editDescription}
+                customEndAdornment={{
+                  variant: 'clear',
+                  showAdornment: !!field.value,
+                  onCLick: () => methods.setValue('internalDescription', ''),
+                  icon: <ClearIcon />,
+                }}
+              />
+            )}
           />
         )}
       />
@@ -150,15 +162,22 @@ const DatasetFieldInfoEditForm: React.FC<
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size="large"
-      type="submit"
-      form="dataset-field-info-form"
-      color="primary"
-      fullWidth
-    >
-      Save
-    </AppButton>
+    <WithPermissions
+      permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
+      resourceId={dataEntityId}
+      renderContent={({ isAllowedTo: editInfo }) => (
+        <AppButton
+          size='large'
+          type='submit'
+          form='dataset-field-info-form'
+          color='primary'
+          fullWidth
+          disabled={!editInfo}
+        >
+          Save
+        </AppButton>
+      )}
+    />
   );
 
   return (

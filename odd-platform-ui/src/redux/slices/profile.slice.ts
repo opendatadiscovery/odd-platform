@@ -2,10 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import { profileActionPrefix } from 'redux/actions';
 import { ProfileState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
+import { Permission, PermissionResourceType } from 'generated-sources';
 
 export const initialState: ProfileState = {
   owner: { identity: { username: '' } },
-  permissions: { byDataEntityId: {} },
+  permissions: Object.fromEntries(
+    Object.values(PermissionResourceType).map(key => [key, {}])
+  ) as Record<PermissionResourceType, Record<number, Permission[]>>,
 };
 
 export const profileSlice = createSlice({
@@ -27,9 +30,9 @@ export const profileSlice = createSlice({
         state.owner.associationRequest = payload;
       }
     );
-    builder.addCase(thunks.fetchDataEntityPermissions.fulfilled, (state, { payload }) => {
-      const { dataEntityId, permissions } = payload;
-      state.permissions.byDataEntityId[dataEntityId] = permissions;
+    builder.addCase(thunks.fetchResourcePermissions.fulfilled, (state, { payload }) => {
+      const { resourceId, permissionResourceType, permissions } = payload;
+      state.permissions[permissionResourceType][resourceId] = permissions;
     });
   },
 });

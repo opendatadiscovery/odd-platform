@@ -1,3 +1,9 @@
+auth:
+  type: DISABLED
+  ingestion:
+    filter:
+      enabled: false
+
 housekeeping:
   enabled: false
 

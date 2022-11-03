@@ -1,52 +1,89 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
+import java.util.Set;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 import org.jooq.SortOrder;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.OwnerDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.OwnerRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus.APPROVED;
 import static org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus.PENDING;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER_ASSOCIATION_REQUEST;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNER_TO_ROLE;
+import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 
 @Repository
 public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRepository<OwnerRecord, OwnerPojo>
     implements ReactiveOwnerRepository {
+    private static final String AGG_ROLE_FIELD = "role_relations";
+    private final JooqRecordHelper jooqRecordHelper;
 
     public ReactiveOwnerRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                       final JooqQueryHelper jooqQueryHelper) {
+                                       final JooqQueryHelper jooqQueryHelper,
+                                       final JooqRecordHelper jooqRecordHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, OWNER, OwnerPojo.class);
+        this.jooqRecordHelper = jooqRecordHelper;
     }
 
     @Override
-    public Mono<Page<OwnerPojo>> list(final int page,
-                                      final int size,
-                                      final String query,
-                                      final List<Long> ids,
-                                      final Boolean allowedForSync) {
-        final var select = DSL.select(OWNER.fields()).from(OWNER);
-        final var dslQuery = enrichSelect(select, query, ids, allowedForSync);
-        final Select<? extends Record> pagedQuery = paginate(dslQuery,
-            List.of(new OrderByField(idField, SortOrder.ASC)), (page - 1) * size, size);
+    public Mono<OwnerDto> getDto(final Long id) {
+        final var dtoQuery = DSL.select(OWNER.fields())
+            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+            .from(OWNER)
+            .leftJoin(OWNER_TO_ROLE).on(OWNER.ID.eq(OWNER_TO_ROLE.OWNER_ID))
+            .leftJoin(ROLE).on(OWNER_TO_ROLE.ROLE_ID.eq(ROLE.ID))
+            .where(OWNER.ID.eq(id))
+            .groupBy(OWNER.fields());
+        return jooqReactiveOperations.mono(dtoQuery)
+            .map(this::mapRecordToDto);
+    }
 
-        return jooqReactiveOperations.flux(pagedQuery)
+    @Override
+    public Mono<Page<OwnerDto>> list(final int page,
+                                     final int size,
+                                     final String nameQuery,
+                                     final List<Long> ids,
+                                     final Boolean allowedForSync) {
+        final var select = DSL.select(OWNER.fields()).from(OWNER);
+        final var dslQuery = enrichSelect(select, nameQuery, ids, allowedForSync);
+
+        final Select<? extends Record> ownerSelect = paginate(dslQuery,
+            List.of(new OrderByField(idField, SortOrder.ASC)), (page - 1) * size, size);
+        final Table<? extends Record> ownerCTE = ownerSelect.asTable("owner_cte");
+
+        final var query = DSL.with(ownerCTE.getName())
+            .as(ownerSelect)
+            .select(ownerCTE.fields())
+            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+            .from(ownerCTE)
+            .leftJoin(OWNER_TO_ROLE).on(OWNER_TO_ROLE.OWNER_ID.eq(ownerCTE.field(idField)))
+            .leftJoin(ROLE).on(ROLE.ID.eq(OWNER_TO_ROLE.ROLE_ID))
+            .groupBy(ownerCTE.fields());
+
+        return jooqReactiveOperations.flux(query)
             .collectList()
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
-                r -> r.into(recordTable).into(pojoClass),
-                fetchCount(query, ids, allowedForSync)
+                r -> mapRecordToDto(r, ownerCTE.getName()),
+                fetchCount(nameQuery, ids, allowedForSync)
             ));
     }
 
@@ -89,5 +126,17 @@ public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDR
         }
         select.where(conditions);
         return select;
+    }
+
+    private OwnerDto mapRecordToDto(final Record r) {
+        final OwnerPojo pojo = r.into(OWNER).into(OwnerPojo.class);
+        final Set<RolePojo> roles = jooqRecordHelper.extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class);
+        return new OwnerDto(pojo, roles);
+    }
+
+    private OwnerDto mapRecordToDto(final Record r, final String cteName) {
+        final OwnerPojo ownerPojo = jooqRecordHelper.remapCte(r, cteName, OWNER).into(OwnerPojo.class);
+        final Set<RolePojo> roles = jooqRecordHelper.extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class);
+        return new OwnerDto(ownerPojo, roles);
     }
 }

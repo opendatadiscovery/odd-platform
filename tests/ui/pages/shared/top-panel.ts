@@ -20,42 +20,7 @@ export default class TopPanel extends BasePage {
    *
    * @param tab
    */
-  private async goTo(tab: Tab) {
+  async clickTab(tab: Tab) {
     await this.page.click(SELECTORS.sharedNavigation(tab));
-  }
-
-  /**
-   *
-   */
-  async goToCatalog() {
-    await this.goTo('Catalog');
-  }
-
-  /**
-   *
-   */
-  async goToManagement() {
-    await this.goTo('Management');
-  }
-
-  /**
-   *
-   */
-  async goToDictionary() {
-    await this.goTo('Dictionary');
-  }
-
-  /**
-   *
-   */
-  async goToAlerts() {
-    await this.goTo('Alerts');
-  }
-
-  /**
-   *
-   */
-  async goToActivity() {
-    await this.goTo('Activity');
   }
 }

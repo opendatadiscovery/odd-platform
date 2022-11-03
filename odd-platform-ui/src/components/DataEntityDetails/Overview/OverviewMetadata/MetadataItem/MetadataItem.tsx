@@ -6,14 +6,15 @@ import {
   MetadataFieldType,
   MetadataFieldValue,
   MetadataFieldValueUpdateFormData,
+  Permission,
 } from 'generated-sources';
 import { DeleteIcon, EditIcon, DropdownIcon } from 'components/shared/Icons';
 import {
-  AppTooltip,
-  CopyButton,
   AppButton,
   AppIconButton,
+  AppTooltip,
   ConfirmationDialog,
+  CopyButton,
   TextFormatted,
 } from 'components/shared';
 import { stringFormatted } from 'lib/helpers';
@@ -22,7 +23,7 @@ import {
   deleteDataEntityCustomMetadata,
   updateDataEntityCustomMetadata,
 } from 'redux/thunks';
-import { usePermissions } from 'lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import MetadataValueEditor from '../../../Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
 
@@ -33,7 +34,6 @@ interface MetadataItemProps {
 
 const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem }) => {
   const dispatch = useAppDispatch();
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const [editMode, setEditMode] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -155,37 +155,45 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
             </S.ValueLeftContainer>
             {isCustom ? (
               <S.Actions>
-                <AppIconButton
-                  size='small'
-                  color='tertiary'
-                  icon={<EditIcon />}
-                  disabled={!editDataEntity}
-                  onClick={() => {
-                    setEditMode(true);
-                  }}
-                />
+                <WithPermissions
+                  resourceId={dataEntityId}
+                  permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE}
+                >
+                  <AppIconButton
+                    size='small'
+                    color='tertiary'
+                    icon={<EditIcon />}
+                    onClick={() => {
+                      setEditMode(true);
+                    }}
+                  />
+                </WithPermissions>
                 {metadataVal && (
                   <CopyButton stringToCopy={metadataVal} sx={{ ml: 0.5 }} />
                 )}
-                <ConfirmationDialog
-                  actionTitle='Are you sure you want to delete this Metadata?'
-                  actionName='Delete Metadata'
-                  actionText={
-                    <>
-                      &quot;{metadataItem.field.name}&quot; will be deleted permanently.
-                    </>
-                  }
-                  onConfirm={handleDelete}
-                  actionBtn={
-                    <AppIconButton
-                      size='small'
-                      color='tertiary'
-                      icon={<DeleteIcon />}
-                      disabled={!editDataEntity}
-                      sx={{ ml: 0.5 }}
-                    />
-                  }
-                />
+                <WithPermissions
+                  resourceId={dataEntityId}
+                  permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE}
+                >
+                  <ConfirmationDialog
+                    actionTitle='Are you sure you want to delete this Metadata?'
+                    actionName='Delete Metadata'
+                    actionText={
+                      <>
+                        &quot;{metadataItem.field.name}&quot; will be deleted permanently.
+                      </>
+                    }
+                    onConfirm={handleDelete}
+                    actionBtn={
+                      <AppIconButton
+                        size='small'
+                        color='tertiary'
+                        icon={<DeleteIcon />}
+                        sx={{ ml: 0.5 }}
+                      />
+                    }
+                  />
+                </WithPermissions>
               </S.Actions>
             ) : null}
           </S.ValueContainer>

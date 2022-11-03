@@ -3,8 +3,8 @@ import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import styled from 'styled-components';
 
 export const Content = styled(Box)<{
-  typeName: DataSetFieldTypeTypeEnum;
-}>(({ theme, typeName }) => ({
+  $typeName: DataSetFieldTypeTypeEnum;
+}>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,
   fontWeight: theme.typography.body2.fontWeight,
   lineHeight: theme.typography.body2.lineHeight,
@@ -13,5 +13,5 @@ export const Content = styled(Box)<{
   borderRadius: theme.typography.body2.fontSize,
   alignSelf: 'center',
   color: theme.palette.texts.primary,
-  borderColor: theme.palette.structureLabel[typeName].border,
+  borderColor: theme.palette.structureLabel[$typeName].border,
 }));

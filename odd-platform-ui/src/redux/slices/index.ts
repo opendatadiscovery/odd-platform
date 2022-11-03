@@ -23,6 +23,8 @@ import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 import ownerAssociation from './ownerAssociation.slice';
 import dataCollaboration from './dataCollaboration.slice';
+import roles from './roles.slice';
+import policies from './policy.slice';
 
 export default combineReducers({
   namespaces,
@@ -48,5 +50,7 @@ export default combineReducers({
   dataEntityRuns,
   activities,
   ownerAssociation,
+  roles,
+  policies,
   dataCollaboration,
 });

@@ -84,6 +84,11 @@ const useAppPaths = () => {
   const managementPath = (viewType: ManagementViewType = 'namespaces') =>
     updatePath(`/management/${viewType}`);
 
+  const policyDetailsPath = (policyId: number) =>
+    `${managementPath('policies')}/${policyId}`;
+
+  const createPolicyPath = () => `${managementPath('policies')}/createPolicy`;
+
   // Activity
   const activityPath = (query: string) => updatePath(`/activity?${query}`);
 
@@ -113,6 +118,8 @@ const useAppPaths = () => {
     dataEntityCollaborationPath,
     dataEntityCollaborationMessagePath,
     dataEntityCollaborationCreateMessagePath,
+    policyDetailsPath,
+    createPolicyPath,
   };
 };
 

@@ -33,6 +33,7 @@ export { default as OwnerAutocomplete } from './Autocomplete/OwnerAutocomplete/O
 export { default as OwnerTitleAutocomplete } from './Autocomplete/OwnerTitleAutocomplete/OwnerTitleAutocomplete';
 export { default as DataEntityChannelsAutocomplete } from './Autocomplete/DataEntityChannelsAutocomplete/DataEntityChannelsAutocomplete';
 export { default as SlackChannelsAutocomplete } from './Autocomplete/SlackChannelsAutocomplete/SlackChannelsAutocomplete';
+export { default as PolicyAutocomplete } from './Autocomplete/PolicyAutocomplete/PolicyAutocomplete';
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';
@@ -53,3 +54,4 @@ export { default as TestRunStatusItem } from './TestRunStatusItem/TestRunStatusI
 export { default as TestRunStatusIcon } from './TestRunStatusIcon/TestRunStatusIcon';
 export { default as AppAvatar } from './AppAvatar/AppAvatar';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';
+export { default as AppJSONEditor } from './AppJSONEditor/AppJSONEditor';

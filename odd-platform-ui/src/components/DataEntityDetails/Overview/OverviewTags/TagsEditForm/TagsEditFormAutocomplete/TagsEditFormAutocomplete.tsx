@@ -25,9 +25,9 @@ interface TagsEditFormAutocompleteProps {
   append: UseFieldArrayAppend<DataEntityTagsFormType, 'tagNameList'>;
 }
 
-const TagsEditFormAutocomplete: React.FC<
-  TagsEditFormAutocompleteProps
-> = ({ append }) => {
+const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
+  append,
+}) => {
   const dispatch = useAppDispatch();
 
   type FilterOption = Omit<Tag, 'id'> & Partial<Tag>;
@@ -50,18 +50,15 @@ const TagsEditFormAutocomplete: React.FC<
     [searchTags, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback(
-    (option: FilterOption | string) => {
-      if (typeof option === 'string') {
-        return option;
-      }
-      if ('name' in option && option.name) {
-        return option.name;
-      }
-      return '';
-    },
-    []
-  );
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
+    if (typeof option === 'string') {
+      return option;
+    }
+    if ('name' in option && option.name) {
+      return option.name;
+    }
+    return '';
+  }, []);
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -70,9 +67,7 @@ const TagsEditFormAutocomplete: React.FC<
         searchText !== '' &&
         !loading &&
         !options.find(
-          option =>
-            option.name.toLocaleLowerCase() ===
-            searchText.toLocaleLowerCase()
+          option => option.name.toLocaleLowerCase() === searchText.toLocaleLowerCase()
         )
       ) {
         return [...options, { name: searchText }];
@@ -110,17 +105,13 @@ const TagsEditFormAutocomplete: React.FC<
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    append(
-      typeof value === 'string'
-        ? { name: value }
-        : { ...value, external: false }
-    );
+    append(typeof value === 'string' ? { name: value } : { ...value, external: false });
   };
 
   return (
     <Autocomplete
       fullWidth
-      id="dataentity-tag-add-name-search"
+      id='dataentity-tag-add-name-search'
       open={autocompleteOpen}
       onOpen={() => setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
@@ -140,7 +131,7 @@ const TagsEditFormAutocomplete: React.FC<
         <AppInput
           {...params}
           ref={params.InputProps.ref}
-          placeholder="Enter tag name…"
+          placeholder='Enter tag name…'
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,
@@ -151,14 +142,11 @@ const TagsEditFormAutocomplete: React.FC<
       renderOption={(props, option) => (
         <li {...props}>
           <OptionsContainer $isImportant={option.important}>
-            <Typography variant="body1">
+            <Typography variant='body1'>
               {option.id ? (
                 option.name
               ) : (
-                <AutocompleteSuggestion
-                  optionLabel="tag"
-                  optionName={option.name}
-                />
+                <AutocompleteSuggestion optionLabel='tag' optionName={option.name} />
               )}
             </Typography>
           </OptionsContainer>

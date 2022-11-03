@@ -2,11 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Term } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared';
-import { DeleteIcon } from 'components/shared/Icons';
-import { deleteTerm } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { useAppDispatch } from 'redux/lib/hooks';
 import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
@@ -18,15 +14,9 @@ interface TermsResultItemProps {
 }
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult }) => {
-  const dispatch = useAppDispatch();
   const { termDetailsOverviewPath } = useAppPaths();
 
   const termDetailsOverviewLink = termDetailsOverviewPath(termSearchResult.id);
-
-  const handleDelete = React.useCallback(
-    () => dispatch(deleteTerm({ termId: termSearchResult.id })),
-    [termSearchResult, deleteTerm]
-  );
 
   return (
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
@@ -73,23 +63,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
               })}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType='colxs'>
-          <S.ActionsContainer>
-            <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this term?'
-              actionName='Delete Term'
-              actionText={
-                <>&quot;{termSearchResult.name}&quot; will be deleted permanently.</>
-              }
-              onConfirm={handleDelete}
-              actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
-              }
-            />
-          </S.ActionsContainer>
-        </TermSearchResultsColContainer>
+        <TermSearchResultsColContainer item $colType='colxs' />
       </S.TermSearchResultsContainer>
     </S.TermSearchResultsItemLink>
   );

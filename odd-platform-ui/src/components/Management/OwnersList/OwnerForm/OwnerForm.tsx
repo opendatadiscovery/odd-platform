@@ -1,35 +1,40 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { Grid, Typography } from '@mui/material';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { Owner, OwnerFormData } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { AppButton, AppInput, DialogWrapper, TagItem } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 import { getOwnerCreatingStatuses } from 'redux/selectors';
+import RoleAutocomplete from 'components/shared/Autocomplete/RoleAutocomplete/RoleAutocomplete';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;
-  owner?: Owner;
+  ownerId?: Owner['id'];
+  name?: Owner['name'];
+  roles?: Owner['roles'];
 }
 
-const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
+const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isOwnerCreating } = useAppSelector(
-    getOwnerCreatingStatuses
+  const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
+
+  const getDefaultValues = React.useCallback(
+    (): OwnerFormData => ({ name: name || '', roles: roles || [] }),
+    [name, roles]
   );
 
-  const { handleSubmit, control, reset, formState } =
-    useForm<OwnerFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-      defaultValues: {
-        name: owner?.name || '',
-      },
-    });
+  const { control, formState, reset, handleSubmit } = useForm<OwnerFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: getDefaultValues(),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'roles',
+  });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -39,13 +44,15 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
 
   const clearState = React.useCallback(() => {
     setState(initialState);
-    reset({ name: owner?.name || '' });
-  }, [owner]);
+    reset();
+  }, [setState, initialState]);
 
-  const handleOwnerFormSubmit = async (data: OwnerFormData) => {
-    (owner
-      ? dispatch(updateOwner({ ownerId: owner.id, ownerFormData: data }))
-      : dispatch(createOwner({ ownerFormData: data }))
+  const updateState = () => reset({ name, roles });
+
+  const handleOwnerFormSubmit = async (ownerFormData: OwnerFormData) => {
+    (ownerId
+      ? dispatch(updateOwner({ ownerId, ownerFormData }))
+      : dispatch(createOwner({ ownerFormData }))
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -55,7 +62,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
         setState({
           ...initialState,
           error:
-            response.statusText || owner
+            response.statusText || ownerId
               ? 'Unable to update owner'
               : 'Owner already exists',
         });
@@ -63,26 +70,29 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
     );
   };
 
+  const handleRemove = React.useCallback(
+    (index: number) => () => remove(index),
+    [remove]
+  );
+
   const formTitle = (
-    <Typography variant="h4" component="span">
-      {owner ? 'Edit' : 'Add'} Owner
+    <Typography variant='h4' component='span'>
+      {ownerId ? 'Edit' : 'Add'} Owner
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="owner-create-form"
-      onSubmit={handleSubmit(handleOwnerFormSubmit)}
-    >
+    <form id='owner-create-form' onSubmit={handleSubmit(handleOwnerFormSubmit)}>
       <Controller
-        name="name"
+        name='name'
         control={control}
-        defaultValue={owner?.name || ''}
+        defaultValue={name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Owner Name"
+            label='Name'
+            placeholder='Owner Name'
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -92,32 +102,54 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
           />
         )}
       />
+      <RoleAutocomplete append={append} sx={{ mt: 1.5 }} />
+      <Grid
+        container
+        alignItems='center'
+        justifyContent='flex-start'
+        flexWrap='wrap'
+        mt={1.5}
+      >
+        {fields.map((field, idx) => (
+          <TagItem
+            sx={{ my: 0.5, mr: 0.5 }}
+            key={field.id}
+            label={field.name}
+            removable
+            onRemoveClick={handleRemove(idx)}
+          />
+        ))}
+      </Grid>
     </form>
   );
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="owner-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='owner-create-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
-      {owner ? 'Save' : 'Add new owner'}
+      {ownerId ? 'Save' : 'Add new owner'}
     </AppButton>
+  );
+
+  const handleOnOpen = React.useCallback(
+    (handleOpen: () => void) => () => {
+      if (ownerId) updateState();
+      else clearState();
+      handleOpen();
+    },
+    [clearState]
   );
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
-        React.cloneElement(btnCreateEl, {
-          onClick: () => {
-            clearState();
-            handleOpen();
-          },
-        })
+        React.cloneElement(btnCreateEl, { onClick: handleOnOpen(handleOpen) })
       }
       title={formTitle}
       renderContent={formContent}

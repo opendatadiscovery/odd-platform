@@ -10,8 +10,6 @@ import reactor.core.publisher.Mono;
 public interface OwnerService {
     Mono<OwnerPojo> getOrCreate(final String name);
 
-    Mono<Owner> get(final long id);
-
     Mono<OwnerList> list(final int page,
                          final int size,
                          final String query,
@@ -22,5 +20,5 @@ public interface OwnerService {
 
     Mono<Owner> update(final long id, final OwnerFormData updateEntityForm);
 
-    Mono<Owner> delete(final long id);
+    Mono<Void> delete(final long id);
 }

@@ -20,8 +20,8 @@ components:
       properties:
         username:
           type: string
-        actions:
-          $ref: '#/components/schemas/Actions'
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
       required:
         - username
 
@@ -37,25 +37,69 @@ components:
       required:
         - identity
 
+    PermissionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Permission'
+
     Permission:
       type: string
       enum:
-        - MANAGEMENT_CONTROL
-        - DATA_ENTITY_EDIT
+        - DATA_ENTITY_INTERNAL_NAME_UPDATE
+        - DATA_ENTITY_CUSTOM_METADATA_CREATE
+        - DATA_ENTITY_CUSTOM_METADATA_UPDATE
+        - DATA_ENTITY_CUSTOM_METADATA_DELETE
+        - DATA_ENTITY_DESCRIPTION_UPDATE
+        - DATA_ENTITY_OWNERSHIP_CREATE
+        - DATA_ENTITY_OWNERSHIP_UPDATE
+        - DATA_ENTITY_OWNERSHIP_DELETE
+        - DATA_ENTITY_ADD_TO_GROUP
+        - DATA_ENTITY_DELETE_FROM_GROUP
+        - DATA_ENTITY_TAGS_UPDATE
+        - DATA_ENTITY_ADD_TERM
+        - DATA_ENTITY_DELETE_TERM
+        - DATA_ENTITY_ALERT_RESOLVE
+        - DATASET_TEST_RUN_SET_SEVERITY
+        - DATASET_FIELD_INFO_UPDATE
+        - DATASET_FIELD_ENUMS_UPDATE
+        - DATA_ENTITY_GROUP_CREATE
+        - DATA_ENTITY_GROUP_UPDATE
+        - DATA_ENTITY_GROUP_DELETE
+        - TERM_CREATE
+        - TERM_UPDATE
+        - TERM_DELETE
+        - TERM_OWNERSHIP_CREATE
+        - TERM_OWNERSHIP_UPDATE
+        - TERM_OWNERSHIP_DELETE
+        - TERM_TAGS_UPDATE
+        - DATA_SOURCE_CREATE
+        - DATA_SOURCE_UPDATE
+        - DATA_SOURCE_DELETE
+        - DATA_SOURCE_TOKEN_REGENERATE
+        - COLLECTOR_CREATE
+        - COLLECTOR_UPDATE
+        - COLLECTOR_DELETE
+        - COLLECTOR_TOKEN_REGENERATE
+        - NAMESPACE_CREATE
+        - NAMESPACE_UPDATE
+        - NAMESPACE_DELETE
+        - TAG_CREATE
+        - TAG_UPDATE
+        - TAG_DELETE
+        - LABEL_CREATE
+        - LABEL_UPDATE
+        - LABEL_DELETE
+        - OWNER_CREATE
+        - OWNER_UPDATE
+        - OWNER_DELETE
+        - OWNER_ASSOCIATION_MANAGE
         - DIRECT_OWNER_SYNC
-        - ALERT_PROCESSING
-
-    Actions:
-      type: object
-      properties:
-        allowed:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
-        forbidden:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
+        - POLICY_CREATE
+        - POLICY_UPDATE
+        - POLICY_DELETE
+        - ROLE_CREATE
+        - ROLE_UPDATE
+        - ROLE_DELETE
 
     Namespace:
       type: object
@@ -180,6 +224,10 @@ components:
           format: int64
         name:
           type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
       required:
         - id
         - name
@@ -202,6 +250,10 @@ components:
       properties:
         name:
           type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
       required:
         - name
 
@@ -2250,6 +2302,8 @@ components:
           format: int64
         username:
           type: string
+        provider:
+          type: string
         owner_name:
           type: string
         status:
@@ -2276,6 +2330,107 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/OwnerAssociationRequestStatus'
+
+    Policy:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    PolicyList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    PolicyFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        policy:
+          type: string
+      required:
+        - name
+        - policy
+
+    PolicyDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        policy:
+          type: string
+      required:
+        - id
+        - name
+        - policy
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+      required:
+        - id
+        - name
+        - policies
+
+    RoleList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    RoleFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Policy'
+      required:
+        - name
+        - policies
+
+    PermissionResourceType:
+      type: string
+      enum:
+        - DATA_ENTITY
+        - TERM
+        - MANAGEMENT
 
     MessageChannel:
       type: object
@@ -2472,6 +2627,21 @@ components:
       schema:
         type: integer
         format: int64
+
+    PolicyIdParam:
+      name: policy_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    PermissionResourceTypeParam:
+      name: permission_resource_type
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/PermissionResourceType'
 
   responses:
     Deleted:

@@ -21,3 +21,5 @@ export * from './activity.actions';
 export * from './dataEntityRun.actions';
 export * from './ownerAssociation.actions';
 export * from './dataCollaboration.actions';
+export * from './roles.actions';
+export * from './policy.actions';

@@ -1,28 +1,23 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import {
   AppButton,
-  AppIconButton,
   AppLoadingPage,
-  AppMenuItem,
-  AppPopover,
-  ConfirmationDialog,
   EntityClassItem,
   EntityTypeItem,
   LabelItem,
   SkeletonWrapper,
 } from 'components/shared';
-import { AddIcon, EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
-import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
+import { AddIcon, EditIcon, TimeGapIcon } from 'components/shared/Icons';
+import { useAppParams } from 'lib/hooks';
 import {
-  deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
   fetchDataSetQualitySLAReport,
-  fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
+  fetchResourcePermissions,
 } from 'redux/thunks';
 import {
   getDataEntityAddToGroupStatuses,
@@ -30,14 +25,17 @@ import {
   getDataEntityDetails,
   getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
-  getSearchId,
 } from 'redux/selectors';
-import { Permission } from 'generated-sources';
-import { PermissionProvider } from 'components/shared/contexts';
+import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import {
+  PermissionProvider,
+  WithPermissions,
+  WithPermissionsProvider,
+} from 'components/shared/contexts';
+import DataEntityGroupControls from './DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
-import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
 import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
 import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
@@ -63,13 +61,9 @@ const DataCollaboration = React.lazy(
 
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
-  const { searchPath } = useAppPaths();
 
-  const searchId = useAppSelector(getSearchId);
-  const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
+  const details = useAppSelector(getDataEntityDetails(dataEntityId));
 
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
@@ -97,60 +91,79 @@ const DataEntityDetails: React.FC = () => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
-    dispatch(fetchDataEntityPermissions({ dataEntityId }));
+    dispatch(
+      fetchResourcePermissions({
+        resourceId: dataEntityId,
+        permissionResourceType: PermissionResourceType.DATA_ENTITY,
+      })
+    );
   }, [dataEntityId]);
 
-  const handleEntityGroupDelete = React.useCallback(
+  const originalName = React.useMemo(
     () =>
-      dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() =>
-        history.push(searchPath(searchId))
+      details.internalName &&
+      details.externalName && (
+        <Grid container alignItems='center' width='auto'>
+          <LabelItem labelName='Original' variant='body1' />
+          <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+            {details.externalName}
+          </Typography>
+        </Grid>
       ),
-    [deleteDataEntityGroup, dataEntityId]
+    [details.internalName, details.externalName]
+  );
+
+  const updatedAt = React.useMemo(
+    () =>
+      details.updatedAt && (
+        <>
+          <TimeGapIcon />
+          <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+            {formatDistanceToNowStrict(details.updatedAt, { addSuffix: true })}
+          </Typography>
+        </>
+      ),
+    [details.updatedAt]
   );
 
   return (
     <S.Container>
-      {dataEntityDetails && !isDataEntityDetailsFetching ? (
+      {details.id && !isDataEntityDetailsFetching ? (
         <>
           <Grid container flexDirection='column' alignItems='flex-start'>
             <S.Caption container alignItems='center' flexWrap='nowrap'>
               <Grid container item lg={11} alignItems='center' flexWrap='nowrap'>
                 <Typography variant='h1' noWrap sx={{ mr: 1 }}>
-                  {dataEntityDetails.internalName
-                    ? dataEntityDetails.internalName
-                    : dataEntityDetails.externalName}
+                  {details.internalName || details.externalName}
                 </Typography>
-                {dataEntityDetails.entityClasses?.map(entityClass => (
+                {details.entityClasses?.map(entityClass => (
                   <EntityClassItem
                     sx={{ ml: 0.5 }}
                     key={entityClass.id}
                     entityClassName={entityClass.name}
                   />
                 ))}
-                {dataEntityDetails.type && (
-                  <EntityTypeItem
-                    sx={{ ml: 1 }}
-                    entityTypeName={dataEntityDetails.type.name}
-                  />
+                {details.type && (
+                  <EntityTypeItem sx={{ ml: 1 }} entityTypeName={details.type.name} />
                 )}
                 <S.InternalNameEditBtnContainer>
-                  <InternalNameFormDialog
-                    btnCreateEl={
-                      <AppButton
-                        size='small'
-                        color='tertiary'
-                        sx={{ ml: 1 }}
-                        disabled={!editDataEntity}
-                        startIcon={
-                          dataEntityDetails.internalName ? <EditIcon /> : <AddIcon />
-                        }
-                      >
-                        {`${
-                          dataEntityDetails.internalName ? 'Edit custom' : 'Add custom'
-                        } name`}
-                      </AppButton>
-                    }
-                  />
+                  <WithPermissions
+                    resourceId={dataEntityId}
+                    permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}
+                  >
+                    <InternalNameFormDialog
+                      btnCreateEl={
+                        <AppButton
+                          size='small'
+                          color='tertiary'
+                          sx={{ ml: 1 }}
+                          startIcon={details.internalName ? <EditIcon /> : <AddIcon />}
+                        >
+                          {`${details.internalName ? 'Edit custom' : 'Add custom'} name`}
+                        </AppButton>
+                      }
+                    />
+                  </WithPermissions>
                 </S.InternalNameEditBtnContainer>
               </Grid>
               <Grid
@@ -161,73 +174,24 @@ const DataEntityDetails: React.FC = () => {
                 alignItems='center'
                 flexWrap='nowrap'
               >
-                {dataEntityDetails.updatedAt ? (
-                  <>
-                    <TimeGapIcon />
-                    <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-                      {formatDistanceToNowStrict(dataEntityDetails.updatedAt, {
-                        addSuffix: true,
-                      })}
-                    </Typography>
-                  </>
-                ) : null}
-                <Grid>
-                  {dataEntityDetails.manuallyCreated && (
-                    <AppPopover
-                      childrenSx={{
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                      }}
-                      renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-                        <AppIconButton
-                          sx={{ ml: 2 }}
-                          ariaDescribedBy={ariaDescribedBy}
-                          size='medium'
-                          color='primaryLight'
-                          icon={<KebabIcon />}
-                          onClick={onClick}
-                        />
-                      )}
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 65,
-                      }}
-                    >
-                      <DataEntityGroupForm
-                        btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
+                {updatedAt}
+                {details.manuallyCreated && (
+                  <WithPermissionsProvider
+                    permissions={[
+                      Permission.DATA_ENTITY_GROUP_UPDATE,
+                      Permission.DATA_ENTITY_GROUP_DELETE,
+                    ]}
+                    render={() => (
+                      <DataEntityGroupControls
+                        internalName={details.internalName}
+                        externalName={details.externalName}
                       />
-                      <ConfirmationDialog
-                        actionTitle='Are you sure you want to delete this data entity group?'
-                        actionName='Delete Data Entity Group'
-                        actionText={
-                          <>
-                            &quot;
-                            {dataEntityDetails.internalName ||
-                              dataEntityDetails.externalName}
-                            &quot; will be deleted permanently.
-                          </>
-                        }
-                        onConfirm={handleEntityGroupDelete}
-                        actionBtn={<AppMenuItem>Delete</AppMenuItem>}
-                      />
-                    </AppPopover>
-                  )}
-                </Grid>
+                    )}
+                  />
+                )}
               </Grid>
             </S.Caption>
-
-            {dataEntityDetails.internalName && dataEntityDetails.externalName && (
-              <Grid container alignItems='center' width='auto'>
-                <LabelItem labelName='Original' variant='body1' />
-                <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
-                  {dataEntityDetails.externalName}
-                </Typography>
-              </Grid>
-            )}
+            {originalName}
           </Grid>
           <Grid sx={{ mt: 2 }}>
             <DataEntityDetailsTabs />
@@ -258,7 +222,16 @@ const DataEntityDetails: React.FC = () => {
                 '/dataentities/:dataEntityId/structure/:versionId?',
                 '/embedded/dataentities/:dataEntityId/structure/:versionId?',
               ]}
-              component={DatasetStructure}
+              render={() => (
+                <PermissionProvider
+                  permissions={[
+                    Permission.DATASET_FIELD_ENUMS_UPDATE,
+                    Permission.DATASET_FIELD_INFO_UPDATE,
+                  ]}
+                >
+                  <DatasetStructure />
+                </PermissionProvider>
+              )}
             />
             <Route
               exact
@@ -291,7 +264,7 @@ const DataEntityDetails: React.FC = () => {
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
               render={() => (
-                <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
+                <PermissionProvider permissions={[Permission.DATA_ENTITY_ALERT_RESOLVE]}>
                   <DataEntityAlerts />
                 </PermissionProvider>
               )}

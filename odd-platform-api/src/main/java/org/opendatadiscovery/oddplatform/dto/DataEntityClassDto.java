@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import static java.util.Collections.emptySet;
 import static java.util.function.Function.identity;
@@ -71,5 +73,12 @@ public enum DataEntityClassDto {
         }
 
         return findByIds(Arrays.stream(ids).collect(Collectors.toSet()));
+    }
+
+    public String resolveName() {
+        return Stream.of(name().split("_"))
+            .map(String::toLowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining(" "));
     }
 }

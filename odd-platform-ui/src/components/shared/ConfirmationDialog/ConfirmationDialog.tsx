@@ -20,36 +20,29 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   onConfirm,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const onClose =
-    (handleClose: () => void, action?: () => Promise<unknown>) => () => {
-      if (action) {
-        setIsLoading(true);
-        action().then(() => {
-          setIsLoading(false);
-          handleClose();
-        });
-      }
-    };
+  const onClose = (handleClose: () => void, action?: () => Promise<unknown>) => () => {
+    if (action) {
+      setIsLoading(true);
+      action().then(() => {
+        setIsLoading(false);
+        handleClose();
+      });
+    }
+  };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {actionTitle}
     </Typography>
   );
 
-  const formContent = () => (
-    <Typography variant="subtitle1">{actionText}</Typography>
-  );
+  const formContent = () => <Typography variant='subtitle1'>{actionText}</Typography>;
 
-  const formActionButtons = ({
-    handleClose,
-  }: {
-    handleClose: () => void;
-  }) => (
+  const formActionButtons = ({ handleClose }: { handleClose: () => void }) => (
     <S.Actions>
       <AppButton
-        size="large"
-        color="primary"
+        size='large'
+        color='primary'
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
           onClose(handleClose, onConfirm)();
@@ -62,7 +55,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(actionBtn, { onClick: handleOpen })
       }

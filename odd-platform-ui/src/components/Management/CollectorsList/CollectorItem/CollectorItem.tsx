@@ -1,11 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Collector } from 'generated-sources';
+import { Collector, Permission } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
-import { LabeledInfoItem, ConfirmationDialog, AppButton } from 'components/shared';
-import { EditIcon, DeleteIcon } from 'components/shared/Icons';
-import { usePermissions } from 'lib/hooks';
+import { AppButton, ConfirmationDialog, LabeledInfoItem } from 'components/shared';
+import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import CollectorFormDialog from '../CollectorForm/CollectorForm';
 import CollectorItemToken from './CollectorItemToken/CollectorItemToken';
 import * as S from './CollectorItemStyles';
@@ -16,7 +16,6 @@ interface CollectorItemProps {
 
 const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions({});
 
   const onDelete = React.useCallback(
     () => dispatch(deleteCollector({ collectorId: collector.id })),
@@ -32,40 +31,38 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
           </Typography>
         </Grid>
         <S.CollectorActionsContainer item sm={4}>
-          <CollectorFormDialog
-            collector={collector}
-            btnCreateEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<EditIcon />}
-                sx={{ mr: 1 }}
-                disabled={!isAdmin}
-              >
-                Edit
-              </AppButton>
-            }
-          />
-          <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this collector?'
-            actionName='Delete'
-            actionText={
-              <Typography variant='subtitle1'>
-                Delete &quot;{collector.name}&quot; collector?
-              </Typography>
-            }
-            onConfirm={onDelete}
-            actionBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={<DeleteIcon />}
-                disabled={!isAdmin}
-              >
-                Delete
-              </AppButton>
-            }
-          />
+          <WithPermissions permissionTo={Permission.COLLECTOR_UPDATE}>
+            <CollectorFormDialog
+              collector={collector}
+              btnCreateEl={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<EditIcon />}
+                  sx={{ mr: 1 }}
+                >
+                  Edit
+                </AppButton>
+              }
+            />
+          </WithPermissions>
+          <WithPermissions permissionTo={Permission.COLLECTOR_DELETE}>
+            <ConfirmationDialog
+              actionTitle='Are you sure you want to delete this collector?'
+              actionName='Delete'
+              actionText={
+                <Typography variant='subtitle1'>
+                  Delete &quot;{collector.name}&quot; collector?
+                </Typography>
+              }
+              onConfirm={onDelete}
+              actionBtn={
+                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
+                  Delete
+                </AppButton>
+              }
+            />
+          </WithPermissions>
         </S.CollectorActionsContainer>
         <S.CollectorDescriptionContainer item sm={6} container>
           <LabeledInfoItem variant='body2' inline label='Description' labelWidth={4}>

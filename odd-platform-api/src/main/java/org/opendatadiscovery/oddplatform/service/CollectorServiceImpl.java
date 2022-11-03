@@ -34,7 +34,6 @@ public class CollectorServiceImpl implements CollectorService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Collector> create(final CollectorFormData form) {
         final Mono<TokenDto> token = tokenGenerator.generateToken().flatMap(tokenRepository::create);
@@ -48,7 +47,6 @@ public class CollectorServiceImpl implements CollectorService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Collector> update(final long id, final CollectorUpdateFormData form) {
         return collectorRepository.getDto(id)
@@ -70,13 +68,11 @@ public class CollectorServiceImpl implements CollectorService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Long> delete(final long id) {
         return collectorRepository.delete(id).map(CollectorPojo::getId);
     }
 
     @Override
-    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Collector> regenerateToken(final long collectorId) {
         return collectorRepository.getDto(collectorId)
             .switchIfEmpty(Mono.error(new NotFoundException("Collector with ID %d doesn't exist", collectorId)))

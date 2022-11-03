@@ -15,6 +15,7 @@ interface RouteParams {
   versionId: string;
   searchId: string;
   messageId: string;
+  policyId: string;
   viewType:
     | TermsViewType
     | AlertViewType
@@ -30,6 +31,7 @@ interface AppRouteParams {
   versionId: number;
   searchId: string;
   messageId: number;
+  policyId: number;
   viewType:
     | TermsViewType
     | AlertViewType
@@ -48,6 +50,7 @@ export const useAppParams = (): AppRouteParams => {
     versionId,
     searchId,
     messageId,
+    policyId,
   } = useParams<RouteParams>();
 
   return {
@@ -59,6 +62,7 @@ export const useAppParams = (): AppRouteParams => {
     versionId: parseInt(versionId, 10),
     searchId,
     messageId: parseInt(messageId, 10),
+    policyId: parseInt(policyId, 10),
   };
 };
 

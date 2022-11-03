@@ -21,8 +21,15 @@ export const collectorSlice = createSlice({
     builder.addCase(thunks.fetchCollectorsList.fulfilled, (state, { payload }) => {
       const { items, pageInfo } = payload;
 
-      collectorAdapter.setMany(state, items);
       state.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        collectorAdapter.setMany(state, items);
+        return state;
+      }
+      collectorAdapter.setAll(state, items);
+
+      return state;
     });
     builder.addCase(thunks.updateCollector.fulfilled, (state, { payload }) => {
       collectorAdapter.upsertOne(state, payload);
