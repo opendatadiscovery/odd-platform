@@ -1,17 +1,20 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.InsertResultStep;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.model.Indexes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToTermPojo;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
@@ -113,7 +117,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .from(tagCte.getName())
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))
             .groupBy(tagCte.fields())
-            .orderBy(DSL.field(COUNT_FIELD).desc());
+            .orderBy(field(COUNT_FIELD).desc());
 
         return jooqReactiveOperations.flux(cteSelect)
             .collectList()
@@ -132,6 +136,44 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.in(dataEntityIds).and(TAG.IS_DELETED.isFalse()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagToDataEntityPojo.class));
+    }
+
+    @Override
+    public Flux<TagPojo> ingestData(final List<TagPojo> tags) {
+        if (CollectionUtils.isEmpty(tags)) {
+            return Flux.just();
+        }
+
+        final LocalDateTime now = LocalDateTime.now();
+
+        final List<TagRecord> records = tags.stream()
+            .map(e -> createRecord(e, now))
+            .toList();
+
+        return jooqReactiveOperations
+            .executeInPartitionReturning(records, rs -> {
+                InsertSetStep<TagRecord> insertStep = DSL.insertInto(TAG);
+
+                for (int i = 0; i < rs.size() - 1; i++) {
+                    insertStep = insertStep.set(rs.get(i)).newRecord();
+                }
+
+                final List<Field<Object>> conflictFields = Indexes.TAG_NAME_UNIQUE.getFields()
+                    .stream()
+                    .map(of -> field(of.getName()))
+                    .toList();
+
+                final InsertResultStep<TagRecord> query = insertStep
+                    .set(rs.get(rs.size() - 1))
+                    .onConflict(conflictFields)
+                    .where(TAG.IS_DELETED.isFalse())
+                    .doUpdate()
+                    .set(TAG.NAME, jooqQueryHelper.excludedField(TAG.NAME, TAG.NAME.getType()))
+                    .returning();
+
+                return jooqReactiveOperations.flux(query);
+            })
+            .map(this::recordToPojo);
     }
 
     @Override

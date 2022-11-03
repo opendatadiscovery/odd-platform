@@ -17,10 +17,11 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToTermPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import static reactor.function.TupleUtils.function;
 
@@ -77,21 +78,18 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames) {
-        return reactiveTagRepository.listByNames(tagNames)
-            .collectList()
-            .flatMap(existingTags -> {
-                final List<String> existingTagNames = existingTags.stream()
-                    .map(TagPojo::getName)
-                    .toList();
+        return divideTagsByExistence(tagNames).flatMap(function((existingTags, tagsToCreate) ->
+            reactiveTagRepository.bulkCreate(tagsToCreate)
+                .collectList()
+                .map(createdTags -> ListUtils.union(createdTags, existingTags))));
+    }
 
-                final List<TagPojo> tagToCreate = tagNames
-                    .stream()
-                    .filter(n -> !existingTagNames.contains(n))
-                    .map(n -> new TagPojo().setName(n).setImportant(false)).toList();
-
-                return reactiveTagRepository.bulkCreate(tagToCreate).collectList()
-                    .map(createdTags -> ListUtils.union(createdTags, existingTags));
-            });
+    @Override
+    public Flux<TagPojo> getOrInjectTagByName(final Set<String> tagNames) {
+        return divideTagsByExistence(tagNames).flatMapMany(function((existingTags, tagsToCreate) ->
+            reactiveTagRepository
+                .ingestData(tagsToCreate)
+                .mergeWith(Flux.fromIterable(existingTags))));
     }
 
     @Override
@@ -146,6 +144,23 @@ public class TagServiceImpl implements TagService {
                                                        final List<TagPojo> tags) {
         final List<Long> ids = tags.stream().map(TagPojo::getId).toList();
         return reactiveTagRepository.createTermRelations(termId, ids);
+    }
+
+    private Mono<Tuple2<List<TagPojo>, List<TagPojo>>> divideTagsByExistence(final Set<String> tagNames) {
+        return reactiveTagRepository.listByNames(tagNames)
+            .collectList()
+            .map(existingTags -> {
+                final List<String> existingTagNames = existingTags.stream()
+                    .map(TagPojo::getName)
+                    .toList();
+
+                final List<TagPojo> tagToCreate = tagNames
+                    .stream()
+                    .filter(n -> !existingTagNames.contains(n))
+                    .map(n -> new TagPojo().setName(n).setImportant(false)).toList();
+
+                return Tuples.of(existingTags, tagToCreate);
+            });
     }
 
     private Mono<TagPojo> updateSearchVectors(final TagPojo updatedPojo) {
