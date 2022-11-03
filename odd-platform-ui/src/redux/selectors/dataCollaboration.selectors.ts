@@ -12,7 +12,7 @@ export const getSlackChannelsFetchingStatuses = createStatusesSelector(
   actions.fetchSlackChannelsActionType
 );
 
-export const getMessageInSlackCreatingStatuses = createStatusesSelector(
+export const getMessageToSlackCreatingStatuses = createStatusesSelector(
   actions.postMessageInSlackActionType
 );
 

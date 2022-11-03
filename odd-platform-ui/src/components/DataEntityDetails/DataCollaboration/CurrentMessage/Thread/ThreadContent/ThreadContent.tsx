@@ -1,13 +1,14 @@
 import React from 'react';
 import { Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import { AppIconButton } from 'components/shared';
+import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
 import { useHistory } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import ThreadMessageSkeleton from './ThreadMessage/ThreadMessageSkeleton';
 import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
-import ThreadMessage from './MainThreadMessage/ThreadMessage/ThreadMessage';
+import ThreadMessage from './ThreadMessage/ThreadMessage';
 
 interface ThreadContentProps {
   dataEntityId: number;
@@ -30,7 +31,14 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
   const { dataEntityCollaborationPath } = useAppPaths();
 
   return (
-    <Grid container flexDirection='column' flexWrap='nowrap' pl={2} pt={2}>
+    <Grid
+      container
+      flexDirection='column'
+      flexWrap='nowrap'
+      alignSelf='baseline'
+      pl={2}
+      pt={2}
+    >
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
           Thread
@@ -45,18 +53,22 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
       </Grid>
       <MainThreadMessage mainMessage={mainMessage} />
       <Grid container flexDirection='column' pl={3} pr={0.5}>
-        <InfiniteScroll
-          dataLength={relatedMessages?.length}
-          next={fetchNextMessages}
-          hasMore={hasNext}
-          loader={isRelatedMessagesLoading && <div>SKELETON</div>}
-          scrollThreshold='200px'
-          scrollableTarget='messages-list'
-        >
-          {relatedMessages.map(message => (
-            <ThreadMessage key={message.id} message={message} />
-          ))}
-        </InfiniteScroll>
+        {isRelatedMessagesLoading && relatedMessages?.length ? (
+          <InfiniteScroll
+            dataLength={relatedMessages?.length}
+            next={fetchNextMessages}
+            hasMore={hasNext}
+            loader={isRelatedMessagesLoading && <ThreadMessageSkeleton />}
+            scrollThreshold='200px'
+            scrollableTarget='messages-list'
+          >
+            {relatedMessages.map(message => (
+              <ThreadMessage key={message.id} message={message} />
+            ))}
+          </InfiniteScroll>
+        ) : (
+          <EmptyContentPlaceholder text='No messages' />
+        )}
       </Grid>
     </Grid>
   );

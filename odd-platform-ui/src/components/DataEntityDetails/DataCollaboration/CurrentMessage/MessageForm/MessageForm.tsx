@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppPaths } from 'lib/hooks';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Box, Grid, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { createMessageToSlack } from 'redux/thunks';
@@ -13,6 +13,7 @@ import {
 import { ClearIcon } from 'components/shared/Icons';
 import { MessageRequest } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
+import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
 
 interface MessageFormProps {
   dataEntityId: number;
@@ -22,6 +23,10 @@ const MessageForm: React.FC<MessageFormProps> = ({ dataEntityId }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { dataEntityCollaborationPath } = useAppPaths();
+
+  const { isLoading: isMessageCreating } = useAppSelector(
+    getMessageToSlackCreatingStatuses
+  );
 
   const toCollaboration = dataEntityCollaborationPath(dataEntityId);
 
@@ -44,7 +49,14 @@ const MessageForm: React.FC<MessageFormProps> = ({ dataEntityId }) => {
   };
 
   return (
-    <Grid container flexDirection='column' flexWrap='nowrap' pl={2} pt={2}>
+    <Grid
+      container
+      flexDirection='column'
+      flexWrap='nowrap'
+      alignSelf='baseline'
+      pl={2}
+      pt={2}
+    >
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
           New message
@@ -94,8 +106,9 @@ const MessageForm: React.FC<MessageFormProps> = ({ dataEntityId }) => {
         form='message-to-slack-form'
         color='primary'
         fullWidth
-        sx={{ mt: 5, width: 'fit-content' }}
+        sx={{ mt: 5, width: 'fit-content', minWidth: '64px !important' }}
         disabled={!formState.isValid}
+        isLoading={isMessageCreating}
       >
         Send message
       </AppButton>
