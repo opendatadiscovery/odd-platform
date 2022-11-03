@@ -42,7 +42,7 @@ public class RecordFactory extends ObjenesisObjectFactory {
         }
         try {
             return getCanonicalConstructor(recordType).newInstance(randomValues);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ObjectCreationException("Unable to create a random instance of recordType " + recordType, e);
         }
     }
@@ -55,7 +55,7 @@ public class RecordFactory extends ObjenesisObjectFactory {
         }
         try {
             return recordType.getDeclaredConstructor(componentTypes);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new RuntimeException("Invalid record definition", e);
         }
     }

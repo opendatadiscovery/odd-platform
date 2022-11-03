@@ -21,8 +21,14 @@ export const tagsSlice = createSlice({
     builder.addCase(thunks.fetchTagsList.fulfilled, (state, { payload }) => {
       const { items, pageInfo } = payload;
 
-      tagsAdapter.setMany(state, items);
       state.pageInfo = pageInfo;
+
+      if (pageInfo.page > 1) {
+        tagsAdapter.setMany(state, items);
+        return state;
+      }
+      tagsAdapter.setAll(state, items);
+      return state;
     });
     builder.addCase(thunks.createTag.fulfilled, (state, { payload }) => {
       tagsAdapter.addMany(state, payload);

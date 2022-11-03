@@ -14,6 +14,7 @@ interface RouteParams {
   termSearchId: string;
   versionId: string;
   searchId: string;
+  policyId: string;
   viewType:
     | TermsViewType
     | AlertViewType
@@ -28,6 +29,7 @@ interface AppRouteParams {
   termSearchId: string;
   versionId: number;
   searchId: string;
+  policyId: number;
   viewType:
     | TermsViewType
     | AlertViewType
@@ -45,6 +47,7 @@ export const useAppParams = (): AppRouteParams => {
     dataQATestId,
     versionId,
     searchId,
+    policyId,
   } = useParams<RouteParams>();
 
   return {
@@ -55,6 +58,7 @@ export const useAppParams = (): AppRouteParams => {
     viewType,
     versionId: parseInt(versionId, 10),
     searchId,
+    policyId: parseInt(policyId, 10),
   };
 };
 

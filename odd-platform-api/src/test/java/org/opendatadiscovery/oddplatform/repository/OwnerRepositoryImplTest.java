@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
@@ -11,10 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus;
+import org.opendatadiscovery.oddplatform.dto.OwnerDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerAssociationRequestRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerToRoleRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveRoleRepository;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -28,7 +33,10 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
     private ReactiveOwnerRepository ownerRepository;
-
+    @Autowired
+    private ReactiveRoleRepository roleRepository;
+    @Autowired
+    private ReactiveOwnerToRoleRepository ownerToRoleRepository;
     @Autowired
     private ReactiveOwnerAssociationRequestRepository associationRequestRepository;
 
@@ -186,22 +194,37 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void testListOwner() {
-        final int numberOfTestOwners = 10;
-        final List<OwnerPojo> testOwnerList = createTestOwnerList(numberOfTestOwners);
-        ownerRepository.bulkCreate(testOwnerList)
+        final List<Long> roleIds = roleRepository
+            .bulkCreate(List.of(new RolePojo().setName("USER"), new RolePojo().setName("ADMIN")))
+            .map(RolePojo::getId)
             .collectList()
             .block();
 
-        final Mono<Page<OwnerPojo>> pageMono = ownerRepository.list(1, 5, null, List.of(), null);
+        final int numberOfTestOwners = 10;
+        final List<OwnerPojo> testOwnerList = createTestOwnerList(numberOfTestOwners);
+        final List<OwnerPojo> owners = ownerRepository.bulkCreate(testOwnerList)
+            .collectList()
+            .block();
+        owners.stream().sorted(Comparator.comparing(OwnerPojo::getId)).limit(4)
+            .forEach(owner -> ownerToRoleRepository.createRelations(owner.getId(), roleIds).block());
+
+        final Mono<Page<OwnerDto>> pageMono = ownerRepository.list(1, 5, null, List.of(), null);
         StepVerifier.create(pageMono)
             .assertNext(page -> {
                 assertThat(page.getTotal()).isEqualTo(numberOfTestOwners);
                 assertThat(page.isHasNext()).isTrue();
                 assertThat(page.getData())
                     .hasSize(5);
+                final List<OwnerDto> ownersWithRoles = page.getData().stream()
+                    .filter(owner -> owner.ownerPojo().getId() < 5)
+                    .toList();
+                assertThat(ownersWithRoles)
+                    .hasSize(4)
+                    .extracting(OwnerDto::roles)
+                    .allMatch(roles -> roles.size() == 2);
             }).verifyComplete();
 
-        final Mono<Page<OwnerPojo>> secondPageMono = ownerRepository.list(2, 5, null, List.of(), null);
+        final Mono<Page<OwnerDto>> secondPageMono = ownerRepository.list(2, 5, null, List.of(), null);
         StepVerifier.create(secondPageMono)
             .assertNext(page -> {
                 assertThat(page.getTotal()).isEqualTo(numberOfTestOwners);
@@ -232,7 +255,7 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
         associationRequestRepository.bulkCreate(
             List.of(pendingPojo, approvedPojo, declinedPojo, secondPending, secondDeclined)).collectList().block();
 
-        final Mono<Page<OwnerPojo>> pageMono = ownerRepository.list(1, numberOfTestOwners, null, List.of(), true);
+        final Mono<Page<OwnerDto>> pageMono = ownerRepository.list(1, numberOfTestOwners, null, List.of(), true);
         StepVerifier.create(pageMono)
             .assertNext(page -> {
                 assertThat(page.getTotal()).isEqualTo(numberOfTestOwners - 3);
@@ -240,11 +263,11 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
                 assertThat(page.getData())
                     .hasSize(numberOfTestOwners - 3);
                 assertThat(page.getData())
-                    .extracting(OwnerPojo::getId)
+                    .extracting(dto -> dto.ownerPojo().getId())
                     .doesNotContain(savedOwners.get(0).getId(), savedOwners.get(1).getId(), savedOwners.get(2).getId());
             }).verifyComplete();
 
-        final Mono<Page<OwnerPojo>> notAllowedToSyncMono =
+        final Mono<Page<OwnerDto>> notAllowedToSyncMono =
             ownerRepository.list(1, numberOfTestOwners, null, List.of(), false);
         StepVerifier.create(notAllowedToSyncMono)
             .assertNext(page -> {
@@ -253,7 +276,7 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
                 assertThat(page.getData())
                     .hasSize(numberOfTestOwners - 7);
                 assertThat(page.getData())
-                    .extracting(OwnerPojo::getId)
+                    .extracting(dto -> dto.ownerPojo().getId())
                     .containsExactlyInAnyOrder(savedOwners.get(0).getId(), savedOwners.get(1).getId(),
                         savedOwners.get(2).getId());
             }).verifyComplete();

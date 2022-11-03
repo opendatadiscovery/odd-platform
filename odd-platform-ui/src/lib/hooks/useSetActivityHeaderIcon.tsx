@@ -1,7 +1,9 @@
 import React from 'react';
-import ActivityCreatedIcon from 'components/shared/Icons/ActivityCreatedIcon';
-import ActivityUpdatedIcon from 'components/shared/Icons/ActivityUpdatedIcon';
-import ActivityDeletedIcon from 'components/shared/Icons/ActivityDeletedIcon';
+import {
+  ActivityCreatedIcon,
+  ActivityUpdatedIcon,
+  ActivityDeletedIcon,
+} from 'components/shared/Icons';
 import { CRUDType } from 'lib/interfaces';
 
 const useSetActivityHeaderIcon = (eventType: CRUDType | string) => {

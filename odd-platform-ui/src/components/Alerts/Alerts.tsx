@@ -56,7 +56,7 @@ const Alerts: React.FC = () => {
     },
   ];
 
-  const [selectedTab] = React.useState<number>(() =>
+  const [selectedTab] = React.useState(() =>
     viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
   );
 
@@ -73,18 +73,18 @@ const Alerts: React.FC = () => {
       Record<string, unknown>
     >
   ) => (
-    <PermissionProvider permissions={[Permission.ALERT_PROCESSING]}>
+    <PermissionProvider permissions={[Permission.DATA_ENTITY_ALERT_RESOLVE]}>
       <AlertsList fetchAlerts={fetchAlerts} />
     </PermissionProvider>
   );
 
   return (
     <S.Container>
-      <Typography variant="h1" sx={{ mb: 2.75 }}>
+      <Typography variant='h1' sx={{ mb: 2.75 }}>
         Alerts
       </Typography>
       <AppTabs
-        type="primary"
+        type='primary'
         items={tabs}
         selectedTab={selectedTab}
         handleTabChange={alertsFilterUpdateAction}
@@ -105,7 +105,7 @@ const Alerts: React.FC = () => {
           path={alertsPath('dependents')}
           render={() => alertListWithProvider(fetchMyDependentsAlertList)}
         />
-        <Redirect from="/alerts" to={alertsPath()} />
+        <Redirect from='/alerts' to={alertsPath()} />
       </Switch>
     </S.Container>
   );

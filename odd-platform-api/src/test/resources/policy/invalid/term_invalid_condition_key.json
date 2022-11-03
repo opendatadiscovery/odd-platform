@@ -1,0 +1,34 @@
+{
+  "statements": [
+    {
+      "resource": {
+        "type": "TERM",
+        "conditions": {
+          "all": [
+            {
+              "is": "term:owner"
+            },
+            {
+              "eq": {
+                "dataEntity:namespace:name": "Open Data Discovery"
+              }
+            },
+            {
+              "match": {
+                "term:tag:name": "Test"
+              }
+            }
+          ]
+        }
+      },
+      "permissions": [
+        "TERM_UPDATE",
+        "TERM_DELETE",
+        "TERM_TAGS_UPDATE",
+        "TERM_OWNERSHIP_CREATE",
+        "TERM_OWNERSHIP_UPDATE",
+        "TERM_OWNERSHIP_DELETE"
+      ]
+    }
+  ]
+}

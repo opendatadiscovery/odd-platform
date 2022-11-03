@@ -47,8 +47,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   onSizeChange,
   rowHeight,
 }) => {
-  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
-
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
 
   const datasetStructure = useAppSelector(
@@ -95,25 +93,14 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     }
 
     return (
-      <S.Button
-        $showBtn={showBtn}
-        disabled={!editDataEntity}
-        size={btnSize}
-        color={btnColor}
-        sx={{ mr: 1 }}
-      >
+      <S.Button $showBtn={showBtn} size={btnSize} color={btnColor} sx={{ mr: 1 }}>
         {btnText}
       </S.Button>
     );
   }, [datasetField.enumValueCount]);
 
   const datasetFieldInfoEditBtn = (
-    <S.Button
-      disabled={!editDataEntity}
-      size='medium'
-      color='primaryLight'
-      sx={{ mr: 1 }}
-    >
+    <S.Button size='medium' color='primaryLight' sx={{ mr: 1 }}>
       Edit
     </S.Button>
   );
@@ -226,7 +213,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
           </S.RowInfoWrapper>
         </Grid>
         {isUniqStatsExist && (
-          <Grid container lg={6} flexWrap='nowrap'>
+          <Grid container item lg={6} flexWrap='nowrap'>
             <DatasetFieldStats datasetField={datasetField} rowsCount={rowsCount} />
           </Grid>
         )}

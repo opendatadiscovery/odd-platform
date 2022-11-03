@@ -1,15 +1,24 @@
 import { Grid } from '@mui/material';
-import styled from 'styled-components';
+import styled, { CSSObject } from 'styled-components';
 
-export const ActionsContainer = styled(Grid)(() => ({
-  opacity: 0,
-}));
+export const ActionsContainer = styled(Grid)(
+  () =>
+    ({
+      justifyContent: 'flex-end',
+      flexWrap: 'nowrap',
+      opacity: 0,
+    } as CSSObject)
+);
 
 export const Container = styled(Grid)(({ theme }) => ({
-  justifyContent: 'space-between',
   flexWrap: 'nowrap',
   alignItems: 'center',
-  padding: theme.spacing(1.5, 1, 1.5, 1),
+  padding: theme.spacing(1.5, 0),
+  '& > *': {
+    padding: theme.spacing(0, 1),
+    '&:last-child': { paddingLeft: 0 },
+  },
+
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
   '&:hover': {

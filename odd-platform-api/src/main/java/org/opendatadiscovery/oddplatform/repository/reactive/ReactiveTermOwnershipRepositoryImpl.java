@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.term.TermOwnershipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -79,6 +80,6 @@ public class ReactiveTermOwnershipRepositoryImpl implements ReactiveTermOwnershi
                 .and(TERM_OWNERSHIP.DELETED_AT.isNull())
         );
 
-        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 }

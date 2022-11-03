@@ -49,7 +49,14 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
     if (to) {
       return (
         <Box sx={containerSx}>
-          <Link to={to} style={{ width: 'inherit' }} target={linkTarget}>
+          <Link
+            to={to}
+            style={{
+              width: 'inherit',
+              pointerEvents: props.disabled ? 'none' : undefined,
+            }}
+            target={linkTarget}
+          >
             <StyledAppButton
               {...props}
               focusRipple

@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.GoogleCondition;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
-import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -46,7 +44,7 @@ public class GoogleUserHandler implements OAuthUserHandler<OidcUser, OidcUserReq
                                                             final OidcUserRequest request) {
         final String registrationId = request.getClientRegistration().getRegistrationId();
         final ODDOAuth2Properties.OAuth2Provider provider = oAuth2Properties.getClient().get(registrationId);
-        final Set<UserRole> roles = new HashSet<>();
+        boolean isAdmin = false;
         final OidcIdToken token = oidcUser.getIdToken();
         final String domain = token.getClaim(GOOGLE_DOMAIN);
         if (StringUtils.isNotEmpty(provider.getAllowedDomain())
@@ -61,10 +59,10 @@ public class GoogleUserHandler implements OAuthUserHandler<OidcUser, OidcUserReq
             final String adminPrincipal = token.getClaim(adminPrincipalAttribute);
             final boolean containsEmail = containsIgnoreCase(provider.getAdminPrincipals(), adminPrincipal);
             if (containsEmail) {
-                roles.add(UserRole.ROLE_ADMIN);
+                isAdmin = true;
             }
         }
-        final Set<GrantedAuthority> authorities = authorityExtractor.getAuthoritiesByUserRoles(roles);
+        final Set<GrantedAuthority> authorities = authorityExtractor.getAuthorities(isAdmin);
         final String userNameAttributeName = request.getClientRegistration()
             .getProviderDetails()
             .getUserInfoEndpoint().getUserNameAttributeName();

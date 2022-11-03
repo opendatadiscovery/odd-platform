@@ -20,3 +20,5 @@ export * from './termSearch.actions';
 export * from './activity.actions';
 export * from './dataEntityRun.actions';
 export * from './ownerAssociation.actions';
+export * from './roles.actions';
+export * from './policy.actions';

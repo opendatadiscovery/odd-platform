@@ -1,25 +1,17 @@
 import { createSelector } from '@reduxjs/toolkit';
-import {
-  DataEntitiesState,
-  DataQualityTestState,
-  RootState,
-} from 'redux/interfaces';
+import { DataEntitiesState, DataQualityTestState, RootState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import isEmpty from 'lodash/isEmpty';
 
-const getDataQualityTestState = ({
-  dataQualityTest,
-}: RootState): DataQualityTestState => dataQualityTest;
+const getDataQualityTestState = ({ dataQualityTest }: RootState): DataQualityTestState =>
+  dataQualityTest;
 
-export const getDataQATestId = (
-  _: RootState,
-  dataQATestId: number | string
-) => dataQATestId;
+export const getDataQATestId = (_: RootState, dataQATestId: number | string) =>
+  dataQATestId;
 
-const getDataEntitiesState = ({
-  dataEntities,
-}: RootState): DataEntitiesState => dataEntities;
+const getDataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
+  dataEntities;
 
 export const getDatasetTestReportFetchingStatuses = createStatusesSelector(
   actions.fetchDataSetQualityTestReportActionType
@@ -36,15 +28,13 @@ export const getDatasetTestListFetchingStatuses = createStatusesSelector(
 export const getDatasetTestReport = (dataEntityId: number) =>
   createSelector(
     getDataQualityTestState,
-    dataQualityTestState =>
-      dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
+    dataQualityTestState => dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
   );
 
 export const getDatasetSLAReport = (dataEntityId: number) =>
   createSelector(
     getDataQualityTestState,
-    dataQualityTestState =>
-      dataQualityTestState.datasetSLAReportByEntityId[dataEntityId]
+    dataQualityTestState => dataQualityTestState.datasetSLAReportByEntityId[dataEntityId]
   );
 
 export const getDatasetTestReportTotal = (dataEntityId: number) =>
@@ -56,17 +46,13 @@ export const getDatasetTestReportTotal = (dataEntityId: number) =>
 
 export const getDatasetQualityTestsBySuiteNames = (dataEntityId: number) =>
   createSelector(getDataQualityTestState, dataQualityTestState => {
-    if (
-      isEmpty(dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId])
-    ) {
+    if (isEmpty(dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId])) {
       return {};
     }
     const suitNamesByDatasetId = Object.entries(
       dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId]
     ).map(([key, values]) => {
-      const newValues = values.map(
-        id => dataQualityTestState.qualityTestsById[id]
-      );
+      const newValues = values.map(id => dataQualityTestState.qualityTestsById[id]);
       return [key, newValues];
     });
     return Object.fromEntries(suitNamesByDatasetId);
@@ -80,8 +66,7 @@ export const getTestReportListBySuiteName = createSelector(
 export const getQualityTestByTestId = (dataQATestId: number) =>
   createSelector(
     getDataQualityTestState,
-    dataQualityTestState =>
-      dataQualityTestState.qualityTestsById[dataQATestId]
+    dataQualityTestState => dataQualityTestState.qualityTestsById[dataQATestId]
   );
 
 export const getQualityTestNameByTestId = createSelector(

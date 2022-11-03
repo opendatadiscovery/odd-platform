@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'redux/interfaces';
+import { CurrentPageInfo, RootState } from 'redux/interfaces';
 import { labelsAdapter } from 'redux/slices/labels.slice';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { LabelsState } from 'redux/interfaces/state';
@@ -29,5 +29,5 @@ export const getLabelDeletingStatuses = createStatusesSelector(
 
 export const getLabelsListPage = createSelector(
   labelsState,
-  labelsList => labelsList.pageInfo
+  (labelsList): CurrentPageInfo => labelsList.pageInfo
 );
