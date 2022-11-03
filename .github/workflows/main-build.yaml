@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - 'main'
 
 concurrency: main_build
 
@@ -13,7 +13,7 @@ jobs:
     env:
       REGISTRY: 436866023604.dkr.ecr.eu-central-1.amazonaws.com
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - uses: unfor19/install-aws-cli-action@v1
@@ -25,17 +25,17 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1.3.3
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'gradle'
       - name: Cache local Gradle dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -49,10 +49,10 @@ jobs:
           CI: false
         run: ./gradlew test jib --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} --scan -Pversion=ci-${GITHUB_SHA::6} -Penv=prod -PmultiArchContainerBuild=false
   update_tag:
-    needs: ["images"]
+    needs: ['images']
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           repository: provectus/environment-state
           token: ${{ secrets.ODD_GIT_TOKEN }}
@@ -64,7 +64,7 @@ jobs:
           git commit --allow-empty -m "update tag"
           git push
   argocd_sync:
-    needs: ["update_tag"]
+    needs: ['update_tag']
     runs-on: ubuntu-latest
     steps:
       - name: Install ArgoCD CLI
