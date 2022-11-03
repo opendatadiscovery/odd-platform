@@ -163,7 +163,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .getOrCreateLabelsByName(labelNames)
             .collectMap(LabelPojo::getName, identity())
             .flatMap(labels -> {
-                final Set<LabelToDatasetFieldPojo> relationsToCreate = pivotDatasetStatisticsDict(statisticsDict)
+                final Set<LabelToDatasetFieldPojo> relationsToCreate = transposeDatasetStatisticsDict(statisticsDict)
                     .entries().stream()
                     .map(e -> createExternalStatisticsRelation(
                         labels.get(e.getKey()).getId(),
@@ -269,7 +269,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .setOrigin(LabelOrigin.EXTERNAL_STATISTICS.toString());
     }
 
-    private MultiValuedMap<String, String> pivotDatasetStatisticsDict(
+    private MultiValuedMap<String, String> transposeDatasetStatisticsDict(
         final Map<String, DataSetFieldStat> statisticsDict
     ) {
         final MultiValuedMap<String, String> result = new HashSetValuedHashMap<>();
