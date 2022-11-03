@@ -23,7 +23,7 @@ import * as S from './OwnerAssociationFormStyles';
 
 const OwnerAssociationForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAllowedTo: associateImmediately } = usePermissions({});
+  const { isAllowedTo: associateImmediately } = usePermissions();
 
   const identity = useAppSelector(getIdentity);
   const { isLoading: isRequestCreating } = useAppSelector(

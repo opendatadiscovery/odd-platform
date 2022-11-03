@@ -92,9 +92,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           rules={{ required: true }}
           render={({ field }) => (
             <WithPermissions
-              resourceId={termId}
               permissionTo={Permission.OWNER_CREATE}
-              resourceType={PermissionResourceType.TERM}
               renderContent={({ isAllowedTo: createOwner }) => (
                 <OwnerAutocomplete field={field} disableOwnerCreating={!createOwner} />
               )}

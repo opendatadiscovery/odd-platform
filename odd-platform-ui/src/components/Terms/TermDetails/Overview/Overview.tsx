@@ -7,8 +7,9 @@ import {
   getTermDetails,
   getTermDetailsFetchingStatuses,
 } from 'redux/selectors/terms.selectors';
-import { Permission } from 'generated-sources';
+import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { getResourcePermissions } from 'redux/selectors';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import { SectionContainer, SectionFlexContainer } from './OverviewStyles';
@@ -18,6 +19,9 @@ const Overview: React.FC = () => {
   const { termId } = useAppParams();
 
   const termDetails = useAppSelector(getTermDetails(termId));
+  const termPermissions = useAppSelector(
+    getResourcePermissions(PermissionResourceType.TERM, termId)
+  );
 
   const { isLoading: isTermDetailsFetching } = useAppSelector(
     getTermDetailsFetchingStatuses
@@ -37,17 +41,19 @@ const Overview: React.FC = () => {
           <Grid item xs={4}>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[
+                allowedPermissions={[
                   Permission.TERM_OWNERSHIP_CREATE,
                   Permission.TERM_OWNERSHIP_UPDATE,
                   Permission.TERM_OWNERSHIP_DELETE,
                 ]}
+                resourcePermissions={termPermissions}
                 Component={OverviewGeneral}
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[Permission.TERM_TAGS_UPDATE]}
+                allowedPermissions={[Permission.TERM_TAGS_UPDATE]}
+                resourcePermissions={termPermissions}
                 render={() => <OverviewTags tags={termDetails.tags} />}
               />
             </SectionContainer>

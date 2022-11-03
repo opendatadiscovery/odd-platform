@@ -35,10 +35,7 @@ const OwnersSection: React.FC = () => {
               {ownershipItem.owner.name}
               <LabelItem labelName={ownershipItem.title?.name} />
               <S.OwnerActionBtns>
-                <WithPermissions
-                  resourceId={dataEntityId}
-                  permissionTo={Permission.DATA_ENTITY_OWNERSHIP_UPDATE}
-                >
+                <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_UPDATE}>
                   <OwnershipForm
                     dataEntityId={dataEntityId}
                     dataEntityOwnership={ownershipItem}
@@ -52,10 +49,7 @@ const OwnersSection: React.FC = () => {
                     }
                   />
                 </WithPermissions>
-                <WithPermissions
-                  resourceId={dataEntityId}
-                  permissionTo={Permission.DATA_ENTITY_OWNERSHIP_DELETE}
-                >
+                <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_DELETE}>
                   <ConfirmationDialog
                     actionTitle='Are you sure you want to delete this owner?'
                     actionName='Delete Owner'
@@ -82,10 +76,7 @@ const OwnersSection: React.FC = () => {
         ) : (
           <Typography variant='subtitle2'>Not created.</Typography>
         )}
-        <WithPermissions
-          resourceId={dataEntityId}
-          permissionTo={Permission.DATA_ENTITY_OWNERSHIP_CREATE}
-        >
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_CREATE}>
           <OwnershipForm
             dataEntityId={dataEntityId}
             ownerEditBtn={

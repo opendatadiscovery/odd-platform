@@ -6,12 +6,13 @@ import {
   getDataEntityDetailsFetchingStatuses,
   getDatasetTestReport,
   getIsDataEntityBelongsToClass,
+  getResourcePermissions,
 } from 'redux/selectors';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { Permission } from 'generated-sources';
+import { Permission, PermissionResourceType } from 'generated-sources';
 import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
 import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
 import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
@@ -31,6 +32,9 @@ const Overview: React.FC = () => {
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
   const { isDataset } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
   const datasetQualityTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
+  const resourcePermissions = useAppSelector(
+    getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
+  );
 
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
     getDataEntityDetailsFetchingStatuses
@@ -62,11 +66,12 @@ const Overview: React.FC = () => {
             </Typography>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[
+                allowedPermissions={[
                   Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE,
                   Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE,
                   Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE,
                 ]}
+                resourcePermissions={resourcePermissions}
                 Component={OverviewMetadata}
               />
             </SectionContainer>
@@ -75,7 +80,8 @@ const Overview: React.FC = () => {
             </Typography>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
+                allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
+                resourcePermissions={resourcePermissions}
                 Component={OverviewDescription}
               />
             </SectionContainer>
@@ -83,11 +89,12 @@ const Overview: React.FC = () => {
           <Grid item lg={3}>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[
+                allowedPermissions={[
                   Permission.DATA_ENTITY_OWNERSHIP_CREATE,
                   Permission.DATA_ENTITY_OWNERSHIP_UPDATE,
                   Permission.DATA_ENTITY_OWNERSHIP_DELETE,
                 ]}
+                resourcePermissions={resourcePermissions}
                 Component={OverviewGeneral}
               />
             </SectionContainer>
@@ -99,10 +106,11 @@ const Overview: React.FC = () => {
             ) : null}
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[
+                allowedPermissions={[
                   Permission.DATA_ENTITY_ADD_TO_GROUP,
                   Permission.DATA_ENTITY_DELETE_FROM_GROUP,
                 ]}
+                resourcePermissions={resourcePermissions}
                 render={() => (
                   <OverviewGroups
                     dataEntityGroups={dataEntityDetails.dataEntityGroups}
@@ -113,16 +121,18 @@ const Overview: React.FC = () => {
             </SectionContainer>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[Permission.DATA_ENTITY_TAGS_UPDATE]}
+                allowedPermissions={[Permission.DATA_ENTITY_TAGS_UPDATE]}
+                resourcePermissions={resourcePermissions}
                 render={() => <OverviewTags tags={dataEntityDetails.tags} />}
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                permissions={[
+                allowedPermissions={[
                   Permission.DATA_ENTITY_ADD_TERM,
                   Permission.DATA_ENTITY_DELETE_TERM,
                 ]}
+                resourcePermissions={resourcePermissions}
                 render={() => (
                   <OverviewTerms
                     terms={dataEntityDetails.terms}

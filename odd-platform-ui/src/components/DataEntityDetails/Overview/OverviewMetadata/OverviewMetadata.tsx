@@ -92,7 +92,6 @@ const OverviewMetadata: React.FC = () => {
             <SubtitleContainer>
               <Typography variant='h4'>Custom</Typography>
               <WithPermissions
-                resourceId={dataEntityId}
                 permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
               >
                 <MetadataCreateForm
@@ -127,7 +126,6 @@ const OverviewMetadata: React.FC = () => {
             >
               <Typography variant='subtitle2'>Not created.</Typography>
               <WithPermissions
-                resourceId={dataEntityId}
                 permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
               >
                 <MetadataCreateForm

@@ -4,7 +4,7 @@ import { Grid } from '@mui/material';
 import { AppLoadingPage, AppTabItem, AppTabs, RestrictedRoute } from 'components/shared';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
-import WithPermissionsProvider from 'components/shared/contexts/Permission/WithPermissionsProvider';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -26,7 +26,7 @@ const PolicyDetails = React.lazy(
 const Management: React.FC = () => {
   const { viewType } = useAppParams();
   const { managementPath } = useAppPaths();
-  const { hasAccessTo } = usePermissions({});
+  const { hasAccessTo } = usePermissions();
 
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: managementPath('namespaces') },
@@ -75,11 +75,12 @@ const Management: React.FC = () => {
               path='/management/namespaces'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.NAMESPACE_UPDATE,
                     Permission.NAMESPACE_DELETE,
                     Permission.NAMESPACE_CREATE,
                   ]}
+                  resourcePermissions={[]}
                   Component={NamespaceList}
                 />
               )}
@@ -89,12 +90,13 @@ const Management: React.FC = () => {
               path='/management/datasources'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.DATA_SOURCE_CREATE,
                     Permission.DATA_SOURCE_UPDATE,
                     Permission.DATA_SOURCE_DELETE,
                     Permission.DATA_SOURCE_TOKEN_REGENERATE,
                   ]}
+                  resourcePermissions={[]}
                   Component={DataSourcesList}
                 />
               )}
@@ -104,12 +106,13 @@ const Management: React.FC = () => {
               path='/management/collectors'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.COLLECTOR_CREATE,
                     Permission.COLLECTOR_UPDATE,
                     Permission.COLLECTOR_DELETE,
                     Permission.COLLECTOR_TOKEN_REGENERATE,
                   ]}
+                  resourcePermissions={[]}
                   Component={CollectorsList}
                 />
               )}
@@ -119,11 +122,12 @@ const Management: React.FC = () => {
               path='/management/owners'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.OWNER_CREATE,
                     Permission.OWNER_UPDATE,
                     Permission.OWNER_DELETE,
                   ]}
+                  resourcePermissions={[]}
                   Component={OwnersList}
                 />
               )}
@@ -133,11 +137,12 @@ const Management: React.FC = () => {
               path='/management/tags'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.TAG_CREATE,
                     Permission.TAG_UPDATE,
                     Permission.TAG_DELETE,
                   ]}
+                  resourcePermissions={[]}
                   Component={TagsList}
                 />
               )}
@@ -147,11 +152,12 @@ const Management: React.FC = () => {
               path='/management/labels'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.LABEL_CREATE,
                     Permission.LABEL_UPDATE,
                     Permission.LABEL_DELETE,
                   ]}
+                  resourcePermissions={[]}
                   Component={LabelsList}
                 />
               )}
@@ -168,11 +174,12 @@ const Management: React.FC = () => {
               path='/management/roles'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.ROLE_CREATE,
                     Permission.ROLE_UPDATE,
                     Permission.ROLE_DELETE,
                   ]}
+                  resourcePermissions={[]}
                   Component={RolesList}
                 />
               )}
@@ -182,11 +189,12 @@ const Management: React.FC = () => {
               path='/management/policies'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[
+                  allowedPermissions={[
                     Permission.POLICY_CREATE,
                     Permission.POLICY_UPDATE,
                     Permission.POLICY_DELETE,
                   ]}
+                  resourcePermissions={[]}
                   Component={PolicyList}
                 />
               )}
@@ -199,7 +207,8 @@ const Management: React.FC = () => {
               ]}
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[Permission.POLICY_UPDATE]}
+                  allowedPermissions={[Permission.POLICY_UPDATE]}
+                  resourcePermissions={[]}
                   Component={PolicyDetails}
                 />
               )}

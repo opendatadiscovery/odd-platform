@@ -15,7 +15,7 @@ import { useAppParams } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import OwnershipForm from '../../Ownership/OwnershipForm';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 
@@ -51,11 +51,7 @@ const OverviewGeneral: React.FC = () => {
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.title?.name} />
                 <OwnerActionBtns>
-                  <WithPermissions
-                    resourceId={termId}
-                    resourceType={PermissionResourceType.TERM}
-                    permissionTo={Permission.TERM_OWNERSHIP_UPDATE}
-                  >
+                  <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_UPDATE}>
                     <OwnershipForm
                       termDetailsOwnership={ownershipItem}
                       ownerEditBtn={
@@ -68,11 +64,7 @@ const OverviewGeneral: React.FC = () => {
                       }
                     />
                   </WithPermissions>
-                  <WithPermissions
-                    resourceId={termId}
-                    resourceType={PermissionResourceType.TERM}
-                    permissionTo={Permission.TERM_OWNERSHIP_DELETE}
-                  >
+                  <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_DELETE}>
                     <ConfirmationDialog
                       actionTitle='Are you sure you want to delete this owner?'
                       actionName='Delete Owner'
@@ -96,11 +88,7 @@ const OverviewGeneral: React.FC = () => {
                 </OwnerActionBtns>
               </OwnerItem>
             ))}
-            <WithPermissions
-              permissionTo={Permission.TERM_OWNERSHIP_CREATE}
-              resourceId={termId}
-              resourceType={PermissionResourceType.TERM}
-            >
+            <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_CREATE}>
               <OwnershipForm
                 ownerEditBtn={
                   <AppButton
