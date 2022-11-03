@@ -19,11 +19,9 @@ interface AlertItemProps {
 const AlertItem: React.FC<AlertItemProps> = ({ alert, alertStatusHandler }) => {
   const dispatch = useAppDispatch();
 
-  const resourcePermissions = alert.dataEntity?.id
-    ? useAppSelector(
-        getResourcePermissions(PermissionResourceType.DATA_ENTITY, alert.dataEntity?.id)
-      )
-    : [];
+  const resourcePermissions = useAppSelector(
+    getResourcePermissions(PermissionResourceType.DATA_ENTITY, alert.dataEntity?.id)
+  );
   const isPermFetched = useAppSelector(
     isResourcePermissionsAlreadyFetched(
       PermissionResourceType.DATA_ENTITY,
