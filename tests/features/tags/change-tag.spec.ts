@@ -5,7 +5,7 @@ test.describe(() => {
   test.beforeEach(async ({ steps: { pages }, page }) => {
     await test.step(`I open Tags page`, async () => {
       await page.goto('');
-      await pages.topPanel.goToManagement();
+      await pages.topPanel.clickTab('Management');
       await pages.management.tags.click();
     });
   });

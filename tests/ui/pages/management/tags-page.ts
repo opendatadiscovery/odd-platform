@@ -33,6 +33,7 @@ export default class TagsPage extends ManagementPage {
   }
 
   async isTagVisible(name: string) {
+    await this.page.waitForSelector(SELECTORS.tagString(name), { state: 'visible' });
     return this.page.locator(SELECTORS.tagString(name)).isVisible();
   }
 
