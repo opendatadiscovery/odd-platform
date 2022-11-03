@@ -11,7 +11,6 @@ import { AppButton, AppInput, DialogWrapper, LabelItem } from 'components/shared
 import { ClearIcon } from 'components/shared/Icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { useAppParams } from 'lib/hooks';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
 
@@ -30,7 +29,6 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
   const { isLoading } = useAppSelector(getDatasetFieldFormDataUpdatingStatus);
   const datasetFieldFormData = useAppSelector(getDatasetFieldData(datasetFieldId));
 
@@ -108,7 +106,6 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       </Typography>
       <WithPermissions
         permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-        resourceId={dataEntityId}
         renderContent={({ isAllowedTo: editLabels }) => (
           <LabelsAutocomplete appendLabel={append} labelsEditing={editLabels} />
         )}
@@ -117,7 +114,6 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
         {fields.map((label, index) => (
           <WithPermissions
             permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-            resourceId={dataEntityId}
             renderContent={({ isAllowedTo: editLabels }) => (
               <LabelItem
                 systemLabel={label.external}
@@ -138,7 +134,6 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
         render={({ field }) => (
           <WithPermissions
             permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-            resourceId={dataEntityId}
             renderContent={({ isAllowedTo: editDescription }) => (
               <AppInput
                 {...field}
@@ -164,7 +159,6 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   const formActionButtons = () => (
     <WithPermissions
       permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-      resourceId={dataEntityId}
       renderContent={({ isAllowedTo: editInfo }) => (
         <AppButton
           size='large'

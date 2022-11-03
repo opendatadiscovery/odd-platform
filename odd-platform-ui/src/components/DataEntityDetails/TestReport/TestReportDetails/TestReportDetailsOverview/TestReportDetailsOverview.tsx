@@ -12,10 +12,11 @@ import {
   getQualityTestByTestId,
 } from 'redux/selectors';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams, usePermissions } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
 import * as S from './TestReportDetailsOverviewStyles';
@@ -23,7 +24,6 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
-  const { hasAccessTo } = usePermissions({ resourceId: dataEntityId });
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
 
@@ -79,19 +79,24 @@ const TestReportDetailsOverview: React.FC = () => {
               labelWidth={2.4}
               valueComponent='div'
             >
-              <AppSelect
-                disabled={!hasAccessTo(Permission.DATASET_TEST_RUN_SET_SEVERITY)}
-                size='small'
-                sx={{ width: 'fit-content' }}
-                defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
-                onChange={handleSeverityChange}
-              >
-                {ORDERED_SEVERITY.map(severity => (
-                  <AppMenuItem key={severity} value={severity}>
-                    {severity}
-                  </AppMenuItem>
-                ))}
-              </AppSelect>
+              <WithPermissions
+                permissionTo={Permission.DATASET_TEST_RUN_SET_SEVERITY}
+                renderContent={({ isAllowedTo }) => (
+                  <AppSelect
+                    disabled={!isAllowedTo}
+                    size='small'
+                    sx={{ width: 'fit-content' }}
+                    defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
+                    onChange={handleSeverityChange}
+                  >
+                    {ORDERED_SEVERITY.map(severity => (
+                      <AppMenuItem key={severity} value={severity}>
+                        {severity}
+                      </AppMenuItem>
+                    ))}
+                  </AppSelect>
+                )}
+              />
             </LabeledInfoItem>
           </Grid>
 

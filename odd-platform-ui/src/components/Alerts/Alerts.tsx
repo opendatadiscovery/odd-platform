@@ -14,12 +14,10 @@ import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { AlertViewType } from 'lib/interfaces';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { PermissionProvider } from 'components/shared/contexts';
 import {
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
-  Permission,
 } from 'generated-sources';
 import { AsyncThunk } from '@reduxjs/toolkit';
 import * as S from './AlertsStyles';
@@ -72,11 +70,7 @@ const Alerts: React.FC = () => {
       | AlertApiGetDependentEntitiesAlertsRequest,
       Record<string, unknown>
     >
-  ) => (
-    <PermissionProvider permissions={[Permission.DATA_ENTITY_ALERT_RESOLVE]}>
-      <AlertsList fetchAlerts={fetchAlerts} />
-    </PermissionProvider>
-  );
+  ) => <AlertsList fetchAlerts={fetchAlerts} />;
 
   return (
     <S.Container>

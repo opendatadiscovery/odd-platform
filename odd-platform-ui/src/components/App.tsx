@@ -6,7 +6,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
-import WithPermissionsProvider from 'components/shared/contexts/Permission/WithPermissionsProvider';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -41,46 +41,25 @@ const App: React.FC = () => {
               path='/management/:viewType?'
               render={() => (
                 <WithPermissionsProvider
-                  permissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
+                  allowedPermissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
+                  resourcePermissions={[]}
                   Component={Management}
                 />
               )}
             />
-            <Route
-              exact
-              path='/termsearch/:termSearchId?'
-              render={() => (
-                <WithPermissionsProvider
-                  permissions={[Permission.TERM_CREATE]}
-                  Component={TermSearch}
-                />
-              )}
-            />
+            <Route exact path='/termsearch/:termSearchId?' component={TermSearch} />
             <Route
               exact
               path={['/search/:searchId?', '/embedded/search/:searchId?']}
               component={Search}
             />
-            <Route
-              path='/terms/:termId/:viewType?'
-              render={() => (
-                <WithPermissionsProvider
-                  permissions={[Permission.TERM_UPDATE, Permission.TERM_DELETE]}
-                  Component={TermDetails}
-                />
-              )}
-            />
+            <Route path='/terms/:termId/:viewType?' component={TermDetails} />
             <Route
               path={[
                 '/dataentities/:dataEntityId/:viewType?',
                 '/embedded/dataentities/:dataEntityId/:viewType?',
               ]}
-              render={() => (
-                <WithPermissionsProvider
-                  permissions={[Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE]}
-                  Component={DataEntityDetails}
-                />
-              )}
+              component={DataEntityDetails}
             />
             <Route path='/activity' component={Activity} />
           </Switch>

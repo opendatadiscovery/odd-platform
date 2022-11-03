@@ -2,7 +2,6 @@ import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { Permission, Tag } from 'generated-sources';
 import { AppButton, TagItem } from 'components/shared';
-import { useAppParams } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
@@ -13,8 +12,6 @@ interface OverviewTagsProps {
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
-  const { dataEntityId } = useAppParams();
-
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -30,10 +27,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
     <div>
       <CaptionContainer>
         <Typography variant='h4'>Tags</Typography>
-        <WithPermissions
-          permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}
-          resourceId={dataEntityId}
-        >
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>
           <TagsEditForm
             btnEditEl={
               <AppButton
@@ -100,10 +94,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           wrap='nowrap'
         >
           <Typography variant='subtitle2'>Not created.</Typography>
-          <WithPermissions
-            permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}
-            resourceId={dataEntityId}
-          >
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>
             <TagsEditForm
               btnEditEl={
                 <AppButton size='small' color='tertiary'>

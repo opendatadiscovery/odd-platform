@@ -67,10 +67,7 @@ const OverviewDescription: React.FC = () => {
         <S.CaptionContainer>
           <Typography variant='h4'>Custom</Typography>
           {editMode ? null : (
-            <WithPermissions
-              resourceId={dataEntityId}
-              permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}
-            >
+            <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
               <AppButton
                 onClick={onEditClick}
                 size='medium'
@@ -125,10 +122,7 @@ const OverviewDescription: React.FC = () => {
                 wrap='nowrap'
               >
                 <Typography variant='subtitle2'>Not created.</Typography>
-                <WithPermissions
-                  resourceId={dataEntityId}
-                  permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}
-                >
+                <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
                   <AppButton onClick={onEditClick} size='small' color='tertiary'>
                     Add Description
                   </AppButton>
