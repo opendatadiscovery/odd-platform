@@ -66,16 +66,10 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
           horizontal: 65,
         }}
       >
-        <WithPermissions
-          resourceId={dataEntityId}
-          permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}
-        >
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}>
           <DataEntityGroupForm btnCreateEl={<AppMenuItem>Edit</AppMenuItem>} />
         </WithPermissions>
-        <WithPermissions
-          resourceId={dataEntityId}
-          permissionTo={Permission.DATA_ENTITY_GROUP_DELETE}
-        >
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_DELETE}>
           <ConfirmationDialog
             actionTitle='Are you sure you want to delete this data entity group?'
             actionName='Delete Data Entity Group'

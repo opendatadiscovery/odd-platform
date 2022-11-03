@@ -8,23 +8,19 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import TagItem from 'components/shared/TagItem/TagItem';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import { OptionsContainer } from 'components/Terms/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
-import AppButton from 'components/shared/AppButton/AppButton';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppInput from 'components/shared/AppInput/AppInput';
+import {
+  DialogWrapper,
+  TagItem,
+  AutocompleteSuggestion,
+  AppButton,
+  AppInput,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  fetchTagsList as searchTags,
-  updateTermDetailsTags,
-} from 'redux/thunks';
-import {
-  getTermDetailsTags,
-  getTermDetailsTagsUpdatingStatuses,
-} from 'redux/selectors';
+import { fetchTagsList as searchTags, updateTermDetailsTags } from 'redux/thunks';
+import { getTermDetailsTags, getTermDetailsTagsUpdatingStatuses } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
+import { OptionsContainer } from './TagsEditFormStyles';
 
 interface TagsEditProps {
   btnEditEl: JSX.Element;
@@ -34,9 +30,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
-  const termDetailsTags = useAppSelector(state =>
-    getTermDetailsTags(state, termId)
-  );
+  const termDetailsTags = useAppSelector(state => getTermDetailsTags(state, termId));
 
   const { isLoading: isTermTagsUpdating } = useAppSelector(
     getTermDetailsTagsUpdatingStatuses
@@ -63,18 +57,15 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     [searchTags, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback(
-    (option: FilterOption | string) => {
-      if (typeof option === 'string') {
-        return option;
-      }
-      if ('name' in option && option.name) {
-        return option.name;
-      }
-      return '';
-    },
-    []
-  );
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
+    if (typeof option === 'string') {
+      return option;
+    }
+    if ('name' in option && option.name) {
+      return option.name;
+    }
+    return '';
+  }, []);
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -83,9 +74,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
         searchText !== '' &&
         !loading &&
         !options.find(
-          option =>
-            option.name.toLocaleLowerCase() ===
-            searchText.toLocaleLowerCase()
+          option => option.name.toLocaleLowerCase() === searchText.toLocaleLowerCase()
         )
       ) {
         return [...options, { name: searchText }];
@@ -185,7 +174,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Edit Tags
     </Typography>
   );
@@ -194,7 +183,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     <>
       <Autocomplete
         fullWidth
-        id="term-tag-add-name-search"
+        id='term-tag-add-name-search'
         open={autocompleteOpen}
         onOpen={() => setAutocompleteOpen(true)}
         onClose={() => setAutocompleteOpen(false)}
@@ -214,7 +203,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
           <AppInput
             {...params}
             ref={params.InputProps.ref}
-            placeholder="Enter tag name…"
+            placeholder='Enter tag name…'
             customEndAdornment={{
               variant: 'loader',
               showAdornment: loading,
@@ -225,14 +214,11 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
         renderOption={(props, option) => (
           <li {...props}>
             <OptionsContainer $isImportant={option.important}>
-              <Typography variant="body1">
+              <Typography variant='body1'>
                 {option.id ? (
                   option.name
                 ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="tag"
-                    optionName={option.name}
-                  />
+                  <AutocompleteSuggestion optionLabel='tag' optionName={option.name} />
                 )}
               </Typography>
             </OptionsContainer>
@@ -240,10 +226,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
         )}
       />
       <FormProvider {...methods}>
-        <form
-          id="tags-create-form"
-          onSubmit={methods.handleSubmit(handleSubmit)}
-        >
+        <form id='tags-create-form' onSubmit={methods.handleSubmit(handleSubmit)}>
           <Box sx={{ mt: 1 }}>
             {fields?.map((field, index) => (
               <TagItem
@@ -263,10 +246,10 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="tags-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='tags-create-form'
+      color='primary'
       fullWidth
     >
       Save

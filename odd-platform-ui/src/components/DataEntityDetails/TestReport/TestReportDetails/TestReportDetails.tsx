@@ -7,12 +7,12 @@ import {
   AppTabs,
   AppTooltip,
 } from 'components/shared';
-import { getQualityTestByTestId } from 'redux/selectors';
+import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
-import { PermissionProvider } from 'components/shared/contexts';
-import { Permission } from 'generated-sources';
+import { WithPermissionsProvider } from 'components/shared/contexts';
+import { Permission, PermissionResourceType } from 'generated-sources';
 
 // lazy components
 const TestReportDetailsOverview = React.lazy(
@@ -41,6 +41,9 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
   } = useAppPaths();
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
+  const resourcePermissions = useAppSelector(
+    getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
+  );
 
   React.useEffect(() => {
     setTabs([
@@ -112,11 +115,11 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
                 '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
               ]}
               render={() => (
-                <PermissionProvider
-                  permissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
-                >
-                  <TestReportDetailsOverview />
-                </PermissionProvider>
+                <WithPermissionsProvider
+                  allowedPermissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
+                  resourcePermissions={resourcePermissions}
+                  Component={TestReportDetailsOverview}
+                />
               )}
             />
             <Route

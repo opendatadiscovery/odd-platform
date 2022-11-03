@@ -20,7 +20,7 @@ import {
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
-import { PermissionProvider } from 'components/shared/contexts';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import Filters from './Filters/Filters';
 import Results from './Results/Results';
 
@@ -86,9 +86,11 @@ const Search: React.FC = () => {
         </PageWithLeftSidebar.LeftSidebarContainer>
         <PageWithLeftSidebar.ListContainer item xs={9}>
           <MainSearch placeholder='Search' disableSuggestions />
-          <PermissionProvider permissions={[Permission.DATA_ENTITY_GROUP_CREATE]}>
-            <Results />
-          </PermissionProvider>
+          <WithPermissionsProvider
+            allowedPermissions={[Permission.DATA_ENTITY_GROUP_CREATE]}
+            resourcePermissions={[]}
+            Component={Results}
+          />
         </PageWithLeftSidebar.ListContainer>
       </PageWithLeftSidebar.ContentContainer>
     </PageWithLeftSidebar.MainContainer>

@@ -1,24 +1,20 @@
 import React from 'react';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { usePermissions } from 'lib/hooks';
 
 interface WithPermissionsProps {
   permissionTo: Permission;
   extraCheck?: boolean;
-  resourceId?: number;
-  resourceType?: PermissionResourceType;
   renderContent?: ({ isAllowedTo }: { isAllowedTo: boolean }) => JSX.Element | null;
 }
 
 const WithPermissions: React.FC<WithPermissionsProps> = ({
   permissionTo,
-  resourceId,
-  resourceType = PermissionResourceType.DATA_ENTITY,
   renderContent,
   extraCheck,
   children,
 }) => {
-  const { isAllowedTo, hasAccessTo } = usePermissions({ resourceId, resourceType });
+  const { isAllowedTo, hasAccessTo } = usePermissions();
 
   if (renderContent) {
     return <>{renderContent({ isAllowedTo })}</>;

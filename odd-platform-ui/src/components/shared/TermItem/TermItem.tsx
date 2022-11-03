@@ -34,10 +34,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
           <S.TermDefinition variant='subtitle2'>{term.definition}</S.TermDefinition>
         </Grid>
         <S.ActionsContainer>
-          <WithPermissions
-            permissionTo={Permission.DATA_ENTITY_DELETE_TERM}
-            resourceId={dataEntityId}
-          >
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_TERM}>
             <AppIconButton
               size='small'
               color='unfilled'
