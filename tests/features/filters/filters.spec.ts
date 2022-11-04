@@ -54,7 +54,8 @@ test.describe('Check filters', () => {
      */
     test('Should display the expected item with Owner filter', async ({ steps: { pages } }) => {
       await test.step('Apply filter Owner', async () => {
-        await pages.catalog.searchByText(bookETLDataEntity);
+        await pages.catalog.fillSearchBar(bookETLDataEntity);
+        await pages.catalog.confirmSearch();
         await pages.catalog.clickOnListItem(bookETLDataEntity);
         await pages.overview.createOwner(
           firstOwner,
@@ -72,7 +73,8 @@ test.describe('Check filters', () => {
      */
     test('Should display the expected item with Tag filter', async ({ steps: { pages } }) => {
       await test.step('Apply filter Tag', async () => {
-        await pages.catalog.searchByText(bookETLDataEntity);
+        await pages.catalog.fillSearchBar(bookETLDataEntity);
+        await pages.catalog.confirmSearch();
         await pages.catalog.clickOnListItem(bookETLDataEntity);
         await pages.overview.createTag(tagFilterOption, noResultsTagText);
         await pages.topPanel.clickTab('Catalog');

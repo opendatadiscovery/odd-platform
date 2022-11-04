@@ -1,3 +1,4 @@
+import Button from '../../elements/button';
 import InputField from '../../elements/input-field';
 import BasePage from '../base-page';
 
@@ -10,6 +11,8 @@ const SELECTORS = {
   filterWithInputOption: `[role="presentation"]`,
   listItemName: name => `a:has-text('${name}')`,
   tab: name => `[role="tab"]:has-text('${name}')`,
+  searchButton: `[placeholder="Search"] >> ..`,
+  noMatchesFound: `.MuiTypography-root:text-is('No matches found')`,
 };
 export default class CatalogPage extends BasePage {
   async openFilterWithSelect(filterName: string) {
@@ -48,8 +51,24 @@ export default class CatalogPage extends BasePage {
     return new InputField(this.page, SELECTORS.searchBar);
   }
 
-  async searchByText(text: string) {
+  async fillSearchBar(text: string) {
     await this.searchBar.fill(text);
+  }
+
+  async confirmSearch() {
     await this.page.locator(SELECTORS.searchBar).press('Enter');
+  }
+
+  async isListEmpty(): Promise<boolean> {
+    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'visible' });
+    return this.page.locator(SELECTORS.noMatchesFound).isVisible();
+  }
+
+  get clickSearchButton() {
+    return new Button(this.page, SELECTORS.searchButton);
+  }
+
+  async amountInTab(tabName: string, amount: number): Promise<boolean> {
+    return this.page.locator(`${SELECTORS.tab(tabName)}:has-text('${amount}')`).isVisible();
   }
 }
