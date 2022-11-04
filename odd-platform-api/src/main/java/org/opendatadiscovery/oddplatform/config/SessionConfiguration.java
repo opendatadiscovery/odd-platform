@@ -13,7 +13,6 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveMapSessionRepository;
 import org.springframework.session.ReactiveSessionRepository;
@@ -25,7 +24,6 @@ public class SessionConfiguration {
     @Configuration
     @Conditional(SpringWebSessionConfiguration.SpringWebSessionCondition.class)
     @EnableSpringWebSession
-    @EnableScheduling
     static class SpringWebSessionConfiguration {
         @Bean
         @ConditionalOnProperty(prefix = "session", name = "provider", havingValue = "INTERNAL_POSTGRESQL")

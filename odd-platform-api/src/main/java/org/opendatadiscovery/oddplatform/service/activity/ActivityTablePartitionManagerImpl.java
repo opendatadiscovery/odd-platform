@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +25,9 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
     @Value("${odd.activity.partition-period:30}")
     private Integer partitionDaysPeriod;
 
-    @Value("${odd.activity.advisory-lock-id}")
-    private Long activityLockId;
-    private final PostgreSQLLeaderElectionManager leaderElectionManager;
-
     @Override
-    public void createPartitionsIfNotExists() {
-        try (final Connection connection = leaderElectionManager.acquire(activityLockId, false)) {
+    public void createPartitionsIfNotExists(final Connection connection) {
+        try {
             final Optional<String> partitionName = getLastPartitionTableName(connection);
             LocalDate lastPartitionDate;
             if (partitionName.isPresent()) {
