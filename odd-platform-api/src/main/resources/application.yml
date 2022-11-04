@@ -151,6 +151,7 @@ management:
 odd:
   activity:
     partition-period: 30
+    advisory-lock-id: 130
 
 logging:
   level:
