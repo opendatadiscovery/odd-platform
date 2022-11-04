@@ -51,7 +51,7 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
             }
             for (final ActivityTablePartition newPartition : newPartitions) {
                 createPartitionTable(connection, newPartition.beginDate(), newPartition.endDate());
-                log.info("Created partition for date range: {} - {}", newPartition.beginDate(),
+                log.debug("Created partition for date range: {} - {}", newPartition.beginDate(),
                     newPartition.endDate());
             }
         } catch (final Exception e) {
