@@ -81,9 +81,10 @@ test.describe('Search', () => {
       steps: { pages },
     }) => {
       await test.step(`Fill expressions are contained in one entity`, async () => {
-        await pages.catalog.fillSearchBar('books postcards');
+        await pages.catalog.fillSearchBar('books aqa');
         await pages.catalog.confirmSearch();
-        expect(await pages.catalog.isListItemVisible('postcards_aqa')).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible('books_aqa')).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
     /**
