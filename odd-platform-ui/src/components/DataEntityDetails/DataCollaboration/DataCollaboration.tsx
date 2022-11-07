@@ -7,6 +7,7 @@ import {
   getDataEntityMessagesFetchingStatuses,
   getDataEntityMessagesPageInfo,
   getLengthOfDataEntityMessages,
+  getMessageToSlackCreatingStatuses,
 } from 'redux/selectors';
 import MessagesList from './MessagesList/MessagesList';
 import Channels from './Channels/Channels';
@@ -26,6 +27,9 @@ const DataCollaboration: React.FC = () => {
   const { isLoading: isMessagesLoading } = useAppSelector(
     getDataEntityMessagesFetchingStatuses
   );
+  const { isLoading: isMessageCreating } = useAppSelector(
+    getMessageToSlackCreatingStatuses
+  );
 
   const fetchMessagesParams = React.useMemo(
     () => ({
@@ -40,7 +44,7 @@ const DataCollaboration: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchDataEntityMessages(fetchMessagesParams));
-  }, [fetchMessagesParams]);
+  }, [fetchMessagesParams, isMessageCreating]);
 
   const fetchNextMessages = React.useCallback(() => {
     if (!hasNext) return;
