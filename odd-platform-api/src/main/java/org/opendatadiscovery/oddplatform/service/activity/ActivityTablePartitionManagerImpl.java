@@ -40,7 +40,7 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
             final List<ActivityTablePartition> newPartitions = new ArrayList<>();
             while (lastPartitionDate.isBefore(bufferDate)) {
                 newPartitions.add(
-                    new ActivityTablePartition(lastPartitionDate, lastPartitionDate.plusDays(partitionDaysPeriod * 2))
+                    new ActivityTablePartition(lastPartitionDate, lastPartitionDate.plusDays(partitionDaysPeriod * 2L))
                 );
                 lastPartitionDate = lastPartitionDate.plusDays(partitionDaysPeriod);
             }
