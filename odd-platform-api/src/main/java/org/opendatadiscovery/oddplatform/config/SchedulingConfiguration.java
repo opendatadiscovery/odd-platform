@@ -1,20 +1,19 @@
-package org.opendatadiscovery.oddplatform.housekeeping.config;
+package org.opendatadiscovery.oddplatform.config;
 
 import javax.sql.DataSource;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@ConditionalOnProperty(value = "housekeeping.enabled", havingValue = "true")
 @Configuration
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "1h")
-public class HousekeepingConfiguration {
+public class SchedulingConfiguration {
+
     @Bean
     public LockProvider lockProvider(final DataSource dataSource) {
         return new JdbcTemplateLockProvider(

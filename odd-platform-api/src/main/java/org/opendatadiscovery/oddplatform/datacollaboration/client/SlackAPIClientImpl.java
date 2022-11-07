@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.SlackChannelDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.SlackAPIException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,7 +25,7 @@ public class SlackAPIClientImpl implements SlackAPIClient {
     private final AsyncMethodsClient asyncMethodsClient;
 
     @Override
-    public Flux<SlackChannelDto> getSlackChannels() {
+    public Flux<MessageChannelDto> getSlackChannels() {
         return requestConversationList()
             .expand(response -> {
                 if (!response.isOk()) {
@@ -39,7 +39,7 @@ public class SlackAPIClientImpl implements SlackAPIClient {
                 return Mono.empty();
             })
             .flatMap(response -> Flux.fromIterable(response.getChannels()))
-            .map(c -> SlackChannelDto.builder().id(c.getId()).name(c.getName()).build());
+            .map(c -> MessageChannelDto.builder().id(c.getId()).name(c.getName()).build());
     }
 
     @Override

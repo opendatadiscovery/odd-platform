@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.dto;
 
-public enum MessageProviderEventStateDto {
+public enum MessageEventStateDto {
     PENDING,
     PROCESSED
 }

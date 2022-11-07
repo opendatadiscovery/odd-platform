@@ -1,20 +1,18 @@
 package org.opendatadiscovery.oddplatform.service.activity;
 
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.Statement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.r2dbc.connection.ConnectionFactoryUtils;
-import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -26,57 +24,63 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
 
     @Value("${odd.activity.partition-period:30}")
     private Integer partitionDaysPeriod;
-    private Mono<LocalDate> lastPartitionDate = Mono.empty();
-    private final DatabaseClient databaseClient;
 
     @Override
-    public Mono<LocalDate> createPartitionIfNotExists(final LocalDate eventDate) {
-        this.lastPartitionDate = lastPartitionDate
-            .filter(l -> l.isAfter(eventDate))
-            .switchIfEmpty(databaseClient.inConnection(conn -> createPartitionTables(conn, eventDate)).cache());
+    public void createPartitionsIfNotExists(final Connection connection) {
+        try {
+            final Optional<String> partitionName = getLastPartitionTableName(connection);
+            LocalDate lastPartitionDate;
+            if (partitionName.isPresent()) {
+                lastPartitionDate = getLastPartitionDate(partitionName.get());
+            } else {
+                lastPartitionDate = LocalDate.now();
+            }
+            final LocalDate bufferDate = LocalDate.now().plusDays(partitionDaysPeriod);
 
-        return this.lastPartitionDate;
+            final List<ActivityTablePartition> newPartitions = new ArrayList<>();
+            while (lastPartitionDate.isBefore(bufferDate)) {
+                newPartitions.add(
+                    new ActivityTablePartition(lastPartitionDate, lastPartitionDate.plusDays(partitionDaysPeriod * 2L))
+                );
+                lastPartitionDate = lastPartitionDate.plusDays(partitionDaysPeriod);
+            }
+            for (final ActivityTablePartition newPartition : newPartitions) {
+                createPartitionTable(connection, newPartition.beginDate(), newPartition.endDate());
+                log.debug("Created partition for date range: {} - {}", newPartition.beginDate(),
+                    newPartition.endDate());
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private Mono<LocalDate> createPartitionTables(final Connection connection, final LocalDate eventDate) {
-        return getLastPartitionTableName(connection)
-            .map(this::getLastPartitionDate)
-            .switchIfEmpty(Mono.just(eventDate))
-            .flatMap(lastPartitionDate -> {
-                final List<ActivityTablePartition> newPartitions = new ArrayList<>();
-                while (!lastPartitionDate.isAfter(eventDate)) {
-                    newPartitions.add(
-                        new ActivityTablePartition(lastPartitionDate, lastPartitionDate.plusDays(partitionDaysPeriod))
-                    );
-                    lastPartitionDate = lastPartitionDate.plusDays(partitionDaysPeriod);
-                }
-
-                return Flux.fromIterable(newPartitions)
-                    .flatMap(partition -> createPartitionTable(connection, partition.beginDate(), partition.endDate()))
-                    .doOnError(e -> log.error("Error creating partition table", e))
-                    .then(getLastPartitionTableName(connection))
-                    .map(this::getLastPartitionDate);
-            });
-    }
-
-    private Mono<String> getLastPartitionTableName(final Connection connection) {
+    private Optional<String> getLastPartitionTableName(final Connection connection) throws SQLException {
         final String sql = """
                SELECT table_name FROM information_schema.tables
-               WHERE table_schema = 'public' AND table_name LIKE 'activity_%'
+               WHERE table_schema = ? AND table_name LIKE ?
                ORDER BY table_name DESC LIMIT 1
             """;
-        final Statement statement = connection.createStatement(sql);
-        return Mono.from(statement.execute())
-            .flatMap(result -> Mono.from(result.map((row, rowMetadata) -> row.get("table_name", String.class))));
+        try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "public");
+            statement.setString(2, "activity_%");
+            try (final ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(resultSet.getString("table_name"));
+                }
+                return Optional.empty();
+            }
+        }
     }
 
-    private Mono<?> createPartitionTable(final Connection connection,
-                                         final LocalDate beginDate,
-                                         final LocalDate endDate) {
+    private void createPartitionTable(final Connection connection,
+                                      final LocalDate beginDate,
+                                      final LocalDate endDate) throws SQLException {
         final String tableName = getTableName(beginDate, endDate);
         final String sql = "CREATE TABLE IF NOT EXISTS %s PARTITION OF activity FOR VALUES FROM ('%s') TO ('%s');"
             .formatted(tableName, beginDate.format(ISO_LOCAL_DATE), endDate.format(ISO_LOCAL_DATE));
-        return Mono.from(connection.createStatement(sql).execute());
+        try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.execute();
+        }
     }
 
     private String getTableName(final LocalDate beginDate, final LocalDate endDate) {

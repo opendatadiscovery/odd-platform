@@ -11,14 +11,14 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 
 @Mapper(config = MapperConfig.class)
 public interface MessageMapper {
-    @Mapping(target = "channel", source = ".", qualifiedByName = "opa")
+    @Mapping(target = "channel", source = ".", qualifiedByName = "messageChannel")
     Message mapPojo(final MessagePojo messagePojo);
 
     default MessageList mapPojos(final List<MessagePojo> messagePojos) {
         return new MessageList().items(messagePojos.stream().map(this::mapPojo).toList());
     }
 
-    @Named("opa")
+    @Named("messageChannel")
     default MessageChannel messageChannel(final MessagePojo message) {
         return new MessageChannel()
             .channelId(message.getChannelId())

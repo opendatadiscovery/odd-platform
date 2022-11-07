@@ -1,9 +1,7 @@
 package org.opendatadiscovery.oddplatform.service.activity;
 
-import java.time.LocalDate;
-import reactor.core.publisher.Mono;
+import java.sql.Connection;
 
 public interface ActivityTablePartitionManager {
-
-    Mono<LocalDate> createPartitionIfNotExists(final LocalDate eventDate);
+    void createPartitionsIfNotExists(final Connection connection);
 }

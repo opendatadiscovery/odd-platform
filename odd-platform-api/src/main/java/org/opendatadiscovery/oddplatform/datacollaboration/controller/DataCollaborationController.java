@@ -24,8 +24,8 @@ public class DataCollaborationController implements DataCollaborationApi {
     public Mono<ResponseEntity<MessageChannelList>> getSlackChannels(final String channelName,
                                                                      final ServerWebExchange exchange) {
         final Mono<MessageChannelList> channelList = channelName != null
-            ? dataCollaborationService.getSlackChannels(channelName)
-            : dataCollaborationService.getSlackChannels();
+            ? dataCollaborationService.getChannels(channelName, MessageProviderDto.SLACK)
+            : dataCollaborationService.getChannels(MessageProviderDto.SLACK);
 
         return channelList.map(ResponseEntity::ok);
     }

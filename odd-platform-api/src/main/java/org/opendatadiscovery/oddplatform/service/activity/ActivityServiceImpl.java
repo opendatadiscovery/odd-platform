@@ -34,7 +34,6 @@ import static reactor.function.TupleUtils.function;
 @RequiredArgsConstructor
 @Slf4j
 public class ActivityServiceImpl implements ActivityService {
-    private final ActivityTablePartitionManager activityTablePartitionManager;
     private final ReactiveActivityRepository activityRepository;
     private final DataEntityRepository dataEntityRepository;
     private final AuthIdentityProvider authIdentityProvider;
@@ -44,9 +43,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Mono<Void> createActivityEvent(final ActivityCreateEvent event) {
         final LocalDateTime activityCreateTime = LocalDateTime.now();
-
-        return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
-            .then(authIdentityProvider.getCurrentUser())
+        return authIdentityProvider.getCurrentUser()
             .map(UserDto::username)
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
             .switchIfEmpty(Mono.defer(() -> Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null))))
@@ -57,9 +54,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Mono<Void> createActivityEvents(final List<ActivityCreateEvent> events) {
         final LocalDateTime activityCreateTime = LocalDateTime.now();
-
-        return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
-            .then(authIdentityProvider.getCurrentUser())
+        return authIdentityProvider.getCurrentUser()
             .map(UserDto::username)
             .flatMapMany(username -> Flux.fromStream(mapEventsToPojos(events, activityCreateTime, username)))
             .switchIfEmpty(Flux.fromStream(mapEventsToPojos(events, activityCreateTime, null)))
