@@ -3,22 +3,34 @@ import { Permission } from 'generated-sources';
 import { PermissionProvider } from 'components/shared/contexts/index';
 
 interface WithPermissionsProviderProps {
-  permissions: Permission[];
+  allowedPermissions: Permission[];
+  resourcePermissions: Permission[];
   Component?: React.FC;
   render?: () => JSX.Element;
 }
 
 const WithPermissionsProvider: React.FC<WithPermissionsProviderProps> = ({
-  permissions,
+  allowedPermissions,
+  resourcePermissions,
   Component,
   render,
 }) => {
   if (render) {
-    return <PermissionProvider permissions={permissions}>{render()}</PermissionProvider>;
+    return (
+      <PermissionProvider
+        resourcePermissions={resourcePermissions}
+        allowedPermissions={allowedPermissions}
+      >
+        {render()}
+      </PermissionProvider>
+    );
   }
 
   return Component ? (
-    <PermissionProvider permissions={permissions}>
+    <PermissionProvider
+      resourcePermissions={resourcePermissions}
+      allowedPermissions={allowedPermissions}
+    >
       <Component />
     </PermissionProvider>
   ) : null;

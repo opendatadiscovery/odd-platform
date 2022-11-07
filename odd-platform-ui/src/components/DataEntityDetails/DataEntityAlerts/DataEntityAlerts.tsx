@@ -7,9 +7,9 @@ import {
   getDataEntityAlertListFetchingStatus,
   getAlertList,
 } from 'redux/selectors/alert.selectors';
-import DataEntityAlertItem from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertItem';
-import DataEntityAlertsSkeleton from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import { EmptyContentPlaceholder } from 'components/shared';
+import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
+import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {

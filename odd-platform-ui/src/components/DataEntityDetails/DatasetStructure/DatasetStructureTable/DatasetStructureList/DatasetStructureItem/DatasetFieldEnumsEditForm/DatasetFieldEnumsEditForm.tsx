@@ -16,10 +16,6 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AppButton, AppCircularProgress, DialogWrapper } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import { WithPermissions } from 'components/shared/contexts';
-import { useAppParams } from 'lib/hooks';
-import { ValueDescriptionContainer } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItemStyles';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
   ActionsContainer,
   HeaderContainer,
@@ -45,7 +41,6 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
   enumValueType,
 }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
 
   const { isLoading: isEnumsCreating } = useAppSelector(
     getDatasetFieldEnumsCreatingStatus
@@ -145,10 +140,7 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
           Custom values
         </Typography>
       </TitleContainer>
-      <WithPermissions
-        permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-        resourceId={dataEntityId}
-      >
+      <WithPermissions permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}>
         <AppButton
           size='medium'
           color='primaryLight'
@@ -196,7 +188,6 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
     <ActionsContainer>
       <WithPermissions
         permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-        resourceId={dataEntityId}
         renderContent={({ isAllowedTo: editEnums }) => (
           <AppButton
             size='large'

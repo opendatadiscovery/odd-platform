@@ -24,6 +24,7 @@ const Message: React.FC<MessageProps> = ({
   messageOnClick,
 }) => {
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
+  const messagesCount = childrenMessagesCount ?? 0;
 
   return (
     <S.Container $active={isActive} container onClick={messageOnClick}>
@@ -61,7 +62,7 @@ const Message: React.FC<MessageProps> = ({
         </Typography>
       </Grid>
       <Grid container justifyContent='flex-start'>
-        <Typography variant='subtitle1'>{`${childrenMessagesCount} messages in thread`}</Typography>
+        <Typography variant='subtitle1'>{`${messagesCount} messages in thread`}</Typography>
       </Grid>
     </S.Container>
   );

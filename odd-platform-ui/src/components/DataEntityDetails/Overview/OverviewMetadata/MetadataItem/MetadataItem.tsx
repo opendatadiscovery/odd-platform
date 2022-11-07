@@ -156,7 +156,6 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
             {isCustom ? (
               <S.Actions>
                 <WithPermissions
-                  resourceId={dataEntityId}
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE}
                 >
                   <AppIconButton
@@ -172,7 +171,6 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                   <CopyButton stringToCopy={metadataVal} sx={{ ml: 0.5 }} />
                 )}
                 <WithPermissions
-                  resourceId={dataEntityId}
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE}
                 >
                   <ConfirmationDialog

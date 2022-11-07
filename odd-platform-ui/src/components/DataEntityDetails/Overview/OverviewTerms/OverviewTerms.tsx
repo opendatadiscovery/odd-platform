@@ -20,10 +20,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
     <div>
       <TermsCaptionContainer>
         <Typography variant='h4'>Dictionary terms</Typography>
-        <WithPermissions
-          resourceId={dataEntityId}
-          permissionTo={Permission.DATA_ENTITY_ADD_TERM}
-        >
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
           <AddTermsForm
             dataEntityId={dataEntityId}
             btnCreateEl={
@@ -74,10 +71,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
           wrap='nowrap'
         >
           <Typography variant='subtitle2'>Not created.</Typography>
-          <WithPermissions
-            resourceId={dataEntityId}
-            permissionTo={Permission.DATA_ENTITY_ADD_TERM}
-          >
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
             <AddTermsForm
               dataEntityId={dataEntityId}
               btnCreateEl={

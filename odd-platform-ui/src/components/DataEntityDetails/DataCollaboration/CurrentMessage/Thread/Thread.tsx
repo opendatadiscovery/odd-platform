@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityMessage,
+  getDataEntityMessagesFetchingStatuses,
   getRelatedMessages,
   getRelatedMessagesFetchingStatuses,
   getRelatedMessagesPageInfo,

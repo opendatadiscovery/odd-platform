@@ -20,7 +20,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { managementPath } = useAppPaths();
-  const { hasAccessTo } = usePermissions({});
+  const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';

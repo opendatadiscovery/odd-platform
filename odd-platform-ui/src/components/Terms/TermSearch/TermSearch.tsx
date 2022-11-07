@@ -3,9 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { useHistory } from 'react-router-dom';
-import { AppButton, PageWithLeftSidebar } from 'components/shared';
-import { AddIcon } from 'components/shared/Icons';
-import { Grid } from '@mui/material';
+import { PageWithLeftSidebar } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getTermSearchCreateStatuses,
@@ -16,12 +14,11 @@ import {
 } from 'redux/selectors';
 import { createTermSearch, getTermsSearch, updateTermSearch } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import TermSearchInput from './TermSearchInput/TermSearchInput';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import TermSearchFilters from './TermSearchFilters/TermSearchFilters';
 import TermsSearchResults from './TermSearchResults/TermSearchResults';
-import TermsForm from './TermForm/TermsForm';
+import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 
 const TermSearch: React.FC = () => {
   const history = useHistory();
@@ -79,18 +76,11 @@ const TermSearch: React.FC = () => {
           <TermSearchFilters />
         </PageWithLeftSidebar.LeftSidebarContainer>
         <PageWithLeftSidebar.ListContainer item xs={9}>
-          <Grid container justifyContent='space-between' alignItems='center' mt={1.5}>
-            <TermSearchInput />
-            <WithPermissions permissionTo={Permission.TERM_CREATE}>
-              <TermsForm
-                btnCreateEl={
-                  <AppButton size='large' color='primary' startIcon={<AddIcon />}>
-                    Add term
-                  </AppButton>
-                }
-              />
-            </WithPermissions>
-          </Grid>
+          <WithPermissionsProvider
+            allowedPermissions={[Permission.TERM_CREATE]}
+            resourcePermissions={[]}
+            Component={TermSearchHeader}
+          />
           <TermsSearchResults />
         </PageWithLeftSidebar.ListContainer>
       </PageWithLeftSidebar.ContentContainer>

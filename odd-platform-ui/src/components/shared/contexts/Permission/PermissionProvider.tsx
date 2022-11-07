@@ -1,42 +1,39 @@
 import React from 'react';
-import { Permission, PermissionResourceType } from 'generated-sources';
-import { getGlobalPermissions, getResourcePermissions } from 'redux/selectors';
+import { Permission } from 'generated-sources';
+import { getGlobalPermissions } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import PermissionContext, { PermissionContextProps } from './PermissionContext';
 
 interface PermissionProviderProps {
-  permissions: Permission[];
+  allowedPermissions: Permission[];
+  resourcePermissions: Permission[];
 }
 
-const getPermissions = (resourceType?: PermissionResourceType, resourceId?: number) =>
-  resourceType && resourceId
-    ? useAppSelector(getResourcePermissions(resourceType, resourceId))
-    : [];
-
 const PermissionProvider: React.FunctionComponent<PermissionProviderProps> = ({
-  permissions,
+  allowedPermissions,
+  resourcePermissions,
   children,
 }) => {
   const globalPermissions = useAppSelector(getGlobalPermissions);
 
-  const getIsAllowedTo = React.useCallback(
-    (resourceType?: PermissionResourceType, resourceId?: number) =>
-      permissions.every(perm =>
-        [...globalPermissions, ...getPermissions(resourceType, resourceId)].includes(perm)
+  const isAllowedTo = React.useMemo(
+    () =>
+      allowedPermissions.every(perm =>
+        [...globalPermissions, ...resourcePermissions].includes(perm)
       ),
-    [permissions, getPermissions, globalPermissions]
+    [allowedPermissions, resourcePermissions, globalPermissions]
   );
 
   const getHasAccessTo = React.useCallback(
-    (resourceType?: PermissionResourceType, resourceId?: number) => (to: Permission) =>
-      [...globalPermissions, ...getPermissions(resourceType, resourceId)].includes(to) &&
-      permissions.includes(to),
-    [permissions, getPermissions, globalPermissions]
+    (to: Permission) =>
+      [...globalPermissions, ...resourcePermissions].includes(to) &&
+      allowedPermissions.includes(to),
+    [allowedPermissions, resourcePermissions, globalPermissions]
   );
 
   const providerValue = React.useMemo<PermissionContextProps>(
-    () => ({ getIsAllowedTo, getHasAccessTo }),
-    [getIsAllowedTo, getHasAccessTo]
+    () => ({ isAllowedTo, getHasAccessTo }),
+    [isAllowedTo, getHasAccessTo]
   );
 
   return (

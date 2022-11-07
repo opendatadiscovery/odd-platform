@@ -1,17 +1,14 @@
 import React from 'react';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { Permission } from 'generated-sources';
 
 export interface PermissionContextProps {
-  getIsAllowedTo: (resourceType?: PermissionResourceType, resourceId?: number) => boolean;
-  getHasAccessTo: (
-    resourceType?: PermissionResourceType,
-    resourceId?: number
-  ) => (to: Permission) => boolean;
+  isAllowedTo: boolean;
+  getHasAccessTo: (to: Permission) => boolean;
 }
 
 const defaultBehaviour: PermissionContextProps = {
-  getIsAllowedTo: () => false,
-  getHasAccessTo: () => () => false,
+  isAllowedTo: false,
+  getHasAccessTo: () => false,
 };
 
 const PermissionContext = React.createContext<PermissionContextProps>(defaultBehaviour);

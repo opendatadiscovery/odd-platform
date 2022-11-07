@@ -6,7 +6,6 @@ import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { DataSetFieldTypeTypeEnum, Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useAppParams } from 'lib/hooks';
 import {
   Container,
   EditBtnContainer,
@@ -27,7 +26,6 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
   enumValueType,
   itemId,
 }) => {
-  const { dataEntityId } = useAppParams();
   const { control, getValues } = useFormContext();
   const [editMode, setEditMode] = React.useState<boolean>(false);
 
@@ -60,7 +58,6 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             render={({ field }) => (
               <WithPermissions
                 permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-                resourceId={dataEntityId}
                 renderContent={({ isAllowedTo: editEnum }) => (
                   <ValueNameContainer sx={{ mr: 1 }}>
                     <AppInput
@@ -88,7 +85,6 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             render={({ field }) => (
               <WithPermissions
                 permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-                resourceId={dataEntityId}
                 renderContent={({ isAllowedTo: editEnum }) => (
                   <ValueDescriptionContainer sx={{ mr: 1 }}>
                     <AppInput
@@ -109,10 +105,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
               />
             )}
           />
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-            resourceId={dataEntityId}
-          >
+          <WithPermissions permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}>
             <AppButton size='small' color='dropdown' onClick={onItemRemove}>
               Delete
             </AppButton>

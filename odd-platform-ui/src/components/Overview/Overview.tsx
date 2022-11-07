@@ -9,7 +9,7 @@ import {
 import { EntityClassItem, MainSearch, SkeletonWrapper } from 'components/shared';
 import { fetchDataEntitiesUsageInfo, fetchTagsList } from 'redux/thunks';
 import { DataEntityClassLabelMap } from 'redux/interfaces';
-import { PermissionProvider } from 'components/shared/contexts';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
@@ -82,9 +82,11 @@ const Overview: React.FC = () => {
           </Grid>
         </>
       )}
-      <PermissionProvider permissions={[Permission.DIRECT_OWNER_SYNC]}>
-        <OwnerAssociation />
-      </PermissionProvider>
+      <WithPermissionsProvider
+        allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
+        resourcePermissions={[]}
+        Component={OwnerAssociation}
+      />
     </S.Container>
   );
 };

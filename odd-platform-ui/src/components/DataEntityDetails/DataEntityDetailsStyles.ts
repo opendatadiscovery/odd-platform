@@ -1,6 +1,5 @@
-import { Grid } from '@mui/material';
 import { maxContentWidthWithoutSidebar, toolbarHeight } from 'lib/constants';
-import styled, { CSSObject } from 'styled-components';
+import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',
@@ -14,15 +13,3 @@ export const Container = styled('div')(({ theme }) => ({
     maxWidth: `${maxContentWidthWithoutSidebar}px`,
   },
 }));
-
-export const InternalNameEditBtnContainer = styled(Grid)(
-  () => ({ visibility: 'hidden' } as CSSObject)
-);
-
-export const Caption = styled(Grid)(
-  () =>
-    ({
-      width: '100%',
-      '&:hover': { [`${InternalNameEditBtnContainer}`]: { visibility: 'visible' } },
-    } as CSSObject)
-);

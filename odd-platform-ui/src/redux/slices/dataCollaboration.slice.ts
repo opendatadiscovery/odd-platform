@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { DataCollaborationState, Message } from 'redux/interfaces';
 import { formattedDate } from 'lib/helpers';
+import uniqBy from 'lodash/uniqBy';
 
 export const initialState: DataCollaborationState = {
   channels: [],
@@ -28,11 +29,14 @@ export const dataCollaborationSlice = createSlice({
           ...memo,
           messagesByDate: {
             ...memo.messagesByDate,
-            [formattedDate(message.createdAt, dateFormat)]: [
-              ...(memo.messagesByDate[formattedDate(message.createdAt, dateFormat)] ||
-                []),
-              message,
-            ],
+            [formattedDate(message.createdAt, dateFormat)]: uniqBy(
+              [
+                ...(memo.messagesByDate[formattedDate(message.createdAt, dateFormat)] ||
+                  []),
+                message,
+              ],
+              'id'
+            ),
           },
         }),
         { ...state.messages, pageInfo }

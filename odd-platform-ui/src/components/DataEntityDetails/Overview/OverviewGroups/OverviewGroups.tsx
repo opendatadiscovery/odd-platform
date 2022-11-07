@@ -24,10 +24,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
     <div>
       <GroupsCaptionContainer>
         <Typography variant='h4'>Data entity groups</Typography>
-        <WithPermissions
-          resourceId={dataEntityId}
-          permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}
-        >
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
           <AddDataEntityToGroupForm
             dataEntityId={dataEntityId}
             btnCreateEl={
@@ -82,10 +79,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
           wrap='nowrap'
         >
           <Typography variant='subtitle2'>Not created.</Typography>
-          <WithPermissions
-            resourceId={dataEntityId}
-            permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}
-          >
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
             <AddDataEntityToGroupForm
               dataEntityId={dataEntityId}
               btnCreateEl={

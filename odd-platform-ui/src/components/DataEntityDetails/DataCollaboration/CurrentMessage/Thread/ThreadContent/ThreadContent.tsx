@@ -1,7 +1,11 @@
 import React from 'react';
 import { Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
+import {
+  AppCircularProgress,
+  AppIconButton,
+  EmptyContentPlaceholder,
+} from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
 import { useHistory } from 'react-router-dom';
@@ -30,7 +34,9 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
   const history = useHistory();
   const { dataEntityCollaborationPath } = useAppPaths();
 
-  return (
+  return isRelatedMessagesLoading ? (
+    <AppCircularProgress size={40} background='transparent' />
+  ) : (
     <Grid
       container
       flexDirection='column'
@@ -53,7 +59,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
       </Grid>
       <MainThreadMessage mainMessage={mainMessage} />
       <Grid container flexDirection='column' pl={3} pr={0.5}>
-        {isRelatedMessagesLoading && relatedMessages?.length ? (
+        {!isRelatedMessagesLoading && relatedMessages?.length ? (
           <InfiniteScroll
             dataLength={relatedMessages?.length}
             next={fetchNextMessages}

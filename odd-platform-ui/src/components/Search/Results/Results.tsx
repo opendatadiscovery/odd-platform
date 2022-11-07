@@ -132,22 +132,20 @@ const Results: React.FC = () => {
         onSearchClassChange={onSearchClassChange}
       />
       <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_CREATE}>
-        <>
-          {showDEGBtn && (
-            <DataEntityGroupForm
-              btnCreateEl={
-                <AppButton
-                  sx={{ mt: 2 }}
-                  size='medium'
-                  color='primaryLight'
-                  startIcon={<AddIcon />}
-                >
-                  Add group
-                </AppButton>
-              }
-            />
-          )}
-        </>
+        {showDEGBtn && (
+          <DataEntityGroupForm
+            btnCreateEl={
+              <AppButton
+                sx={{ mt: 2 }}
+                size='medium'
+                color='primaryLight'
+                startIcon={<AddIcon />}
+              >
+                Add group
+              </AppButton>
+            }
+          />
+        )}
       </WithPermissions>
       <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
         <S.SearchCol item lg={grid.lg.nm}>

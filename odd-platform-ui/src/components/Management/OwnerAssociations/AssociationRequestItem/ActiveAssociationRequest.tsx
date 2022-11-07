@@ -27,7 +27,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
   provider,
 }) => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
+  const { hasAccessTo } = usePermissions();
 
   const dispatchedRequest = (
     params: OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest

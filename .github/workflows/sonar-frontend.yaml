@@ -2,41 +2,41 @@ name: SonarCloud Scan for frontend
 on:
   push:
     branches:
-      - "main"
+      - 'main'
   pull_request_target:
-    types: [ "opened", "edited", "reopened", "synchronize" ]
+    types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
-      - "odd-platform-ui/**"
-      - "build.gradle"
+      - 'odd-platform-ui/**'
+      - 'build.gradle'
 
 jobs:
   images:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - uses: unfor19/install-aws-cli-action@v1
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -46,7 +46,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Node cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: odd-platform-ui/.npm
           key: ${{ runner.os }}-shared-node-${{ hashFiles('**/package-lock.json') }}
@@ -57,7 +57,7 @@ jobs:
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+          JAVA_OPTS: '-Xms2048m -Xmx2048m'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew -Penv=prod -p odd-platform-ui clean sonarqube --info

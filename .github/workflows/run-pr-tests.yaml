@@ -2,7 +2,7 @@ name: PR build
 on:
   workflow_dispatch:
   pull_request:
-    types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
+    types: ['opened', 'edited', 'reopened', 'synchronize']
 
 permissions:
   checks: write
@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Cache local Gradle dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -49,6 +49,6 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
-          files: "odd-platform-api/build/test-results/**/*.xml"
+          files: 'odd-platform-api/build/test-results/**/*.xml'
           check_name: Test Results
           comment_mode: create new

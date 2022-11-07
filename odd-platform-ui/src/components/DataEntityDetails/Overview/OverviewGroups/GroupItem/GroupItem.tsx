@@ -35,10 +35,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
           </Typography>
         </Grid>
         <S.ActionsContainer>
-          <WithPermissions
-            permissionTo={Permission.DATA_ENTITY_DELETE_FROM_GROUP}
-            resourceId={dataEntityId}
-          >
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_FROM_GROUP}>
             {group.manuallyCreated && (
               <AppIconButton
                 size='small'

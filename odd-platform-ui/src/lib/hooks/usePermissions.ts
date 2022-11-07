@@ -1,24 +1,15 @@
 import { PermissionContext } from 'components/shared/contexts';
 import { useContext } from 'react';
-import { Permission, PermissionResourceType } from 'generated-sources';
-
-interface UsePermissionProps {
-  resourceType?: PermissionResourceType;
-  resourceId?: number;
-}
+import { Permission } from 'generated-sources';
 
 interface UsePermissionReturn {
   isAllowedTo: boolean;
   hasAccessTo: (to: Permission) => boolean;
 }
 
-const usePermissions = ({
-  resourceId = undefined,
-  resourceType = PermissionResourceType.DATA_ENTITY,
-}: UsePermissionProps): UsePermissionReturn => {
-  const { getIsAllowedTo, getHasAccessTo } = useContext(PermissionContext);
-  const isAllowedTo = getIsAllowedTo(resourceType, resourceId);
-  const hasAccessTo = getHasAccessTo(resourceType, resourceId);
+const usePermissions = (): UsePermissionReturn => {
+  const { isAllowedTo, getHasAccessTo } = useContext(PermissionContext);
+  const hasAccessTo = getHasAccessTo;
 
   return { isAllowedTo, hasAccessTo };
 };

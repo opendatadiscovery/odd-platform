@@ -21,11 +21,10 @@ export const getGlobalPermissions = createSelector(
 
 export const getResourcePermissions = (
   resourceType: PermissionResourceType,
-  resourceId: number
+  resourceId: number | undefined
 ) =>
-  createSelector(
-    profileState,
-    profile => profile.permissions[resourceType][resourceId] || emptyArr
+  createSelector(profileState, profile =>
+    resourceId ? profile.permissions[resourceType][resourceId] || emptyArr : emptyArr
   );
 
 export const isResourcePermissionsAlreadyFetched = (

@@ -16,7 +16,7 @@ interface PolicyItemProps {
 
 const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
   const dispatch = useAppDispatch();
-  const { hasAccessTo } = usePermissions({});
+  const { hasAccessTo } = usePermissions();
 
   const isAdministrator = name === 'Administrator';
 
