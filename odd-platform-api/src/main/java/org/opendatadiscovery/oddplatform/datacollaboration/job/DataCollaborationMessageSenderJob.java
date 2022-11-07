@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.exception.DataCollabo
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.notification.exception.NotificationSubscriberException;
+import reactor.util.function.Tuple2;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 
@@ -36,11 +37,12 @@ public class DataCollaborationMessageSenderJob extends Thread {
                     getSendingCandidate(dslContext)
                         .ifPresent(message -> {
                             // TODO: Slack API is Mono based. Redo to Future?
-                            final String messageTs = slackAPIClient
+                            final Tuple2<String, String> t = slackAPIClient
                                 .postMessage(message.getChannelId(), message.getText())
+                                .zipWhen(messageTs -> slackAPIClient.exchangeForUrl(message.getChannelId(), messageTs))
                                 .block();
 
-                            updateMessage(dslContext, message.getId(), messageTs);
+                            updateMessage(dslContext, message.getId(), t.getT1(), t.getT2());
                         });
 
                     TimeUnit.SECONDS.sleep(1);
@@ -74,11 +76,13 @@ public class DataCollaborationMessageSenderJob extends Thread {
     }
 
     private void updateMessage(final DSLContext dslContext,
-                                                final long messageId,
-                                                final String messageTs) {
+                               final long messageId,
+                               final String messageTs,
+                               final String url) {
         dslContext.update(MESSAGE)
             .set(MESSAGE.PROVIDER_MESSAGE_ID, messageTs)
             .set(MESSAGE.STATE, MessageStateDto.SENT.toString())
+            .set(MESSAGE.PROVIDER_MESSAGE_URL, url)
             .where(MESSAGE.ID.eq(messageId))
             .execute();
     }

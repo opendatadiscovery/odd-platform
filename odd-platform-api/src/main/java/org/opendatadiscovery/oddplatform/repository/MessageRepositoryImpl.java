@@ -11,6 +11,7 @@ import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectSeekStep2;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
@@ -46,9 +47,10 @@ public class MessageRepositoryImpl implements MessageRepository {
             conditions.add(MESSAGE.CHANNEL_ID.startsWithIgnoreCase(channelId));
         }
 
-        final SelectConditionStep<Record> query = DSL.select(MESSAGE.fields())
+        final SelectSeekStep2<Record, OffsetDateTime, Long> query = DSL.select(MESSAGE.fields())
             .from(MESSAGE)
-            .where(conditions);
+            .where(conditions)
+            .orderBy(MESSAGE.CREATED_AT.desc(), MESSAGE.ID.desc());
 
         return applySeekPagination(lastMessageId, lastMessageDateTime, query);
     }
@@ -58,9 +60,10 @@ public class MessageRepositoryImpl implements MessageRepository {
                                                   final Long lastMessageId,
                                                   final OffsetDateTime lastMessageDateTime,
                                                   final int size) {
-        final SelectConditionStep<Record> query = DSL.select(MESSAGE.fields())
+        final SelectSeekStep2<Record, OffsetDateTime, Long> query = DSL.select(MESSAGE.fields())
             .from(MESSAGE)
-            .where(MESSAGE.PARENT_MESSAGE_ID.eq(messageId));
+            .where(MESSAGE.PARENT_MESSAGE_ID.eq(messageId))
+            .orderBy(MESSAGE.CREATED_AT, MESSAGE.ID);
 
         return applySeekPagination(lastMessageId, lastMessageDateTime, query);
     }
@@ -75,32 +78,31 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public Mono<MessageProviderEventPojo> createMessageEventForCreate(final String event,
-                                                                      final MessageProviderDto messageProvider,
-                                                                      final long parentMessageId) {
-        return createMessageEvent(
-            jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
-                .setProvider(messageProvider.toString())
-                .setEvent(JSONB.jsonb(event))
-                .setState(MessageEventStateDto.PENDING.toString())
-                .setAction(MessageEventActionDto.CREATE.toString())
-                .setParentMessageId(parentMessageId)
-            )
-        );
+    public Mono<Void> createMessageEvent(final String event,
+                                         final MessageEventActionDto action,
+                                         final MessageProviderDto messageProvider) {
+        return createMessageEvent(event, action, messageProvider, null);
     }
 
     @Override
-    public Mono<MessageProviderEventPojo> createMessageEventForUpdate(final String event,
-                                                                      final MessageProviderDto messageProvider,
-                                                                      final long messageId) {
-        return createMessageEvent(
+    public Mono<Void> createMessageEvent(final String event,
+                                         final MessageEventActionDto action,
+                                         final MessageProviderDto messageProvider,
+                                         final Long parentMessageId) {
+        final MessageProviderEventRecord record =
             jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
                 .setProvider(messageProvider.toString())
                 .setEvent(JSONB.jsonb(event))
                 .setState(MessageEventStateDto.PENDING.toString())
-                .setAction(MessageEventActionDto.UPDATE.toString())
-                .setMessageId(messageId)
-            ));
+                .setParentMessageId(parentMessageId)
+                .setAction(action.toString())
+            );
+
+        final var query = DSL
+            .insertInto(MESSAGE_PROVIDER_EVENT)
+            .set(record);
+
+        return jooqReactiveOperations.mono(query).then();
     }
 
     @Override
@@ -114,24 +116,13 @@ public class MessageRepositoryImpl implements MessageRepository {
 
     private Flux<MessagePojo> applySeekPagination(final Long lastMessageId,
                                                   final OffsetDateTime lastMessageDateTime,
-                                                  final SelectConditionStep<Record> query) {
+                                                  final SelectSeekStep2<Record, OffsetDateTime, Long> query) {
         if (lastMessageId != null && lastMessageId > 0 && lastMessageDateTime != null) {
             return jooqReactiveOperations
-                .flux(query
-                    .orderBy(MESSAGE.CREATED_AT.desc(), MESSAGE.ID.desc())
-                    .seek(lastMessageDateTime, lastMessageId))
+                .flux(query.seek(lastMessageDateTime, lastMessageId))
                 .map(r -> r.into(MessagePojo.class));
         }
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(MessagePojo.class));
-    }
-
-    private Mono<MessageProviderEventPojo> createMessageEvent(final MessageProviderEventRecord record) {
-        final InsertResultStep<MessageProviderEventRecord> query = DSL
-            .insertInto(MESSAGE_PROVIDER_EVENT)
-            .set(record)
-            .returning();
-
-        return jooqReactiveOperations.mono(query).map(r -> r.into(MessageProviderEventPojo.class));
     }
 }

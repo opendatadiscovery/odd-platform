@@ -2473,6 +2473,7 @@ components:
       enum:
         - PENDING_SEND
         - SENT
+        - EXTERNAL
         - ERROR_SENDING
 
     Message:

@@ -1,9 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.OffsetDateTime;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,14 +21,14 @@ public interface MessageRepository {
 
     Mono<MessagePojo> create(final MessagePojo message);
 
-    Mono<MessageProviderEventPojo> createMessageEventForCreate(final String event,
-                                                               final MessageProviderDto messageProvider,
-                                                               final long parentMessageId);
+    Mono<Void> createMessageEvent(final String event,
+                                  final MessageEventActionDto action,
+                                  final MessageProviderDto messageProvider);
 
-
-    Mono<MessageProviderEventPojo> createMessageEventForUpdate(final String event,
-                                                               final MessageProviderDto messageProvider,
-                                                               final long messageId);
+    Mono<Void> createMessageEvent(final String event,
+                                  final MessageEventActionDto action,
+                                  final MessageProviderDto messageProvider,
+                                  final Long parentMessageId);
 
     Mono<Long> getIdByProviderId(final String providerId);
 }

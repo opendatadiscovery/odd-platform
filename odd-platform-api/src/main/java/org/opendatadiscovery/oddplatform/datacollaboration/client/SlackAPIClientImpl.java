@@ -4,12 +4,16 @@ import com.slack.api.methods.AsyncMethodsClient;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
+import com.slack.api.methods.response.users.UsersInfoResponse;
 import com.slack.api.model.ConversationType;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.SlackAPIException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -57,6 +61,48 @@ public class SlackAPIClientImpl implements SlackAPIClient {
                 }
 
                 sink.next(response.getTs());
+            });
+    }
+
+    @Override
+    public Mono<String> exchangeForUrl(final String channelId, final String messageTs) {
+        return Mono
+            .fromFuture(asyncMethodsClient.chatGetPermalink(r -> r.channel(channelId).messageTs(messageTs)))
+            .handle((response, sink) -> {
+                if (!response.isOk()) {
+                    sink.error(new SlackAPIException(response.getError()));
+                    return;
+                }
+
+                sink.next(response.getPermalink());
+            });
+    }
+
+    @Override
+    public Flux<MessageUserDto> exchangeForUserProfile(final Set<String> userIds) {
+        if (CollectionUtils.isEmpty(userIds)) {
+            return Flux.just();
+        }
+
+        final List<Mono<UsersInfoResponse>> monos = userIds.stream()
+            .map(userId -> asyncMethodsClient.usersInfo(r -> r.user(userId)))
+            .map(Mono::fromFuture)
+            .toList();
+
+        return Flux.concat(monos)
+            .handle((response, sink) -> {
+                if (!response.isOk()) {
+                    log.error("Couldn't get Slack user info: {}", response.getError());
+                    return;
+                }
+
+                final MessageUserDto messageUser = MessageUserDto.builder()
+                    .id(response.getUser().getId())
+                    .name(response.getUser().getName())
+                    .userAvatar(response.getUser().getProfile().getImage24())
+                    .build();
+
+                sink.next(messageUser);
             });
     }
 

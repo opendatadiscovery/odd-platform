@@ -8,14 +8,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageState;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.mapper.DataCollaborationMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
-import org.opendatadiscovery.oddplatform.utils.GsonHelper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -61,7 +59,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     }
 
     @Override
-    // TODO: find a way to get slack channels that have bot installed
+    // TODO: find a way to get Slack channels that have bot installed
     public Mono<MessageChannelList> getChannels(final String nameLike, final MessageProviderDto messageProvider) {
         final MessageProviderClient messageProviderClient = messageProviderClients.get(messageProvider);
         if (messageProviderClient == null) {

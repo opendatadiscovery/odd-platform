@@ -24,7 +24,6 @@ public class DataCollaborationMessageEventProcessorStarter {
     @EventListener(ApplicationReadyEvent.class)
     public void runDataCollaborationMessageSender() {
         log.debug("Data Collaboration message event processor is enabled");
-
-//        executorService.submit(new DataCollaborationMessageEventProcessor(leaderElectionManager));
+        executorService.submit(new DataCollaborationMessageEventProcessor(leaderElectionManager));
     }
 }
