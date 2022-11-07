@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.job;
 
-import com.google.gson.Gson;
 import com.slack.api.model.event.MessageEvent;
-import com.slack.api.util.json.GsonFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -13,7 +11,7 @@ import org.jooq.DSLContext;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderEventStateDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.DataCollaborationMessageSenderException;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
@@ -21,6 +19,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
 import org.opendatadiscovery.oddplatform.notification.exception.NotificationSubscriberException;
+import org.opendatadiscovery.oddplatform.utils.GsonHelper;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EVENT;
@@ -28,8 +27,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EV
 @RequiredArgsConstructor
 @Slf4j
 public class DataCollaborationMessageEventProcessor extends Thread {
-    private static final Gson GSON = GsonFactory.createSnakeCase();
-
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
 
     @Override
@@ -44,7 +41,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         .select(MESSAGE.fields())
                         .from(MESSAGE_PROVIDER_EVENT)
                         .join(MESSAGE).on(MESSAGE.ID.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_ID))
-                        .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageProviderEventStateDto.PENDING.toString()))
+                        .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageEventStateDto.PENDING.toString()))
                         .limit(100)
                         .fetchStream()
                         .map(this::mapRecord)
@@ -57,7 +54,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                     final List<MessageRecord> messageRecords = messageEvents.stream()
                         .map(event -> {
                             final MessageEvent messageEvent =
-                                GSON.fromJson(event.event().getEvent().data(), MessageEvent.class);
+                                GsonHelper.fromJson(event.event().getEvent().data(), MessageEvent.class);
 
                             return new MessageRecord()
                                 .setProvider(event.parentMessage().getProvider())

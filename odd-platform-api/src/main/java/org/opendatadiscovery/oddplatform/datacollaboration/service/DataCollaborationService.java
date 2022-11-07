@@ -1,18 +1,18 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
-import com.slack.api.model.event.MessageEvent;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import reactor.core.publisher.Mono;
 
 public interface DataCollaborationService {
-    Mono<MessageChannelList> getSlackChannels();
+    Mono<MessageChannelList> getChannels(final MessageProviderDto messageProvider);
 
-    Mono<MessageChannelList> getSlackChannels(final String channelNameStartsWith);
+    Mono<MessageChannelList> getChannels(final String nameLike, final MessageProviderDto messageProvider);
 
     Mono<Message> createAndSendMessage(final MessageRequest message, final MessageProviderDto messageProvider);
 
-    Mono<Void> enqueueMessageEvent(final MessageEvent messageEvent, final MessageProviderDto messageProvider);
+    Mono<Void> enqueueMessageEvent(final MessageEventDto messageEvent);
 }

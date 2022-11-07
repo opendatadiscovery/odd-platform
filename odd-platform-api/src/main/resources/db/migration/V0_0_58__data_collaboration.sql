@@ -17,11 +17,14 @@ CREATE TABLE IF NOT EXISTS message
 CREATE TABLE IF NOT EXISTS message_provider_event
 (
     id                BIGSERIAL PRIMARY KEY,
+    message_id        BIGINT,
     parent_message_id BIGINT,
     provider          VARCHAR(64)              NOT NULL,
+    action            VARCHAR(64)              NOT NULL,
     event             JSONB,
     created_at        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc'),
     state             VARCHAR(64),
 
-    CONSTRAINT fk_parent_message_id FOREIGN KEY (parent_message_id) REFERENCES message (id)
+    CONSTRAINT fk_parent_message_id FOREIGN KEY (parent_message_id) REFERENCES message (id),
+    CONSTRAINT fk_message_id FOREIGN KEY (message_id) REFERENCES message (id)
 )

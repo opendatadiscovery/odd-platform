@@ -21,9 +21,14 @@ public interface MessageRepository {
 
     Mono<MessagePojo> create(final MessagePojo message);
 
-    Mono<MessageProviderEventPojo> createMessageEvent(final String event,
-                                                      final MessageProviderDto messageProvider,
-                                                      final long parentMessageId);
+    Mono<MessageProviderEventPojo> createMessageEventForCreate(final String event,
+                                                               final MessageProviderDto messageProvider,
+                                                               final long parentMessageId);
+
+
+    Mono<MessageProviderEventPojo> createMessageEventForUpdate(final String event,
+                                                               final MessageProviderDto messageProvider,
+                                                               final long messageId);
 
     Mono<Long> getIdByProviderId(final String providerId);
 }

@@ -12,8 +12,9 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderEventStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageProviderEventRecord;
@@ -74,23 +75,32 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public Mono<MessageProviderEventPojo> createMessageEvent(final String event,
-                                                             final MessageProviderDto messageProvider,
-                                                             long parentMessageId) {
-        final MessageProviderEventRecord record =
+    public Mono<MessageProviderEventPojo> createMessageEventForCreate(final String event,
+                                                                      final MessageProviderDto messageProvider,
+                                                                      final long parentMessageId) {
+        return createMessageEvent(
             jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
                 .setProvider(messageProvider.toString())
                 .setEvent(JSONB.jsonb(event))
-                .setState(MessageProviderEventStateDto.PENDING.toString())
+                .setState(MessageEventStateDto.PENDING.toString())
+                .setAction(MessageEventActionDto.CREATE.toString())
                 .setParentMessageId(parentMessageId)
-            );
+            )
+        );
+    }
 
-        final InsertResultStep<MessageProviderEventRecord> query = DSL
-            .insertInto(MESSAGE_PROVIDER_EVENT)
-            .set(record)
-            .returning();
-
-        return jooqReactiveOperations.mono(query).map(r -> r.into(MessageProviderEventPojo.class));
+    @Override
+    public Mono<MessageProviderEventPojo> createMessageEventForUpdate(final String event,
+                                                                      final MessageProviderDto messageProvider,
+                                                                      final long messageId) {
+        return createMessageEvent(
+            jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
+                .setProvider(messageProvider.toString())
+                .setEvent(JSONB.jsonb(event))
+                .setState(MessageEventStateDto.PENDING.toString())
+                .setAction(MessageEventActionDto.UPDATE.toString())
+                .setMessageId(messageId)
+            ));
     }
 
     @Override
@@ -114,5 +124,14 @@ public class MessageRepositoryImpl implements MessageRepository {
         }
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(MessagePojo.class));
+    }
+
+    private Mono<MessageProviderEventPojo> createMessageEvent(final MessageProviderEventRecord record) {
+        final InsertResultStep<MessageProviderEventRecord> query = DSL
+            .insertInto(MESSAGE_PROVIDER_EVENT)
+            .set(record)
+            .returning();
+
+        return jooqReactiveOperations.mono(query).map(r -> r.into(MessageProviderEventPojo.class));
     }
 }

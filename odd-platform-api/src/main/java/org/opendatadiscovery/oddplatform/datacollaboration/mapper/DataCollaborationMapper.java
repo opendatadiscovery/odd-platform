@@ -7,16 +7,16 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannel;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.SlackChannelDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 
 @Mapper
 @MapperConfig(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 // TODO: delete this and move to the MessageMapper?
 public interface DataCollaborationMapper {
     @Mapping(source = "id", target = "channelId")
-    MessageChannel mapSlackChannel(final SlackChannelDto slackChannel);
+    MessageChannel mapSlackChannel(final MessageChannelDto slackChannel);
 
-    default MessageChannelList mapSlackChannelList(final List<SlackChannelDto> channels) {
+    default MessageChannelList mapSlackChannelList(final List<MessageChannelDto> channels) {
         return new MessageChannelList().items(channels.stream().map(this::mapSlackChannel).toList());
     }
 }
