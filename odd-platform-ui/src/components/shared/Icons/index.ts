@@ -29,3 +29,6 @@ export { default as MoreIcon } from './MoreIcon';
 export { default as ActivityCreatedIcon } from './ActivityCreatedIcon';
 export { default as ActivityUpdatedIcon } from './ActivityUpdatedIcon';
 export { default as ActivityDeletedIcon } from './ActivityDeletedIcon';
+export { default as SlackIcon } from './SlackIcon';
+export { default as GitBookIcon } from './GitBookIcon';
+export { default as GitHubIcon } from './GitHubIcon';

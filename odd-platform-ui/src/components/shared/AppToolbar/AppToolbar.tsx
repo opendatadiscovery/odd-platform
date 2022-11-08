@@ -1,6 +1,6 @@
 import React, { MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
-import { getIdentity, getOwnership, getVersion } from 'redux/selectors';
+import { getIdentity, getOwnership } from 'redux/selectors';
 import {
   createDataEntitiesSearch,
   createTermSearch,
@@ -20,6 +20,7 @@ import {
   AppTabs,
 } from 'components/shared';
 import * as S from './AppToolbarStyles';
+import AppInfoMenu from './AppInfoMenu/AppInfoMenu';
 
 const AppToolbar: React.FC = () => {
   const location = useLocation();
@@ -27,7 +28,6 @@ const AppToolbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const { searchPath, termSearchPath } = useAppPaths();
 
-  const version = useAppSelector(getVersion);
   const identity = useAppSelector(getIdentity);
   const owner = useAppSelector(getOwnership);
 
@@ -151,6 +151,7 @@ const AppToolbar: React.FC = () => {
               ) : null}
             </Grid>
             <S.SectionDesktop item>
+              <AppInfoMenu />
               <S.UserAvatar stroke='currentColor' />
               <S.UserName>{owner?.name || identity?.username}</S.UserName>
               <AppIconButton
@@ -171,19 +172,11 @@ const AppToolbar: React.FC = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
         keepMounted
-        transformOrigin={{ vertical: -42, horizontal: 'right' }}
+        transformOrigin={{ vertical: -20, horizontal: 'right' }}
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
         <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
-        {version && (
-          <div>
-            <AppMenuItem divider />
-            <S.CaptionsTypographyWrapper>
-              <Typography variant='caption'>ODD Platform v.{version}</Typography>
-            </S.CaptionsTypographyWrapper>
-          </div>
-        )}
       </AppMenu>
     </S.Bar>
   );

@@ -6,7 +6,14 @@ import * as S from './AppMenuItemStyles';
 interface AppMenuItemProps
   extends Pick<
     MenuItemProps,
-    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue' | 'ref' | 'disabled'
+    | 'children'
+    | 'onClick'
+    | 'divider'
+    | 'value'
+    | 'defaultValue'
+    | 'ref'
+    | 'disabled'
+    | 'sx'
   > {
   minWidth?: number;
   maxWidth?: number;

@@ -1,7 +1,7 @@
-import { Menu, menuClasses } from '@mui/material';
+import { Menu, menuClasses, MenuProps } from '@mui/material';
 import styled from 'styled-components';
 
-interface AppMenuStyleProps {
+interface AppMenuStyleProps extends MenuProps {
   $minWidth?: number;
   $maxWidth?: number;
   $maxHeight?: number;
