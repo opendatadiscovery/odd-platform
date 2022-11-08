@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
 import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.mapper.DataCollaborationMapper;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
@@ -25,6 +26,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final SlackAPIClient slackAPIClient;
     private final MessageMapper messageMapper;
+    private final DataCollaborationMapper dataCollaborationMapper;
 
     @Override
     public Mono<MessageList> getMessagesByDataEntityId(final long dataEntityId,
@@ -51,6 +53,7 @@ public class MessageServiceImpl implements MessageService {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
 
+                // TODO: handler, not slack api client
                 return slackAPIClient
                     .exchangeForUserProfile(userIds)
                     .collectMap(MessageUserDto::id, identity());
@@ -60,9 +63,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Mono<MessageChannelList> getExistingMessagesChannels(final long dataEntityId, final String channelName) {
-        return Mono.empty();
-//        return messageRepository.listExistingChannels(dataEntityId, channelName)
-//            .collectList()
-//            .map(messageMapper::mapPojos);
+        return messageRepository.listChannelsByDataEntity(dataEntityId, channelName)
+            .collectList()
+            .map(dataCollaborationMapper::mapSlackChannelList);
     }
 }

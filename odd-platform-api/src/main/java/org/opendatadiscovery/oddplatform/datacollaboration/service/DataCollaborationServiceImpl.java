@@ -75,21 +75,31 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     @Override
     public Mono<Message> createAndSendMessage(final MessageRequest messageRequest,
                                               final MessageProviderDto messageProvider) {
-        final MessagePojo messagePojo = new MessagePojo()
-            .setDataEntityId(messageRequest.getDataEntityId())
-            .setState(MessageStateDto.PENDING_SEND.toString())
-            .setProvider(messageProvider.toString())
-            .setChannelId(messageRequest.getChannelId())
-            .setText(messageRequest.getText());
+        final MessageProviderClient messageProviderClient = messageProviderClients.get(messageProvider);
+        if (messageProviderClient == null) {
+            throw new IllegalStateException(
+                "No message provider client found for %s".formatted(messageProvider.toString()));
+        }
 
-        return messageRepository.create(messagePojo)
-            // TODO: mapper
-            .map(pojo -> new Message()
-                .id(pojo.getId())
-                .text(pojo.getText())
-                .createdAt(pojo.getCreatedAt())
-                .state(MessageState.fromValue(pojo.getState()))
-            );
+        return messageProviderClient.getChannelById(messageRequest.getChannelId())
+            .flatMap(channel -> {
+                final MessagePojo messagePojo = new MessagePojo()
+                    .setDataEntityId(messageRequest.getDataEntityId())
+                    .setState(MessageStateDto.PENDING_SEND.toString())
+                    .setProvider(messageProvider.toString())
+                    .setChannelId(channel.id())
+                    .setChannelName(channel.name())
+                    .setText(messageRequest.getText());
+
+                return messageRepository.create(messagePojo)
+                    // TODO: mapper
+                    .map(pojo -> new Message()
+                        .id(pojo.getId())
+                        .text(pojo.getText())
+                        .createdAt(pojo.getCreatedAt())
+                        .state(MessageState.fromValue(pojo.getState()))
+                    );
+            });
     }
 
     @Override

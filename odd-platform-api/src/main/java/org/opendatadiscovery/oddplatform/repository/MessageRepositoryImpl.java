@@ -10,9 +10,11 @@ import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectSeekStep2;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
@@ -66,6 +68,24 @@ public class MessageRepositoryImpl implements MessageRepository {
             .orderBy(MESSAGE.CREATED_AT, MESSAGE.ID);
 
         return applySeekPagination(lastMessageId, lastMessageDateTime, query);
+    }
+
+    @Override
+    public Flux<MessageChannelDto> listChannelsByDataEntity(final long dataEntityId, final String channelNameLike) {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(MESSAGE.DATA_ENTITY_ID.eq(dataEntityId));
+
+        if (StringUtils.isNotEmpty(channelNameLike)) {
+            conditions.add(MESSAGE.CHANNEL_NAME.startsWithIgnoreCase(channelNameLike));
+        }
+
+        final SelectConditionStep<Record2<String, String>> query = DSL
+            .selectDistinct(MESSAGE.CHANNEL_ID, MESSAGE.CHANNEL_NAME)
+            .from(MESSAGE)
+            .where(conditions);
+
+        return jooqReactiveOperations.flux(query)
+            .map(r -> MessageChannelDto.builder().id(r.component1()).name(r.component2()).build());
     }
 
     @Override

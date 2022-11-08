@@ -41,6 +41,6 @@ public interface MessageMapper {
     default MessageChannel messageChannel(final MessagePojo message) {
         return new MessageChannel()
             .channelId(message.getChannelId())
-            .name(message.getChannelId());
+            .name(message.getChannelName());
     }
 }

@@ -47,6 +47,21 @@ public class SlackAPIClientImpl implements SlackAPIClient {
     }
 
     @Override
+    public Mono<MessageChannelDto> exchangeForChannel(final String channelId) {
+        return Mono.fromFuture(asyncMethodsClient.conversationsInfo(r -> r.channel(channelId)))
+            .handle((response, sink) -> {
+                if (!response.isOk()) {
+                    sink.error(new SlackAPIException(response.getError()));
+                }
+
+                sink.next(MessageChannelDto.builder()
+                    .id(channelId)
+                    .name(response.getChannel().getName())
+                    .build());
+            });
+    }
+
+    @Override
     public Mono<String> postMessage(final String channelId, final String string) {
         final ChatPostMessageRequest req = ChatPostMessageRequest.builder()
             .blocks(List.of(section(b -> b.text(markdownText(string)))))

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS message
     parent_message_id       BIGINT,
     data_entity_id          BIGINT                   NOT NULL,
     channel_id              VARCHAR(128)             NOT NULL,
+    channel_name            VARCHAR(128)             NOT NULL,
     text                    TEXT                     NOT NULL,
     created_at              TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() at time zone 'utc'),
     sent_at                 TIMESTAMP WITH TIME ZONE NULL,

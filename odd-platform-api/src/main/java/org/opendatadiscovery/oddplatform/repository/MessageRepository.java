@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.OffsetDateTime;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
@@ -18,6 +19,8 @@ public interface MessageRepository {
                                            final Long lastMessageId,
                                            final OffsetDateTime lastMessageDateTime,
                                            final int size);
+
+    Flux<MessageChannelDto> listChannelsByDataEntity(final long dataEntityId, final String channelNameLike);
 
     Mono<MessagePojo> create(final MessagePojo message);
 

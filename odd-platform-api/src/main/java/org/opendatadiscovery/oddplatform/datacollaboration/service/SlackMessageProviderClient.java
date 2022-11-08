@@ -7,6 +7,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +23,11 @@ public class SlackMessageProviderClient implements MessageProviderClient {
     @Override
     public Flux<MessageChannelDto> getChannels(final String nameLike) {
         return slackAPIClient.getSlackChannels().filter(slackChannel -> slackChannel.name().startsWith(nameLike));
+    }
+
+    @Override
+    public Mono<MessageChannelDto> getChannelById(final String channelId) {
+        return slackAPIClient.exchangeForChannel(channelId);
     }
 
     @Override
