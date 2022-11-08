@@ -85,10 +85,3 @@ export const UserName = styled('p')(({ theme }) => ({
   color: theme.palette.text.primary,
   margin: theme.spacing(0, 1),
 }));
-
-export const CaptionsTypographyWrapper = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  padding: theme.spacing(0.75, 2),
-}));
