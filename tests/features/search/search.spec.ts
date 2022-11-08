@@ -21,7 +21,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill valid expression in search input`, async () => {
         await pages.catalog.fillSearchBar(entityNameWithAlphabeticChars);
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
       });
     });
@@ -33,7 +32,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill invalid expression in search input`, async () => {
         await pages.catalog.fillSearchBar('entityNameWithAlphabeticChars');
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListEmpty()).toBeTruthy();
       });
     });
@@ -45,7 +43,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill single word expression which starts with special characters in the input`, async () => {
         await pages.catalog.fillSearchBar(entityNameWithSpecialChars);
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListItemVisible(entityNameWithSpecialChars)).toBeTruthy();
       });
     });
@@ -57,7 +54,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill single word expression which starts with numbers in the input`, async () => {
         await pages.catalog.fillSearchBar(numbersDataEntity);
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListItemVisible(numbersDataEntity)).toBeTruthy();
       });
     });
@@ -68,7 +64,7 @@ test.describe('Search', () => {
       steps: { pages },
     }) => {
       await test.step(`Empty search string`, async () => {
-        await pages.catalog.searchButton.click();
+        await pages.catalog.fillSearchBar('');
         expect(await pages.catalog.isListFull()).toBeTruthy();
       });
     });
@@ -82,7 +78,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill expressions are contained in one entity`, async () => {
         await pages.catalog.fillSearchBar('books aqa');
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListItemVisible('books_aqa')).toBeTruthy();
         expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
       });
@@ -95,7 +90,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill expression are contained in different entities`, async () => {
         await pages.catalog.fillSearchBar('group aqa');
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListEmpty()).toBeTruthy();
       });
     });
@@ -107,7 +101,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill expressions are contained numbers and letters`, async () => {
         await pages.catalog.fillSearchBar('737boeing aqa');
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListItemVisible(numbersDataEntity)).toBeTruthy();
       });
     });
@@ -119,7 +112,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill valid expression and invalid expression`, async () => {
         await pages.catalog.fillSearchBar('book ticket');
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListEmpty()).toBeTruthy();
       });
     });
@@ -131,7 +123,6 @@ test.describe('Search', () => {
     }) => {
       await test.step(`Fill invalid expressions`, async () => {
         await pages.catalog.fillSearchBar('train ticket');
-        await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListEmpty()).toBeTruthy();
       });
     });

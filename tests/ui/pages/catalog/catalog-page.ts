@@ -53,9 +53,6 @@ export default class CatalogPage extends BasePage {
 
   async fillSearchBar(text: string) {
     await this.searchBar.fill(text);
-  }
-
-  async confirmSearch() {
     await this.page.locator(SELECTORS.searchBar).press('Enter');
   }
 
