@@ -1,20 +1,20 @@
 import {
   Configuration,
-  DataEntity,
-  DataEntityRef,
-  MultipleFacetType,
+  type DataEntity,
+  type DataEntityRef,
+  type MultipleFacetType,
   SearchApi,
-  SearchApiGetFiltersForFacetRequest,
-  SearchApiGetSearchFacetListRequest,
-  SearchApiGetSearchResultsRequest,
-  SearchApiGetSearchSuggestionsRequest,
-  SearchApiSearchRequest,
-  SearchApiUpdateSearchFacetsRequest,
-  SearchFacetsData,
+  type SearchApiGetFiltersForFacetRequest,
+  type SearchApiGetSearchFacetListRequest,
+  type SearchApiGetSearchResultsRequest,
+  type SearchApiGetSearchSuggestionsRequest,
+  type SearchApiSearchRequest,
+  type SearchApiUpdateSearchFacetsRequest,
+  type SearchFacetsData,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { CurrentPageInfo, FacetOptions } from 'redux/interfaces';
+import type { CurrentPageInfo, FacetOptions } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);

@@ -1,14 +1,14 @@
 import {
-  Activity as GeneratedActivity,
+  type Activity as GeneratedActivity,
   ActivityApi,
-  ActivityCountInfo,
+  type ActivityCountInfo,
   Configuration,
   DataEntityApi,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import {
+import type {
   Activity,
   ActivityCountParamsRequest,
   ActivityListResponse,
@@ -17,11 +17,12 @@ import {
   DataEntityActivityQueryParams,
 } from 'redux/interfaces';
 import { toDateWithoutOffset } from 'lib/helpers';
-import { activityListSize } from 'redux/slices/activity.slice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const activityApi = new ActivityApi(apiClientConf);
 const dataEntityApi = new DataEntityApi(apiClientConf);
+
+export const activityListSize = 20;
 
 const castCreatedAtToTimestamp = (activities: GeneratedActivity[]) =>
   activities.map<Activity>(activity => ({

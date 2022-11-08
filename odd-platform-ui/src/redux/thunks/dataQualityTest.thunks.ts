@@ -1,14 +1,14 @@
 import {
   Configuration,
-  DataEntity,
-  DataEntityList,
+  type DataEntity,
+  type DataEntityList,
   DataQualityApi,
-  DataQualityApiGetDataEntityDataQATestsRequest,
-  DataQualityApiGetDatasetSLAReportRequest,
-  DataQualityApiGetDatasetTestReportRequest,
-  DataQualityApiSetDataQATestSeverityRequest,
-  DataSetSLAReport,
-  DataSetTestReport,
+  type DataQualityApiGetDataEntityDataQATestsRequest,
+  type DataQualityApiGetDatasetSLAReportRequest,
+  type DataQualityApiGetDatasetTestReportRequest,
+  type DataQualityApiSetDataQATestSeverityRequest,
+  type DataSetSLAReport,
+  type DataSetTestReport,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';

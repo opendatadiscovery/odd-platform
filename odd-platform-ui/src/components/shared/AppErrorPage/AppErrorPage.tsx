@@ -9,26 +9,21 @@ interface AppErrorPageProps {
   error?: ErrorState;
 }
 
-const AppErrorPage: React.FC<AppErrorPageProps> = ({
-  fetchStatus,
-  error,
-}) =>
+const AppErrorPage: React.FC<AppErrorPageProps> = ({ fetchStatus, error }) =>
   fetchStatus === 'errorFetching' ? (
     <Grid sx={{ mt: 10 }}>
-      <Grid container alignItems="center" justifyContent="center">
+      <Grid container alignItems='center' justifyContent='center'>
         <Grid item>
-          <Typography variant="errorCode" sx={{ mr: 4 }}>
-            {error?.statusCode}
-          </Typography>
+          {/* <Typography variant="errorCode" sx={{ mr: 4 }}> */}
+          {/*   {error?.statusCode} */}
+          {/* </Typography> */}
         </Grid>
-        <Grid item alignItems="center">
-          <Typography variant="h1">
-            {error?.statusText || 'Unknown Error'}
-          </Typography>
-          <Grid container alignItems="center">
-            <Typography variant="body1">Return to the</Typography>
-            <AppButton size="small" color="tertiary">
-              <Link to="/">Home Page</Link>
+        <Grid item alignItems='center'>
+          <Typography variant='h1'>{error?.statusText || 'Unknown Error'}</Typography>
+          <Grid container alignItems='center'>
+            <Typography variant='body1'>Return to the</Typography>
+            <AppButton size='small' color='tertiary'>
+              <Link to='/'>Home Page</Link>
             </AppButton>
           </Grid>
         </Grid>

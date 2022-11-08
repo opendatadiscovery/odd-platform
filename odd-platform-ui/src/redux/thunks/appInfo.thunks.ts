@@ -1,4 +1,4 @@
-import { Configuration, AppInfoApi, AppInfo } from 'generated-sources';
+import { Configuration, AppInfoApi, type AppInfo } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';

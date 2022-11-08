@@ -1,27 +1,27 @@
 import {
   Configuration,
   DataEntityApi,
-  DataEntityApiCreateOwnershipRequest,
-  DataEntityApiDeleteOwnershipRequest,
-  DataEntityApiUpdateOwnershipRequest,
-  Owner,
+  type DataEntityApiCreateOwnershipRequest,
+  type DataEntityApiDeleteOwnershipRequest,
+  type DataEntityApiUpdateOwnershipRequest,
+  type Owner,
   OwnerApi,
-  OwnerApiCreateOwnerRequest,
-  OwnerApiDeleteOwnerRequest,
-  OwnerApiGetOwnerListRequest,
-  OwnerApiUpdateOwnerRequest,
-  Ownership,
+  type OwnerApiCreateOwnerRequest,
+  type OwnerApiDeleteOwnerRequest,
+  type OwnerApiGetOwnerListRequest,
+  type OwnerApiUpdateOwnerRequest,
+  type Ownership,
   TitleApi,
-  TitleApiGetTitleListRequest,
-  TitleList,
+  type TitleApiGetTitleListRequest,
+  type TitleList,
   TermApi,
-  TermApiCreateTermOwnershipRequest,
-  TermApiDeleteTermOwnershipRequest,
-  TermApiUpdateTermOwnershipRequest,
+  type TermApiCreateTermOwnershipRequest,
+  type TermApiDeleteTermOwnershipRequest,
+  type TermApiUpdateTermOwnershipRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { CurrentPageInfo } from 'redux/interfaces';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);

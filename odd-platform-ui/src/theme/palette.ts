@@ -279,4 +279,11 @@ export const palette = createPalette({
     updated: colors.blue5,
     deleted: colors.red5,
   },
+  toast: {
+    success: colors.black5,
+    error: colors.red5,
+    loading: '',
+    blank: '',
+    custom: '',
+  },
 });

@@ -1,14 +1,14 @@
 import {
   Configuration,
   DataSetApi,
-  DataSetApiGetDataSetStructureByVersionIdRequest,
-  DataSetApiGetDataSetStructureLatestRequest,
+  type DataSetApiGetDataSetStructureByVersionIdRequest,
+  type DataSetApiGetDataSetStructureLatestRequest,
   DatasetFieldApi,
-  DatasetFieldApiCreateEnumValueRequest,
-  DatasetFieldApiGetEnumValuesRequest,
-  DatasetFieldApiUpdateDatasetFieldRequest,
+  type DatasetFieldApiCreateEnumValueRequest,
+  type DatasetFieldApiGetEnumValuesRequest,
+  type DatasetFieldApiUpdateDatasetFieldRequest,
 } from 'generated-sources';
-import {
+import type {
   DataSetFieldEnumsResponse,
   DataSetStructureResponse,
   UpdateDataSetFieldFormResponse,

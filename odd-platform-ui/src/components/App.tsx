@@ -7,6 +7,7 @@ import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { Toaster } from 'react-hot-toast';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -31,6 +32,7 @@ const App: React.FC = () => {
 
   return (
     <div className='App'>
+      <Toaster position='bottom-right' />
       {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>

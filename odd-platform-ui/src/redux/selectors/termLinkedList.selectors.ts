@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DataEntitiesState, RootState, TermLinkedListState } from 'redux/interfaces';
-import { getTermId } from 'redux/selectors';
+import type { DataEntitiesState, RootState, TermLinkedListState } from 'redux/interfaces';
+import { getTermId } from 'redux/selectors/terms.selectors';
 import * as actions from 'redux/actions';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 

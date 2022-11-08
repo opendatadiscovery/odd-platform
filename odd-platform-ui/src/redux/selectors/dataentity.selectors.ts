@@ -1,19 +1,16 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DataEntitiesState, RootState } from 'redux/interfaces';
+import type { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClass,
   DataEntityClassNameEnum,
   DataEntityType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { createStatusesSelector } from 'redux/selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { emptyObj } from 'lib/constants';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
-
-export const getDataEntityId = (_: RootState, dataEntityId: number | string) =>
-  dataEntityId;
 
 export const getDataEntityTypesByClassName = (entityClassName: DataEntityClassNameEnum) =>
   createSelector(

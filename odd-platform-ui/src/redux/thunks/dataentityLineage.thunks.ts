@@ -1,13 +1,13 @@
 import {
   Configuration,
   DataEntityApi,
-  DataEntityApiGetDataEntityDownstreamLineageRequest,
-  DataEntityApiGetDataEntityUpstreamLineageRequest,
-  DataEntityLineage,
+  type DataEntityApiGetDataEntityDownstreamLineageRequest,
+  type DataEntityApiGetDataEntityUpstreamLineageRequest,
+  type DataEntityLineage,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { DataEntityLineageRootNodeId } from 'redux/interfaces/dataentityLineage';
+import type { DataEntityLineageRootNodeId } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);

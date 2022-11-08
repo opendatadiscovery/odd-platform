@@ -1,5 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DataEntitiesState, DataQualityTestState, RootState } from 'redux/interfaces';
+import type {
+  DataEntitiesState,
+  DataQualityTestState,
+  RootState,
+} from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import isEmpty from 'lodash/isEmpty';

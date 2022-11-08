@@ -1,13 +1,13 @@
 import {
   Configuration,
-  Tag,
+  type Tag,
   TagApi,
-  TagApiCreateTagRequest,
-  TagApiDeleteTagRequest,
-  TagApiGetPopularTagListRequest,
-  TagApiUpdateTagRequest,
+  type TagApiCreateTagRequest,
+  type TagApiDeleteTagRequest,
+  type TagApiGetPopularTagListRequest,
+  type TagApiUpdateTagRequest,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';

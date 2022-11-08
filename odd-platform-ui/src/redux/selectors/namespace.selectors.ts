@@ -1,15 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'redux/interfaces';
+import type { RootState, NamespacesState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
-import { NamespacesState } from 'redux/interfaces/state';
 import { namespaceAdapter } from 'redux/slices/namespace.slice';
 import * as actions from 'redux/actions';
 
-const namespacesState = ({ namespaces }: RootState): NamespacesState =>
-  namespaces;
+const namespacesState = ({ namespaces }: RootState): NamespacesState => namespaces;
 
-export const { selectAll: getNamespaceList } =
-  namespaceAdapter.getSelectors<RootState>(state => state.namespaces);
+export const { selectAll: getNamespaceList } = namespaceAdapter.getSelectors<RootState>(
+  state => state.namespaces
+);
 
 export const getNamespaceListFetchingStatuses = createStatusesSelector(
   actions.fetchNamespacesActionType

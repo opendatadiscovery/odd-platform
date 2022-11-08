@@ -1,9 +1,10 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { DataEntityRef } from 'generated-sources';
+import type { DataEntityRef } from 'generated-sources';
 import { Link } from 'react-router-dom';
-import { EntityClassItem, DialogWrapper } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
+import EntityClassItem from '../EntityClassItem/EntityClassItem';
+import DialogWrapper from '../DialogWrapper/DialogWrapper';
 import * as S from './EntitiesListModalStyles';
 
 type LabelForTypes =
@@ -50,12 +51,10 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   );
 
   const modalTitle = (
-    <Typography variant="h4">{`${labelFor} for ${dataEntityName}`}</Typography>
+    <Typography variant='h4'>{`${labelFor} for ${dataEntityName}`}</Typography>
   );
 
-  const modalContent = () => (
-    <div>{entities?.map(entity => listItem(entity))}</div>
-  );
+  const modalContent = () => <div>{entities?.map(entity => listItem(entity))}</div>;
 
   return (
     <DialogWrapper
@@ -64,7 +63,7 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
       }
       title={modalTitle}
       renderContent={modalContent}
-      maxWidth="md"
+      maxWidth='md'
     />
   );
 };

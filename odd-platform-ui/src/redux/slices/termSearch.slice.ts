@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { termsSearchActTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
-import {
+import type {
   SearchFacetStateById,
   SearchFilterStateSynced,
   TermSearchFacetNames,
@@ -9,7 +9,7 @@ import {
   TermSearchState,
   TermsSearchFacetStateById,
 } from 'redux/interfaces';
-import {
+import type {
   CountableSearchFilter,
   SearchFilter,
   TermSearchFacetsData,
@@ -142,12 +142,14 @@ export const termsSearchSlice = createSlice({
             get(selectedOption, 'name')
           );
 
-          selectedOptionState = {
-            entityId,
-            entityName,
-            selected: false,
-            syncedState: false,
-          };
+          selectedOptionState = entityId
+            ? {
+                entityId,
+                entityName,
+                selected: false,
+                syncedState: false,
+              }
+            : undefined;
         }
       }
 

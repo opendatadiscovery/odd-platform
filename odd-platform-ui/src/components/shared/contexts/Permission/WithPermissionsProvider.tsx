@@ -1,6 +1,6 @@
 import React from 'react';
-import { Permission } from 'generated-sources';
-import { PermissionProvider } from 'components/shared/contexts/index';
+import type { Permission } from 'generated-sources';
+import PermissionProvider from './PermissionProvider';
 
 interface WithPermissionsProviderProps {
   allowedPermissions: Permission[];

@@ -1,14 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { dataEntitiesSearchActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
-import {
+import type {
   DataEntitySearchState,
   FacetStateUpdate,
   SearchFacetNames,
   SearchFacetStateById,
   SearchFilterStateSynced,
 } from 'redux/interfaces';
-import { CountableSearchFilter, SearchFacetsData, SearchFilter } from 'generated-sources';
+import type {
+  CountableSearchFilter,
+  SearchFacetsData,
+  SearchFilter,
+} from 'generated-sources';
 import mapValues from 'lodash/mapValues';
 import reduce from 'lodash/reduce';
 import { assignWith } from 'redux/lib/helpers';
@@ -153,12 +157,14 @@ export const dataEntitiesSearchSlice = createSlice({
             get(selectedOption, 'name')
           );
 
-          selectedOptionState = {
-            entityId,
-            entityName,
-            selected: false,
-            syncedState: false,
-          };
+          selectedOptionState = entityId
+            ? {
+                entityId,
+                entityName,
+                selected: false,
+                syncedState: false,
+              }
+            : undefined;
         }
       }
 

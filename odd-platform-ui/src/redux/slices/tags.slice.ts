@@ -1,5 +1,5 @@
-import { TagsState } from 'redux/interfaces/state';
-import { Tag } from 'generated-sources';
+import type { TagsState } from 'redux/interfaces';
+import type { Tag } from 'generated-sources';
 import { tagsActTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';

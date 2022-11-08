@@ -32,3 +32,4 @@ export { default as ActivityDeletedIcon } from './ActivityDeletedIcon';
 export { default as SlackIcon } from './SlackIcon';
 export { default as GitBookIcon } from './GitBookIcon';
 export { default as GitHubIcon } from './GitHubIcon';
+export { default as InfoIcon } from './InfoIcon';

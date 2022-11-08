@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   Configuration,
-  Permission,
+  type Permission,
   PermissionApi,
-  PermissionApiGetResourcePermissionsRequest,
-  PermissionResourceType,
+  type PermissionApiGetResourcePermissionsRequest,
+  type PermissionResourceType,
 } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions';

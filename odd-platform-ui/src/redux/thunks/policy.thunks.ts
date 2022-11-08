@@ -1,15 +1,15 @@
 import {
   Configuration,
-  Policy,
+  type Policy,
   PolicyApi,
-  PolicyApiCreatePolicyRequest,
-  PolicyApiDeletePolicyRequest,
-  PolicyApiGetPolicyDetailsRequest,
-  PolicyApiGetPolicyListRequest,
-  PolicyApiUpdatePolicyRequest,
-  PolicyDetails,
+  type PolicyApiCreatePolicyRequest,
+  type PolicyApiDeletePolicyRequest,
+  type PolicyApiGetPolicyDetailsRequest,
+  type PolicyApiGetPolicyListRequest,
+  type PolicyApiUpdatePolicyRequest,
+  type PolicyDetails,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';

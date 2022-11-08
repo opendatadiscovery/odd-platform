@@ -1,17 +1,17 @@
 import {
   Configuration,
-  Tag,
+  type Tag,
   TermApi,
-  TermApiCreateTermRequest,
-  TermApiCreateTermTagsRelationsRequest,
-  TermApiDeleteTermRequest,
-  TermApiGetTermDetailsRequest,
-  TermApiGetTermsListRequest,
-  TermApiUpdateTermRequest,
-  TermDetails,
-  TermRef,
+  type TermApiCreateTermRequest,
+  type TermApiCreateTermTagsRelationsRequest,
+  type TermApiDeleteTermRequest,
+  type TermApiGetTermDetailsRequest,
+  type TermApiGetTermsListRequest,
+  type TermApiUpdateTermRequest,
+  type TermDetails,
+  type TermRef,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';

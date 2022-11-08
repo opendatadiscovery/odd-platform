@@ -1,7 +1,9 @@
 import React from 'react';
-import { LabelItem, AppIconButton, AppPopover } from 'components/shared';
-import { Label } from 'generated-sources';
+import type { Label } from 'generated-sources';
 import { MoreIcon } from 'components/shared/Icons';
+import LabelItem from '../../LabelItem/LabelItem';
+import AppIconButton from '../../AppIconButton/AppIconButton';
+import AppPopover from '../../AppPopover/AppPopover';
 
 interface TruncatedLabelMenuProps {
   labelList?: Label[];

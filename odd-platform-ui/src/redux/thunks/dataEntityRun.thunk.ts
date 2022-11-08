@@ -1,10 +1,10 @@
 import {
   Configuration,
   DataEntityRunApi,
-  DataEntityRunApiGetRunsRequest,
-  DataEntityRun,
+  type DataEntityRunApiGetRunsRequest,
+  type DataEntityRun,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
+import type { CurrentPageInfo } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';

@@ -1,15 +1,15 @@
 import {
   Configuration,
-  Namespace,
+  type Namespace,
   NamespaceApi,
-  NamespaceApiCreateNamespaceRequest,
-  NamespaceApiDeleteNamespaceRequest,
-  NamespaceApiGetNamespaceListRequest,
-  NamespaceApiUpdateNamespaceRequest,
+  type NamespaceApiCreateNamespaceRequest,
+  type NamespaceApiDeleteNamespaceRequest,
+  type NamespaceApiGetNamespaceListRequest,
+  type NamespaceApiUpdateNamespaceRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);

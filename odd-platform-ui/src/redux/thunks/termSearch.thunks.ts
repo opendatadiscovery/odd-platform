@@ -1,17 +1,17 @@
 import {
   Configuration,
-  Term,
+  type Term,
   TermApi,
-  TermApiGetTermFiltersForFacetRequest,
-  TermApiGetTermSearchFacetListRequest,
-  TermApiGetTermSearchResultsRequest,
-  TermApiGetTermSearchSuggestionsRequest,
-  TermApiTermSearchRequest,
-  TermApiUpdateTermSearchFacetsRequest,
-  TermRef,
-  TermSearchFacetsData,
+  type TermApiGetTermFiltersForFacetRequest,
+  type TermApiGetTermSearchFacetListRequest,
+  type TermApiGetTermSearchResultsRequest,
+  type TermApiGetTermSearchSuggestionsRequest,
+  type TermApiTermSearchRequest,
+  type TermApiUpdateTermSearchFacetsRequest,
+  type TermRef,
+  type TermSearchFacetsData,
 } from 'generated-sources';
-import {
+import type {
   CurrentPageInfo,
   TermSearchFacetOptions,
   TermSearchOptionalFacetNames,

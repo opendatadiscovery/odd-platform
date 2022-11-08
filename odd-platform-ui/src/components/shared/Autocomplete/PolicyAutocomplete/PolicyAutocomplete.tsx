@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react';
+import React, { type HTMLAttributes } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   Autocomplete,
@@ -6,18 +6,18 @@ import {
   Theme,
   Typography,
 } from '@mui/material';
-import { Policy, RoleFormData } from 'generated-sources';
+import type { Policy, RoleFormData } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { AppInput } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchPolicyList } from 'redux/thunks';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { SxProps } from '@mui/system';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type SxProps } from '@mui/system';
+import AppInput from '../../AppInput/AppInput';
 
 interface PolicyAutocompleteProps {
   append: UseFieldArrayAppend<RoleFormData, 'policies'>;

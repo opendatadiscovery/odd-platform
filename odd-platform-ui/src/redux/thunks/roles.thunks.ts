@@ -1,13 +1,13 @@
 import {
   Configuration,
-  Role,
+  type Role,
   RoleApi,
-  RoleApiCreateRoleRequest,
-  RoleApiDeleteRoleRequest,
-  RoleApiGetRolesListRequest,
-  RoleApiUpdateRoleRequest,
+  type RoleApiCreateRoleRequest,
+  type RoleApiDeleteRoleRequest,
+  type RoleApiGetRolesListRequest,
+  type RoleApiUpdateRoleRequest,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';

@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { DataEntitiesState } from 'redux/interfaces';
+import type { DataEntitiesState } from 'redux/interfaces';
 import keyBy from 'lodash/keyBy';
-import { DataEntityDetails } from 'generated-sources';
+import type { DataEntityDetails } from 'generated-sources';
 import omit from 'lodash/omit';
 import { dataEntitiesActionTypePrefix } from 'redux/actions';
 import uniqBy from 'lodash/uniqBy';

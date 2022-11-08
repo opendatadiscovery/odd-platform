@@ -1,5 +1,4 @@
 import React, { MouseEvent } from 'react';
-import { AppIconButton, AppMenu } from 'components/shared/index';
 import {
   GitBookIcon,
   GitHubIcon,
@@ -10,6 +9,8 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { getVersion } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import AppMenu from '../../AppMenu/AppMenu';
+import AppIconButton from '../../AppIconButton/AppIconButton';
 import * as S from './AppInfoMenuStyles';
 
 const AppInfoMenu: React.FC = () => {

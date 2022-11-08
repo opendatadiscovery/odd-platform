@@ -1,15 +1,15 @@
 import {
   Configuration,
-  DataSource,
+  type DataSource,
   DataSourceApi,
-  DataSourceApiDeleteDataSourceRequest,
-  DataSourceApiGetDataSourceListRequest,
-  DataSourceApiRegenerateDataSourceTokenRequest,
-  DataSourceApiRegisterDataSourceRequest,
-  DataSourceApiUpdateDataSourceRequest,
+  type DataSourceApiDeleteDataSourceRequest,
+  type DataSourceApiGetDataSourceListRequest,
+  type DataSourceApiRegenerateDataSourceTokenRequest,
+  type DataSourceApiRegisterDataSourceRequest,
+  type DataSourceApiUpdateDataSourceRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 

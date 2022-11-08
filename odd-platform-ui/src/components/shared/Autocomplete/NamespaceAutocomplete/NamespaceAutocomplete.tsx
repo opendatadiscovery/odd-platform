@@ -11,12 +11,13 @@ import {
   Namespace,
   TermFormData,
 } from 'generated-sources';
-import { AppInput, AutocompleteSuggestion } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
-import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
+import type { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
+import AutocompleteSuggestion from '../../AutocompleteSuggestion/AutocompleteSuggestion';
+import AppInput from '../../AppInput/AppInput';
 
 type FilterOption = Omit<Namespace, 'id' | 'name'> & Partial<Namespace>;
 

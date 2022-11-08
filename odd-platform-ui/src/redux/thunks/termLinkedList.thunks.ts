@@ -1,10 +1,10 @@
 import {
   Configuration,
-  DataEntity,
+  type DataEntity,
   TermApi,
-  TermApiGetTermLinkedItemsRequest,
+  type TermApiGetTermLinkedItemsRequest,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';

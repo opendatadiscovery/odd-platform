@@ -1,8 +1,12 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DatasetStructureIds, DatasetStructureState, RootState } from 'redux/interfaces';
+import type {
+  DatasetStructureIds,
+  DatasetStructureState,
+  RootState,
+} from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { EnumValue } from 'generated-sources';
+import type { EnumValue } from 'generated-sources';
 import { emptyArr } from 'lib/constants';
 
 export const getDataSetStructureFetchingStatus = createStatusesSelector(

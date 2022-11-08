@@ -10,6 +10,7 @@ import {
 } from 'generated-sources';
 import { TypographyStyle } from '@mui/material';
 import { TypographyStyleOptions } from '@mui/material/styles/createTypography';
+import { ToastType } from 'react-hot-toast';
 
 // helpers interfaces
 export type CSSObject = Partial<CSSStyleDeclaration>;
@@ -89,6 +90,8 @@ interface ActivityEventType {
   deleted: string;
 }
 
+type Toast = Record<ToastType, string>;
+
 declare module '@mui/material/styles' {
   interface Palette {
     entityClass: EntityClasses;
@@ -105,6 +108,7 @@ declare module '@mui/material/styles' {
     textField: ItemCondition;
     activityEvent: ActivityEventType;
     slaStatus: SLAStatus;
+    toast: Toast;
   }
 
   interface PaletteOptions {
@@ -122,6 +126,7 @@ declare module '@mui/material/styles' {
     textField?: ItemCondition;
     activityEvent?: ActivityEventType;
     slaStatus: SLAStatus;
+    toast: Toast;
   }
 }
 

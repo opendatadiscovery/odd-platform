@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createStatusesSelector } from 'redux/selectors';
-import { CurrentPageInfo, PoliciesState, RootState } from 'redux/interfaces';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import type { CurrentPageInfo, PoliciesState, RootState } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { policyAdapter, policyDetailsAdapter } from 'redux/slices/policy.slice';
 

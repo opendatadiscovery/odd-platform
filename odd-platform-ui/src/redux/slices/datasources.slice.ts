@@ -1,8 +1,8 @@
 import { datasourceActionTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { DataSource } from 'generated-sources';
-import { DataSourcesState } from 'redux/interfaces/state';
+import type { DataSource } from 'generated-sources';
+import type { DataSourcesState } from 'redux/interfaces';
 
 export const datasourceAdapter = createEntityAdapter<DataSource>({
   selectId: datasource => datasource.id,

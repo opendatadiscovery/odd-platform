@@ -1,14 +1,14 @@
 import {
   Configuration,
-  Label,
+  type Label,
   LabelApi,
-  LabelApiCreateLabelRequest,
-  LabelApiDeleteLabelRequest,
-  LabelApiGetLabelListRequest,
-  LabelApiUpdateLabelRequest,
+  type LabelApiCreateLabelRequest,
+  type LabelApiDeleteLabelRequest,
+  type LabelApiGetLabelListRequest,
+  type LabelApiUpdateLabelRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 

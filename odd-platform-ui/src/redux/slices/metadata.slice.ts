@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { MetaDataState } from 'redux/interfaces';
+import type { MetaDataState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
 import uniq from 'lodash/uniq';
 import filter from 'lodash/filter';

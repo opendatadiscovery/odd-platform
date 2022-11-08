@@ -1,4 +1,4 @@
-import { DataEntityDetails, DataEntityClassNameEnum } from 'generated-sources';
+import { type DataEntityDetails, DataEntityClassNameEnum } from 'generated-sources';
 
 export const DataEntityClassLabelMap: Map<
   DataEntityClassNameEnum,

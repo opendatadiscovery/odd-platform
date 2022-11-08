@@ -1,8 +1,8 @@
 import React from 'react';
-import { Permission } from 'generated-sources';
+import type { Permission } from 'generated-sources';
 import { getGlobalPermissions } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
-import PermissionContext, { PermissionContextProps } from './PermissionContext';
+import PermissionContext, { type PermissionContextProps } from './PermissionContext';
 
 interface PermissionProviderProps {
   allowedPermissions: Permission[];

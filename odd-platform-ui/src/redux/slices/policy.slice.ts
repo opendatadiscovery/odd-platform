@@ -1,5 +1,5 @@
-import { PoliciesState } from 'redux/interfaces/state';
-import { Policy, PolicyDetails } from 'generated-sources';
+import type { PoliciesState } from 'redux/interfaces';
+import type { Policy, PolicyDetails } from 'generated-sources';
 import { policyActTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';

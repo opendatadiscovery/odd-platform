@@ -1,28 +1,15 @@
-export interface LoaderState {
-  statuses: {
-    [key: string]: FetchStatus;
-  };
-  errors: {
-    [key: string]: ErrorState | undefined;
-  };
-}
+import type { ErrorResponse } from 'generated-sources';
 
 export interface ErrorState {
-  statusCode?: string;
-  statusText?: string;
+  status: number;
+  statusText: string;
+  url: string;
+  message: ErrorResponse['message'];
 }
 
-export type FetchStatus =
-  | 'notFetched'
-  | 'fetching'
-  | 'fetched'
-  | 'errorFetching';
+export type FetchStatus = 'notFetched' | 'fetching' | 'fetched' | 'errorFetching';
 
-export type AsyncRequestStatus =
-  | 'initial'
-  | 'pending'
-  | 'fulfilled'
-  | 'rejected';
+export type AsyncRequestStatus = 'initial' | 'pending' | 'fulfilled' | 'rejected';
 
 export interface LoaderSliceState {
   statuses: { [key: string]: AsyncRequestStatus };

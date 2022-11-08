@@ -1,14 +1,14 @@
 import {
-  Collector,
+  type Collector,
   CollectorApi,
-  CollectorApiDeleteCollectorRequest,
-  CollectorApiGetCollectorsListRequest,
-  CollectorApiRegenerateCollectorTokenRequest,
-  CollectorApiRegisterCollectorRequest,
-  CollectorApiUpdateCollectorRequest,
+  type CollectorApiDeleteCollectorRequest,
+  type CollectorApiGetCollectorsListRequest,
+  type CollectorApiRegenerateCollectorTokenRequest,
+  type CollectorApiRegisterCollectorRequest,
+  type CollectorApiUpdateCollectorRequest,
   Configuration,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';

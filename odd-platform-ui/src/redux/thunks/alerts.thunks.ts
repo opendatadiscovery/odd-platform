@@ -1,21 +1,21 @@
 import {
-  Alert as GeneratedAlert,
+  type Alert as GeneratedAlert,
   AlertApi,
-  AlertApiChangeAlertStatusRequest,
-  AlertApiGetAllAlertsRequest,
-  AlertApiGetAssociatedUserAlertsRequest,
-  AlertApiGetDependentEntitiesAlertsRequest,
-  AlertStatus,
-  AlertTotals,
+  type AlertApiChangeAlertStatusRequest,
+  type AlertApiGetAllAlertsRequest,
+  type AlertApiGetAssociatedUserAlertsRequest,
+  type AlertApiGetDependentEntitiesAlertsRequest,
+  type AlertStatus,
+  type AlertTotals,
   Configuration,
   DataEntityApi,
-  DataEntityApiGetDataEntityAlertsRequest,
-  PageInfo,
+  type DataEntityApiGetDataEntityAlertsRequest,
+  type PageInfo,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { Alert, CurrentPageInfo } from 'redux/interfaces';
+import type { Alert, CurrentPageInfo } from 'redux/interfaces';
 import { castItemDatesToTimestampInArray } from 'redux/lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);

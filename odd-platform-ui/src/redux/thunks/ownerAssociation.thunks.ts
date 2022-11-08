@@ -1,24 +1,51 @@
 import {
   Configuration,
-  OwnerAssociationRequest,
+  type OwnerAssociationRequest,
   OwnerAssociationRequestApi,
-  OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest,
-  OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest,
-  OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
+  type OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest,
+  type OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest,
+  type OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
-import { CurrentPageInfo } from 'redux/interfaces';
+import type { CurrentPageInfo } from 'redux/interfaces';
+import { getResponse } from 'lib/errorHandling';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const ownerAssociationRequestApi = new OwnerAssociationRequestApi(apiClientConf);
 
+const a = getResponse({} as Response);
+
 export const createOwnerAssociationRequest = createAsyncThunk<
   OwnerAssociationRequest,
   OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest
->(actions.createOwnerAssociationRequestActionType, async params =>
-  ownerAssociationRequestApi.createOwnerAssociationRequest(params)
+>(
+  actions.createOwnerAssociationRequestActionType,
+  async ({ ownerFormData }, { rejectWithValue }) => {
+    try {
+      const request = await ownerAssociationRequestApi.createOwnerAssociationRequest({
+        ownerFormData,
+      });
+
+      // showSuccessToast({
+      //   id: `association-request-${ownerFormData.name}`,
+      //   message: `Request for associating with owner ${ownerFormData.name} successfully created.`,
+      // });
+
+      return request;
+    } catch (error) {
+      // const errorResp = await getResponse(error as Response);
+      // showServerErrorToast({
+      //   status: errorResp.status,
+      //   message: errorResp.message,
+      //   toastId: errorResp.url,
+      // });
+
+      // return rejectWithValue(errorResp);
+      return rejectWithValue({});
+    }
+  }
 );
 
 export const fetchOwnerAssociationRequestList = createAsyncThunk<

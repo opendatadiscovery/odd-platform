@@ -1,13 +1,13 @@
 import {
   Configuration,
   DataEntityApi,
-  DataEntityApiCreateDataEntityMetadataFieldValueRequest,
-  DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
-  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
+  type DataEntityApiCreateDataEntityMetadataFieldValueRequest,
+  type DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
+  type DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
   MetadataApi,
-  MetadataApiGetMetadataFieldListRequest,
-  MetadataField,
-  MetadataFieldValue,
+  type MetadataApiGetMetadataFieldListRequest,
+  type MetadataField,
+  type MetadataFieldValue,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';

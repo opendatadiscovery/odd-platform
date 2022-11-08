@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppCircularProgress } from 'components/shared';
+import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import { Container } from './AppLoadingPageStyles';
 
 const AppLoadingPage: React.FC = () => (

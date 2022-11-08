@@ -3,10 +3,8 @@ import { toTimestampWithoutOffset } from 'lib/helpers';
 export const assignWith = <
   TargetType extends Record<string, any>,
   SourceType extends Record<string, any>,
-  ReturnType extends Record<
-    keyof TargetType | keyof SourceType,
-    unknown
-  > = TargetType & SourceType
+  ReturnType extends Record<keyof TargetType | keyof SourceType, unknown> = TargetType &
+    SourceType
 >(
   target: TargetType,
   source: SourceType,
