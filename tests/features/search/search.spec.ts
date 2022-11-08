@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
-const bookETLDataEntity = 'Book_ETL_aqa';
-const specialCharactersDataEntity = '_AirFlights';
+const entityNameWithAlphabeticChars = 'Book_ETL_aqa';
+const entityNameWithSpecialChars = '_!AirFlights';
 const numbersDataEntity = '737boeing';
 
 test.describe('Search', () => {
@@ -12,7 +12,7 @@ test.describe('Search', () => {
       await pages.topPanel.clickTab('Catalog');
     });
   });
-  test.describe('Search by single word', () => {
+  test.describe('When searching for a single keyword', () => {
     /**
      * /project/1/test-cases/17
      */
@@ -20,9 +20,9 @@ test.describe('Search', () => {
       steps: { pages },
     }) => {
       await test.step(`Fill valid expression in search input`, async () => {
-        await pages.catalog.fillSearchBar(bookETLDataEntity);
+        await pages.catalog.fillSearchBar(entityNameWithAlphabeticChars);
         await pages.catalog.confirmSearch();
-        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
       });
     });
     /**
@@ -32,7 +32,7 @@ test.describe('Search', () => {
       steps: { pages },
     }) => {
       await test.step(`Fill invalid expression in search input`, async () => {
-        await pages.catalog.fillSearchBar('bookETLDataEntity');
+        await pages.catalog.fillSearchBar('entityNameWithAlphabeticChars');
         await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListEmpty()).toBeTruthy();
       });
@@ -44,9 +44,9 @@ test.describe('Search', () => {
       steps: { pages },
     }) => {
       await test.step(`Fill single word expression which starts with special characters in the input`, async () => {
-        await pages.catalog.fillSearchBar(specialCharactersDataEntity);
+        await pages.catalog.fillSearchBar(entityNameWithSpecialChars);
         await pages.catalog.confirmSearch();
-        expect(await pages.catalog.isListItemVisible(specialCharactersDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(entityNameWithSpecialChars)).toBeTruthy();
       });
     });
     /**
@@ -68,8 +68,8 @@ test.describe('Search', () => {
       steps: { pages },
     }) => {
       await test.step(`Empty search string`, async () => {
-        await pages.catalog.clickSearchButton.click();
-        expect(await pages.catalog.amountInTab('All', 474)).toBeTruthy();
+        await pages.catalog.searchButton.click();
+        expect(await pages.catalog.isListFull()).toBeTruthy();
       });
     });
   });
@@ -84,7 +84,7 @@ test.describe('Search', () => {
         await pages.catalog.fillSearchBar('books aqa');
         await pages.catalog.confirmSearch();
         expect(await pages.catalog.isListItemVisible('books_aqa')).toBeTruthy();
-        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
+        expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
       });
     });
     /**

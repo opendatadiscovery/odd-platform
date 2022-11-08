@@ -2,8 +2,8 @@
   "data_source_oddrn": "//airflow/host/aws.airflow.aws.com/air",
   "items": [
     {
-      "oddrn": "//airflow/host/aws.airflow.aws.com/flights/_AirFlights",
-      "name": "_AirFlights",
+      "oddrn": "//airflow/host/aws.airflow.aws.com/flights/_!AirFlights",
+      "name": "_!AirFlights",
       "version": null,
       "description": null,
       "owner": null,

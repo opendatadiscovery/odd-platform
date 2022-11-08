@@ -12,7 +12,7 @@ const SELECTORS = {
   listItemName: name => `a:has-text('${name}')`,
   tab: name => `[role="tab"]:has-text('${name}')`,
   searchButton: `[placeholder="Search"] >> ..`,
-  noMatchesFound: `.MuiTypography-root:text-is('No matches found')`,
+  noMatchesFound: `text=No matches found`,
 };
 export default class CatalogPage extends BasePage {
   async openFilterWithSelect(filterName: string) {
@@ -64,11 +64,12 @@ export default class CatalogPage extends BasePage {
     return this.page.locator(SELECTORS.noMatchesFound).isVisible();
   }
 
-  get clickSearchButton() {
-    return new Button(this.page, SELECTORS.searchButton);
+  async isListFull(): Promise<boolean> {
+    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'hidden' });
+    return this.page.locator(SELECTORS.noMatchesFound).isHidden();
   }
 
-  async amountInTab(tabName: string, amount: number): Promise<boolean> {
-    return this.page.locator(`${SELECTORS.tab(tabName)}:has-text('${amount}')`).isVisible();
+  get searchButton() {
+    return new Button(this.page, SELECTORS.searchButton);
   }
 }
