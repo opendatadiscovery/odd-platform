@@ -23,6 +23,7 @@ import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const ownerApi = new OwnerApi(apiClientConf);
@@ -30,6 +31,7 @@ const dataEntityApi = new DataEntityApi(apiClientConf);
 const titleApi = new TitleApi(apiClientConf);
 const termApi = new TermApi(apiClientConf);
 
+// TODO handle
 export const fetchOwnershipTitleList = createAsyncThunk<
   { titleList: TitleList['items'] },
   TitleApiGetTitleListRequest
@@ -38,6 +40,7 @@ export const fetchOwnershipTitleList = createAsyncThunk<
   return { titleList: items };
 });
 
+// TODO handle
 export const fetchOwnersList = createAsyncThunk<
   { items: Array<Owner>; pageInfo: CurrentPageInfo },
   OwnerApiGetOwnerListRequest
@@ -46,29 +49,50 @@ export const fetchOwnersList = createAsyncThunk<
   return { items, pageInfo: { ...pageInfo, page: params.page } };
 });
 
-export const createOwner = createAsyncThunk<Owner, OwnerApiCreateOwnerRequest>(
+export const createOwner = handleResponseAsyncThunk<Owner, OwnerApiCreateOwnerRequest>(
   actions.createOwnerAction,
-  async ({ ownerFormData }) => ownerApi.createOwner({ ownerFormData })
+  async ({ ownerFormData }) => await ownerApi.createOwner({ ownerFormData }),
+  {
+    setSuccessOptions: ({ ownerFormData }) => ({
+      id: `Owner-creating-${ownerFormData.name}`,
+      message: `Owner ${ownerFormData.name} successfully created.`,
+    }),
+  }
 );
 
-export const deleteOwner = createAsyncThunk<number, OwnerApiDeleteOwnerRequest>(
+export const updateOwner = handleResponseAsyncThunk<
+  { ownerId: number; owner: Owner },
+  OwnerApiUpdateOwnerRequest
+>(
+  actions.updateOwnerAction,
+  async ({ ownerId, ownerFormData }) => {
+    const owner = await ownerApi.updateOwner({ ownerId, ownerFormData });
+    return { ownerId, owner };
+  },
+  {
+    setSuccessOptions: ({ ownerFormData }) => ({
+      id: `Owner-updating-${ownerFormData.name}`,
+      message: `Owner ${ownerFormData.name} successfully updated.`,
+    }),
+  }
+);
+
+export const deleteOwner = handleResponseAsyncThunk<number, OwnerApiDeleteOwnerRequest>(
   actions.deleteOwnerAction,
   async ({ ownerId }) => {
     await ownerApi.deleteOwner({ ownerId });
     return ownerId;
+  },
+  {
+    setSuccessOptions: ({ ownerId }) => ({
+      id: `Owner-deleting-${ownerId}`,
+      message: `Owner successfully deleted.`,
+    }),
   }
 );
 
-export const updateOwner = createAsyncThunk<
-  { ownerId: number; owner: Owner },
-  OwnerApiUpdateOwnerRequest
->(actions.updateOwnerAction, async ({ ownerId, ownerFormData }) => {
-  const owner = await ownerApi.updateOwner({ ownerId, ownerFormData });
-  return { ownerId, owner };
-});
-
 // Data entity ownership
-export const createDataEntityOwnership = createAsyncThunk<
+export const createDataEntityOwnership = handleResponseAsyncThunk<
   { dataEntityId: number; ownership: Ownership },
   DataEntityApiCreateOwnershipRequest
 >(
@@ -79,10 +103,16 @@ export const createDataEntityOwnership = createAsyncThunk<
       ownershipFormData,
     });
     return { dataEntityId, ownership };
+  },
+  {
+    setSuccessOptions: ({ ownershipFormData }) => ({
+      id: `Ownership-creating-${ownershipFormData.ownerName}`,
+      message: `Ownership ${ownershipFormData.ownerName} successfully created.`,
+    }),
   }
 );
 
-export const updateDataEntityOwnership = createAsyncThunk<
+export const updateDataEntityOwnership = handleResponseAsyncThunk<
   { dataEntityId: number; ownership: Ownership },
   DataEntityApiUpdateOwnershipRequest
 >(
@@ -94,31 +124,54 @@ export const updateDataEntityOwnership = createAsyncThunk<
       ownershipUpdateFormData,
     });
     return { dataEntityId, ownership };
+  },
+  {
+    setSuccessOptions: ({ ownershipUpdateFormData }) => ({
+      id: `Ownership-updating-${ownershipUpdateFormData.titleName}`,
+      message: `Owner's title ${ownershipUpdateFormData.titleName} successfully updated.`,
+    }),
   }
 );
 
-export const deleteDataEntityOwnership = createAsyncThunk<
+export const deleteDataEntityOwnership = handleResponseAsyncThunk<
   { dataEntityId: number; ownershipId: number },
   DataEntityApiDeleteOwnershipRequest
->(actions.deleteDataEntityOwnershipAction, async ({ dataEntityId, ownershipId }) => {
-  await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId });
-  return { dataEntityId, ownershipId };
-});
+>(
+  actions.deleteDataEntityOwnershipAction,
+  async ({ dataEntityId, ownershipId }) => {
+    await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId });
+    return { dataEntityId, ownershipId };
+  },
+  {
+    setSuccessOptions: ({ ownershipId }) => ({
+      id: `Ownership-deleting-${ownershipId}`,
+      message: `Ownership successfully deleted.`,
+    }),
+  }
+);
 
 // Term ownership
-
-export const createTermOwnership = createAsyncThunk<
+export const createTermOwnership = handleResponseAsyncThunk<
   { termId: number; ownership: Ownership },
   TermApiCreateTermOwnershipRequest
->(actions.createTermOwnershipAction, async ({ termId, ownershipFormData }) => {
-  const ownership = await termApi.createTermOwnership({
-    termId,
-    ownershipFormData,
-  });
-  return { termId, ownership };
-});
+>(
+  actions.createTermOwnershipAction,
+  async ({ termId, ownershipFormData }) => {
+    const ownership = await termApi.createTermOwnership({
+      termId,
+      ownershipFormData,
+    });
+    return { termId, ownership };
+  },
+  {
+    setSuccessOptions: ({ ownershipFormData }) => ({
+      id: `Term-ownership-creating-${ownershipFormData.ownerName}`,
+      message: `Term ownership ${ownershipFormData.ownerName} successfully created.`,
+    }),
+  }
+);
 
-export const updateTermOwnership = createAsyncThunk<
+export const updateTermOwnership = handleResponseAsyncThunk<
   { termId: number; ownershipId: number; ownership: Ownership },
   TermApiUpdateTermOwnershipRequest
 >(
@@ -130,13 +183,28 @@ export const updateTermOwnership = createAsyncThunk<
       ownershipUpdateFormData,
     });
     return { termId, ownershipId, ownership };
+  },
+  {
+    setSuccessOptions: ({ ownershipUpdateFormData }) => ({
+      id: `Term-ownership-updating-${ownershipUpdateFormData.titleName}`,
+      message: `Term owner's title ${ownershipUpdateFormData.titleName} successfully updated.`,
+    }),
   }
 );
 
-export const deleteTermOwnership = createAsyncThunk<
+export const deleteTermOwnership = handleResponseAsyncThunk<
   { termId: number; ownershipId: number },
   TermApiDeleteTermOwnershipRequest
->(actions.deleteTermOwnershipAction, async ({ termId, ownershipId }) => {
-  await termApi.deleteTermOwnership({ termId, ownershipId });
-  return { termId, ownershipId };
-});
+>(
+  actions.deleteTermOwnershipAction,
+  async ({ termId, ownershipId }) => {
+    await termApi.deleteTermOwnership({ termId, ownershipId });
+    return { termId, ownershipId };
+  },
+  {
+    setSuccessOptions: ({ ownershipId }) => ({
+      id: `Term-ownership-deleting-${ownershipId}`,
+      message: `Term ownership successfully deleted.`,
+    }),
+  }
+);

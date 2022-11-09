@@ -1,5 +1,6 @@
 import {
   Configuration,
+  ErrorApi,
   type Policy,
   PolicyApi,
   type PolicyApiCreatePolicyRequest,
@@ -13,10 +14,12 @@ import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const policyApi = new PolicyApi(apiClientConf);
 
+// TODO handle
 export const fetchPolicyList = createAsyncThunk<
   { items: Array<Policy>; pageInfo: CurrentPageInfo },
   PolicyApiGetPolicyListRequest
@@ -26,26 +29,54 @@ export const fetchPolicyList = createAsyncThunk<
   return { items, pageInfo: { ...pageInfo, page } };
 });
 
-export const createPolicy = createAsyncThunk<PolicyDetails, PolicyApiCreatePolicyRequest>(
+export const createPolicy = handleResponseAsyncThunk<
+  PolicyDetails,
+  PolicyApiCreatePolicyRequest
+>(
   actions.createPolicyActType,
-  async params => policyApi.createPolicy(params)
+  async ({ policyFormData }) => await policyApi.createPolicy({ policyFormData }),
+  {
+    setSuccessOptions: ({ policyFormData }) => ({
+      id: `policy-creating-${policyFormData.name}`,
+      message: `Policy ${policyFormData.name} successfully created.`,
+    }),
+  }
 );
 
-export const updatePolicy = createAsyncThunk<PolicyDetails, PolicyApiUpdatePolicyRequest>(
+export const updatePolicy = handleResponseAsyncThunk<
+  PolicyDetails,
+  PolicyApiUpdatePolicyRequest
+>(
   actions.updatePolicyActType,
   async ({ policyId, policyFormData }) =>
-    policyApi.updatePolicy({ policyId, policyFormData })
+    await policyApi.updatePolicy({ policyId, policyFormData }),
+  {
+    setSuccessOptions: ({ policyFormData }) => ({
+      id: `policy-updating-${policyFormData.name}`,
+      message: `Policy ${policyFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deletePolicy = createAsyncThunk<number, PolicyApiDeletePolicyRequest>(
+export const deletePolicy = handleResponseAsyncThunk<
+  number,
+  PolicyApiDeletePolicyRequest
+>(
   actions.deletePolicyActType,
   async ({ policyId }) => {
     await policyApi.deletePolicy({ policyId });
 
     return policyId;
+  },
+  {
+    setSuccessOptions: ({ policyId }) => ({
+      id: `policy-deleting-${policyId}`,
+      message: `Policy successfully deleted.`,
+    }),
   }
 );
 
+// TODO handle
 export const fetchPolicyDetails = createAsyncThunk<
   PolicyDetails,
   PolicyApiGetPolicyDetailsRequest
@@ -53,7 +84,7 @@ export const fetchPolicyDetails = createAsyncThunk<
   policyApi.getPolicyDetails({ policyId })
 );
 
-export const fetchPolicySchema = createAsyncThunk<Record<string, unknown>, void>(
+export const fetchPolicySchema = handleResponseAsyncThunk<Record<string, unknown>, void>(
   actions.fetchPolicySchemaActType,
   async () => {
     const schema = await policyApi.getPolicySchema();
@@ -62,5 +93,6 @@ export const fetchPolicySchema = createAsyncThunk<Record<string, unknown>, void>
     } catch (e) {
       throw new Error(e?.toString());
     }
-  }
+  },
+  {}
 );

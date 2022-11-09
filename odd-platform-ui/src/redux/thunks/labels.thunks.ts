@@ -11,10 +11,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new LabelApi(apiClientConf);
 
+// TODO handle
 export const fetchLabelsList = createAsyncThunk<
   { items: Array<Label>; pageInfo: CurrentPageInfo },
   LabelApiGetLabelListRequest
@@ -28,27 +30,41 @@ export const fetchLabelsList = createAsyncThunk<
   return { items, pageInfo: { ...pageInfo, page } };
 });
 
-export const createLabel = createAsyncThunk<Label[], LabelApiCreateLabelRequest>(
+export const createLabel = handleResponseAsyncThunk<Label[], LabelApiCreateLabelRequest>(
   actions.createLabelsActionType,
-  async ({ labelFormData }) =>
-    apiClient.createLabel({
-      labelFormData,
-    })
+  async ({ labelFormData }) => await apiClient.createLabel({ labelFormData }),
+  {
+    setSuccessOptions: ({ labelFormData }) => ({
+      id: `Labels-creating-${labelFormData.length}`,
+      message: `Label${labelFormData.length > 1 ? 's' : ''} ${labelFormData.map(
+        label => ` ${label.name}`
+      )} successfully created.`,
+    }),
+  }
 );
 
-export const updateLabel = createAsyncThunk<Label, LabelApiUpdateLabelRequest>(
+export const updateLabel = handleResponseAsyncThunk<Label, LabelApiUpdateLabelRequest>(
   actions.updateLabelActionType,
   async ({ labelId, labelFormData }) =>
-    apiClient.updateLabel({
-      labelId,
-      labelFormData,
-    })
+    await apiClient.updateLabel({ labelId, labelFormData }),
+  {
+    setSuccessOptions: ({ labelFormData }) => ({
+      id: `Labels-updating-${labelFormData.name}`,
+      message: `Label ${labelFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteLabel = createAsyncThunk<number, LabelApiDeleteLabelRequest>(
+export const deleteLabel = handleResponseAsyncThunk<number, LabelApiDeleteLabelRequest>(
   actions.deleteLabelActionType,
   async ({ labelId }) => {
     await apiClient.deleteLabel({ labelId });
     return labelId;
+  },
+  {
+    setSuccessOptions: ({ labelId }) => ({
+      id: `Labels-deleting-${labelId}`,
+      message: `Label successfully deleted.`,
+    }),
   }
 );

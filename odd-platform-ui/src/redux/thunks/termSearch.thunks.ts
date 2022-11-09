@@ -23,11 +23,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const termApi = new TermApi(apiClientConf);
 
+// TODO handle
 export const createTermSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiTermSearchRequest
 >(actions.createTermsSearchActType, async params => termApi.termSearch(params));
 
+// TODO handle
 export const updateTermSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiUpdateTermSearchFacetsRequest
@@ -35,11 +37,13 @@ export const updateTermSearch = createAsyncThunk<
   termApi.updateTermSearchFacets(params)
 );
 
+// TODO handle
 export const getTermsSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiGetTermSearchFacetListRequest
 >(actions.getTermsSearchActType, async params => termApi.getTermSearchFacetList(params));
 
+// TODO handle
 export const fetchTermsSearchResults = createAsyncThunk<
   { items: Term[]; pageInfo: CurrentPageInfo },
   TermApiGetTermSearchResultsRequest
@@ -57,6 +61,7 @@ export const fetchTermsSearchResults = createAsyncThunk<
   };
 });
 
+// TODO handle
 export const getTermsSearchFacetOptions = createAsyncThunk<
   TermSearchFacetOptions,
   TermApiGetTermFiltersForFacetRequest

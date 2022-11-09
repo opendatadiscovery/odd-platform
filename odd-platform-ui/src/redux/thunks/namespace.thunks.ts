@@ -11,10 +11,12 @@ import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const namespaceApi = new NamespaceApi(apiClientConf);
 
+// TODO handle
 export const fetchNamespaceList = createAsyncThunk<
   { namespaceList: Array<Namespace>; pageInfo: CurrentPageInfo },
   NamespaceApiGetNamespaceListRequest
@@ -28,30 +30,50 @@ export const fetchNamespaceList = createAsyncThunk<
   return { namespaceList: items, pageInfo: { ...pageInfo, page } };
 });
 
-export const createNamespace = createAsyncThunk<
+export const createNamespace = handleResponseAsyncThunk<
   Namespace,
   NamespaceApiCreateNamespaceRequest
->(actions.createNamespaceActionType, async ({ namespaceFormData }) =>
-  namespaceApi.createNamespace({
-    namespaceFormData,
-  })
+>(
+  actions.createNamespaceActionType,
+  async ({ namespaceFormData }) =>
+    await namespaceApi.createNamespace({ namespaceFormData }),
+  {
+    setSuccessOptions: ({ namespaceFormData }) => ({
+      id: `Namespace-creating-${namespaceFormData.name}`,
+      message: `Namespace ${namespaceFormData.name} successfully created.`,
+    }),
+  }
 );
 
-export const updateNamespace = createAsyncThunk<
+export const updateNamespace = handleResponseAsyncThunk<
   Namespace,
   NamespaceApiUpdateNamespaceRequest
->(actions.updateNamespaceActionType, async ({ namespaceId, namespaceUpdateFormData }) =>
-  namespaceApi.updateNamespace({
-    namespaceId,
-    namespaceUpdateFormData,
-  })
+>(
+  actions.updateNamespaceActionType,
+  async ({ namespaceId, namespaceUpdateFormData }) =>
+    await namespaceApi.updateNamespace({ namespaceId, namespaceUpdateFormData }),
+  {
+    setSuccessOptions: ({ namespaceUpdateFormData }) => ({
+      id: `Namespace-updating-${namespaceUpdateFormData.name}`,
+      message: `Namespace ${namespaceUpdateFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteNamespace = createAsyncThunk<
+export const deleteNamespace = handleResponseAsyncThunk<
   number,
   NamespaceApiDeleteNamespaceRequest
->(actions.deleteNamespaceActionType, async ({ namespaceId }) => {
-  await namespaceApi.deleteNamespace({ namespaceId });
+>(
+  actions.deleteNamespaceActionType,
+  async ({ namespaceId }) => {
+    await namespaceApi.deleteNamespace({ namespaceId });
 
-  return namespaceId;
-});
+    return namespaceId;
+  },
+  {
+    setSuccessOptions: ({ namespaceId }) => ({
+      id: `Namespace-deleting-${namespaceId}`,
+      message: `Namespace successfully deleted.`,
+    }),
+  }
+);

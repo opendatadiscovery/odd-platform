@@ -32,7 +32,7 @@ const App: React.FC = () => {
 
   return (
     <div className='App'>
-      <Toaster position='bottom-right' />
+      <Toaster position='bottom-right' toastOptions={{ custom: { duration: 6000 } }} />
       {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>

@@ -12,6 +12,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const termApi = new TermApi(apiClientConf);
 
+// TODO handle
 export const fetchTermLinkedList = createAsyncThunk<
   { termId: number; linkedItemsList: Array<DataEntity>; pageInfo: CurrentPageInfo },
   TermApiGetTermLinkedItemsRequest

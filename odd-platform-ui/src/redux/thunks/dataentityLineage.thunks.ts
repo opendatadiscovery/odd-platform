@@ -13,6 +13,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 
+// TODO handle
 export const fetchDataEntityDownstreamLineage = createAsyncThunk<
   { rootNodeId: number; dataEntityId: number; dataEntityLineage: DataEntityLineage },
   DataEntityApiGetDataEntityDownstreamLineageRequest & DataEntityLineageRootNodeId
@@ -27,6 +28,7 @@ export const fetchDataEntityDownstreamLineage = createAsyncThunk<
   }
 );
 
+// TODO handle
 export const fetchDataEntityUpstreamLineage = createAsyncThunk<
   { rootNodeId: number; dataEntityId: number; dataEntityLineage: DataEntityLineage },
   DataEntityApiGetDataEntityUpstreamLineageRequest & DataEntityLineageRootNodeId

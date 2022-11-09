@@ -17,6 +17,7 @@ import type {
   DataEntityActivityQueryParams,
 } from 'redux/interfaces';
 import { toDateWithoutOffset } from 'lib/helpers';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const activityApi = new ActivityApi(apiClientConf);
@@ -48,6 +49,7 @@ const setActivitiesPageInfo = (
   return pageInfo;
 };
 
+// TODO handle
 export const fetchActivityList = createAsyncThunk<
   ActivityListResponse,
   ActivityQueryParams
@@ -72,6 +74,7 @@ export const fetchActivityList = createAsyncThunk<
   return { activities: activitiesWithTimestamps, pageInfo };
 });
 
+// TODO handle
 export const fetchDataEntityActivityList = createAsyncThunk<
   ActivityListResponse,
   DataEntityActivityQueryParams
@@ -96,16 +99,20 @@ export const fetchDataEntityActivityList = createAsyncThunk<
   return { activities: activitiesWithTimestamps, pageInfo };
 });
 
-export const fetchActivityCounts = createAsyncThunk<
+export const fetchActivityCounts = handleResponseAsyncThunk<
   ActivityCountInfo,
   ActivityCountParamsRequest
->(actions.fetchActivityCountsActionType, async params => {
-  const castedBeginDate = toDateWithoutOffset(params.beginDate);
-  const castedEndDate = toDateWithoutOffset(params.endDate);
+>(
+  actions.fetchActivityCountsActionType,
+  async params => {
+    const castedBeginDate = toDateWithoutOffset(params.beginDate);
+    const castedEndDate = toDateWithoutOffset(params.endDate);
 
-  return activityApi.getActivityCounts({
-    ...params,
-    beginDate: castedBeginDate,
-    endDate: castedEndDate,
-  });
-});
+    return activityApi.getActivityCounts({
+      ...params,
+      beginDate: castedBeginDate,
+      endDate: castedEndDate,
+    });
+  },
+  {}
+);

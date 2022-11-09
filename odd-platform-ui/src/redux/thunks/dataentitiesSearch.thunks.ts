@@ -20,25 +20,26 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const searchApi = new SearchApi(apiClientConf);
 
+// TODO handle
 export const createDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
   SearchApiSearchRequest
 >(actions.createDataEntitySearchActionType, async params => searchApi.search(params));
-
+// TODO handle
 export const updateDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
   SearchApiUpdateSearchFacetsRequest
 >(actions.updateDataEntitySearchActionType, async params =>
   searchApi.updateSearchFacets(params)
 );
-
+// TODO handle
 export const getDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
   SearchApiGetSearchFacetListRequest
 >(actions.getDataEntitySearchActionType, async params =>
   searchApi.getSearchFacetList(params)
 );
-
+// TODO handle
 export const fetchDataEntitySearchResults = createAsyncThunk<
   { items: DataEntity[]; pageInfo: CurrentPageInfo },
   SearchApiGetSearchResultsRequest
@@ -55,7 +56,7 @@ export const fetchDataEntitySearchResults = createAsyncThunk<
     },
   };
 });
-
+// TODO handle
 export const getDataEntitySearchFacetOptions = createAsyncThunk<
   FacetOptions,
   SearchApiGetFiltersForFacetRequest
@@ -69,7 +70,7 @@ export const getDataEntitySearchFacetOptions = createAsyncThunk<
     page,
   };
 });
-
+// TODO handle
 export const fetchSearchSuggestions = createAsyncThunk<
   DataEntityRef[],
   SearchApiGetSearchSuggestionsRequest

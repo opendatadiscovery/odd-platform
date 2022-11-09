@@ -17,6 +17,7 @@ import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { Alert, CurrentPageInfo } from 'redux/interfaces';
 import { castItemDatesToTimestampInArray } from 'redux/lib/helpers';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
@@ -27,11 +28,13 @@ export interface AlertsResponse {
   pageInfo: CurrentPageInfo;
 }
 
+// TODO handle
 export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
   async () => alertApi.getAlertTotals()
 );
 
+// TODO handle
 export const fetchAllAlertList = createAsyncThunk<
   AlertsResponse,
   AlertApiGetAllAlertsRequest
@@ -47,6 +50,7 @@ export const fetchAllAlertList = createAsyncThunk<
   };
 });
 
+// TODO handle
 export const fetchMyAlertList = createAsyncThunk<
   AlertsResponse,
   AlertApiGetAssociatedUserAlertsRequest
@@ -61,6 +65,7 @@ export const fetchMyAlertList = createAsyncThunk<
   };
 });
 
+// TODO handle
 export const fetchMyDependentsAlertList = createAsyncThunk<
   AlertsResponse,
   AlertApiGetDependentEntitiesAlertsRequest
@@ -75,18 +80,28 @@ export const fetchMyDependentsAlertList = createAsyncThunk<
   };
 });
 
-export const updateAlertStatus = createAsyncThunk<
+export const updateAlertStatus = handleResponseAsyncThunk<
   { alertId: number; status: AlertStatus },
   AlertApiChangeAlertStatusRequest
->(actions.updateAlertStatusActionType, async ({ alertId, alertStatusFormData }) => {
-  const status = await alertApi.changeAlertStatus({
-    alertId,
-    alertStatusFormData,
-  });
+>(
+  actions.updateAlertStatusActionType,
+  async ({ alertId, alertStatusFormData }) => {
+    const status = await alertApi.changeAlertStatus({
+      alertId,
+      alertStatusFormData,
+    });
 
-  return { alertId, status };
-});
+    return { alertId, status };
+  },
+  {
+    setSuccessOptions: ({ alertStatusFormData, alertId }) => ({
+      id: `Alert-updating-${alertId}`,
+      message: `Alert successfully ${alertStatusFormData.status?.toLowerCase()}.`,
+    }),
+  }
+);
 
+// TODO handle
 export const fetchDataEntityAlerts = createAsyncThunk<
   { items: Alert[]; pageInfo: PageInfo },
   DataEntityApiGetDataEntityAlertsRequest

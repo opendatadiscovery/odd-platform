@@ -15,29 +15,52 @@ import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const termApi = new TermApi(apiClientConf);
 
-export const createTerm = createAsyncThunk<TermDetails, TermApiCreateTermRequest>(
+export const createTerm = handleResponseAsyncThunk<TermDetails, TermApiCreateTermRequest>(
   actions.createTermActType,
-  async ({ termFormData }) => termApi.createTerm({ termFormData })
+  async ({ termFormData }) => await termApi.createTerm({ termFormData }),
+  {
+    setSuccessOptions: ({ termFormData }) => ({
+      id: `Term-creating-${termFormData.name}`,
+      message: `Term ${termFormData.name} successfully created.`,
+    }),
+  }
 );
 
-export const updateTerm = createAsyncThunk<TermDetails, TermApiUpdateTermRequest>(
+export const updateTerm = handleResponseAsyncThunk<TermDetails, TermApiUpdateTermRequest>(
   actions.updateTermActType,
-  async ({ termId, termFormData }) => termApi.updateTerm({ termId, termFormData })
+  async ({ termId, termFormData }) => await termApi.updateTerm({ termId, termFormData }),
+  {
+    setSuccessOptions: ({ termFormData }) => ({
+      id: `Term-updating-${termFormData.name}`,
+      message: `Term ${termFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteTerm = createAsyncThunk<{ termId: number }, TermApiDeleteTermRequest>(
+export const deleteTerm = handleResponseAsyncThunk<
+  { termId: number },
+  TermApiDeleteTermRequest
+>(
   actions.deleteTermActType,
   async ({ termId }) => {
     await termApi.deleteTerm({ termId });
 
     return { termId };
+  },
+  {
+    setSuccessOptions: ({ termId }) => ({
+      id: `Term-deleting-${termId}`,
+      message: `Term successfully deleted.`,
+    }),
   }
 );
 
+// TODO handle
 export const fetchTermsList = createAsyncThunk<
   { termList: Array<TermRef>; pageInfo: CurrentPageInfo },
   TermApiGetTermsListRequest
@@ -54,6 +77,7 @@ export const fetchTermsList = createAsyncThunk<
   };
 });
 
+// TODO handle
 export const fetchTermDetails = createAsyncThunk<
   TermDetails,
   TermApiGetTermDetailsRequest
@@ -61,14 +85,23 @@ export const fetchTermDetails = createAsyncThunk<
   termApi.getTermDetails({ termId })
 );
 
-export const updateTermDetailsTags = createAsyncThunk<
+export const updateTermDetailsTags = handleResponseAsyncThunk<
   { termId: number; tags: Array<Tag> },
   TermApiCreateTermTagsRelationsRequest
->(actions.updateTermDetailsTagsActType, async ({ termId, tagsFormData }) => {
-  const tags = await termApi.createTermTagsRelations({
-    termId,
-    tagsFormData,
-  });
+>(
+  actions.updateTermDetailsTagsActType,
+  async ({ termId, tagsFormData }) => {
+    const tags = await termApi.createTermTagsRelations({
+      termId,
+      tagsFormData,
+    });
 
-  return { termId, tags };
-});
+    return { termId, tags };
+  },
+  {
+    setSuccessOptions: ({ tagsFormData }) => ({
+      id: `Term-tags-updating-${tagsFormData.tagNameList.length}`,
+      message: `Term tags successfully updated.`,
+    }),
+  }
+);

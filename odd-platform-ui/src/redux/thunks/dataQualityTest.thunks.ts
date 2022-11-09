@@ -13,10 +13,12 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataQualityApi = new DataQualityApi(apiClientConf);
 
+// TODO handle
 export const fetchDataSetQualityTestReport = createAsyncThunk<
   { entityId: number; value: DataSetTestReport },
   DataQualityApiGetDatasetTestReportRequest
@@ -27,6 +29,7 @@ export const fetchDataSetQualityTestReport = createAsyncThunk<
   return { entityId: dataEntityId, value: response };
 });
 
+// TODO handle
 export const fetchDataSetQualitySLAReport = createAsyncThunk<
   { entityId: number; value: DataSetSLAReport },
   DataQualityApiGetDatasetSLAReportRequest
@@ -37,6 +40,7 @@ export const fetchDataSetQualitySLAReport = createAsyncThunk<
   return { entityId: dataEntityId, value: response };
 });
 
+// TODO handle
 export const fetchDataSetQualityTestList = createAsyncThunk<
   { entityId: number; value: DataEntityList },
   DataQualityApiGetDataEntityDataQATestsRequest
@@ -50,15 +54,21 @@ export const fetchDataSetQualityTestList = createAsyncThunk<
   };
 });
 
-export const setDataQATestSeverity = createAsyncThunk<
+export const setDataQATestSeverity = handleResponseAsyncThunk<
   DataEntity,
   DataQualityApiSetDataQATestSeverityRequest
 >(
   actions.setDataQATestSeverityActionType,
   async ({ dataEntityId, dataqaTestId, dataQualityTestSeverityForm }) =>
-    dataQualityApi.setDataQATestSeverity({
+    await dataQualityApi.setDataQATestSeverity({
       dataEntityId,
       dataqaTestId,
       dataQualityTestSeverityForm,
-    })
+    }),
+  {
+    setSuccessOptions: ({ dataqaTestId }) => ({
+      id: `DQSeverity-deleting-${dataqaTestId}`,
+      message: `Severity successfully updated.`,
+    }),
+  }
 );

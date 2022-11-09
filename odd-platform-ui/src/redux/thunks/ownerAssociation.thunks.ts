@@ -10,44 +10,29 @@ import * as actions from 'redux/actions';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { getResponse } from 'lib/errorHandling';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const ownerAssociationRequestApi = new OwnerAssociationRequestApi(apiClientConf);
 
-const a = getResponse({} as Response);
-
-export const createOwnerAssociationRequest = createAsyncThunk<
+export const createOwnerAssociationRequest = handleResponseAsyncThunk<
   OwnerAssociationRequest,
   OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest
 >(
   actions.createOwnerAssociationRequestActionType,
-  async ({ ownerFormData }, { rejectWithValue }) => {
-    try {
-      const request = await ownerAssociationRequestApi.createOwnerAssociationRequest({
-        ownerFormData,
-      });
-
-      // showSuccessToast({
-      //   id: `association-request-${ownerFormData.name}`,
-      //   message: `Request for associating with owner ${ownerFormData.name} successfully created.`,
-      // });
-
-      return request;
-    } catch (error) {
-      // const errorResp = await getResponse(error as Response);
-      // showServerErrorToast({
-      //   status: errorResp.status,
-      //   message: errorResp.message,
-      //   toastId: errorResp.url,
-      // });
-
-      // return rejectWithValue(errorResp);
-      return rejectWithValue({});
-    }
+  async ({ ownerFormData }) =>
+    await ownerAssociationRequestApi.createOwnerAssociationRequest({
+      ownerFormData,
+    }),
+  {
+    setSuccessOptions: ({ ownerFormData }) => ({
+      id: `association-request-${ownerFormData.name}`,
+      message: `Request for associating with owner ${ownerFormData.name} successfully created.`,
+    }),
   }
 );
 
+// TODO handle errors
 export const fetchOwnerAssociationRequestList = createAsyncThunk<
   { items: Array<OwnerAssociationRequest>; pageInfo: CurrentPageInfo; active: boolean },
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest
@@ -62,11 +47,26 @@ export const fetchOwnerAssociationRequestList = createAsyncThunk<
   };
 });
 
-export const updateOwnerAssociationRequest = createAsyncThunk<
+export const updateOwnerAssociationRequest = handleResponseAsyncThunk<
   number,
   OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
->(actions.updateOwnerAssociationRequestActionType, async params => {
-  const { id } = await ownerAssociationRequestApi.updateOwnerAssociationRequest(params);
+>(
+  actions.updateOwnerAssociationRequestActionType,
+  async ({ ownerAssociationRequestId, ownerAssociationRequestStatusFormData }) => {
+    const { id } = await ownerAssociationRequestApi.updateOwnerAssociationRequest({
+      ownerAssociationRequestId,
+      ownerAssociationRequestStatusFormData,
+    });
 
-  return id;
-});
+    return id;
+  },
+  {
+    setSuccessOptions: ({
+      ownerAssociationRequestId,
+      ownerAssociationRequestStatusFormData,
+    }) => ({
+      id: `association-request-${ownerAssociationRequestId}`,
+      message: `Association request successfully ${ownerAssociationRequestStatusFormData.status?.toLowerCase()}.`,
+    }),
+  }
+);

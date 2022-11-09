@@ -12,6 +12,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 
+// TODO handle
 export const fetchDataEntityGroupLinkedList = createAsyncThunk<
   {
     dataEntityGroupId: number;

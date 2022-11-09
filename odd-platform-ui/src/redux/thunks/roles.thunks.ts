@@ -11,10 +11,12 @@ import type { CurrentPageInfo } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const roleApi = new RoleApi(apiClientConf);
 
+// TODO handle error
 export const fetchRolesList = createAsyncThunk<
   { items: Array<Role>; pageInfo: CurrentPageInfo },
   RoleApiGetRolesListRequest
@@ -24,21 +26,38 @@ export const fetchRolesList = createAsyncThunk<
   return { items, pageInfo: { ...pageInfo, page } };
 });
 
-export const createRole = createAsyncThunk<Role, RoleApiCreateRoleRequest>(
+export const createRole = handleResponseAsyncThunk<Role, RoleApiCreateRoleRequest>(
   actions.createRoleActType,
-  async params => roleApi.createRole(params)
+  async ({ roleFormData }) => await roleApi.createRole({ roleFormData }),
+  {
+    setSuccessOptions: ({ roleFormData }) => ({
+      id: `role-creating-${roleFormData.name}`,
+      message: `Role ${roleFormData.name} successfully created.`,
+    }),
+  }
 );
 
-export const updateRole = createAsyncThunk<Role, RoleApiUpdateRoleRequest>(
+export const updateRole = handleResponseAsyncThunk<Role, RoleApiUpdateRoleRequest>(
   actions.updateRoleActType,
-  async ({ roleId, roleFormData }) => roleApi.updateRole({ roleId, roleFormData })
+  async ({ roleId, roleFormData }) => await roleApi.updateRole({ roleId, roleFormData }),
+  {
+    setSuccessOptions: ({ roleFormData }) => ({
+      id: `role-updating-${roleFormData.name}`,
+      message: `Role ${roleFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteRole = createAsyncThunk<number, RoleApiDeleteRoleRequest>(
+export const deleteRole = handleResponseAsyncThunk<number, RoleApiDeleteRoleRequest>(
   actions.deleteRoleActType,
   async ({ roleId }) => {
     await roleApi.deleteRole({ roleId });
-
     return roleId;
+  },
+  {
+    setSuccessOptions: ({ roleId }) => ({
+      id: `role-deleting-${roleId}`,
+      message: `Role successfully deleted.`,
+    }),
   }
 );

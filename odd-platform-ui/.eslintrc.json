@@ -87,7 +87,7 @@
         ]
       }
     ],
-    "no-return-await": "off",
+    "@typescript-eslint/return-await": "off",
     "import/no-cycle": "error",
     "import/no-unresolved": "error"
   },

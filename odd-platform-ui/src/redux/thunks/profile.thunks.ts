@@ -1,12 +1,13 @@
 import { type AssociatedOwner, Configuration, IdentityApi } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const identityApi = new IdentityApi(apiClientConf);
 
-export const fetchIdentity = createAsyncThunk<AssociatedOwner>(
+export const fetchIdentity = handleResponseAsyncThunk<AssociatedOwner>(
   actions.fetchIdentityActionType,
-  async () => identityApi.whoami()
+  async () => await identityApi.whoami(),
+  {}
 );
