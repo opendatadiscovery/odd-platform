@@ -2,10 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppButton, AppCircularProgress } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  getNamespaceList,
-  getTermSearchUpdateStatuses,
-} from 'redux/selectors';
+import { getNamespaceList, getTermSearchUpdateStatuses } from 'redux/selectors';
 import { fetchNamespaceList } from 'redux/thunks';
 import { clearTermSearchFacets } from 'redux/slices/termSearch.slice';
 import MultipleFilterItem from './TermSearchFilterItem/MultipleFilterItem/MultipleFilterItem';
@@ -16,9 +13,7 @@ const TermSearchFilters: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const namespaces = useAppSelector(getNamespaceList);
-  const { isLoading: isTermSearchUpdating } = useAppSelector(
-    getTermSearchUpdateStatuses
-  );
+  const { isLoading: isTermSearchUpdating } = useAppSelector(getTermSearchUpdateStatuses);
 
   React.useEffect(() => {
     dispatch(fetchNamespaceList({ page: 1, size: 100 }));
@@ -26,28 +21,28 @@ const TermSearchFilters: React.FC = () => {
 
   return (
     <S.TermSearchFiltersContainer>
-      <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
-        <Typography variant="h4">Filters</Typography>
+      <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
+        <Typography variant='h4'>Filters</Typography>
         <AppButton
-          color="tertiary"
-          size="medium"
+          color='tertiary'
+          size='medium'
           onClick={() => dispatch(clearTermSearchFacets())}
         >
           Clear All
         </AppButton>
       </Grid>
       <S.TermSearchListContainer>
-        <MultipleFilterItem key="tg" facetName="tags" name="Tag" />
-        <MultipleFilterItem key="ow" facetName="owners" name="Owner" />
+        <MultipleFilterItem key='tg' facetName='tags' name='Tag' />
+        <MultipleFilterItem key='ow' facetName='owners' name='Owner' />
         <SingleFilterItem
-          key="ns"
-          facetName="namespaces"
-          name="Namespace"
+          key='ns'
+          facetName='namespaces'
+          name='Namespace'
           facetOptions={namespaces}
         />
         <S.TermSearchFacetsLoaderContainer container sx={{ mt: 2 }}>
           {isTermSearchUpdating && (
-            <AppCircularProgress size={16} text="Updating filters" />
+            <AppCircularProgress size={16} text='Updating filters' />
           )}
         </S.TermSearchFacetsLoaderContainer>
       </S.TermSearchListContainer>

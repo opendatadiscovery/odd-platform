@@ -35,18 +35,16 @@ const LinkedItemsList: React.FC = () => {
     getTermLinkedList(state, termId)
   );
 
-  const entityClasses: Array<DataEntityClass> = useAppSelector(
-    getDataEntityClassesList
-  );
+  const entityClasses: Array<DataEntityClass> = useAppSelector(getDataEntityClassesList);
   const { isLoading: isLinkedListFetching } = useAppSelector(
     getTermLinkedListFetchingStatuses
   );
   const pageInfo = useAppSelector(getTermLinkedListPageInfo);
 
   const [searchText, setSearchText] = React.useState<string>('');
-  const [selectedClassId, setSelectedClassId] = React.useState<
-    number | undefined
-  >(undefined);
+  const [selectedClassId, setSelectedClassId] = React.useState<number | undefined>(
+    undefined
+  );
 
   const pageSize = 50;
 
@@ -90,16 +88,11 @@ const LinkedItemsList: React.FC = () => {
 
   return (
     <Grid>
-      <Grid
-        container
-        flexWrap="nowrap"
-        justifyContent="flex-start"
-        sx={{ mt: 2 }}
-      >
+      <Grid container flexWrap='nowrap' justifyContent='flex-start' sx={{ mt: 2 }}>
         <Grid item xs={3} sx={{ mr: 1 }}>
           <AppInput
-            size="medium"
-            placeholder="Search"
+            size='medium'
+            placeholder='Search'
             onKeyDown={handleKeyDownSearch}
             onChange={e => setSearchText(e.target.value)}
             value={searchText}
@@ -121,12 +114,9 @@ const LinkedItemsList: React.FC = () => {
           />
         </Grid>
         <Grid item xs={2}>
-          <AppSelect
-            defaultValue="All entities"
-            onChange={handleOnClickSearch}
-          >
+          <AppSelect defaultValue='All entities' onChange={handleOnClickSearch}>
             <AppMenuItem
-              value="All entities"
+              value='All entities'
               onClick={() => setSelectedClassId(undefined)}
             >
               All entities
@@ -137,52 +127,44 @@ const LinkedItemsList: React.FC = () => {
                 value={entityClass.id}
                 onClick={() => setSelectedClassId(entityClass.id)}
               >
-                {stringFormatted(
-                  entityClass.name,
-                  '_',
-                  'firstLetterOfEveryWord'
-                )}
+                {stringFormatted(entityClass.name, '_', 'firstLetterOfEveryWord')}
               </AppMenuItem>
             ))}
           </AppSelect>
         </Grid>
       </Grid>
-      <TermLinkedItemsResultsTableHeader
-        container
-        sx={{ mt: 2 }}
-        wrap="nowrap"
-      >
-        <TermLinkedItemsColContainer item $colType="colmd">
-          <Typography variant="caption">Name</Typography>
+      <TermLinkedItemsResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
+        <TermLinkedItemsColContainer item $colType='colmd'>
+          <Typography variant='caption'>Name</Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="collg">
-          <Typography variant="caption">Namespace</Typography>
+        <TermLinkedItemsColContainer item $colType='collg'>
+          <Typography variant='caption'>Namespace</Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colsm">
-          <Typography variant="caption">Datasource</Typography>
+        <TermLinkedItemsColContainer item $colType='colsm'>
+          <Typography variant='caption'>Datasource</Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colsm">
-          <Typography variant="caption">Owner</Typography>
+        <TermLinkedItemsColContainer item $colType='colsm'>
+          <Typography variant='caption'>Owner</Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colxs">
-          <Typography variant="caption">Created</Typography>
+        <TermLinkedItemsColContainer item $colType='colxs'>
+          <Typography variant='caption'>Created</Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colxs">
-          <Typography variant="caption">Last Update</Typography>
+        <TermLinkedItemsColContainer item $colType='colxs'>
+          <Typography variant='caption'>Last Update</Typography>
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching ? (
         <SearchResultsSkeleton />
       ) : (
-        <TermLinkedItemsListContainer id="term-linked-items-list">
+        <TermLinkedItemsListContainer id='term-linked-items-list'>
           {termLinkedList && (
             <InfiniteScroll
               dataLength={termLinkedList?.length}
               next={fetchNextPage}
               hasMore={!!pageInfo?.hasNext}
               loader={isLinkedListFetching && <SearchResultsSkeleton />}
-              scrollThreshold="200px"
-              scrollableTarget="term-linked-items-list"
+              scrollThreshold='200px'
+              scrollableTarget='term-linked-items-list'
             >
               {termLinkedList?.map(linkedItem => (
                 <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
@@ -192,7 +174,7 @@ const LinkedItemsList: React.FC = () => {
         </TermLinkedItemsListContainer>
       )}
       {isLinkedListFetching && !pageInfo?.total && (
-        <EmptyContentPlaceholder text="No linked items" />
+        <EmptyContentPlaceholder text='No linked items' />
       )}
     </Grid>
   );

@@ -11,7 +11,7 @@ const AlertSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
     renderContent={({ randWidth, key }) => (
-      <Grid key={key} container sx={{ py: 1.25, px: 1 }} wrap="nowrap">
+      <Grid key={key} container sx={{ py: 1.25, px: 1 }} wrap='nowrap'>
         <Grid item xs={3}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>

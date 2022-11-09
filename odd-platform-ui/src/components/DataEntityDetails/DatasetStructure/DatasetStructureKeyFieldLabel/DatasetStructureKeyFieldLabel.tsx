@@ -9,9 +9,10 @@ interface DatasetStructureKeyFieldLabelProps {
   sx?: SxProps<Theme>;
 }
 
-const DatasetStructureKeyFieldLabel: React.FC<
-  DatasetStructureKeyFieldLabelProps
-> = ({ keyType, sx }) => (
+const DatasetStructureKeyFieldLabel: React.FC<DatasetStructureKeyFieldLabelProps> = ({
+  keyType,
+  sx,
+}) => (
   <S.Container title={keyType} sx={sx}>
     <S.FilledContainer $keyType={keyType}>{keyType} key</S.FilledContainer>
   </S.Container>

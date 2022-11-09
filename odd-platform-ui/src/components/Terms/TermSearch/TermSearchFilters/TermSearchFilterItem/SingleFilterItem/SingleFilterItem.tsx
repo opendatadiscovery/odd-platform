@@ -19,9 +19,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
   facetOptions,
 }) => {
   const dispatch = useAppDispatch();
-  const selectedOptions = useAppSelector(
-    getSelectedTermSearchFacetOptions(facetName)
-  );
+  const selectedOptions = useAppSelector(getSelectedTermSearchFacetOptions(facetName));
 
   const handleFilterSelect = React.useCallback(
     (option: { id: number | string; name: string }) => {
@@ -45,12 +43,10 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
           sx={{ mt: 2 }}
           label={name}
           id={`term-search-filter-${facetName}`}
-          value={
-            selectedOptions?.length ? selectedOptions[0].entityId : 'All'
-          }
+          value={selectedOptions?.length ? selectedOptions[0].entityId : 'All'}
         >
           <AppMenuItem
-            value="All"
+            value='All'
             maxWidth={190}
             onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
           >

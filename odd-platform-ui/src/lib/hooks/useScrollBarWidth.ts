@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 /**
  * Find out dynamically size of scrollbar width of client's browser.

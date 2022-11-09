@@ -21,17 +21,10 @@ interface ActivityItemProps {
   hideAllDetails: boolean;
 }
 
-const ActivityItem: React.FC<ActivityItemProps> = ({
-  activity,
-  hideAllDetails,
-}) => {
+const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
   const tagStateItem = React.useCallback(
     (name, important) => (
-      <TagItem
-        sx={{ backgroundColor: 'white' }}
-        label={name}
-        important={important}
-      />
+      <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
     ),
     []
   );
@@ -45,10 +38,10 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
     <S.Container container>
       <Grid
         container
-        justifyContent="space-between"
-        alignItems="baseline"
-        flexWrap="nowrap"
-        position="relative"
+        justifyContent='space-between'
+        alignItems='baseline'
+        flexWrap='nowrap'
+        position='relative'
       >
         {(activity.eventType === ActivityEventType.OWNERSHIP_CREATED ||
           activity.eventType === ActivityEventType.OWNERSHIP_UPDATED ||
@@ -62,45 +55,38 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         )}
         {activity.eventType === ActivityEventType.DATA_ENTITY_CREATED && (
           <ActivityFieldHeader
-            eventType="created"
-            startText="Data entity with"
+            eventType='created'
+            startText='Data entity with'
             activityName={`ODDRN ${activity.newState.dataEntity?.oddrn}`}
           />
         )}
         {activity.eventType === ActivityEventType.DESCRIPTION_UPDATED && (
           <StringActivityField
-            activityName="Description"
+            activityName='Description'
             oldState={activity.oldState.description?.description}
             newState={activity.newState.description?.description}
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType ===
-          ActivityEventType.BUSINESS_NAME_UPDATED && (
+        {activity.eventType === ActivityEventType.BUSINESS_NAME_UPDATED && (
           <StringActivityField
-            activityName="Business name"
+            activityName='Business name'
             oldState={activity.oldState.businessName?.internalName}
             newState={activity.newState.businessName?.internalName}
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType ===
-          ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED && (
+        {activity.eventType === ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED && (
           <StringActivityField
             activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`}
-            oldState={
-              activity.oldState.datasetFieldInformation?.description
-            }
-            newState={
-              activity.newState.datasetFieldInformation?.description
-            }
+            oldState={activity.oldState.datasetFieldInformation?.description}
+            newState={activity.newState.datasetFieldInformation?.description}
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType ===
-          ActivityEventType.TAGS_ASSOCIATION_UPDATED && (
+        {activity.eventType === ActivityEventType.TAGS_ASSOCIATION_UPDATED && (
           <ArrayActivityField
-            activityName="Tags"
+            activityName='Tags'
             oldState={activity.oldState.tags}
             newState={activity.newState.tags}
             hideAllDetails={hideAllDetails}
@@ -108,8 +94,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             plural
           />
         )}
-        {activity.eventType ===
-          ActivityEventType.DATASET_FIELD_LABELS_UPDATED && (
+        {activity.eventType === ActivityEventType.DATASET_FIELD_LABELS_UPDATED && (
           <ArrayActivityField
             activityName={`Labels in ${activity.oldState.datasetFieldInformation?.name} column`}
             oldState={activity.oldState.datasetFieldInformation?.labels}
@@ -124,22 +109,20 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             oldState={activity.oldState.terms}
             newState={activity.newState.terms}
             hideAllDetails={hideAllDetails}
-            eventType="added"
-            stateDirection="column"
+            eventType='added'
+            stateDirection='column'
           />
         )}
-        {activity.eventType ===
-          ActivityEventType.TERM_ASSIGNMENT_DELETED && (
+        {activity.eventType === ActivityEventType.TERM_ASSIGNMENT_DELETED && (
           <TermActivityField
             oldState={activity.oldState.terms}
             newState={activity.newState.terms}
             hideAllDetails={hideAllDetails}
-            eventType="deleted"
-            stateDirection="column"
+            eventType='deleted'
+            stateDirection='column'
           />
         )}
-        {activity.eventType ===
-          ActivityEventType.DATASET_FIELD_VALUES_UPDATED && (
+        {activity.eventType === ActivityEventType.DATASET_FIELD_VALUES_UPDATED && (
           <EnumsActivityField
             oldState={activity.oldState.datasetFieldValues}
             newState={activity.newState.datasetFieldValues}
@@ -148,15 +131,15 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         )}
         {activity.eventType === ActivityEventType.CUSTOM_GROUP_CREATED && (
           <ActivityFieldHeader
-            eventType="created"
-            startText="Custom group"
+            eventType='created'
+            startText='Custom group'
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}
         {activity.eventType === ActivityEventType.CUSTOM_GROUP_DELETED && (
           <ActivityFieldHeader
-            eventType="deleted"
-            startText="Custom group"
+            eventType='deleted'
+            startText='Custom group'
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}
@@ -170,23 +153,22 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         <Grid
           item
           container
-          flexWrap="nowrap"
-          justifyContent="flex-end"
-          alignItems="center"
+          flexWrap='nowrap'
+          justifyContent='flex-end'
+          alignItems='center'
           sx={{ position: 'absolute', top: '8px', right: 0, zIndex: -1 }}
         >
           {activity.systemEvent ? (
             <GearIcon />
           ) : (
-            <Grid display="flex" flexWrap="nowrap" alignItems="center">
-              <UserIcon stroke="black" />
-              <Typography variant="body1" sx={{ ml: 0.5 }}>
-                {activity.createdBy?.owner?.name ||
-                  activity.createdBy?.identity.username}
+            <Grid display='flex' flexWrap='nowrap' alignItems='center'>
+              <UserIcon stroke='black' />
+              <Typography variant='body1' sx={{ ml: 0.5 }}>
+                {activity.createdBy?.owner?.name || activity.createdBy?.identity.username}
               </Typography>
             </Grid>
           )}
-          <Typography variant="subtitle1" sx={{ ml: 0.5 }}>
+          <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
             at {format(activity.createdAt, 'p')}
           </Typography>
         </Grid>

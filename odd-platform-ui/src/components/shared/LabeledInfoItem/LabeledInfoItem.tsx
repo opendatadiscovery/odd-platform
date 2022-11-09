@@ -38,8 +38,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
 }) => {
   const getXS = () => {
     if (labelWidth === 12) return 12;
-    if (typeof labelWidth === 'number')
-      return (12 - labelWidth) as GridSize;
+    if (typeof labelWidth === 'number') return (12 - labelWidth) as GridSize;
     return 'auto';
   };
 
@@ -50,7 +49,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           title={typeof label === 'string' ? label : ''}
           variant={variant}
           noWrap
-          component="span"
+          component='span'
         >
           {label}
         </Label>
@@ -66,9 +65,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           variant={variant}
           component={valueComponent}
           noWrap={!valueWrap}
-          title={
-            typeof children === 'string' ? children?.toString() : undefined
-          }
+          title={typeof children === 'string' ? children?.toString() : undefined}
         >
           {children}
         </Value>

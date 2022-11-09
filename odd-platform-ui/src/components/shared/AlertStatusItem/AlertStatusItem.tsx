@@ -9,9 +9,7 @@ interface AlertStatusItemProps {
 
 const AlertStatusItem: React.FC<AlertStatusItemProps> = ({ typeName }) => (
   <S.Container title={typeName}>
-    <S.FilledContainer $typeName={typeName}>
-      {capitalize(typeName)}
-    </S.FilledContainer>
+    <S.FilledContainer $typeName={typeName}>{capitalize(typeName)}</S.FilledContainer>
   </S.Container>
 );
 

@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  DataEntityClassNameEnum,
-  DataEntityDetails,
-} from 'generated-sources';
+import { DataEntityClassNameEnum, DataEntityDetails } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
@@ -27,39 +24,24 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
   return (
     <Grid container>
       <Grid item xs={12} sx={{ ml: 0, mb: 1.25 }}>
-        <EntityClassItem
-          entityClassName={DataEntityClassNameEnum.INPUT}
-          fullName
-        />
+        <EntityClassItem entityClassName={DataEntityClassNameEnum.INPUT} fullName />
       </Grid>
-      <Grid
-        item
-        container
-        xs={6}
-        alignItems="flex-start"
-        alignContent="flex-start"
-      >
-        <Grid item container xs={12} alignItems="baseline">
-          <Typography variant="h2" sx={{ mr: 0.5 }}>
+      <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
+        <Grid item container xs={12} alignItems='baseline'>
+          <Typography variant='h2' sx={{ mr: 0.5 }}>
             {(outputs?.length || 0) + (unknownOutputsCount || 0)}
           </Typography>
-          <Typography variant="body1" color="texts.hint">
+          <Typography variant='body1' color='texts.hint'>
             outputs
           </Typography>
         </Grid>
-        <Grid
-          item
-          container
-          xs={12}
-          direction="column"
-          alignItems="flex-start"
-        >
+        <Grid item container xs={12} direction='column' alignItems='flex-start'>
           {outputs?.slice(0, displayedEntitiesNumber).map(output => (
             <AppButton
               key={output.id}
               sx={{ my: 0.25 }}
-              size="small"
-              color="tertiary"
+              size='small'
+              color='tertiary'
               onClick={() => {}}
             >
               <Link to={dataEntityDetailsPath(output.id)}>
@@ -68,7 +50,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
             </AppButton>
           ))}
           {unknownOutputsCount ? (
-            <Typography variant="subtitle1" sx={{ ml: 0.5 }}>
+            <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
               {unknownOutputsCount} more output
               {unknownOutputsCount === 1 ? '' : 's'} unknown
             </Typography>
@@ -76,14 +58,10 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
           {outputs && outputs?.length > displayedEntitiesNumber ? (
             <EntitiesListModal
               entities={outputs}
-              labelFor="Outputs"
+              labelFor='Outputs'
               dataEntityName={dataEntityName}
               openBtnEl={
-                <AppButton
-                  size="medium"
-                  color="tertiary"
-                  sx={{ my: 0.25 }}
-                >
+                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
                   Show All
                 </AppButton>
               }

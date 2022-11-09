@@ -34,63 +34,50 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   const collapseBtn = (
     <AppIconButton
       sx={{ mr: 1 }}
-      color="collapse"
+      color='collapse'
       open={open}
-      icon={
-        open ? (
-          <MinusIcon width={6} height={6} />
-        ) : (
-          <PlusIcon width={6} height={6} />
-        )
-      }
-      aria-label="expand row"
+      icon={open ? <MinusIcon width={6} height={6} /> : <PlusIcon width={6} height={6} />}
+      aria-label='expand row'
       onClick={() => setOpen(!open)}
     />
   );
 
   return (
-    <Grid container direction="column" wrap="nowrap">
-      <S.TestReportBySuitNameHeader container wrap="nowrap">
+    <Grid container direction='column' wrap='nowrap'>
+      <S.TestReportBySuitNameHeader container wrap='nowrap'>
         <Grid item>{collapseBtn}</Grid>
         <Grid
           item
           container
-          wrap="nowrap"
+          wrap='nowrap'
           onClick={() => setOpen(prevState => !prevState)}
         >
           <Grid item>
-            <Typography variant="body1">{suitName}</Typography>
+            <Typography variant='body1'>{suitName}</Typography>
           </Grid>
-          <Grid item container justifyContent="flex-end">
+          <Grid item container justifyContent='flex-end'>
             {Object.entries(dataQATestReport).map(
               ([testType, count]) =>
                 count !== 0 && (
                   <TestRunStatusItem
                     key={testType}
                     count={count}
-                    typeName={
-                      testType.toUpperCase() as DataEntityRunStatus
-                    }
-                    size="small"
+                    typeName={testType.toUpperCase() as DataEntityRunStatus}
+                    size='small'
                   />
                 )
             )}
           </Grid>
         </Grid>
       </S.TestReportBySuitNameHeader>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} timeout='auto' unmountOnExit>
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
-              <Link
-                to={dataEntityTestPath(dataSetId, dataQATest.id)}
-                key={dataQATest.id}
-              >
+              <Link to={dataEntityTestPath(dataSetId, dataQATest.id)} key={dataQATest.id}>
                 <TestItem
                   active={dataQATestId === dataQATest.id}
                   latestRunStatus={dataQATest.latestRun?.status}
-                  testName={
-                    dataQATest.internalName || dataQATest.externalName
-                  }
+                  testName={dataQATest.internalName || dataQATest.externalName}
                   testStartTime={dataQATest.latestRun?.startTime}
                   testEndTime={dataQATest.latestRun?.endTime}
                 />

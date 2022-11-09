@@ -32,14 +32,10 @@ const DatasetStructureTypeCountLabelList: React.FC<
     );
 
   const truncateButton = useCallback(
-    (
-      showOrHide: boolean,
-      listLength?: number,
-      renderedListLength?: number
-    ) => (
+    (showOrHide: boolean, listLength?: number, renderedListLength?: number) => (
       <AppButton
-        size="medium"
-        color="tertiary"
+        size='medium'
+        color='tertiary'
         onClick={() => {
           setViewAll(!showOrHide);
           onListOpening(!showOrHide);
@@ -56,11 +52,7 @@ const DatasetStructureTypeCountLabelList: React.FC<
   const ellipsis = (label: React.ReactPortal) => {
     const labelsRendered = label.props.children;
 
-    return truncateButton(
-      viewAll,
-      typesCountList.length,
-      labelsRendered.length
-    );
+    return truncateButton(viewAll, typesCountList.length, labelsRendered.length);
   };
 
   return !viewAll ? (

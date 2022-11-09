@@ -9,7 +9,7 @@ interface SkeletonProps {
 
 const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ length }) => {
   const skeletonItem = (width?: string) => (
-    <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
+    <Grid container justifyContent='space-between' sx={{ mb: 2 }}>
       <Grid item xs={2}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>

@@ -13,10 +13,7 @@ interface FilterItemProps {
   facetName: TermSearchOptionalFacetNames;
 }
 
-const SelectedFilterOption: React.FC<FilterItemProps> = ({
-  filter,
-  facetName,
-}) => {
+const SelectedFilterOption: React.FC<FilterItemProps> = ({ filter, facetName }) => {
   const dispatch = useAppDispatch();
 
   const filterId = 'id' in filter ? filter.id : filter.entityId;
@@ -39,8 +36,8 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
       </Typography>
       <AppIconButton
         sx={{ ml: 0.5 }}
-        size="small"
-        color="unfilled"
+        size='small'
+        color='unfilled'
         icon={<ClearIcon />}
         onClick={onRemoveClick}
       />

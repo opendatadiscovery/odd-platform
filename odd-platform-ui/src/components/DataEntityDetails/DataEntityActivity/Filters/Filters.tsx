@@ -35,11 +35,11 @@ const Filters: React.FC = () => {
 
   return (
     <S.Container>
-      <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
-        <Typography variant="h4">Filters</Typography>
+      <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
+        <Typography variant='h4'>Filters</Typography>
         <AppButton
-          color="tertiary"
-          size="medium"
+          color='tertiary'
+          size='medium'
           onClick={() =>
             asyncClearFilters().then(() =>
               dispatch(
@@ -57,12 +57,12 @@ const Filters: React.FC = () => {
       <>
         <CalendarFilter />
         <SingleFilter
-          key="at"
-          filterName="eventType"
-          name="Event type"
+          key='at'
+          filterName='eventType'
+          name='Event type'
           filterOptions={activityEventTypes}
         />
-        <MultipleFilter key="us" filterName="userIds" name="User" />
+        <MultipleFilter key='us' filterName='userIds' name='User' />
       </>
     </S.Container>
   );

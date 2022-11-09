@@ -2,11 +2,9 @@ import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
 import { AppButton } from 'components/shared';
 
-export const Button = styled(AppButton)<{ $showBtn?: boolean }>(
-  ({ $showBtn }) => ({
-    opacity: $showBtn ? 1 : 0,
-  })
-);
+export const Button = styled(AppButton)<{ $showBtn?: boolean }>(({ $showBtn }) => ({
+  opacity: $showBtn ? 1 : 0,
+}));
 
 export const RowContainer = styled(Grid)<{
   $offset: number;

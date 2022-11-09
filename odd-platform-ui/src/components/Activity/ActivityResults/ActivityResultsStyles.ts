@@ -1,9 +1,5 @@
 import { Grid } from '@mui/material';
-import {
-  primaryTabsHeight,
-  tabsContainerMargin,
-  toolbarHeight,
-} from 'lib/constants';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 
 export const ListContainer = styled(Grid)(({ theme }) => ({

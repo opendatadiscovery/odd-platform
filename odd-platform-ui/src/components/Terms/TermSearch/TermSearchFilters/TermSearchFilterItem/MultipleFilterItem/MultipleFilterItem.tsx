@@ -12,25 +12,14 @@ interface Props {
 }
 
 const MultipleFilterItem: React.FC<Props> = ({ name, facetName }) => {
-  const selectedOptions = useAppSelector(
-    getSelectedTermSearchFacetOptions(facetName)
-  );
+  const selectedOptions = useAppSelector(getSelectedTermSearchFacetOptions(facetName));
 
   return (
     <Grid container>
       <Grid item xs={12}>
-        <MultipleFilterItemAutocomplete
-          name={name}
-          facetName={facetName}
-        />
+        <MultipleFilterItemAutocomplete name={name} facetName={facetName} />
       </Grid>
-      <Grid
-        display="inline-flex"
-        item
-        xs={12}
-        sx={{ my: 0.25, mx: -0.25 }}
-        container
-      >
+      <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
         {selectedOptions?.map(option => (
           <SelectedFilterOption
             key={option.entityId}

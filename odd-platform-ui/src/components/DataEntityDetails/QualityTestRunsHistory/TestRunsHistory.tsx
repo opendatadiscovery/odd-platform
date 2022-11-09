@@ -23,9 +23,9 @@ import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 const TestRunsHistory: React.FC = () => {
   const pageSize = 100;
 
-  const [alertStatus, setAlertStatus] = React.useState<
-    DataEntityRunStatus | 'All'
-  >('All');
+  const [alertStatus, setAlertStatus] = React.useState<DataEntityRunStatus | 'All'>(
+    'All'
+  );
 
   const dispatch = useAppDispatch();
   const { dataEntityId: dataQATestId } = useAppParams();
@@ -54,12 +54,8 @@ const TestRunsHistory: React.FC = () => {
 
   return (
     <Grid container sx={{ mt: 2 }}>
-      <AppSelect
-        sx={{ minWidth: '200px' }}
-        fullWidth={false}
-        value={alertStatus}
-      >
-        <AppMenuItem value="All" onClick={() => setAlertStatus('All')}>
+      <AppSelect sx={{ minWidth: '200px' }} fullWidth={false} value={alertStatus}>
+        <AppMenuItem value='All' onClick={() => setAlertStatus('All')}>
           Show all statuses
         </AppMenuItem>
         {Object.keys(DataEntityRunStatus)?.map(option => (
@@ -72,18 +68,18 @@ const TestRunsHistory: React.FC = () => {
           </AppMenuItem>
         ))}
       </AppSelect>
-      <RunsTableHeader container wrap="nowrap" sx={{ mt: 2 }}>
-        <ColContainer item $colType="md">
-          <Typography variant="caption">Start time</Typography>
+      <RunsTableHeader container wrap='nowrap' sx={{ mt: 2 }}>
+        <ColContainer item $colType='md'>
+          <Typography variant='caption'>Start time</Typography>
         </ColContainer>
-        <ColContainer item $colType="sm">
-          <Typography variant="caption">Status</Typography>
+        <ColContainer item $colType='sm'>
+          <Typography variant='caption'>Status</Typography>
         </ColContainer>
-        <ColContainer item $colType="lg">
-          <Typography variant="caption">Status reason</Typography>
+        <ColContainer item $colType='lg'>
+          <Typography variant='caption'>Status reason</Typography>
         </ColContainer>
-        <ColContainer item $colType="sm">
-          <Typography variant="caption">Duration</Typography>
+        <ColContainer item $colType='sm'>
+          <Typography variant='caption'>Duration</Typography>
         </ColContainer>
       </RunsTableHeader>
       <Grid container>

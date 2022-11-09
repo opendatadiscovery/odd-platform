@@ -26,12 +26,12 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
       <Controller
         name={`tags.${itemIndex}.name`}
         control={control}
-        defaultValue=""
+        defaultValue=''
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Tag Name"
+            placeholder='Tag Name'
             name={`tags.${itemIndex}.name`}
             customEndAdornment={{
               variant: 'clear',
@@ -54,12 +54,12 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
               sx={{ ml: -0.25 }}
               checked={field.value}
               control={<AppCheckbox sx={{ mr: 1 }} />}
-              label="Important"
+              label='Important'
             />
           )}
         />
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
+          <AppButton size='small' color='dropdown' onClick={onItemRemove}>
             Delete
           </AppButton>
         )}

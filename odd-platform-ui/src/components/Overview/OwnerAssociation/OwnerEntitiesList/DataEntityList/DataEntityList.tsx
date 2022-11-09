@@ -1,11 +1,11 @@
-import { Typography, Box } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { useAppPaths } from 'lib/hooks';
-import * as S from 'components/Overview/OwnerAssociation/OwnerEntitiesList/DataEntityList/DataEntityListStyles';
+import * as S from './DataEntityListStyles';
 
 interface OverviewDataEntityProps {
   dataEntitiesList: DataEntityRef[];
@@ -24,7 +24,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
 
   return (
     <S.DataEntityListContainer item>
-      <S.SectionCaption variant="h4" sx={{ mb: 2 }}>
+      <S.SectionCaption variant='h4' sx={{ mb: 2 }}>
         {entityListIcon}
         {entityListName}
       </S.SectionCaption>
@@ -32,17 +32,11 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
       <S.ListLinksContainer>
         {dataEntitiesList.map(item => (
           <li key={item.id}>
-            <S.ListLink
-              to={dataEntityDetailsPath(item.id)}
-              $hasAlerts={item.hasAlerts}
-            >
+            <S.ListLink to={dataEntityDetailsPath(item.id)} $hasAlerts={item.hasAlerts}>
               <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
 
-                <Typography
-                  noWrap
-                  title={item.internalName || item.externalName}
-                >
+                <Typography noWrap title={item.internalName || item.externalName}>
                   {item.internalName || item.externalName}
                 </Typography>
               </S.ListLinkInnerItem>
@@ -60,9 +54,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
           </li>
         ))}
 
-        {!isFetching && !dataEntitiesList.length ? (
-          <EmptyContentPlaceholder />
-        ) : null}
+        {!isFetching && !dataEntitiesList.length ? <EmptyContentPlaceholder /> : null}
       </S.ListLinksContainer>
     </S.DataEntityListContainer>
   );

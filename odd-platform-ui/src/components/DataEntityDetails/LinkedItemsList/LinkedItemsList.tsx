@@ -43,37 +43,35 @@ const LinkedItemsList: React.FC = () => {
 
   return (
     <S.Container>
-      <S.ResultsTableHeader container sx={{ mt: 2 }} wrap="nowrap">
-        <S.ColContainer item $colType="colmd">
-          <Typography variant="caption">Name</Typography>
+      <S.ResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
+        <S.ColContainer item $colType='colmd'>
+          <Typography variant='caption'>Name</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="collg">
-          <Typography variant="caption">Entities</Typography>
+        <S.ColContainer item $colType='collg'>
+          <Typography variant='caption'>Entities</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colsm">
-          <Typography variant="caption">Owners</Typography>
+        <S.ColContainer item $colType='colsm'>
+          <Typography variant='caption'>Owners</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colxs">
-          <Typography variant="caption">Created</Typography>
+        <S.ColContainer item $colType='colxs'>
+          <Typography variant='caption'>Created</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="colxs">
-          <Typography variant="caption">Last Update</Typography>
+        <S.ColContainer item $colType='colxs'>
+          <Typography variant='caption'>Last Update</Typography>
         </S.ColContainer>
       </S.ResultsTableHeader>
       {isLinkedListFetching ? (
         <LinkedListSkeleton length={10} />
       ) : (
-        <S.ListContainer id="linked-items-list">
+        <S.ListContainer id='linked-items-list'>
           {dataEntityGroupLinkedList && (
             <InfiniteScroll
               dataLength={dataEntityGroupLinkedList?.length}
               next={fetchNextPage}
               hasMore={!!pageInfo?.hasNext}
-              loader={
-                isLinkedListFetching && <LinkedListSkeleton length={10} />
-              }
-              scrollThreshold="200px"
-              scrollableTarget="linked-items-list"
+              loader={isLinkedListFetching && <LinkedListSkeleton length={10} />}
+              scrollThreshold='200px'
+              scrollableTarget='linked-items-list'
             >
               {dataEntityGroupLinkedList?.map(linkedItem => (
                 <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
@@ -83,7 +81,7 @@ const LinkedItemsList: React.FC = () => {
         </S.ListContainer>
       )}
       {isLinkedListFetching && !pageInfo?.total ? (
-        <EmptyContentPlaceholder text="No linked items" />
+        <EmptyContentPlaceholder text='No linked items' />
       ) : null}
     </S.Container>
   );

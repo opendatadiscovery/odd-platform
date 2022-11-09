@@ -25,8 +25,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
   const dispatch = useAppDispatch();
   const searchTerms = fetchTermsList;
 
-  type FilterOption = Omit<TermRef, 'id' | 'definition' | 'namespace'> &
-    Partial<TermRef>;
+  type FilterOption = Omit<TermRef, 'id' | 'definition' | 'namespace'> & Partial<TermRef>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -46,18 +45,15 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
     [searchTerms, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback(
-    (option: FilterOption | string) => {
-      if (typeof option === 'string') {
-        return option;
-      }
-      if ('name' in option && option.name) {
-        return option.name;
-      }
-      return '';
-    },
-    []
-  );
+  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
+    if (typeof option === 'string') {
+      return option;
+    }
+    if ('name' in option && option.name) {
+      return option.name;
+    }
+    return '';
+  }, []);
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -66,9 +62,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
         searchText !== '' &&
         !loading &&
         !options.find(
-          option =>
-            option.name.toLocaleLowerCase() ===
-            searchText.toLocaleLowerCase()
+          option => option.name.toLocaleLowerCase() === searchText.toLocaleLowerCase()
         )
       ) {
         return [...options, { name: searchText }];
@@ -115,7 +109,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
       {...field}
       sx={{ mt: 2 }}
       fullWidth
-      id="dataentity-term-add-search"
+      id='dataentity-term-add-search'
       open={autocompleteOpen}
       onOpen={() => setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
@@ -135,7 +129,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
         <AppInput
           {...params}
           ref={params.InputProps.ref}
-          placeholder="Enter term name…"
+          placeholder='Enter term name…'
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,
@@ -146,19 +140,13 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
       renderOption={(props, option) =>
         option.id ? (
           <li {...props}>
-            <Grid container flexWrap="wrap" flexDirection="column">
-              <Typography variant="body1">{option.name}</Typography>
-              <Typography variant="subtitle2">
-                {option.namespace?.name}
-              </Typography>
+            <Grid container flexWrap='wrap' flexDirection='column'>
+              <Typography variant='body1'>{option.name}</Typography>
+              <Typography variant='subtitle2'>{option.namespace?.name}</Typography>
             </Grid>
           </li>
         ) : (
-          <Typography
-            sx={{ py: 0.5, px: 1 }}
-            variant="subtitle2"
-            component="span"
-          >
+          <Typography sx={{ py: 0.5, px: 1 }} variant='subtitle2' component='span'>
             There are no terms
           </Typography>
         )

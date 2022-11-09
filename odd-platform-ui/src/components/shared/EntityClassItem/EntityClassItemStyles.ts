@@ -13,7 +13,5 @@ export const Content = styled(Box)<{
   fontWeight: theme.typography.body2.fontWeight,
   lineHeight: theme.typography.body2.lineHeight,
   color: theme.palette.text.primary,
-  backgroundColor: $entityClassName
-    ? theme.palette.entityClass[$entityClassName]
-    : '',
+  backgroundColor: $entityClassName ? theme.palette.entityClass[$entityClassName] : '',
 }));

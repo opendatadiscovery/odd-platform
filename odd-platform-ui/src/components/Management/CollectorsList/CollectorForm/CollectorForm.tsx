@@ -26,9 +26,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isCollectorCreating } = useAppSelector(
-    getCollectorCreatingStatuses
-  );
+  const { isLoading: isCollectorCreating } = useAppSelector(getCollectorCreatingStatuses);
   const { isLoading: isCollectorUpdating } = useAppSelector(
     getCollectorsUpdatingStatuses
   );
@@ -93,20 +91,19 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   };
 
   const collectorFormTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {collector ? 'Edit ' : 'Add '}
       Collector
     </Typography>
   );
 
   const collectorFormContent = () => (
-    <form id="collector-create-form" onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="subtitle2" fontSize="0.73rem">
-        Fields with the <Asterisk>*</Asterisk> symbol are required to save
-        the Collector
+    <form id='collector-create-form' onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant='subtitle2' fontSize='0.73rem'>
+        Fields with the <Asterisk>*</Asterisk> symbol are required to save the Collector
       </Typography>
       <Controller
-        name="name"
+        name='name'
         control={control}
         rules={{
           required: true,
@@ -116,8 +113,8 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.5 }}
-            label="Name"
-            placeholder="e.g. Data Tower"
+            label='Name'
+            placeholder='e.g. Data Tower'
             required
             customEndAdornment={{
               variant: 'clear',
@@ -130,21 +127,19 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       />
       <Controller
         control={control}
-        name="namespaceName"
+        name='namespaceName'
         defaultValue={collector?.namespace?.name}
-        render={({ field }) => (
-          <NamespaceAutocomplete controllerProps={field} />
-        )}
+        render={({ field }) => <NamespaceAutocomplete controllerProps={field} />}
       />
       <Controller
-        name="description"
+        name='description'
         control={control}
         render={({ field }) => (
           <AppInput
             {...field}
             sx={{ mt: 1.25 }}
-            label="Description"
-            placeholder="Collector description"
+            label='Description'
+            placeholder='Collector description'
             multiline
             maxRows={4}
             customEndAdornment={{
@@ -161,10 +156,10 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
 
   const collectorFormActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="collector-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='collector-create-form'
+      color='primary'
       fullWidth
       disabled={!isValid}
     >
