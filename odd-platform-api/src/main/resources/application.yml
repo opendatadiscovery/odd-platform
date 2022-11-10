@@ -127,11 +127,19 @@ notifications:
 #    webhook:
 #      url:
 
+partition:
+  advisory-lock-id: 90
+
 datacollaboration:
   receive-event-advisory-lock-id: 110
   sender-message-advisory-lock-id: 120
+  message-partition-period: 30
   enabled: false
 #  slack-oauth-token:
+
+odd:
+  activity:
+    partition-period: 30
 
 management:
   endpoints:
@@ -153,11 +161,6 @@ management:
       enabled: false
     redis:
       enabled: false
-
-odd:
-  activity:
-    partition-period: 30
-    advisory-lock-id: 130
 
 logging:
   level:
