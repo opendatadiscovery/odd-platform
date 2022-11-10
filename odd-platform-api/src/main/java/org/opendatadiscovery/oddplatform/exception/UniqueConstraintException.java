@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.exception;
 
-public class UniqueConstraintException extends RuntimeException {
+public class UniqueConstraintException extends ExceptionWithErrorCode {
     public UniqueConstraintException(final String message) {
-        super(message);
+        super(ErrorCode.UNIQUE_CONSTRAINT, message);
     }
 }

@@ -23,7 +23,6 @@ public class AlertManagerController {
     public Mono<ResponseEntity<Void>> alertManagerWebhook(@RequestBody final Mono<AlertManagerRequest> request) {
         return request
             .flatMap(req -> alertService.handleExternalAlerts(req.getAlerts()))
-            .subscribeOn(Schedulers.boundedElastic())
             .map(o -> ResponseEntity.noContent().build());
     }
 

@@ -122,6 +122,17 @@ public class ReactiveDataSourceRepositoryImpl
         return jooqReactiveOperations.mono(query).map(r -> r.into(DataSourcePojo.class));
     }
 
+    @Override
+    public Mono<Boolean> existsByCollector(final long collectorId) {
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
+            DSL.selectFrom(DATA_SOURCE)
+                .where(DATA_SOURCE.COLLECTOR_ID.eq(collectorId))
+                .and(DATA_SOURCE.IS_DELETED.isFalse())
+        );
+
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
     private SelectJoinStep<Record> baseSelect() {
         return DSL
             .select(DATA_SOURCE.asterisk())

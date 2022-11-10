@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsResponse;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -45,9 +46,9 @@ public class TagServiceImpl implements TagService {
     @ReactiveTransactional
     public Mono<Tag> update(final long tagId, final TagFormData formData) {
         return reactiveTagRepository.getDto(tagId)
-            .switchIfEmpty(Mono.error(new NotFoundException("Can't find tag with id %s", tagId)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Tag", tagId)))
             .filter(tagDto -> !tagDto.external())
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update tag which has external relations")))
+            .switchIfEmpty(Mono.error(new IllegalUserRequestException("Can't update tag which has external relations")))
             .map(tag -> tagMapper.applyToPojo(formData, tag.tagPojo()))
             .flatMap(reactiveTagRepository::update)
             .flatMap(this::updateSearchVectors)
@@ -58,9 +59,9 @@ public class TagServiceImpl implements TagService {
     @ReactiveTransactional
     public Mono<Tag> delete(final long tagId) {
         return reactiveTagRepository.getDto(tagId)
-            .switchIfEmpty(Mono.error(new NotFoundException("Can't find tag with id %s", tagId)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Tag", tagId)))
             .filter(tagDto -> !tagDto.external())
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't delete tag which has external relations")))
+            .switchIfEmpty(Mono.error(new IllegalUserRequestException("Can't delete tag which has external relations")))
             .thenMany(Flux.zip(reactiveTagRepository.deleteTermRelations(tagId),
                 reactiveTagRepository.deleteDataEntityRelations(tagId)))
             .then(reactiveTagRepository.delete(tagId))

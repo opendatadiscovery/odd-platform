@@ -9,6 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
+import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
@@ -43,7 +44,7 @@ public class EnumValueServiceImpl implements EnumValueService {
             .collect(Collectors.toList());
 
         if (hasDuplicates(enumNames)) {
-            return Mono.error(new RuntimeException("There are duplicates in enum values"));
+            return Mono.error(new IllegalUserRequestException("There are duplicates in enum values"));
         }
 
         final List<Long> idsToKeep = pojos.stream()

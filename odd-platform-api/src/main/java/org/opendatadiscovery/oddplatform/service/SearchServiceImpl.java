@@ -170,7 +170,7 @@ public class SearchServiceImpl implements SearchService {
         return Mono
             .fromCallable(() -> searchFacetRepository.getFacetState(searchId))
             .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
+                ? Mono.error(new NotFoundException("Search not found"))
                 : Mono.just(optional.get()));
     }
 

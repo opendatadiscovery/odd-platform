@@ -18,7 +18,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,16 +34,11 @@ public class ReactiveDataEntityRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<DataEntityRecord, DataEntityPojo>
     implements ReactiveDataEntityRepository {
 
-    private final JooqRecordHelper jooqRecordHelper;
-
     public ReactiveDataEntityRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                            final JooqQueryHelper jooqQueryHelper,
-                                            final JooqRecordHelper jooqRecordHelper) {
+                                            final JooqQueryHelper jooqQueryHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY, DataEntityPojo.class,
             DATA_ENTITY.EXTERNAL_NAME, DATA_ENTITY.ID, DATA_ENTITY.CREATED_AT, DATA_ENTITY.UPDATED_AT,
             DATA_ENTITY.IS_DELETED, DATA_ENTITY.DELETED_AT);
-
-        this.jooqRecordHelper = jooqRecordHelper;
     }
 
     @Override

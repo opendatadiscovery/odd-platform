@@ -82,7 +82,7 @@ public class OwnershipServiceImpl implements OwnershipService {
         @ActivityParameter(ActivityParameterNames.OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,
         final OwnershipUpdateFormData formData) {
         return ownershipRepository.get(ownershipId)
-            .switchIfEmpty(Mono.error(new NotFoundException("Ownership with id = [%s] was not found", ownershipId)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Ownership", ownershipId)))
             .then(titleService.getOrCreate(formData.getTitleName()))
             .flatMap(titlePojo -> ownershipRepository.updateTitle(ownershipId, titlePojo.getId()))
             .then(ownershipRepository.get(ownershipId))

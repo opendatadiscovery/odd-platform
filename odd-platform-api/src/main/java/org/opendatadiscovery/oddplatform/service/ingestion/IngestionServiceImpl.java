@@ -65,8 +65,7 @@ public class IngestionServiceImpl implements IngestionService {
     @ReactiveTransactional
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
-            .switchIfEmpty(Mono.error(() -> new NotFoundException(
-                "Data source with oddrn %s hasn't been found", dataEntityList.getDataSourceOddrn())))
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("dataSource", dataEntityList.getDataSourceOddrn())))
             .filter(ds -> CollectionUtils.isNotEmpty(dataEntityList.getItems()))
             .flatMap(ds -> persistDataEntities(ds.dataSource().getId(), dataEntityList.getItems()))
             .flatMap(ingestionProcessorChain::processIngestionRequest)

@@ -7,7 +7,6 @@ import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.Collector;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorList;
-import org.opendatadiscovery.oddplatform.api.contract.model.CollectorUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.CollectorPojo;
@@ -39,10 +38,10 @@ public interface CollectorMapper {
             .setTokenId(token != null ? token.getId() : null);
     }
 
-    CollectorPojo applyToDto(@MappingTarget final CollectorPojo collector, final CollectorUpdateFormData form);
+    CollectorPojo applyToDto(@MappingTarget final CollectorPojo collector, final CollectorFormData form);
 
     default CollectorPojo applyToDto(final CollectorPojo collector,
-                                     final CollectorUpdateFormData form,
+                                     final CollectorFormData form,
                                      final NamespacePojo namespace) {
         return applyToDto(collector, form).setNamespaceId(namespace != null ? namespace.getId() : null);
     }

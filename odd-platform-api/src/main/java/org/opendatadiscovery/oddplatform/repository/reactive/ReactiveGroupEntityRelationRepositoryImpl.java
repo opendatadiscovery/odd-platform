@@ -9,10 +9,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.GroupEntityRelationsRecord;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -21,12 +24,14 @@ import reactor.core.publisher.Mono;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 
 @Repository
 @RequiredArgsConstructor
 public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupEntityRelationRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
+    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Flux<GroupEntityRelationsPojo> deleteRelationsForDEG(final String groupOddrn) {
@@ -167,5 +172,17 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
             .from(cte.getName());
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(String.class));
+    }
+
+    public Mono<Boolean> degHasEntities(final long dataEntityGroupId) {
+        final var groupOddrn = DSL.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.eq(dataEntityGroupId));
+
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
+            DSL.selectFrom(GROUP_ENTITY_RELATIONS)
+                .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+        );
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 }

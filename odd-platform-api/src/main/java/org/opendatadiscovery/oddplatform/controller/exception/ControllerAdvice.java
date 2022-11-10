@@ -1,69 +1,79 @@
 package org.opendatadiscovery.oddplatform.controller.exception;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.api.contract.model.ErrorDetail;
 import org.opendatadiscovery.oddplatform.api.contract.model.ErrorResponse;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
-import org.opendatadiscovery.oddplatform.exception.ForbiddenException;
+import org.opendatadiscovery.oddplatform.exception.ErrorCode;
+import org.opendatadiscovery.oddplatform.exception.ExceptionWithErrorCode;
+import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
 @RestControllerAdvice
+@Slf4j
 public class ControllerAdvice {
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(IllegalUserRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequest(final IllegalArgumentException e) {
-        final ErrorResponse error = new ErrorResponse();
-        error.setMessage(e.getMessage());
-        error.setCode("USR001");
-        return error;
-    }
-
-    @ExceptionHandler(ForbiddenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleForbidden(final ForbiddenException e) {
-        final ErrorResponse error = new ErrorResponse();
-        error.setMessage(e.getMessage());
-        error.setCode("USR002");
-        return error;
+    public ErrorResponse handleBadRequest(final IllegalUserRequestException e) {
+        return buildResponse(e);
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
-        final ErrorResponse error = new ErrorResponse();
-        error.setMessage(e.getMessage());
-        error.setCode("USR003");
-        return error;
+        return buildResponse(e);
     }
 
     @ExceptionHandler(UniqueConstraintException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUniqueConstraint(final UniqueConstraintException e) {
-        final ErrorResponse error = new ErrorResponse();
-        error.setMessage(e.getMessage());
-        error.setCode("USR004");
-        return error;
+        return buildResponse(e);
     }
 
     @ExceptionHandler(CascadeDeleteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleCascadeDelete(final CascadeDeleteException e) {
+        return buildResponse(e);
+    }
+
+    @ExceptionHandler(WebExchangeBindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleException(final WebExchangeBindException e) {
+        return buildResponse(e);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleServerException(final Exception e) {
+        log.error("Internal server error", e);
+        return buildResponse(new ExceptionWithErrorCode(ErrorCode.SERVER_EXCEPTION, "Internal Server Error"));
+    }
+
+    private ErrorResponse buildResponse(final ExceptionWithErrorCode e) {
         final ErrorResponse error = new ErrorResponse();
         error.setMessage(e.getMessage());
-        error.setCode("USR005");
+        error.setCode(e.getCode().getValue());
         return error;
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleServerException(final RuntimeException e) {
+    private ErrorResponse buildResponse(final WebExchangeBindException e) {
         final ErrorResponse error = new ErrorResponse();
-        error.setMessage(e.getMessage());
-        error.setCode("SYS001");
+        error.setMessage(StringUtils.isNotEmpty(e.getReason()) ? e.getReason() : "Internal validation failed");
+        error.setCode(ErrorCode.BAD_REQUEST.getValue());
+        e.getFieldErrors().forEach(fe -> {
+            final ErrorDetail detail = new ErrorDetail();
+            detail.setField(fe.getField());
+            detail.setMessage(fe.getDefaultMessage());
+            error.addDetailsItem(detail);
+        });
         return error;
     }
 }

@@ -51,7 +51,7 @@ public class DataQualityServiceImpl implements DataQualityService {
     public Mono<DataSetTestReport> getDatasetTestReport(final long datasetId) {
         return reactiveDataEntityRepository.exists(datasetId)
             .filter(e -> e)
-            .switchIfEmpty(Mono.error(new NotFoundException("Dataset with id %d not found".formatted(datasetId))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Dataset", datasetId)))
             .flatMap(ign -> dataQualityRepository.getDatasetTestReport(datasetId))
             .map(dataQualityMapper::mapDatasetTestReport);
     }
@@ -65,11 +65,11 @@ public class DataQualityServiceImpl implements DataQualityService {
             .zipWith(reactiveDataEntityRepository.exists(dataQualityTest))
             .doOnNext(consumer((datasetExists, dqTestExists) -> {
                 if (!datasetExists) {
-                    throw new NotFoundException("Dataset with id %d not found".formatted(datasetId));
+                    throw new NotFoundException("Dataset", datasetId);
                 }
 
                 if (!dqTestExists) {
-                    throw new NotFoundException("DataQualityTest with id %d not found".formatted(dataQualityTest));
+                    throw new NotFoundException("DataQualityTest", dataQualityTest);
                 }
             }))
             .then(dataQualityRepository.setDataQualityTestSeverity(dataQualityTest, datasetId, severity))
@@ -97,7 +97,7 @@ public class DataQualityServiceImpl implements DataQualityService {
     private Mono<List<TestStatusWithSeverityDto>> getDatasetSLA(final long datasetId) {
         return reactiveDataEntityRepository.exists(datasetId)
             .filter(e -> e)
-            .switchIfEmpty(Mono.error(new NotFoundException("Dataset with id %d not found".formatted(datasetId))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Dataset", datasetId)))
             .thenMany(dataQualityRepository.getSLA(datasetId))
             .collectList();
     }

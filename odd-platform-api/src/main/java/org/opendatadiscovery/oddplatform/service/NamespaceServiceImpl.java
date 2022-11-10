@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
@@ -7,6 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceUpdateFormData;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -17,7 +19,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -42,7 +43,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     @Override
     public Mono<Namespace> get(final long id) {
         return namespaceRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Namespace", id)))
             .map(namespaceMapper::mapPojo);
     }
 
@@ -63,7 +64,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     @ReactiveTransactional
     public Mono<Namespace> update(final long id, final NamespaceUpdateFormData updateEntityForm) {
         return namespaceRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Namespace", id)))
             .map(pojo -> namespaceMapper.applyToPojo(pojo, updateEntityForm))
             .flatMap(namespaceRepository::update)
             .flatMap(this::updateSearchVectors)
@@ -83,8 +84,8 @@ public class NamespaceServiceImpl implements NamespaceService {
                 || BooleanUtils.toBoolean(t.getT3())
                 || BooleanUtils.toBoolean(t.getT4()))
             .filter(exists -> !exists)
-            .switchIfEmpty(Mono.error(new IllegalStateException(
-                "Namespace with ID %d cannot be deleted: there are still resources attached".formatted(id))))
+            .switchIfEmpty(Mono.error(new CascadeDeleteException(
+                "Namespace cannot be deleted: there are still resources attached")))
             .flatMap(ign -> namespaceRepository.delete(id))
             .map(NamespacePojo::getId);
     }

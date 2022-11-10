@@ -18,7 +18,6 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 @RequiredArgsConstructor
 public class DatasetFieldController implements DatasetFieldApi {
-
     private final DatasetFieldService datasetFieldService;
     private final EnumValueService enumValueService;
 
@@ -30,7 +29,6 @@ public class DatasetFieldController implements DatasetFieldApi {
     ) {
         return datasetFieldUpdateFormData
             .flatMap(formData -> datasetFieldService.updateDatasetField(datasetFieldId, formData))
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
