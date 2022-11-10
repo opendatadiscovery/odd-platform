@@ -4,9 +4,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationProperties;
+import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClientFactory;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -22,7 +22,7 @@ public class DataCollaborationMessageSenderStarter {
     );
 
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
-    private final SlackAPIClient slackAPIClient;
+    private final MessageProviderClientFactory messageProviderClientFactory;
     private final DataCollaborationProperties dataCollaborationProperties;
 
     @EventListener(ApplicationReadyEvent.class)
@@ -31,7 +31,7 @@ public class DataCollaborationMessageSenderStarter {
 
         executorService.submit(new DataCollaborationMessageSenderJob(
             leaderElectionManager,
-            slackAPIClient,
+            messageProviderClientFactory,
             dataCollaborationProperties
         ));
     }

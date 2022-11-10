@@ -8,14 +8,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationProperties;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.DataCollaborationMessageSenderException;
+import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClient;
+import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClientFactory;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
-import org.opendatadiscovery.oddplatform.notification.exception.NotificationSubscriberException;
-import reactor.util.function.Tuple2;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 
@@ -23,27 +23,30 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 @Slf4j
 public class DataCollaborationMessageSenderJob extends Thread {
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
-    private final SlackAPIClient slackAPIClient;
+    private final MessageProviderClientFactory messageProviderClientFactory;
     private final DataCollaborationProperties dataCollaborationProperties;
 
     @Override
     public void run() {
-        // TODO: maybe I could extract more into one method from notificationSubscriber and here
         while (!Thread.interrupted()) {
             try (final Connection connection = acquireLeaderElectionConnection()) {
                 final DSLContext dslContext = DSL.using(connection);
 
                 while (true) {
-                    getSendingCandidate(dslContext)
-                        .ifPresent(message -> {
-                            // TODO: Slack API is Mono based. Redo to Future?
-                            final Tuple2<String, String> t = slackAPIClient
-                                .postMessage(message.getChannelId(), message.getText())
-                                .zipWhen(messageTs -> slackAPIClient.exchangeForUrl(message.getChannelId(), messageTs))
-                                .block();
+                    final Optional<MessagePojo> sendingCandidate = getSendingCandidate(dslContext);
 
-                            updateMessage(dslContext, message.getId(), t.getT1(), t.getT2());
-                        });
+                    if (sendingCandidate.isPresent()) {
+                        final MessagePojo message = sendingCandidate.get();
+
+                        final MessageProviderClient messageProviderClient = messageProviderClientFactory
+                            .getOrFail(MessageProviderDto.valueOf(message.getProvider()));
+
+                        final String messageTs = messageProviderClient
+                            .postMessage(message.getProviderChannelId(), message.getText())
+                            .block();
+
+                        updateMessage(dslContext, message.getId(), messageTs);
+                    }
 
                     TimeUnit.SECONDS.sleep(1);
                 }
@@ -56,17 +59,14 @@ public class DataCollaborationMessageSenderJob extends Thread {
 
             log.debug("Released a lock, waiting 10 seconds for next iteration");
             try {
-                TimeUnit.SECONDS.sleep(10L);
+                TimeUnit.SECONDS.sleep(10);
             } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new NotificationSubscriberException(e);
+                throw new DataCollaborationMessageSenderException(e);
             }
         }
     }
 
-    // TODO: index on created_at ??
-    // TODO: max instead of orderby + limit?
-    // TODO: another message state = SENDING?
     private Optional<MessagePojo> getSendingCandidate(final DSLContext dslContext) {
         return dslContext.select(MESSAGE.fields())
             .from(MESSAGE)
@@ -77,17 +77,15 @@ public class DataCollaborationMessageSenderJob extends Thread {
 
     private void updateMessage(final DSLContext dslContext,
                                final long messageId,
-                               final String messageTs,
-                               final String url) {
+                               final String providerMessageId) {
         dslContext.update(MESSAGE)
-            .set(MESSAGE.PROVIDER_MESSAGE_ID, messageTs)
+            .set(MESSAGE.PROVIDER_MESSAGE_ID, providerMessageId)
             .set(MESSAGE.STATE, MessageStateDto.SENT.toString())
-            .set(MESSAGE.PROVIDER_MESSAGE_URL, url)
             .where(MESSAGE.ID.eq(messageId))
             .execute();
     }
 
     private Connection acquireLeaderElectionConnection() throws SQLException {
-        return leaderElectionManager.acquire(dataCollaborationProperties.getAdvisoryLockId(), true);
+        return leaderElectionManager.acquire(dataCollaborationProperties.getSenderMessageAdvisoryLockId(), true);
     }
 }

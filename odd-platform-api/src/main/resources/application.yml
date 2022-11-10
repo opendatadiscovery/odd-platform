@@ -128,7 +128,7 @@ notifications:
 #      url:
 
 datacollaboration:
-  receive-message-advisory-lock-id: 110
+  receive-event-advisory-lock-id: 110
   sender-message-advisory-lock-id: 120
   enabled: false
 #  slack-oauth-token:

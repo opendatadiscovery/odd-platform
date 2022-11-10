@@ -10,7 +10,6 @@ import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectSeekStep2;
 import org.jooq.impl.DSL;
@@ -46,7 +45,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         conditions.add(MESSAGE.PARENT_MESSAGE_ID.isNull());
 
         if (StringUtils.isNotEmpty(channelId)) {
-            conditions.add(MESSAGE.CHANNEL_ID.startsWithIgnoreCase(channelId));
+            conditions.add(MESSAGE.PROVIDER_CHANNEL_ID.startsWithIgnoreCase(channelId));
         }
 
         final SelectSeekStep2<Record, OffsetDateTime, Long> query = DSL.select(MESSAGE.fields())
@@ -76,16 +75,16 @@ public class MessageRepositoryImpl implements MessageRepository {
         conditions.add(MESSAGE.DATA_ENTITY_ID.eq(dataEntityId));
 
         if (StringUtils.isNotEmpty(channelNameLike)) {
-            conditions.add(MESSAGE.CHANNEL_NAME.startsWithIgnoreCase(channelNameLike));
+            conditions.add(MESSAGE.PROVIDER_CHANNEL_ID.startsWithIgnoreCase(channelNameLike));
         }
 
-        final SelectConditionStep<Record2<String, String>> query = DSL
-            .selectDistinct(MESSAGE.CHANNEL_ID, MESSAGE.CHANNEL_NAME)
+        final SelectConditionStep<Record1<String>> query = DSL
+            .selectDistinct(MESSAGE.PROVIDER_CHANNEL_ID)
             .from(MESSAGE)
             .where(conditions);
 
         return jooqReactiveOperations.flux(query)
-            .map(r -> MessageChannelDto.builder().id(r.component1()).name(r.component2()).build());
+            .map(r -> MessageChannelDto.builder().id(r.component1()).name(r.component1()).build());
     }
 
     @Override
@@ -100,15 +99,8 @@ public class MessageRepositoryImpl implements MessageRepository {
     @Override
     public Mono<Void> createMessageEvent(final String event,
                                          final MessageEventActionDto action,
-                                         final MessageProviderDto messageProvider) {
-        return createMessageEvent(event, action, messageProvider, null);
-    }
-
-    @Override
-    public Mono<Void> createMessageEvent(final String event,
-                                         final MessageEventActionDto action,
                                          final MessageProviderDto messageProvider,
-                                         final Long parentMessageId) {
+                                         final long parentMessageId) {
         final MessageProviderEventRecord record =
             jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
                 .setProvider(messageProvider.toString())
@@ -126,10 +118,10 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public Mono<Long> getIdByProviderId(final String providerId) {
+    public Mono<Long> getIdByProviderInfo(final String providerId, final MessageProviderDto messageProvider) {
         final SelectConditionStep<Record1<Long>> query = DSL.select(MESSAGE.ID)
             .from(MESSAGE)
-            .where(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerId));
+            .where(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerId).and(MESSAGE.PROVIDER.eq(messageProvider.toString())));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }

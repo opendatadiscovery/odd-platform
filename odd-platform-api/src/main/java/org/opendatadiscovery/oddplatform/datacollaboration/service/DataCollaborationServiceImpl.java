@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
@@ -11,84 +10,50 @@ import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnD
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
-import org.opendatadiscovery.oddplatform.datacollaboration.mapper.DataCollaborationMapper;
+import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-
 @Service
 @ConditionalOnDataCollaboration
 @Slf4j
+@RequiredArgsConstructor
 public class DataCollaborationServiceImpl implements DataCollaborationService {
     private final MessageRepository messageRepository;
-    private final DataCollaborationMapper dataCollaborationMapper;
-
-    // TODO: to separate beans would be great
-    private final Map<MessageProviderDto, MessageProviderClient> messageProviderClients;
-    private final Map<MessageProviderDto, MessageProviderEventHandler> messageProviderEventHandlers;
-
-    public DataCollaborationServiceImpl(final MessageRepository messageRepository,
-                                        final DataCollaborationMapper dataCollaborationMapper,
-                                        final List<MessageProviderClient> messageProviderClients,
-                                        final List<MessageProviderEventHandler> messageProviderEventHandlers) {
-        this.messageRepository = messageRepository;
-        this.dataCollaborationMapper = dataCollaborationMapper;
-
-        this.messageProviderClients = messageProviderClients.stream()
-            .collect(toMap(MessageProviderClient::getProvider, identity()));
-
-        this.messageProviderEventHandlers = messageProviderEventHandlers.stream()
-            .collect(toMap(MessageProviderEventHandler::getProvider, identity()));
-    }
+    private final MessageMapper messageMapper;
+    private final MessageProviderClientFactory messageProviderClientFactory;
+    private final MessageProviderEventHandlerFactory messageProviderEventHandlerFactory;
 
     @Override
     public Mono<MessageChannelList> getChannels(final MessageProviderDto messageProvider) {
-        final MessageProviderClient messageProviderClient = messageProviderClients.get(messageProvider);
-        if (messageProviderClient == null) {
-            throw new IllegalStateException(
-                "No message provider client found for %s".formatted(messageProvider.toString()));
-        }
-
-        return messageProviderClient.getChannels()
+        return messageProviderClientFactory.getOrFail(messageProvider)
+            .getChannels()
             .collectList()
-            .map(dataCollaborationMapper::mapSlackChannelList);
+            .map(messageMapper::mapSlackChannelList);
     }
 
     @Override
-    // TODO: find a way to get Slack channels that have bot installed
     public Mono<MessageChannelList> getChannels(final String nameLike, final MessageProviderDto messageProvider) {
-        final MessageProviderClient messageProviderClient = messageProviderClients.get(messageProvider);
-        if (messageProviderClient == null) {
-            throw new IllegalStateException(
-                "No message provider client found for %s".formatted(messageProvider.toString()));
-        }
-
-        return messageProviderClient.getChannels(nameLike)
+        return messageProviderClientFactory.getOrFail(messageProvider)
+            .getChannels(nameLike)
             .collectList()
-            .map(dataCollaborationMapper::mapSlackChannelList);
+            .map(messageMapper::mapSlackChannelList);
     }
 
     @Override
+    // TODO: partition messages by created_at
     public Mono<Message> createAndSendMessage(final MessageRequest messageRequest,
                                               final MessageProviderDto messageProvider) {
-        final MessageProviderClient messageProviderClient = messageProviderClients.get(messageProvider);
-        if (messageProviderClient == null) {
-            throw new IllegalStateException(
-                "No message provider client found for %s".formatted(messageProvider.toString()));
-        }
-
-        return messageProviderClient.getChannelById(messageRequest.getChannelId())
+        return messageProviderClientFactory.getOrFail(messageProvider)
+            .getChannelById(messageRequest.getChannelId())
             .flatMap(channel -> {
                 final MessagePojo messagePojo = new MessagePojo()
                     .setDataEntityId(messageRequest.getDataEntityId())
                     .setState(MessageStateDto.PENDING_SEND.toString())
                     .setProvider(messageProvider.toString())
-                    .setChannelId(channel.id())
-                    .setChannelName(channel.name())
+                    .setProviderChannelId(channel.id())
                     .setText(messageRequest.getText());
 
                 return messageRepository.create(messagePojo)
@@ -104,14 +69,8 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
 
     @Override
     public Mono<Void> enqueueMessageEvent(final MessageEventDto messageEvent) {
-        final MessageProviderEventHandler messageProviderEventHandler =
-            messageProviderEventHandlers.get(messageEvent.provider());
-
-        if (messageProviderEventHandler == null) {
-            throw new IllegalStateException(
-                "No message provider event handler found for %s".formatted(messageEvent.provider()));
-        }
-
-        return messageProviderEventHandler.handleEvent(messageEvent);
+        return messageProviderEventHandlerFactory
+            .getOrFail(messageEvent.provider())
+            .enqueueEvent(messageEvent);
     }
 }

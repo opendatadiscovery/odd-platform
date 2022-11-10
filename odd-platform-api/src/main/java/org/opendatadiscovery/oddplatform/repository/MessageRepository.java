@@ -26,12 +26,8 @@ public interface MessageRepository {
 
     Mono<Void> createMessageEvent(final String event,
                                   final MessageEventActionDto action,
-                                  final MessageProviderDto messageProvider);
-
-    Mono<Void> createMessageEvent(final String event,
-                                  final MessageEventActionDto action,
                                   final MessageProviderDto messageProvider,
-                                  final Long parentMessageId);
+                                  final long parentMessageId);
 
-    Mono<Long> getIdByProviderId(final String providerId);
+    Mono<Long> getIdByProviderInfo(final String providerId, final MessageProviderDto messageProvider);
 }

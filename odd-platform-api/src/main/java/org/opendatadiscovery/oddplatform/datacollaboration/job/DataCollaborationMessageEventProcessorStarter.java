@@ -5,6 +5,9 @@ import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
+import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationProperties;
+import org.opendatadiscovery.oddplatform.datacollaboration.repository.EventProcessorRepository;
+import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderEventHandlerFactory;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -20,10 +23,18 @@ public class DataCollaborationMessageEventProcessorStarter {
     );
 
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
+    private final MessageProviderEventHandlerFactory messageProviderEventHandlerFactory;
+    private final EventProcessorRepository eventProcessorRepository;
+    private final DataCollaborationProperties dataCollaborationProperties;
 
     @EventListener(ApplicationReadyEvent.class)
     public void runDataCollaborationMessageSender() {
         log.debug("Data Collaboration message event processor is enabled");
-        executorService.submit(new DataCollaborationMessageEventProcessor(leaderElectionManager));
+        executorService.submit(new DataCollaborationMessageEventProcessor(
+            leaderElectionManager,
+            messageProviderEventHandlerFactory,
+            eventProcessorRepository,
+            dataCollaborationProperties
+        ));
     }
 }
