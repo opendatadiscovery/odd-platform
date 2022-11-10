@@ -14,7 +14,6 @@ import {
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -60,22 +59,25 @@ export const deleteTerm = handleResponseAsyncThunk<
   }
 );
 
-// TODO handle
-export const fetchTermsList = createAsyncThunk<
+export const fetchTermsList = handleResponseAsyncThunk<
   { termList: Array<TermRef>; pageInfo: CurrentPageInfo },
   TermApiGetTermsListRequest
->(actions.fetchTermListActType, async ({ page, size, query }) => {
-  const { items: termList, pageInfo } = await termApi.getTermsList({
-    page,
-    size,
-    query,
-  });
+>(
+  actions.fetchTermListActType,
+  async ({ page, size, query }) => {
+    const { items: termList, pageInfo } = await termApi.getTermsList({
+      page,
+      size,
+      query,
+    });
 
-  return {
-    termList,
-    pageInfo: { ...pageInfo, page, hasNext: size * page < pageInfo.total },
-  };
-});
+    return {
+      termList,
+      pageInfo: { ...pageInfo, page, hasNext: size * page < pageInfo.total },
+    };
+  },
+  {}
+);
 
 export const fetchTermDetails = handleResponseAsyncThunk<
   TermDetails,

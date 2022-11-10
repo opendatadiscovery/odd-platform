@@ -23,7 +23,10 @@ const AppToast: React.FC<AppToastProps> = ({ type, onClose, message }) => {
   return (
     <S.Container $type={type} alignItems={message.length > 44 ? 'flex-start' : 'center'}>
       {toastIcon}
-      <Typography variant='body2' ml={1} mr={2} flexGrow={1}>
+      <Typography
+        variant='body2'
+        sx={{ ml: 1, mr: 2, flexGrow: 1, wordBreak: 'break-word' }}
+      >
         {message}
       </Typography>
       <AppIconButton

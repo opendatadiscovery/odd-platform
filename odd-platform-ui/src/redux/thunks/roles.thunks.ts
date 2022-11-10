@@ -8,7 +8,6 @@ import {
   type RoleApiUpdateRoleRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -16,15 +15,18 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const roleApi = new RoleApi(apiClientConf);
 
-// TODO handle error
-export const fetchRolesList = createAsyncThunk<
+export const fetchRolesList = handleResponseAsyncThunk<
   { items: Array<Role>; pageInfo: CurrentPageInfo },
   RoleApiGetRolesListRequest
->(actions.fetchRolesActType, async ({ page, size, query }) => {
-  const { items, pageInfo } = await roleApi.getRolesList({ page, size, query });
+>(
+  actions.fetchRolesActType,
+  async ({ page, size, query }) => {
+    const { items, pageInfo } = await roleApi.getRolesList({ page, size, query });
 
-  return { items, pageInfo: { ...pageInfo, page } };
-});
+    return { items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
 export const createRole = handleResponseAsyncThunk<Role, RoleApiCreateRoleRequest>(
   actions.createRoleActType,

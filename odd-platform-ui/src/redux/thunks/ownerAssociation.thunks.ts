@@ -7,7 +7,6 @@ import {
   type OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -32,20 +31,23 @@ export const createOwnerAssociationRequest = handleResponseAsyncThunk<
   }
 );
 
-// TODO handle errors
-export const fetchOwnerAssociationRequestList = createAsyncThunk<
+export const fetchOwnerAssociationRequestList = handleResponseAsyncThunk<
   { items: Array<OwnerAssociationRequest>; pageInfo: CurrentPageInfo; active: boolean },
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest
->(actions.fetchOwnerAssociationRequestsListActionType, async params => {
-  const { items, pageInfo } =
-    await ownerAssociationRequestApi.getOwnerAssociationRequestList(params);
+>(
+  actions.fetchOwnerAssociationRequestsListActionType,
+  async params => {
+    const { items, pageInfo } =
+      await ownerAssociationRequestApi.getOwnerAssociationRequestList(params);
 
-  return {
-    items,
-    pageInfo: { ...pageInfo, page: params.page },
-    active: params.active,
-  };
-});
+    return {
+      items,
+      pageInfo: { ...pageInfo, page: params.page },
+      active: params.active,
+    };
+  },
+  {}
+);
 
 export const updateOwnerAssociationRequest = handleResponseAsyncThunk<
   number,

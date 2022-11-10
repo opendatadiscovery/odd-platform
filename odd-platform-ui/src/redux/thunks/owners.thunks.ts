@@ -11,18 +11,17 @@ import {
   type OwnerApiGetOwnerListRequest,
   type OwnerApiUpdateOwnerRequest,
   type Ownership,
-  TitleApi,
-  type TitleApiGetTitleListRequest,
-  type TitleList,
   TermApi,
   type TermApiCreateTermOwnershipRequest,
   type TermApiDeleteTermOwnershipRequest,
   type TermApiUpdateTermOwnershipRequest,
+  TitleApi,
+  type TitleApiGetTitleListRequest,
+  type TitleList,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -31,23 +30,29 @@ const dataEntityApi = new DataEntityApi(apiClientConf);
 const titleApi = new TitleApi(apiClientConf);
 const termApi = new TermApi(apiClientConf);
 
-// TODO handle
-export const fetchOwnershipTitleList = createAsyncThunk<
+export const fetchOwnershipTitleList = handleResponseAsyncThunk<
   { titleList: TitleList['items'] },
   TitleApiGetTitleListRequest
->(actions.fetchTitlesAction, async ({ page, size, query }) => {
-  const { items } = await titleApi.getTitleList({ page, size, query });
-  return { titleList: items };
-});
+>(
+  actions.fetchTitlesAction,
+  async ({ page, size, query }) => {
+    const { items } = await titleApi.getTitleList({ page, size, query });
+    return { titleList: items };
+  },
+  {}
+);
 
-// TODO handle
-export const fetchOwnersList = createAsyncThunk<
+export const fetchOwnersList = handleResponseAsyncThunk<
   { items: Array<Owner>; pageInfo: CurrentPageInfo },
   OwnerApiGetOwnerListRequest
->(actions.fetchOwnersAction, async params => {
-  const { items, pageInfo } = await ownerApi.getOwnerList(params);
-  return { items, pageInfo: { ...pageInfo, page: params.page } };
-});
+>(
+  actions.fetchOwnersAction,
+  async params => {
+    const { items, pageInfo } = await ownerApi.getOwnerList(params);
+    return { items, pageInfo: { ...pageInfo, page: params.page } };
+  },
+  {}
+);
 
 export const createOwner = handleResponseAsyncThunk<Owner, OwnerApiCreateOwnerRequest>(
   actions.createOwnerAction,

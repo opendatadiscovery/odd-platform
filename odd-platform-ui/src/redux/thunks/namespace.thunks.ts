@@ -10,25 +10,27 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const namespaceApi = new NamespaceApi(apiClientConf);
 
-// TODO handle
-export const fetchNamespaceList = createAsyncThunk<
+export const fetchNamespaceList = handleResponseAsyncThunk<
   { namespaceList: Array<Namespace>; pageInfo: CurrentPageInfo },
   NamespaceApiGetNamespaceListRequest
->(actions.fetchNamespacesActionType, async ({ page, size, query }) => {
-  const { items, pageInfo } = await namespaceApi.getNamespaceList({
-    page,
-    size,
-    query,
-  });
+>(
+  actions.fetchNamespacesActionType,
+  async ({ page, size, query }) => {
+    const { items, pageInfo } = await namespaceApi.getNamespaceList({
+      page,
+      size,
+      query,
+    });
 
-  return { namespaceList: items, pageInfo: { ...pageInfo, page } };
-});
+    return { namespaceList: items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
 export const createNamespace = handleResponseAsyncThunk<
   Namespace,

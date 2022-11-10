@@ -10,7 +10,6 @@ import {
   type PolicyDetails,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -18,15 +17,18 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const policyApi = new PolicyApi(apiClientConf);
 
-// TODO handle
-export const fetchPolicyList = createAsyncThunk<
+export const fetchPolicyList = handleResponseAsyncThunk<
   { items: Array<Policy>; pageInfo: CurrentPageInfo },
   PolicyApiGetPolicyListRequest
->(actions.fetchPolicyListActType, async ({ page, size, query }) => {
-  const { items, pageInfo } = await policyApi.getPolicyList({ page, size, query });
+>(
+  actions.fetchPolicyListActType,
+  async ({ page, size, query }) => {
+    const { items, pageInfo } = await policyApi.getPolicyList({ page, size, query });
 
-  return { items, pageInfo: { ...pageInfo, page } };
-});
+    return { items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
 export const createPolicy = handleResponseAsyncThunk<
   PolicyDetails,

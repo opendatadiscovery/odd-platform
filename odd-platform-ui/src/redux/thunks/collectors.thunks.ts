@@ -9,7 +9,6 @@ import {
   Configuration,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -17,19 +16,18 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new CollectorApi(apiClientConf);
 
-// TODO handle
-export const fetchCollectorsList = createAsyncThunk<
+export const fetchCollectorsList = handleResponseAsyncThunk<
   { items: Array<Collector>; pageInfo: CurrentPageInfo },
   CollectorApiGetCollectorsListRequest
->(actions.fetchCollectorsActionType, async ({ page, size, query }) => {
-  const { items, pageInfo } = await apiClient.getCollectorsList({
-    page,
-    size,
-    query,
-  });
+>(
+  actions.fetchCollectorsActionType,
+  async ({ page, size, query }) => {
+    const { items, pageInfo } = await apiClient.getCollectorsList({ page, size, query });
 
-  return { items, pageInfo: { ...pageInfo, page } };
-});
+    return { items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
 export const registerCollector = handleResponseAsyncThunk<
   Collector,

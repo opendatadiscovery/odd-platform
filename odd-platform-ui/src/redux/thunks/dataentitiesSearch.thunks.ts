@@ -15,65 +15,82 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo, FacetOptions } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const searchApi = new SearchApi(apiClientConf);
 
-// TODO handle
-export const createDataEntitiesSearch = createAsyncThunk<
+export const createDataEntitiesSearch = handleResponseAsyncThunk<
   SearchFacetsData,
   SearchApiSearchRequest
->(actions.createDataEntitySearchActionType, async params => searchApi.search(params));
-// TODO handle
-export const updateDataEntitiesSearch = createAsyncThunk<
+>(
+  actions.createDataEntitySearchActionType,
+  async params => await searchApi.search(params),
+  {}
+);
+
+export const updateDataEntitiesSearch = handleResponseAsyncThunk<
   SearchFacetsData,
   SearchApiUpdateSearchFacetsRequest
->(actions.updateDataEntitySearchActionType, async params =>
-  searchApi.updateSearchFacets(params)
+>(
+  actions.updateDataEntitySearchActionType,
+  async params => await searchApi.updateSearchFacets(params),
+  {}
 );
-// TODO handle
-export const getDataEntitiesSearch = createAsyncThunk<
+
+export const getDataEntitiesSearch = handleResponseAsyncThunk<
   SearchFacetsData,
   SearchApiGetSearchFacetListRequest
->(actions.getDataEntitySearchActionType, async params =>
-  searchApi.getSearchFacetList(params)
+>(
+  actions.getDataEntitySearchActionType,
+  async params => await searchApi.getSearchFacetList(params),
+  {}
 );
-// TODO handle
-export const fetchDataEntitySearchResults = createAsyncThunk<
+
+export const fetchDataEntitySearchResults = handleResponseAsyncThunk<
   { items: DataEntity[]; pageInfo: CurrentPageInfo },
   SearchApiGetSearchResultsRequest
->(actions.fetchDataEntitySearchResultsActionType, async params => {
-  const { items, pageInfo } = await searchApi.getSearchResults(params);
-  const { page, size } = params;
+>(
+  actions.fetchDataEntitySearchResultsActionType,
+  async params => {
+    const { items, pageInfo } = await searchApi.getSearchResults(params);
+    const { page, size } = params;
 
-  return {
-    items,
-    pageInfo: {
-      ...pageInfo,
-      page,
-      hasNext: page * size < pageInfo.total,
-    },
-  };
-});
-// TODO handle
-export const getDataEntitySearchFacetOptions = createAsyncThunk<
+    return {
+      items,
+      pageInfo: {
+        ...pageInfo,
+        page,
+        hasNext: page * size < pageInfo.total,
+      },
+    };
+  },
+  {}
+);
+
+export const getDataEntitySearchFacetOptions = handleResponseAsyncThunk<
   FacetOptions,
   SearchApiGetFiltersForFacetRequest
->(actions.getDataEntitySearchFacetOptionsActionType, async params => {
-  const countableSearchFilters = await searchApi.getFiltersForFacet(params);
-  const { query, page, facetType } = params;
+>(
+  actions.getDataEntitySearchFacetOptionsActionType,
+  async params => {
+    const countableSearchFilters = await searchApi.getFiltersForFacet(params);
+    const { query, page, facetType } = params;
 
-  return {
-    facetName: query ? undefined : (facetType.toLowerCase() as MultipleFacetType),
-    facetOptions: countableSearchFilters,
-    page,
-  };
-});
-// TODO handle
-export const fetchSearchSuggestions = createAsyncThunk<
+    return {
+      facetName: query ? undefined : (facetType.toLowerCase() as MultipleFacetType),
+      facetOptions: countableSearchFilters,
+      page,
+    };
+  },
+  {}
+);
+
+export const fetchSearchSuggestions = handleResponseAsyncThunk<
   DataEntityRef[],
   SearchApiGetSearchSuggestionsRequest
->(actions.fetchDataEntitySearchSuggestionsActionType, async params =>
-  searchApi.getSearchSuggestions(params)
+>(
+  actions.fetchDataEntitySearchSuggestionsActionType,
+  async params => await searchApi.getSearchSuggestions(params),
+  {}
 );
