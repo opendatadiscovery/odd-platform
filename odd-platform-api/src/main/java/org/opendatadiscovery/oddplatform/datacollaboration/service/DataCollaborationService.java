@@ -15,4 +15,6 @@ public interface DataCollaborationService {
     Mono<Message> createAndSendMessage(final MessageRequest message, final MessageProviderDto messageProvider);
 
     Mono<Void> enqueueMessageEvent(final MessageEventDto messageEvent);
+
+    Mono<String> resolveMessageUrl(final long messageId);
 }

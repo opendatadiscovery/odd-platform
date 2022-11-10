@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 @Mapper(config = MapperConfig.class)
 public interface MessageMapper {
     @Mapping(target = "channel", source = ".", qualifiedByName = "messageChannel")
+    @Mapping(target = "url", source = ".", qualifiedByName = "urlRef")
     Message mapPojo(final MessagePojo messagePojo);
 
     default MessageList mapPojos(final List<MessagePojo> messagePojos) {
@@ -43,6 +44,11 @@ public interface MessageMapper {
         return new MessageChannel()
             .channelId(message.getProviderChannelId())
             .name(message.getProviderChannelId());
+    }
+
+    @Named("urlRef")
+    default String urlRef(final MessagePojo message) {
+        return "/api/messages/%d/provider_url".formatted(message.getId());
     }
 
     @Mapping(source = "id", target = "channelId")

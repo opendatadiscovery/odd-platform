@@ -73,4 +73,12 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
             .getOrFail(messageEvent.provider())
             .enqueueEvent(messageEvent);
     }
+
+    @Override
+    public Mono<String> resolveMessageUrl(final long messageId) {
+        return messageRepository.getMessageProviderIdentity(messageId)
+            .flatMap(messageIdentity -> messageProviderClientFactory
+                .getOrFail(messageIdentity.messageProvider())
+                .resolveMessageUrl(messageIdentity.providerMessageChannel(), messageIdentity.providerMessageId()));
+    }
 }

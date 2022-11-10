@@ -17,6 +17,8 @@ public interface MessageProviderClient {
 
     Mono<String> getChannelUrl(final String channelId, final String providerMessageId);
 
+    Mono<String> resolveMessageUrl(final String providerChannelId, final String providerMessageId);
+
     Mono<Map<String, MessageUserDto>> getUserProfiles(final Set<String> userIds);
 
     Mono<String> postMessage(final String channelId, final String messageText);

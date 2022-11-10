@@ -10,12 +10,15 @@ import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectSeekStep2;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageIdentity;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
@@ -115,6 +118,21 @@ public class MessageRepositoryImpl implements MessageRepository {
             .set(record);
 
         return jooqReactiveOperations.mono(query).then();
+    }
+
+    @Override
+    public Mono<MessageIdentity> getMessageProviderIdentity(final long messageId) {
+        final SelectConditionStep<Record3<String, String, String>> query = DSL
+            .select(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER_CHANNEL_ID, MESSAGE.PROVIDER)
+            .from(MESSAGE)
+            .where(MESSAGE.ID.eq(messageId));
+
+        return jooqReactiveOperations.mono(query)
+            .map(r -> MessageIdentity.builder()
+                .providerMessageId(r.component1())
+                .providerMessageChannel(r.component2())
+                .messageProvider(MessageProviderDto.valueOf(r.component3()))
+                .build());
     }
 
     @Override

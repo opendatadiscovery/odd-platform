@@ -1410,6 +1410,23 @@ paths:
       tags:
         - dataEntity
 
+  /api/messages/{message_id}/url:
+    get:
+      summary: Redirects user to correspondent message in the provider
+      operationId: redirect
+      parameters:
+        - name: message_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '301':
+          description: Moved Permanently
+      tags:
+        - dataCollaboration
+
   /api/datasets/{data_entity_id}/structure:
     get:
       summary: Get latest version's DataSet structure information

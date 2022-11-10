@@ -2492,8 +2492,6 @@ components:
         created_at:
           type: string
           format: date-time
-        # TODO: how to construct URL of message?
-        # TODO: come up with naming
         url:
           type: string
         channel:

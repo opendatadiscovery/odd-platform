@@ -3,12 +3,17 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.time.OffsetDateTime;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageIdentity;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface MessageRepository {
+    Mono<MessageIdentity> getMessageProviderIdentity(final long messageId);
+
+    Mono<Long> getIdByProviderInfo(final String providerId, final MessageProviderDto messageProvider);
+
     Flux<MessagePojo> listParentMessagesByDataEntityId(final long dataEntityId,
                                                        final String channelId,
                                                        final Long lastMessageId,
@@ -28,6 +33,4 @@ public interface MessageRepository {
                                   final MessageEventActionDto action,
                                   final MessageProviderDto messageProvider,
                                   final long parentMessageId);
-
-    Mono<Long> getIdByProviderInfo(final String providerId, final MessageProviderDto messageProvider);
 }

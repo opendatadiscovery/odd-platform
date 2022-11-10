@@ -37,4 +37,10 @@ public class DataCollaborationController implements DataCollaborationApi {
             .flatMap(mr -> dataCollaborationService.createAndSendMessage(mr, MessageProviderDto.SLACK))
             .map(message -> ResponseEntity.status(HttpStatus.ACCEPTED).body(message));
     }
+
+    @Override
+    public Mono<ResponseEntity<Void>> redirect(final Long messageId,
+                                               final ServerWebExchange exchange) {
+        return DataCollaborationApi.super.redirect(messageId, exchange);
+    }
 }

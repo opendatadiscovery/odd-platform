@@ -43,6 +43,11 @@ public class SlackMessageProviderClient implements MessageProviderClient {
     }
 
     @Override
+    public Mono<String> resolveMessageUrl(final String providerChannelId, final String providerMessageId) {
+        return slackAPIClient.exchangeForUrl(providerChannelId, providerMessageId);
+    }
+
+    @Override
     public Mono<Map<String, MessageUserDto>> getUserProfiles(final Set<String> userIds) {
         return slackAPIClient
             .exchangeForUserProfile(userIds)
