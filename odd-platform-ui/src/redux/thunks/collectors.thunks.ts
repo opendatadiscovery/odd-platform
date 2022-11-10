@@ -51,12 +51,12 @@ export const updateCollector = handleResponseAsyncThunk<
   CollectorApiUpdateCollectorRequest
 >(
   actions.updateCollectorActionType,
-  async ({ collectorId, collectorUpdateFormData }) =>
-    await apiClient.updateCollector({ collectorId, collectorUpdateFormData }),
+  async ({ collectorId, collectorFormData }) =>
+    await apiClient.updateCollector({ collectorId, collectorFormData }),
   {
-    setSuccessOptions: ({ collectorUpdateFormData }) => ({
-      id: `Collector-updating-${collectorUpdateFormData.name}`,
-      message: `Collector ${collectorUpdateFormData.name} successfully updated.`,
+    setSuccessOptions: ({ collectorFormData }) => ({
+      id: `Collector-updating-${collectorFormData.name}`,
+      message: `Collector ${collectorFormData.name} successfully updated.`,
     }),
   }
 );

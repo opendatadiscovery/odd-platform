@@ -987,16 +987,6 @@ components:
       required:
         - name
 
-    CollectorUpdateFormData:
-      type: object
-      properties:
-        description:
-          type: string
-        name:
-          type: string
-        namespace_name:
-          type: string
-
     PageInfo:
       type: object
       properties:
@@ -2424,6 +2414,10 @@ components:
           type: string
         message:
           type: string
+        retryable:
+          type: boolean
+        resolvable:
+          type: boolean
         details:
           type: array
           items:

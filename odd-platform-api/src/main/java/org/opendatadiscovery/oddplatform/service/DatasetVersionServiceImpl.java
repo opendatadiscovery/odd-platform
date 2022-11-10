@@ -17,14 +17,17 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
     @Override
     public Mono<DataSetStructure> getDatasetVersion(final long datasetId, final long datasetVersionId) {
         return reactiveDatasetVersionRepository.getDatasetVersion(datasetVersionId)
-            .map(datasetVersionMapper::mapDatasetStructure)
-            .switchIfEmpty(Mono.error(new NotFoundException()));
+            .switchIfEmpty(Mono.error(
+                new NotFoundException("Dataset version with id %s for dataset with id %s not found"
+                    .formatted(datasetVersionId, datasetId))))
+            .map(datasetVersionMapper::mapDatasetStructure);
     }
 
     @Override
     public Mono<DataSetStructure> getLatestDatasetVersion(final long datasetId) {
         return reactiveDatasetVersionRepository.getLatestDatasetVersion(datasetId)
-            .map(datasetVersionMapper::mapDatasetStructure)
-            .switchIfEmpty(Mono.error(new NotFoundException()));
+            .switchIfEmpty(Mono.error(
+                new NotFoundException("Can't find latest version for dataset with id %s".formatted(datasetId))))
+            .map(datasetVersionMapper::mapDatasetStructure);
     }
 }

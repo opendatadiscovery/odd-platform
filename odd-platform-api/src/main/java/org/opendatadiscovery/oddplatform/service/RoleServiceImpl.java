@@ -13,6 +13,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.RoleList;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.RoleDto;
 import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
+import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.RoleMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerToRoleRepository;
@@ -61,9 +64,9 @@ public class RoleServiceImpl implements RoleService {
     @ReactiveTransactional
     public Mono<Role> update(final long id, final RoleFormData formData) {
         return roleRepository.get(id)
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Role with id %s not found".formatted(id))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Role", id)))
             .filter(role -> !role.getName().equals(UserProviderRole.ADMIN.getValue()))
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Administrator role is not editable")))
+            .switchIfEmpty(Mono.error(new IllegalUserRequestException("Administrator role is not editable")))
             .flatMap(role -> updateRoleName(role, formData))
             .flatMap(role -> updateRolePolicyRelations(role, formData))
             .flatMap(role -> roleRepository.getDto(role.getId()))
@@ -74,15 +77,15 @@ public class RoleServiceImpl implements RoleService {
     @ReactiveTransactional
     public Mono<Void> delete(final long id) {
         return roleRepository.get(id)
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Role with id %s not found".formatted(id))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Role", id)))
             .filter(role -> Stream.of(UserProviderRole.values())
                 .noneMatch(r -> r.getValue().equalsIgnoreCase(role.getName())))
             .switchIfEmpty(Mono.error(
-                new IllegalArgumentException("Role with id %s is predefined and cannot be deleted".formatted(id))))
+                new IllegalUserRequestException("Role is predefined and cannot be deleted")))
             .then(ownerToRoleRepository.isRoleAttachedToOwner(id))
             .filter(Boolean::booleanValue)
             .flatMap(isAttached -> Mono.error(
-                new IllegalStateException("Role with id %d is attached to a owner".formatted(id))))
+                new CascadeDeleteException("Role is attached to a owner")))
             .then(roleToPolicyRepository.deleteRoleRelationsExcept(id, List.of()))
             .then(roleRepository.delete(id))
             .then();
@@ -100,7 +103,7 @@ public class RoleServiceImpl implements RoleService {
     private Mono<RolePojo> updateRoleName(final RolePojo role, final RoleFormData formData) {
         if (role.getName().equals(UserProviderRole.USER.getValue())
             && !StringUtils.equals(role.getName(), formData.getName())) {
-            return Mono.error(new IllegalArgumentException("User role name cannot be changed"));
+            return Mono.error(new IllegalUserRequestException("User role name cannot be changed"));
         }
         return Mono.just(roleMapper.applyToPojo(formData, role))
             .flatMap(roleRepository::update);

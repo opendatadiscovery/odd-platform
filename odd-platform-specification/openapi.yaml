@@ -36,7 +36,6 @@ tags:
   - name: policy
   - name: role
   - name: permission
-  - name: error
 paths:
   /api/identity/whoami:
     get:
@@ -94,12 +93,8 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/Owner'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/ErrorResponse'
+        '403':
+          $ref: './components.yaml/#/components/responses/Forbidden'
       tags:
         - owner
   /api/owners/{owner_id}:
@@ -579,7 +574,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/CollectorUpdateFormData'
+              $ref: './components.yaml/#/components/schemas/CollectorFormData'
       responses:
         '201':
           description: The resource has been successfully updated
@@ -2439,32 +2434,3 @@ paths:
                 $ref: './components.yaml/#/components/schemas/PermissionList'
       tags:
         - permission
-
-  /api/errors/{error_code}:
-    get:
-      summary: Get error details
-      description: Get error details
-      operationId: getErrorDetails
-      parameters:
-        - name: error_code
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/AssociatedOwner'
-        '400':
-          $ref: './components.yaml/#/components/responses/BadRequest'
-        '403':
-          $ref: './components.yaml/#/components/responses/Forbidden'
-        '404':
-          $ref: './components.yaml/#/components/responses/NotFound'
-        '500':
-          $ref: './components.yaml/#/components/responses/InternalError'
-      tags:
-        - error

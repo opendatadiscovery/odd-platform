@@ -21,6 +21,7 @@ import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
@@ -125,6 +126,7 @@ public class DataEntityServiceTest {
         final MetadataFieldValue metadataFieldValue =
             createMetadataFieldValue(metadataFieldName, type, origin, metadataValue);
 
+        when(reactiveDataEntityRepository.get(dataEntityId)).thenReturn(Mono.just(new DataEntityPojo()));
         when(metadataFieldMapper.mapObject(metadataObject)).thenReturn(fieldPojoBeforeCreation);
         when(metadataFieldService.getOrCreateMetadataFields(List.of(fieldPojoBeforeCreation)))
             .thenReturn(Mono.just(List.of(fieldPojoAfterCreation)));

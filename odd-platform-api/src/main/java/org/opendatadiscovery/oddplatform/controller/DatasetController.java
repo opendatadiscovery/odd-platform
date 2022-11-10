@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class DatasetController implements DataSetApi {
     ) {
         return datasetVersionService
             .getDatasetVersion(dataEntityId, versionId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -34,7 +32,6 @@ public class DatasetController implements DataSetApi {
     ) {
         return datasetVersionService
             .getLatestDatasetVersion(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 }

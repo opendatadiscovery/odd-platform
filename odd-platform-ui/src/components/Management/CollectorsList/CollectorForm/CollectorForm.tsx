@@ -72,7 +72,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       ? dispatch(
           updateCollector({
             collectorId: collector.id,
-            collectorUpdateFormData: parsedData,
+            collectorFormData: parsedData,
           })
         )
       : dispatch(registerCollector({ collectorFormData: parsedData }))
