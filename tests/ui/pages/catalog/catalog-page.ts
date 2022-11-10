@@ -1,4 +1,3 @@
-import Button from '../../elements/button';
 import InputField from '../../elements/input-field';
 import BasePage from '../base-page';
 
@@ -13,6 +12,8 @@ const SELECTORS = {
   tab: name => `[role="tab"]:has-text('${name}')`,
   searchButton: `[placeholder="Search"] >> ..`,
   noMatchesFound: `text=No matches found`,
+  resultList: `#results-list`,
+  listItem: `a`,
 };
 export default class CatalogPage extends BasePage {
   async openFilterWithSelect(filterName: string) {
@@ -51,22 +52,27 @@ export default class CatalogPage extends BasePage {
     return new InputField(this.page, SELECTORS.searchBar);
   }
 
-  async fillSearchBar(text: string) {
+  async searchBy(text: string) {
     await this.searchBar.fill(text);
     await this.page.locator(SELECTORS.searchBar).press('Enter');
   }
 
-  async isListEmpty(): Promise<boolean> {
-    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'visible' });
+  async isAlertVisible(): Promise<boolean> {
+    await this.page.locator(SELECTORS.resultList).waitFor({ state: 'visible' });
     return this.page.locator(SELECTORS.noMatchesFound).isVisible();
   }
 
-  async isListFull(): Promise<boolean> {
-    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'hidden' });
-    return this.page.locator(SELECTORS.noMatchesFound).isHidden();
+  get resultsList() {
+    return this.page.locator(SELECTORS.resultList);
   }
 
-  get searchButton() {
-    return new Button(this.page, SELECTORS.searchButton);
+  async isListVisible(): Promise<boolean> {
+    return this.resultsList.locator(SELECTORS.listItem).isVisible();
+  }
+
+  async countListItems() {
+    const listItems = this.resultsList.locator(SELECTORS.listItem);
+    await listItems.first().waitFor();
+    return listItems.count();
   }
 }

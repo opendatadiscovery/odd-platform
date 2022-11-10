@@ -3,69 +3,67 @@ import { test } from '../../config/test-base';
 
 const entityNameWithAlphabeticChars = 'Book_ETL_aqa';
 const entityNameWithSpecialChars = '_!AirFlights';
-const numbersDataEntity = '737boeing';
+const entityNameWithNumbers = '737boeing';
 
-test.describe('Search', () => {
+test.describe('Search by name of data-entity', () => {
   test.beforeEach(async ({ steps: { pages }, page }) => {
     await test.step(`I open Catalog page`, async () => {
       await page.goto('');
       await pages.topPanel.clickTab('Catalog');
     });
   });
-  test.describe('When searching for a single keyword', () => {
+  test.describe('Search for a single keyword', () => {
     /**
      * /project/1/test-cases/17
      */
-    test(`Should contain expected item with single word valid expression`, async ({
-      steps: { pages },
-    }) => {
-      await test.step(`Fill valid expression in search input`, async () => {
-        await pages.catalog.fillSearchBar(entityNameWithAlphabeticChars);
+    test(`Display an expected item with valid expression`, async ({ steps: { pages } }) => {
+      await test.step(`When fill a valid expression in the search input`, async () => {
+        await pages.catalog.searchBy(entityNameWithAlphabeticChars);
         expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/20
      */
-    test(`Should display empty list with single word invalid expression`, async ({
-      steps: { pages },
-    }) => {
-      await test.step(`Fill invalid expression in search input`, async () => {
-        await pages.catalog.fillSearchBar('entityNameWithAlphabeticChars');
-        expect(await pages.catalog.isListEmpty()).toBeTruthy();
+    test(`Display an empty list with invalid expression`, async ({ steps: { pages } }) => {
+      await test.step(`When fill an invalid expression in search input`, async () => {
+        await pages.catalog.searchBy('entityNameWithAlphabeticChars');
+        expect(await pages.catalog.isListVisible()).toBeFalsy();
+        expect(await pages.catalog.isAlertVisible()).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/21
      */
-    test(`Should contain expected item with single word expression which starts with special characters`, async ({
+    test(`Display expected item with an expression which starts with special characters`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill single word expression which starts with special characters in the input`, async () => {
-        await pages.catalog.fillSearchBar(entityNameWithSpecialChars);
+      await test.step(`When fill an expression which starts with special characters in the input`, async () => {
+        await pages.catalog.searchBy(entityNameWithSpecialChars);
         expect(await pages.catalog.isListItemVisible(entityNameWithSpecialChars)).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/35
      */
-    test(`Should contain expected item with single word expression which starts with numbers`, async ({
+    test(`Display an expected item with expression which starts with numbers`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill single word expression which starts with numbers in the input`, async () => {
-        await pages.catalog.fillSearchBar(numbersDataEntity);
-        expect(await pages.catalog.isListItemVisible(numbersDataEntity)).toBeTruthy();
+      await test.step(`When fill an expression which starts with numbers in the input`, async () => {
+        await pages.catalog.searchBy(entityNameWithNumbers);
+        expect(await pages.catalog.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
       });
     });
-    /**
-     * /project/1/test-cases/19
-     */
-    test(`Should display full list when searching by empty string`, async ({
-      steps: { pages },
-    }) => {
-      await test.step(`Empty search string`, async () => {
-        await pages.catalog.fillSearchBar('');
-        expect(await pages.catalog.isListFull()).toBeTruthy();
+    test.describe('"No matches found" alert message', () => {
+      /**
+       * /project/1/test-cases/19
+       */
+      test(`Not displayed alert message when list is not empty`, async ({ steps: { pages } }) => {
+        await test.step(`When fill an empty expression`, async () => {
+          await pages.catalog.searchBy('');
+          expect(await pages.catalog.countListItems()).toBeGreaterThanOrEqual(30);
+          expect(await pages.catalog.isAlertVisible()).toBeFalsy();
+        });
       });
     });
   });
@@ -73,11 +71,11 @@ test.describe('Search', () => {
     /**
      * /project/1/test-cases/18
      */
-    test(`Should contain expected item when search expression is contained in one entity`, async ({
+    test(`Display an expected item when search expression is contained in one entity`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill expressions are contained in one entity`, async () => {
-        await pages.catalog.fillSearchBar('books aqa');
+      await test.step(`When fill an expressions are contained in one entity`, async () => {
+        await pages.catalog.searchBy('books aqa');
         expect(await pages.catalog.isListItemVisible('books_aqa')).toBeTruthy();
         expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
       });
@@ -85,45 +83,45 @@ test.describe('Search', () => {
     /**
      * /project/1/test-cases/104
      */
-    test(`Should display empty list  when search expression is contained in different entities`, async ({
+    test(`Display an empty list when search expression is contained in different entities`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill expression are contained in different entities`, async () => {
-        await pages.catalog.fillSearchBar('group aqa');
-        expect(await pages.catalog.isListEmpty()).toBeTruthy();
+      await test.step(`When fill expression are contained in different entities`, async () => {
+        await pages.catalog.searchBy('group aqa');
+        expect(await pages.catalog.isAlertVisible()).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/105
      */
-    test(`Should contain expected list when search for entity by attribute which starts with number(s)`, async ({
+    test(`Display an expected list when search for entity by attribute which starts with number`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill expressions are contained numbers and letters`, async () => {
-        await pages.catalog.fillSearchBar('737boeing aqa');
-        expect(await pages.catalog.isListItemVisible(numbersDataEntity)).toBeTruthy();
+      await test.step(`When fill an expressions are contained numbers and letters`, async () => {
+        await pages.catalog.searchBy('737boeing aqa');
+        expect(await pages.catalog.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/106
      */
-    test(`Should display empty list  when search for entity by multiple words: one expression is valid, another is invalid`, async ({
+    test(`Display an empty list when entering 1 valid and 1 invalid expression`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill valid expression and invalid expression`, async () => {
-        await pages.catalog.fillSearchBar('book ticket');
-        expect(await pages.catalog.isListEmpty()).toBeTruthy();
+      await test.step(`When fill a valid expression and invalid expression`, async () => {
+        await pages.catalog.searchBy('book ticket');
+        expect(await pages.catalog.isAlertVisible()).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/107
      */
-    test(`Should display empty list  when search for entity when both expressions are invalid`, async ({
+    test(`Display an empty list when search for entity when both expressions are invalid`, async ({
       steps: { pages },
     }) => {
-      await test.step(`Fill invalid expressions`, async () => {
-        await pages.catalog.fillSearchBar('train ticket');
-        expect(await pages.catalog.isListEmpty()).toBeTruthy();
+      await test.step(`When fill an invalid expressions`, async () => {
+        await pages.catalog.searchBy('train ticket');
+        expect(await pages.catalog.isAlertVisible()).toBeTruthy();
       });
     });
   });
