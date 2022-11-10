@@ -24,8 +24,15 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
-import { getDataEntityLineage } from 'redux/selectors';
+import {
+  getDataEntityLineage,
+  getDownstreamLineageFetchingError,
+  getDownstreamLineageFetchingStatuses,
+  getUpstreamLineageFetchingError,
+  getUpstreamLineageFetchingStatuses,
+} from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
+import { AppErrorPage } from 'components/shared/index';
 import AppSelect from '../AppSelect/AppSelect';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
@@ -36,10 +43,35 @@ const AppGraph: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const data = useAppSelector(state => getDataEntityLineage(state, dataEntityId));
+  const {
+    isLoading: isUpstreamFetching,
+    isLoaded: isUpstreamLoaded,
+    isNotLoaded: isUpstreamNotFetched,
+  } = useAppSelector(getUpstreamLineageFetchingStatuses);
+  const {
+    isLoading: isDownstreamFetching,
+    isLoaded: isDownstreamLoaded,
+    isNotLoaded: isDownstreamNotFetched,
+  } = useAppSelector(getDownstreamLineageFetchingStatuses);
+  const upstreamError = useAppSelector(getUpstreamLineageFetchingError);
+  const downstreamError = useAppSelector(getDownstreamLineageFetchingError);
+
+  const isLineageFetching = React.useMemo(
+    () => isUpstreamFetching || isDownstreamFetching,
+    [isUpstreamFetching, isDownstreamFetching]
+  );
+  const isLineageFetched = React.useMemo(
+    () => isUpstreamLoaded && isDownstreamLoaded,
+    [isUpstreamLoaded, isDownstreamLoaded]
+  );
+  const isLineageNotFetched = React.useMemo(
+    () => isUpstreamNotFetched || isDownstreamNotFetched,
+    [isUpstreamNotFetched, isDownstreamNotFetched]
+  );
 
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
-  const [compactView, setCompactView] = React.useState<boolean>(false);
+  const [compactView, setCompactView] = React.useState(false);
   const d3Zoom = d3zoom<SVGSVGElement, unknown>();
   const transitionDuration = 800;
   const zoomable = true;
@@ -47,14 +79,12 @@ const AppGraph: React.FC = () => {
   const enableLegacyTransitions = false;
   const scaleExtent = { min: 0.1, max: 3 };
   const defaultDepth = 1;
-  const [selectedDepth, setSelectedDepth] = React.useState<number>(defaultDepth);
+  const [selectedDepth, setSelectedDepth] = React.useState(defaultDepth);
 
   const setInitialDepth = React.useCallback(
     (depth: number) => setSelectedDepth(depth),
     [setSelectedDepth]
   );
-
-  const [isLineageFetching, setIsLineageFetching] = React.useState<boolean>(true);
 
   const [parsedData, setParsedData] = React.useState<{
     root: TreeNodeDatum;
@@ -136,12 +166,9 @@ const AppGraph: React.FC = () => {
       lineageDepth: selectedDepth,
       rootNodeId: dataEntityId,
     };
-    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-      setIsLineageFetching(false)
-    );
-    dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
-      setIsLineageFetching(false)
-    );
+
+    dispatch(fetchDataEntityDownstreamLineage(params));
+    dispatch(fetchDataEntityUpstreamLineage(params));
   }, [selectedDepth, dataEntityId]);
 
   const assignInternalProps = (nodeData: DataEntityLineageNode): TreeNodeDatum => ({
@@ -394,131 +421,141 @@ const AppGraph: React.FC = () => {
     bindZoomListener();
   }, [ref.current]);
 
-  return isLineageFetching ? (
-    <S.LoaderContainer>
-      <AppCircularProgress size={16} text='Loading lineage' />
-    </S.LoaderContainer>
-  ) : (
-    <S.Container className={zoomable ? 'rd3t-grabbable' : ''} ref={ref}>
-      <S.ActionsContainer>
-        <AppButton
-          color='primaryLight'
-          size='medium'
-          startIcon={<TargetIcon />}
-          onClick={centerRoot}
-        >
-          Main
-        </AppButton>
-        <AppTabs
-          type='secondarySmall'
-          orientation='horizontal'
-          items={[{ name: 'Full' }, { name: 'Compact' }]}
-          selectedTab={compactView ? 1 : 0}
-          handleTabChange={(newViewIndex: number) => setCompactView(newViewIndex > 0)}
-        />
-        <Typography variant='subtitle2'>Depth:</Typography>
-        <AppSelect
-          sx={{ width: 48 }}
-          native
-          fullWidth={false}
-          size='small'
-          type='number'
-          value={selectedDepth}
-          onChange={handleDepthChange}
-        >
-          {new Array(20).fill(0).map((_, i) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <option key={i + 1} value={i + 1}>
-              {i + 1}
-            </option>
-          ))}
-        </AppSelect>
-      </S.ActionsContainer>
-      <S.Layer className={svgInstanceRef}>
-        <g className={gInstanceRef}>
-          {crossLinksDown?.map((linkData, idx) => (
-            <AppGraphCrossLink
-              // eslint-disable-next-line react/no-array-index-key
-              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-              linkData={linkData}
-              nodeSize={nodeSize}
-              enableLegacyTransitions={enableLegacyTransitions}
-              transitionDuration={transitionDuration}
-              replacedCrossLinks={replacedCrossLinksDown}
+  return (
+    <>
+      {isLineageFetching ? (
+        <S.LoaderContainer>
+          <AppCircularProgress size={16} text='Loading lineage' />
+        </S.LoaderContainer>
+      ) : null}
+      {isLineageFetched ? (
+        <S.Container className={zoomable ? 'rd3t-grabbable' : ''} ref={ref}>
+          <S.ActionsContainer>
+            <AppButton
+              color='primaryLight'
+              size='medium'
+              startIcon={<TargetIcon />}
+              onClick={centerRoot}
+            >
+              Main
+            </AppButton>
+            <AppTabs
+              type='secondarySmall'
+              orientation='horizontal'
+              items={[{ name: 'Full' }, { name: 'Compact' }]}
+              selectedTab={compactView ? 1 : 0}
+              handleTabChange={(newViewIndex: number) => setCompactView(newViewIndex > 0)}
             />
-          ))}
-          {crossLinksUp?.map((linkData, idx) => (
-            <AppGraphCrossLink
-              // eslint-disable-next-line react/no-array-index-key
-              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-              reverse
-              linkData={linkData}
-              nodeSize={nodeSize}
-              enableLegacyTransitions={enableLegacyTransitions}
-              transitionDuration={transitionDuration}
-              replacedCrossLinks={replacedCrossLinksUp}
-            />
-          ))}
-          {nodesUp?.map(node => (
-            <AppGraphNode
-              appGraphNodeType='upstream'
-              rootNodeId={dataEntityId}
-              key={`node-${node.x}${node.y}`}
-              reverse
-              data={node.data}
-              position={{ x: node.x, y: node.y }}
-              parent={node.parent}
-              nodeSize={nodeSize}
-              compactView={compactView}
-              enableLegacyTransitions={enableLegacyTransitions}
-              transitionDuration={transitionDuration}
-              hasChildren={!!node.children?.length}
-              nodeDepth={node.depth}
-              setInitialDepth={setInitialDepth}
-            />
-          ))}
-          {nodesDown?.map(node => (
-            <AppGraphNode
-              appGraphNodeType='downstream'
-              rootNodeId={dataEntityId}
-              key={`node-${node.x}${node.y}`}
-              data={node.data}
-              position={{ x: node.x, y: node.y }}
-              parent={node.parent}
-              nodeSize={nodeSize}
-              compactView={compactView}
-              enableLegacyTransitions={enableLegacyTransitions}
-              transitionDuration={transitionDuration}
-              hasChildren={!!node.children?.length}
-              nodeDepth={node.depth}
-              setInitialDepth={setInitialDepth}
-            />
-          ))}
+            <Typography variant='subtitle2'>Depth:</Typography>
+            <AppSelect
+              sx={{ width: 48 }}
+              native
+              fullWidth={false}
+              size='small'
+              type='number'
+              value={selectedDepth}
+              onChange={handleDepthChange}
+            >
+              {new Array(20).fill(0).map((_, i) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </AppSelect>
+          </S.ActionsContainer>
+          <S.Layer className={svgInstanceRef}>
+            <g className={gInstanceRef}>
+              {crossLinksDown?.map((linkData, idx) => (
+                <AppGraphCrossLink
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+                  linkData={linkData}
+                  nodeSize={nodeSize}
+                  enableLegacyTransitions={enableLegacyTransitions}
+                  transitionDuration={transitionDuration}
+                  replacedCrossLinks={replacedCrossLinksDown}
+                />
+              ))}
+              {crossLinksUp?.map((linkData, idx) => (
+                <AppGraphCrossLink
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+                  reverse
+                  linkData={linkData}
+                  nodeSize={nodeSize}
+                  enableLegacyTransitions={enableLegacyTransitions}
+                  transitionDuration={transitionDuration}
+                  replacedCrossLinks={replacedCrossLinksUp}
+                />
+              ))}
+              {nodesUp?.map(node => (
+                <AppGraphNode
+                  appGraphNodeType='upstream'
+                  rootNodeId={dataEntityId}
+                  key={`node-${node.x}${node.y}`}
+                  reverse
+                  data={node.data}
+                  position={{ x: node.x, y: node.y }}
+                  parent={node.parent}
+                  nodeSize={nodeSize}
+                  compactView={compactView}
+                  enableLegacyTransitions={enableLegacyTransitions}
+                  transitionDuration={transitionDuration}
+                  hasChildren={!!node.children?.length}
+                  nodeDepth={node.depth}
+                  setInitialDepth={setInitialDepth}
+                />
+              ))}
+              {nodesDown?.map(node => (
+                <AppGraphNode
+                  appGraphNodeType='downstream'
+                  rootNodeId={dataEntityId}
+                  key={`node-${node.x}${node.y}`}
+                  data={node.data}
+                  position={{ x: node.x, y: node.y }}
+                  parent={node.parent}
+                  nodeSize={nodeSize}
+                  compactView={compactView}
+                  enableLegacyTransitions={enableLegacyTransitions}
+                  transitionDuration={transitionDuration}
+                  hasChildren={!!node.children?.length}
+                  nodeDepth={node.depth}
+                  setInitialDepth={setInitialDepth}
+                />
+              ))}
 
-          {linksUp?.map((linkData, idx) => (
-            <AppGraphLink
-              // eslint-disable-next-line react/no-array-index-key
-              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-              reverse
-              linkData={linkData}
-              nodeSize={nodeSize}
-              enableLegacyTransitions={enableLegacyTransitions}
-              transitionDuration={transitionDuration}
-            />
-          ))}
-          {linksDown?.map((linkData, idx) => (
-            <AppGraphLink
-              // eslint-disable-next-line react/no-array-index-key
-              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-              linkData={linkData}
-              nodeSize={nodeSize}
-              enableLegacyTransitions={enableLegacyTransitions}
-              transitionDuration={transitionDuration}
-            />
-          ))}
-        </g>
-      </S.Layer>
-    </S.Container>
+              {linksUp?.map((linkData, idx) => (
+                <AppGraphLink
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+                  reverse
+                  linkData={linkData}
+                  nodeSize={nodeSize}
+                  enableLegacyTransitions={enableLegacyTransitions}
+                  transitionDuration={transitionDuration}
+                />
+              ))}
+              {linksDown?.map((linkData, idx) => (
+                <AppGraphLink
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+                  linkData={linkData}
+                  nodeSize={nodeSize}
+                  enableLegacyTransitions={enableLegacyTransitions}
+                  transitionDuration={transitionDuration}
+                />
+              ))}
+            </g>
+          </S.Layer>
+        </S.Container>
+      ) : null}
+      <AppErrorPage
+        isNotContentLoaded={isLineageNotFetched}
+        error={upstreamError || downstreamError}
+        offsetTop={132}
+      />
+    </>
   );
 };
 

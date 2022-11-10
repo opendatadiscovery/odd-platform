@@ -8,13 +8,12 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { DataEntityLineageRootNodeId } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 
-// TODO handle
-export const fetchDataEntityDownstreamLineage = createAsyncThunk<
+export const fetchDataEntityDownstreamLineage = handleResponseAsyncThunk<
   { rootNodeId: number; dataEntityId: number; dataEntityLineage: DataEntityLineage },
   DataEntityApiGetDataEntityDownstreamLineageRequest & DataEntityLineageRootNodeId
 >(
@@ -24,12 +23,13 @@ export const fetchDataEntityDownstreamLineage = createAsyncThunk<
       dataEntityId,
       lineageDepth,
     });
+
     return { rootNodeId, dataEntityId, dataEntityLineage };
-  }
+  },
+  { switchOffErrorMessage: true }
 );
 
-// TODO handle
-export const fetchDataEntityUpstreamLineage = createAsyncThunk<
+export const fetchDataEntityUpstreamLineage = handleResponseAsyncThunk<
   { rootNodeId: number; dataEntityId: number; dataEntityLineage: DataEntityLineage },
   DataEntityApiGetDataEntityUpstreamLineageRequest & DataEntityLineageRootNodeId
 >(
@@ -40,5 +40,6 @@ export const fetchDataEntityUpstreamLineage = createAsyncThunk<
       lineageDepth,
     });
     return { rootNodeId, dataEntityId, dataEntityLineage };
-  }
+  },
+  { switchOffErrorMessage: true }
 );
