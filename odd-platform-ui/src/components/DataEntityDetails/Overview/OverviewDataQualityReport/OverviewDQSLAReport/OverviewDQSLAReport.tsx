@@ -17,9 +17,8 @@ interface OverviewDQSLAReportProps {
 }
 
 const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId }) => {
-  const { isLoading: isSLAReportFetching } = useAppSelector(
-    getDatasetSLAReportFetchingStatuses
-  );
+  const { isLoading: isSLAReportFetching, isNotLoaded: isSLAReportNotFetched } =
+    useAppSelector(getDatasetSLAReportFetchingStatuses);
   const dqSLAReport = useAppSelector(getDatasetSLAReport(dataEntityId));
 
   const slaBarValue = ((dqSLAReport?.success || 0) * 100) / (dqSLAReport?.total || 1);
@@ -29,12 +28,12 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
     : '';
 
   const renderSeverityWeightsBar = React.useMemo(() => {
-    const totalWeights = dqSLAReport.severityWeights.reduce<number>(
+    const totalWeights = dqSLAReport?.severityWeights.reduce<number>(
       (acc, { count }) => acc + count,
       0
     );
 
-    return [...dqSLAReport.severityWeights]
+    return [...(dqSLAReport?.severityWeights || [])]
       .sort(
         (a, b) =>
           ORDERED_SEVERITY.indexOf(a.severity) - ORDERED_SEVERITY.indexOf(b.severity)
@@ -50,7 +49,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
             />
           )
       );
-  }, [dqSLAReport.severityWeights]);
+  }, [dqSLAReport?.severityWeights]);
 
   const getSLAHint = () => {
     const orderedLiElement = (text: string, color: SLAColour) => {
@@ -127,62 +126,65 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
   };
 
   return (
-    <S.Container>
-      {isSLAReportFetching ? (
-        <OverviewDQSLAReportSkeleton />
-      ) : (
-        <Grid container direction='column' sx={{ py: 0.5 }}>
-          <Grid
-            item
-            container
-            wrap='nowrap'
-            justifyContent='space-between'
-            alignItems='center'
-          >
-            <Grid item container alignItems='center'>
-              <Typography variant='h4' sx={{ mr: 0.5 }}>
-                SLA
-              </Typography>
-              <AppTooltip
-                title={getSLAHint}
-                checkForOverflow={false}
-                placement='bottom-end'
-                componentsProps={{ tooltip: { sx: S.TooltipStyles } }}
+    <>
+      {isSLAReportNotFetched ? null : (
+        <S.Container>
+          {isSLAReportFetching ? <OverviewDQSLAReportSkeleton /> : null}
+          {dqSLAReport ? (
+            <Grid container direction='column' sx={{ py: 0.5 }}>
+              <Grid
+                item
+                container
+                wrap='nowrap'
+                justifyContent='space-between'
+                alignItems='center'
               >
-                <InformationIcon width={14} height={14} />
-              </AppTooltip>
+                <Grid item container alignItems='center'>
+                  <Typography variant='h4' sx={{ mr: 0.5 }}>
+                    SLA
+                  </Typography>
+                  <AppTooltip
+                    title={getSLAHint}
+                    checkForOverflow={false}
+                    placement='bottom-end'
+                    componentsProps={{ tooltip: { sx: S.TooltipStyles } }}
+                  >
+                    <InformationIcon width={14} height={14} />
+                  </AppTooltip>
+                </Grid>
+                <Grid item>
+                  <CopyButton stringToCopy={slaRef} />
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                sx={{ mt: 1.5 }}
+                justifyContent='space-between'
+                flexWrap='nowrap'
+                alignItems='center'
+              >
+                <Grid item container flexWrap='nowrap' width='fit-content'>
+                  <Typography variant='h3' color={`slaStatus.${dqSLAReport.slaColour}`}>
+                    {dqSLAReport?.success}
+                  </Typography>
+                  <Typography ml={0.25} variant='h3' color='texts.hint'>
+                    /{dqSLAReport?.total}
+                  </Typography>
+                </Grid>
+                <Grid sx={{ ml: 1 }} item container flexDirection='column'>
+                  <S.Bar
+                    $slaColor={dqSLAReport.slaColour}
+                    value={slaBarValue}
+                    variant='determinate'
+                  />
+                  <S.BarContainer container>{renderSeverityWeightsBar}</S.BarContainer>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item>
-              <CopyButton stringToCopy={slaRef} />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            sx={{ mt: 1.5 }}
-            justifyContent='space-between'
-            flexWrap='nowrap'
-            alignItems='center'
-          >
-            <Grid item container flexWrap='nowrap' width='fit-content'>
-              <Typography variant='h3' color={`slaStatus.${dqSLAReport.slaColour}`}>
-                {dqSLAReport?.success}
-              </Typography>
-              <Typography ml={0.25} variant='h3' color='texts.hint'>
-                /{dqSLAReport?.total}
-              </Typography>
-            </Grid>
-            <Grid sx={{ ml: 1 }} item container flexDirection='column'>
-              <S.Bar
-                $slaColor={dqSLAReport.slaColour}
-                value={slaBarValue}
-                variant='determinate'
-              />
-              <S.BarContainer container>{renderSeverityWeightsBar}</S.BarContainer>
-            </Grid>
-          </Grid>
-        </Grid>
+          ) : null}
+        </S.Container>
       )}
-    </S.Container>
+    </>
   );
 };
 
