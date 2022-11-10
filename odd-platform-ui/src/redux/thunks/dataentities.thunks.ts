@@ -41,14 +41,14 @@ export const fetchDataEntitiesClassesAndTypes = handleResponseAsyncThunk<
   async () => await dataEntityApi.getDataEntityClasses(),
   {}
 );
-// TODO handle
-export const fetchDataEntityDetails = createAsyncThunk<
+
+export const fetchDataEntityDetails = handleResponseAsyncThunk<
   DataEntityDetails,
   DataEntityApiGetDataEntityDetailsRequest
->(actions.fetchDataEntityDetailsActionType, async ({ dataEntityId }) =>
-  dataEntityApi.getDataEntityDetails({
-    dataEntityId,
-  })
+>(
+  actions.fetchDataEntityDetailsActionType,
+  async ({ dataEntityId }) => await dataEntityApi.getDataEntityDetails({ dataEntityId }),
+  { switchOffErrorMessage: true }
 );
 
 export const updateDataEntityTags = handleResponseAsyncThunk<

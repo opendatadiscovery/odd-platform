@@ -4,7 +4,10 @@ import type {
   DatasetStructureState,
   RootState,
 } from 'redux/interfaces';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import type { EnumValue } from 'generated-sources';
 import { emptyArr } from 'lib/constants';
@@ -12,7 +15,13 @@ import { emptyArr } from 'lib/constants';
 export const getDataSetStructureFetchingStatus = createStatusesSelector(
   actions.fetchDataSetStructureActionType
 );
+export const getDataSetStructureFetchingError = createErrorSelector(
+  actions.fetchDataSetStructureActionType
+);
 export const getDataSetStructureLatestFetchingStatus = createStatusesSelector(
+  actions.fetchDataSetStructureLatestActionType
+);
+export const getDataSetStructureLatestFetchingError = createErrorSelector(
   actions.fetchDataSetStructureLatestActionType
 );
 

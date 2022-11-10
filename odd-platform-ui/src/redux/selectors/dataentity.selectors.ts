@@ -6,7 +6,10 @@ import {
   DataEntityType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import { emptyObj } from 'lib/constants';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
@@ -43,8 +46,10 @@ export const getIsDataEntityBelongsToClass = (dataEntityId: number | string) =>
     return { isDataset, isQualityTest, isTransformer };
   });
 
-export const getDataEntityClassesList = createSelector(dataEntitiesState, dataEntities =>
-  Object.values(dataEntities.classesAndTypesDict.entityClasses)
+export const getDataEntityClassesList = createSelector(
+  dataEntitiesState,
+  (dataEntities): DataEntityClass[] =>
+    Object.values(dataEntities.classesAndTypesDict.entityClasses)
 );
 
 export const getDataEntityClassesDict = createSelector(
@@ -149,6 +154,9 @@ export const getPopularDataEntitiesFetchingStatuses = createStatusesSelector(
 );
 
 export const getDataEntityDetailsFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntityDetailsActionType
+);
+export const getDataEntityDetailsFetchingError = createErrorSelector(
   actions.fetchDataEntityDetailsActionType
 );
 

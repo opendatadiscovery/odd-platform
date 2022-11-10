@@ -77,12 +77,13 @@ export const fetchTermsList = createAsyncThunk<
   };
 });
 
-// TODO handle
-export const fetchTermDetails = createAsyncThunk<
+export const fetchTermDetails = handleResponseAsyncThunk<
   TermDetails,
   TermApiGetTermDetailsRequest
->(actions.fetchTermDetailsActType, async ({ termId }) =>
-  termApi.getTermDetails({ termId })
+>(
+  actions.fetchTermDetailsActType,
+  async ({ termId }) => termApi.getTermDetails({ termId }),
+  { switchOffErrorMessage: true }
 );
 
 export const updateTermDetailsTags = handleResponseAsyncThunk<

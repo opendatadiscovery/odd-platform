@@ -7,8 +7,6 @@ export interface ErrorState {
   message: ErrorResponse['message'];
 }
 
-export type FetchStatus = 'notFetched' | 'fetching' | 'fetched' | 'errorFetching';
-
 export type AsyncRequestStatus = 'initial' | 'pending' | 'fulfilled' | 'rejected';
 
 export interface LoaderSliceState {

@@ -1,6 +1,5 @@
 import {
   Configuration,
-  ErrorApi,
   type Policy,
   PolicyApi,
   type PolicyApiCreatePolicyRequest,
@@ -76,12 +75,13 @@ export const deletePolicy = handleResponseAsyncThunk<
   }
 );
 
-// TODO handle
-export const fetchPolicyDetails = createAsyncThunk<
+export const fetchPolicyDetails = handleResponseAsyncThunk<
   PolicyDetails,
   PolicyApiGetPolicyDetailsRequest
->(actions.fetchPolicyDetailsActType, async ({ policyId }) =>
-  policyApi.getPolicyDetails({ policyId })
+>(
+  actions.fetchPolicyDetailsActType,
+  async ({ policyId }) => policyApi.getPolicyDetails({ policyId }),
+  { switchOffErrorMessage: true }
 );
 
 export const fetchPolicySchema = handleResponseAsyncThunk<Record<string, unknown>, void>(
@@ -94,5 +94,5 @@ export const fetchPolicySchema = handleResponseAsyncThunk<Record<string, unknown
       throw new Error(e?.toString());
     }
   },
-  {}
+  { switchOffErrorMessage: true }
 );

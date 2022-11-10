@@ -1,15 +1,14 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { DataEntity, DataEntityClass } from 'generated-sources';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import {
+  EmptyContentPlaceholder,
+  AppSelect,
+  AppInput,
+  AppMenuItem,
+} from 'components/shared';
 import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
-import LinkedItem from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItem/LinkedItem';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppInput from 'components/shared/AppInput/AppInput';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useDebouncedCallback } from 'use-debounce';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -21,6 +20,7 @@ import {
   getTermLinkedListPageInfo,
 } from 'redux/selectors';
 import { fetchTermLinkedList } from 'redux/thunks';
+import LinkedItem from './LinkedItem/LinkedItem';
 import {
   TermLinkedItemsColContainer,
   TermLinkedItemsListContainer,
@@ -31,35 +31,22 @@ const LinkedItemsList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
-  const termLinkedList: Array<DataEntity> = useAppSelector(state =>
-    getTermLinkedList(state, termId)
-  );
+  const termLinkedList = useAppSelector(getTermLinkedList(termId));
 
-  const entityClasses: Array<DataEntityClass> = useAppSelector(getDataEntityClassesList);
+  const entityClasses = useAppSelector(getDataEntityClassesList);
   const { isLoading: isLinkedListFetching } = useAppSelector(
     getTermLinkedListFetchingStatuses
   );
-  const pageInfo = useAppSelector(getTermLinkedListPageInfo);
+  const { hasNext, page, total } = useAppSelector(getTermLinkedListPageInfo);
 
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [selectedClassId, setSelectedClassId] = React.useState<number | undefined>(
-    undefined
-  );
+  const [query, setQuery] = React.useState('');
+  const [entityClassId, setEntityClassId] = React.useState<number | undefined>(undefined);
 
-  const pageSize = 50;
+  const size = 50;
 
   const fetchNextPage = () => {
-    if (!pageInfo?.hasNext) return;
-
-    dispatch(
-      fetchTermLinkedList({
-        termId,
-        page: pageInfo.page + 1,
-        size: pageSize,
-        query: searchText || '',
-        entityClassId: selectedClassId,
-      })
-    );
+    if (!hasNext) return;
+    dispatch(fetchTermLinkedList({ termId, page: page + 1, size, query, entityClassId }));
   };
 
   React.useEffect(() => {
@@ -67,21 +54,11 @@ const LinkedItemsList: React.FC = () => {
   }, [termId]);
 
   const createSearch = useDebouncedCallback(() => {
-    dispatch(
-      fetchTermLinkedList({
-        termId,
-        page: pageInfo?.page || 1,
-        size: pageSize,
-        query: searchText || '',
-        entityClassId: selectedClassId,
-      })
-    );
+    dispatch(fetchTermLinkedList({ termId, page, size, query, entityClassId }));
   }, 500);
 
   const handleKeyDownSearch = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      createSearch();
-    }
+    if (event.key === 'Enter') createSearch();
   };
 
   const handleOnClickSearch = () => createSearch();
@@ -94,8 +71,8 @@ const LinkedItemsList: React.FC = () => {
             size='medium'
             placeholder='Search'
             onKeyDown={handleKeyDownSearch}
-            onChange={e => setSearchText(e.target.value)}
-            value={searchText}
+            onChange={e => setQuery(e.target.value)}
+            value={query}
             customStartAdornment={{
               variant: 'search',
               showAdornment: true,
@@ -104,9 +81,9 @@ const LinkedItemsList: React.FC = () => {
             }}
             customEndAdornment={{
               variant: 'clear',
-              showAdornment: !!searchText,
+              showAdornment: !!query,
               onCLick: () => {
-                setSearchText('');
+                setQuery('');
                 handleOnClickSearch();
               },
               icon: <ClearIcon />,
@@ -115,17 +92,14 @@ const LinkedItemsList: React.FC = () => {
         </Grid>
         <Grid item xs={2}>
           <AppSelect defaultValue='All entities' onChange={handleOnClickSearch}>
-            <AppMenuItem
-              value='All entities'
-              onClick={() => setSelectedClassId(undefined)}
-            >
+            <AppMenuItem value='All entities' onClick={() => setEntityClassId(undefined)}>
               All entities
             </AppMenuItem>
             {entityClasses?.map(entityClass => (
               <AppMenuItem
                 key={entityClass.id}
                 value={entityClass.id}
-                onClick={() => setSelectedClassId(entityClass.id)}
+                onClick={() => setEntityClassId(entityClass.id)}
               >
                 {stringFormatted(entityClass.name, '_', 'firstLetterOfEveryWord')}
               </AppMenuItem>
@@ -161,7 +135,7 @@ const LinkedItemsList: React.FC = () => {
             <InfiniteScroll
               dataLength={termLinkedList?.length}
               next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
+              hasMore={hasNext}
               loader={isLinkedListFetching && <SearchResultsSkeleton />}
               scrollThreshold='200px'
               scrollableTarget='term-linked-items-list'
@@ -173,7 +147,7 @@ const LinkedItemsList: React.FC = () => {
           )}
         </TermLinkedItemsListContainer>
       )}
-      {isLinkedListFetching && !pageInfo?.total && (
+      {isLinkedListFetching && !total && (
         <EmptyContentPlaceholder text='No linked items' />
       )}
     </Grid>

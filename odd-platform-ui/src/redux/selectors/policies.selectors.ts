@@ -1,5 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import type { CurrentPageInfo, PoliciesState, RootState } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { policyAdapter, policyDetailsAdapter } from 'redux/slices/policy.slice';
@@ -22,6 +25,9 @@ export const getPolicyDeletingStatuses = createStatusesSelector(
 export const getPolicyDetailsFetchingStatuses = createStatusesSelector(
   actions.fetchPolicyDetailsActType
 );
+export const getPolicyDetailsFetchingError = createErrorSelector(
+  actions.fetchPolicyDetailsActType
+);
 
 export const { selectAll: getPoliciesList } = policyAdapter.getSelectors<RootState>(
   state => state.policies.policies
@@ -41,5 +47,8 @@ export const getPolicySchema = createSelector(
 );
 
 export const getPolicySchemaFetchingStatuses = createStatusesSelector(
+  actions.fetchPolicySchemaActType
+);
+export const getPolicySchemaFetchingError = createErrorSelector(
   actions.fetchPolicySchemaActType
 );

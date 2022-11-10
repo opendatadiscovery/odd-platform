@@ -203,7 +203,7 @@ export interface TermSearchState {
 
 export interface TermLinkedListState {
   linkedItemsIdsByTermId: { [termId: string]: number[] };
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface ActivitiesState {

@@ -16,46 +16,49 @@ import type {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const datasetApiClient = new DataSetApi(apiClientConf);
 const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
 
-// TODO handle
-export const fetchDataSetStructureLatest = createAsyncThunk<
+export const fetchDataSetStructureLatest = handleResponseAsyncThunk<
   DataSetStructureResponse,
   DataSetApiGetDataSetStructureLatestRequest
->(actions.fetchDataSetStructureLatestActionType, async ({ dataEntityId }) => {
-  const { dataSetVersion, fieldList } = await datasetApiClient.getDataSetStructureLatest({
-    dataEntityId,
-  });
+>(
+  actions.fetchDataSetStructureLatestActionType,
+  async ({ dataEntityId }) => {
+    const { dataSetVersion, fieldList } =
+      await datasetApiClient.getDataSetStructureLatest({ dataEntityId });
 
-  return {
-    dataEntityId,
-    dataSetVersionId: dataSetVersion.id,
-    fieldList,
-    isLatestVersion: true,
-  };
-});
+    return {
+      dataEntityId,
+      dataSetVersionId: dataSetVersion.id,
+      fieldList,
+      isLatestVersion: true,
+    };
+  },
+  { switchOffErrorMessage: true }
+);
 
-// TODO handle
-export const fetchDataSetStructure = createAsyncThunk<
+export const fetchDataSetStructure = handleResponseAsyncThunk<
   DataSetStructureResponse,
   DataSetApiGetDataSetStructureByVersionIdRequest
->(actions.fetchDataSetStructureActionType, async ({ dataEntityId, versionId }) => {
-  const { dataSetVersion, fieldList } =
-    await datasetApiClient.getDataSetStructureByVersionId({
-      dataEntityId,
-      versionId,
-    });
+>(
+  actions.fetchDataSetStructureActionType,
+  async ({ dataEntityId, versionId }) => {
+    const { dataSetVersion, fieldList } =
+      await datasetApiClient.getDataSetStructureByVersionId({ dataEntityId, versionId });
 
-  return {
-    dataEntityId,
-    dataSetVersionId: dataSetVersion.id,
-    fieldList,
-    isLatestVersion: false,
-  };
-});
+    return {
+      dataEntityId,
+      dataSetVersionId: dataSetVersion.id,
+      fieldList,
+      isLatestVersion: false,
+    };
+  },
+  { switchOffErrorMessage: true }
+);
 
 // TODO handle
 export const updateDataSetFieldFormData = createAsyncThunk<
