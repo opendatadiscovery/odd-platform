@@ -21,7 +21,7 @@ const OverviewGeneral: React.FC = () => {
       <Grid item container sm={12}>
         <Grid item sm={12}>
           <LabeledInfoItem inline label='Namespace' labelWidth={4}>
-            {dataEntityDetails.dataSource.namespace?.name}
+            {dataEntityDetails.dataSource?.namespace?.name}
           </LabeledInfoItem>
         </Grid>
         {!dataEntityDetails?.manuallyCreated && (

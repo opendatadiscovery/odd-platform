@@ -1,18 +1,21 @@
 import React from 'react';
-import { SearchFormData } from 'generated-sources';
+import { SearchFormData, Tag } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { TagItem } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
-import { getTagsList } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 
-const TopTagsList: React.FC = () => {
+interface TopTagListProps {
+  topTags: Tag[];
+  isTagsNotFetched: boolean;
+}
+
+const TopTagsList: React.FC<TopTagListProps> = ({ topTags, isTagsNotFetched }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { searchPath } = useAppPaths();
 
-  const topTagsList = useAppSelector(getTagsList);
   const [searchLoading, setSearchLoading] = React.useState(false);
 
   const handleTagClick = React.useCallback(
@@ -21,9 +24,7 @@ const TopTagsList: React.FC = () => {
       setSearchLoading(true);
       const searchQuery: SearchFormData = {
         query: '',
-        filters: {
-          tags: [{ entityId: id, entityName: name, selected: true }],
-        },
+        filters: { tags: [{ entityId: id, entityName: name, selected: true }] },
       };
       dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
         .unwrap()
@@ -38,24 +39,24 @@ const TopTagsList: React.FC = () => {
 
   const sortedTags = React.useMemo(
     () =>
-      topTagsList
-        .filter(tag => tag.important)
-        .concat(topTagsList.filter(tag => !tag.important)),
-    [topTagsList]
+      topTags.filter(tag => tag.important).concat(topTags.filter(tag => !tag.important)),
+    [topTags]
   );
 
   return (
     <>
-      {sortedTags.map(tag => (
-        <TagItem
-          onClick={handleTagClick(tag.id, tag.name)}
-          key={tag.id}
-          label={tag.name}
-          important={tag.important}
-          cursorPointer
-          sx={{ m: 0.5 }}
-        />
-      ))}
+      {isTagsNotFetched
+        ? null
+        : sortedTags.map(tag => (
+            <TagItem
+              onClick={handleTagClick(tag.id, tag.name)}
+              key={tag.id}
+              label={tag.name}
+              important={tag.important}
+              cursorPointer
+              sx={{ m: 0.5 }}
+            />
+          ))}
     </>
   );
 };

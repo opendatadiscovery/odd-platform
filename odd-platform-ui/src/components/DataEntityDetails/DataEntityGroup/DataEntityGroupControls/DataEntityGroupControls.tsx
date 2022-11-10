@@ -34,9 +34,9 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
 
   const handleEntityGroupDelete = React.useCallback(
     () =>
-      dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() =>
-        history.push(searchPath(searchId))
-      ),
+      dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() => {
+        history.push(searchPath(searchId));
+      }),
     [deleteDataEntityGroup, dataEntityId]
   );
 

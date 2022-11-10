@@ -1,9 +1,8 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import { DataEntityRef } from 'generated-sources';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import AlertIcon from 'components/shared/Icons/AlertIcon';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import { EntityClassItem, EmptyContentPlaceholder } from 'components/shared';
+import { AlertIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './DataEntityListStyles';
 
@@ -12,6 +11,7 @@ interface OverviewDataEntityProps {
   entityListName: string;
   entityListIcon?: JSX.Element;
   isFetching: boolean;
+  isNotFetched: boolean;
 }
 
 const DataEntityList: React.FC<OverviewDataEntityProps> = ({
@@ -19,11 +19,12 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   entityListName,
   entityListIcon,
   isFetching,
+  isNotFetched,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
 
-  return (
-    <S.DataEntityListContainer item>
+  return isNotFetched ? null : (
+    <S.DataEntityListContainer item lg={3}>
       <S.SectionCaption variant='h4' sx={{ mb: 2 }}>
         {entityListIcon}
         {entityListName}

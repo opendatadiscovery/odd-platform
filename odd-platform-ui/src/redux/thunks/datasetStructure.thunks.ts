@@ -13,7 +13,6 @@ import type {
   DataSetStructureResponse,
   UpdateDataSetFieldFormResponse,
 } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -60,8 +59,7 @@ export const fetchDataSetStructure = handleResponseAsyncThunk<
   { switchOffErrorMessage: true }
 );
 
-// TODO handle
-export const updateDataSetFieldFormData = createAsyncThunk<
+export const updateDataSetFieldFormData = handleResponseAsyncThunk<
   UpdateDataSetFieldFormResponse,
   DatasetFieldApiUpdateDatasetFieldRequest
 >(
@@ -74,23 +72,31 @@ export const updateDataSetFieldFormData = createAsyncThunk<
       });
 
     return { datasetFieldId, internalDescription, labels };
+  },
+  {
+    setSuccessOptions: ({ datasetFieldId }) => ({
+      id: `DatasetField-form-updating-${datasetFieldId}`,
+      message: `Dataset field labels and description successfully updated.`,
+    }),
   }
 );
 
-// TODO handle
-export const fetchDataSetFieldEnum = createAsyncThunk<
+export const fetchDataSetFieldEnum = handleResponseAsyncThunk<
   DataSetFieldEnumsResponse,
   DatasetFieldApiGetEnumValuesRequest
->(actions.fetchDataSetFieldEnumActionType, async ({ datasetFieldId }) => {
-  const { items } = await datasetFieldApiClient.getEnumValues({
-    datasetFieldId,
-  });
+>(
+  actions.fetchDataSetFieldEnumActionType,
+  async ({ datasetFieldId }) => {
+    const { items } = await datasetFieldApiClient.getEnumValues({
+      datasetFieldId,
+    });
 
-  return { datasetFieldId, enumValueList: items };
-});
+    return { datasetFieldId, enumValueList: items };
+  },
+  {}
+);
 
-// TODO handle
-export const createDataSetFieldEnum = createAsyncThunk<
+export const createDataSetFieldEnum = handleResponseAsyncThunk<
   DataSetFieldEnumsResponse,
   DatasetFieldApiCreateEnumValueRequest
 >(
@@ -102,5 +108,11 @@ export const createDataSetFieldEnum = createAsyncThunk<
     });
 
     return { datasetFieldId, enumValueList: items };
+  },
+  {
+    setSuccessOptions: ({ datasetFieldId }) => ({
+      id: `DatasetField-form-enums-updating-${datasetFieldId}`,
+      message: `Dataset field enums successfully updated.`,
+    }),
   }
 );

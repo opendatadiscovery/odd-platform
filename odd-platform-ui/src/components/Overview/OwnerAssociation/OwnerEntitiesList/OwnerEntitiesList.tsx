@@ -1,4 +1,3 @@
-import { Grid } from '@mui/material';
 import React from 'react';
 import {
   getIdentity,
@@ -39,26 +38,25 @@ const OwnerEntitiesList: React.FC = () => {
   const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
   const popularEntities = useAppSelector(getPopularEntities);
 
-  const { isLoading: isMyDataEntitiesFetching } = useAppSelector(
-    getMyDataEntitiesFetchingStatuses
-  );
-  const { isLoading: isUpstreamDataEntitiesFetching } = useAppSelector(
-    getMyUpstreamDataEntitiesFetchingStatuses
-  );
-  const { isLoading: isDownstreamDataEntitiesFetching } = useAppSelector(
-    getMyDownstreamFetchingStatuses
-  );
-  const { isLoading: isPopularDataEntitiesFetching } = useAppSelector(
-    getPopularDataEntitiesFetchingStatuses
-  );
+  const { isLoading: isMyDataEntitiesFetching, isNotLoaded: isMyDataEntitiesNotFetched } =
+    useAppSelector(getMyDataEntitiesFetchingStatuses);
+  const {
+    isLoading: isUpstreamDataEntitiesFetching,
+    isNotLoaded: isUpstreamDataEntitiesNotFetched,
+  } = useAppSelector(getMyUpstreamDataEntitiesFetchingStatuses);
+  const {
+    isLoading: isDownstreamDataEntitiesFetching,
+    isNotLoaded: isDownstreamDataEntitiesNotFetched,
+  } = useAppSelector(getMyDownstreamFetchingStatuses);
+  const {
+    isLoading: isPopularDataEntitiesFetching,
+    isNotLoaded: isPopularDataEntitiesNotFetched,
+  } = useAppSelector(getPopularDataEntitiesFetchingStatuses);
   const isOwnerEntitiesListFetching = useAppSelector(getIsOwnerEntitiesFetching);
 
   React.useEffect(() => {
     if (!identity) return;
-    const params = {
-      page: 1,
-      size: 5,
-    };
+    const params = { page: 1, size: 5 };
     dispatch(fetchMyDataEntitiesList(params));
     dispatch(fetchMyUpstreamDataEntitiesList(params));
     dispatch(fetchMyDownstreamDataEntitiesList(params));
@@ -75,38 +73,34 @@ const OwnerEntitiesList: React.FC = () => {
         />
       ) : (
         <S.DataEntityContainer container>
-          <Grid item xs={3}>
-            <DataEntityList
-              dataEntitiesList={myEntities}
-              entityListName='My Objects'
-              entityListIcon={<CatalogIcon />}
-              isFetching={isMyDataEntitiesFetching}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <DataEntityList
-              dataEntitiesList={myEntitiesUpstream}
-              entityListName='Upstream dependents'
-              entityListIcon={<UpstreamIcon />}
-              isFetching={isUpstreamDataEntitiesFetching}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <DataEntityList
-              dataEntitiesList={myEntitiesDownstream}
-              entityListName='Downstream dependents'
-              entityListIcon={<DownstreamIcon />}
-              isFetching={isDownstreamDataEntitiesFetching}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <DataEntityList
-              dataEntitiesList={popularEntities}
-              entityListName='Popular'
-              entityListIcon={<StarIcon />}
-              isFetching={isPopularDataEntitiesFetching}
-            />
-          </Grid>
+          <DataEntityList
+            dataEntitiesList={myEntities}
+            entityListName='My Objects'
+            entityListIcon={<CatalogIcon />}
+            isFetching={isMyDataEntitiesFetching}
+            isNotFetched={isMyDataEntitiesNotFetched}
+          />
+          <DataEntityList
+            dataEntitiesList={myEntitiesUpstream}
+            entityListName='Upstream dependents'
+            entityListIcon={<UpstreamIcon />}
+            isFetching={isUpstreamDataEntitiesFetching}
+            isNotFetched={isUpstreamDataEntitiesNotFetched}
+          />
+          <DataEntityList
+            dataEntitiesList={myEntitiesDownstream}
+            entityListName='Downstream dependents'
+            entityListIcon={<DownstreamIcon />}
+            isFetching={isDownstreamDataEntitiesFetching}
+            isNotFetched={isDownstreamDataEntitiesNotFetched}
+          />
+          <DataEntityList
+            dataEntitiesList={popularEntities}
+            entityListName='Popular'
+            entityListIcon={<StarIcon />}
+            isFetching={isPopularDataEntitiesFetching}
+            isNotFetched={isPopularDataEntitiesNotFetched}
+          />
         </S.DataEntityContainer>
       )}
     </>

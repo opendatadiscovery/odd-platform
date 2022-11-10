@@ -3,6 +3,7 @@ import type { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClass,
   DataEntityClassNameEnum,
+  DataEntityClassUsageInfo,
   DataEntityType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
@@ -10,7 +11,7 @@ import {
   createErrorSelector,
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
-import { emptyObj } from 'lib/constants';
+import { emptyArr, emptyObj } from 'lib/constants';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
@@ -79,17 +80,18 @@ export const getPopularEntities = createSelector(
 
 export const getDataEntitiesUsageTotalCount = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageInfo.totalCount
+  dataEntities => dataEntities.dataEntityUsageInfo.totalCount || 0
 );
 
 export const getDataEntitiesUsageUnfilledCount = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageInfo.unfilledCount
+  dataEntities => dataEntities.dataEntityUsageInfo.unfilledCount || 0
 );
 
 export const getDataEntityClassesUsageInfo = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageInfo.dataEntityClassesInfo
+  (dataEntities): DataEntityClassUsageInfo[] =>
+    dataEntities.dataEntityUsageInfo.dataEntityClassesInfo || emptyArr
 );
 
 // details
@@ -151,6 +153,10 @@ export const getMyDownstreamFetchingStatuses = createStatusesSelector(
 
 export const getPopularDataEntitiesFetchingStatuses = createStatusesSelector(
   actions.fetchPopularDataEntitiesActionType
+);
+
+export const getDataEntityUsageInfoFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntitiesUsageActionType
 );
 
 export const getDataEntityDetailsFetchingStatuses = createStatusesSelector(

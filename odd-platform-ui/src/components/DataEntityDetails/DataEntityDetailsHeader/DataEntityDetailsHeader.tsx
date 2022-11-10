@@ -55,7 +55,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
       <S.Caption container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={11} alignItems='center' flexWrap='nowrap'>
+        <Grid container item lg={10} alignItems='center' flexWrap='nowrap'>
           <Typography variant='h1' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -84,7 +84,15 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             </WithPermissions>
           </S.InternalNameEditBtnContainer>
         </Grid>
-        <Grid container item lg={1} sx={{ ml: 1 }} alignItems='center' flexWrap='nowrap'>
+        <Grid
+          container
+          item
+          lg={2}
+          sx={{ ml: 1 }}
+          alignItems='center'
+          flexWrap='nowrap'
+          justifyContent='flex-end'
+        >
           {entityUpdatedAt}
           {manuallyCreated && (
             <DataEntityGroupControls
