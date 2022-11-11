@@ -73,6 +73,8 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/OwnerList'
+        '500':
+          $ref: './components.yaml/#/components/responses/InternalError'
       tags:
         - owner
     post:
@@ -91,6 +93,8 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/Owner'
+        '403':
+          $ref: './components.yaml/#/components/responses/Forbidden'
       tags:
         - owner
   /api/owners/{owner_id}:
@@ -570,7 +574,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/CollectorUpdateFormData'
+              $ref: './components.yaml/#/components/schemas/CollectorFormData'
       responses:
         '201':
           description: The resource has been successfully updated

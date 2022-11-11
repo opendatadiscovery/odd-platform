@@ -1,7 +1,7 @@
 import React from 'react';
 import { linkHorizontal } from 'd3-shape';
-import { DefaultLinkObject } from 'd3';
-import { TreeLinkDatum } from 'redux/interfaces/graph';
+import type { DefaultLinkObject } from 'd3';
+import type { TreeLinkDatum } from 'redux/interfaces';
 import { applyOpacity } from 'components/shared/AppGraph/helpers/lineageHelpers';
 import * as S from './AppGraphCrossLinkStyles';
 
@@ -30,8 +30,7 @@ const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
   let linkRef: SVGPathElement;
   const { source, target } = linkData;
 
-  const [isReplacedLink, setIsReplacedLink] =
-    React.useState<boolean>(false);
+  const [isReplacedLink, setIsReplacedLink] = React.useState<boolean>(false);
 
   const replacedCrossLink = replacedCrossLinks.find(
     ({ source: replacedSource, target: replacedTarget }) =>
@@ -63,14 +62,14 @@ const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
     <S.Container>
       <defs>
         <marker
-          id="crossHead"
-          orient="auto-start-reverse"
-          markerWidth="13"
-          markerHeight="14"
-          refX="11"
-          refY="5.6"
+          id='crossHead'
+          orient='auto-start-reverse'
+          markerWidth='13'
+          markerHeight='14'
+          refX='11'
+          refY='5.6'
         >
-          <S.Arrow d="M 0 0 12 6 0 12 3 6" />
+          <S.Arrow d='M 0 0 12 6 0 12 3 6' />
         </marker>
       </defs>
       <S.Path

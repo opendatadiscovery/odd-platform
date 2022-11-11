@@ -1,6 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { LabelsState } from 'redux/interfaces/state';
-import { Label } from 'generated-sources';
+import type { LabelsState } from 'redux/interfaces';
+import type { Label } from 'generated-sources';
 import { labelsActionPrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 

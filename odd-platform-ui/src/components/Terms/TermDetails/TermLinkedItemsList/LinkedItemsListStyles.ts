@@ -1,9 +1,5 @@
 import { Grid } from '@mui/material';
-import {
-  primaryTabsHeight,
-  tabsContainerMargin,
-  toolbarHeight,
-} from 'lib/constants';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 import {
   TermSearchResultsColType,
@@ -12,12 +8,10 @@ import {
 
 const itemHeight = 40;
 
-export const TermLinkedItemsResultsTableHeader = styled(Grid)(
-  ({ theme }) => ({
-    borderBottom: '1px solid',
-    borderBottomColor: theme.palette.divider,
-  })
-);
+export const TermLinkedItemsResultsTableHeader = styled(Grid)(({ theme }) => ({
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+}));
 
 export const TermLinkedItemsColContainer = styled(Grid)<{
   $colType: TermSearchResultsColType;

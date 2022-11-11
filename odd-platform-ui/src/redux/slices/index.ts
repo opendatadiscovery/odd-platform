@@ -1,4 +1,5 @@
 import { combineReducers } from '@reduxjs/toolkit';
+import policies from './policy.slice';
 import loader from './loader.slice';
 import namespaces from './namespace.slice';
 import dataSources from './datasources.slice';
@@ -23,7 +24,6 @@ import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 import ownerAssociation from './ownerAssociation.slice';
 import roles from './roles.slice';
-import policies from './policy.slice';
 
 export default combineReducers({
   namespaces,

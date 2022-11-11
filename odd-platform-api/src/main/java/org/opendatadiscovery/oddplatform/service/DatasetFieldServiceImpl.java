@@ -22,6 +22,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
@@ -61,7 +62,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                                                  final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         return reactiveDatasetFieldRepository.getDto(datasetFieldId)
             .switchIfEmpty(Mono.error(
-                new IllegalArgumentException(String.format("DatasetField not found by id = %s", datasetFieldId))))
+                new NotFoundException("DatasetField", datasetFieldId)))
             .flatMap(dto -> updateDescription(datasetFieldId, datasetFieldUpdateFormData, dto))
             .zipWith(Mono.defer(() -> updateInternalDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData)))
             .map(tuple -> {

@@ -25,7 +25,7 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   dialogContentId?: string;
   clearState?: () => void;
   maxWidth?: 'xs' | 'sm' | 'md' | 'xl';
-  formSubmitHandler?: any;
+  formSubmitHandler?: () => Promise<unknown>;
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({
@@ -42,7 +42,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
   clearState,
   formSubmitHandler,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(false);
+  const [open, setOpen] = React.useState(false);
 
   const handleOpen = React.useCallback(
     (e?: React.MouseEvent) => {
@@ -67,13 +67,12 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     handleClose();
   }, [handleCloseSubmittedForm, handleClose]);
 
-  const dialogOnKeyDownHandler = (
-    event: React.KeyboardEvent<HTMLDivElement>
-  ) => {
+  React.useEffect(() => () => setOpen(false), [setOpen]);
+
+  const dialogOnKeyDownHandler = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' && !event.shiftKey && formSubmitHandler) {
       event.preventDefault();
-
-      formSubmitHandler();
+      await formSubmitHandler();
     }
   };
 
@@ -88,16 +87,16 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           fullWidth
           maxWidth={maxWidth}
           scroll={scroll}
-          aria-labelledby="max-width-dialog-title"
+          aria-labelledby='max-width-dialog-title'
           onKeyDown={dialogOnKeyDownHandler}
         >
-          <S.Progress color="primary" $isLoading={isLoading} />
-          <S.Title $isLoading={isLoading} id="max-width-dialog-title">
+          <S.Progress color='primary' $isLoading={isLoading} />
+          <S.Title $isLoading={isLoading} id='max-width-dialog-title'>
             {title}
             <AppIconButton
               sx={{ ml: 1 }}
-              size="small"
-              color="unfilled"
+              size='small'
+              color='unfilled'
               icon={<ClearIcon />}
               onClick={handleClose}
             />
@@ -107,7 +106,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           </S.Content>
           <S.Actions disableSpacing>
             {errorText && (
-              <S.ErrorText variant="subtitle2" color="error">
+              <S.ErrorText variant='subtitle2' color='error'>
                 {errorText}
               </S.ErrorText>
             )}

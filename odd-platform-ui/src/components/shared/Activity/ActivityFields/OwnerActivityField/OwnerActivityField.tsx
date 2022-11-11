@@ -2,16 +2,14 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import {
   ActivityEventType,
-  ActivityState,
-  OwnershipActivityState,
+  type ActivityState,
+  type OwnershipActivityState,
 } from 'generated-sources';
-import {
-  ActivityFieldState,
-  ActivityFieldHeader,
-  OwnerWithTitle,
-} from 'components/shared/Activity';
-import { CRUDType } from 'lib/interfaces';
+import { type CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
+import OwnerWithTitle from './OwnerWithTitle/OwnerWithTitle';
+import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 
 type OwnerItem = OwnershipActivityState & {
   typeOfChange?: CRUDType;

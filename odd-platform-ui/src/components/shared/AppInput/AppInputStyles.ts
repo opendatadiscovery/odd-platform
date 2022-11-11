@@ -23,7 +23,7 @@ const isLarge = (size: string) => size === 'large';
 const inputYPaddingsBySize = (size: AppInputSizes) => {
   if (size === 'large') return 1.25;
   if (size === 'small') return 0.25;
-  return 0.75;
+  return 0.625;
 };
 
 export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
@@ -66,6 +66,7 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
         lineHeight: '16px',
       },
       [`& .${inputBaseClasses.input}`]: {
+        height: 'auto',
         padding: theme.spacing(inputYPaddingsBySize($size), 1),
         color: theme.palette.texts.primary,
         fontWeight: 400,

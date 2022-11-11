@@ -1,8 +1,8 @@
 import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
 import { Label } from 'generated-sources';
-import { LabelItem } from 'components/shared';
 import { Grid } from '@mui/material';
+import LabelItem from '../LabelItem/LabelItem';
 import TruncatedLabelMenu from './TruncatedLabelMenu/TruncatedLabelMenu';
 
 interface TruncatedLabelProps {

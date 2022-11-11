@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceUpdateFormData;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -249,7 +250,7 @@ class NamespaceServiceImplTest {
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
-            .verifyError(IllegalStateException.class);
+            .verifyError(CascadeDeleteException.class);
 
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
@@ -270,7 +271,7 @@ class NamespaceServiceImplTest {
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
-            .verifyError(IllegalStateException.class);
+            .verifyError(CascadeDeleteException.class);
 
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
@@ -291,7 +292,7 @@ class NamespaceServiceImplTest {
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
-            .verifyError(IllegalStateException.class);
+            .verifyError(CascadeDeleteException.class);
 
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
@@ -312,7 +313,7 @@ class NamespaceServiceImplTest {
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
-            .verifyError(IllegalStateException.class);
+            .verifyError(CascadeDeleteException.class);
 
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));

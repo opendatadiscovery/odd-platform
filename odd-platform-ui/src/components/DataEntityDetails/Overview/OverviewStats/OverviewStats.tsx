@@ -12,9 +12,7 @@ import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQuality
 
 const OverviewStats: React.FC = () => {
   const { dataEntityId } = useAppParams();
-  const dataEntityDetails = useAppSelector(
-    getDataEntityDetails(dataEntityId)
-  );
+  const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
   const dataEntityName =
     dataEntityDetails?.externalName || dataEntityDetails?.internalName;

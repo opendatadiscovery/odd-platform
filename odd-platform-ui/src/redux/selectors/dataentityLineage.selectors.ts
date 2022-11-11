@@ -1,30 +1,28 @@
 import { createSelector } from '@reduxjs/toolkit';
+import type { DataEntityLineageState, RootState } from 'redux/interfaces';
 import {
-  AsyncRequestStatus,
-  DataEntityLineageState,
-  RootState,
-} from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { getDataEntityId } from './dataentity.selectors';
 
-const dataEntitiesState = ({
-  dataEntityLineage,
-}: RootState): DataEntityLineageState => dataEntityLineage;
+const getDataEntityId = (_: RootState, dataEntityId: number | string) => dataEntityId;
 
-const getDataEntityUpstreamLineageFetchingStatus = createFetchingSelector(
+const dataEntitiesState = ({ dataEntityLineage }: RootState): DataEntityLineageState =>
+  dataEntityLineage;
+
+export const getUpstreamLineageFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntityUpstreamLineageActionType
+);
+export const getUpstreamLineageFetchingError = createErrorSelector(
   actions.fetchDataEntityUpstreamLineageActionType
 );
 
-const getDataEntityDownstreamLineageFetchingStatus =
-  createFetchingSelector(
-    actions.fetchDataEntityDownstreamLineageActionType
-  );
-
-export const getDataEntityLineageStreamFetching = createSelector(
-  getDataEntityUpstreamLineageFetchingStatus,
-  getDataEntityDownstreamLineageFetchingStatus,
-  (...statuses: AsyncRequestStatus[]) => statuses.includes('pending')
+export const getDownstreamLineageFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntityDownstreamLineageActionType
+);
+export const getDownstreamLineageFetchingError = createErrorSelector(
+  actions.fetchDataEntityDownstreamLineageActionType
 );
 
 export const getDataEntityLineage = createSelector(

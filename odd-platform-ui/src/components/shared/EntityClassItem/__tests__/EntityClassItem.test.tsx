@@ -8,10 +8,7 @@ describe('EntityClassItem', () => {
   const setupComponent = (props?: Partial<EntityClassItemProps>) =>
     render(
       provideTheme(
-        <EntityClassItem
-          entityClassName={DataEntityClassNameEnum.SET}
-          {...props}
-        />
+        <EntityClassItem entityClassName={DataEntityClassNameEnum.SET} {...props} />
       )
     );
 

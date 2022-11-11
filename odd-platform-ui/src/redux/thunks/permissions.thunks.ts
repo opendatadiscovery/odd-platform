@@ -1,18 +1,18 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
   Configuration,
-  Permission,
+  type Permission,
   PermissionApi,
-  PermissionApiGetResourcePermissionsRequest,
-  PermissionResourceType,
+  type PermissionApiGetResourcePermissionsRequest,
+  type PermissionResourceType,
 } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const permissionApi = new PermissionApi(apiClientConf);
 
-export const fetchResourcePermissions = createAsyncThunk<
+export const fetchResourcePermissions = handleResponseAsyncThunk<
   {
     resourceId: number;
     permissionResourceType: PermissionResourceType;
@@ -28,5 +28,6 @@ export const fetchResourcePermissions = createAsyncThunk<
     });
 
     return { resourceId, permissionResourceType, permissions };
-  }
+  },
+  {}
 );

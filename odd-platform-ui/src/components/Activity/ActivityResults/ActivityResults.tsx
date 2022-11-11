@@ -34,9 +34,7 @@ const ActivityResults: React.FC = () => {
   const { activityPath } = useAppPaths();
 
   const activityTotals = useAppSelector(getActivityCounts);
-  const activityType = useAppSelector(
-    getActivitiesQueryParamsByName('type')
-  );
+  const activityType = useAppSelector(getActivitiesQueryParamsByName('type'));
   const pageInfo = useAppSelector(getActivityPageInfo);
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const countParams = useAppSelector(getActivitiesCountsParams);
@@ -131,9 +129,7 @@ const ActivityResults: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
-    setSelectedTab(
-      activityType ? tabs.findIndex(tab => tab.value === activityType) : 0
-    );
+    setSelectedTab(activityType ? tabs.findIndex(tab => tab.value === activityType) : 0);
   }, [tabs, activityType]);
 
   const onActivityTypeChange = (newTypeIndex: number) => {
@@ -149,9 +145,7 @@ const ActivityResults: React.FC = () => {
   const activityItemSkeleton = () => (
     <SkeletonWrapper
       length={10}
-      renderContent={({ key }) => (
-        <ActivityResultsItemSkeleton width="100%" key={key} />
-      )}
+      renderContent={({ key }) => <ActivityResultsItemSkeleton width='100%' key={key} />}
     />
   );
 
@@ -160,19 +154,19 @@ const ActivityResults: React.FC = () => {
   return (
     <Grid sx={{ mt: 2 }}>
       <AppTabs
-        type="primary"
+        type='primary'
         items={tabs}
         selectedTab={selectedTab}
         handleTabChange={onActivityTypeChange}
         isHintUpdating={isActivityCountsFetching}
       />
       {!isActivityListFetching && activityCount === 0 ? (
-        <EmptyContentPlaceholder text="No matches found" />
+        <EmptyContentPlaceholder text='No matches found' />
       ) : (
         <>
           <Grid
             container
-            justifyContent="flex-end"
+            justifyContent='flex-end'
             sx={{
               mt: 2,
               py: 0.25,
@@ -181,39 +175,37 @@ const ActivityResults: React.FC = () => {
             }}
           >
             <AppButton
-              size="small"
-              color="tertiary"
+              size='small'
+              color='tertiary'
               onClick={() => setHideAllDetails(!hideAllDetails)}
             >
               Hide all details
             </AppButton>
           </Grid>
-          <S.ListContainer id="activities-list">
+          <S.ListContainer id='activities-list'>
             <InfiniteScroll
               dataLength={activityCount}
               next={fetchNextPage}
               hasMore={pageInfo.hasNext}
               loader={isActivityListFetching && activityItemSkeleton()}
-              scrollThreshold="200px"
-              scrollableTarget="activities-list"
+              scrollThreshold='200px'
+              scrollableTarget='activities-list'
             >
-              {Object.entries(activityResults).map(
-                ([activityDate, activities], idx) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Grid key={`${activityDate}-${idx}`} container>
-                    <Typography variant="subtitle2" sx={{ py: 1 }}>
-                      {activityDate}
-                    </Typography>
-                    {activities.map(activity => (
-                      <ActivityItem
-                        key={activity.id}
-                        activity={activity}
-                        hideAllDetails={hideAllDetails}
-                      />
-                    ))}
-                  </Grid>
-                )
-              )}
+              {Object.entries(activityResults).map(([activityDate, activities], idx) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Grid key={`${activityDate}-${idx}`} container>
+                  <Typography variant='subtitle2' sx={{ py: 1 }}>
+                    {activityDate}
+                  </Typography>
+                  {activities.map(activity => (
+                    <ActivityItem
+                      key={activity.id}
+                      activity={activity}
+                      hideAllDetails={hideAllDetails}
+                    />
+                  ))}
+                </Grid>
+              ))}
             </InfiniteScroll>
           </S.ListContainer>
         </>

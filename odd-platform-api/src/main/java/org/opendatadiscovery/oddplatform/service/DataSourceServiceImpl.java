@@ -10,6 +10,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -18,9 +20,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -47,7 +47,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     public Mono<DataSource> create(final DataSourceFormData form) {
         if (StringUtils.isNotEmpty(form.getConnectionUrl()) && StringUtils.isNotEmpty(form.getOddrn())) {
             return Mono.error(
-                new IllegalArgumentException("Can't create data source with both URL and ODDRN defined"));
+                new BadUserRequestException("Can't create data source with both URL and ODDRN defined"));
         }
 
         final Mono<TokenDto> token = tokenGenerator.generateToken().flatMap(tokenRepository::create);
@@ -68,7 +68,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @ReactiveTransactional
     public Mono<DataSource> update(final long id, final DataSourceUpdateFormData form) {
         return dataSourceRepository.getDto(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", id)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Data source", id)))
             .flatMap(dataSource -> {
                 if (StringUtils.isNotEmpty(form.getNamespaceName())) {
                     return namespaceService.getOrCreate(form.getNamespaceName())
@@ -89,15 +89,15 @@ public class DataSourceServiceImpl implements DataSourceService {
                 if (!exists) {
                     return dataSourceRepository.delete(id).map(DataSourcePojo::getId);
                 }
-                return Mono.error(new IllegalStateException(
-                    "Data source with ID %d cannot be deleted: there are still data sources attached".formatted(id)));
+                return Mono.error(new CascadeDeleteException(
+                    "Data source cannot be deleted: there are still data entities attached"));
             });
     }
 
     @Override
     public Mono<DataSource> regenerateDataSourceToken(final long id) {
         return dataSourceRepository.getDto(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", id)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Data source", id)))
             .flatMap(dto -> tokenGenerator.regenerateToken(dto.token().tokenPojo())
                 .flatMap(tokenRepository::updateToken)
                 .map(t -> new DataSourceDto(dto.dataSource(), dto.namespace(), t)))

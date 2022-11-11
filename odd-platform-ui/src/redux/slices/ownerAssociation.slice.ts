@@ -1,8 +1,8 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { ownerAssociationActionPrefix } from 'redux/actions';
-import { OwnerAssociationState } from 'redux/interfaces';
+import type { OwnerAssociationState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
-import { OwnerAssociationRequest } from 'generated-sources';
+import type { OwnerAssociationRequest } from 'generated-sources';
 
 export const ownerAssociationAdapter = createEntityAdapter<OwnerAssociationRequest>({
   selectId: request => request.id,

@@ -1,9 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import {
-  Autocomplete,
-  AutocompleteRenderOptionState,
-  Grid,
-} from '@mui/material';
+import { Autocomplete, AutocompleteRenderOptionState, Grid } from '@mui/material';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -18,10 +14,7 @@ import { AppInput } from 'components/shared';
 import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
 import { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  getTermSearchFacetsByType,
-  getTermSearchId,
-} from 'redux/selectors';
+import { getTermSearchFacetsByType, getTermSearchId } from 'redux/selectors';
 import { changeTermSearchFacet } from 'redux/slices/termSearch.slice';
 import { getTermsSearchFacetOptions } from 'redux/thunks';
 import * as S from './MultipleFilterItemAutocompleteStyles';
@@ -31,16 +24,11 @@ interface Props {
   facetName: TermSearchOptionalFacetNames;
 }
 
-const MultipleFilterItemAutocomplete: React.FC<Props> = ({
-  name,
-  facetName,
-}) => {
+const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) => {
   const dispatch = useAppDispatch();
 
   const searchId = useAppSelector(getTermSearchId);
-  const facetOptionsAll = useAppSelector(
-    getTermSearchFacetsByType(facetName)
-  );
+  const facetOptionsAll = useAppSelector(getTermSearchFacetsByType(facetName));
 
   type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> &
     Partial<CountableSearchFilter>;
@@ -94,9 +82,8 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
         searchText
           ? facetOptions.filter(
               option =>
-                option.name
-                  .toLocaleLowerCase()
-                  .indexOf(searchText.toLocaleLowerCase()) >= 0
+                option.name.toLocaleLowerCase().indexOf(searchText.toLocaleLowerCase()) >=
+                0
             )
           : facetOptions,
         params
@@ -104,8 +91,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
     [searchText, facetOptions]
   );
 
-  const [facetOptionsLoading, setFacetOptionsLoading] =
-    React.useState<boolean>(false);
+  const [facetOptionsLoading, setFacetOptionsLoading] = React.useState<boolean>(false);
 
   const handleFacetSearch = React.useCallback(
     useDebouncedCallback(() => {
@@ -125,12 +111,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
           setFacetOptions(response.facetOptions);
         });
     }, 500),
-    [
-      getTermsSearchFacetOptions,
-      setFacetOptionsLoading,
-      setFacetOptions,
-      searchText,
-    ]
+    [getTermsSearchFacetOptions, setFacetOptionsLoading, setFacetOptions, searchText]
   );
 
   React.useEffect(() => {
@@ -147,7 +128,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
     if (!state.inputValue) {
       return (
         <li {...props}>
-          <Grid container justifyContent="space-between">
+          <Grid container justifyContent='space-between'>
             <span>{option.name}</span>
             <S.FilterCount>{option.count}</S.FilterCount>
           </Grid>
@@ -163,9 +144,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
             <S.HighlightedTextPart
               // eslint-disable-next-line react/no-array-index-key
               key={i}
-              isHighlighted={
-                part.toLowerCase() === highlight.toLowerCase()
-              }
+              isHighlighted={part.toLowerCase() === highlight.toLowerCase()}
             >
               {part}
             </S.HighlightedTextPart>
@@ -176,7 +155,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
 
     return (
       <li {...props}>
-        <Grid container justifyContent="space-between">
+        <Grid container justifyContent='space-between'>
           {highlightedText(option.name, state.inputValue)}
           <S.FilterCount>{option.count}</S.FilterCount>
         </Grid>
@@ -208,7 +187,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({
         <AppInput
           {...params}
           sx={{ mt: 2 }}
-          placeholder="Search by name"
+          placeholder='Search by name'
           label={name}
           ref={params.InputProps.ref}
           customEndAdornment={{

@@ -1,49 +1,73 @@
 import {
   Configuration,
-  Tag,
+  type Tag,
   TagApi,
-  TagApiCreateTagRequest,
-  TagApiDeleteTagRequest,
-  TagApiGetPopularTagListRequest,
-  TagApiUpdateTagRequest,
+  type TagApiCreateTagRequest,
+  type TagApiDeleteTagRequest,
+  type TagApiGetPopularTagListRequest,
+  type TagApiUpdateTagRequest,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces/common';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TagApi(apiClientConf);
 
-export const fetchTagsList = createAsyncThunk<
+export const fetchTagsList = handleResponseAsyncThunk<
   { items: Array<Tag>; pageInfo: CurrentPageInfo },
   TagApiGetPopularTagListRequest
->(actions.fetchTagsActType, async ({ page, size, query, ids }) => {
-  const { items, pageInfo } = await apiClient.getPopularTagList({
-    page,
-    size,
-    query,
-    ids,
-  });
+>(
+  actions.fetchTagsActType,
+  async ({ page, size, query, ids }) => {
+    const { items, pageInfo } = await apiClient.getPopularTagList({
+      page,
+      size,
+      query,
+      ids,
+    });
 
-  return { items, pageInfo: { ...pageInfo, page } };
-});
+    return { items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
-export const createTag = createAsyncThunk<Tag[], TagApiCreateTagRequest>(
+export const createTag = handleResponseAsyncThunk<Tag[], TagApiCreateTagRequest>(
   actions.createTagsActType,
-  async params => apiClient.createTag(params)
+  async ({ tagFormData }) => await apiClient.createTag({ tagFormData }),
+  {
+    setSuccessOptions: ({ tagFormData }) => ({
+      id: `Tags-creating-${tagFormData.length}`,
+      message: `Tag${tagFormData.length > 1 ? 's' : ''} ${tagFormData.map(
+        tag => ` ${tag.name}`
+      )} successfully created.`,
+    }),
+  }
 );
 
-export const updateTag = createAsyncThunk<Tag, TagApiUpdateTagRequest>(
+export const updateTag = handleResponseAsyncThunk<Tag, TagApiUpdateTagRequest>(
   actions.updateTagActType,
-  async ({ tagId, tagFormData }) => apiClient.updateTag({ tagId, tagFormData })
+  async ({ tagId, tagFormData }) => await apiClient.updateTag({ tagId, tagFormData }),
+  {
+    setSuccessOptions: ({ tagFormData }) => ({
+      id: `Tags-updating-${tagFormData.name}`,
+      message: `Tag ${tagFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteTag = createAsyncThunk<number, TagApiDeleteTagRequest>(
+export const deleteTag = handleResponseAsyncThunk<number, TagApiDeleteTagRequest>(
   actions.deleteTagActType,
   async ({ tagId }) => {
     await apiClient.deleteTag({ tagId });
 
     return tagId;
+  },
+  {
+    setSuccessOptions: ({ tagId }) => ({
+      id: `Tags-deleting-${tagId}`,
+      message: `Tag successfully deleted.`,
+    }),
   }
 );

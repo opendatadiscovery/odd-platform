@@ -1,9 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { CurrentPageInfo, RootState } from 'redux/interfaces';
+import type { CurrentPageInfo, RootState, CollectorsState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { collectorAdapter } from 'redux/slices/collectors.slice';
 import * as actions from 'redux/actions';
-import { CollectorsState } from 'redux/interfaces/state';
 
 const collectorsState = ({ collectors }: RootState): CollectorsState => collectors;
 

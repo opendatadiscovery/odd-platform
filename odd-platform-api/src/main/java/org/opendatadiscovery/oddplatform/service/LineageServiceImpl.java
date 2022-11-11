@@ -52,7 +52,7 @@ public class LineageServiceImpl implements LineageService {
     @Override
     public Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId) {
         return groupEntityRelationRepository.getDEGEntitiesOddrns(dataEntityGroupId)
-            .switchIfEmpty(Flux.error(new NotFoundException()))
+            .switchIfEmpty(Flux.error(new NotFoundException("Data entity group", dataEntityGroupId)))
             .collectList()
             .flatMap(entitiesOddrns -> {
                 final Map<String, DataEntityDimensionsDto> dtoDict = getDataEntityDimensionsDtoMap(entitiesOddrns);
@@ -78,7 +78,8 @@ public class LineageServiceImpl implements LineageService {
     public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth,
                                               final LineageStreamKind lineageStreamKind) {
         return Mono.fromCallable(() -> dataEntityRepository.get(dataEntityId))
-            .flatMap(optional -> optional.isEmpty() ? Mono.error(new NotFoundException()) : Mono.just(optional.get()))
+            .flatMap(optional -> optional.isEmpty()
+                ? Mono.error(new NotFoundException("DataEntity", dataEntityId)) : Mono.just(optional.get()))
             .flatMap(dto -> lineageRepository
                 .getLineageRelations(Set.of(dto.getDataEntity().getOddrn()),
                     LineageDepth.of(lineageDepth), lineageStreamKind)
@@ -136,8 +137,7 @@ public class LineageServiceImpl implements LineageService {
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
             .distinct()
             .map(deOddrn -> Optional.ofNullable(dtoRepository.get(deOddrn))
-                .orElseThrow(() -> new IllegalArgumentException(
-                    String.format("Entity with oddrn %s wasn't fetched", deOddrn)))
+                .orElseThrow(() -> new RuntimeException(String.format("Entity with oddrn %s wasn't fetched", deOddrn)))
             )
             .map(dto -> {
                 final var childrenCount = childrenCountMap.getOrDefault(dto.getDataEntity().getOddrn(), 0);
@@ -155,8 +155,8 @@ public class LineageServiceImpl implements LineageService {
 
                     final long entityId = Optional.ofNullable(dtoRepository.get(deOddrn))
                         .map(d -> d.getDataEntity().getId())
-                        .orElseThrow(() -> new IllegalArgumentException(
-                            String.format("Entity with oddrn %s wasn't fetched", deOddrn)));
+                        .orElseThrow(
+                            () -> new RuntimeException(String.format("Entity with oddrn %s wasn't fetched", deOddrn)));
 
                     return Pair.of(entityId, groupId);
                 }))

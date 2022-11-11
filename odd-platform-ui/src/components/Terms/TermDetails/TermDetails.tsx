@@ -1,10 +1,11 @@
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { AppLoadingPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getResourcePermissions,
   getTermDetails,
+  getTermDetailsFetchingErrors,
   getTermDetailsFetchingStatuses,
   getTermSearchId,
 } from 'redux/selectors';
@@ -12,7 +13,7 @@ import { deleteTerm, fetchResourcePermissions, fetchTermDetails } from 'redux/th
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import TermDetailsHeader from 'components/Terms/TermDetails/TermDetailsHeader/TermDetailsHeader';
+import TermDetailsHeader from './TermDetailsHeader/TermDetailsHeader';
 import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
 import TermDetailsTabs from './TermDetailsTabs/TermDetailsTabs';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
@@ -31,8 +32,12 @@ const TermDetailsView: React.FC = () => {
   const { termId } = useAppParams();
   const { termSearchPath } = useAppPaths();
 
-  const { isLoading: isTermDetailsFetching, isLoaded: isTermDetailsFetched } =
-    useAppSelector(getTermDetailsFetchingStatuses);
+  const {
+    isLoading: isTermDetailsFetching,
+    isLoaded: isTermDetailsFetched,
+    isNotLoaded: isTermDetailsNotFetched,
+  } = useAppSelector(getTermDetailsFetchingStatuses);
+  const termDetailsFetchingErrors = useAppSelector(getTermDetailsFetchingErrors);
 
   const termSearchId = useAppSelector(getTermSearchId);
   const termDetails = useAppSelector(getTermDetails(termId));
@@ -90,6 +95,10 @@ const TermDetailsView: React.FC = () => {
           </Switch>
         </React.Suspense>
       )}
+      <AppErrorPage
+        isNotContentLoaded={isTermDetailsNotFetched}
+        error={termDetailsFetchingErrors}
+      />
     </TermDetailsComponentWrapper>
   );
 };

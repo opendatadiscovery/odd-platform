@@ -1,7 +1,8 @@
 import React from 'react';
-import { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import {
   getDatasetQualityTestsBySuiteNames,
+  getDatasetTestListFetchingError,
   getDatasetTestListFetchingStatuses,
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,
@@ -10,7 +11,7 @@ import {
 import { fetchDataSetQualityTestList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
-import { AppPaper, TestRunStatusItem } from 'components/shared';
+import { AppErrorPage, AppPaper, TestRunStatusItem } from 'components/shared';
 import omit from 'lodash/omit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TestReportItem from './TestReportItem/TestReportItem';
@@ -19,26 +20,23 @@ import TestReportItemSkeleton from './TestReportItem/TestReportItemSkeleton/Test
 import TestReportSkeleton from './TestReportSkeleton/TestReportSkeleton';
 import * as S from './TestReportStyles';
 
-interface DatasetQualityTestList {
-  [suiteName: string]: DataQualityTest[];
-}
-
 const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataQATestId, dataEntityId, viewType } = useAppParams();
 
   const datasetTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
-  const datasetQualityTestList: DatasetQualityTestList = useAppSelector(
+  const datasetQualityTestList = useAppSelector(
     getDatasetQualityTestsBySuiteNames(dataEntityId)
   );
   const testReportBySuitName = useAppSelector(getTestReportListBySuiteName);
 
-  const { isLoading: isDatasetTestListFetching } = useAppSelector(
-    getDatasetTestListFetchingStatuses
-  );
-  const { isLoading: isTestReportFetching } = useAppSelector(
-    getDatasetTestReportFetchingStatuses
-  );
+  const {
+    isLoading: isDatasetTestListFetching,
+    isNotLoaded: isDatasetTestListNotLoaded,
+  } = useAppSelector(getDatasetTestListFetchingStatuses);
+  const datasetTestListError = useAppSelector(getDatasetTestListFetchingError);
+  const { isLoading: isTestReportFetching, isNotLoaded: isTestReportNotLoaded } =
+    useAppSelector(getDatasetTestReportFetchingStatuses);
 
   React.useEffect(() => {
     dispatch(fetchDataSetQualityTestList({ dataEntityId }));
@@ -66,9 +64,8 @@ const TestReport: React.FC = () => {
   return (
     <Grid container sx={{ mt: 2 }}>
       <>
-        {isTestReportFetching ? (
-          <TestReportSkeleton />
-        ) : (
+        {isTestReportFetching ? <TestReportSkeleton /> : null}
+        {isTestReportNotLoaded ? null : (
           <Grid container alignItems='center' wrap='nowrap'>
             <S.TestReportContainer container item>
               {renderTestReportItems}
@@ -79,30 +76,27 @@ const TestReport: React.FC = () => {
           </Grid>
         )}
         <>
+          {isDatasetTestListFetching ? <TestReportItemSkeleton length={5} /> : null}
           {datasetQualityTestList ? (
             <Grid container sx={{ mt: 4 }}>
               <Grid item lg={7.91} sx={{ pr: 2 }}>
-                {isDatasetTestListFetching ? (
-                  <TestReportItemSkeleton length={5} />
-                ) : (
-                  <S.TestReportItemCont container>
-                    {Object.entries(datasetQualityTestList).map(
-                      ([suitName, dataQATestList]) => (
-                        <TestReportItem
-                          dataQATestId={dataQATestId}
-                          dataSetId={dataEntityId}
-                          dataQATestReport={testReportBySuitName[suitName]}
-                          key={suitName}
-                          suitName={suitName}
-                          dataQATestList={dataQATestList}
-                        />
-                      )
-                    )}
-                  </S.TestReportItemCont>
-                )}
+                <S.TestReportItemCont container>
+                  {Object.entries(datasetQualityTestList).map(
+                    ([suitName, dataQATestList]) => (
+                      <TestReportItem
+                        dataQATestId={dataQATestId}
+                        dataSetId={dataEntityId}
+                        dataQATestReport={testReportBySuitName[suitName]}
+                        key={suitName}
+                        suitName={suitName}
+                        dataQATestList={dataQATestList}
+                      />
+                    )
+                  )}
+                </S.TestReportItemCont>
               </Grid>
-              <Grid item lg={4.09}>
-                {dataQATestId ? (
+              {dataQATestId ? (
+                <Grid item lg={4.09}>
                   <AppPaper square elevation={0}>
                     <TestReportDetails
                       dataEntityId={dataEntityId}
@@ -110,10 +104,15 @@ const TestReport: React.FC = () => {
                       reportDetailsViewType={viewType}
                     />
                   </AppPaper>
-                ) : null}
-              </Grid>
+                </Grid>
+              ) : null}
             </Grid>
           ) : null}
+          <AppErrorPage
+            isNotContentLoaded={isDatasetTestListNotLoaded}
+            error={datasetTestListError}
+            offsetTop={154}
+          />
         </>
       </>
     </Grid>

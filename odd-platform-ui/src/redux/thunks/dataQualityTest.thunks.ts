@@ -1,64 +1,76 @@
 import {
   Configuration,
-  DataEntity,
-  DataEntityList,
+  type DataEntity,
+  type DataEntityList,
   DataQualityApi,
-  DataQualityApiGetDataEntityDataQATestsRequest,
-  DataQualityApiGetDatasetSLAReportRequest,
-  DataQualityApiGetDatasetTestReportRequest,
-  DataQualityApiSetDataQATestSeverityRequest,
-  DataSetSLAReport,
-  DataSetTestReport,
+  type DataQualityApiGetDataEntityDataQATestsRequest,
+  type DataQualityApiGetDatasetSLAReportRequest,
+  type DataQualityApiGetDatasetTestReportRequest,
+  type DataQualityApiSetDataQATestSeverityRequest,
+  type DataSetSLAReport,
+  type DataSetTestReport,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataQualityApi = new DataQualityApi(apiClientConf);
 
-export const fetchDataSetQualityTestReport = createAsyncThunk<
+export const fetchDataSetQualityTestReport = handleResponseAsyncThunk<
   { entityId: number; value: DataSetTestReport },
   DataQualityApiGetDatasetTestReportRequest
->(actions.fetchDataSetQualityTestReportActionType, async ({ dataEntityId }) => {
-  const response = await dataQualityApi.getDatasetTestReport({
-    dataEntityId,
-  });
-  return { entityId: dataEntityId, value: response };
-});
+>(
+  actions.fetchDataSetQualityTestReportActionType,
+  async ({ dataEntityId }) => {
+    const response = await dataQualityApi.getDatasetTestReport({ dataEntityId });
+    return { entityId: dataEntityId, value: response };
+  },
+  {}
+);
 
-export const fetchDataSetQualitySLAReport = createAsyncThunk<
+export const fetchDataSetQualitySLAReport = handleResponseAsyncThunk<
   { entityId: number; value: DataSetSLAReport },
   DataQualityApiGetDatasetSLAReportRequest
->(actions.fetchDataSetQualitySLAReportActionType, async ({ dataEntityId }) => {
-  const response = await dataQualityApi.getDatasetSLAReport({
-    dataEntityId,
-  });
-  return { entityId: dataEntityId, value: response };
-});
+>(
+  actions.fetchDataSetQualitySLAReportActionType,
+  async ({ dataEntityId }) => {
+    const response = await dataQualityApi.getDatasetSLAReport({
+      dataEntityId,
+    });
+    return { entityId: dataEntityId, value: response };
+  },
+  {}
+);
 
-export const fetchDataSetQualityTestList = createAsyncThunk<
+export const fetchDataSetQualityTestList = handleResponseAsyncThunk<
   { entityId: number; value: DataEntityList },
   DataQualityApiGetDataEntityDataQATestsRequest
->(actions.fetchDataSetQualityTestListActionType, async ({ dataEntityId }) => {
-  const response = await dataQualityApi.getDataEntityDataQATests({
-    dataEntityId,
-  });
-  return {
-    entityId: dataEntityId,
-    value: response,
-  };
-});
+>(
+  actions.fetchDataSetQualityTestListActionType,
+  async ({ dataEntityId }) => {
+    const response = await dataQualityApi.getDataEntityDataQATests({ dataEntityId });
 
-export const setDataQATestSeverity = createAsyncThunk<
+    return { entityId: dataEntityId, value: response };
+  },
+  { switchOffErrorMessage: true }
+);
+
+export const setDataQATestSeverity = handleResponseAsyncThunk<
   DataEntity,
   DataQualityApiSetDataQATestSeverityRequest
 >(
   actions.setDataQATestSeverityActionType,
   async ({ dataEntityId, dataqaTestId, dataQualityTestSeverityForm }) =>
-    dataQualityApi.setDataQATestSeverity({
+    await dataQualityApi.setDataQATestSeverity({
       dataEntityId,
       dataqaTestId,
       dataQualityTestSeverityForm,
-    })
+    }),
+  {
+    setSuccessOptions: ({ dataqaTestId }) => ({
+      id: `DQSeverity-deleting-${dataqaTestId}`,
+      message: `Severity successfully updated.`,
+    }),
+  }
 );

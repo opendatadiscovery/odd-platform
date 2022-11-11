@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { type CSSProperties } from 'react';
 import { Collapse, Grid } from '@mui/material';
 import * as S from './ActivityFieldStateStyles';
 

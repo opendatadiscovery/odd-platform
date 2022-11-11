@@ -1,74 +1,110 @@
 import {
   Configuration,
-  Tag,
+  type Tag,
   TermApi,
-  TermApiCreateTermRequest,
-  TermApiCreateTermTagsRelationsRequest,
-  TermApiDeleteTermRequest,
-  TermApiGetTermDetailsRequest,
-  TermApiGetTermsListRequest,
-  TermApiUpdateTermRequest,
-  TermDetails,
-  TermRef,
+  type TermApiCreateTermRequest,
+  type TermApiCreateTermTagsRelationsRequest,
+  type TermApiDeleteTermRequest,
+  type TermApiGetTermDetailsRequest,
+  type TermApiGetTermsListRequest,
+  type TermApiUpdateTermRequest,
+  type TermDetails,
+  type TermRef,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
+import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const termApi = new TermApi(apiClientConf);
 
-export const createTerm = createAsyncThunk<TermDetails, TermApiCreateTermRequest>(
+export const createTerm = handleResponseAsyncThunk<TermDetails, TermApiCreateTermRequest>(
   actions.createTermActType,
-  async ({ termFormData }) => termApi.createTerm({ termFormData })
+  async ({ termFormData }) => await termApi.createTerm({ termFormData }),
+  {
+    setSuccessOptions: ({ termFormData }) => ({
+      id: `Term-creating-${termFormData.name}`,
+      message: `Term ${termFormData.name} successfully created.`,
+    }),
+  }
 );
 
-export const updateTerm = createAsyncThunk<TermDetails, TermApiUpdateTermRequest>(
+export const updateTerm = handleResponseAsyncThunk<TermDetails, TermApiUpdateTermRequest>(
   actions.updateTermActType,
-  async ({ termId, termFormData }) => termApi.updateTerm({ termId, termFormData })
+  async ({ termId, termFormData }) => await termApi.updateTerm({ termId, termFormData }),
+  {
+    setSuccessOptions: ({ termFormData }) => ({
+      id: `Term-updating-${termFormData.name}`,
+      message: `Term ${termFormData.name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteTerm = createAsyncThunk<{ termId: number }, TermApiDeleteTermRequest>(
+export const deleteTerm = handleResponseAsyncThunk<
+  { termId: number },
+  TermApiDeleteTermRequest
+>(
   actions.deleteTermActType,
   async ({ termId }) => {
     await termApi.deleteTerm({ termId });
 
     return { termId };
+  },
+  {
+    setSuccessOptions: ({ termId }) => ({
+      id: `Term-deleting-${termId}`,
+      message: `Term successfully deleted.`,
+    }),
   }
 );
 
-export const fetchTermsList = createAsyncThunk<
+export const fetchTermsList = handleResponseAsyncThunk<
   { termList: Array<TermRef>; pageInfo: CurrentPageInfo },
   TermApiGetTermsListRequest
->(actions.fetchTermListActType, async ({ page, size, query }) => {
-  const { items: termList, pageInfo } = await termApi.getTermsList({
-    page,
-    size,
-    query,
-  });
+>(
+  actions.fetchTermListActType,
+  async ({ page, size, query }) => {
+    const { items: termList, pageInfo } = await termApi.getTermsList({
+      page,
+      size,
+      query,
+    });
 
-  return {
-    termList,
-    pageInfo: { ...pageInfo, page, hasNext: size * page < pageInfo.total },
-  };
-});
-
-export const fetchTermDetails = createAsyncThunk<
-  TermDetails,
-  TermApiGetTermDetailsRequest
->(actions.fetchTermDetailsActType, async ({ termId }) =>
-  termApi.getTermDetails({ termId })
+    return {
+      termList,
+      pageInfo: { ...pageInfo, page, hasNext: size * page < pageInfo.total },
+    };
+  },
+  {}
 );
 
-export const updateTermDetailsTags = createAsyncThunk<
+export const fetchTermDetails = handleResponseAsyncThunk<
+  TermDetails,
+  TermApiGetTermDetailsRequest
+>(
+  actions.fetchTermDetailsActType,
+  async ({ termId }) => termApi.getTermDetails({ termId }),
+  { switchOffErrorMessage: true }
+);
+
+export const updateTermDetailsTags = handleResponseAsyncThunk<
   { termId: number; tags: Array<Tag> },
   TermApiCreateTermTagsRelationsRequest
->(actions.updateTermDetailsTagsActType, async ({ termId, tagsFormData }) => {
-  const tags = await termApi.createTermTagsRelations({
-    termId,
-    tagsFormData,
-  });
+>(
+  actions.updateTermDetailsTagsActType,
+  async ({ termId, tagsFormData }) => {
+    const tags = await termApi.createTermTagsRelations({
+      termId,
+      tagsFormData,
+    });
 
-  return { termId, tags };
-});
+    return { termId, tags };
+  },
+  {
+    setSuccessOptions: ({ tagsFormData }) => ({
+      id: `Term-tags-updating-${tagsFormData.tagNameList.length}`,
+      message: `Term tags successfully updated.`,
+    }),
+  }
+);

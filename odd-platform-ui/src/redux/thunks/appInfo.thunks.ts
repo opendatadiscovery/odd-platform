@@ -1,15 +1,13 @@
-import { Configuration, AppInfoApi, AppInfo } from 'generated-sources';
+import { type AppInfo, AppInfoApi, Configuration } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new AppInfoApi(apiClientConf);
 
-export const fetchAppInfo = createAsyncThunk<AppInfo>(
+export const fetchAppInfo = handleResponseAsyncThunk<AppInfo>(
   actions.fetchAppInfoActionType,
-  async () => {
-    const response = await apiClient.getAppInfo();
-    return response;
-  }
+  async () => await apiClient.getAppInfo(),
+  {}
 );

@@ -19,28 +19,22 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
     <ItemLink to={detailsLink}>
       <Container container>
         <TermLinkedItemsColContainer
-          $colType="colmd"
+          $colType='colmd'
           item
           container
-          justifyContent="space-between"
-          wrap="nowrap"
+          justifyContent='space-between'
+          wrap='nowrap'
         >
           <NameContainer container item>
             <Typography
-              variant="body1"
+              variant='body1'
               noWrap
               title={linkedItem.internalName || linkedItem.externalName}
             >
               {linkedItem.internalName || linkedItem.externalName}
             </Typography>
           </NameContainer>
-          <Grid
-            container
-            item
-            justifyContent="flex-end"
-            wrap="nowrap"
-            flexBasis={0}
-          >
+          <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
             {linkedItem.entityClasses?.map(entityClass => (
               <EntityClassItem
                 sx={{ ml: 0.5 }}
@@ -50,42 +44,34 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             ))}
           </Grid>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="collg">
+        <TermLinkedItemsColContainer item $colType='collg'>
           <Typography
-            variant="body1"
+            variant='body1'
             title={linkedItem.dataSource.namespace?.name}
             noWrap
           >
             {linkedItem.dataSource.namespace?.name}
           </Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colsm">
-          <Typography
-            variant="body1"
-            title={linkedItem.dataSource?.name}
-            noWrap
-          >
+        <TermLinkedItemsColContainer item $colType='colsm'>
+          <Typography variant='body1' title={linkedItem.dataSource?.name} noWrap>
             {linkedItem.dataSource?.name}
           </Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colsm">
-          <Grid container direction="column" alignItems="flex-start">
+        <TermLinkedItemsColContainer item $colType='colsm'>
+          <Grid container direction='column' alignItems='flex-start'>
             {linkedItem.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
-                <Typography
-                  variant="body1"
-                  title={ownership.owner.name}
-                  noWrap
-                >
+                <Typography variant='body1' title={ownership.owner.name} noWrap>
                   {ownership.owner.name}
                 </Typography>
               </Grid>
             ))}
           </Grid>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colxs">
+        <TermLinkedItemsColContainer item $colType='colxs'>
           <Typography
-            variant="body1"
+            variant='body1'
             title={
               linkedItem.createdAt
                 ? format(linkedItem.createdAt, 'd MMM yyyy')
@@ -93,14 +79,12 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             }
             noWrap
           >
-            {linkedItem.createdAt
-              ? format(linkedItem.createdAt, 'd MMM yyyy')
-              : null}
+            {linkedItem.createdAt ? format(linkedItem.createdAt, 'd MMM yyyy') : null}
           </Typography>
         </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType="colxs">
+        <TermLinkedItemsColContainer item $colType='colxs'>
           <Typography
-            variant="body1"
+            variant='body1'
             title={
               linkedItem.updatedAt
                 ? formatDistanceToNowStrict(linkedItem.updatedAt, {

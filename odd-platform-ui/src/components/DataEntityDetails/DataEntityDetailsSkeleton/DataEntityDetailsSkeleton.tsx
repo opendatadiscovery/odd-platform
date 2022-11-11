@@ -15,12 +15,12 @@ const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({ width }) => {
 
   return (
     <Grid container>
-      <Grid container justifyContent="space-between">
+      <Grid container justifyContent='space-between'>
         <Grid item xs={4}>
           <Skeleton width={width} height={40} />
         </Grid>
       </Grid>
-      <Grid container item xs={6} sx={{ mt: 3 }} wrap="nowrap">
+      <Grid container item xs={6} sx={{ mt: 3 }} wrap='nowrap'>
         {[...Array(6)].map((_, id) => tabsSkeletonItem(id))}
       </Grid>
     </Grid>

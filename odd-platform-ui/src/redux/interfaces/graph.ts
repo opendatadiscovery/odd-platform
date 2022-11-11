@@ -1,5 +1,5 @@
-import { HierarchyPointNode } from 'd3-hierarchy';
-import { GroupedDataEntityLineageNode } from 'redux/interfaces/dataentityLineage';
+import type { HierarchyPointNode } from 'd3-hierarchy';
+import type { GroupedDataEntityLineageNode } from './dataentityLineage';
 
 export interface Point {
   x: number;
@@ -8,9 +8,7 @@ export interface Point {
 
 export interface TreeNodeDatum extends GroupedDataEntityLineageNode {
   children?: TreeNodeDatum[];
-  d3attrs: {
-    id: string;
-  };
+  d3attrs: { id: string };
 }
 
 export interface TreeLinkDatum {

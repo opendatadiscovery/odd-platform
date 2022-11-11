@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { AppButton } from 'components/shared';
-import { CRUDType } from 'lib/interfaces';
+import type { CRUDType } from 'lib/interfaces';
 import { useSetActivityHeaderIcon } from 'lib/hooks';
+import AppButton from '../../../AppButton/AppButton';
 import * as S from './ActivityFieldHeaderStyles';
 
 interface ActivityFieldHeaderProps {

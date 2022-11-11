@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
-import { TextFormatted, AppIconButton } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { deleteActivityQueryParam } from 'redux/slices/activity.slice';
+import AppIconButton from '../../../../AppIconButton/AppIconButton';
+import TextFormatted from '../../../../TextFormatted/TextFormatted';
 import { Container } from './SelectedFilterOptionStyles';
 
 interface SelectedFilterOptionProps {

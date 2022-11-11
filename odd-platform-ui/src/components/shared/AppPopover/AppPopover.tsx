@@ -1,7 +1,7 @@
 import React from 'react';
 import { PopoverProps, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
-import { AppCircularProgress } from 'components/shared';
+import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import * as S from './AppPopoverStyles';
 
 interface AppPopoverProps extends Omit<PopoverProps, 'open'> {

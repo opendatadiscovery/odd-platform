@@ -1,9 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  DataEntityClassNameEnum,
-  DataEntityDetails,
-} from 'generated-sources';
+import { DataEntityClassNameEnum, DataEntityDetails } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
@@ -17,9 +14,11 @@ interface OverviewEntityGroupStatsProps {
   entityGroups: DataEntityDetails['dataEntityGroups'];
 }
 
-const OverviewEntityGroupStats: React.FC<
-  OverviewEntityGroupStatsProps
-> = ({ dataEntityGroupName, entities, entityGroups }) => {
+const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
+  dataEntityGroupName,
+  entities,
+  entityGroups,
+}) => {
   const { dataEntityDetailsPath } = useAppPaths();
 
   return (
@@ -30,18 +29,12 @@ const OverviewEntityGroupStats: React.FC<
           fullName
         />
       </Grid>
-      <Grid
-        item
-        container
-        xs={6}
-        alignItems="flex-start"
-        alignContent="flex-start"
-      >
-        <Grid item container xs={12} alignItems="baseline">
-          <Typography variant="h2" sx={{ mr: 0.5 }}>
+      <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
+        <Grid item container xs={12} alignItems='baseline'>
+          <Typography variant='h2' sx={{ mr: 0.5 }}>
             {entities?.length || 0}
           </Typography>
-          <Typography variant="body1" color="texts.hint">
+          <Typography variant='body1' color='texts.hint'>
             entities
           </Typography>
         </Grid>
@@ -49,19 +42,16 @@ const OverviewEntityGroupStats: React.FC<
           item
           container
           xs={12}
-          direction="column"
-          alignItems="flex-start"
+          direction='column'
+          alignItems='flex-start'
           sx={{ mt: 1 }}
         >
           {entities?.slice(0, 5).map(entity => (
-            <S.EntityLink
-              key={entity.id}
-              to={dataEntityDetailsPath(entity.id)}
-            >
+            <S.EntityLink key={entity.id} to={dataEntityDetailsPath(entity.id)}>
               <AppButton
                 key={entity.id}
-                size="medium"
-                color="tertiary"
+                size='medium'
+                color='tertiary'
                 sx={{
                   my: 0.25,
                   width: 'inherit',
@@ -77,14 +67,10 @@ const OverviewEntityGroupStats: React.FC<
           {entities && entities?.length > 5 ? (
             <EntitiesListModal
               entities={entities}
-              labelFor="Entities"
+              labelFor='Entities'
               dataEntityName={dataEntityGroupName}
               openBtnEl={
-                <AppButton
-                  size="medium"
-                  color="tertiary"
-                  sx={{ my: 0.25 }}
-                >
+                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
                   Show All
                 </AppButton>
               }
@@ -92,21 +78,15 @@ const OverviewEntityGroupStats: React.FC<
           ) : null}
         </Grid>
       </Grid>
-      <Grid
-        item
-        container
-        xs={6}
-        alignItems="flex-start"
-        alignContent="flex-start"
-      >
-        <Grid item container xs={12} alignItems="baseline">
+      <Grid item container xs={6} alignItems='flex-start' alignContent='flex-start'>
+        <Grid item container xs={12} alignItems='baseline'>
           <S.StatIconContainer sx={{ mr: 1 }}>
             <TriangularUnionIcon />
           </S.StatIconContainer>
-          <Typography variant="h2" sx={{ mr: 0.5 }}>
+          <Typography variant='h2' sx={{ mr: 0.5 }}>
             {entityGroups?.length || 0}
           </Typography>
-          <Typography variant="body1" color="texts.hint">
+          <Typography variant='body1' color='texts.hint'>
             upper groups
           </Typography>
         </Grid>
@@ -114,16 +94,16 @@ const OverviewEntityGroupStats: React.FC<
           item
           container
           xs={12}
-          direction="column"
-          alignItems="flex-start"
+          direction='column'
+          alignItems='flex-start'
           sx={{ mt: 1 }}
         >
           {entityGroups?.slice(0, 5).map(entityGroup => (
             <S.EntityLink to={dataEntityDetailsPath(entityGroup.id)}>
               <AppButton
                 key={entityGroup.id}
-                size="medium"
-                color="tertiary"
+                size='medium'
+                color='tertiary'
                 sx={{
                   my: 0.25,
                   width: 'inherit',
@@ -139,14 +119,10 @@ const OverviewEntityGroupStats: React.FC<
           {entityGroups && entityGroups?.length > 5 ? (
             <EntitiesListModal
               entities={entityGroups}
-              labelFor="Upper groups"
+              labelFor='Upper groups'
               dataEntityName={dataEntityGroupName}
               openBtnEl={
-                <AppButton
-                  size="medium"
-                  color="tertiary"
-                  sx={{ my: 0.25 }}
-                >
+                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
                   Show All
                 </AppButton>
               }

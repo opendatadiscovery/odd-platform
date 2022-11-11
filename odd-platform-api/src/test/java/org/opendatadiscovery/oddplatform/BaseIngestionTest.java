@@ -186,7 +186,7 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
     private String createSearchId() {
         return webTestClient.post()
             .uri("/api/search")
-            .body(Mono.just(new SearchFormData()), SearchFormData.class)
+            .body(Mono.just(new SearchFormData().filters(new SearchFormDataFilters())), SearchFormData.class)
             .exchange()
             .returnResult(SearchFacetsData.class)
             .getResponseBody()

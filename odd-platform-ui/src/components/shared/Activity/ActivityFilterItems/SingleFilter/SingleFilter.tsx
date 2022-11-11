@@ -1,12 +1,13 @@
 import React, { PropsWithChildren } from 'react';
 import { Grid } from '@mui/material';
-import { ActivityEventType, DataSource, Namespace } from 'generated-sources';
-import { AppMenuItem, AppSelect } from 'components/shared';
+import { ActivityEventType, type DataSource, type Namespace } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { stringFormatted } from 'lib/helpers';
-import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
+import type { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
+import AppSelect from '../../../AppSelect/AppSelect';
+import AppMenuItem from '../../../AppMenuItem/AppMenuItem';
 
 interface SingleFilterProps<OptionType> {
   name: string;

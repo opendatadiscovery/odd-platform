@@ -1,16 +1,16 @@
 import {
-  BinaryFieldStat,
-  BooleanFieldStat,
-  ComplexFieldStat,
-  DataSetField,
-  DataSetFieldType,
+  type BinaryFieldStat,
+  type BooleanFieldStat,
+  type ComplexFieldStat,
+  type DataSetField,
+  type DataSetFieldType,
   DataSetFieldTypeTypeEnum,
-  DateTimeFieldStat,
-  EnumValue,
-  Label,
-  NumberFieldStat,
-  StringFieldStat,
-  IntegerFieldStat,
+  type DateTimeFieldStat,
+  type EnumValue,
+  type Label,
+  type NumberFieldStat,
+  type StringFieldStat,
+  type IntegerFieldStat,
 } from 'generated-sources';
 
 export type DataSetFormattedStats = StringFieldStat &

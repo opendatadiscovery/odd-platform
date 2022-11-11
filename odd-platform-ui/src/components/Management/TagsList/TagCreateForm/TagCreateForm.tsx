@@ -20,9 +20,7 @@ interface TagCreateFormData {
 
 const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isTagCreating } = useAppSelector(
-    getTagCreatingStatuses
-  );
+  const { isLoading: isTagCreating } = useAppSelector(getTagCreatingStatuses);
   const methods = useForm<TagCreateFormData>({
     defaultValues: {
       tags: [{ name: '', important: false }],
@@ -73,14 +71,14 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Create Tag
     </Typography>
   );
 
   const formContent = () => (
     <FormProvider {...methods}>
-      <form id="tag-create-form">
+      <form id='tag-create-form'>
         {fields.map((item, index) => (
           <TagCreateFormItem
             key={item.id}
@@ -90,8 +88,8 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
           />
         ))}
         <AppButton
-          size="medium"
-          color="primaryLight"
+          size='medium'
+          color='primaryLight'
           startIcon={<AddIcon />}
           onClick={handleAppend}
         >
@@ -103,10 +101,10 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="tag-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='tag-create-form'
+      color='primary'
       fullWidth
       disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}
@@ -117,7 +115,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }

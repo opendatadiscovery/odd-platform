@@ -1,22 +1,22 @@
 import {
-  Alert as GeneratedAlert,
+  type Alert as GeneratedAlert,
   AlertApi,
-  AlertApiChangeAlertStatusRequest,
-  AlertApiGetAllAlertsRequest,
-  AlertApiGetAssociatedUserAlertsRequest,
-  AlertApiGetDependentEntitiesAlertsRequest,
-  AlertStatus,
-  AlertTotals,
+  type AlertApiChangeAlertStatusRequest,
+  type AlertApiGetAllAlertsRequest,
+  type AlertApiGetAssociatedUserAlertsRequest,
+  type AlertApiGetDependentEntitiesAlertsRequest,
+  type AlertStatus,
+  type AlertTotals,
   Configuration,
   DataEntityApi,
-  DataEntityApiGetDataEntityAlertsRequest,
-  PageInfo,
+  type DataEntityApiGetDataEntityAlertsRequest,
+  type PageInfo,
 } from 'generated-sources';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { Alert, CurrentPageInfo } from 'redux/interfaces';
+import type { Alert, CurrentPageInfo } from 'redux/interfaces';
 import { castItemDatesToTimestampInArray } from 'redux/lib/helpers';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
@@ -27,75 +27,90 @@ export interface AlertsResponse {
   pageInfo: CurrentPageInfo;
 }
 
-export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
+export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
-  async () => alertApi.getAlertTotals()
+  async () => await alertApi.getAlertTotals(),
+  {}
 );
 
-export const fetchAllAlertList = createAsyncThunk<
+export const fetchAllAlertList = handleResponseAsyncThunk<
   AlertsResponse,
   AlertApiGetAllAlertsRequest
->(actions.fetchAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await alertApi.getAllAlerts({
-    page,
-    size,
-  });
+>(
+  actions.fetchAlertListActionType,
+  async ({ page, size }) => {
+    const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
 
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo: { ...pageInfo, page },
-  };
-});
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo: { ...pageInfo, page },
+    };
+  },
+  {}
+);
 
-export const fetchMyAlertList = createAsyncThunk<
+export const fetchMyAlertList = handleResponseAsyncThunk<
   AlertsResponse,
   AlertApiGetAssociatedUserAlertsRequest
->(actions.fetchMyAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({
-    page,
-    size,
-  });
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo: { ...pageInfo, page },
-  };
-});
+>(
+  actions.fetchMyAlertListActionType,
+  async ({ page, size }) => {
+    const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo: { ...pageInfo, page },
+    };
+  },
+  {}
+);
 
-export const fetchMyDependentsAlertList = createAsyncThunk<
+export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
   AlertsResponse,
   AlertApiGetDependentEntitiesAlertsRequest
->(actions.fetchMyDependentsAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({
-    page,
-    size,
-  });
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo: { ...pageInfo, page },
-  };
-});
+>(
+  actions.fetchMyDependentsAlertListActionType,
+  async ({ page, size }) => {
+    const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo: { ...pageInfo, page },
+    };
+  },
+  {}
+);
 
-export const updateAlertStatus = createAsyncThunk<
+export const updateAlertStatus = handleResponseAsyncThunk<
   { alertId: number; status: AlertStatus },
   AlertApiChangeAlertStatusRequest
->(actions.updateAlertStatusActionType, async ({ alertId, alertStatusFormData }) => {
-  const status = await alertApi.changeAlertStatus({
-    alertId,
-    alertStatusFormData,
-  });
+>(
+  actions.updateAlertStatusActionType,
+  async ({ alertId, alertStatusFormData }) => {
+    const status = await alertApi.changeAlertStatus({
+      alertId,
+      alertStatusFormData,
+    });
 
-  return { alertId, status };
-});
+    return { alertId, status };
+  },
+  {
+    setSuccessOptions: ({ alertStatusFormData, alertId }) => ({
+      id: `Alert-updating-${alertId}`,
+      message: `Alert successfully ${alertStatusFormData.status?.toLowerCase()}.`,
+    }),
+  }
+);
 
-export const fetchDataEntityAlerts = createAsyncThunk<
+export const fetchDataEntityAlerts = handleResponseAsyncThunk<
   { items: Alert[]; pageInfo: PageInfo },
   DataEntityApiGetDataEntityAlertsRequest
->(actions.fetchDataEntityAlertsActionType, async ({ dataEntityId }) => {
-  const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({
-    dataEntityId,
-  });
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo,
-  };
-});
+>(
+  actions.fetchDataEntityAlertsActionType,
+  async ({ dataEntityId }) => {
+    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({ dataEntityId });
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo,
+    };
+  },
+  {}
+);

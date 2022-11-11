@@ -5,7 +5,7 @@ import TextFormatted, { TextFormattedProps } from '../TextFormatted';
 
 describe('TextFormatted', () => {
   const setupComponent = (props?: Partial<TextFormattedProps>) =>
-    render(<TextFormatted value="" {...props} />);
+    render(<TextFormatted value='' {...props} />);
 
   it('Text formatted should return capitalized value', () => {
     setupComponent({ value: 'float' });

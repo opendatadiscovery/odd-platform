@@ -1,8 +1,8 @@
-import { Variant } from '@mui/material/styles/createTypography';
-import { Typography } from '@mui/material';
-import { LabelItem } from 'components/shared';
 import React from 'react';
-import { CRUDType } from 'lib/interfaces';
+import { type Variant } from '@mui/material/styles/createTypography';
+import { Typography } from '@mui/material';
+import { type CRUDType } from 'lib/interfaces';
+import LabelItem from '../../../../LabelItem/LabelItem';
 import * as S from './OwnerWithTitleStyles';
 
 export interface OwnerWithRoleProps {

@@ -7,23 +7,18 @@ interface SkeletonProps {
 
 const OwnerEntitiesListSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   const dataSkeleton = (key: number) => (
-    <Skeleton key={key} width={width} height="34px" />
+    <Skeleton key={key} width={width} height='34px' />
   );
 
   const dataListSkeleton = (key: number) => (
-    <Grid container item key={key} xs={3} justifyContent="center" mr={3}>
-      <Skeleton width={width} height="34px" sx={{ mb: 2 }} />
+    <Grid container item key={key} xs={3} justifyContent='center' mr={3}>
+      <Skeleton width={width} height='34px' sx={{ mb: 2 }} />
       {[...Array(5)].map((_, id) => dataSkeleton(id))}
     </Grid>
   );
 
   return (
-    <Grid
-      container
-      wrap="nowrap"
-      justifyContent="space-between"
-      sx={{ mt: 3.5 }}
-    >
+    <Grid container wrap='nowrap' justifyContent='space-between' sx={{ mt: 3.5 }}>
       {[...Array(4)].map((_, id) => dataListSkeleton(id))}
     </Grid>
   );

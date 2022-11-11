@@ -1,8 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DataEntitiesState, RootState, TermLinkedListState } from 'redux/interfaces';
-import { getTermId } from 'redux/selectors';
+import type {
+  CurrentPageInfo,
+  DataEntitiesState,
+  RootState,
+  TermLinkedListState,
+} from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import { emptyArr } from 'lib/constants';
+import { DataEntity } from 'generated-sources';
 
 const termLinkedListState = ({ termLinkedList }: RootState): TermLinkedListState =>
   termLinkedList;
@@ -14,15 +20,16 @@ export const getTermLinkedListFetchingStatuses = createStatusesSelector(
   actions.fetchTermLinkedListAction
 );
 
-export const getTermLinkedList = createSelector(
-  termLinkedListState,
-  dataEntitiesState,
-  getTermId,
-  (linkedLists, dataEntities, termId) =>
-    linkedLists.linkedItemsIdsByTermId?.[termId]?.map(id => dataEntities.byId[id]) || []
-);
+export const getTermLinkedList = (termId: number) =>
+  createSelector(
+    termLinkedListState,
+    dataEntitiesState,
+    (linkedLists, dataEntities): DataEntity[] =>
+      linkedLists.linkedItemsIdsByTermId?.[termId]?.map(id => dataEntities.byId[id]) ||
+      emptyArr
+  );
 
 export const getTermLinkedListPageInfo = createSelector(
   termLinkedListState,
-  linkedList => linkedList.pageInfo
+  (linkedList): CurrentPageInfo => linkedList.pageInfo
 );

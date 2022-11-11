@@ -58,8 +58,7 @@ export const Count = styled('div')<{
     .toUpperCase() as DataEntityRunStatus;
 
   return {
-    backgroundColor:
-      theme.palette.runStatus[runStatusPaletteKey].background,
+    backgroundColor: theme.palette.runStatus[runStatusPaletteKey].background,
     color: theme.palette.runStatus[runStatusPaletteKey].color,
     borderRadius: '16px',
     padding: theme.spacing(0, 1),

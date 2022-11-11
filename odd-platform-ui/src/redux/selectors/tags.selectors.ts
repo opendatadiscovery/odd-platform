@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createStatusesSelector } from 'redux/selectors';
-import { CurrentPageInfo, RootState, TagsState } from 'redux/interfaces';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import type { CurrentPageInfo, RootState, TagsState } from 'redux/interfaces';
 import { tagsAdapter } from 'redux/slices/tags.slice';
 import * as actions from 'redux/actions';
 

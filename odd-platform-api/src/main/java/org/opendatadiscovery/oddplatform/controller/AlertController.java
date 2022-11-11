@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class AlertController implements AlertApi {
                                                                final Mono<AlertStatusFormData> alertStatusFormData,
                                                                final ServerWebExchange exchange) {
         return alertStatusFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(s -> alertService.updateStatus(alertId, s.getStatus()))
             .map(ResponseEntity::ok);
     }
@@ -31,7 +29,6 @@ public class AlertController implements AlertApi {
     @Override
     public Mono<ResponseEntity<AlertTotals>> getAlertTotals(final ServerWebExchange exchange) {
         return alertService.getTotals()
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -40,7 +37,6 @@ public class AlertController implements AlertApi {
                                                         final Integer size,
                                                         final ServerWebExchange exchange) {
         return alertService.listAll(page, size)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -49,7 +45,6 @@ public class AlertController implements AlertApi {
                                                                    final Integer size,
                                                                    final ServerWebExchange exchange) {
         return alertService.listByOwner(page, size)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -58,7 +53,6 @@ public class AlertController implements AlertApi {
                                                                       final Integer size,
                                                                       final ServerWebExchange exchange) {
         return alertService.listDependentObjectsAlerts(page, size)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 }

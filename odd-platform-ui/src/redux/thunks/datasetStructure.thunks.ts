@@ -1,61 +1,65 @@
 import {
   Configuration,
   DataSetApi,
-  DataSetApiGetDataSetStructureByVersionIdRequest,
-  DataSetApiGetDataSetStructureLatestRequest,
+  type DataSetApiGetDataSetStructureByVersionIdRequest,
+  type DataSetApiGetDataSetStructureLatestRequest,
   DatasetFieldApi,
-  DatasetFieldApiCreateEnumValueRequest,
-  DatasetFieldApiGetEnumValuesRequest,
-  DatasetFieldApiUpdateDatasetFieldRequest,
+  type DatasetFieldApiCreateEnumValueRequest,
+  type DatasetFieldApiGetEnumValuesRequest,
+  type DatasetFieldApiUpdateDatasetFieldRequest,
 } from 'generated-sources';
-import {
+import type {
   DataSetFieldEnumsResponse,
   DataSetStructureResponse,
   UpdateDataSetFieldFormResponse,
 } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const datasetApiClient = new DataSetApi(apiClientConf);
 const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
 
-export const fetchDataSetStructureLatest = createAsyncThunk<
+export const fetchDataSetStructureLatest = handleResponseAsyncThunk<
   DataSetStructureResponse,
   DataSetApiGetDataSetStructureLatestRequest
->(actions.fetchDataSetStructureLatestActionType, async ({ dataEntityId }) => {
-  const { dataSetVersion, fieldList } = await datasetApiClient.getDataSetStructureLatest({
-    dataEntityId,
-  });
+>(
+  actions.fetchDataSetStructureLatestActionType,
+  async ({ dataEntityId }) => {
+    const { dataSetVersion, fieldList } =
+      await datasetApiClient.getDataSetStructureLatest({ dataEntityId });
 
-  return {
-    dataEntityId,
-    dataSetVersionId: dataSetVersion.id,
-    fieldList,
-    isLatestVersion: true,
-  };
-});
+    return {
+      dataEntityId,
+      dataSetVersionId: dataSetVersion.id,
+      fieldList,
+      isLatestVersion: true,
+    };
+  },
+  { switchOffErrorMessage: true }
+);
 
-export const fetchDataSetStructure = createAsyncThunk<
+export const fetchDataSetStructure = handleResponseAsyncThunk<
   DataSetStructureResponse,
   DataSetApiGetDataSetStructureByVersionIdRequest
->(actions.fetchDataSetStructureActionType, async ({ dataEntityId, versionId }) => {
-  const { dataSetVersion, fieldList } =
-    await datasetApiClient.getDataSetStructureByVersionId({
+>(
+  actions.fetchDataSetStructureActionType,
+  async ({ dataEntityId, versionId }) => {
+    const { dataSetVersion, fieldList } =
+      await datasetApiClient.getDataSetStructureByVersionId({ dataEntityId, versionId });
+
+    return {
       dataEntityId,
-      versionId,
-    });
+      dataSetVersionId: dataSetVersion.id,
+      fieldList,
+      isLatestVersion: false,
+    };
+  },
+  { switchOffErrorMessage: true }
+);
 
-  return {
-    dataEntityId,
-    dataSetVersionId: dataSetVersion.id,
-    fieldList,
-    isLatestVersion: false,
-  };
-});
-
-export const updateDataSetFieldFormData = createAsyncThunk<
+export const updateDataSetFieldFormData = handleResponseAsyncThunk<
   UpdateDataSetFieldFormResponse,
   DatasetFieldApiUpdateDatasetFieldRequest
 >(
@@ -68,21 +72,31 @@ export const updateDataSetFieldFormData = createAsyncThunk<
       });
 
     return { datasetFieldId, internalDescription, labels };
+  },
+  {
+    setSuccessOptions: ({ datasetFieldId }) => ({
+      id: `DatasetField-form-updating-${datasetFieldId}`,
+      message: `Dataset field labels and description successfully updated.`,
+    }),
   }
 );
 
-export const fetchDataSetFieldEnum = createAsyncThunk<
+export const fetchDataSetFieldEnum = handleResponseAsyncThunk<
   DataSetFieldEnumsResponse,
   DatasetFieldApiGetEnumValuesRequest
->(actions.fetchDataSetFieldEnumActionType, async ({ datasetFieldId }) => {
-  const { items } = await datasetFieldApiClient.getEnumValues({
-    datasetFieldId,
-  });
+>(
+  actions.fetchDataSetFieldEnumActionType,
+  async ({ datasetFieldId }) => {
+    const { items } = await datasetFieldApiClient.getEnumValues({
+      datasetFieldId,
+    });
 
-  return { datasetFieldId, enumValueList: items };
-});
+    return { datasetFieldId, enumValueList: items };
+  },
+  {}
+);
 
-export const createDataSetFieldEnum = createAsyncThunk<
+export const createDataSetFieldEnum = handleResponseAsyncThunk<
   DataSetFieldEnumsResponse,
   DatasetFieldApiCreateEnumValueRequest
 >(
@@ -94,5 +108,11 @@ export const createDataSetFieldEnum = createAsyncThunk<
     });
 
     return { datasetFieldId, enumValueList: items };
+  },
+  {
+    setSuccessOptions: ({ datasetFieldId }) => ({
+      id: `DatasetField-form-enums-updating-${datasetFieldId}`,
+      message: `Dataset field enums successfully updated.`,
+    }),
   }
 );

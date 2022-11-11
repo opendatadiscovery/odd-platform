@@ -1,15 +1,21 @@
 package org.opendatadiscovery.oddplatform.exception;
 
-public class NotFoundException extends RuntimeException {
-    public NotFoundException() {
-        super();
-    }
+import static org.apache.commons.lang3.StringUtils.capitalize;
 
+public class NotFoundException extends ExceptionWithErrorCode {
     public NotFoundException(final String message) {
-        super(message);
+        super(ErrorCode.NOT_FOUND, message);
     }
 
-    public NotFoundException(final String message, final Object... bindings) {
-        super(String.format(message, bindings));
+    public NotFoundException() {
+        super(ErrorCode.NOT_FOUND, "");
+    }
+
+    public NotFoundException(final String entityName, final Long id) {
+        super(ErrorCode.NOT_FOUND, "%s with id %s is not found".formatted(capitalize(entityName), id));
+    }
+
+    public NotFoundException(final String entityName, final String oddrn) {
+        super(ErrorCode.NOT_FOUND, "%s with oddrn %s is not found".formatted(capitalize(entityName), oddrn));
     }
 }

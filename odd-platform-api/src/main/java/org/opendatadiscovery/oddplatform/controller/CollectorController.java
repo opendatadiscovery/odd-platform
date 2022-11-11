@@ -5,7 +5,6 @@ import org.opendatadiscovery.oddplatform.api.contract.api.CollectorApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Collector;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorList;
-import org.opendatadiscovery.oddplatform.api.contract.model.CollectorUpdateFormData;
 import org.opendatadiscovery.oddplatform.service.CollectorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +32,9 @@ public class CollectorController implements CollectorApi {
 
     @Override
     public Mono<ResponseEntity<Collector>> updateCollector(final Long collectorId,
-                                                           final Mono<CollectorUpdateFormData> collectorUpdateFormData,
+                                                           final Mono<CollectorFormData> collectorFormData,
                                                            final ServerWebExchange exchange) {
-        return collectorUpdateFormData
+        return collectorFormData
             .flatMap(form -> collectorService.update(collectorId, form))
             .map(ResponseEntity::ok);
     }

@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.dto.policy.DataEntityPolicyResolverCont
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
@@ -46,7 +47,7 @@ public class DataEntityPermissionExtractor
             .filter(Optional::isPresent)
             .map(Optional::get)
             .switchIfEmpty(Mono.error(
-                () -> new IllegalArgumentException("Data entity with id %s is not present".formatted(resourceId))))
+                () -> new NotFoundException("Data entity", resourceId)))
             .publishOn(Schedulers.boundedElastic());
         final Mono<OwnerPojo> ownerPojoMono = authIdentityProvider.fetchAssociatedOwner();
         return ownerPojoMono

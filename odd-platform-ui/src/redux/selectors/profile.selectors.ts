@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { ProfileState, RootState } from 'redux/interfaces';
+import type { ProfileState, RootState } from 'redux/interfaces';
 import { emptyArr } from 'lib/constants';
-import { PermissionResourceType } from 'generated-sources';
+import type { PermissionResourceType } from 'generated-sources';
 
 const profileState = ({ profile }: RootState): ProfileState => profile;
 

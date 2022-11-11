@@ -10,15 +10,8 @@ export interface EntityTypeItemProps {
   sx?: SxProps<Theme>;
 }
 
-const EntityTypeItem: React.FC<EntityTypeItemProps> = ({
-  entityTypeName,
-  sx,
-}) => (
-  <S.Content
-    sx={sx}
-    variant="body2"
-    title={stringFormatted(entityTypeName, '_', 'all')}
-  >
+const EntityTypeItem: React.FC<EntityTypeItemProps> = ({ entityTypeName, sx }) => (
+  <S.Content sx={sx} variant='body2' title={stringFormatted(entityTypeName, '_', 'all')}>
     {stringFormatted(entityTypeName, '_', 'all')}
   </S.Content>
 );

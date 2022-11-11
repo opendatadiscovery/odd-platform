@@ -1,8 +1,8 @@
-import { Collector } from 'generated-sources';
+import type { Collector } from 'generated-sources';
 import { collectorsActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import { CollectorsState } from 'redux/interfaces/state';
+import type { CollectorsState } from 'redux/interfaces';
 
 export const collectorAdapter = createEntityAdapter<Collector>({
   selectId: collector => collector.id,

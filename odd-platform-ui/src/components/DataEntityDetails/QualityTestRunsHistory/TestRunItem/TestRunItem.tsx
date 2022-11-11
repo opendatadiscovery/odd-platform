@@ -5,10 +5,7 @@ import { format, formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TestRunStatusReasonModal from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
-import {
-  Container,
-  StatusReasonModalBtnContainer,
-} from './TestRunItemStyles';
+import { Container, StatusReasonModalBtnContainer } from './TestRunItemStyles';
 import { ColContainer } from '../TestRunsHistoryStyles';
 
 interface QualityTestRunItemProps {
@@ -23,24 +20,17 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
   dataQATestRun,
 }) => (
   <Container container>
-    <ColContainer item $colType="md">
-      <Typography variant="body1">
+    <ColContainer item $colType='md'>
+      <Typography variant='body1'>
         {dataQATestRun.startTime &&
           format(dataQATestRun.startTime, 'd MMM yyyy, HH:MM a')}
       </Typography>
     </ColContainer>
-    <ColContainer item $colType="sm">
-      <TestRunStatusItem
-        sx={{ ml: -0.5 }}
-        typeName={dataQATestRun.status}
-      />
+    <ColContainer item $colType='sm'>
+      <TestRunStatusItem sx={{ ml: -0.5 }} typeName={dataQATestRun.status} />
     </ColContainer>
-    <ColContainer item $colType="lg">
-      <Typography
-        variant="body1"
-        title={dataQATestRun.statusReason}
-        noWrap
-      >
+    <ColContainer item $colType='lg'>
+      <Typography variant='body1' title={dataQATestRun.statusReason} noWrap>
         {dataQATestRun.statusReason}
       </Typography>
       {dataQATestRun.statusReason && (
@@ -50,7 +40,7 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
             dataQATestName={dataQATestName}
             dataQATestRun={dataQATestRun}
             btnCreateEl={
-              <AppButton size="small" color="tertiary">
+              <AppButton size='small' color='tertiary'>
                 See details
               </AppButton>
             }
@@ -58,17 +48,13 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
         </StatusReasonModalBtnContainer>
       )}
     </ColContainer>
-    <ColContainer item $colType="sm">
-      <Typography variant="body1">
+    <ColContainer item $colType='sm'>
+      <Typography variant='body1'>
         {dataQATestRun.endTime &&
           dataQATestRun.startTime &&
-          formatDistanceStrict(
-            dataQATestRun.endTime,
-            dataQATestRun.startTime,
-            {
-              addSuffix: false,
-            }
-          )}
+          formatDistanceStrict(dataQATestRun.endTime, dataQATestRun.startTime, {
+            addSuffix: false,
+          })}
       </Typography>
     </ColContainer>
   </Container>

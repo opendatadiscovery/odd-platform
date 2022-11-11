@@ -987,16 +987,6 @@ components:
       required:
         - name
 
-    CollectorUpdateFormData:
-      type: object
-      properties:
-        description:
-          type: string
-        name:
-          type: string
-        namespace_name:
-          type: string
-
     PageInfo:
       type: object
       properties:
@@ -2417,6 +2407,36 @@ components:
         - TERM
         - MANAGEMENT
 
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        retryable:
+          type: boolean
+        resolvable:
+          type: boolean
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+      required:
+        - code
+        - message
+
+    ErrorDetail:
+      type: object
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+      required:
+        - field
+        - message
+
   parameters:
     PageParam:
       name: page
@@ -2545,3 +2565,31 @@ components:
   responses:
     Deleted:
       description: The resource has been successfully deleted
+
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

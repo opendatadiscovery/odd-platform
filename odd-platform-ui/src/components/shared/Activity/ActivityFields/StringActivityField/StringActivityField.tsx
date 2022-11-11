@@ -1,7 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
-import { CRUDType } from 'lib/interfaces';
+import { type CRUDType } from 'lib/interfaces';
+import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 
 interface ActivityFieldData {
   oldValue: string;

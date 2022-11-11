@@ -13,20 +13,20 @@ const LinkedListSkeleton: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
     renderContent={({ randWidth, key }) => (
-      <Grid key={key} container sx={{ py: 1.25, px: 0 }} wrap="nowrap">
-        <ColContainer item $colType="colmd">
+      <Grid key={key} container sx={{ py: 1.25, px: 0 }} wrap='nowrap'>
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="collg">
+        <ColContainer item $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colsm">
+        <ColContainer item $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
-        <ColContainer item $colType="colxs">
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </ColContainer>
       </Grid>

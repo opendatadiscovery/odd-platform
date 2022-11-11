@@ -1,9 +1,7 @@
-import { AlertsState } from 'redux/interfaces';
+import type { AlertsState, Alert } from 'redux/interfaces';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { alertsActionPrefix } from 'redux/actions';
-
 import * as thunks from 'redux/thunks';
-import { Alert } from 'redux/interfaces/alerts';
 
 export const alertsAdapter = createEntityAdapter<Alert>({
   selectId: alert => alert.id,

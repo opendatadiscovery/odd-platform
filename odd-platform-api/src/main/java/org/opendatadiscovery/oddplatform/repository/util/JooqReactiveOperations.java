@@ -11,6 +11,7 @@ import org.jooq.ResultQuery;
 import org.jooq.RowCountQuery;
 import org.jooq.SQLDialect;
 import org.jooq.Table;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -37,14 +38,14 @@ public class JooqReactiveOperations {
         return databaseClient.inConnection(c -> {
             DSL.using(c).attach(query);
             return Mono.from(query);
-        });
+        }).onErrorMap(DataAccessException.class, ExceptionUtils::translateDatabaseException);
     }
 
     public <R extends Record> Flux<R> flux(final ResultQuery<R> query) {
         return databaseClient.inConnectionMany(c -> {
             DSL.using(c).attach(query);
             return Flux.from(query);
-        });
+        }).onErrorMap(DataAccessException.class, ExceptionUtils::translateDatabaseException);
     }
 
     public <T> Mono<Void> executeInPartition(final List<T> entities,

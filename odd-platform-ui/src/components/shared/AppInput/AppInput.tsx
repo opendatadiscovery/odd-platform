@@ -92,7 +92,6 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
         fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
         ref={ref}
-        // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
           ...props.InputProps,
           startAdornment: (

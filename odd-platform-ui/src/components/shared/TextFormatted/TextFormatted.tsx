@@ -9,16 +9,8 @@ export interface TextFormattedProps {
   removePrefix?: boolean;
 }
 
-const TextFormatted: React.FC<TextFormattedProps> = ({
-  value,
-  removePrefix,
-}) => (
-  <>
-    {value &&
-      capitalize(
-        join(slice(split(value, '_'), removePrefix ? 1 : 0), ' ')
-      )}
-  </>
+const TextFormatted: React.FC<TextFormattedProps> = ({ value, removePrefix }) => (
+  <>{value && capitalize(join(slice(split(value, '_'), removePrefix ? 1 : 0), ' '))}</>
 );
 
 export default TextFormatted;

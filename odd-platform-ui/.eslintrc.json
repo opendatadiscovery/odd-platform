@@ -20,16 +20,26 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "lodash"
+    "lodash",
+    "import"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
     "airbnb",
     "airbnb-typescript",
     "prettier"
   ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src"]
+      }
+    }
+  },
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
@@ -76,7 +86,10 @@
           "localState"
         ]
       }
-    ]
+    ],
+    "@typescript-eslint/return-await": "off",
+    "import/no-cycle": "error",
+    "import/no-unresolved": "error"
   },
   "overrides": [
     {

@@ -5,7 +5,7 @@ import values from 'lodash/values';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import transform from 'lodash/transform';
-import {
+import type {
   DataEntitySearchState,
   OptionalFacetNames,
   RootState,
@@ -14,7 +14,7 @@ import {
   SearchFilterStateSynced,
 } from 'redux/interfaces';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { createStatusesSelector } from 'redux/selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import compact from 'lodash/compact';
 import { emptyArr } from 'lib/constants';

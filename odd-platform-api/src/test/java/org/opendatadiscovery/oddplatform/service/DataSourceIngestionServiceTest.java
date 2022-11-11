@@ -65,8 +65,7 @@ public class DataSourceIngestionServiceTest {
         dataSourceIngestionService
             .createDataSources(collectorId, new DataSourceList())
             .as(StepVerifier::create)
-            .expectErrorMatches(throwable -> throwable instanceof NotFoundException
-                && throwable.getMessage().equals(String.format("Couldn't find collector with id %d", collectorId)))
+            .expectErrorMatches(throwable -> throwable instanceof NotFoundException)
             .verify();
     }
 

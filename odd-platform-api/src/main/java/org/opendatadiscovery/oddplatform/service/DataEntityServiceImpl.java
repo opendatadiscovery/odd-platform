@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
@@ -39,6 +40,8 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
@@ -171,9 +174,9 @@ public class DataEntityServiceImpl
         @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
         final DataEntityGroupFormData formData) {
         return reactiveDataEntityRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
             .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update ingested data entity")))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't update ingested data entity")))
             .flatMap(pojo -> {
                 if (StringUtils.isNotEmpty(formData.getNamespaceName())) {
                     return namespaceService.getOrCreate(formData.getNamespaceName())
@@ -186,12 +189,16 @@ public class DataEntityServiceImpl
 
     @Override
     @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
+    @ReactiveTransactional
     public Mono<DataEntityPojo> deleteDataEntityGroup(
         @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
-        return reactiveDataEntityRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
+        return reactiveGroupEntityRelationRepository.degHasEntities(id)
+            .filter(hasEntities -> !hasEntities)
+            .switchIfEmpty(Mono.error(new CascadeDeleteException("Can't delete data entity group with entities")))
+            .then(reactiveDataEntityRepository.get(id))
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
             .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't delete ingested data entity")))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't delete ingested data entity")))
             .flatMap(this::deleteDEG);
     }
 
@@ -201,11 +208,12 @@ public class DataEntityServiceImpl
     }
 
     @Override
+    @BlockingTransactional
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
         return Mono
             .fromCallable(() -> entityRepository.getDetails(dataEntityId))
             .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
+                ? Mono.error(new NotFoundException("Data entity", dataEntityId))
                 : Mono.just(optional.get()))
             .map(this::incrementViewCount)
             .map(dto -> {
@@ -287,7 +295,9 @@ public class DataEntityServiceImpl
             .map(metadataFieldMapper::mapObject)
             .collect(Collectors.toList());
 
-        return metadataFieldService.getOrCreateMetadataFields(mfPojos)
+        return reactiveDataEntityRepository.get(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity", dataEntityId)))
+            .then(metadataFieldService.getOrCreateMetadataFields(mfPojos))
             .map(pojos -> pojos.stream().collect(Collectors.toMap(MetadataFieldPojo::getId, identity())))
             .map(fieldsMap -> {
                 final List<MetadataFieldValuePojo> metadataFieldValuePojos = fieldsMap.values().stream()
@@ -303,7 +313,11 @@ public class DataEntityServiceImpl
                 .map(mfv -> {
                     final MetadataFieldPojo metadataFieldPojo = fieldsMap.get(mfv.getMetadataFieldId());
                     return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
-                }).collectList()))
+                })
+                .collectList()
+                .filter(createdValues -> createdValues.size() == metadataFieldValuePojos.size())
+                .switchIfEmpty(Mono.error(new BadUserRequestException("Metadata with this name already exists")))
+            ))
             .flatMap(fields -> reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId)
                 .thenReturn(fields))
             .flatMap(fields -> dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_METADATA)
@@ -425,16 +439,17 @@ public class DataEntityServiceImpl
     public Mono<DataEntityRef> addDataEntityToDEG(final Long dataEntityId,
                                                   final DataEntityDataEntityGroupFormData formData) {
         final Mono<DataEntityPojo> dataEntityMono = reactiveDataEntityRepository.get(dataEntityId)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity with id %s doesn't exist", dataEntityId)));
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity", dataEntityId)));
         final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(formData.getDataEntityGroupId())
             .filter(this::isManuallyCreatedDEG)
             .switchIfEmpty(Mono.error(
-                new IllegalArgumentException(
+                new BadUserRequestException(
                     "Entity with id %s is not manually created DEG".formatted(formData.getDataEntityGroupId()))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function(
                 (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
                     .createRelationsReturning(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
+                    .switchIfEmpty(Mono.error(new BadUserRequestException("Data entity is already in this DEG")))
                     .ignoreElements()
                     .thenReturn(groupPojo)))
             .flatMap(
@@ -447,11 +462,11 @@ public class DataEntityServiceImpl
     public Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId,
                                                                   final Long dataEntityGroupId) {
         final Mono<DataEntityPojo> dataEntityMono = reactiveDataEntityRepository.get(dataEntityId)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity with id %s doesn't exist", dataEntityId)));
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity", dataEntityId)));
         final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(dataEntityGroupId)
             .filter(this::isManuallyCreatedDEG)
             .switchIfEmpty(Mono.error(
-                new IllegalArgumentException(
+                new BadUserRequestException(
                     "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function((pojo, groupPojo) -> reactiveGroupEntityRelationRepository

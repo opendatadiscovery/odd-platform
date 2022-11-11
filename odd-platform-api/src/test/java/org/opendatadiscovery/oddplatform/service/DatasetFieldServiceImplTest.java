@@ -118,7 +118,7 @@ class DatasetFieldServiceImplTest {
         final long datasetFieldId = 1L;
         datasetFieldService.updateDatasetField(datasetFieldId, datasetFieldUpdateFormData)
             .as(StepVerifier::create)
-            .expectErrorMessage("DatasetField not found by id = " + datasetFieldId)
+            .expectErrorMessage("DatasetField with id %s is not found".formatted(datasetFieldId))
             .verify();
     }
 

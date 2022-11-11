@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { AppLoadingPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams } from 'lib/hooks';
 import {
   fetchDataEntityAlerts,
@@ -14,6 +14,7 @@ import {
   getDataEntityAddToGroupStatuses,
   getDataEntityDeleteFromGroupStatuses,
   getDataEntityDetails,
+  getDataEntityDetailsFetchingError,
   getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
   getResourcePermissions,
@@ -55,8 +56,14 @@ const DataEntityDetails: React.FC = () => {
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
   );
-  const { isLoading: isDataEntityDetailsFetching, isLoaded: isDataEntityDetailsFetched } =
-    useAppSelector(getDataEntityDetailsFetchingStatuses);
+  const {
+    isLoading: isDataEntityDetailsFetching,
+    isLoaded: isDataEntityDetailsFetched,
+    isNotLoaded: isDataEntityDetailsNotFetched,
+  } = useAppSelector(getDataEntityDetailsFetchingStatuses);
+  const dataEntityDetailsFetchingError = useAppSelector(
+    getDataEntityDetailsFetchingError
+  );
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
@@ -221,6 +228,10 @@ const DataEntityDetails: React.FC = () => {
           </Switch>
         </React.Suspense>
       ) : null}
+      <AppErrorPage
+        isNotContentLoaded={isDataEntityDetailsNotFetched}
+        error={dataEntityDetailsFetchingError}
+      />
     </S.Container>
   );
 };

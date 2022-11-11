@@ -80,61 +80,55 @@ const ActivityResults: React.FC = () => {
 
   React.useEffect(() => {
     if (isQueryUpdated) {
-      dispatch(
-        fetchDataEntityActivityList({ ...queryParams, dataEntityId })
-      );
+      dispatch(fetchDataEntityActivityList({ ...queryParams, dataEntityId }));
     }
   }, [queryParams, dataEntityId, isQueryUpdated]);
 
   const activityItemSkeleton = () => (
     <SkeletonWrapper
       length={10}
-      renderContent={({ key }) => (
-        <ActivityResultsItemSkeleton width="100%" key={key} />
-      )}
+      renderContent={({ key }) => <ActivityResultsItemSkeleton width='100%' key={key} />}
     />
   );
 
   return (
     <Grid container>
       {!isActivityListFetching && activityCount === 0 ? (
-        <EmptyContentPlaceholder text="No matches found" />
+        <EmptyContentPlaceholder text='No matches found' />
       ) : (
         <>
           <S.ContentContainer container>
             <AppButton
-              size="small"
-              color="tertiary"
+              size='small'
+              color='tertiary'
               onClick={() => setHideAllDetails(!hideAllDetails)}
             >
               Hide all details
             </AppButton>
           </S.ContentContainer>
-          <S.ListContainer id="activities-list">
+          <S.ListContainer id='activities-list'>
             <InfiniteScroll
               dataLength={activityCount}
               next={fetchNextPage}
               hasMore={pageInfo.hasNext}
               loader={isActivityListFetching && activityItemSkeleton()}
-              scrollThreshold="200px"
-              scrollableTarget="activities-list"
+              scrollThreshold='200px'
+              scrollableTarget='activities-list'
             >
-              {Object.entries(activityResults).map(
-                ([activityDate, activities]) => (
-                  <Grid container>
-                    <Typography variant="subtitle2" sx={{ py: 1 }}>
-                      {activityDate}
-                    </Typography>
-                    {activities.map(activity => (
-                      <ActivityItem
-                        key={activity.id}
-                        activity={activity}
-                        hideAllDetails={hideAllDetails}
-                      />
-                    ))}
-                  </Grid>
-                )
-              )}
+              {Object.entries(activityResults).map(([activityDate, activities]) => (
+                <Grid container>
+                  <Typography variant='subtitle2' sx={{ py: 1 }}>
+                    {activityDate}
+                  </Typography>
+                  {activities.map(activity => (
+                    <ActivityItem
+                      key={activity.id}
+                      activity={activity}
+                      hideAllDetails={hideAllDetails}
+                    />
+                  ))}
+                </Grid>
+              ))}
             </InfiniteScroll>
           </S.ListContainer>
         </>

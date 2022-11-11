@@ -1,12 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { SearchSuggestionsAutocomplete } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { getSearchId, getSearchQuery } from 'redux/selectors';
 import { Box } from '@mui/material';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
+import SearchSuggestionsAutocomplete from '../Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 
 interface AppSearchProps {
   placeholder?: string;

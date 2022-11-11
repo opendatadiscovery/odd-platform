@@ -5,14 +5,22 @@ import { fetchDataSetStructure, fetchDataSetStructureLatest } from 'redux/thunks
 import {
   getDatasetStats,
   getDatasetStructure,
+  getDataSetStructureFetchingError,
   getDataSetStructureFetchingStatus,
+  getDataSetStructureLatestFetchingError,
   getDataSetStructureLatestFetchingStatus,
   getDatasetStructureTypeStats,
   getDatasetVersionId,
   getDatasetVersions,
 } from 'redux/selectors';
 import { ClearIcon, ColumnsIcon } from 'components/shared/Icons';
-import { AppInput, AppSelect, NumberFormatted, SkeletonWrapper } from 'components/shared';
+import {
+  AppErrorPage,
+  AppInput,
+  AppSelect,
+  NumberFormatted,
+  SkeletonWrapper,
+} from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
@@ -33,11 +41,17 @@ const DatasetStructure: React.FC = () => {
     getDatasetStructure({ datasetId: dataEntityId, versionId })
   );
 
-  const { isLoading: isDatasetStructureFetching } = useAppSelector(
-    getDataSetStructureFetchingStatus
-  );
-  const { isLoading: isDatasetStructureLatestFetching } = useAppSelector(
-    getDataSetStructureLatestFetchingStatus
+  const {
+    isLoading: isDatasetStructureFetching,
+    isNotLoaded: isDatasetStructureNotFetched,
+  } = useAppSelector(getDataSetStructureFetchingStatus);
+  const {
+    isLoading: isDatasetStructureLatestFetching,
+    isNotLoaded: isDatasetStructureLatestNotFetched,
+  } = useAppSelector(getDataSetStructureLatestFetchingStatus);
+  const datasetStructureFetchingError = useAppSelector(getDataSetStructureFetchingError);
+  const datasetStructureLatestFetchingError = useAppSelector(
+    getDataSetStructureLatestFetchingError
   );
   const datasetStats = useAppSelector(getDatasetStats(dataEntityId));
   const datasetVersions = useAppSelector(getDatasetVersions(dataEntityId));
@@ -54,7 +68,7 @@ const DatasetStructure: React.FC = () => {
     } else {
       dispatch(fetchDataSetStructureLatest({ dataEntityId }));
     }
-  }, [fetchDataSetStructureLatest, dataEntityId]);
+  }, [versionId, dataEntityId]);
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
@@ -78,9 +92,7 @@ const DatasetStructure: React.FC = () => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    if (event.key === 'Enter') handleSearch();
   };
 
   const clearSearchField = () => {
@@ -98,7 +110,8 @@ const DatasetStructure: React.FC = () => {
             <DatasetStructureSkeleton width={randWidth()} />
           )}
         />
-      ) : (
+      ) : null}
+      {datasetStructureVersion ? (
         <Grid container>
           <Grid
             item
@@ -147,38 +160,41 @@ const DatasetStructure: React.FC = () => {
                   icon: <ClearIcon />,
                 }}
               />
-              {datasetStructureVersion ? (
-                <>
-                  <Typography variant='subtitle2'>Current Revision:</Typography>
-                  <AppSelect
-                    sx={{ width: 52, ml: 1 }}
-                    fullWidth={false}
-                    type='number'
-                    native
-                    defaultValue={datasetStructureVersion}
-                    onChange={handleRevisionChange}
-                  >
-                    {datasetVersions?.map(rev => (
-                      <option key={rev.id} value={rev.id}>
-                        {rev.version}
-                      </option>
-                    ))}
-                  </AppSelect>
-                </>
-              ) : null}
+              <>
+                <Typography variant='subtitle2'>Current Revision:</Typography>
+                <AppSelect
+                  sx={{ width: 52, ml: 1 }}
+                  fullWidth={false}
+                  type='number'
+                  native
+                  defaultValue={datasetStructureVersion}
+                  onChange={handleRevisionChange}
+                >
+                  {datasetVersions?.map(rev => (
+                    <option key={rev.id} value={rev.id}>
+                      {rev.version}
+                    </option>
+                  ))}
+                </AppSelect>
+              </>
             </Grid>
           </Grid>
-          {datasetStructureVersion ? (
-            <DatasetStructureTable
-              datasetStructureRoot={datasetStructureRoot}
-              dataEntityId={dataEntityId}
-              versionId={versionId}
-              indexToScroll={indexToScroll}
-              datasetRowsCount={datasetStats.rowsCount}
-            />
-          ) : null}
+          <DatasetStructureTable
+            datasetStructureRoot={datasetStructureRoot}
+            dataEntityId={dataEntityId}
+            versionId={versionId}
+            indexToScroll={indexToScroll}
+            datasetRowsCount={datasetStats.rowsCount}
+          />
         </Grid>
-      )}
+      ) : null}
+      <AppErrorPage
+        isNotContentLoaded={
+          isDatasetStructureNotFetched || isDatasetStructureLatestNotFetched
+        }
+        error={datasetStructureFetchingError || datasetStructureLatestFetchingError}
+        offsetTop={132}
+      />
     </Box>
   );
 };

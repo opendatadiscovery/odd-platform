@@ -3,10 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import {
-  Container,
-  DescriptionContainer,
-} from '../DataSourceItem/DataSourceItemStyles';
+import { Container, DescriptionContainer } from '../DataSourceItem/DataSourceItemStyles';
 
 interface SkeletonProps {
   length: number;
@@ -17,7 +14,7 @@ const DataSourceSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
     length={length}
     renderContent={({ randWidth, key }) => (
       <Container key={key} sx={{ mb: 1 }}>
-        <Grid container alignItems="flex-start" spacing={2}>
+        <Grid container alignItems='flex-start' spacing={2}>
           <Grid item container xs={12}>
             <Grid item xs={2}>
               <Skeleton width={randWidth()} height={mainSkeletonHeight} />

@@ -1,8 +1,8 @@
 import React from 'react';
 import { linkHorizontal } from 'd3-shape';
-import { DefaultLinkObject } from 'd3';
-import { TreeLinkDatum } from 'redux/interfaces/graph';
+import type { TreeLinkDatum } from 'redux/interfaces';
 import { applyOpacity } from 'components/shared/AppGraph/helpers/lineageHelpers';
+import type { DefaultLinkObject } from 'd3';
 import * as S from './AppGraphLinkStyles';
 
 interface AppGraphLinkProps {

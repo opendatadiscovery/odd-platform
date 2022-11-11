@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerList;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnerMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -70,7 +71,7 @@ public class OwnerServiceImpl implements OwnerService {
     public Mono<Owner> update(final long id, final OwnerFormData updateEntityForm) {
         final List<Long> newRoles = getRoleIdsList(updateEntityForm);
         return ownerRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Owner with id %d hasn't been found".formatted(id))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Owner", id)))
             .map(pojo -> ownerMapper.applyToPojo(updateEntityForm, pojo))
             .flatMap(ownerRepository::update)
             .flatMap(owner -> ownerToRoleRepository
@@ -92,8 +93,8 @@ public class OwnerServiceImpl implements OwnerService {
             .map(t -> BooleanUtils.toBoolean(t.getT1()) || BooleanUtils.toBoolean(t.getT2())
                 || BooleanUtils.toBoolean(t.getT3()))
             .filter(exists -> !exists)
-            .switchIfEmpty(Mono.error(new IllegalStateException(
-                "Owner with ID %d cannot be deleted: there are still resources attached".formatted(id))))
+            .switchIfEmpty(Mono.error(new CascadeDeleteException(
+                "Owner cannot be deleted: there are still resources attached")))
             .then(ownerToRoleRepository.deleteOwnerRelationsExcept(id, List.of()))
             .then(ownerRepository.delete(id))
             .then();

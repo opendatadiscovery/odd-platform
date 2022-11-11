@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
-import { DataEntityGroupLinkedListState } from 'redux/interfaces';
-import { dataEntityGroupLinkedListActionTypePrefix } from 'redux/actions/dataentityLinkedList.actions';
+import type { DataEntityGroupLinkedListState } from 'redux/interfaces';
+import { dataEntityGroupLinkedListActionTypePrefix } from 'redux/actions';
 
 export const initialState: DataEntityGroupLinkedListState = {
   linkedItemsIdsByDataEntityGroupId: {},
