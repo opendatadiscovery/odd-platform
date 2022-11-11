@@ -58,8 +58,13 @@ export default class CatalogPage extends BasePage {
   }
 
   async isAlertVisible(): Promise<boolean> {
-    await this.page.locator(SELECTORS.resultList).waitFor({ state: 'visible' });
+    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'visible' });
     return this.page.locator(SELECTORS.noMatchesFound).isVisible();
+  }
+
+  async isAlertHidden(): Promise<boolean> {
+    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'hidden' });
+    return this.page.locator(SELECTORS.noMatchesFound).isHidden();
   }
 
   get resultsList() {
