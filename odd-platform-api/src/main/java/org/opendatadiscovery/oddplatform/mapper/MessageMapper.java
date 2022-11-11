@@ -9,7 +9,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannel;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
+import org.opendatadiscovery.oddplatform.api.contract.model.MessageState;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 
@@ -37,6 +39,15 @@ public interface MessageMapper {
             .toList();
 
         return new MessageList().items(messages);
+    }
+
+    default MessageState mapMessageState(final Short messageStateCode) {
+        final MessageStateDto messageState = MessageStateDto.fromCode(messageStateCode);
+        if (messageState == null) {
+            throw new IllegalStateException("There's no message state with code %d".formatted(messageStateCode));
+        }
+
+        return MessageState.fromValue(messageState.toString());
     }
 
     @Named("messageChannel")

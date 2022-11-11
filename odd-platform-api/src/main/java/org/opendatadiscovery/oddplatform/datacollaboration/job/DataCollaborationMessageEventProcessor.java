@@ -78,7 +78,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
 
     private void handleEvent(final MessageEventDto event, final DSLContext dslContext) {
         final MessageProviderDto messageProvider = MessageProviderDto.valueOf(event.event().getProvider());
-        final MessageEventActionDto eventAction = MessageEventActionDto.valueOf(event.event().getAction());
+        final MessageEventActionDto eventAction = MessageEventActionDto.fromCode(event.event().getAction());
 
         switch (eventAction) {
             case CREATE -> {
@@ -120,23 +120,27 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                                              final MessageEventPayload eventPayload) {
         return new MessageRecord()
             .setProvider(event.parentMessage().getProvider())
-            .setParentMessageId(event.parentMessage().getId())
+            .setParentMessageKey(event.parentMessage().getKey())
+            .setParentMessageCreatedAt(event.parentMessage().getCreatedAt())
             .setProviderChannelId(event.parentMessage().getProviderChannelId())
             .setDataEntityId(event.parentMessage().getDataEntityId())
             .setText(eventPayload.messageText())
             .setProviderMessageId(eventPayload.messageId())
             .setProvider(event.parentMessage().getProvider())
             .setProviderMessageAuthor(eventPayload.messageAuthor())
-            .setState(MessageStateDto.EXTERNAL.toString());
+            .setState(MessageStateDto.EXTERNAL.getCode());
     }
 
     private Stream<MessageEventDto> getPendingEventsStream(final DSLContext dslContext) {
+        // @formatter:off
         return dslContext
             .select(MESSAGE_PROVIDER_EVENT.fields())
             .select(MESSAGE.fields())
             .from(MESSAGE_PROVIDER_EVENT)
-            .join(MESSAGE).on(MESSAGE.ID.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_ID))
-            .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageEventStateDto.PENDING.toString()))
+            .join(MESSAGE)
+                .on(MESSAGE.KEY.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_KEY))
+                .and(MESSAGE.CREATED_AT.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_CREATED_AT))
+            .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageEventStateDto.PENDING.getCode()))
             .orderBy(MESSAGE_PROVIDER_EVENT.CREATED_AT)
             .limit(10)
             .forUpdate().of(MESSAGE_PROVIDER_EVENT)
@@ -145,6 +149,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                 r.into(MESSAGE_PROVIDER_EVENT).into(MessageProviderEventPojo.class),
                 r.into(MESSAGE).into(MessagePojo.class)
             ));
+        // @formatter:on
     }
 
     private Connection acquireLeaderElectionConnection() throws SQLException {
