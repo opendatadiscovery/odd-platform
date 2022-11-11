@@ -9,6 +9,7 @@ import {
   getLengthOfDataEntityMessages,
   getMessageToSlackCreatingStatuses,
 } from 'redux/selectors';
+import { clearCollaborationState } from 'redux/slices/dataCollaboration.slice';
 import MessagesList from './MessagesList/MessagesList';
 import Channels from './Channels/Channels';
 import * as S from './DataCollaborationStyles';
@@ -38,6 +39,10 @@ const DataCollaboration: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchDataEntityMessages(fetchMessagesParams));
+
+    return () => {
+      dispatch(clearCollaborationState());
+    };
   }, [fetchMessagesParams, isMessageCreating]);
 
   const fetchNextMessages = React.useCallback(() => {

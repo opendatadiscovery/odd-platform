@@ -4,7 +4,6 @@ import { Grid, Typography } from '@mui/material';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { AppAvatar, AppButton, WithFeature } from 'components/shared';
 import { Feature } from 'generated-sources';
-import { createUrl } from 'lib/helpers';
 import * as S from './MessageStyles';
 
 interface MessageProps {
@@ -27,8 +26,6 @@ const Message: React.FC<MessageProps> = ({
 }) => {
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
   const messagesCount = childrenMessagesCount ?? 0;
-
-  const openInSlackUrl = createUrl(url);
 
   return (
     <S.Container $active={isActive} container onClick={messageOnClick}>

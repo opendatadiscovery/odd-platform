@@ -13,7 +13,6 @@ const Channels: React.FC<ChannelsProps> = ({ handleSetChannelId }) => {
   return (
     <S.Container container>
       <DataEntityChannelsAutocomplete
-        sx={{ mt: 2.5 }}
         dataEntityId={dataEntityId}
         handleSetChannelId={handleSetChannelId}
       />
