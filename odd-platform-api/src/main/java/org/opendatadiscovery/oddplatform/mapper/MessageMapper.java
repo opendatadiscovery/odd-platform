@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -19,6 +20,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 public interface MessageMapper {
     @Mapping(target = "channel", source = ".", qualifiedByName = "messageChannel")
     @Mapping(target = "url", source = ".", qualifiedByName = "urlRef")
+    @Mapping(target = "id", source = "uuid")
     Message mapPojo(final MessagePojo messagePojo);
 
     default MessageList mapPojos(final List<MessagePojo> messagePojos) {
@@ -50,6 +52,10 @@ public interface MessageMapper {
         return MessageState.fromValue(messageState.toString());
     }
 
+    default UUID mapUUID(final String uuid) {
+        return UUID.fromString(uuid);
+    }
+
     @Named("messageChannel")
     default MessageChannel messageChannel(final MessagePojo message) {
         return new MessageChannel()
@@ -59,7 +65,7 @@ public interface MessageMapper {
 
     @Named("urlRef")
     default String urlRef(final MessagePojo message) {
-        return "/api/messages/%d/provider_url".formatted(message.getId());
+        return "/api/messages/%s/provider_url".formatted(message.getUuid());
     }
 
     @Mapping(source = "id", target = "channelId")

@@ -2,6 +2,9 @@ package org.opendatadiscovery.oddplatform.utils;
 
 import com.fasterxml.uuid.EthernetAddress;
 import com.fasterxml.uuid.Generators;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -21,5 +24,10 @@ public class UUIDHelper {
         final long epochMillis = uuidEpoch.getTime().getTime();
 
         return uuid.timestamp() / 10_000L + epochMillis;
+    }
+
+    public static OffsetDateTime extractDateTimeFromUUID(final UUID uuid) {
+        // TODO: check UTC
+        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(UUIDHelper.extractEpochMsFromUUID(uuid)), ZoneOffset.UTC);
     }
 }

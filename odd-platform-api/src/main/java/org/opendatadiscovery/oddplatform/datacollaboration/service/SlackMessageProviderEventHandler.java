@@ -29,16 +29,16 @@ public class SlackMessageProviderEventHandler implements MessageProviderEventHan
         };
 
         // TODO: check that messages are coming from channels where an app is
-        return messageRepository.getIdByProviderInfo(parentMessageProviderId, messageEvent.provider())
+        return messageRepository.getInternalIdentityByProviderInfo(parentMessageProviderId, messageEvent.provider())
             .switchIfEmpty(Mono.defer(() -> {
                 log.debug("Message is not a reply thread for tracked messages: {}", messageEvent.event());
                 return Mono.empty();
             }))
-            .flatMap(parentMessageId -> messageRepository.createMessageEvent(
+            .flatMap(identity -> messageRepository.createMessageEvent(
                 GsonHelper.toJson(messageEvent.event()),
                 messageEvent.action(),
                 messageEvent.provider(),
-                parentMessageId
+                identity
             ))
             .then();
     }

@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.controller;
 
+import java.net.URI;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataCollaborationApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
@@ -39,8 +41,12 @@ public class DataCollaborationController implements DataCollaborationApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> redirect(final Long messageId,
-                                               final ServerWebExchange exchange) {
-        return DataCollaborationApi.super.redirect(messageId, exchange);
+    public Mono<ResponseEntity<Void>> redirect(final UUID messageId, final ServerWebExchange exchange) {
+        return dataCollaborationService.resolveMessageUrl(messageId)
+            .map(providerUrl -> ResponseEntity
+                .status(HttpStatus.FOUND)
+                .headers(headers -> headers.setLocation(URI.create(providerUrl)))
+                .build()
+            );
     }
 }

@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.controller;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
@@ -370,23 +371,21 @@ public class DataEntityController
     public Mono<ResponseEntity<MessageList>> getDataEntityMessages(final Long dataEntityId,
                                                                    final Integer size,
                                                                    final String channelId,
-                                                                   final Long lastMessageId,
-                                                                   final OffsetDateTime lastMessageDateTime,
+                                                                   final UUID lastMessageId,
                                                                    final ServerWebExchange exchange) {
         return messageService
-            .getMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, lastMessageDateTime, size)
+            .getMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, size)
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<MessageList>> getMessages(final Long dataEntityId,
                                                          final Integer size,
-                                                         final Long messageId,
-                                                         final Long lastMessageId,
-                                                         final OffsetDateTime lastMessageDateTime,
+                                                         final UUID messageId,
+                                                         final UUID lastMessageId,
                                                          final ServerWebExchange exchange) {
         return messageService
-            .getChildrenMessages(messageId, lastMessageId, lastMessageDateTime, size)
+            .getChildrenMessages(messageId, lastMessageId, size)
             .map(ResponseEntity::ok);
     }
 }

@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,21 +28,19 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Mono<MessageList> getMessagesByDataEntityId(final long dataEntityId,
                                                        final String channelId,
-                                                       final Long lastMessageId,
-                                                       final OffsetDateTime lastMessageDateTime,
+                                                       final UUID lastMessageId,
                                                        final int size) {
         return messageRepository
-            .listParentMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, lastMessageDateTime, size)
+            .listParentMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, size)
             .collectList()
             .map(messageMapper::mapPojos);
     }
 
     @Override
-    public Mono<MessageList> getChildrenMessages(final long messageId,
-                                                 final Long lastMessageId,
-                                                 final OffsetDateTime lastMessageDateTime,
+    public Mono<MessageList> getChildrenMessages(final UUID messageId,
+                                                 final UUID lastMessageId,
                                                  final int size) {
-        return messageRepository.listChildrenMessages(messageId, lastMessageId, lastMessageDateTime, size)
+        return messageRepository.listChildrenMessages(messageId, lastMessageId, size)
             .collectList()
             .zipWhen(messages -> {
                 if (CollectionUtils.isEmpty(messages)) {
