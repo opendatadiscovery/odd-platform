@@ -42,16 +42,6 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
     defaultValues: {},
   });
 
-  const handleFormSubmit = (formData: MessageFormData) => {
-    dispatch(
-      createMessageToSlack({ messageRequest: { dataEntityId, ...formData } })
-    ).then(response => {
-      if (response.meta.requestStatus === 'fulfilled') {
-        history.push(toCollaboration);
-      }
-    });
-  };
-
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
     error: string;
@@ -62,6 +52,26 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
     setState(initialState);
     reset();
   }, [reset]);
+
+  const handleFormSubmit = (formData: MessageFormData) => {
+    dispatch(
+      createMessageToSlack({ messageRequest: { dataEntityId, ...formData } })
+    ).then(
+      resolved => {
+        if (resolved.meta.requestStatus === 'fulfilled') {
+          setState({ ...initialState, isSuccessfulSubmit: true });
+          clearState();
+          history.push(toCollaboration);
+        }
+      },
+      (response: Response) => {
+        setState({
+          ...initialState,
+          error: response.statusText || 'Unable to create message',
+        });
+      }
+    );
+  };
 
   const formTitle = (
     <Typography variant='h4' component='span'>

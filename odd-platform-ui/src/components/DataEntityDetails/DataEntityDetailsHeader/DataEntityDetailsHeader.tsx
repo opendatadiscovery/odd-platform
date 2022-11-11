@@ -63,7 +63,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
       <Grid container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={10} alignItems='center' flexWrap='nowrap'>
+        <Grid container item lg={9} alignItems='center' flexWrap='nowrap'>
           <Typography variant='h1' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -104,7 +104,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
         <Grid
           container
           item
-          lg={2}
+          lg={3}
           sx={{ ml: 1 }}
           alignItems='center'
           flexWrap='nowrap'
@@ -118,7 +118,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
                   size='medium'
                   color='primaryLight'
                   startIcon={<SlackIcon />}
-                  sx={{ mr: 1 }}
+                  sx={{ mr: 2 }}
                 >
                   Share
                 </AppButton>
