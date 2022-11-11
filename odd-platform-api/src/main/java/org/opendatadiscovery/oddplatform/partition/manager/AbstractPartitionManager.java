@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
@@ -59,14 +60,22 @@ public abstract class AbstractPartitionManager implements PartitionManager {
     protected Optional<String> getLastPartitionTableName(final Connection connection,
                                                          final String tableName,
                                                          final String schemaName) throws SQLException {
+        final List<String> tableNameExclusions = getTableNameExclusions();
+
+        // TODO: do not generate AND table_name NOT IN (?) if exlusions are empty
         final String sql = """
                SELECT table_name FROM information_schema.tables
-               WHERE table_schema = ? AND table_name LIKE ?
+               WHERE table_schema = ? AND table_name LIKE ? AND table_name NOT IN (?)
                ORDER BY table_name DESC LIMIT 1
             """;
         try (final PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, StringUtils.isNotEmpty(schemaName) ? schemaName : DEFAULT_SCHEMA);
             statement.setString(2, tableName + "_%");
+            if (CollectionUtils.isNotEmpty(tableNameExclusions)) {
+                statement.setString(3, String.join(",", tableNameExclusions));
+            } else {
+                statement.setString(3, "");
+            }
             try (final ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return Optional.of(resultSet.getString("table_name"));
