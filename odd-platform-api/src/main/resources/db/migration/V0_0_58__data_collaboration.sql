@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS message
 (
     key                       BIGINT,
+    uuid                      VARCHAR                  NOT NULL,
     parent_message_key        BIGINT,
     parent_message_created_at TIMESTAMP WITH TIME ZONE,
     data_entity_id            BIGINT                   NOT NULL,

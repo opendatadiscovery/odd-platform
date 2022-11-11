@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.datacollaboration.job;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElection
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
+import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EVENT;
@@ -118,8 +120,13 @@ public class DataCollaborationMessageEventProcessor extends Thread {
 
     private MessageRecord buildMessageRecord(final MessageEventDto event,
                                              final MessageEventPayload eventPayload) {
+        final UUID messageUUID = UUIDHelper.generateUUIDv1();
+
         return new MessageRecord()
             .setProvider(event.parentMessage().getProvider())
+            .setKey(messageUUID.node())
+            .setCreatedAt(UUIDHelper.extractDateTimeFromUUID(messageUUID))
+            .setUuid(messageUUID.toString())
             .setParentMessageKey(event.parentMessage().getKey())
             .setParentMessageCreatedAt(event.parentMessage().getCreatedAt())
             .setProviderChannelId(event.parentMessage().getProviderChannelId())

@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,12 +52,12 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
             .getChannelById(messageRequest.getChannelId())
             .flatMap(channel -> {
                 final UUID messageUUID = UUIDHelper.generateUUIDv1();
-                final OffsetDateTime createdAt =
-                    OffsetDateTime.ofInstant(Instant.ofEpochMilli(UUIDHelper.extractEpochMsFromUUID(messageUUID)),
-                        ZoneOffset.UTC);
+                final OffsetDateTime createdAt = UUIDHelper.extractDateTimeFromUUID(messageUUID);
 
                 final MessagePojo messagePojo = new MessagePojo()
                     .setKey(messageUUID.node())
+                    // TODO: either remove UUID from here or add to the event table instead of message identity
+                    .setUuid(messageUUID.toString())
                     .setCreatedAt(createdAt)
                     .setDataEntityId(messageRequest.getDataEntityId())
                     .setState(MessageStateDto.PENDING_SEND.getCode())
@@ -86,7 +84,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     }
 
     @Override
-    public Mono<String> resolveMessageUrl(final long messageId) {
+    public Mono<String> resolveMessageUrl(final UUID messageId) {
         return messageRepository.getMessageProviderIdentity(messageId)
             .flatMap(messageIdentity -> messageProviderClientFactory
                 .getOrFail(messageIdentity.messageProvider())

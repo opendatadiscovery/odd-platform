@@ -1,28 +1,28 @@
 package org.opendatadiscovery.oddplatform.repository;
 
-import java.time.OffsetDateTime;
+import java.util.UUID;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageIdentity;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageInternalIdentity;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderIdentity;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface MessageRepository {
-    Mono<MessageIdentity> getMessageProviderIdentity(final long messageId);
+    Mono<MessageProviderIdentity> getMessageProviderIdentity(final UUID messageId);
 
-    Mono<Long> getIdByProviderInfo(final String providerId, final MessageProviderDto messageProvider);
+    Mono<MessageInternalIdentity> getInternalIdentityByProviderInfo(final String providerId,
+                                                                    final MessageProviderDto messageProvider);
 
     Flux<MessagePojo> listParentMessagesByDataEntityId(final long dataEntityId,
                                                        final String channelId,
-                                                       final Long lastMessageId,
-                                                       final OffsetDateTime lastMessageDateTime,
+                                                       final UUID lastMessageId,
                                                        final int size);
 
-    Flux<MessagePojo> listChildrenMessages(final long messageId,
-                                           final Long lastMessageId,
-                                           final OffsetDateTime lastMessageDateTime,
+    Flux<MessagePojo> listChildrenMessages(final UUID messageId,
+                                           final UUID lastMessageId,
                                            final int size);
 
     Flux<MessageChannelDto> listChannelsByDataEntity(final long dataEntityId, final String channelNameLike);
@@ -32,5 +32,5 @@ public interface MessageRepository {
     Mono<Void> createMessageEvent(final String event,
                                   final MessageEventActionDto action,
                                   final MessageProviderDto messageProvider,
-                                  final long parentMessageId);
+                                  final MessageInternalIdentity parentMessageIdentity);
 }

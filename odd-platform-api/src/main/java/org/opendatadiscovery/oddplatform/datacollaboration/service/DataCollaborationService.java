@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
+import java.util.UUID;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
@@ -16,5 +17,5 @@ public interface DataCollaborationService {
 
     Mono<Void> enqueueMessageEvent(final MessageEventDto messageEvent);
 
-    Mono<String> resolveMessageUrl(final long messageId);
+    Mono<String> resolveMessageUrl(final UUID messageId);
 }
