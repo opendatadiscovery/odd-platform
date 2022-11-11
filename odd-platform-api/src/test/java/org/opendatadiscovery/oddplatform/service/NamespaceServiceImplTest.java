@@ -12,7 +12,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceUpdateFormData;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;

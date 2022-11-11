@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LabelFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LabelsResponse;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
@@ -83,7 +83,7 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
             .switchIfEmpty(Mono.error(new NotFoundException("Label", id)))
             .filter(not(LabelDto::hasExternalRelations))
             .switchIfEmpty(
-                Mono.error(new IllegalUserRequestException("Can't update label which has external relations")))
+                Mono.error(new BadUserRequestException("Can't update label which has external relations")))
             .flatMap(dto -> labelRepository.update(labelMapper.applyToPojo(dto.pojo(), form)))
             .flatMap(label -> searchEntrypointRepository.updateChangedLabelVector(label.getId()).thenReturn(label))
             .map(labelMapper::mapToLabel);
@@ -96,7 +96,7 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
             .switchIfEmpty(Mono.error(new NotFoundException("Label", id)))
             .filter(not(LabelDto::hasExternalRelations))
             .switchIfEmpty(
-                Mono.error(new IllegalUserRequestException("Can't delete label which has external relations")))
+                Mono.error(new BadUserRequestException("Can't delete label which has external relations")))
             .thenMany(labelRepository.deleteRelations(id))
             .then(labelRepository.delete(id))
             .map(labelMapper::mapToLabel);

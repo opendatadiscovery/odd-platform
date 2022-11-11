@@ -9,7 +9,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.CollectorList;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.CollectorMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.CollectorPojo;

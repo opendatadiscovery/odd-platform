@@ -40,8 +40,8 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
@@ -176,7 +176,7 @@ public class DataEntityServiceImpl
         return reactiveDataEntityRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
             .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new IllegalUserRequestException("Can't update ingested data entity")))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't update ingested data entity")))
             .flatMap(pojo -> {
                 if (StringUtils.isNotEmpty(formData.getNamespaceName())) {
                     return namespaceService.getOrCreate(formData.getNamespaceName())
@@ -198,7 +198,7 @@ public class DataEntityServiceImpl
             .then(reactiveDataEntityRepository.get(id))
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
             .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new IllegalUserRequestException("Can't delete ingested data entity")))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't delete ingested data entity")))
             .flatMap(this::deleteDEG);
     }
 
@@ -316,7 +316,7 @@ public class DataEntityServiceImpl
                 })
                 .collectList()
                 .filter(createdValues -> createdValues.size() == metadataFieldValuePojos.size())
-                .switchIfEmpty(Mono.error(new IllegalUserRequestException("Metadata with this name already exists")))
+                .switchIfEmpty(Mono.error(new BadUserRequestException("Metadata with this name already exists")))
             ))
             .flatMap(fields -> reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId)
                 .thenReturn(fields))
@@ -443,13 +443,13 @@ public class DataEntityServiceImpl
         final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(formData.getDataEntityGroupId())
             .filter(this::isManuallyCreatedDEG)
             .switchIfEmpty(Mono.error(
-                new IllegalUserRequestException(
+                new BadUserRequestException(
                     "Entity with id %s is not manually created DEG".formatted(formData.getDataEntityGroupId()))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function(
                 (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
                     .createRelationsReturning(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
-                    .switchIfEmpty(Mono.error(new IllegalUserRequestException("Data entity is already in this DEG")))
+                    .switchIfEmpty(Mono.error(new BadUserRequestException("Data entity is already in this DEG")))
                     .ignoreElements()
                     .thenReturn(groupPojo)))
             .flatMap(
@@ -466,7 +466,7 @@ public class DataEntityServiceImpl
         final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(dataEntityGroupId)
             .filter(this::isManuallyCreatedDEG)
             .switchIfEmpty(Mono.error(
-                new IllegalUserRequestException(
+                new BadUserRequestException(
                     "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function((pojo, groupPojo) -> reactiveGroupEntityRelationRepository

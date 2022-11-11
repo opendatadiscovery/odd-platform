@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Permission;
 import org.opendatadiscovery.oddplatform.api.contract.model.PermissionResourceType;
 import org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.service.permission.extractor.ContextualPermissionExtractor;
 import org.opendatadiscovery.oddplatform.service.permission.extractor.NoContextPermissionExtractor;
 import org.opendatadiscovery.oddplatform.service.permission.extractor.PermissionExtractor;
@@ -23,7 +23,7 @@ public class PermissionServiceImpl implements PermissionService {
                                                                  final long resourceId) {
         final PolicyTypeDto policyTypeDto = PolicyTypeDto.valueOf(resourceType.name());
         if (!policyTypeDto.isHasContext()) {
-            throw new IllegalUserRequestException("Resource type " + resourceType + " does not have context");
+            throw new BadUserRequestException("Resource type " + resourceType + " does not have context");
         }
         return getExtractor(policyTypeDto, contextualPermissionExtractors)
             .getContextualResourcePermissions(resourceId);
@@ -33,7 +33,7 @@ public class PermissionServiceImpl implements PermissionService {
     public Flux<Permission> getNonContextualPermissionsForCurrentUser(final PermissionResourceType resourceType) {
         final PolicyTypeDto policyTypeDto = PolicyTypeDto.valueOf(resourceType.name());
         if (policyTypeDto.isHasContext()) {
-            throw new IllegalUserRequestException("Resource type " + resourceType + " has context");
+            throw new BadUserRequestException("Resource type " + resourceType + " has context");
         }
         return getExtractor(policyTypeDto, noContextPermissionExtractors)
             .getNonContextualPermissions();

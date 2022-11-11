@@ -14,7 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
@@ -65,7 +65,7 @@ public class TermServiceImpl implements TermService {
             .flatMap(exists -> {
                 if (exists) {
                     return Mono.error(
-                        () -> new IllegalUserRequestException("Term with name %s and namespace %s already exists"
+                        () -> new BadUserRequestException("Term with name %s and namespace %s already exists"
                             .formatted(formData.getName(), formData.getNamespaceName()))
                     );
                 }
@@ -110,7 +110,7 @@ public class TermServiceImpl implements TermService {
                                                 @ActivityParameter(ActivityParameterNames.TermAssigned.DATA_ENTITY_ID)
                                                 final Long dataEntityId) {
         return termRepository.createRelationWithDataEntity(dataEntityId, termId)
-            .switchIfEmpty(Mono.error(() -> new IllegalUserRequestException("Term already assigned to data entity")))
+            .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Term already assigned to data entity")))
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
             .flatMap(termRefDto -> dataEntityFilledService.markEntityFilled(dataEntityId, TERMS).thenReturn(termRefDto))
             .map(termMapper::mapToRef);

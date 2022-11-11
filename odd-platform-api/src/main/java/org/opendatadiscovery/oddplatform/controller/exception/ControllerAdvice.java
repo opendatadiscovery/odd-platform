@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.ErrorDetail;
 import org.opendatadiscovery.oddplatform.api.contract.model.ErrorResponse;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.ErrorCode;
 import org.opendatadiscovery.oddplatform.exception.ExceptionWithErrorCode;
-import org.opendatadiscovery.oddplatform.exception.IllegalUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.exception.UniqueConstraintException;
 import org.springframework.http.HttpStatus;
@@ -20,9 +20,9 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 @Slf4j
 public class ControllerAdvice {
 
-    @ExceptionHandler(IllegalUserRequestException.class)
+    @ExceptionHandler(BadUserRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequest(final IllegalUserRequestException e) {
+    public ErrorResponse handleBadRequest(final BadUserRequestException e) {
         return buildResponse(e);
     }
 
