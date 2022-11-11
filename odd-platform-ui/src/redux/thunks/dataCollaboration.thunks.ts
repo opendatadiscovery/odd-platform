@@ -7,16 +7,13 @@ import {
   DataEntityApiGetChannelsRequest,
   Message as GeneratedMessage,
   MessageChannel,
+  DataEntityApiGetDataEntityMessagesRequest,
+  DataEntityApiGetMessagesRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import {
-  DataEntityApiGetDataEntityMessagesRequest,
-  DataEntityApiGetRelatedMessagesRequest,
-  Message,
-  PageInfo,
-} from 'redux/interfaces';
+import { Message, PageInfo } from 'redux/interfaces';
 import { castDatesToTimestampInItemsArray, setPageInfo } from 'redux/lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -54,13 +51,7 @@ export const fetchDataEntityMessages = createAsyncThunk<
   { messages: Message[]; pageInfo: PageInfo },
   DataEntityApiGetDataEntityMessagesRequest
 >(actions.fetchDataEntityMessagesActionType, async params => {
-  const castedMessageDateTime = params.lastMessageDateTime
-    ? new Date(params.lastMessageDateTime)
-    : undefined;
-
-  const reqParams = { ...params, lastMessageDateTime: castedMessageDateTime };
-
-  const { items } = await dataEntityApi.getDataEntityMessages(reqParams);
+  const { items } = await dataEntityApi.getDataEntityMessages(params);
 
   const messages = castDatesToTimestampInItemsArray<GeneratedMessage, Message>(items);
   const pageInfo = setPageInfo<Message>(messages, messagesListSize);
@@ -70,15 +61,9 @@ export const fetchDataEntityMessages = createAsyncThunk<
 
 export const fetchRelatedMessages = createAsyncThunk<
   { messages: Message[]; pageInfo: PageInfo },
-  DataEntityApiGetRelatedMessagesRequest
+  DataEntityApiGetMessagesRequest
 >(actions.fetchMessagesRelatedToMessageActionType, async params => {
-  const castedMessageDateTime = params.lastMessageDateTime
-    ? new Date(params.lastMessageDateTime)
-    : undefined;
-
-  const reqParams = { ...params, lastMessageDateTime: castedMessageDateTime };
-
-  const { items } = await dataEntityApi.getMessages(reqParams);
+  const { items } = await dataEntityApi.getMessages(params);
 
   const messages = castDatesToTimestampInItemsArray<GeneratedMessage, Message>(items);
   const pageInfo = setPageInfo<Message>(messages, messagesListSize);

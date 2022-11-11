@@ -30,7 +30,7 @@ interface AppRouteParams {
   termSearchId: string;
   versionId: number;
   searchId: string;
-  messageId: number;
+  messageId: string;
   policyId: number;
   viewType:
     | TermsViewType
@@ -61,7 +61,7 @@ export const useAppParams = (): AppRouteParams => {
     viewType,
     versionId: parseInt(versionId, 10),
     searchId,
-    messageId: parseInt(messageId, 10),
+    messageId,
     policyId: parseInt(policyId, 10),
   };
 };

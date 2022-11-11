@@ -25,7 +25,7 @@ export const getDataEntityMessages = createSelector(
   dataCollaboration => dataCollaboration.messages.messagesByDate
 );
 
-export const getDataEntityMessage = (messageDate: string, messageId: number) =>
+export const getDataEntityMessage = (messageDate: string, messageId: string) =>
   createSelector(
     dataCollaborationState,
     dataCollaboration =>

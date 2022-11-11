@@ -31,7 +31,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
   const { dataEntityCollaborationMessagePath } = useAppPaths();
 
   const handleMessageOnClick = React.useCallback(
-    (messageId: number) => () => {
+    (messageId: string) => () => {
       history.push(dataEntityCollaborationMessagePath(dataEntityId, messageId));
     },
     [dataEntityId]

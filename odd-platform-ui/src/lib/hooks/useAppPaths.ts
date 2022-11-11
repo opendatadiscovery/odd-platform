@@ -56,7 +56,7 @@ const useAppPaths = () => {
   const dataEntityCollaborationPath = (entityId: number) =>
     `${dataEntityDetailsPath(entityId)}/collaboration`;
 
-  const dataEntityCollaborationMessagePath = (entityId: number, messageId: number) =>
+  const dataEntityCollaborationMessagePath = (entityId: number, messageId: string) =>
     `${dataEntityDetailsPath(entityId)}/collaboration/${messageId}`;
 
   const dataEntityCollaborationCreateMessagePath = (entityId: number) =>

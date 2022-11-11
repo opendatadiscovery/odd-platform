@@ -44,7 +44,7 @@ export const castDatesToTimestampInItemsArray = <
     )
   );
 
-export const setPageInfo = <Item extends { id: number; createdAt: number }>(
+export const setPageInfo = <Item extends { id: string; createdAt: number }>(
   items: Item[],
   maxItemsSize: number
 ): PageInfo => {
@@ -55,10 +55,6 @@ export const setPageInfo = <Item extends { id: number; createdAt: number }>(
     return pageInfo;
   }
 
-  pageInfo = {
-    hasNext: true,
-    lastId: lastItem[0].id,
-    lastDateTime: lastItem[0].createdAt,
-  };
+  pageInfo = { hasNext: true, lastId: lastItem[0].id };
   return pageInfo;
 };

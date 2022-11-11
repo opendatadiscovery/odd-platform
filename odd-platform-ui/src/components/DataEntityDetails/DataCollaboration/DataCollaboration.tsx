@@ -23,7 +23,7 @@ const DataCollaboration: React.FC = () => {
 
   const messagesByDate = useAppSelector(getDataEntityMessages);
   const messagesLength = useAppSelector(getLengthOfDataEntityMessages);
-  const { lastId, lastDateTime, hasNext } = useAppSelector(getDataEntityMessagesPageInfo);
+  const { lastId, hasNext } = useAppSelector(getDataEntityMessagesPageInfo);
   const { isLoading: isMessagesLoading } = useAppSelector(
     getDataEntityMessagesFetchingStatuses
   );
@@ -32,14 +32,8 @@ const DataCollaboration: React.FC = () => {
   );
 
   const fetchMessagesParams = React.useMemo(
-    () => ({
-      dataEntityId,
-      channelId,
-      size,
-      lastMessageId: lastId,
-      lastMessageDateTime: lastDateTime,
-    }),
-    [dataEntityId, channelId, size, lastId, lastDateTime]
+    () => ({ dataEntityId, channelId, size, lastMessageId: lastId }),
+    [dataEntityId, channelId, size, lastId]
   );
 
   React.useEffect(() => {

@@ -20,21 +20,15 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
 
   const mainMessage = useAppSelector(getDataEntityMessage(messageDate, messageId));
   const relatedMessages = useAppSelector(getRelatedMessages);
-  const { lastId, lastDateTime, hasNext } = useAppSelector(getRelatedMessagesPageInfo);
+  const { lastId, hasNext } = useAppSelector(getRelatedMessagesPageInfo);
   const { isLoading: isRelatedMessagesLoading } = useAppSelector(
     getRelatedMessagesFetchingStatuses
   );
 
   const fetchRelatedMessagesParams =
     React.useMemo<DataEntityApiGetRelatedMessagesRequest>(
-      () => ({
-        dataEntityId,
-        messageId,
-        size,
-        lastMessageId: lastId,
-        lastMessageDateTime: lastDateTime,
-      }),
-      [dataEntityId, messageId, size, lastId, lastDateTime]
+      () => ({ dataEntityId, messageId, size, lastMessageId: lastId }),
+      [dataEntityId, messageId, size, lastId]
     );
 
   React.useEffect(() => {

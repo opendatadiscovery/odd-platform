@@ -6,6 +6,5 @@ export interface CurrentPageInfo extends GeneratedPageInfo {
 
 export interface PageInfo {
   hasNext: boolean;
-  lastId?: number;
-  lastDateTime?: number;
+  lastId?: string;
 }
