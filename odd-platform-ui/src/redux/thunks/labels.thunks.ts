@@ -7,7 +7,6 @@ import {
   type LabelApiGetLabelListRequest,
   type LabelApiUpdateLabelRequest,
 } from 'generated-sources';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -16,19 +15,22 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new LabelApi(apiClientConf);
 
-// TODO handle
-export const fetchLabelsList = createAsyncThunk<
+export const fetchLabelsList = handleResponseAsyncThunk<
   { items: Array<Label>; pageInfo: CurrentPageInfo },
   LabelApiGetLabelListRequest
->(actions.fetchLabelsActionType, async ({ page, size, query }) => {
-  const { items, pageInfo } = await apiClient.getLabelList({
-    page,
-    size,
-    query,
-  });
+>(
+  actions.fetchLabelsActionType,
+  async ({ page, size, query }) => {
+    const { items, pageInfo } = await apiClient.getLabelList({
+      page,
+      size,
+      query,
+    });
 
-  return { items, pageInfo: { ...pageInfo, page } };
-});
+    return { items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
 export const createLabel = handleResponseAsyncThunk<Label[], LabelApiCreateLabelRequest>(
   actions.createLabelsActionType,

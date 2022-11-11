@@ -5,7 +5,6 @@ import {
   Configuration,
   DataEntityApi,
 } from 'generated-sources';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type {
@@ -49,55 +48,61 @@ const setActivitiesPageInfo = (
   return pageInfo;
 };
 
-// TODO handle
-export const fetchActivityList = createAsyncThunk<
+export const fetchActivityList = handleResponseAsyncThunk<
   ActivityListResponse,
   ActivityQueryParams
->(actions.fetchActivityListActionType, async params => {
-  const castedBeginDate = toDateWithoutOffset(params.beginDate);
-  const castedEndDate = toDateWithoutOffset(params.endDate);
-  const castedLastEventDateTime = params.lastEventDateTime
-    ? new Date(params.lastEventDateTime)
-    : undefined;
+>(
+  actions.fetchActivityListActionType,
+  async params => {
+    const castedBeginDate = toDateWithoutOffset(params.beginDate);
+    const castedEndDate = toDateWithoutOffset(params.endDate);
+    const castedLastEventDateTime = params.lastEventDateTime
+      ? new Date(params.lastEventDateTime)
+      : undefined;
 
-  const activityList = await activityApi.getActivity({
-    ...params,
-    beginDate: castedBeginDate,
-    endDate: castedEndDate,
-    lastEventDateTime: castedLastEventDateTime,
-  });
+    const activityList = await activityApi.getActivity({
+      ...params,
+      beginDate: castedBeginDate,
+      endDate: castedEndDate,
+      lastEventDateTime: castedLastEventDateTime,
+    });
 
-  const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
+    const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
 
-  const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
+    const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
 
-  return { activities: activitiesWithTimestamps, pageInfo };
-});
+    return { activities: activitiesWithTimestamps, pageInfo };
+  },
+  {}
+);
 
-// TODO handle
-export const fetchDataEntityActivityList = createAsyncThunk<
+export const fetchDataEntityActivityList = handleResponseAsyncThunk<
   ActivityListResponse,
   DataEntityActivityQueryParams
->(actions.fetchDataEntityActivityListActionType, async params => {
-  const castedBeginDate = toDateWithoutOffset(params.beginDate);
-  const castedEndDate = toDateWithoutOffset(params.endDate);
-  const castedLastEventDateTime = params.lastEventDateTime
-    ? new Date(params.lastEventDateTime)
-    : undefined;
+>(
+  actions.fetchDataEntityActivityListActionType,
+  async params => {
+    const castedBeginDate = toDateWithoutOffset(params.beginDate);
+    const castedEndDate = toDateWithoutOffset(params.endDate);
+    const castedLastEventDateTime = params.lastEventDateTime
+      ? new Date(params.lastEventDateTime)
+      : undefined;
 
-  const activityList = await dataEntityApi.getDataEntityActivity({
-    ...params,
-    beginDate: castedBeginDate,
-    endDate: castedEndDate,
-    lastEventDateTime: castedLastEventDateTime,
-  });
+    const activityList = await dataEntityApi.getDataEntityActivity({
+      ...params,
+      beginDate: castedBeginDate,
+      endDate: castedEndDate,
+      lastEventDateTime: castedLastEventDateTime,
+    });
 
-  const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
+    const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
 
-  const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
+    const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
 
-  return { activities: activitiesWithTimestamps, pageInfo };
-});
+    return { activities: activitiesWithTimestamps, pageInfo };
+  },
+  {}
+);
 
 export const fetchActivityCounts = handleResponseAsyncThunk<
   ActivityCountInfo,

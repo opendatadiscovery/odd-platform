@@ -27,7 +27,6 @@ import {
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -154,75 +153,93 @@ export const updateDataEntityInternalName = handleResponseAsyncThunk<
     }),
   }
 );
-// TODO handle
-export const fetchMyDataEntitiesList = createAsyncThunk<
+
+export const fetchMyDataEntitiesList = handleResponseAsyncThunk<
   DataEntityRef[],
   DataEntityApiGetMyObjectsRequest
->(actions.fetchMyDataEntitiesActionType, async ({ page, size }) =>
-  dataEntityApi.getMyObjects({
-    page,
-    size,
-  })
+>(
+  actions.fetchMyDataEntitiesActionType,
+  async ({ page, size }) => await dataEntityApi.getMyObjects({ page, size }),
+  {}
 );
-// TODO handle
-export const fetchMyUpstreamDataEntitiesList = createAsyncThunk<
+
+export const fetchMyUpstreamDataEntitiesList = handleResponseAsyncThunk<
   DataEntityRef[],
   DataEntityApiGetMyObjectsWithUpstreamRequest
->(actions.fetchMyUpstreamDataEntitiesActionType, async ({ page, size }) =>
-  dataEntityApi.getMyObjectsWithUpstream({
-    page,
-    size,
-  })
+>(
+  actions.fetchMyUpstreamDataEntitiesActionType,
+  async ({ page, size }) => await dataEntityApi.getMyObjectsWithUpstream({ page, size }),
+  {}
 );
-// TODO handle
-export const fetchMyDownstreamDataEntitiesList = createAsyncThunk<
+
+export const fetchMyDownstreamDataEntitiesList = handleResponseAsyncThunk<
   DataEntityRef[],
   DataEntityApiGetMyObjectsWithDownstreamRequest
->(actions.fetchMyDownstreamDataEntitiesActionType, async ({ page, size }) =>
-  dataEntityApi.getMyObjectsWithDownstream({
-    page,
-    size,
-  })
+>(
+  actions.fetchMyDownstreamDataEntitiesActionType,
+  async ({ page, size }) =>
+    await dataEntityApi.getMyObjectsWithDownstream({ page, size }),
+  {}
 );
-// TODO handle
-export const fetchPopularDataEntitiesList = createAsyncThunk<
+
+export const fetchPopularDataEntitiesList = handleResponseAsyncThunk<
   DataEntityRef[],
   DataEntityApiGetPopularRequest
->(actions.fetchPopularDataEntitiesActionType, async ({ page, size }) =>
-  dataEntityApi.getPopular({
-    page,
-    size,
-  })
+>(
+  actions.fetchPopularDataEntitiesActionType,
+  async ({ page, size }) => await dataEntityApi.getPopular({ page, size }),
+  {}
 );
 
-export const createDataEntityGroup = createAsyncThunk<
+export const createDataEntityGroup = handleResponseAsyncThunk<
   DataEntityRef,
   DataEntityApiCreateDataEntityGroupRequest
->(actions.createDataEntityGroupActionType, async ({ dataEntityGroupFormData }) =>
-  dataEntityApi.createDataEntityGroup({ dataEntityGroupFormData })
+>(
+  actions.createDataEntityGroupActionType,
+  async ({ dataEntityGroupFormData }) =>
+    await dataEntityApi.createDataEntityGroup({ dataEntityGroupFormData }),
+  {
+    setSuccessOptions: ({ dataEntityGroupFormData: { name } }) => ({
+      id: `DataEntityGroup-creating-${name}`,
+      message: `Data entity group ${name} successfully created.`,
+    }),
+  }
 );
 
-export const updateDataEntityGroup = createAsyncThunk<
+export const updateDataEntityGroup = handleResponseAsyncThunk<
   DataEntityRef,
   DataEntityApiUpdateDataEntityGroupRequest
 >(
   actions.updateDataEntityGroupActionType,
   async ({ dataEntityGroupId, dataEntityGroupFormData }) =>
-    dataEntityApi.updateDataEntityGroup({
+    await dataEntityApi.updateDataEntityGroup({
       dataEntityGroupId,
       dataEntityGroupFormData,
-    })
+    }),
+  {
+    setSuccessOptions: ({ dataEntityGroupFormData: { name } }) => ({
+      id: `DataEntityGroup-updating-${name}`,
+      message: `Data entity group ${name} successfully updated.`,
+    }),
+  }
 );
 
-export const deleteDataEntityGroup = createAsyncThunk<
+export const deleteDataEntityGroup = handleResponseAsyncThunk<
   number,
   DataEntityApiDeleteDataEntityGroupRequest
->(actions.deleteDataEntityGroupActionType, async ({ dataEntityGroupId }) => {
-  await dataEntityApi.deleteDataEntityGroup({
-    dataEntityGroupId,
-  });
-  return dataEntityGroupId;
-});
+>(
+  actions.deleteDataEntityGroupActionType,
+  async ({ dataEntityGroupId }) => {
+    await dataEntityApi.deleteDataEntityGroup({ dataEntityGroupId });
+    return dataEntityGroupId;
+  },
+  {
+    setSuccessOptions: ({ dataEntityGroupId }) => ({
+      id: `DataEntityGroup-deleting-${dataEntityGroupId}`,
+      message: `Data entity group successfully deleted.`,
+    }),
+  }
+);
 
 export const addDataEntityToGroup = handleResponseAsyncThunk<
   DataEntityRef,
@@ -262,8 +279,12 @@ export const deleteDataEntityFromGroup = handleResponseAsyncThunk<
     }),
   }
 );
-// TODO handle
-export const fetchDataEntitiesUsageInfo = createAsyncThunk<DataEntityUsageInfo, void>(
+
+export const fetchDataEntitiesUsageInfo = handleResponseAsyncThunk<
+  DataEntityUsageInfo,
+  void
+>(
   actions.fetchDataEntitiesUsageActionType,
-  async () => dataEntityApi.getDataEntitiesUsage()
+  async () => dataEntityApi.getDataEntitiesUsage(),
+  {}
 );

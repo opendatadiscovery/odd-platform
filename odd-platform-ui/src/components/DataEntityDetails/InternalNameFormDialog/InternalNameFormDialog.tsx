@@ -44,10 +44,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 
   const onSubmit = (data: InternalNameFormData) => {
     dispatch(
-      updateDataEntityInternalName({
-        dataEntityId,
-        internalNameFormData: data,
-      })
+      updateDataEntityInternalName({ dataEntityId, internalNameFormData: data })
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -63,15 +60,13 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSubmit(onSubmit);
-    }
+    if (event.key === 'Enter') handleSubmit(onSubmit);
   };
 
   const formTitle = (
     <Typography variant='h4' component='span'>
       {dataEntityInternalName ? 'Edit ' : 'Add '}
-      custom name
+      business name
     </Typography>
   );
 
@@ -84,8 +79,8 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         render={({ field }) => (
           <AppInput
             {...field}
-            label='Custom name'
-            placeholder='Enter custom name'
+            label='Business name'
+            placeholder='Enter business name'
             onKeyDown={handleKeyDown}
             customEndAdornment={{
               variant: 'clear',

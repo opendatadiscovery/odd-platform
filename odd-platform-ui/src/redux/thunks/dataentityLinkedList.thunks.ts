@@ -7,13 +7,12 @@ import {
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 
-// TODO handle
-export const fetchDataEntityGroupLinkedList = createAsyncThunk<
+export const fetchDataEntityGroupLinkedList = handleResponseAsyncThunk<
   {
     dataEntityGroupId: number;
     linkedItemsList: Array<DataEntity>;
@@ -30,5 +29,6 @@ export const fetchDataEntityGroupLinkedList = createAsyncThunk<
     });
 
     return { dataEntityGroupId, linkedItemsList: items, pageInfo: { ...pageInfo, page } };
-  }
+  },
+  {}
 );

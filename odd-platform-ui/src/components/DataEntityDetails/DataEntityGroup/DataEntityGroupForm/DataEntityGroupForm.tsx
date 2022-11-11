@@ -96,7 +96,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
 
   const handleSubmitForm = (data: DataEntityGroupFormData) => {
     dispatch(
-      dataEntityGroupDetails
+      dataEntityGroupDetails.id
         ? updateDataEntityGroup({
             dataEntityGroupId: dataEntityGroupDetails.id,
             dataEntityGroupFormData: data,

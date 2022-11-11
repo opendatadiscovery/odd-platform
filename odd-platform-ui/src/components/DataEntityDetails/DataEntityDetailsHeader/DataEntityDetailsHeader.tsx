@@ -7,7 +7,6 @@ import { AddIcon, EditIcon, TimeGapIcon } from 'components/shared/Icons';
 import { formatDistanceToNowStrict } from 'date-fns';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
-import * as S from './DataEntityDetailsHeaderStyles';
 
 interface DataEntityDetailsHeaderProps {
   internalName: DataEntityDetails['internalName'];
@@ -54,8 +53,8 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
 
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
-      <S.Caption container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={11} alignItems='center' flexWrap='nowrap'>
+      <Grid container alignItems='center' flexWrap='nowrap'>
+        <Grid container item lg={10} alignItems='center' flexWrap='nowrap'>
           <Typography variant='h1' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -67,24 +66,41 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             />
           ))}
           {type && <EntityTypeItem sx={{ ml: 1 }} entityTypeName={type.name} />}
-          <S.InternalNameEditBtnContainer>
-            <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
-              <InternalNameFormDialog
-                btnCreateEl={
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
+            <InternalNameFormDialog
+              btnCreateEl={
+                internalName ? (
                   <AppButton
                     size='small'
                     color='tertiary'
                     sx={{ ml: 1 }}
-                    startIcon={internalName ? <EditIcon /> : <AddIcon />}
+                    startIcon={<EditIcon />}
                   >
-                    {`${internalName ? 'Edit custom' : 'Add custom'} name`}
+                    Edit
                   </AppButton>
-                }
-              />
-            </WithPermissions>
-          </S.InternalNameEditBtnContainer>
+                ) : (
+                  <AppButton
+                    size='small'
+                    color='tertiary'
+                    sx={{ ml: 1 }}
+                    startIcon={<AddIcon />}
+                  >
+                    Add business name
+                  </AppButton>
+                )
+              }
+            />
+          </WithPermissions>
         </Grid>
-        <Grid container item lg={1} sx={{ ml: 1 }} alignItems='center' flexWrap='nowrap'>
+        <Grid
+          container
+          item
+          lg={2}
+          sx={{ ml: 1 }}
+          alignItems='center'
+          flexWrap='nowrap'
+          justifyContent='flex-end'
+        >
           {entityUpdatedAt}
           {manuallyCreated && (
             <DataEntityGroupControls
@@ -93,7 +109,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             />
           )}
         </Grid>
-      </S.Caption>
+      </Grid>
       {originalName}
     </Grid>
   );

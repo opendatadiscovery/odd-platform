@@ -12,7 +12,6 @@ import {
   type DataEntityApiGetDataEntityAlertsRequest,
   type PageInfo,
 } from 'generated-sources';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { Alert, CurrentPageInfo } from 'redux/interfaces';
@@ -28,57 +27,57 @@ export interface AlertsResponse {
   pageInfo: CurrentPageInfo;
 }
 
-// TODO handle
-export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
+export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
-  async () => alertApi.getAlertTotals()
+  async () => await alertApi.getAlertTotals(),
+  {}
 );
 
-// TODO handle
-export const fetchAllAlertList = createAsyncThunk<
+export const fetchAllAlertList = handleResponseAsyncThunk<
   AlertsResponse,
   AlertApiGetAllAlertsRequest
->(actions.fetchAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await alertApi.getAllAlerts({
-    page,
-    size,
-  });
+>(
+  actions.fetchAlertListActionType,
+  async ({ page, size }) => {
+    const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
 
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo: { ...pageInfo, page },
-  };
-});
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo: { ...pageInfo, page },
+    };
+  },
+  {}
+);
 
-// TODO handle
-export const fetchMyAlertList = createAsyncThunk<
+export const fetchMyAlertList = handleResponseAsyncThunk<
   AlertsResponse,
   AlertApiGetAssociatedUserAlertsRequest
->(actions.fetchMyAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({
-    page,
-    size,
-  });
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo: { ...pageInfo, page },
-  };
-});
+>(
+  actions.fetchMyAlertListActionType,
+  async ({ page, size }) => {
+    const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo: { ...pageInfo, page },
+    };
+  },
+  {}
+);
 
-// TODO handle
-export const fetchMyDependentsAlertList = createAsyncThunk<
+export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
   AlertsResponse,
   AlertApiGetDependentEntitiesAlertsRequest
->(actions.fetchMyDependentsAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({
-    page,
-    size,
-  });
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo: { ...pageInfo, page },
-  };
-});
+>(
+  actions.fetchMyDependentsAlertListActionType,
+  async ({ page, size }) => {
+    const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo: { ...pageInfo, page },
+    };
+  },
+  {}
+);
 
 export const updateAlertStatus = handleResponseAsyncThunk<
   { alertId: number; status: AlertStatus },
@@ -101,16 +100,17 @@ export const updateAlertStatus = handleResponseAsyncThunk<
   }
 );
 
-// TODO handle
-export const fetchDataEntityAlerts = createAsyncThunk<
+export const fetchDataEntityAlerts = handleResponseAsyncThunk<
   { items: Alert[]; pageInfo: PageInfo },
   DataEntityApiGetDataEntityAlertsRequest
->(actions.fetchDataEntityAlertsActionType, async ({ dataEntityId }) => {
-  const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({
-    dataEntityId,
-  });
-  return {
-    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
-    pageInfo,
-  };
-});
+>(
+  actions.fetchDataEntityAlertsActionType,
+  async ({ dataEntityId }) => {
+    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({ dataEntityId });
+    return {
+      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      pageInfo,
+    };
+  },
+  {}
+);

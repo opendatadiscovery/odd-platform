@@ -8,7 +8,6 @@ import {
   type TagApiUpdateTagRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -16,20 +15,23 @@ import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TagApi(apiClientConf);
 
-// TODO handle
-export const fetchTagsList = createAsyncThunk<
+export const fetchTagsList = handleResponseAsyncThunk<
   { items: Array<Tag>; pageInfo: CurrentPageInfo },
   TagApiGetPopularTagListRequest
->(actions.fetchTagsActType, async ({ page, size, query, ids }) => {
-  const { items, pageInfo } = await apiClient.getPopularTagList({
-    page,
-    size,
-    query,
-    ids,
-  });
+>(
+  actions.fetchTagsActType,
+  async ({ page, size, query, ids }) => {
+    const { items, pageInfo } = await apiClient.getPopularTagList({
+      page,
+      size,
+      query,
+      ids,
+    });
 
-  return { items, pageInfo: { ...pageInfo, page } };
-});
+    return { items, pageInfo: { ...pageInfo, page } };
+  },
+  {}
+);
 
 export const createTag = handleResponseAsyncThunk<Tag[], TagApiCreateTagRequest>(
   actions.createTagsActType,

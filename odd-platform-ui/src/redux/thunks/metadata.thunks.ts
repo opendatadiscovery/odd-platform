@@ -11,7 +11,6 @@ import {
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -83,11 +82,14 @@ export const deleteDataEntityCustomMetadata = handleResponseAsyncThunk<
   }
 );
 
-// TODO handle
-export const searchMetadata = createAsyncThunk<
+export const searchMetadata = handleResponseAsyncThunk<
   { metadataFields: Array<MetadataField> },
   MetadataApiGetMetadataFieldListRequest
->(actions.searchMetadataAction, async ({ query }) => {
-  const { items } = await metadataApi.getMetadataFieldList({ query });
-  return { metadataFields: items };
-});
+>(
+  actions.searchMetadataAction,
+  async ({ query }) => {
+    const { items } = await metadataApi.getMetadataFieldList({ query });
+    return { metadataFields: items };
+  },
+  {}
+);
