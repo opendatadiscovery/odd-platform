@@ -15,7 +15,7 @@ public class EventProcessorRepositoryImpl implements EventProcessorRepository {
     public void createMessage(final DSLContext dslContext, final MessageRecord record) {
         dslContext.insertInto(MESSAGE)
             .set(record)
-            .onConflict(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER)
+            .onConflict(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER, MESSAGE.CREATED_AT)
             .where(MESSAGE.PROVIDER_MESSAGE_ID.isNotNull())
             .doNothing()
             .execute();
@@ -36,7 +36,7 @@ public class EventProcessorRepositoryImpl implements EventProcessorRepository {
     @Override
     public void markEventAsFailed(final DSLContext dslContext, final long eventId, final String errorMessage) {
         dslContext.update(MESSAGE_PROVIDER_EVENT)
-            .set(MESSAGE_PROVIDER_EVENT.STATE, MessageEventStateDto.PROCESSING_FAILED.toString())
+            .set(MESSAGE_PROVIDER_EVENT.STATE, MessageEventStateDto.PROCESSING_FAILED.getCode())
             .set(MESSAGE_PROVIDER_EVENT.ERROR_MESSAGE, errorMessage)
             .where(MESSAGE_PROVIDER_EVENT.ID.eq(eventId));
     }

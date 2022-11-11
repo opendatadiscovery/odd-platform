@@ -5,6 +5,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.methods.response.users.UsersInfoResponse;
+import com.slack.api.model.Conversation;
 import com.slack.api.model.ConversationType;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class SlackAPIClientImpl implements SlackAPIClient {
                 return Mono.empty();
             })
             .flatMap(response -> Flux.fromIterable(response.getChannels()))
+            .filter(Conversation::isMember)
             .map(c -> MessageChannelDto.builder().id(c.getId()).name(c.getName()).build());
     }
 

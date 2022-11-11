@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.datacollaboration.job;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class DataCollaborationMessageSenderJob extends Thread {
                             .postMessage(message.getProviderChannelId(), message.getText())
                             .block();
 
-                        updateMessage(dslContext, message.getId(), messageTs);
+                        updateMessage(dslContext, message.getKey(), message.getCreatedAt(), messageTs);
                     }
 
                     TimeUnit.SECONDS.sleep(1);
@@ -70,18 +71,20 @@ public class DataCollaborationMessageSenderJob extends Thread {
     private Optional<MessagePojo> getSendingCandidate(final DSLContext dslContext) {
         return dslContext.select(MESSAGE.fields())
             .from(MESSAGE)
-            .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.toString()))
+            .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.getCode()))
             .orderBy(MESSAGE.CREATED_AT.desc()).limit(1)
             .fetchOptional(r -> r.into(MessagePojo.class));
     }
 
     private void updateMessage(final DSLContext dslContext,
-                               final long messageId,
+                               final long messageKey,
+                               final OffsetDateTime messageCreatedAt,
                                final String providerMessageId) {
         dslContext.update(MESSAGE)
             .set(MESSAGE.PROVIDER_MESSAGE_ID, providerMessageId)
-            .set(MESSAGE.STATE, MessageStateDto.SENT.toString())
-            .where(MESSAGE.ID.eq(messageId))
+            .set(MESSAGE.STATE, MessageStateDto.SENT.getCode())
+            .where(MESSAGE.KEY.eq(messageKey))
+            .and(MESSAGE.CREATED_AT.eq(messageCreatedAt))
             .execute();
     }
 

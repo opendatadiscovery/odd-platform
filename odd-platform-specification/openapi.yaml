@@ -1338,14 +1338,8 @@ paths:
         - name: last_message_id
           in: query
           schema:
-            type: integer
-            format: int64
-        # TODO: check if I need this parameter
-        - name: last_message_date_time
-          in: query
-          schema:
             type: string
-            format: date-time
+            format: uuid
       responses:
         '200':
           description: OK
@@ -1366,20 +1360,14 @@ paths:
         - name: message_id
           in: path
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
           required: true
         - name: last_message_id
           in: query
           schema:
-            type: integer
-            format: int64
-        # TODO: check if I need this parameter
-        - name: last_message_date_time
-          in: query
-          schema:
             type: string
-            format: date-time
+            format: uuid
       responses:
         '200':
           description: OK
@@ -1418,8 +1406,8 @@ paths:
         - name: message_id
           in: path
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
           required: true
       responses:
         '301':

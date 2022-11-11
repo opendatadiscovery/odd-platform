@@ -2481,8 +2481,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         text:
           type: string
         username:

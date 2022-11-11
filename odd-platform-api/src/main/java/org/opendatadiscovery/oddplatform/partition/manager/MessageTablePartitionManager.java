@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnDataCollaboration
-public class MessageTablePartitionManager {
+public class MessageTablePartitionManager extends AbstractPartitionManager implements PartitionManager {
     @Value("${datacollaboration.message-partition-period:30}")
     @Getter
     private int partitionDaysPeriod;

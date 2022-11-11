@@ -1,5 +1,9 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
@@ -13,6 +17,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
+import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -43,15 +48,21 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     }
 
     @Override
-    // TODO: partition messages by created_at
     public Mono<Message> createAndSendMessage(final MessageRequest messageRequest,
                                               final MessageProviderDto messageProvider) {
         return messageProviderClientFactory.getOrFail(messageProvider)
             .getChannelById(messageRequest.getChannelId())
             .flatMap(channel -> {
+                final UUID messageUUID = UUIDHelper.generateUUIDv1();
+                final OffsetDateTime createdAt =
+                    OffsetDateTime.ofInstant(Instant.ofEpochMilli(UUIDHelper.extractEpochMsFromUUID(messageUUID)),
+                        ZoneOffset.UTC);
+
                 final MessagePojo messagePojo = new MessagePojo()
+                    .setKey(messageUUID.node())
+                    .setCreatedAt(createdAt)
                     .setDataEntityId(messageRequest.getDataEntityId())
-                    .setState(MessageStateDto.PENDING_SEND.toString())
+                    .setState(MessageStateDto.PENDING_SEND.getCode())
                     .setProvider(messageProvider.toString())
                     .setProviderChannelId(channel.id())
                     .setText(messageRequest.getText());
@@ -59,10 +70,10 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
                 return messageRepository.create(messagePojo)
                     // TODO: mapper
                     .map(pojo -> new Message()
-                        .id(pojo.getId())
+                        .id(messageUUID)
                         .text(pojo.getText())
                         .createdAt(pojo.getCreatedAt())
-                        .state(MessageState.fromValue(pojo.getState()))
+                        .state(MessageState.PENDING_SEND)
                     );
             });
     }
