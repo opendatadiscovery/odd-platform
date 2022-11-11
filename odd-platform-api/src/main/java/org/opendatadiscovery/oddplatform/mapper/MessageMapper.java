@@ -52,10 +52,6 @@ public interface MessageMapper {
         return MessageState.fromValue(messageState.toString());
     }
 
-    default UUID mapUUID(final String uuid) {
-        return UUID.fromString(uuid);
-    }
-
     @Named("messageChannel")
     default MessageChannel messageChannel(final MessagePojo message) {
         return new MessageChannel()
@@ -65,7 +61,7 @@ public interface MessageMapper {
 
     @Named("urlRef")
     default String urlRef(final MessagePojo message) {
-        return "/api/messages/%s/provider_url".formatted(message.getUuid());
+        return "/api/messages/%s/url".formatted(message.getUuid());
     }
 
     @Mapping(source = "id", target = "channelId")

@@ -123,7 +123,6 @@ notifications:
 #  receivers:
 #    slack:
 #      url:
-#      platform-base-url:
 #    webhook:
 #      url:
 
@@ -138,6 +137,7 @@ datacollaboration:
 #  slack-oauth-token:
 
 odd:
+  platform-base-url: http://localhost:8080
   activity:
     partition-period: 30
 

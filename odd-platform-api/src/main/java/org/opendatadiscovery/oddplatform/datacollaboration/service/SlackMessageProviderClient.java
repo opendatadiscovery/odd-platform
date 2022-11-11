@@ -1,13 +1,17 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
+import com.slack.api.model.Attachment;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
+import org.opendatadiscovery.oddplatform.notification.processor.message.SlackMessageGenerator;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,10 +22,10 @@ import static java.util.function.Function.identity;
 @RequiredArgsConstructor
 @ConditionalOnDataCollaboration
 public class SlackMessageProviderClient implements MessageProviderClient {
+    private final SlackMessageGenerator slackMessageGenerator;
     private final SlackAPIClient slackAPIClient;
 
     @Override
-    // TODO: find a way to get Slack channels that have bot installed
     public Flux<MessageChannelDto> getChannels() {
         return slackAPIClient.getSlackChannels();
     }
@@ -50,8 +54,13 @@ public class SlackMessageProviderClient implements MessageProviderClient {
     }
 
     @Override
-    public Mono<String> postMessage(final String channelId, final String messageText) {
-        return slackAPIClient.postMessage(channelId, messageText);
+    public Mono<String> postMessage(final String channelId,
+                                    final String messageText,
+                                    final DataEntityMessageContext messageContext) {
+        final List<Attachment> preparedMessageLayout =
+            slackMessageGenerator.generateMessage(messageContext, messageText);
+
+        return slackAPIClient.postMessage(channelId, preparedMessageLayout);
     }
 
     @Override

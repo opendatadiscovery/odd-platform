@@ -124,11 +124,9 @@ public class DataCollaborationMessageEventProcessor extends Thread {
 
         return new MessageRecord()
             .setProvider(event.parentMessage().getProvider())
-            .setKey(messageUUID.node())
+            .setUuid(messageUUID)
             .setCreatedAt(UUIDHelper.extractDateTimeFromUUID(messageUUID))
-            .setUuid(messageUUID.toString())
-            .setParentMessageKey(event.parentMessage().getKey())
-            .setParentMessageCreatedAt(event.parentMessage().getCreatedAt())
+            .setParentMessageUuid(event.parentMessage().getUuid())
             .setProviderChannelId(event.parentMessage().getProviderChannelId())
             .setDataEntityId(event.parentMessage().getDataEntityId())
             .setText(eventPayload.messageText())
@@ -145,7 +143,8 @@ public class DataCollaborationMessageEventProcessor extends Thread {
             .select(MESSAGE.fields())
             .from(MESSAGE_PROVIDER_EVENT)
             .join(MESSAGE)
-                .on(MESSAGE.KEY.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_KEY))
+            // TODO: do I need this join in case of updates?
+                .on(MESSAGE.UUID.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_UUID))
                 .and(MESSAGE.CREATED_AT.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_CREATED_AT))
             .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageEventStateDto.PENDING.getCode()))
             .orderBy(MESSAGE_PROVIDER_EVENT.CREATED_AT)

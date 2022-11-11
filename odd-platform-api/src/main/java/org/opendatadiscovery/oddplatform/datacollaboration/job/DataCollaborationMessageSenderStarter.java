@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationProperties;
+import org.opendatadiscovery.oddplatform.datacollaboration.repository.MessageSenderRepository;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClientFactory;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,6 +25,7 @@ public class DataCollaborationMessageSenderStarter {
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
     private final MessageProviderClientFactory messageProviderClientFactory;
     private final DataCollaborationProperties dataCollaborationProperties;
+    private final MessageSenderRepository messageSenderRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     public void runDataCollaborationMessageSender() {
@@ -32,7 +34,8 @@ public class DataCollaborationMessageSenderStarter {
         executorService.submit(new DataCollaborationMessageSenderJob(
             leaderElectionManager,
             messageProviderClientFactory,
-            dataCollaborationProperties
+            dataCollaborationProperties,
+            messageSenderRepository
         ));
     }
 }

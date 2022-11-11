@@ -12,12 +12,16 @@ import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnD
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import static reactor.function.TupleUtils.function;
 
 @Service
 @ConditionalOnDataCollaboration
@@ -25,6 +29,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class DataCollaborationServiceImpl implements DataCollaborationService {
     private final MessageRepository messageRepository;
+    private final ReactiveDataEntityRepository dataEntityRepository;
     private final MessageMapper messageMapper;
     private final MessageProviderClientFactory messageProviderClientFactory;
     private final MessageProviderEventHandlerFactory messageProviderEventHandlerFactory;
@@ -48,16 +53,19 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     @Override
     public Mono<Message> createAndSendMessage(final MessageRequest messageRequest,
                                               final MessageProviderDto messageProvider) {
-        return messageProviderClientFactory.getOrFail(messageProvider)
-            .getChannelById(messageRequest.getChannelId())
-            .flatMap(channel -> {
+        return dataEntityRepository.get(messageRequest.getDataEntityId())
+            .flatMap(dataEntity -> !dataEntity.getHollow() ? Mono.just(dataEntity.getId()) : Mono.empty())
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity", messageRequest.getDataEntityId())))
+            .zipWith(messageProviderClientFactory
+                .getOrFail(messageProvider)
+                .getChannelById(messageRequest.getChannelId())
+            )
+            .flatMap(function((dataEntityId, channel) -> {
                 final UUID messageUUID = UUIDHelper.generateUUIDv1();
                 final OffsetDateTime createdAt = UUIDHelper.extractDateTimeFromUUID(messageUUID);
 
                 final MessagePojo messagePojo = new MessagePojo()
-                    .setKey(messageUUID.node())
-                    // TODO: either remove UUID from here or add to the event table instead of message identity
-                    .setUuid(messageUUID.toString())
+                    .setUuid(messageUUID)
                     .setCreatedAt(createdAt)
                     .setDataEntityId(messageRequest.getDataEntityId())
                     .setState(MessageStateDto.PENDING_SEND.getCode())
@@ -73,7 +81,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
                         .createdAt(pojo.getCreatedAt())
                         .state(MessageState.PENDING_SEND)
                     );
-            });
+            }));
     }
 
     @Override

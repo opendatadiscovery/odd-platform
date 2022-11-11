@@ -5,6 +5,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.methods.response.users.UsersInfoResponse;
+import com.slack.api.model.Attachment;
 import com.slack.api.model.Conversation;
 import com.slack.api.model.ConversationType;
 import java.util.List;
@@ -18,9 +19,6 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.SlackAPIException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import static com.slack.api.model.block.Blocks.section;
-import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -64,9 +62,10 @@ public class SlackAPIClientImpl implements SlackAPIClient {
     }
 
     @Override
-    public Mono<String> postMessage(final String channelId, final String string) {
+    public Mono<String> postMessage(final String channelId, final List<Attachment> attachments) {
         final ChatPostMessageRequest req = ChatPostMessageRequest.builder()
-            .blocks(List.of(section(b -> b.text(markdownText(string)))))
+            .attachments(attachments)
+            .text("Message from OpenDataDiscovery platform!")
             .channel(channelId)
             .build();
 

@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.repository;
 
 import org.jooq.DSLContext;
+import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
@@ -10,6 +11,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EVENT;
 
 @Repository
+@ConditionalOnDataCollaboration
+// TODO: unite repositories with DSLContext in methods
 public class EventProcessorRepositoryImpl implements EventProcessorRepository {
     @Override
     public void createMessage(final DSLContext dslContext, final MessageRecord record) {
