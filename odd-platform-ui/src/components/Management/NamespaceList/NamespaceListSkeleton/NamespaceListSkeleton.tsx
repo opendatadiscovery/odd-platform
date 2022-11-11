@@ -8,7 +8,7 @@ interface SkeletonProps {
 }
 
 const NamespaceSkeletonItem: React.FC<SkeletonProps> = ({ width }) => (
-  <Grid container sx={{ py: 1.5, px: 1 }} wrap="nowrap">
+  <Grid container sx={{ py: 1.5, px: 1 }} wrap='nowrap'>
     <Grid item xs={3}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>

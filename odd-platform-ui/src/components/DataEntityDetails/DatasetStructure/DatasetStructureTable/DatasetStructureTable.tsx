@@ -22,10 +22,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   datasetRowsCount,
 }) => {
   const isUniqStatsExist = useAppSelector(
-    getIsUniqStatsExist({
-      datasetId: dataEntityId,
-      versionId,
-    })
+    getIsUniqStatsExist({ datasetId: dataEntityId, versionId })
   );
 
   return (

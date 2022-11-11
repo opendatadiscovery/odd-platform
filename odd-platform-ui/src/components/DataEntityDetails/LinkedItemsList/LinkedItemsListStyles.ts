@@ -1,14 +1,7 @@
 import { Grid } from '@mui/material';
-import {
-  primaryTabsHeight,
-  tabsContainerMargin,
-  toolbarHeight,
-} from 'lib/constants';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
-import {
-  ColType,
-  colWidthStyles,
-} from 'components/Search/Results/ResultsStyles';
+import { ColType, colWidthStyles } from 'components/Search/Results/ResultsStyles';
 
 const itemHeight = 40;
 

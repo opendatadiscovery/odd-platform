@@ -11,7 +11,6 @@ import {
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
-import { EntityClassItem, AppInput, AppButton, AppInputProps } from 'components/shared';
 import { useDebouncedCallback } from 'use-debounce';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -24,6 +23,10 @@ import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
+import type { AppInputProps } from '../../AppInput/AppInput';
+import AppButton from '../../AppButton/AppButton';
+import AppInput from '../../AppInput/AppInput';
+import EntityClassItem from '../../EntityClassItem/EntityClassItem';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;

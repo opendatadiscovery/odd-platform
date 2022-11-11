@@ -47,6 +47,7 @@ spring-security-ldap = { module = 'org.springframework.security:spring-security-
 spring-r2dbc = { module = 'org.springframework:spring-r2dbc' }
 spring-data-redis = { module = 'org.springframework.boot:spring-boot-starter-data-redis-reactive' }
 spring-data-session-redis = { module = 'org.springframework.session:spring-session-data-redis' }
+spring-validator = { module = 'org.springframework.boot:spring-boot-starter-validation' }
 reactor-extra = { module = 'io.projectreactor.addons:reactor-extra', version.ref = 'reactor-extra' }
 micrometer-registry-prometheus = { module = 'io.micrometer:micrometer-registry-prometheus', version.ref = 'micrometer-registry-prometheus' }
 ingestion-contract-server = { module = 'org.opendatadiscovery:ingestion-contract-server', version.ref = 'ingestion-contract-server' }
@@ -103,7 +104,8 @@ spring = [
     'spring-security-ldap',
     'spring-r2dbc',
     'reactor-extra',
-    'spring-aop'
+    'spring-aop',
+    'spring-validator'
 ]
 spring-redis-session = [
     'spring-data-session-redis',

@@ -13,17 +13,13 @@ interface AddTermsFormProps {
   dataEntityId: number;
 }
 
-const AddTermsForm: React.FC<AddTermsFormProps> = ({
-  btnCreateEl,
-  dataEntityId,
-}) => {
+const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }) => {
   const dispatch = useAppDispatch();
 
-  const { handleSubmit, control, reset, formState } =
-    useForm<DataEntityTermFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-    });
+  const { handleSubmit, control, reset, formState } = useForm<DataEntityTermFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -31,9 +27,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
     isSuccessfulSubmit: boolean;
   }>(initialState);
 
-  const [selectedTerm, setSelectedTerm] = React.useState<TermRef | null>(
-    null
-  );
+  const [selectedTerm, setSelectedTerm] = React.useState<TermRef | null>(null);
 
   const clearState = () => {
     setState(initialState);
@@ -67,47 +61,36 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
   );
 
   const termFormTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Add term
     </Typography>
   );
 
   const termFormContent = () => (
-    <form id="add-term-form" onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="subtitle2" fontSize="0.73rem">
+    <form id='add-term-form' onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant='subtitle2' fontSize='0.73rem'>
         Select a term from the dictionary.
       </Typography>
       <Controller
-        name="termId"
+        name='termId'
         control={control}
         rules={{
           required: true,
         }}
         render={({ field }) => (
-          <TermsAutocomplete
-            field={field}
-            setSelectedTerm={handleSetSelectedTerm}
-          />
+          <TermsAutocomplete field={field} setSelectedTerm={handleSetSelectedTerm} />
         )}
       />
       {selectedTerm && (
         <>
-          <Grid container flexDirection="column" sx={{ mt: 2 }}>
-            <Typography
-              variant="body2"
-              color="texts.secondary"
-              component="span"
-            >
+          <Grid container flexDirection='column' sx={{ mt: 2 }}>
+            <Typography variant='body2' color='texts.secondary' component='span'>
               Namespace:
             </Typography>
             {selectedTerm.namespace.name}
           </Grid>
-          <Grid container flexDirection="column" sx={{ mt: 2 }}>
-            <Typography
-              variant="body2"
-              color="texts.secondary"
-              component="span"
-            >
+          <Grid container flexDirection='column' sx={{ mt: 2 }}>
+            <Typography variant='body2' color='texts.secondary' component='span'>
               Definition:
             </Typography>
             {selectedTerm.definition}
@@ -119,10 +102,10 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
 
   const termFormActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="add-term-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='add-term-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
@@ -135,7 +118,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }
-      maxWidth="sm"
+      maxWidth='sm'
       title={termFormTitle}
       renderContent={termFormContent}
       renderActions={termFormActionButtons}

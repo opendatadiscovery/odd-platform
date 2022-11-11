@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import {
+import type {
   ActivitiesState,
   ActivityCountParamsRequest,
   ActivityQueryName,
@@ -9,8 +9,7 @@ import {
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 
-const activitiesState = ({ activities }: RootState): ActivitiesState =>
-  activities;
+const activitiesState = ({ activities }: RootState): ActivitiesState => activities;
 
 export const getActivitiesListFetchingStatuses = createStatusesSelector(
   actions.fetchActivityListActionType
@@ -30,12 +29,10 @@ export const getActivityPageInfo = createSelector(
   activities => activities.pageInfo
 );
 
-export const getActivitiesListLength = createSelector(
-  activitiesState,
-  activities =>
-    Object.entries(activities.activitiesByDate)
-      .map(([_, activityList]) => activityList.length)
-      .reduce((acc, val) => acc + val, 0)
+export const getActivitiesListLength = createSelector(activitiesState, activities =>
+  Object.entries(activities.activitiesByDate)
+    .map(([_, activityList]) => activityList.length)
+    .reduce((acc, val) => acc + val, 0)
 );
 
 export const getActivitiesByDate = createSelector(
@@ -48,13 +45,8 @@ export const getActivitiesQueryParams = createSelector(
   (activities): ActivityQueryParams => activities.queryParams
 );
 
-export const getActivitiesQueryParamsByName = (
-  queryName: ActivityQueryName
-) =>
-  createSelector(
-    activitiesState,
-    activities => activities.queryParams[queryName]
-  );
+export const getActivitiesQueryParamsByName = (queryName: ActivityQueryName) =>
+  createSelector(activitiesState, activities => activities.queryParams[queryName]);
 
 export const getActivitiesCountsParams = createSelector(
   activitiesState,

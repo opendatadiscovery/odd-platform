@@ -1,7 +1,10 @@
-import { DataQualityTestExpectation, DataSetFieldTypeTypeEnum } from 'generated-sources';
+import {
+  type DataQualityTestExpectation,
+  DataSetFieldTypeTypeEnum,
+} from 'generated-sources';
 import capitalize from 'lodash/capitalize';
-import { Theme } from '@mui/material';
-import { CRUDType } from 'lib/interfaces';
+import { type Theme } from '@mui/material';
+import { type CRUDType } from 'lib/interfaces';
 import { format } from 'date-fns';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>

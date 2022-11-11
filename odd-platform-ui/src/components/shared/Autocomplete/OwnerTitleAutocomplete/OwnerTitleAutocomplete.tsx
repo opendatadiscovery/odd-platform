@@ -1,17 +1,18 @@
-import React, { HTMLAttributes } from 'react';
+import React, { type HTMLAttributes } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { Autocomplete, AutocompleteRenderInputParams, Typography } from '@mui/material';
-import { ControllerRenderProps } from 'react-hook-form';
-import { OwnershipFormData, Title } from 'generated-sources';
+import { type ControllerRenderProps } from 'react-hook-form';
+import type { OwnershipFormData, Title } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { AutocompleteSuggestion, AppInput } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnershipTitleList } from 'redux/thunks';
+import AutocompleteSuggestion from '../../AutocompleteSuggestion/AutocompleteSuggestion';
+import AppInput from '../../AppInput/AppInput';
 
 interface OwnershipTitleAutocompleteProps {
   field: ControllerRenderProps<OwnershipFormData, 'titleName'>;

@@ -1,8 +1,7 @@
 import { activitiesActionTypePrefix, fetchActivityListActionType } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
-import * as thunks from 'redux/thunks';
 import { addDays, endOfDay, format } from 'date-fns';
-import {
+import type {
   ActivitiesState,
   Activity,
   ActivityListResponse,
@@ -13,10 +12,15 @@ import {
 } from 'redux/interfaces';
 import { ActivityType } from 'generated-sources';
 import uniqBy from 'lodash/uniqBy';
+import {
+  activityListSize,
+  fetchActivityCounts,
+  fetchActivityList,
+  fetchDataEntityActivityList,
+} from 'redux/thunks/activity.thunks';
 
 const beginDate = endOfDay(addDays(new Date(), -5)).getTime();
 const endDate = endOfDay(addDays(new Date(), 1)).getTime();
-export const activityListSize = 20;
 
 const initialQueryParams: ActivityQueryParams = {
   beginDate,
@@ -126,11 +130,11 @@ export const activitiesSlice = createSlice({
     clearActivityFilters: () => initialState,
   },
   extraReducers: builder => {
-    builder.addCase(thunks.fetchActivityCounts.fulfilled, (state, { payload }) => {
+    builder.addCase(fetchActivityCounts.fulfilled, (state, { payload }) => {
       state.counts = payload;
     });
-    builder.addCase(thunks.fetchActivityList.fulfilled, updateActivitiesState);
-    builder.addCase(thunks.fetchDataEntityActivityList.fulfilled, updateActivitiesState);
+    builder.addCase(fetchActivityList.fulfilled, updateActivitiesState);
+    builder.addCase(fetchDataEntityActivityList.fulfilled, updateActivitiesState);
   },
 });
 

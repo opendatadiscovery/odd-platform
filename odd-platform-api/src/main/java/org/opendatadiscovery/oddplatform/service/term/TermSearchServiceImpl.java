@@ -108,7 +108,7 @@ public class TermSearchServiceImpl implements TermSearchService {
 
     private Mono<SearchFacetsPojo> fetchFacetState(final UUID searchId) {
         return reactiveSearchFacetRepository.get(searchId)
-            .switchIfEmpty(Mono.error(NotFoundException::new));
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("Search not found")));
     }
 
     private Mono<TermSearchFacetsData> getFacetsData(final UUID searchId, final FacetStateDto state) {

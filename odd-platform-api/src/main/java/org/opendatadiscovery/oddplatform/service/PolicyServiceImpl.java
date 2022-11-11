@@ -10,6 +10,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.PolicyFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PolicyList;
 import org.opendatadiscovery.oddplatform.dto.RoleDto;
 import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.PolicyMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.PolicyPojo;
@@ -43,6 +45,7 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Mono<PolicyDetails> getPolicyDetails(final long id) {
         return policyRepository.get(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Policy", id)))
             .map(policyMapper::mapToDetails);
     }
 
@@ -71,7 +74,7 @@ public class PolicyServiceImpl implements PolicyService {
         return policyRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Policy with id %d hasn't been found".formatted(id))))
             .filter(policy -> !policy.getName().equals(ADMINISTRATOR_POLICY))
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Administrator policy cannot be updated")))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Administrator policy cannot be updated")))
             .map(pojo -> policyMapper.applyToPojo(formData, pojo))
             .flatMap(policyRepository::update)
             .map(policyMapper::mapToDetails);
@@ -80,13 +83,13 @@ public class PolicyServiceImpl implements PolicyService {
     @Override
     public Mono<Policy> delete(final long id) {
         return policyRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Policy with id %d hasn't been found".formatted(id))))
+            .switchIfEmpty(Mono.error(new NotFoundException("Policy", id)))
             .filter(policy -> !policy.getName().equals(ADMINISTRATOR_POLICY))
-            .switchIfEmpty(Mono.error(new IllegalArgumentException("Administrator policy cannot be deleted")))
+            .switchIfEmpty(Mono.error(new BadUserRequestException("Administrator policy cannot be deleted")))
             .then(roleToPolicyRepository.isPolicyAttachedToRole(id))
             .filter(Boolean::booleanValue)
             .flatMap(isAttached -> Mono.error(
-                new IllegalStateException("Policy with id %d is attached to a role".formatted(id))))
+                new CascadeDeleteException("Policy is attached to a role")))
             .then(policyRepository.delete(id))
             .map(policyMapper::mapToPolicy);
     }

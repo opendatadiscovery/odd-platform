@@ -1,5 +1,5 @@
 import { toTimestampWithoutOffset } from 'lib/helpers';
-import { PageInfo } from 'redux/interfaces';
+import type { PageInfo } from 'redux/interfaces/common';
 
 export const assignWith = <
   TargetType extends Record<string, any>,

@@ -16,45 +16,40 @@ interface OverviewDatasetStatsProps {
   };
 }
 
-const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({
-  stats,
-}) => (
+const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({ stats }) => (
   <Grid container>
     <Grid item xs={12} sx={{ ml: 0, mb: 1.25 }}>
-      <EntityClassItem
-        entityClassName={DataEntityClassNameEnum.SET}
-        fullName
-      />
+      <EntityClassItem entityClassName={DataEntityClassNameEnum.SET} fullName />
     </Grid>
-    <Grid alignItems="center" item container xs={4}>
+    <Grid alignItems='center' item container xs={4}>
       <Grid item xs={12}>
-        <StatLabel variant="h6">Rows</StatLabel>
+        <StatLabel variant='h6'>Rows</StatLabel>
       </Grid>
-      <Grid item container xs={12} wrap="nowrap" alignItems="center">
+      <Grid item container xs={12} wrap='nowrap' alignItems='center'>
         <RowsIcon sx={{ mr: 1 }} />
-        <Typography variant="h2">
+        <Typography variant='h2'>
           <NumberFormatted value={stats?.rowsCount} />
         </Typography>
       </Grid>
     </Grid>
-    <Grid alignItems="center" item container xs={4}>
+    <Grid alignItems='center' item container xs={4}>
       <Grid item xs={12}>
-        <StatLabel variant="h6">Columns</StatLabel>
+        <StatLabel variant='h6'>Columns</StatLabel>
       </Grid>
-      <Grid item container xs={12} wrap="nowrap" alignItems="center">
+      <Grid item container xs={12} wrap='nowrap' alignItems='center'>
         <ColumnsIcon sx={{ mr: 1 }} />
-        <Typography variant="h2">
+        <Typography variant='h2'>
           <NumberFormatted value={stats?.fieldsCount} />
         </Typography>
       </Grid>
     </Grid>
-    <Grid alignItems="center" item container xs={4}>
+    <Grid alignItems='center' item container xs={4}>
       <Grid item xs={12}>
-        <StatLabel variant="h6">Used by</StatLabel>
+        <StatLabel variant='h6'>Used by</StatLabel>
       </Grid>
-      <Grid item container xs={12} wrap="nowrap" alignItems="center">
+      <Grid item container xs={12} wrap='nowrap' alignItems='center'>
         <UserIcon sx={{ mr: 1 }} />
-        <Typography variant="h2">
+        <Typography variant='h2'>
           <NumberFormatted value={stats?.consumersCount} />
         </Typography>
       </Grid>

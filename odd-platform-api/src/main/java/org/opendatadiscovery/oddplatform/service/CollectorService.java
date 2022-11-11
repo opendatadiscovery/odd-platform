@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.service;
 import org.opendatadiscovery.oddplatform.api.contract.model.Collector;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorList;
-import org.opendatadiscovery.oddplatform.api.contract.model.CollectorUpdateFormData;
 import reactor.core.publisher.Mono;
 
 public interface CollectorService {
@@ -11,7 +10,7 @@ public interface CollectorService {
 
     Mono<Collector> create(final CollectorFormData createEntityForm);
 
-    Mono<Collector> update(final long id, final CollectorUpdateFormData updateEntityForm);
+    Mono<Collector> update(final long id, final CollectorFormData updateEntityForm);
 
     Mono<Long> delete(final long id);
 

@@ -1,14 +1,27 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DatasetStructureIds, DatasetStructureState, RootState } from 'redux/interfaces';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import type {
+  DatasetStructureIds,
+  DatasetStructureState,
+  RootState,
+} from 'redux/interfaces';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { EnumValue } from 'generated-sources';
+import type { EnumValue } from 'generated-sources';
 import { emptyArr } from 'lib/constants';
 
 export const getDataSetStructureFetchingStatus = createStatusesSelector(
   actions.fetchDataSetStructureActionType
 );
+export const getDataSetStructureFetchingError = createErrorSelector(
+  actions.fetchDataSetStructureActionType
+);
 export const getDataSetStructureLatestFetchingStatus = createStatusesSelector(
+  actions.fetchDataSetStructureLatestActionType
+);
+export const getDataSetStructureLatestFetchingError = createErrorSelector(
   actions.fetchDataSetStructureLatestActionType
 );
 

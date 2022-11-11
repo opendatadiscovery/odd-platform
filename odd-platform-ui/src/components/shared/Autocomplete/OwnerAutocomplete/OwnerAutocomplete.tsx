@@ -8,10 +8,11 @@ import {
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { AutocompleteSuggestion, AppInput } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
+import AppInput from '../../AppInput/AppInput';
+import AutocompleteSuggestion from '../../AutocompleteSuggestion/AutocompleteSuggestion';
 
 interface OwnerAutocompleteProps {
   disableOwnerCreating?: boolean;

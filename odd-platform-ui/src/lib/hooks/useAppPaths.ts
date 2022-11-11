@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { AlertViewType, ManagementViewType } from 'lib/interfaces';
+import type { AlertViewType, ManagementViewType } from 'lib/interfaces';
 
 const useAppPaths = () => {
   const location = useLocation();

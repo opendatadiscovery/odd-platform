@@ -10,7 +10,7 @@ const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
   text = 'No content',
 }) => (
   <Typography
-    variant="subtitle2"
+    variant='subtitle2'
     sx={{
       mt: 2,
       display: 'flex',

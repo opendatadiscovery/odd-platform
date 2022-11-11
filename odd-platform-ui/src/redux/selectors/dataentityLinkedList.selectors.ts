@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import {
+import type {
   DataEntitiesState,
   DataEntityGroupLinkedListState,
   RootState,
@@ -11,9 +11,8 @@ const dataEntityGroupLinkedListState = ({
   dataEntityGroupLinkedList,
 }: RootState): DataEntityGroupLinkedListState => dataEntityGroupLinkedList;
 
-const dataEntitiesState = ({
-  dataEntities,
-}: RootState): DataEntitiesState => dataEntities;
+const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
+  dataEntities;
 
 export const getDEGLinkedListFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntityGroupLinkedListAction
@@ -24,9 +23,9 @@ export const getDataEntityGroupLinkedList = (dataEntityGroupId: number) =>
     dataEntityGroupLinkedListState,
     dataEntitiesState,
     (linkedLists, dataEntities) =>
-      linkedLists.linkedItemsIdsByDataEntityGroupId?.[
-        dataEntityGroupId
-      ]?.map(id => dataEntities.byId[id])
+      linkedLists.linkedItemsIdsByDataEntityGroupId?.[dataEntityGroupId]?.map(
+        id => dataEntities.byId[id]
+      )
   );
 
 export const getDataEntityGroupLinkedListPage = createSelector(

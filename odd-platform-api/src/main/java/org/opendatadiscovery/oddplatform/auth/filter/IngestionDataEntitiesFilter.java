@@ -41,16 +41,14 @@ public class IngestionDataEntitiesFilter extends AbstractIngestionFilter {
                         final String token = resolveToken(exchange.getRequest());
 
                         return dataSourceRepository.getDtoByOddrn(body.getDataSourceOddrn())
-                            .switchIfEmpty(Mono.error(new NotFoundException(
-                                "DataSource with oddrn %s doesn't exist".formatted(body.getDataSourceOddrn()))))
+                            .switchIfEmpty(Mono.error(new NotFoundException("dataSource", body.getDataSourceOddrn())))
                             .flatMap(dto -> {
                                 if (dto.token() != null) {
                                     return Mono.just(dto.token());
                                 } else {
                                     return collectorRepository.getDto(dto.dataSource().getCollectorId())
-                                        .switchIfEmpty(Mono.error(new NotFoundException(
-                                            "Collector with id %s doesn't exist".formatted(dto.dataSource()
-                                                .getCollectorId()))))
+                                        .switchIfEmpty(Mono.error(
+                                            new NotFoundException("collector", dto.dataSource().getCollectorId())))
                                         .map(CollectorDto::tokenDto);
                                 }
                             })

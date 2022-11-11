@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchTermLinkedList } from 'redux/thunks';
-import { TermLinkedListState } from 'redux/interfaces';
+import type { TermLinkedListState } from 'redux/interfaces';
 import { termLinkedListActionTypePrefix } from 'redux/actions';
 
 export const initialState: TermLinkedListState = {

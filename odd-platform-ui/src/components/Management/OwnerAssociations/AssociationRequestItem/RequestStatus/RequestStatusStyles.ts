@@ -9,6 +9,5 @@ export const Container = styled(Typography)<{
   padding: theme.spacing(0.25, 1),
   borderRadius: '12px',
   border: `1px solid ${theme.palette.associationRequestStatus[$status].border}`,
-  backgroundColor:
-    theme.palette.associationRequestStatus[$status].background,
+  backgroundColor: theme.palette.associationRequestStatus[$status].background,
 }));

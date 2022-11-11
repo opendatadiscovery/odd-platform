@@ -1,7 +1,7 @@
 import { dataCollaborationActTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { DataCollaborationState, Message } from 'redux/interfaces';
+import type { DataCollaborationState, Message } from 'redux/interfaces';
 import { formattedDate } from 'lib/helpers';
 import uniqBy from 'lodash/uniqBy';
 

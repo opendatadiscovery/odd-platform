@@ -1,4 +1,4 @@
-import { PageInfo as GeneratedPageInfo } from 'generated-sources';
+import type { PageInfo as GeneratedPageInfo } from 'generated-sources';
 
 export interface CurrentPageInfo extends GeneratedPageInfo {
   page: number;

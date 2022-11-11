@@ -1,6 +1,5 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { getDataEntityLineageStreamFetching } from 'redux/selectors';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';
 import {
@@ -8,6 +7,10 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { StreamType } from 'redux/interfaces';
+import {
+  getDownstreamLineageFetchingStatuses,
+  getUpstreamLineageFetchingStatuses,
+} from 'redux/selectors';
 import * as S from './LoadMoreButtonStyles';
 
 interface LoadMoreButtonProps {
@@ -38,7 +41,17 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const isStreamFetching = useAppSelector(getDataEntityLineageStreamFetching);
+  const { isLoading: isUpstreamFetching } = useAppSelector(
+    getUpstreamLineageFetchingStatuses
+  );
+  const { isLoading: isDownstreamFetching } = useAppSelector(
+    getDownstreamLineageFetchingStatuses
+  );
+
+  const isStreamFetching = React.useMemo(
+    () => isUpstreamFetching || isDownstreamFetching,
+    [isUpstreamFetching, isDownstreamFetching]
+  );
 
   const loadMoreButtonHandler = () => {
     const params = { dataEntityId, lineageDepth: 1, rootNodeId };

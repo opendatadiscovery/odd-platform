@@ -12,14 +12,14 @@ const TestReportDetailsOverviewParametersModal: React.FC<
   TestReportDetailsOverviewParametersModalProps
 > = ({ openBtnEl, expectations }) => {
   const modalTitle = (
-    <Typography variant="h3" component="span">
+    <Typography variant='h3' component='span'>
       Parameters
     </Typography>
   );
 
   const renderContent = React.useCallback(
     () => (
-      <Typography variant="body1" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
+      <Typography variant='body1' sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
         {JSON.stringify(expectations, null, 2)}
       </Typography>
     ),
@@ -33,7 +33,7 @@ const TestReportDetailsOverviewParametersModal: React.FC<
       }
       title={modalTitle}
       renderContent={renderContent}
-      maxWidth="md"
+      maxWidth='md'
     />
   );
 };

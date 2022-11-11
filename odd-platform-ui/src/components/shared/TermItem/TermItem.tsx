@@ -1,12 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Permission, TermRef } from 'generated-sources';
-import { deleteDataEntityTerm } from 'redux/thunks';
+import { Permission, type TermRef } from 'generated-sources';
+import { deleteDataEntityTerm } from 'redux/thunks/dataentities.thunks';
 import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { WithPermissions } from 'components/shared/contexts';
-import { CloseIcon } from 'components/shared/Icons';
-import { AppIconButton } from 'components/shared/index';
+import CloseIcon from '../Icons/CloseIcon';
+import WithPermissions from '../contexts/Permission/WithPermissions';
+import AppIconButton from '../AppIconButton/AppIconButton';
 import * as S from './TermItemStyles';
 
 interface TermItemProps {

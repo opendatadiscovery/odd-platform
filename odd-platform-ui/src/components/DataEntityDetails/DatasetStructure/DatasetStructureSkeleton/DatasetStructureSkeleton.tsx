@@ -13,7 +13,7 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
   width,
 }) => {
   const structureRowItem = (key: number) => (
-    <Grid key={key} item xs={1} height="34px" container wrap="wrap">
+    <Grid key={key} item xs={1} height='34px' container wrap='wrap'>
       <Grid item xs={12}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
@@ -24,28 +24,23 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
   );
 
   const structureRow = (key: number) => (
-    <Grid
-      key={key}
-      container
-      justifyContent="space-between"
-      sx={{ pt: 5, pl: 5 }}
-    >
-      <Grid item xs={3} container wrap="wrap">
-        <Grid item xs={10} height="26px">
+    <Grid key={key} container justifyContent='space-between' sx={{ pt: 5, pl: 5 }}>
+      <Grid item xs={3} container wrap='wrap'>
+        <Grid item xs={10} height='26px'>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={10} height="20px">
+        <Grid item xs={10} height='20px'>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
-      <Grid item xs={9} container justifyContent="flex-end">
-        <Grid item xs={2} height="34px">
+      <Grid item xs={9} container justifyContent='flex-end'>
+        <Grid item xs={2} height='34px'>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} height="34px">
+        <Grid item xs={2} height='34px'>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} height="34px">
+        <Grid item xs={2} height='34px'>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         {[...Array(4)].map((_, id) => structureRowItem(id))}
@@ -55,11 +50,11 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
 
   return (
     <Grid container sx={{ px: 1 }}>
-      <Grid container height="34px" justifyContent="space-between">
+      <Grid container height='34px' justifyContent='space-between'>
         <Grid item xs={5}>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} container justifyContent="flex-end">
+        <Grid item xs={2} container justifyContent='flex-end'>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>

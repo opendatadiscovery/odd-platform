@@ -8,7 +8,7 @@ import {
 } from 'redux/selectors';
 import { fetchRelatedMessages, messagesListSize as size } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
-import { DataEntityApiGetRelatedMessagesRequest } from 'redux/interfaces';
+import type { DataEntityApiGetMessagesRequest } from 'generated-sources';
 import ThreadContent from './ThreadContent/ThreadContent';
 
 interface ThreadProps {
@@ -25,11 +25,10 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
     getRelatedMessagesFetchingStatuses
   );
 
-  const fetchRelatedMessagesParams =
-    React.useMemo<DataEntityApiGetRelatedMessagesRequest>(
-      () => ({ dataEntityId, messageId, size, lastMessageId: lastId }),
-      [dataEntityId, messageId, size, lastId]
-    );
+  const fetchRelatedMessagesParams = React.useMemo<DataEntityApiGetMessagesRequest>(
+    () => ({ dataEntityId, messageId, size, lastMessageId: lastId }),
+    [dataEntityId, messageId, size, lastId]
+  );
 
   React.useEffect(() => {
     dispatch(fetchRelatedMessages(fetchRelatedMessagesParams));

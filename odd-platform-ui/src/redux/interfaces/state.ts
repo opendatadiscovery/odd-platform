@@ -1,6 +1,5 @@
-import { EntityState } from '@reduxjs/toolkit';
-import { ActionType } from 'typesafe-actions';
-import {
+import type { EntityState } from '@reduxjs/toolkit';
+import type {
   ActivityCountInfo,
   AlertTotals,
   AppInfo,
@@ -20,7 +19,6 @@ import {
   DataSource,
   EnumValue,
   Label,
-  MessageChannel,
   MetadataField,
   MetadataFieldValue,
   Namespace,
@@ -38,30 +36,22 @@ import {
   PermissionResourceType,
   Feature,
 } from 'generated-sources';
-import * as actions from 'redux/actions';
-import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
-import rootReducer from 'redux/slices';
 // eslint-disable-next-line lodash/import-scope
-import { Dictionary } from 'lodash';
-import { store } from 'redux/store';
-import {
-  Activity,
-  ActivityPageInfo,
-  ActivityQueryParams,
-  Alert,
-  CurrentPageInfo,
-  DataEntityDetailsState,
-  DataEntityLineageById,
-  DataSetStructureTypesCount,
+import type { Dictionary } from 'lodash';
+import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
+import type { CurrentPageInfo, PageInfo } from './common';
+import type { DataSetStructureTypesCount } from './datasetStructure';
+import type { DataEntityLineageById } from './dataentityLineage';
+import type { DataEntityDetailsState } from './dataentities';
+import type { Alert } from './alerts';
+import type { Activity, ActivityPageInfo, ActivityQueryParams } from './activities';
+import type {
   FacetOptionsByName,
-  Message,
-  MessagesByDate,
-  PageInfo,
-  SearchFacetsByName,
   SearchTotalsByName,
-  TermSearchFacetOptionsByName,
-  TermSearchFacetsByName,
-} from 'redux/interfaces';
+  SearchFacetsByName,
+} from './dataEntitySearch';
+import type { TermSearchFacetOptionsByName, TermSearchFacetsByName } from './termSearch';
+import type { MessagesByDate, Message } from './dataCollaboration';
 
 export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo: CurrentPageInfo;
@@ -221,7 +211,7 @@ export interface TermSearchState {
 
 export interface TermLinkedListState {
   linkedItemsIdsByTermId: { [termId: string]: number[] };
-  pageInfo?: CurrentPageInfo;
+  pageInfo: CurrentPageInfo;
 }
 
 export interface ActivitiesState {
@@ -240,8 +230,3 @@ export interface PoliciesState {
   policyDetails: EntityState<PolicyDetails>;
   policySchema: Record<string, unknown>;
 }
-
-export type RootState = ReturnType<typeof rootReducer>;
-export type AppDispatch = typeof store.dispatch;
-
-export type Action = ActionType<typeof actions>;

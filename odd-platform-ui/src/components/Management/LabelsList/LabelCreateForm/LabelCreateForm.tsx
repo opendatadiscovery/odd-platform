@@ -18,13 +18,9 @@ interface LabelCreateFormData {
   labels: LabelFormData[];
 }
 
-const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
-  btnCreateEl,
-}) => {
+const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isLabelCreating } = useAppSelector(
-    getLabelCreatingStatuses
-  );
+  const { isLoading: isLabelCreating } = useAppSelector(getLabelCreatingStatuses);
   const methods = useForm<LabelCreateFormData>({
     defaultValues: {
       labels: [
@@ -78,14 +74,14 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Create Label
     </Typography>
   );
 
   const formContent = () => (
     <FormProvider {...methods}>
-      <form id="label-create-form">
+      <form id='label-create-form'>
         {fields.map((item, index) => (
           <LabelCreateFormItem
             key={item.id}
@@ -95,9 +91,9 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
           />
         ))}
         <AppButton
-          size="medium"
-          form="tag-create-form"
-          color="primaryLight"
+          size='medium'
+          form='tag-create-form'
+          color='primaryLight'
           startIcon={<AddIcon />}
           onClick={handleAppend}
         >
@@ -109,10 +105,10 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="label-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='label-create-form'
+      color='primary'
       fullWidth
       disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}
@@ -123,7 +119,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }

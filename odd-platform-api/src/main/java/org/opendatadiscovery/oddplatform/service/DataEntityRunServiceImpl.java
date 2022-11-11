@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityRunMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -30,9 +31,9 @@ public class DataEntityRunServiceImpl implements DataEntityRunService {
                                                      final int size) {
         return dataEntityRepository.get(dataEntityId)
             .switchIfEmpty(Mono.error(
-                new NotFoundException("Data entity with id %d not found".formatted(dataEntityId))))
+                new NotFoundException("Data entity", dataEntityId)))
             .filter(this::checkIfDeClassSupposedToHaveRuns)
-            .switchIfEmpty(Mono.error(new IllegalStateException(
+            .switchIfEmpty(Mono.error(new BadUserRequestException(
                 "Data entity with id %d is not supposed to have runs due to its class".formatted(dataEntityId))))
             .flatMap(de -> dataEntityRunRepository.getDataEntityRuns(de.getId(), status, page, size))
             .map(pageInfo -> dataEntityRunMapper.mapDataEntityRuns(dataEntityId, pageInfo));

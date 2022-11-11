@@ -19,22 +19,14 @@ interface LabelEditFormProps {
   label: Label;
 }
 
-const LabelEditForm: React.FC<LabelEditFormProps> = ({
-  editBtn,
-  label,
-}) => {
+const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isLabelDeleting } = useAppSelector(
-    getLabelDeletingStatuses
-  );
-  const { isLoading: isLabelUpdating } = useAppSelector(
-    getLabelUpdatingStatuses
-  );
-  const { control, handleSubmit, reset, formState } =
-    useForm<LabelFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-    });
+  const { isLoading: isLabelDeleting } = useAppSelector(getLabelDeletingStatuses);
+  const { isLoading: isLabelUpdating } = useAppSelector(getLabelUpdatingStatuses);
+  const { control, handleSubmit, reset, formState } = useForm<LabelFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -68,22 +60,22 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Edit Label
     </Typography>
   );
 
   const formContent = () => (
-    <form id="label-edit-form" onSubmit={handleSubmit(handleUpdate)}>
+    <form id='label-edit-form' onSubmit={handleSubmit(handleUpdate)}>
       <Controller
-        name="name"
+        name='name'
         control={control}
         defaultValue={label.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Label Name"
+            placeholder='Label Name'
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -98,10 +90,10 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="label-edit-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='label-edit-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
@@ -111,7 +103,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(editBtn, { onClick: handleOpen })
       }

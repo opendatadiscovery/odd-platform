@@ -18,24 +18,24 @@ const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
   <Grid
     sx={{ p: 2, pt: 1 }}
     container
-    justifyContent="space-between"
-    alignItems="center"
-    flexWrap="nowrap"
+    justifyContent='space-between'
+    alignItems='center'
+    flexWrap='nowrap'
   >
     <Grid>
       {ranges.map(range => (
         <AppButton
           key={range.label}
           sx={{ mr: 0.5 }}
-          color="secondary"
-          size="medium"
+          color='secondary'
+          size='medium'
           onClick={() => setRange(range.value)}
         >
           {range.label}
         </AppButton>
       ))}
     </Grid>
-    <AppButton color="primary" size="large" onClick={onClickDoneBtn}>
+    <AppButton color='primary' size='large' onClick={onClickDoneBtn}>
       Done
     </AppButton>
   </Grid>

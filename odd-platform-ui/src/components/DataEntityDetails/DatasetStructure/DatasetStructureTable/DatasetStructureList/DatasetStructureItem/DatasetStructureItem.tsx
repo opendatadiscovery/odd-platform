@@ -10,7 +10,6 @@ import {
   TruncatedLabel,
 } from 'components/shared';
 import { GraphIcon, InformationIcon, MinusIcon, PlusIcon } from 'components/shared/Icons';
-import { usePermissions } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';

@@ -55,4 +55,6 @@ export { default as TestRunStatusIcon } from './TestRunStatusIcon/TestRunStatusI
 export { default as AppAvatar } from './AppAvatar/AppAvatar';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';
 export { default as AppJSONEditor } from './AppJSONEditor/AppJSONEditor';
+export { default as AppToast } from './AppToast/AppToast';
+export { default as AppErrorPage } from './AppErrorPage/AppErrorPage';
 export { default as WithFeature } from './WithFeature/WithFeature';

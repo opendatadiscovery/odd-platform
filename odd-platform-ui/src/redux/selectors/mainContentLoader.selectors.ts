@@ -1,13 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
 import compact from 'lodash/compact';
+import { getTagListFetchingStatuses } from 'redux/selectors/tags.selectors';
+import { getIdentityFetchingStatuses } from 'redux/selectors/profile.selectors';
 import {
-  getIdentityFetchingStatuses,
   getMyDataEntitiesFetchingStatuses,
   getMyDownstreamFetchingStatuses,
   getMyUpstreamDataEntitiesFetchingStatuses,
   getPopularDataEntitiesFetchingStatuses,
-  getTagListFetchingStatuses,
-} from 'redux/selectors';
+} from 'redux/selectors/dataentity.selectors';
 
 export const getIsMainOverviewContentFetching = createSelector(
   getTagListFetchingStatuses,

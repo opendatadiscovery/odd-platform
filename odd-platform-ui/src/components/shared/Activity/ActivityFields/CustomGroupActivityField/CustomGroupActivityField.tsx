@@ -1,12 +1,13 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
-import { CustomGroupActivityState } from 'generated-sources';
-import { CRUDType } from 'lib/interfaces';
+import { type CustomGroupActivityState } from 'generated-sources';
+import { type CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import { AppButton } from 'components/shared';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
+import AppButton from '../../../AppButton/AppButton';
+import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
+import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
 import * as S from '../ArrayActivityField/ArrayActivityFieldStyles';
 
 interface GroupFieldData {

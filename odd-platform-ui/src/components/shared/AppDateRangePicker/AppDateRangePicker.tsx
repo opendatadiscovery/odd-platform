@@ -66,8 +66,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     selectedDate: DateObject | DateObject[];
   }) => {
     const isArray = Array.isArray(selectedDate);
-    if (isArray && selectedDate[0].unix === date.unix)
-      return { disabled: true };
+    if (isArray && selectedDate[0].unix === date.unix) return { disabled: true };
 
     return {};
   };
@@ -76,7 +75,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     <>
       <S.DateRangePickerLabel>{label}</S.DateRangePickerLabel>
       <DatePicker
-        format="D MMM"
+        format='D MMM'
         range
         arrow={false}
         showOtherDays
@@ -91,7 +90,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         value={[rangeStart, rangeEnd]}
         plugins={[
           <AppDateRangePickerFooter
-            position="bottom"
+            position='bottom'
             onClickDoneBtn={() => {
               if (setCurrentRange) {
                 setCurrentRange(rangeStart, rangeEnd);

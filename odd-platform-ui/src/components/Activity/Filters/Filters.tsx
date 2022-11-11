@@ -35,11 +35,11 @@ const Filters: React.FC = () => {
   );
   return (
     <S.Container>
-      <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
-        <Typography variant="h4">Filters</Typography>
+      <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
+        <Typography variant='h4'>Filters</Typography>
         <AppButton
-          color="tertiary"
-          size="medium"
+          color='tertiary'
+          size='medium'
           onClick={() => {
             dispatch(clearActivityFilters());
           }}
@@ -50,26 +50,26 @@ const Filters: React.FC = () => {
       <S.ListContainer>
         <CalendarFilter />
         <SingleFilter
-          key="ds"
-          name="Datasource"
-          filterName="datasourceId"
+          key='ds'
+          name='Datasource'
+          filterName='datasourceId'
           filterOptions={datasources}
         />
         <SingleFilter
-          key="ns"
-          filterName="namespaceId"
-          name="Namespace"
+          key='ns'
+          filterName='namespaceId'
+          name='Namespace'
           filterOptions={namespaces}
         />
         <SingleFilter
-          key="at"
-          filterName="eventType"
-          name="Event type"
+          key='at'
+          filterName='eventType'
+          name='Event type'
           filterOptions={activityEventTypes}
         />
-        <MultipleFilter key="tg" filterName="tagIds" name="Tag" />
-        <MultipleFilter key="ow" filterName="ownerIds" name="Owner" />
-        <MultipleFilter key="us" filterName="userIds" name="User" />
+        <MultipleFilter key='tg' filterName='tagIds' name='Tag' />
+        <MultipleFilter key='ow' filterName='ownerIds' name='Owner' />
+        <MultipleFilter key='us' filterName='userIds' name='User' />
       </S.ListContainer>
     </S.Container>
   );

@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -77,6 +78,7 @@ public class AlertServiceImpl implements AlertService {
                 alertId, AlertStatusEnum.valueOf(alertStatus.name()), u.username()))
             .switchIfEmpty(alertRepository
                 .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), null))
+            .switchIfEmpty(Mono.error(new NotFoundException("Alert", alertId)))
             .thenReturn(alertStatus);
     }
 

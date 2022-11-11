@@ -1,8 +1,7 @@
 import React from 'react';
 import { Box, BoxProps } from '@mui/material';
 
-export interface NumberFormattedProps
-  extends Pick<BoxProps, 'sx' | 'component'> {
+export interface NumberFormattedProps extends Pick<BoxProps, 'sx' | 'component'> {
   value: string | number | undefined | null;
   precision?: number;
 }
@@ -17,8 +16,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
   if (value === undefined) formattedNumber = '';
   if (value === null) formattedNumber = 'N/A';
 
-  const numVal =
-    typeof value === 'string' ? parseInt(value, 10) : (value as number);
+  const numVal = typeof value === 'string' ? parseInt(value, 10) : (value as number);
 
   const formatNumber = React.useCallback(() => {
     const lookups = [
@@ -36,8 +34,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
       .reverse()
       .find(lookup => numVal >= lookup.value);
     return item
-      ? (numVal / item.value).toFixed(precision).replace(rx, '$1') +
-          item.symbol
+      ? (numVal / item.value).toFixed(precision).replace(rx, '$1') + item.symbol
       : '0';
   }, [value, precision]);
 
@@ -48,7 +45,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
       sx={sx}
       component={component}
       title={numVal && numVal > 1000 ? numVal.toLocaleString() : ''}
-      data-testid="number-formatted-component"
+      data-testid='number-formatted-component'
     >
       {formattedNumber}
     </Box>

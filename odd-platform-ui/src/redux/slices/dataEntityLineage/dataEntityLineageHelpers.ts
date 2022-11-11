@@ -1,13 +1,14 @@
-import { DataEntityLineageState, StreamType } from 'redux/interfaces';
-import { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
-import {
+import type {
+  DataEntityLineageState,
+  StreamType,
   FilterDownstreamEdges,
   FilterUpstreamEdges,
   GroupedDataEntityLineageNode,
   GroupingDownstreamNodes,
   GroupingUpstreamNodes,
   LocalState,
-} from 'redux/interfaces/dataentityLineage';
+} from 'redux/interfaces';
+import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
 
 export const isRootNodeIdsEqual = (rootNodeId: number, currentRootNodeId: number) =>
   rootNodeId === currentRootNodeId;

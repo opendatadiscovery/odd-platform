@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { TermsState } from 'redux/interfaces';
+import type { TermsState } from 'redux/interfaces';
 import omit from 'lodash/omit';
 import { termsActTypePrefix } from 'redux/actions';
 

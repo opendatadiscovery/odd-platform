@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { profileActionPrefix } from 'redux/actions';
-import { ProfileState } from 'redux/interfaces';
+import type { ProfileState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { type Permission, PermissionResourceType } from 'generated-sources';
 
 export const initialState: ProfileState = {
   owner: { identity: { username: '' } },

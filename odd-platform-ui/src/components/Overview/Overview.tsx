@@ -1,17 +1,20 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React from 'react';
 import {
   getDataEntitiesUsageTotalCount,
   getDataEntitiesUsageUnfilledCount,
   getDataEntityClassesUsageInfo,
+  getDataEntityUsageInfoFetchingStatuses,
   getIsMainOverviewContentFetching,
+  getTagListFetchingStatuses,
+  getTagsList,
 } from 'redux/selectors';
-import { EntityClassItem, MainSearch, SkeletonWrapper } from 'components/shared';
+import { MainSearch, SkeletonWrapper } from 'components/shared';
 import { fetchDataEntitiesUsageInfo, fetchTagsList } from 'redux/thunks';
-import { DataEntityClassLabelMap } from 'redux/interfaces';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import DataEntitiesUsageInfo from './DataEntitiesUsageInfo/DataEntitiesUsageInfo';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
@@ -23,6 +26,11 @@ const Overview: React.FC = () => {
   const dataEntityClassesUsageInfo = useAppSelector(getDataEntityClassesUsageInfo);
   const dataEntityUsageTotalCount = useAppSelector(getDataEntitiesUsageTotalCount);
   const dataEntityUsageUnfilledCount = useAppSelector(getDataEntitiesUsageUnfilledCount);
+  const topTags = useAppSelector(getTagsList);
+  const { isNotLoaded: isUsageInfoNotFetched } = useAppSelector(
+    getDataEntityUsageInfoFetchingStatuses
+  );
+  const { isNotLoaded: isTagsNotFetched } = useAppSelector(getTagListFetchingStatuses);
 
   const isMainOverviewContentFetching = useAppSelector(getIsMainOverviewContentFetching);
 
@@ -43,43 +51,14 @@ const Overview: React.FC = () => {
             <MainSearch mainSearch />
           </Grid>
           <S.TagsContainer container>
-            <TopTagsList />
+            <TopTagsList topTags={topTags} isTagsNotFetched={isTagsNotFetched} />
           </S.TagsContainer>
-          <Grid container sx={{ mt: 8 }} wrap='nowrap'>
-            <S.DataEntitiesUsageContainer>
-              <S.DataEntitiesTotalContainer>
-                <Box>
-                  <Typography variant='h4'>Total entities</Typography>
-                  <Typography variant='h1'>{dataEntityUsageTotalCount}</Typography>
-                </Box>
-                <Box>
-                  <S.UnfilledEntities>
-                    {dataEntityUsageUnfilledCount} unfilled entities
-                  </S.UnfilledEntities>
-                </Box>
-              </S.DataEntitiesTotalContainer>
-              <S.ListItemContainer>
-                {dataEntityClassesUsageInfo?.map((item, index) => (
-                  <S.ListItemWrapper key={item?.entityClass?.id}>
-                    <S.ListItem $index={index}>
-                      <EntityClassItem
-                        sx={{ ml: 0.5 }}
-                        key={item?.entityClass?.id}
-                        entityClassName={item?.entityClass?.name}
-                      />
-                      <Typography noWrap title={item?.entityClass?.name}>
-                        {item.entityClass &&
-                          DataEntityClassLabelMap.get(item.entityClass.name)?.normal}
-                      </Typography>
-                    </S.ListItem>
-                    <Typography variant='h4' noWrap>
-                      {item.totalCount}
-                    </Typography>
-                  </S.ListItemWrapper>
-                ))}
-              </S.ListItemContainer>
-            </S.DataEntitiesUsageContainer>
-          </Grid>
+          <DataEntitiesUsageInfo
+            dataEntityClassesUsageInfo={dataEntityClassesUsageInfo}
+            dataEntityUsageTotalCount={dataEntityUsageTotalCount}
+            dataEntityUsageUnfilledCount={dataEntityUsageUnfilledCount}
+            isUsageInfoNotFetched={isUsageInfoNotFetched}
+          />
         </>
       )}
       <WithPermissionsProvider

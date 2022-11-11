@@ -18,16 +18,11 @@ const EntityClassItem: React.FC<EntityClassItemProps> = ({
     $entityClassName={entityClassName}
     $fullName={fullName}
     sx={sx}
-    component="span"
-    title={
-      entityClassName &&
-      DataEntityClassLabelMap.get(entityClassName)?.normal
-    }
+    component='span'
+    title={entityClassName && DataEntityClassLabelMap.get(entityClassName)?.normal}
   >
     {entityClassName &&
-      DataEntityClassLabelMap.get(entityClassName)?.[
-        fullName ? 'normal' : 'short'
-      ]}
+      DataEntityClassLabelMap.get(entityClassName)?.[fullName ? 'normal' : 'short']}
   </S.Content>
 );
 

@@ -1,8 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { CurrentPageInfo, RootState } from 'redux/interfaces';
+import type { CurrentPageInfo, RootState, LabelsState } from 'redux/interfaces';
 import { labelsAdapter } from 'redux/slices/labels.slice';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
-import { LabelsState } from 'redux/interfaces/state';
 import * as actions from 'redux/actions';
 
 const labelsState = ({ labels }: RootState): LabelsState => labels;

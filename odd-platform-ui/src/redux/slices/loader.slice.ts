@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import {
   UnknownAsyncThunkFulfilledAction,
   UnknownAsyncThunkPendingAction,
   UnknownAsyncThunkRejectedAction,
 } from '@reduxjs/toolkit/dist/matchers';
-import { ErrorState, LoaderSliceState } from 'redux/interfaces';
+import type { ErrorState, LoaderSliceState } from 'redux/interfaces';
 
 export const initialState: LoaderSliceState = {
   statuses: {},

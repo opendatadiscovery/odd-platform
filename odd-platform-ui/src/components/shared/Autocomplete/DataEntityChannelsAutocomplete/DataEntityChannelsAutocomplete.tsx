@@ -1,18 +1,21 @@
-import React, { HTMLAttributes } from 'react';
+import React, { type HTMLAttributes } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
-  Theme,
+  type AutocompleteRenderInputParams,
+  type Theme,
   Typography,
 } from '@mui/material';
-import { MessageChannel } from 'generated-sources';
-import { createFilterOptions, FilterOptionsState } from '@mui/material/useAutocomplete';
-import { AppInput } from 'components/shared';
+import { type MessageChannel } from 'generated-sources';
+import {
+  createFilterOptions,
+  type FilterOptionsState,
+} from '@mui/material/useAutocomplete';
+import AppInput from 'components/shared/AppInput/AppInput';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntityChannels } from 'redux/thunks';
-import { SxProps } from '@mui/system';
+import { type SxProps } from '@mui/system';
 
 interface DataEntityChannelsAutocompleteProps {
   dataEntityId: number;

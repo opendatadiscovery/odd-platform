@@ -19,24 +19,16 @@ interface NamespaceFormProps {
   namespace?: Namespace;
 }
 
-const NamespaceForm: React.FC<NamespaceFormProps> = ({
-  btnEl,
-  namespace,
-}) => {
+const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isNamespaceCreating } = useAppSelector(
-    getNamespaceCreatingStatuses
-  );
-  const { isLoading: isNamespaceUpdating } = useAppSelector(
-    getNamespaceUpdatingStatuses
-  );
+  const { isLoading: isNamespaceCreating } = useAppSelector(getNamespaceCreatingStatuses);
+  const { isLoading: isNamespaceUpdating } = useAppSelector(getNamespaceUpdatingStatuses);
 
-  const { control, handleSubmit, reset, formState } =
-    useForm<NamespaceFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-    });
+  const { control, handleSubmit, reset, formState } = useForm<NamespaceFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -77,22 +69,22 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {namespace ? 'Edit' : 'Add'} Namespace
     </Typography>
   );
 
   const formContent = () => (
-    <form id="namespace-edit-form" onSubmit={handleSubmit(handleUpdate)}>
+    <form id='namespace-edit-form' onSubmit={handleSubmit(handleUpdate)}>
       <Controller
-        name="name"
+        name='name'
         control={control}
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Namespace Name"
+            placeholder='Namespace Name'
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -107,10 +99,10 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="namespace-edit-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='namespace-edit-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
@@ -120,7 +112,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnEl, { onClick: handleOpen })
       }

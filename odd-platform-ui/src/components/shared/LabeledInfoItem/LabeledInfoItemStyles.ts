@@ -28,15 +28,13 @@ export const Container = styled(Grid)<{
   };
 });
 
-export const Label = styled(Typography)<{ component: ElementType }>(
-  ({ theme }) => ({
-    display: 'block',
-    color: theme.palette.texts.secondary,
-    lineHeight: theme.typography.h3.lineHeight,
-    overflow: 'hidden',
-    width: 'inherit',
-  })
-);
+export const Label = styled(Typography)<{ component: ElementType }>(({ theme }) => ({
+  display: 'block',
+  color: theme.palette.texts.secondary,
+  lineHeight: theme.typography.h3.lineHeight,
+  overflow: 'hidden',
+  width: 'inherit',
+}));
 
 export const LabelContainer = styled(Grid)(() => ({
   width: '100%',
@@ -52,9 +50,7 @@ export const Value = styled(Typography)<ValueProps>(
     display: 'block',
     wordBreak: 'break-all',
     overflow: 'hidden',
-    color: $runStatus
-      ? theme.palette.runStatus[$runStatus].color
-      : $valueColor,
+    color: $runStatus ? theme.palette.runStatus[$runStatus].color : $valueColor,
     marginLeft: $inline ? theme.spacing(0.5) : '',
     lineHeight: $valueLineHeight ? `${$valueLineHeight}px` : 'inherit',
   })

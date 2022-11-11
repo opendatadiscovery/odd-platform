@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import {
+import type {
   DataEntityLineageById,
   DataEntityLineageState,
   DataEntityLineageStreamById,

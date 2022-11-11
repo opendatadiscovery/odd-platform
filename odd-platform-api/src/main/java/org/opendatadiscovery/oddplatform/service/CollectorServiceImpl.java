@@ -6,16 +6,16 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.Collector;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorList;
-import org.opendatadiscovery.oddplatform.api.contract.model.CollectorUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
+import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.CollectorMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.CollectorPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -27,6 +27,7 @@ public class CollectorServiceImpl implements CollectorService {
     private final ReactiveCollectorRepository collectorRepository;
     private final NamespaceService namespaceService;
     private final ReactiveTokenRepository tokenRepository;
+    private final ReactiveDataSourceRepository dataSourceRepository;
 
     @Override
     public Mono<CollectorList> list(final int page, final int size, final String nameQuery) {
@@ -48,9 +49,9 @@ public class CollectorServiceImpl implements CollectorService {
 
     @Override
     @ReactiveTransactional
-    public Mono<Collector> update(final long id, final CollectorUpdateFormData form) {
+    public Mono<Collector> update(final long id, final CollectorFormData form) {
         return collectorRepository.getDto(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Collector with ID %d doesn't exist", id)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Collector", id)))
             .flatMap(collectorDto -> {
                 if (StringUtils.isNotEmpty(form.getNamespaceName())) {
                     return namespaceService.getOrCreate(form.getNamespaceName())
@@ -68,14 +69,20 @@ public class CollectorServiceImpl implements CollectorService {
     }
 
     @Override
+    @ReactiveTransactional
     public Mono<Long> delete(final long id) {
-        return collectorRepository.delete(id).map(CollectorPojo::getId);
+        return dataSourceRepository.existsByCollector(id)
+            .filter(exists -> !exists)
+            .switchIfEmpty(Mono.error(new CascadeDeleteException("Collector has associated data sources")))
+            .then(collectorRepository.delete(id))
+            .switchIfEmpty(Mono.error(new NotFoundException("Collector", id)))
+            .map(CollectorPojo::getId);
     }
 
     @Override
     public Mono<Collector> regenerateToken(final long collectorId) {
         return collectorRepository.getDto(collectorId)
-            .switchIfEmpty(Mono.error(new NotFoundException("Collector with ID %d doesn't exist", collectorId)))
+            .switchIfEmpty(Mono.error(new NotFoundException("Collector", collectorId)))
             .flatMap(dto -> tokenGenerator
                 .regenerateToken(dto.tokenDto().tokenPojo())
                 .flatMap(tokenRepository::updateToken)

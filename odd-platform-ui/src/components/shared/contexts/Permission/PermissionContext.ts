@@ -1,5 +1,5 @@
 import React from 'react';
-import { Permission } from 'generated-sources';
+import type { Permission } from 'generated-sources';
 
 export interface PermissionContextProps {
   isAllowedTo: boolean;

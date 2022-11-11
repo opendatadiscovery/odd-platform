@@ -25,4 +25,6 @@ public interface ReactiveGroupEntityRelationRepository {
     Mono<Map<String, List<String>>> fetchGroupRelations(final Collection<String> childOddrns);
 
     Flux<String> getDEGEntitiesOddrns(final long dataEntityGroupId);
+
+    Mono<Boolean> degHasEntities(final long dataEntityGroupId);
 }

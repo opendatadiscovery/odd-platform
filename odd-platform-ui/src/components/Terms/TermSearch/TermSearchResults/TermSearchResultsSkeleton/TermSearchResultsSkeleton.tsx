@@ -9,32 +9,30 @@ interface SkeletonProps {
   length: number;
 }
 
-const TermSearchResultsSkeleton: React.FC<SkeletonProps> = ({
-  length,
-}) => (
+const TermSearchResultsSkeleton: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
     renderContent={({ randWidth, key }) => (
-      <Grid key={key} container sx={{ py: 1.25 }} wrap="nowrap">
-        <TermSearchResultsColContainer item $colType="collg">
+      <Grid key={key} container sx={{ py: 1.25 }} wrap='nowrap'>
+        <TermSearchResultsColContainer item $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="collg">
+        <TermSearchResultsColContainer item $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="collg">
+        <TermSearchResultsColContainer item $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colxs">
+        <TermSearchResultsColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colsm">
+        <TermSearchResultsColContainer item $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colsm">
+        <TermSearchResultsColContainer item $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colxs">
+        <TermSearchResultsColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
       </Grid>

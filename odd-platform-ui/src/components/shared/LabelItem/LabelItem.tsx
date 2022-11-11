@@ -1,6 +1,6 @@
 import React from 'react';
 import { SystemIcon, ClearIcon } from 'components/shared/Icons';
-import { AppIconButton } from 'components/shared';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { Theme, TypographyProps } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { Container } from './LabelItemStyles';

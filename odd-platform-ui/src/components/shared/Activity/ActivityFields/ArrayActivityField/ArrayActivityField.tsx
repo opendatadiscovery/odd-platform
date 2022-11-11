@@ -1,8 +1,9 @@
-import React, { CSSProperties } from 'react';
+import React, { type CSSProperties } from 'react';
 import { Grid } from '@mui/material';
-import { ActivityFieldHeader, ActivityFieldState } from 'components/shared/Activity';
-import { CRUDType } from 'lib/interfaces';
+import { type CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
+import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 import * as S from './ArrayActivityFieldStyles';
 
 interface ActivityData {

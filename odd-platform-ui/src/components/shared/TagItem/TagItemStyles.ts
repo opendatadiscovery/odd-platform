@@ -15,15 +15,11 @@ export const Container = styled(Typography)<ContainerProps>(
     borderRadius: '4px',
     padding: theme.spacing(0.25, 1),
     backgroundColor: theme.palette.backgrounds.default,
-    color: $systemTag
-      ? theme.palette.texts.info
-      : theme.palette.texts.primary,
-    borderColor:
-      theme.palette.tag[$important ? 'important' : 'main'].normal.border,
+    color: $systemTag ? theme.palette.texts.info : theme.palette.texts.primary,
+    borderColor: theme.palette.tag[$important ? 'important' : 'main'].normal.border,
     '&:hover, &:active': {
       cursor: $cursorPointer ? 'pointer' : 'auto',
-      borderColor:
-        theme.palette.tag[$important ? 'important' : 'main'].hover.border,
+      borderColor: theme.palette.tag[$important ? 'important' : 'main'].hover.border,
     },
   })
 );

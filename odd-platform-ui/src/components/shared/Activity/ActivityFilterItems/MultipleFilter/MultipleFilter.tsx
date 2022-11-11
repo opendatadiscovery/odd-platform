@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 import { ActivityQueryName } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
-import { Owner, Tag } from 'generated-sources';
+import type { Owner, Tag } from 'generated-sources';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
 import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';

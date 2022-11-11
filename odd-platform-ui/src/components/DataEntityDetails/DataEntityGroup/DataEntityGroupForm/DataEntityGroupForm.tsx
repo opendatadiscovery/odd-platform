@@ -96,7 +96,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
 
   const handleSubmitForm = (data: DataEntityGroupFormData) => {
     dispatch(
-      dataEntityGroupDetails
+      dataEntityGroupDetails.id
         ? updateDataEntityGroup({
             dataEntityGroupId: dataEntityGroupDetails.id,
             dataEntityGroupFormData: data,
@@ -126,7 +126,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {dataEntityGroupDetails ? 'Edit' : 'Add'} Group
+      {dataEntityGroupDetails.id ? 'Edit' : 'Add'} Group
     </Typography>
   );
 

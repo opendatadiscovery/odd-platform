@@ -1,19 +1,19 @@
 import {
   Configuration,
   DataCollaborationApi,
-  DataCollaborationApiGetSlackChannelsRequest,
-  DataCollaborationApiPostMessageInSlackRequest,
+  type DataCollaborationApiGetSlackChannelsRequest,
+  type DataCollaborationApiPostMessageInSlackRequest,
   DataEntityApi,
-  DataEntityApiGetChannelsRequest,
-  Message as GeneratedMessage,
-  MessageChannel,
-  DataEntityApiGetDataEntityMessagesRequest,
-  DataEntityApiGetMessagesRequest,
+  type DataEntityApiGetChannelsRequest,
+  type Message as GeneratedMessage,
+  type MessageChannel,
+  type DataEntityApiGetDataEntityMessagesRequest,
+  type DataEntityApiGetMessagesRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { Message, PageInfo } from 'redux/interfaces';
+import type { Message, PageInfo } from 'redux/interfaces';
 import { castDatesToTimestampInItemsArray, setPageInfo } from 'redux/lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);

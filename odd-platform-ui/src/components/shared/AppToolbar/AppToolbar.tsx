@@ -13,15 +13,13 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
 import { clearActivityFilters } from 'redux/slices/activity.slice';
 import { useAppPaths } from 'lib/hooks';
-import {
-  AppIconButton,
-  AppMenu,
-  AppMenuItem,
-  AppTabItem,
-  AppTabs,
-} from 'components/shared';
 import * as S from './AppToolbarStyles';
 import AppInfoMenu from './AppInfoMenu/AppInfoMenu';
+import AppIconButton from '../AppIconButton/AppIconButton';
+import AppMenu from '../AppMenu/AppMenu';
+import AppMenuItem from '../AppMenuItem/AppMenuItem';
+import type { AppTabItem } from '../AppTabs/AppTabs';
+import AppTabs from '../AppTabs/AppTabs';
 
 const AppToolbar: React.FC = () => {
   const location = useLocation();

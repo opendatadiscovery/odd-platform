@@ -14,7 +14,7 @@ const CollectorSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
     length={length}
     renderContent={({ randWidth, key }) => (
       <S.CollectorContainer key={key} sx={{ mb: 1 }}>
-        <Grid container alignItems="flex-start" spacing={2}>
+        <Grid container alignItems='flex-start' spacing={2}>
           <Grid item container xs={12}>
             <Grid item xs={2}>
               <Skeleton width={randWidth()} height={mainSkeletonHeight} />

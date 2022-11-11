@@ -1,4 +1,4 @@
-import {
+import type {
   Activity as GeneratedActivity,
   ActivityApiGetActivityCountsRequest,
   ActivityApiGetActivityRequest,

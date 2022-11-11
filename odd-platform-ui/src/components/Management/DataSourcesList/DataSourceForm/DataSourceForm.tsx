@@ -1,22 +1,12 @@
 import React, { ChangeEvent } from 'react';
 import capitalize from 'lodash/capitalize';
 import reduce from 'lodash/reduce';
-import {
-  add,
-  addSeconds,
-  differenceInSeconds,
-  intervalToDuration,
-} from 'date-fns/esm';
+import { add, addSeconds, differenceInSeconds, intervalToDuration } from 'date-fns/esm';
 import { Controller, useForm } from 'react-hook-form';
 import { DataSource, DataSourceFormData } from 'generated-sources';
 import { registerDataSource, updateDataSource } from 'redux/thunks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import {
-  FormControlLabel,
-  Grid,
-  RadioGroup,
-  Typography,
-} from '@mui/material';
+import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
 import { getDatasourceCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -34,10 +24,7 @@ interface DataSourceFormDialogProps {
   dataSource?: DataSource;
 }
 
-export type DataSourceFormDataValues = Omit<
-  DataSourceFormData,
-  'pullingInterval'
-> & {
+export type DataSourceFormDataValues = Omit<DataSourceFormData, 'pullingInterval'> & {
   pullingInterval: { value?: number; format: string };
 };
 
@@ -64,8 +51,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               start: Date.now(),
               end: addSeconds(Date.now(), dataSource?.pullingInterval),
             }),
-            (result, value, format) =>
-              value && value > 0 ? { format, value } : result,
+            (result, value, format) => (value && value > 0 ? { format, value } : result),
             { format: 'minutes', value: 1 }
           )
         : { format: 'minutes', value: 1 },
@@ -100,15 +86,10 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   type RadioType = 'URL' | 'ODDRN';
   const getDefaultRadioValues = (): RadioType =>
     dataSource?.connectionUrl ? 'URL' : 'ODDRN';
-  const [radioValue, setRadioValue] = React.useState<RadioType>(
-    getDefaultRadioValues()
-  );
+  const [radioValue, setRadioValue] = React.useState<RadioType>(getDefaultRadioValues());
   const isODDRN = () => radioValue === 'ODDRN';
 
-  const handleRadioChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    value: string
-  ) => {
+  const handleRadioChange = (event: ChangeEvent<HTMLInputElement>, value: string) => {
     setRadioValue(value as RadioType);
     setValue('connectionUrl', '');
     setValue('oddrn', '');
@@ -117,7 +98,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   const receiveDataCheckbox = (
     <Controller
       defaultValue={false}
-      name="active"
+      name='active'
       control={control}
       render={({ field }) => (
         <FormControlLabel
@@ -126,7 +107,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           sx={{ ml: -0.25, mt: 1.5 }}
           checked={field.value}
           control={<AppCheckbox sx={{ mr: 1 }} />}
-          label="Receive data from current datasource"
+          label='Receive data from current datasource'
         />
       )}
     />
@@ -174,20 +155,19 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       {dataSource ? 'Edit ' : 'Add '}
       Datasource
     </Typography>
   );
 
   const formContent = () => (
-    <form id="datasource-create-form" onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="subtitle2" fontSize="0.73rem">
-        Fields with the <Asterisk>*</Asterisk> symbol are required to save
-        the Datasource
+    <form id='datasource-create-form' onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant='subtitle2' fontSize='0.73rem'>
+        Fields with the <Asterisk>*</Asterisk> symbol are required to save the Datasource
       </Typography>
       <Controller
-        name="name"
+        name='name'
         control={control}
         rules={{
           required: true,
@@ -197,8 +177,8 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.5 }}
-            label="Name"
-            placeholder="e.g. Data Tower"
+            label='Name'
+            placeholder='e.g. Data Tower'
             required
             customEndAdornment={{
               variant: 'clear',
@@ -218,22 +198,22 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         <Grid container>
           <FormControlLabel
             disabled={!!dataSource}
-            value="ODDRN"
+            value='ODDRN'
             control={<AppRadio />}
-            label="ODDRN"
+            label='ODDRN'
           />
           <FormControlLabel
             disabled={!!dataSource}
-            value="URL"
+            value='URL'
             control={<AppRadio />}
-            label="URL"
+            label='URL'
           />
         </Grid>
       </RadioGroup>
       {isODDRN() ? (
         <>
           <Controller
-            name="oddrn"
+            name='oddrn'
             shouldUnregister
             control={control}
             rules={{
@@ -244,8 +224,8 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               <AppInput
                 {...field}
                 sx={{ mt: 1.5 }}
-                label="ODDRN"
-                placeholder="e.g. //kafka/"
+                label='ODDRN'
+                placeholder='e.g. //kafka/'
                 required
                 disabled={!!dataSource?.oddrn}
                 customEndAdornment={{
@@ -262,7 +242,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       ) : (
         <>
           <Controller
-            name="connectionUrl"
+            name='connectionUrl'
             shouldUnregister
             control={control}
             rules={{
@@ -273,8 +253,8 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               <AppInput
                 {...field}
                 sx={{ mt: 1.25 }}
-                label="URL"
-                placeholder="e.g. https://github.com/link/example"
+                label='URL'
+                placeholder='e.g. https://github.com/link/example'
                 required
                 customEndAdornment={{
                   variant: 'clear',
@@ -290,12 +270,12 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
             <Grid container sx={{ mt: 1.5 }}>
               <Grid item xs={6} md={4} sx={{ mr: 1 }}>
                 <Controller
-                  name="pullingInterval.format"
+                  name='pullingInterval.format'
                   control={control}
                   render={({ field }) => (
                     <AppSelect
                       {...field}
-                      label="Pulling Interval"
+                      label='Pulling Interval'
                       containerSx={{ mt: 0 }}
                     >
                       {['minutes', 'hours', 'days', 'weeks'].map(value => (
@@ -309,14 +289,14 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               </Grid>
               <Grid item xs={6} md={4}>
                 <Controller
-                  name="pullingInterval.value"
+                  name='pullingInterval.value'
                   control={control}
                   render={({ field }) => (
                     <AppInput
                       {...field}
-                      label="Value"
-                      placeholder="e.g. 1"
-                      type="number"
+                      label='Value'
+                      placeholder='e.g. 1'
+                      type='number'
                       inputProps={{ min: 1 }}
                     />
                   )}
@@ -328,21 +308,19 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       )}
       <Controller
         control={control}
-        name="namespaceName"
+        name='namespaceName'
         defaultValue={dataSource?.namespace?.name}
-        render={({ field }) => (
-          <NamespaceAutocomplete controllerProps={field} />
-        )}
+        render={({ field }) => <NamespaceAutocomplete controllerProps={field} />}
       />
       <Controller
-        name="description"
+        name='description'
         control={control}
         render={({ field }) => (
           <AppInput
             {...field}
             sx={{ mt: 1.25 }}
-            label="Description"
-            placeholder="Datasource description"
+            label='Description'
+            placeholder='Datasource description'
             multiline
             maxRows={4}
             customEndAdornment={{
@@ -359,10 +337,10 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="datasource-create-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='datasource-create-form'
+      color='primary'
       fullWidth
       disabled={!isValid}
     >

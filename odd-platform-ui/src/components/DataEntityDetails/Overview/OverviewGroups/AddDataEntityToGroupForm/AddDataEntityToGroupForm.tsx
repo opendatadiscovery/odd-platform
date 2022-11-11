@@ -21,18 +21,19 @@ export interface AddDataEntityToGroupFormData {
   group: DataEntityRef;
 }
 
-const AddDataEntityToGroupForm: React.FC<
-  AddDataEntityToGroupFormProps
-> = ({ btnCreateEl, dataEntityId }) => {
+const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
+  btnCreateEl,
+  dataEntityId,
+}) => {
   const dispatch = useAppDispatch();
 
   const { isLoading: isDataEntityAddingToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
 
-  const dataEntityGroupClassId = useAppSelector(
-    getDataEntityClassesList
-  ).filter(entityClass => entityClass.name === 'DATA_ENTITY_GROUP')[0]?.id;
+  const dataEntityGroupClassId = useAppSelector(getDataEntityClassesList).filter(
+    entityClass => entityClass.name === 'DATA_ENTITY_GROUP'
+  )[0]?.id;
 
   const { handleSubmit, control, reset, formState } =
     useForm<AddDataEntityToGroupFormData>({
@@ -77,18 +78,15 @@ const AddDataEntityToGroupForm: React.FC<
   };
 
   const formTitle = (
-    <Typography variant="h4" component="span">
+    <Typography variant='h4' component='span'>
       Add to group
     </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="add-entity-to-group-form"
-      onSubmit={handleSubmit(handleFormSubmit)}
-    >
+    <form id='add-entity-to-group-form' onSubmit={handleSubmit(handleFormSubmit)}>
       <Controller
-        name="group"
+        name='group'
         control={control}
         rules={{ required: true }}
         render={({ field }) => (
@@ -106,10 +104,10 @@ const AddDataEntityToGroupForm: React.FC<
 
   const formActionButtons = () => (
     <AppButton
-      size="large"
-      type="submit"
-      form="add-entity-to-group-form"
-      color="primary"
+      size='large'
+      type='submit'
+      form='add-entity-to-group-form'
+      color='primary'
       fullWidth
       disabled={!formState.isValid}
     >
@@ -119,7 +117,7 @@ const AddDataEntityToGroupForm: React.FC<
 
   return (
     <DialogWrapper
-      maxWidth="xs"
+      maxWidth='xs'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, {
           onClick: () => {

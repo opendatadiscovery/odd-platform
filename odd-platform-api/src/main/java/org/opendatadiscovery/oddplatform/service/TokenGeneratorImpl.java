@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class TokenGeneratorImpl implements TokenGenerator {
-
     private final AuthIdentityProvider authIdentityProvider;
 
     @Override

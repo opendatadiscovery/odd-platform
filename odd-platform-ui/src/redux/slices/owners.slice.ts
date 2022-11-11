@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { OwnersState } from 'redux/interfaces';
+import type { OwnersState } from 'redux/interfaces';
 import filter from 'lodash/filter';
 import { ownersActionTypePrefix } from 'redux/actions';
 

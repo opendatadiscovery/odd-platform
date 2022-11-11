@@ -1,5 +1,5 @@
-import { RolesState } from 'redux/interfaces/state';
-import { Role } from 'generated-sources';
+import type { RolesState } from 'redux/interfaces';
+import type { Role } from 'generated-sources';
 import { rolesActTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';

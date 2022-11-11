@@ -1,7 +1,4 @@
-import {
-  DataEntityLineageEdge,
-  DataEntityLineageNode,
-} from 'generated-sources';
+import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
 
 export interface DataEntityLineageById<
   NodeT = DataEntityLineageNode,
@@ -16,13 +13,9 @@ export interface DataEntityLineageStreamById<
   NodeT = DataEntityLineageNode,
   EdgeT = DataEntityLineageEdge
 > {
-  nodesById: {
-    [nodeId: number]: NodeT;
-  };
-  edgesById: {
-    // Id of parent entity in the tree. It is source_id of DataEntityLineageEdge for downstream, and target_id for upstream
-    [entityId: number]: EdgeT[];
-  };
+  nodesById: { [nodeId: number]: NodeT };
+  // Id of parent entity in the tree. It is source_id of DataEntityLineageEdge for downstream, and target_id for upstream
+  edgesById: { [entityId: number]: EdgeT[] };
   crossEdges: EdgeT[];
 }
 
@@ -30,8 +23,7 @@ export interface DataEntityLineageRootNodeId {
   rootNodeId: number;
 }
 
-export interface GroupedDataEntityLineageNode
-  extends DataEntityLineageNode {
+export interface GroupedDataEntityLineageNode extends DataEntityLineageNode {
   nodesRelatedWithDEG?: DataEntityLineageNode[];
   originalGroupId?: number;
 }

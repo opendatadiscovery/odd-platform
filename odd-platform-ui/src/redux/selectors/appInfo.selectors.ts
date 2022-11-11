@@ -1,4 +1,4 @@
-import { AppInfoState, RootState } from 'redux/interfaces';
+import type { AppInfoState, RootState } from 'redux/interfaces';
 import { createSelector } from '@reduxjs/toolkit';
 import { emptyArr } from 'lib/constants';
 

@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { MetaDataState, RootState } from 'redux/interfaces';
-import { MetadataFieldValue } from 'generated-sources';
+import type { MetaDataState, RootState } from 'redux/interfaces';
+import type { MetadataFieldValue } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { emptyArr } from 'lib/constants';
-import { createStatusesSelector } from './loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 
 const metaDataState = ({ metaData }: RootState): MetaDataState => metaData;
 

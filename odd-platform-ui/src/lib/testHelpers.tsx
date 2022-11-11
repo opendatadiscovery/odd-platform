@@ -1,5 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react';
-import React, { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
 
@@ -7,8 +7,7 @@ export const provideTheme = (component: ReactElement): ReactElement => (
   <ThemeProvider theme={theme}>{component}</ThemeProvider>
 );
 
-export const flushPromises = () =>
-  new Promise(jest.requireActual('timers').setImmediate);
+export const flushPromises = () => new Promise(jest.requireActual('timers').setImmediate);
 
 export const clickByTestId = async (testId: string) => {
   const button = screen.getByTestId(testId);
@@ -55,5 +54,4 @@ export const setValueByTestId = async (testId: string, value: string) => {
 export const getByText = (text: string) => screen.getByText(text);
 export const queryByText = (text: string) => screen.queryByText(text);
 export const getByTestID = (testID: string) => screen.getByTestId(testID);
-export const getAllByTestID = (testID: string) =>
-  screen.getAllByTestId(testID);
+export const getAllByTestID = (testID: string) => screen.getAllByTestId(testID);

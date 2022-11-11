@@ -24,12 +24,12 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       <Controller
         name={`labels.${itemIndex}.name`}
         control={control}
-        defaultValue=""
+        defaultValue=''
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder="Label Name"
+            placeholder='Label Name'
             name={`labels.${itemIndex}.name`}
             customEndAdornment={{
               variant: 'clear',
@@ -42,7 +42,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       />
       <S.LabelItemButtons sx={{ mt: 1, mb: 1.5 }}>
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
+          <AppButton size='small' color='dropdown' onClick={onItemRemove}>
             Delete
           </AppButton>
         )}
