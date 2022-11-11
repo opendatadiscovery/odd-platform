@@ -84,3 +84,8 @@ export const pseudoRandNum = (function xoshiro128p() {
     return (r >>> 0) / 4294967296;
   };
 })();
+
+export const createUrl = (endpoint: string | undefined) =>
+  endpoint
+    ? `${window.location.protocol}//${window.location.host}${endpoint}`
+    : `${window.location.protocol}//${window.location.host}`;

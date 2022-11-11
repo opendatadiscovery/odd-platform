@@ -36,6 +36,7 @@ import {
   TermRef,
   Permission,
   PermissionResourceType,
+  Feature,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -150,7 +151,6 @@ export interface OwnersState {
 }
 
 export interface DataCollaborationState {
-  channels: MessageChannel[];
   messages: { messagesByDate: MessagesByDate; pageInfo: PageInfo };
   relatedMessages: { messages: Message[]; pageInfo: PageInfo };
 }
@@ -199,7 +199,8 @@ export interface OwnerAssociationState {
 }
 
 export interface AppInfoState {
-  appInfo?: AppInfo;
+  appInfo: AppInfo;
+  activeFeatures: Feature[];
 }
 
 export interface TermsState {

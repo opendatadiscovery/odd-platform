@@ -6,7 +6,6 @@ import { formattedDate } from 'lib/helpers';
 import uniqBy from 'lodash/uniqBy';
 
 export const initialState: DataCollaborationState = {
-  channels: [],
   messages: { messagesByDate: {}, pageInfo: { hasNext: true } },
   relatedMessages: { messages: [], pageInfo: { hasNext: true } },
 };
@@ -16,10 +15,6 @@ export const dataCollaborationSlice = createSlice({
   initialState,
   reducers: { clearCollaborationState: () => initialState },
   extraReducers: builder => {
-    builder.addCase(thunks.fetchDataEntityChannels.fulfilled, (state, { payload }) => {
-      state.channels = payload;
-    });
-
     builder.addCase(thunks.fetchDataEntityMessages.fulfilled, (state, { payload }) => {
       const { messages, pageInfo } = payload;
       const dateFormat = 'MMMM dd, yyyy';

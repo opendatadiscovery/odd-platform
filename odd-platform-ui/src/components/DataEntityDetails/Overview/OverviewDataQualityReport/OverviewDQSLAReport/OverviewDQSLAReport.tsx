@@ -9,6 +9,7 @@ import { InformationIcon } from 'components/shared/Icons';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { useAppSelector } from 'redux/lib/hooks';
 import { SLAColour } from 'generated-sources';
+import { createUrl } from 'lib/helpers';
 import OverviewDQSLAReportSkeleton from './OverviewDQSLAReportSkeleton/OverviewDQSLAReportSkeleton';
 import * as S from './OverviewDQSLAReportStyles';
 
@@ -24,9 +25,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
 
   const slaBarValue = ((dqSLAReport?.success || 0) * 100) / (dqSLAReport?.total || 1);
 
-  const slaRef = dqSLAReport?.slaRef
-    ? `${window.location.protocol}//${window.location.host}${dqSLAReport?.slaRef}`
-    : '';
+  const slaRef = createUrl(dqSLAReport?.slaRef);
 
   const renderSeverityWeightsBar = React.useMemo(() => {
     const totalWeights = dqSLAReport.severityWeights.reduce<number>(

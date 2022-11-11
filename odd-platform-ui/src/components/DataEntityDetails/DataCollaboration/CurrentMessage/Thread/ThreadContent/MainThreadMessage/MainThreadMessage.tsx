@@ -1,7 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton, AppAvatar } from 'components/shared';
+import { AppAvatar, AppButton, WithFeature } from 'components/shared';
 import { Message } from 'redux/interfaces';
+import { Feature } from 'generated-sources';
+import { createUrl } from 'lib/helpers';
 import * as S from './MainThreadMessageStyles';
 
 interface MainThreadMessageProps {
@@ -17,6 +19,8 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
   const truncatedText =
     text?.length > maxTextLength ? `${text?.substring(0, maxTextLength)}...` : text;
 
+  const openInSlackUrl = createUrl(url);
+
   return (
     <S.MainMessageContainer>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
@@ -30,15 +34,17 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
           </Typography>
         </Grid>
         <Grid container alignItems='center' justifyContent='flex-end' flexWrap='nowrap'>
-          <AppButton
-            to={{ pathname: url }}
-            linkTarget='_blank'
-            size='medium'
-            color='primaryLight'
-            sx={{ mr: 2 }}
-          >
-            Open in Slack
-          </AppButton>
+          <WithFeature featureName={Feature.DATA_COLLABORATION}>
+            <AppButton
+              to={{ pathname: url }}
+              linkTarget='_blank'
+              size='medium'
+              color='primaryLight'
+              sx={{ mr: 2 }}
+            >
+              Open in Slack
+            </AppButton>
+          </WithFeature>
         </Grid>
       </Grid>
       <S.TextContainer container>

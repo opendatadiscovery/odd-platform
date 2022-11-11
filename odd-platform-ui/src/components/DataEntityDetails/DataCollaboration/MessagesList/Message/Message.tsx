@@ -2,7 +2,9 @@ import React from 'react';
 import type { Message as MessageModel } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
 import { formatDistanceToNowStrict } from 'date-fns';
-import { AppButton, AppAvatar } from 'components/shared';
+import { AppAvatar, AppButton, WithFeature } from 'components/shared';
+import { Feature } from 'generated-sources';
+import { createUrl } from 'lib/helpers';
 import * as S from './MessageStyles';
 
 interface MessageProps {
@@ -26,6 +28,8 @@ const Message: React.FC<MessageProps> = ({
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
   const messagesCount = childrenMessagesCount ?? 0;
 
+  const openInSlackUrl = createUrl(url);
+
   return (
     <S.Container $active={isActive} container onClick={messageOnClick}>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
@@ -40,17 +44,18 @@ const Message: React.FC<MessageProps> = ({
         </Grid>
         <Grid container alignItems='center' justifyContent='flex-end' flexWrap='nowrap'>
           <S.SlackButtonContainer $active={isActive}>
-            <AppButton
-              to={{ pathname: url }}
-              linkTarget='_blank'
-              size='medium'
-              color='primaryLight'
-              sx={{ mr: 2 }}
-            >
-              Open in Slack
-            </AppButton>
+            <WithFeature featureName={Feature.DATA_COLLABORATION}>
+              <AppButton
+                to={{ pathname: url }}
+                linkTarget='_blank'
+                size='medium'
+                color='primaryLight'
+                sx={{ mr: 2 }}
+              >
+                Open in Slack
+              </AppButton>
+            </WithFeature>
           </S.SlackButtonContainer>
-
           <Typography variant='body1' color='texts.hint'>
             {channel.name}
           </Typography>

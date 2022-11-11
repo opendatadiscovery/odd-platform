@@ -6,3 +6,8 @@ export const fetchAppInfoActionType = createActionType(
   appInfoActionPrefix,
   'fetchAppInfo'
 );
+
+export const fetchActiveFeaturesActionType = createActionType(
+  appInfoActionPrefix,
+  'fetchActiveFeatures'
+);

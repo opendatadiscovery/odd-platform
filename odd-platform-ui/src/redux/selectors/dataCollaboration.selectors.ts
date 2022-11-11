@@ -8,16 +8,8 @@ const dataCollaborationState = ({
   dataCollaboration,
 }: RootState): DataCollaborationState => dataCollaboration;
 
-export const getSlackChannelsFetchingStatuses = createStatusesSelector(
-  actions.fetchSlackChannelsActionType
-);
-
 export const getMessageToSlackCreatingStatuses = createStatusesSelector(
   actions.postMessageInSlackActionType
-);
-
-export const getDataEntityChannelsFetchingStatuses = createStatusesSelector(
-  actions.fetchDataEntityChannelsActionType
 );
 
 export const getDataEntityMessagesFetchingStatuses = createStatusesSelector(
@@ -26,11 +18,6 @@ export const getDataEntityMessagesFetchingStatuses = createStatusesSelector(
 
 export const getRelatedMessagesFetchingStatuses = createStatusesSelector(
   actions.fetchMessagesRelatedToMessageActionType
-);
-
-export const getDataEntityChannels = createSelector(
-  dataCollaborationState,
-  dataCollaboration => dataCollaboration.channels
 );
 
 export const getDataEntityMessages = createSelector(

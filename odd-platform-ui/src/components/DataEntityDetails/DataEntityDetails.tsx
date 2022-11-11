@@ -102,6 +102,7 @@ const DataEntityDetails: React.FC = () => {
             resourcePermissions={resourcePermissions}
             render={() => (
               <DataEntityDetailsHeader
+                dataEntityId={dataEntityId}
                 internalName={details.internalName}
                 externalName={details.externalName}
                 entityClasses={details.entityClasses}

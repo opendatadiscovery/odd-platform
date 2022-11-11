@@ -1,15 +1,23 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton, EntityClassItem, EntityTypeItem, LabelItem } from 'components/shared';
+import {
+  AppButton,
+  EntityClassItem,
+  EntityTypeItem,
+  LabelItem,
+  WithFeature,
+} from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
-import { DataEntityDetails, Permission } from 'generated-sources';
-import { AddIcon, EditIcon, TimeGapIcon } from 'components/shared/Icons';
+import { DataEntityDetails, Feature, Permission } from 'generated-sources';
+import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/Icons';
 import { formatDistanceToNowStrict } from 'date-fns';
+import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
 import * as S from './DataEntityDetailsHeaderStyles';
 
 interface DataEntityDetailsHeaderProps {
+  dataEntityId: DataEntityDetails['id'];
   internalName: DataEntityDetails['internalName'];
   externalName: DataEntityDetails['externalName'];
   entityClasses: DataEntityDetails['entityClasses'];
@@ -24,6 +32,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   externalName,
   internalName,
   type,
+  dataEntityId,
 }) => {
   const entityUpdatedAt = React.useMemo(
     () =>
@@ -85,6 +94,21 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           </S.InternalNameEditBtnContainer>
         </Grid>
         <Grid container item lg={1} sx={{ ml: 1 }} alignItems='center' flexWrap='nowrap'>
+          <WithFeature featureName={Feature.DATA_COLLABORATION}>
+            <CreateMessageForm
+              dataEntityId={dataEntityId}
+              btnCreateEl={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<SlackIcon />}
+                  sx={{ mr: 1 }}
+                >
+                  Share
+                </AppButton>
+              }
+            />
+          </WithFeature>
           {entityUpdatedAt}
           {manuallyCreated && (
             <DataEntityGroupControls
