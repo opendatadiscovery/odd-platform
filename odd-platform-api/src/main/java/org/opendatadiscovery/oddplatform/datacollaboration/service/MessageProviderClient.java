@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
-import java.util.Map;
 import java.util.Set;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
@@ -17,9 +17,11 @@ public interface MessageProviderClient {
 
     Mono<String> resolveMessageUrl(final String providerChannelId, final String providerMessageId);
 
-    Mono<Map<String, MessageUserDto>> getUserProfiles(final Set<String> userIds);
+    Flux<MessageUserDto> getUserProfiles(final Set<String> userIds);
 
-    Mono<String> postMessage(final String channelId, final String messageText);
+    Mono<String> postMessage(final String channelId,
+                             final String messageText,
+                             final DataEntityMessageContext messageContext);
 
     MessageProviderDto getProvider();
 }

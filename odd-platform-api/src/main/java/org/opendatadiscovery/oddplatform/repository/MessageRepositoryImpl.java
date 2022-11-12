@@ -11,7 +11,6 @@ import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectSeekStep2;
@@ -19,7 +18,6 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageInternalIdentity;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderIdentity;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
@@ -47,35 +45,33 @@ public class MessageRepositoryImpl implements MessageRepository {
                                                               final int size) {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(MESSAGE.DATA_ENTITY_ID.eq(dataEntityId));
-        conditions.add(MESSAGE.PARENT_MESSAGE_KEY.isNull());
-        conditions.add(MESSAGE.PARENT_MESSAGE_CREATED_AT.isNull());
+        conditions.add(MESSAGE.PARENT_MESSAGE_UUID.isNull());
 
         if (StringUtils.isNotEmpty(channelId)) {
             conditions.add(MESSAGE.PROVIDER_CHANNEL_ID.startsWithIgnoreCase(channelId));
         }
 
-        final SelectSeekStep2<Record, OffsetDateTime, Long> query = DSL.select(MESSAGE.fields())
+        final SelectSeekStep2<Record, OffsetDateTime, UUID> query = DSL.select(MESSAGE.fields())
             .from(MESSAGE)
             .where(conditions)
-            .orderBy(MESSAGE.CREATED_AT.desc(), MESSAGE.KEY.desc());
+            .orderBy(MESSAGE.CREATED_AT.desc(), MESSAGE.UUID.desc());
 
-        return applySeekPagination(lastMessageId, query);
+        return applySeekPagination(lastMessageId, query, size);
     }
 
     @Override
     public Flux<MessagePojo> listChildrenMessages(final UUID messageId,
                                                   final UUID lastMessageId,
                                                   final int size) {
-        final long messageKey = messageId.node();
         final OffsetDateTime messageDateTime = UUIDHelper.extractDateTimeFromUUID(messageId);
 
-        final SelectSeekStep2<Record, OffsetDateTime, Long> query = DSL.select(MESSAGE.fields())
+        final SelectSeekStep2<Record, OffsetDateTime, UUID> query = DSL.select(MESSAGE.fields())
             .from(MESSAGE)
-            .where(MESSAGE.KEY.eq(messageKey))
+            .where(MESSAGE.PARENT_MESSAGE_UUID.eq(messageId))
             .and(MESSAGE.CREATED_AT.eq(messageDateTime))
-            .orderBy(MESSAGE.CREATED_AT, MESSAGE.KEY);
+            .orderBy(MESSAGE.CREATED_AT, MESSAGE.UUID);
 
-        return applySeekPagination(lastMessageId, query);
+        return applySeekPagination(lastMessageId, query, size);
     }
 
     @Override
@@ -109,14 +105,14 @@ public class MessageRepositoryImpl implements MessageRepository {
     public Mono<Void> createMessageEvent(final String event,
                                          final MessageEventActionDto action,
                                          final MessageProviderDto messageProvider,
-                                         final MessageInternalIdentity parentMessageIdentity) {
+                                         final UUID parentMessageUUID) {
         final MessageProviderEventRecord record =
             jooqReactiveOperations.newRecord(MESSAGE_PROVIDER_EVENT, new MessageProviderEventPojo()
                 .setProvider(messageProvider.toString())
                 .setEvent(JSONB.jsonb(event))
                 .setState(MessageEventStateDto.PENDING.getCode())
-                .setParentMessageKey(parentMessageIdentity.key())
-                .setParentMessageCreatedAt(parentMessageIdentity.createdAt())
+                .setParentMessageUuid(parentMessageUUID)
+                .setParentMessageCreatedAt(UUIDHelper.extractDateTimeFromUUID(parentMessageUUID))
                 .setAction(action.getCode())
             );
 
@@ -132,7 +128,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         final SelectConditionStep<Record3<String, String, String>> query = DSL
             .select(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER_CHANNEL_ID, MESSAGE.PROVIDER)
             .from(MESSAGE)
-            .where(MESSAGE.KEY.eq(messageId.node()))
+            .where(MESSAGE.UUID.eq(messageId))
             .and(MESSAGE.CREATED_AT.eq(UUIDHelper.extractDateTimeFromUUID(messageId)));
 
         return jooqReactiveOperations.mono(query)
@@ -144,29 +140,26 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public Mono<MessageInternalIdentity> getInternalIdentityByProviderInfo(final String providerId,
-                                                                           final MessageProviderDto messageProvider) {
-        final SelectConditionStep<Record2<Long, OffsetDateTime>> query = DSL.select(MESSAGE.KEY, MESSAGE.CREATED_AT)
+    public Mono<UUID> getUUIDByProviderInfo(final String providerId,
+                                            final MessageProviderDto messageProvider) {
+        final SelectConditionStep<Record1<UUID>> query = DSL.select(MESSAGE.UUID)
             .from(MESSAGE)
             .where(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerId).and(MESSAGE.PROVIDER.eq(messageProvider.toString())));
 
-        return jooqReactiveOperations.mono(query).map(r -> MessageInternalIdentity.builder()
-            .key(r.component1())
-            .createdAt(r.component2())
-            .build());
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     private Flux<MessagePojo> applySeekPagination(final UUID lastMessageUUID,
-                                                  final SelectSeekStep2<Record, OffsetDateTime, Long> query) {
+                                                  final SelectSeekStep2<Record, OffsetDateTime, UUID> query,
+                                                  final int size) {
         if (lastMessageUUID != null) {
-            final long lastMessageKey = lastMessageUUID.node();
             final OffsetDateTime lastMessageDateTime = UUIDHelper.extractDateTimeFromUUID(lastMessageUUID);
 
             return jooqReactiveOperations
-                .flux(query.seek(lastMessageDateTime, lastMessageKey))
+                .flux(query.seek(lastMessageDateTime, lastMessageUUID).limit(size))
                 .map(r -> r.into(MessagePojo.class));
         }
 
-        return jooqReactiveOperations.flux(query).map(r -> r.into(MessagePojo.class));
+        return jooqReactiveOperations.flux(query.limit(size)).map(r -> r.into(MessagePojo.class));
     }
 }

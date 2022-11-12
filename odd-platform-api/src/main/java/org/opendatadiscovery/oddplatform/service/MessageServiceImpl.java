@@ -9,20 +9,23 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClientFactory;
+import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderUserProfileResolver;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
 import static reactor.function.TupleUtils.function;
 
 @RequiredArgsConstructor
 @Service
 public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
-    private final MessageProviderClientFactory messageProviderClientFactory;
+    private final MessageProviderUserProfileResolver userProfileResolver;
     private final MessageMapper messageMapper;
 
     @Override
@@ -59,7 +62,7 @@ public class MessageServiceImpl implements MessageService {
                     .findFirst()
                     .get();
 
-                return messageProviderClientFactory.getOrFail(provider).getUserProfiles(userIds);
+                return userProfileResolver.resolve(userIds, provider).collectMap(MessageUserDto::id, identity());
             })
             .map(function(messageMapper::mapPojos));
     }

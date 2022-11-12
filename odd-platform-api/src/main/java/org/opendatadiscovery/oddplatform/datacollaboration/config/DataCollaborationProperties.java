@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DataCollaborationProperties {
     private int senderMessageAdvisoryLockId;
     private int receiveEventAdvisoryLockId;
+    private String platformBaseUrl;
 }
 
 

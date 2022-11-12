@@ -14,7 +14,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.exception.NotificationSenderException;
-import org.opendatadiscovery.oddplatform.notification.processor.message.SlackNotificationMessageGenerator;
+import org.opendatadiscovery.oddplatform.notification.processor.message.SlackMessageGenerator;
 
 @Slf4j
 public class SlackNotificationSender extends AbstractNotificationSender<AlertNotificationMessage> {
@@ -25,11 +25,11 @@ public class SlackNotificationSender extends AbstractNotificationSender<AlertNot
         .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     private final URI slackWebhookUrl;
-    private final SlackNotificationMessageGenerator messageBuilder;
+    private final SlackMessageGenerator messageBuilder;
 
     public SlackNotificationSender(final HttpClient httpClient,
                                    final URI slackWebhookUrl,
-                                   final SlackNotificationMessageGenerator messageBuilder) {
+                                   final SlackMessageGenerator messageBuilder) {
         super(httpClient);
 
         this.slackWebhookUrl = slackWebhookUrl;
@@ -38,7 +38,7 @@ public class SlackNotificationSender extends AbstractNotificationSender<AlertNot
 
     @Override
     public void send(final AlertNotificationMessage message) throws InterruptedException, NotificationSenderException {
-        final List<LayoutBlock> slackMessage = messageBuilder.generate(message);
+        final List<LayoutBlock> slackMessage = messageBuilder.generateAlertMessage(message);
 
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(slackWebhookUrl)

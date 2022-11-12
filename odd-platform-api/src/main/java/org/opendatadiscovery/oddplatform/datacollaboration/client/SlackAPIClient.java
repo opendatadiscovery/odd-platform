@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.client;
 
+import com.slack.api.model.Attachment;
+import java.util.List;
 import java.util.Set;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
@@ -11,7 +13,7 @@ public interface SlackAPIClient {
 
     Mono<MessageChannelDto> exchangeForChannel(final String channelId);
 
-    Mono<String> postMessage(final String channelId, final String string);
+    Mono<String> postMessage(final String channelId, final List<Attachment> attachments);
 
     Mono<String> exchangeForUrl(final String channelId, final String messageTs);
 

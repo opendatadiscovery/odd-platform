@@ -5,29 +5,23 @@ import com.fasterxml.uuid.Generators;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.UUID;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UUIDHelper {
+    // just believe us here :)
+    private static final long NUM_100NS_INTERVALS_SINCE_UUID_EPOCH = 0x01b21dd213814000L;
+
     public static UUID generateUUIDv1() {
-        // TODO: is this an IO operation?
         return Generators.timeBasedGenerator(EthernetAddress.fromInterface()).generate();
     }
 
     public static long extractEpochMsFromUUID(final UUID uuid) {
-        final Calendar uuidEpoch = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        uuidEpoch.clear();
-        uuidEpoch.set(1582, Calendar.OCTOBER, 15, 0, 0, 0);
-        final long epochMillis = uuidEpoch.getTime().getTime();
-
-        return uuid.timestamp() / 10_000L + epochMillis;
+        return (uuid.timestamp() - NUM_100NS_INTERVALS_SINCE_UUID_EPOCH) / 10_000L;
     }
 
     public static OffsetDateTime extractDateTimeFromUUID(final UUID uuid) {
-        // TODO: check UTC
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(UUIDHelper.extractEpochMsFromUUID(uuid)), ZoneOffset.UTC);
     }
 }
