@@ -12,7 +12,7 @@ interface MainThreadMessageProps {
 const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
   mainMessage: { usernameAvatar, username, url, text, channel },
 }) => {
-  const maxTextLength = 220;
+  const maxTextLength = 215;
   const [isExpanded, setIsExpanded] = React.useState(false);
   const isExpandable = text?.length > maxTextLength;
   const truncatedText =

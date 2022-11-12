@@ -6,6 +6,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   height: `calc(100vh - ${toolbarHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
     8.5
   )})`,
+  maxWidth: '480px',
   overflowY: 'scroll',
   alignItems: 'center',
   justifyContent: 'center',

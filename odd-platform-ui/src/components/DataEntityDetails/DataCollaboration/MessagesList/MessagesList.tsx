@@ -38,7 +38,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
   );
 
   return (
-    <S.Container>
+    <S.Container container>
       {!isMessagesLoading && messagesLength ? (
         <S.MessagesContainer container id='messages-list'>
           <InfiniteScroll
