@@ -10,7 +10,3 @@ public class DataCollaborationProperties {
     private int receiveEventAdvisoryLockId;
     private String platformBaseUrl;
 }
-
-
-
-
