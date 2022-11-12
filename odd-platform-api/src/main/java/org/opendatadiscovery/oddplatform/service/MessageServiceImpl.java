@@ -5,13 +5,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
-import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClientFactory;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderUserProfileResolver;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
@@ -23,6 +24,7 @@ import static reactor.function.TupleUtils.function;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final MessageProviderUserProfileResolver userProfileResolver;
@@ -43,7 +45,13 @@ public class MessageServiceImpl implements MessageService {
     public Mono<MessageList> getChildrenMessages(final UUID messageId,
                                                  final UUID lastMessageId,
                                                  final int size) {
-        return messageRepository.listChildrenMessages(messageId, lastMessageId, size)
+        return messageRepository.exists(messageId)
+            .handle((exists, sink) -> {
+                if (!exists) {
+                    sink.error(new NotFoundException("Message", messageId));
+                }
+            })
+            .thenMany(messageRepository.listChildrenMessages(messageId, lastMessageId, size))
             .collectList()
             .zipWhen(messages -> {
                 if (CollectionUtils.isEmpty(messages)) {
@@ -64,7 +72,8 @@ public class MessageServiceImpl implements MessageService {
 
                 return userProfileResolver.resolve(userIds, provider).collectMap(MessageUserDto::id, identity());
             })
-            .map(function(messageMapper::mapPojos));
+            .map(function(messageMapper::mapPojos))
+            .switchIfEmpty(Mono.just(new MessageList()));
     }
 
     @Override

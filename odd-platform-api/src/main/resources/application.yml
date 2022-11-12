@@ -171,5 +171,5 @@ logging:
     org.opendatadiscovery.oddplatform.notification: info
     org.opendatadiscovery.oddplatform.housekeeping: info
     org.opendatadiscovery.oddplatform.partition: debug
-    org.opendatadiscovery.oddplatform.datacollaboration: debug
+    org.opendatadiscovery.oddplatform.datacollaboration: info
     org.opendatadiscovery.oddplatform.service.ingestion: info

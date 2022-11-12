@@ -18,9 +18,10 @@ public class EventProcessorRepositoryImpl implements EventProcessorRepository {
     public void createMessage(final DSLContext dslContext, final MessageRecord record) {
         dslContext.insertInto(MESSAGE)
             .set(record)
-            .onConflict(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER, MESSAGE.CREATED_AT)
-            .where(MESSAGE.PROVIDER_MESSAGE_ID.isNotNull())
-            .doNothing()
+            // TODO: why it doesn't work?
+//            .onConflict(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER, MESSAGE.CREATED_AT)
+//            .where(MESSAGE.PROVIDER_MESSAGE_ID.isNotNull())
+//            .doNothing()
             .execute();
     }
 
@@ -34,6 +35,7 @@ public class EventProcessorRepositoryImpl implements EventProcessorRepository {
             .where(MESSAGE.PROVIDER.eq(provider.toString()))
             .and(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerMessageId))
             .execute();
+
     }
 
     @Override

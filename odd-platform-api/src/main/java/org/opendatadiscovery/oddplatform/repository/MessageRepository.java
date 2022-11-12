@@ -10,6 +10,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface MessageRepository {
+    Mono<Boolean> exists(final UUID messageId);
+
     Mono<MessageProviderIdentity> getMessageProviderIdentity(final UUID messageId);
 
     Mono<UUID> getUUIDByProviderInfo(final String providerId,

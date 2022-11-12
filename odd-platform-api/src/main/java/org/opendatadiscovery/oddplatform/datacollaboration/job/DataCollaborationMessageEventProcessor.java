@@ -52,6 +52,8 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                                 eventProcessorRepository.markEventAsFailed(dslContext, event.event().getId(),
                                     e.getMessage());
                             }
+
+                            eventProcessorRepository.deleteEvent(dslContext, event.event().getId());
                         }
                         connection.commit();
                     } catch (final Exception e) {
@@ -108,6 +110,12 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         "Couldn't retrieve payload to update a message from %s provider".formatted(messageProvider), e);
                 }
 
+                // Slack Event API sends an update event to the parent message after a thread reply message is deleted.
+                // We don't want to generate another useless update query to the database
+                if (eventPayload.messageId().equals(event.parentMessage().getProviderMessageId())) {
+                    return;
+                }
+
                 eventProcessorRepository.updateMessage(
                     dslContext,
                     messageProvider,
@@ -128,6 +136,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
             .setCreatedAt(UUIDHelper.extractDateTimeFromUUID(messageUUID))
             .setParentMessageUuid(event.parentMessage().getUuid())
             .setProviderChannelId(event.parentMessage().getProviderChannelId())
+            .setProviderChannelName(event.parentMessage().getProviderChannelName())
             .setDataEntityId(event.parentMessage().getDataEntityId())
             .setText(eventPayload.messageText())
             .setProviderMessageId(eventPayload.messageId())
@@ -143,7 +152,6 @@ public class DataCollaborationMessageEventProcessor extends Thread {
             .select(MESSAGE.fields())
             .from(MESSAGE_PROVIDER_EVENT)
             .join(MESSAGE)
-            // TODO: do I need this join in case of updates?
                 .on(MESSAGE.UUID.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_UUID))
                 .and(MESSAGE.CREATED_AT.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_CREATED_AT))
             .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageEventStateDto.PENDING.getCode()))

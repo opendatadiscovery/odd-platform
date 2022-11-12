@@ -71,6 +71,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
                     .setState(MessageStateDto.PENDING_SEND.getCode())
                     .setProvider(messageProvider.toString())
                     .setProviderChannelId(channel.id())
+                    .setProviderChannelName(channel.name())
                     .setText(messageRequest.getText());
 
                 return messageRepository.create(messagePojo)

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS message
     state                   SMALLINT                 NOT NULL,
     provider                VARCHAR(64)              NOT NULL,
     provider_channel_id     VARCHAR(128)             NOT NULL,
+    provider_channel_name   VARCHAR(128)             NOT NULL,
     provider_message_id     VARCHAR(128)             NULL,
     provider_message_author VARCHAR(256),
 

@@ -35,6 +35,8 @@ public interface MessageMapper {
                 if (messageUserDto != null) {
                     message.setUsername(messageUserDto.name());
                     message.setUsernameAvatar(messageUserDto.userAvatar());
+                } else {
+                    message.setUsername(messagePojo.getProviderMessageAuthor());
                 }
                 return message;
             })
@@ -56,7 +58,7 @@ public interface MessageMapper {
     default MessageChannel messageChannel(final MessagePojo message) {
         return new MessageChannel()
             .channelId(message.getProviderChannelId())
-            .name(message.getProviderChannelId());
+            .name(message.getProviderChannelName());
     }
 
     @Named("urlRef")

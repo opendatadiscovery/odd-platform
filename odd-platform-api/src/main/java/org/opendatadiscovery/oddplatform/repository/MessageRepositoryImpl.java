@@ -11,7 +11,9 @@ import org.jooq.InsertResultStep;
 import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.Record3;
+import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectSeekStep2;
 import org.jooq.impl.DSL;
@@ -24,6 +26,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageProviderEventRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
 import org.springframework.stereotype.Repository;
@@ -37,6 +40,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EV
 @RequiredArgsConstructor
 public class MessageRepositoryImpl implements MessageRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
+    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Flux<MessagePojo> listParentMessagesByDataEntityId(final long dataEntityId,
@@ -63,12 +67,9 @@ public class MessageRepositoryImpl implements MessageRepository {
     public Flux<MessagePojo> listChildrenMessages(final UUID messageId,
                                                   final UUID lastMessageId,
                                                   final int size) {
-        final OffsetDateTime messageDateTime = UUIDHelper.extractDateTimeFromUUID(messageId);
-
         final SelectSeekStep2<Record, OffsetDateTime, UUID> query = DSL.select(MESSAGE.fields())
             .from(MESSAGE)
             .where(MESSAGE.PARENT_MESSAGE_UUID.eq(messageId))
-            .and(MESSAGE.CREATED_AT.eq(messageDateTime))
             .orderBy(MESSAGE.CREATED_AT, MESSAGE.UUID);
 
         return applySeekPagination(lastMessageId, query, size);
@@ -80,16 +81,16 @@ public class MessageRepositoryImpl implements MessageRepository {
         conditions.add(MESSAGE.DATA_ENTITY_ID.eq(dataEntityId));
 
         if (StringUtils.isNotEmpty(channelNameLike)) {
-            conditions.add(MESSAGE.PROVIDER_CHANNEL_ID.startsWithIgnoreCase(channelNameLike));
+            conditions.add(MESSAGE.PROVIDER_CHANNEL_NAME.startsWithIgnoreCase(channelNameLike));
         }
 
-        final SelectConditionStep<Record1<String>> query = DSL
-            .selectDistinct(MESSAGE.PROVIDER_CHANNEL_ID)
+        final SelectConditionStep<Record2<String, String>> query = DSL
+            .selectDistinct(MESSAGE.PROVIDER_CHANNEL_ID, MESSAGE.PROVIDER_CHANNEL_NAME)
             .from(MESSAGE)
             .where(conditions);
 
         return jooqReactiveOperations.flux(query)
-            .map(r -> MessageChannelDto.builder().id(r.component1()).name(r.component1()).build());
+            .map(r -> MessageChannelDto.builder().id(r.component1()).name(r.component2()).build());
     }
 
     @Override
@@ -121,6 +122,20 @@ public class MessageRepositoryImpl implements MessageRepository {
             .set(record);
 
         return jooqReactiveOperations.mono(query).then();
+    }
+
+    @Override
+    public Mono<Boolean> exists(final UUID messageId) {
+        final OffsetDateTime createdAt = UUIDHelper.extractDateTimeFromUUID(messageId);
+
+        final var query = jooqQueryHelper.selectExists(
+            DSL.select(MESSAGE.UUID)
+                .from(MESSAGE)
+                .where(MESSAGE.CREATED_AT.eq(createdAt))
+                .and(MESSAGE.UUID.eq(messageId))
+        );
+
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.slack.api.model.event.MessageChangedEvent;
 import com.slack.api.model.event.MessageEvent;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnDataCollaboration
+@Slf4j
 public class SlackEventParser {
     public ParseResult parse(final String rawJson) {
         final Map<String, Object> requestMap = JSONSerDeUtils.deserializeJson(rawJson, new TypeReference<>() {

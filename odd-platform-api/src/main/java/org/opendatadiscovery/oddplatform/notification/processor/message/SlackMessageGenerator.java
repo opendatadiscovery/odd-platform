@@ -49,7 +49,12 @@ public class SlackMessageGenerator {
         resolveOwnerContextSection(ctx.owners()).ifPresent(blocks::add);
         resolveTagsContextSection(ctx.tags()).ifPresent(blocks::add);
 
-        return singletonList(Attachment.builder().color(MESSAGE_COLOR).blocks(blocks).build());
+        final Attachment attachment = Attachment.builder()
+            .color(MESSAGE_COLOR)
+            .blocks(blocks)
+            .build();
+
+        return singletonList(attachment);
     }
 
     public List<LayoutBlock> generateAlertMessage(final AlertNotificationMessage message) {
@@ -85,24 +90,7 @@ public class SlackMessageGenerator {
     }
 
     private Optional<LayoutBlock> resolveInformationalContextSection(final AlertedDataEntity dataEntity) {
-        if (dataEntity.namespaceName() == null && dataEntity.dataSourceName() == null) {
-            return Optional.empty();
-        }
-
-        final StringBuilder sb = new StringBuilder();
-        if (dataEntity.dataSourceName() != null) {
-            sb.append("Data Source: ");
-            sb.append(dataEntity.dataSourceName());
-        }
-
-        if (dataEntity.namespaceName() != null) {
-            sb.append(", ");
-            sb.append("Namespace: ");
-            sb.append(dataEntity.namespaceName());
-        }
-
-        return Optional.of(
-            context(c -> c.elements(List.of(BlockCompositions.markdownText(cc -> cc.text(sb.toString()))))));
+        return resolveInformationalContextSection(dataEntity.dataSourceName(), dataEntity.namespaceName());
     }
 
     private Optional<LayoutBlock> resolveInformationalContextSection(final String dataSource, final String namespace) {
@@ -127,13 +115,7 @@ public class SlackMessageGenerator {
     }
 
     private Optional<LayoutBlock> resolveOwnerContextSection(final AlertedDataEntity dataEntity) {
-        if (dataEntity.owners().isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(
-            context(c -> c.elements(List.of(BlockCompositions.markdownText(extractOwners(dataEntity.owners())))))
-        );
+        return resolveOwnerContextSection(dataEntity.owners());
     }
 
     private Optional<LayoutBlock> resolveOwnerContextSection(final Set<OwnershipPair> owners) {

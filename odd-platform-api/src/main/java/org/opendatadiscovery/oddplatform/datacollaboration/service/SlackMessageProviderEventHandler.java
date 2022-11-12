@@ -54,7 +54,7 @@ public class SlackMessageProviderEventHandler implements MessageProviderEventHan
     public MessageEventPayload payloadForUpdate(final MessageProviderEventPojo event) {
         final MessageChangedEvent slackEvent = GsonHelper.fromJson(event.getEvent().data(), MessageChangedEvent.class);
 
-        return buildPayload(slackEvent.getMessage().getTs(), slackEvent.getMessage().getTs(), null);
+        return buildPayload(slackEvent.getMessage().getTs(), slackEvent.getMessage().getText(), null);
     }
 
     @Override
