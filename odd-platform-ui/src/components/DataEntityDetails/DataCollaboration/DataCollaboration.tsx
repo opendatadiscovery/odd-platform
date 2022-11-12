@@ -56,7 +56,9 @@ const DataCollaboration: React.FC = () => {
   );
 
   const handleSetMessageDate = React.useCallback(
-    (date: string) => setMessageDate(date),
+    (date: string) => {
+      setMessageDate(date);
+    },
     [setMessageDate]
   );
 

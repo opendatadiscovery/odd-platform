@@ -49,26 +49,23 @@ const MessagesList: React.FC<MessagesListProps> = ({
             scrollThreshold='200px'
             scrollableTarget='messages-list'
           >
-            {Object.entries(messagesByDate).map(([messageDate, messages], index) => {
-              handleSetMessageDate(messageDate);
-
-              return (
-                // eslint-disable-next-line react/no-array-index-key
-                <Grid key={`${messageDate}-${index}`} container>
-                  <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
-                    {messageDate}
-                  </Typography>
-                  {messages.map(message => (
-                    <Message
-                      key={message.id}
-                      message={message}
-                      isActive={routerMessageId === message.id}
-                      messageOnClick={handleMessageOnClick(message.id)}
-                    />
-                  ))}
-                </Grid>
-              );
-            })}
+            {Object.entries(messagesByDate).map(([messageDate, messages], index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Grid key={`${messageDate}-${index}`} container>
+                <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
+                  {messageDate}
+                </Typography>
+                {messages.map(message => (
+                  <Message
+                    key={message.id}
+                    message={message}
+                    isActive={routerMessageId === message.id}
+                    handleSetMessageDate={handleSetMessageDate}
+                    messageOnClick={handleMessageOnClick(message.id)}
+                  />
+                ))}
+              </Grid>
+            ))}
           </InfiniteScroll>
         </S.MessagesContainer>
       ) : (

@@ -3,7 +3,6 @@ import { Grid } from '@mui/material';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 
 export const Container = styled(Grid)(({ theme }) => ({
-  maxWidth: '31%',
   height: `calc(100vh - ${toolbarHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
     8.5
   )})`,

@@ -42,8 +42,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
       flexDirection='column'
       flexWrap='nowrap'
       alignSelf='baseline'
-      pl={2}
-      pt={2}
+      sx={{ px: 2, pt: 2 }}
     >
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>

@@ -31,6 +31,7 @@ export const tabsContainerMargin = 16;
 
 // time formats
 export const alertDateFormat = 'd MMM yyyy, HH:mm';
+export const datedListFormat = 'MMMM dd, yyyy';
 
 // empty structures
 export const emptyArr = [];

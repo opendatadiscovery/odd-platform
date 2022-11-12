@@ -1,6 +1,6 @@
 import { activitiesActionTypePrefix, fetchActivityListActionType } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
-import { addDays, endOfDay, format } from 'date-fns';
+import { addDays, endOfDay } from 'date-fns';
 import type {
   ActivitiesState,
   Activity,
@@ -18,6 +18,8 @@ import {
   fetchActivityList,
   fetchDataEntityActivityList,
 } from 'redux/thunks/activity.thunks';
+import { formatDate } from 'lib/helpers';
+import { datedListFormat } from 'lib/constants';
 
 const beginDate = endOfDay(addDays(new Date(), -5)).getTime();
 const endDate = endOfDay(addDays(new Date(), 1)).getTime();
@@ -40,8 +42,6 @@ export const initialState: ActivitiesState = {
   },
   pageInfo: { hasNext: true },
 };
-
-const formattedDate = (date: number) => format(date, 'MMMM dd, yyyy');
 
 let currentActivityListActionType = fetchActivityListActionType;
 
@@ -66,8 +66,12 @@ const updateActivitiesState = (
       ...memo,
       activitiesByDate: {
         ...memo.activitiesByDate,
-        [formattedDate(activity.createdAt)]: uniqBy(
-          [...(memo.activitiesByDate[formattedDate(activity.createdAt)] || []), activity],
+        [formatDate(activity.createdAt, datedListFormat)]: uniqBy(
+          [
+            ...(memo.activitiesByDate[formatDate(activity.createdAt, datedListFormat)] ||
+              []),
+            activity,
+          ],
           'id'
         ).sort((a, b) => b.createdAt - a.createdAt),
       },

@@ -35,8 +35,7 @@ export const stringFormatted = (
     .join(' ');
 };
 
-export const formattedDate = (date: number, dateFormat: string) =>
-  format(date, dateFormat);
+export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
 
 export const toDateWithoutOffset = (dateToCast: number): Date => {
   const date = new Date(dateToCast);

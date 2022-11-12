@@ -8,6 +8,7 @@ import {
 } from 'lib/constants';
 
 export const Container = styled(Grid)(() => ({
+  maxWidth: `${760 + maxChannelsWidth}px`,
   paddingLeft: `${maxChannelsWidth}px`,
   flexGrow: 1,
 }));

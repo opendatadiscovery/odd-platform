@@ -2,8 +2,9 @@ import { dataCollaborationActTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import type { DataCollaborationState, Message } from 'redux/interfaces';
-import { formattedDate } from 'lib/helpers';
+import { formatDate } from 'lib/helpers';
 import uniqBy from 'lodash/uniqBy';
+import { datedListFormat } from 'lib/constants';
 
 export const initialState: DataCollaborationState = {
   messages: { messagesByDate: {}, pageInfo: { hasNext: true } },
@@ -17,16 +18,15 @@ export const dataCollaborationSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(thunks.fetchDataEntityMessages.fulfilled, (state, { payload }) => {
       const { messages, pageInfo } = payload;
-      const dateFormat = 'MMMM dd, yyyy';
 
       state.messages = messages.reduce(
         (memo: DataCollaborationState['messages'], message: Message) => ({
           ...memo,
           messagesByDate: {
             ...memo.messagesByDate,
-            [formattedDate(message.createdAt, dateFormat)]: uniqBy(
+            [formatDate(message.createdAt, datedListFormat)]: uniqBy(
               [
-                ...(memo.messagesByDate[formattedDate(message.createdAt, dateFormat)] ||
+                ...(memo.messagesByDate[formatDate(message.createdAt, datedListFormat)] ||
                   []),
                 message,
               ],

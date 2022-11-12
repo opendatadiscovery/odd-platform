@@ -4,12 +4,15 @@ import { Grid, Typography } from '@mui/material';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { AppAvatar, AppButton, WithFeature } from 'components/shared';
 import { Feature } from 'generated-sources';
+import { formatDate } from 'lib/helpers';
+import { datedListFormat } from 'lib/constants';
 import * as S from './MessageStyles';
 
 interface MessageProps {
   message: MessageModel;
   isActive: boolean;
   messageOnClick: () => void;
+  handleSetMessageDate: (date: string) => void;
 }
 const Message: React.FC<MessageProps> = ({
   message: {
@@ -23,9 +26,17 @@ const Message: React.FC<MessageProps> = ({
   },
   isActive,
   messageOnClick,
+  handleSetMessageDate,
 }) => {
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
   const messagesCount = childrenMessagesCount ?? 0;
+
+  React.useEffect(() => {
+    if (isActive) {
+      const formattedDate = formatDate(createdAt, datedListFormat);
+      handleSetMessageDate(formattedDate);
+    }
+  }, [isActive, createdAt, handleSetMessageDate]);
 
   return (
     <S.Container $active={isActive} container onClick={messageOnClick}>
