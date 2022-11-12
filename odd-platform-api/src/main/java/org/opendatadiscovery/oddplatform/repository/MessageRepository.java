@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderIdentity;
+import org.opendatadiscovery.oddplatform.dto.MessageDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,10 +18,10 @@ public interface MessageRepository {
     Mono<UUID> getUUIDByProviderInfo(final String providerId,
                                      final MessageProviderDto messageProvider);
 
-    Flux<MessagePojo> listParentMessagesByDataEntityId(final long dataEntityId,
-                                                       final String channelId,
-                                                       final UUID lastMessageId,
-                                                       final int size);
+    Flux<MessageDto> listParentMessagesByDataEntityId(final long dataEntityId,
+                                                      final String channelId,
+                                                      final UUID lastMessageId,
+                                                      final int size);
 
     Flux<MessagePojo> listChildrenMessages(final UUID messageId,
                                            final UUID lastMessageId,

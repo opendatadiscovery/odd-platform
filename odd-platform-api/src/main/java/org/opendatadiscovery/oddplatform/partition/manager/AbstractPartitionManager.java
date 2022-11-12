@@ -43,9 +43,12 @@ public abstract class AbstractPartitionManager implements PartitionManager {
                 lastPartitionDate = lastPartitionDate.plusDays(partitionDaysPeriod);
             }
             for (final TablePartition newPartition : newPartitions) {
-                createPartition(connection, tableName, newPartition.beginDate(), newPartition.endDate());
+                final String createdPartitionName =
+                    createPartition(connection, tableName, newPartition.beginDate(), newPartition.endDate());
                 log.debug("Created partition for table {} for date range: {} - {}", tableName, newPartition.beginDate(),
                     newPartition.endDate());
+
+                runAdditionalQueriesForPartition(connection, createdPartitionName);
             }
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -61,20 +64,24 @@ public abstract class AbstractPartitionManager implements PartitionManager {
                                                          final String tableName,
                                                          final String schemaName) throws SQLException {
         final List<String> tableNameExclusions = getTableNameExclusions();
+        final boolean toExclude = CollectionUtils.isNotEmpty(tableNameExclusions);
 
-        // TODO: do not generate AND table_name NOT IN (?) if exlusions are empty
-        final String sql = """
-               SELECT table_name FROM information_schema.tables
-               WHERE table_schema = ? AND table_name LIKE ? AND table_name NOT IN (?)
-               ORDER BY table_name DESC LIMIT 1
-            """;
-        try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+        final StringBuilder sqlBuilder = new StringBuilder("""
+                SELECT table_name FROM information_schema.tables
+                WHERE table_schema = ? AND table_name LIKE ?
+            """);
+
+        if (toExclude) {
+            sqlBuilder.append(" AND table_name NOT IN (?)");
+        }
+
+        sqlBuilder.append(" ORDER BY table_name DESC LIMIT 1");
+
+        try (final PreparedStatement statement = connection.prepareStatement(sqlBuilder.toString())) {
             statement.setString(1, StringUtils.isNotEmpty(schemaName) ? schemaName : DEFAULT_SCHEMA);
             statement.setString(2, tableName + "_%");
-            if (CollectionUtils.isNotEmpty(tableNameExclusions)) {
+            if (toExclude) {
                 statement.setString(3, String.join(",", tableNameExclusions));
-            } else {
-                statement.setString(3, "");
             }
             try (final ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -85,10 +92,10 @@ public abstract class AbstractPartitionManager implements PartitionManager {
         }
     }
 
-    protected void createPartition(final Connection connection,
-                                   final String tableName,
-                                   final LocalDate beginDate,
-                                   final LocalDate endDate) throws SQLException {
+    protected String createPartition(final Connection connection,
+                                     final String tableName,
+                                     final LocalDate beginDate,
+                                     final LocalDate endDate) throws SQLException {
         final String partitionName = getPartitionName(tableName, beginDate, endDate);
         final String sql = "CREATE TABLE IF NOT EXISTS %s PARTITION OF %s FOR VALUES FROM ('%s') TO ('%s');"
             .formatted(partitionName, tableName, beginDate.format(ISO_LOCAL_DATE), endDate.format(ISO_LOCAL_DATE));
@@ -96,6 +103,8 @@ public abstract class AbstractPartitionManager implements PartitionManager {
         try (final PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.execute();
         }
+
+        return partitionName;
     }
 
     protected String getPartitionName(final String tableName, final LocalDate beginDate, final LocalDate endDate) {

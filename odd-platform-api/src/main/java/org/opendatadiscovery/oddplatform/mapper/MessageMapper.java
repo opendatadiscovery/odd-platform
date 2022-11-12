@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -14,6 +13,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MessageState;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
+import org.opendatadiscovery.oddplatform.dto.MessageDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 
 @Mapper(config = MapperConfig.class)
@@ -23,8 +23,20 @@ public interface MessageMapper {
     @Mapping(target = "id", source = "uuid")
     Message mapPojo(final MessagePojo messagePojo);
 
+    default Message mapDto(final MessageDto messageDto) {
+        if (messageDto == null || messageDto.message() == null) {
+            return null;
+        }
+
+        return mapPojo(messageDto.message()).childrenMessagesCount(messageDto.childrenMessagesCount());
+    }
+
     default MessageList mapPojos(final List<MessagePojo> messagePojos) {
         return new MessageList().items(messagePojos.stream().map(this::mapPojo).toList());
+    }
+
+    default MessageList mapDtos(final List<MessageDto> messageDtos) {
+        return new MessageList().items(messageDtos.stream().map(this::mapDto).toList());
     }
 
     default MessageList mapPojos(final List<MessagePojo> messagePojos, final Map<String, MessageUserDto> messageUsers) {

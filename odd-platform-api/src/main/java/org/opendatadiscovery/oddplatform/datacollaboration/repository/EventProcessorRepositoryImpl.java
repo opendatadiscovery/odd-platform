@@ -16,13 +16,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EV
 public class EventProcessorRepositoryImpl implements EventProcessorRepository {
     @Override
     public void createMessage(final DSLContext dslContext, final MessageRecord record) {
-        dslContext.insertInto(MESSAGE)
-            .set(record)
-            // TODO: why it doesn't work?
-//            .onConflict(MESSAGE.PROVIDER_MESSAGE_ID, MESSAGE.PROVIDER, MESSAGE.CREATED_AT)
-//            .where(MESSAGE.PROVIDER_MESSAGE_ID.isNotNull())
-//            .doNothing()
-            .execute();
+        dslContext.insertInto(MESSAGE).set(record).onConflict().doNothing().execute();
     }
 
     @Override

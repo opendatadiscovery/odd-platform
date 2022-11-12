@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.dto;
 
+import lombok.Builder;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 
-public record MessageDto(MessagePojo message, long nestedMessages) {
+@Builder
+public record MessageDto(MessagePojo message, long childrenMessagesCount) {
 }

@@ -38,7 +38,7 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository
             .listParentMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, size)
             .collectList()
-            .map(messageMapper::mapPojos);
+            .map(messageMapper::mapDtos);
     }
 
     @Override
