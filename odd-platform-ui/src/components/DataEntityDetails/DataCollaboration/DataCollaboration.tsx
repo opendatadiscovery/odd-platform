@@ -48,7 +48,7 @@ const DataCollaboration: React.FC = () => {
   const fetchNextMessages = React.useCallback(() => {
     if (!hasNext) return;
     dispatch(fetchDataEntityMessages(fetchMessagesParams));
-  }, [fetchMessagesParams]);
+  }, [fetchMessagesParams, hasNext]);
 
   const handleSetChannelId = React.useCallback(
     (id: string | undefined) => setChannelId(id),

@@ -1,6 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { DataCollaborationState, Message, RootState } from 'redux/interfaces';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { emptyArr, emptyObj } from 'lib/constants';
 
@@ -17,6 +20,9 @@ export const getDataEntityMessagesFetchingStatuses = createStatusesSelector(
 );
 
 export const getRelatedMessagesFetchingStatuses = createStatusesSelector(
+  actions.fetchMessagesRelatedToMessageActionType
+);
+export const getRelatedMessagesError = createErrorSelector(
   actions.fetchMessagesRelatedToMessageActionType
 );
 
