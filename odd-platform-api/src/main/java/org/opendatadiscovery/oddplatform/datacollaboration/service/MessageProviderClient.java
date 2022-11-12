@@ -19,9 +19,7 @@ public interface MessageProviderClient {
 
     Flux<MessageUserDto> getUserProfiles(final Set<String> userIds);
 
-    Mono<String> postMessage(final String channelId,
-                             final String messageText,
-                             final DataEntityMessageContext messageContext);
+    Mono<String> postMessage(final DataEntityMessageContext messageContext);
 
     MessageProviderDto getProvider();
 }

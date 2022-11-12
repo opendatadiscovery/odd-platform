@@ -7,15 +7,10 @@ import java.util.stream.Stream;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
 
 public interface DataCollaborationRepository {
-    // TODO: unite with below
-    Optional<DataEntityMessageContext> getMessageContext(final UUID messageUUID, final OffsetDateTime messageCreatedAt);
-
-    // TODO: unite with above
-    Optional<MessagePojo> getSendingCandidate();
+    Optional<DataEntityMessageContext> getSendingCandidate();
 
     void enrichMessage(final UUID messageUUID, final OffsetDateTime messageCreatedAt, final String providerMessageId);
 

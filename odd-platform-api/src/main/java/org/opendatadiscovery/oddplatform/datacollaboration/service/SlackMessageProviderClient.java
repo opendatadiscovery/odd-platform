@@ -49,13 +49,10 @@ public class SlackMessageProviderClient implements MessageProviderClient {
     }
 
     @Override
-    public Mono<String> postMessage(final String channelId,
-                                    final String messageText,
-                                    final DataEntityMessageContext messageContext) {
-        final List<Attachment> preparedMessageLayout =
-            slackMessageGenerator.generateMessage(messageContext, messageText);
+    public Mono<String> postMessage(final DataEntityMessageContext messageContext) {
+        final List<Attachment> preparedMessageLayout = slackMessageGenerator.generateMessage(messageContext);
 
-        return slackAPIClient.postMessage(channelId, preparedMessageLayout);
+        return slackAPIClient.postMessage(messageContext.message().getProviderChannelId(), preparedMessageLayout);
     }
 
     @Override

@@ -34,29 +34,19 @@ public class DataCollaborationMessageSenderJob extends Thread {
                     dataCollaborationRepositoryFactory.create(DSL.using(connection));
 
                 while (true) {
-                    final Optional<MessagePojo> sendingCandidate =
+                    final Optional<DataEntityMessageContext> sendingCandidate =
                         dataCollaborationRepository.getSendingCandidate();
 
                     if (sendingCandidate.isPresent()) {
-                        final MessagePojo message = sendingCandidate.get();
+                        final DataEntityMessageContext messageCtx = sendingCandidate.get();
+                        final MessagePojo message = messageCtx.message();
 
                         final MessageProviderClient messageProviderClient = messageProviderClientFactory
                             .getOrFail(MessageProviderDto.valueOf(message.getProvider()));
 
-                        final Optional<DataEntityMessageContext> messageContext =
-                            dataCollaborationRepository.getMessageContext(message.getUuid(), message.getCreatedAt());
-
-                        if (messageContext.isEmpty()) {
-                            // TODO: specify exception. Might not be needed if sendingCandidate
-                            //  will also send data entity info
-                            throw new RuntimeException();
-                        }
-
                         final String messageTs;
                         try {
-                            messageTs = messageProviderClient
-                                .postMessage(message.getProviderChannelId(), message.getText(), messageContext.get())
-                                .block();
+                            messageTs = messageProviderClient.postMessage(messageCtx).block();
 
                             dataCollaborationRepository.enrichMessage(message.getUuid(), message.getCreatedAt(),
                                 messageTs);

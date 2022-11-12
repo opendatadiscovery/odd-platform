@@ -36,18 +36,21 @@ public class SlackMessageGenerator {
 
     private final URL platformBaseUrl;
 
-    public List<Attachment> generateMessage(final DataEntityMessageContext ctx, final String messageText) {
+    public List<Attachment> generateMessage(final DataEntityMessageContext messageContext) {
         final List<LayoutBlock> blocks = new ArrayList<>();
+        final DataEntityMessageContext.DataEntity dataEntity = messageContext.dataEntity();
 
-        blocks.add(section(c -> c.text(markdownText(
-            ":speech_balloon: " + buildDataEntityLink(ctx.dataEntityId(), ctx.dataEntityName(), ctx.type())))));
+        blocks.add(section(c -> c.text(markdownText(":speech_balloon: " +
+            buildDataEntityLink(dataEntity.dataEntityId(), dataEntity.dataEntityName(), dataEntity.type())))));
 
         blocks.add(divider());
-        blocks.add(section(c -> c.text(markdownText(messageText))));
+        blocks.add(section(c -> c.text(markdownText(messageContext.message().getText()))));
 
-        resolveInformationalContextSection(ctx.dataSourceName(), ctx.namespaceName()).ifPresent(blocks::add);
-        resolveOwnerContextSection(ctx.owners()).ifPresent(blocks::add);
-        resolveTagsContextSection(ctx.tags()).ifPresent(blocks::add);
+        resolveInformationalContextSection(dataEntity.dataSourceName(), dataEntity.namespaceName())
+            .ifPresent(blocks::add);
+
+        resolveOwnerContextSection(dataEntity.owners()).ifPresent(blocks::add);
+        resolveTagsContextSection(dataEntity.tags()).ifPresent(blocks::add);
 
         final Attachment attachment = Attachment.builder()
             .color(MESSAGE_COLOR)

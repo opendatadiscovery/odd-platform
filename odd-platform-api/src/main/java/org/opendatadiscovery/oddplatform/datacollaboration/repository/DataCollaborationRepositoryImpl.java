@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.datacollaboration.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,19 +52,22 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
     private static final String DATA_SOURCE_NAME_FIELD_ALIAS = "data_source_name";
 
     @Override
-    public Optional<DataEntityMessageContext> getMessageContext(final UUID messageUUID,
-                                                                final OffsetDateTime messageCreatedAt) {
-        final List<Field<?>> fields = List.of(
-            DATA_ENTITY.ID,
-            DATA_ENTITY.TYPE_ID,
-            DATA_ENTITY.EXTERNAL_NAME,
-            DATA_ENTITY.INTERNAL_NAME,
-            DATA_SOURCE.NAME.as(DATA_SOURCE_NAME_FIELD_ALIAS),
-            NAMESPACE.NAME.as(NAMESPACE_NAME_FIELD_ALIAS)
-        );
+    public Optional<DataEntityMessageContext> getSendingCandidate() {
+        final List<Field<?>> fields = Stream.concat(
+            Stream.of(
+                DATA_ENTITY.ID,
+                DATA_ENTITY.TYPE_ID,
+                DATA_ENTITY.EXTERNAL_NAME,
+                DATA_ENTITY.INTERNAL_NAME,
+                DATA_SOURCE.NAME.as(DATA_SOURCE_NAME_FIELD_ALIAS),
+                NAMESPACE.NAME.as(NAMESPACE_NAME_FIELD_ALIAS)
+            ),
+            Arrays.stream(MESSAGE.fields())
+        ).toList();
 
         // @formatter:off
         return dslContext
+            .select(MESSAGE.fields())
             .select(fields)
             .select(jsonArrayAgg(jsonObject(
                 jsonEntry("owner_name", OWNER.NAME),
@@ -77,24 +81,17 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
             .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
             .leftJoin(NAMESPACE)
-            .on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .or(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
+                .on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+                .or(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
-            .where(MESSAGE.UUID.eq(messageUUID)).and(MESSAGE.CREATED_AT.eq(messageCreatedAt))
+            .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.getCode()))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
             .groupBy(fields)
+            .orderBy(MESSAGE.CREATED_AT.desc()).limit(1)
             .fetchOptional()
             .map(this::mapMessageContextRecord);
         // @formatter:on
-    }
-
-    @Override
-    public Optional<MessagePojo> getSendingCandidate() {
-        return dslContext.select(MESSAGE.fields())
-            .from(MESSAGE)
-            .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.getCode()))
-            .orderBy(MESSAGE.CREATED_AT.desc()).limit(1)
-            .fetchOptional(r -> r.into(MessagePojo.class));
     }
 
     @Override
@@ -171,6 +168,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
     }
 
     private DataEntityMessageContext mapMessageContextRecord(final Record record) {
+        final MessagePojo message = record.into(MessagePojo.class);
         final String dataEntityName = record.get(DATA_ENTITY.INTERNAL_NAME) == null
             ? record.get(DATA_ENTITY.EXTERNAL_NAME)
             : record.get(DATA_ENTITY.INTERNAL_NAME);
@@ -193,13 +191,16 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .orElseThrow(() -> new IllegalArgumentException("Query returned unknown type id: %d".formatted(typeId)));
 
         return DataEntityMessageContext.builder()
-            .dataEntityId(record.get(DATA_ENTITY.ID))
-            .dataEntityName(dataEntityName)
-            .type(entityType)
-            .dataSourceName(record.get(DATA_SOURCE_NAME_FIELD_ALIAS, String.class))
-            .namespaceName(record.get(NAMESPACE_NAME_FIELD_ALIAS, String.class))
-            .owners(owners)
-            .tags(tags)
+            .message(message)
+            .dataEntity(DataEntityMessageContext.DataEntity.builder()
+                .dataEntityId(record.get(DATA_ENTITY.ID))
+                .dataEntityName(dataEntityName)
+                .type(entityType)
+                .dataSourceName(record.get(DATA_SOURCE_NAME_FIELD_ALIAS, String.class))
+                .namespaceName(record.get(NAMESPACE_NAME_FIELD_ALIAS, String.class))
+                .owners(owners)
+                .tags(tags)
+                .build())
             .build();
     }
 }
