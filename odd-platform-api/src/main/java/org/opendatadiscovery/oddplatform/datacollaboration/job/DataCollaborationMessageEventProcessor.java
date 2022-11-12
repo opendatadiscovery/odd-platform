@@ -7,53 +7,49 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationProperties;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventPayload;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.DataCollaborationMessageEventProcessingException;
-import org.opendatadiscovery.oddplatform.datacollaboration.repository.EventProcessorRepository;
+import org.opendatadiscovery.oddplatform.datacollaboration.repository.DataCollaborationRepository;
+import org.opendatadiscovery.oddplatform.datacollaboration.repository.DataCollaborationRepositoryFactory;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderEventHandlerFactory;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
 import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
-
-import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
-import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EVENT;
 
 @RequiredArgsConstructor
 @Slf4j
 public class DataCollaborationMessageEventProcessor extends Thread {
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
     private final MessageProviderEventHandlerFactory messageProviderEventHandlerFactory;
-    private final EventProcessorRepository eventProcessorRepository;
     private final DataCollaborationProperties dataCollaborationProperties;
+    private final DataCollaborationRepositoryFactory dataCollaborationRepositoryFactory;
 
     @Override
     public void run() {
         while (!Thread.interrupted()) {
             try (final Connection connection = acquireLeaderElectionConnection()) {
                 connection.setAutoCommit(false);
-                final DSLContext dslContext = DSL.using(connection);
+                final DataCollaborationRepository dataCollaborationRepository =
+                    dataCollaborationRepositoryFactory.create(DSL.using(connection));
 
                 while (true) {
-                    try (final Stream<MessageEventDto> pendingEventsStream = getPendingEventsStream(dslContext)) {
+                    try (final Stream<MessageEventDto> pendingEventsStream =
+                             dataCollaborationRepository.getPendingEventsStream()) {
                         for (final MessageEventDto event : pendingEventsStream.toList()) {
                             try {
-                                handleEvent(event, dslContext);
+                                handleEvent(event, dataCollaborationRepository);
                             } catch (final DataCollaborationMessageEventProcessingException e) {
                                 log.error(e.getMessage());
-                                eventProcessorRepository.markEventAsFailed(dslContext, event.event().getId(),
-                                    e.getMessage());
+                                dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                             }
 
-                            eventProcessorRepository.deleteEvent(dslContext, event.event().getId());
+                            dataCollaborationRepository.deleteEvent(event.event().getId());
                         }
                         connection.commit();
                     } catch (final Exception e) {
@@ -80,7 +76,8 @@ public class DataCollaborationMessageEventProcessor extends Thread {
         }
     }
 
-    private void handleEvent(final MessageEventDto event, final DSLContext dslContext) {
+    private void handleEvent(final MessageEventDto event,
+                             final DataCollaborationRepository dataCollaborationRepository) {
         final MessageProviderDto messageProvider = MessageProviderDto.valueOf(event.event().getProvider());
         final MessageEventActionDto eventAction = MessageEventActionDto.fromCode(event.event().getAction());
 
@@ -97,7 +94,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         "Couldn't retrieve payload to create a message from %s provider".formatted(messageProvider), e);
                 }
 
-                eventProcessorRepository.createMessage(dslContext, buildMessageRecord(event, eventPayload));
+                dataCollaborationRepository.createMessage(buildMessageRecord(event, eventPayload));
             }
             case UPDATE -> {
                 final MessageEventPayload eventPayload;
@@ -111,13 +108,14 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                 }
 
                 // Slack Event API sends an update event to the parent message after a thread reply message is deleted.
-                // We don't want to generate another useless update query to the database
+                // This update event for some reason have threadTs which makes the job update the parent message
+                //   which at the moment cannot change.
+                // This behaviour is not stable and occurred several times while we were testing manually
                 if (eventPayload.messageId().equals(event.parentMessage().getProviderMessageId())) {
                     return;
                 }
 
-                eventProcessorRepository.updateMessage(
-                    dslContext,
+                dataCollaborationRepository.updateMessage(
                     messageProvider,
                     eventPayload.messageId(),
                     eventPayload.messageText()
@@ -145,32 +143,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
             .setState(MessageStateDto.EXTERNAL.getCode());
     }
 
-    private Stream<MessageEventDto> getPendingEventsStream(final DSLContext dslContext) {
-        // @formatter:off
-        return dslContext
-            .select(MESSAGE_PROVIDER_EVENT.fields())
-            .select(MESSAGE.fields())
-            .from(MESSAGE_PROVIDER_EVENT)
-            .join(MESSAGE)
-                .on(MESSAGE.UUID.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_UUID))
-                .and(MESSAGE.CREATED_AT.eq(MESSAGE_PROVIDER_EVENT.PARENT_MESSAGE_CREATED_AT))
-            .where(MESSAGE_PROVIDER_EVENT.STATE.eq(MessageEventStateDto.PENDING.getCode()))
-            .orderBy(MESSAGE_PROVIDER_EVENT.CREATED_AT)
-            .limit(10)
-            .forUpdate().of(MESSAGE_PROVIDER_EVENT)
-            .fetchStream()
-            .map(r -> new MessageEventDto(
-                r.into(MESSAGE_PROVIDER_EVENT).into(MessageProviderEventPojo.class),
-                r.into(MESSAGE).into(MessagePojo.class)
-            ));
-        // @formatter:on
-    }
-
     private Connection acquireLeaderElectionConnection() throws SQLException {
         return leaderElectionManager.acquire(dataCollaborationProperties.getReceiveEventAdvisoryLockId(), true);
-    }
-
-    // TODO: rename as this name is occupied?
-    private record MessageEventDto(MessageProviderEventPojo event, MessagePojo parentMessage) {
     }
 }

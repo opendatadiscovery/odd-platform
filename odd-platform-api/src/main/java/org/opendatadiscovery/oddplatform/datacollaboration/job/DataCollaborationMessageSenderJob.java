@@ -6,13 +6,13 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationProperties;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.exception.DataCollaborationMessageSenderException;
-import org.opendatadiscovery.oddplatform.datacollaboration.repository.MessageSenderRepository;
+import org.opendatadiscovery.oddplatform.datacollaboration.repository.DataCollaborationRepository;
+import org.opendatadiscovery.oddplatform.datacollaboration.repository.DataCollaborationRepositoryFactory;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClient;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProviderClientFactory;
 import org.opendatadiscovery.oddplatform.leaderelection.PostgreSQLLeaderElectionManager;
@@ -24,17 +24,18 @@ public class DataCollaborationMessageSenderJob extends Thread {
     private final PostgreSQLLeaderElectionManager leaderElectionManager;
     private final MessageProviderClientFactory messageProviderClientFactory;
     private final DataCollaborationProperties dataCollaborationProperties;
-    private final MessageSenderRepository messageSenderRepository;
+    private final DataCollaborationRepositoryFactory dataCollaborationRepositoryFactory;
 
     @Override
     public void run() {
         while (!Thread.interrupted()) {
             try (final Connection connection = acquireLeaderElectionConnection()) {
-                final DSLContext dslContext = DSL.using(connection);
+                final DataCollaborationRepository dataCollaborationRepository =
+                    dataCollaborationRepositoryFactory.create(DSL.using(connection));
 
                 while (true) {
                     final Optional<MessagePojo> sendingCandidate =
-                        messageSenderRepository.getSendingCandidate(dslContext);
+                        dataCollaborationRepository.getSendingCandidate();
 
                     if (sendingCandidate.isPresent()) {
                         final MessagePojo message = sendingCandidate.get();
@@ -43,11 +44,7 @@ public class DataCollaborationMessageSenderJob extends Thread {
                             .getOrFail(MessageProviderDto.valueOf(message.getProvider()));
 
                         final Optional<DataEntityMessageContext> messageContext =
-                            messageSenderRepository.getMessageContext(
-                                dslContext,
-                                message.getUuid(),
-                                message.getCreatedAt()
-                            );
+                            dataCollaborationRepository.getMessageContext(message.getUuid(), message.getCreatedAt());
 
                         if (messageContext.isEmpty()) {
                             // TODO: specify exception. Might not be needed if sendingCandidate
@@ -61,11 +58,11 @@ public class DataCollaborationMessageSenderJob extends Thread {
                                 .postMessage(message.getProviderChannelId(), message.getText(), messageContext.get())
                                 .block();
 
-                            messageSenderRepository.updateMessage(dslContext, message.getUuid(),
-                                message.getCreatedAt(), messageTs);
+                            dataCollaborationRepository.enrichMessage(message.getUuid(), message.getCreatedAt(),
+                                messageTs);
                         } catch (final Exception e) {
                             log.error("Couldn't send a message to {}: {}", message.getProvider(), e.getMessage());
-                            messageSenderRepository.markMessageAsFailed(dslContext, message.getUuid(), e.getMessage());
+                            dataCollaborationRepository.markMessageAsFailed(message.getUuid(), e.getMessage());
                         }
                     }
 

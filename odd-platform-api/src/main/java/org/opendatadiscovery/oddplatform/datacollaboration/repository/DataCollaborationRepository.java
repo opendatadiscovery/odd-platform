@@ -3,9 +3,12 @@ package org.opendatadiscovery.oddplatform.datacollaboration.repository;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
-import org.jooq.DSLContext;
+import java.util.stream.Stream;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
+import org.opendatadiscovery.oddplatform.model.tables.records.MessageRecord;
 
 public interface DataCollaborationRepository {
     // TODO: unite with below
@@ -14,7 +17,17 @@ public interface DataCollaborationRepository {
     // TODO: unite with above
     Optional<MessagePojo> getSendingCandidate();
 
-    void updateMessage(final UUID messageKey, final OffsetDateTime messageCreatedAt, final String providerMessageId);
+    void enrichMessage(final UUID messageUUID, final OffsetDateTime messageCreatedAt, final String providerMessageId);
 
-    void markMessageAsFailed(final DSLContext dslContext, final UUID uuid, final String error);
+    void markMessageAsFailed(final UUID messageUUID, final String errorMessage);
+
+    Stream<MessageEventDto> getPendingEventsStream();
+
+    void createMessage(final MessageRecord record);
+
+    void updateMessage(final MessageProviderDto provider, final String providerMessageId, final String text);
+
+    void markEventAsFailed(final long eventId, final String errorMessage);
+
+    void deleteEvent(final long eventId);
 }

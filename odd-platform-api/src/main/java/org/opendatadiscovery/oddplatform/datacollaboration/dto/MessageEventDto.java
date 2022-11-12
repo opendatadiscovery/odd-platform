@@ -1,9 +1,7 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.dto;
 
-import lombok.Builder;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
 
-@Builder
-public record MessageEventDto(Object event,
-                              MessageProviderDto provider,
-                              MessageEventActionDto action) {
+public record MessageEventDto(MessageProviderEventPojo event, MessagePojo parentMessage) {
 }
