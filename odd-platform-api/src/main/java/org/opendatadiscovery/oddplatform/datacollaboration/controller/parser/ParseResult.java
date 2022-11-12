@@ -1,11 +1,11 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.controller.parser;
 
 import lombok.Builder;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventRequest;
 import org.springframework.http.HttpStatus;
 
 @Builder
-public record ParseResult(MessageEventDto messageEvent,
+public record ParseResult(MessageEventRequest messageEvent,
                           ParseResultType type,
                           HttpAck ack,
                           String filterMessage,

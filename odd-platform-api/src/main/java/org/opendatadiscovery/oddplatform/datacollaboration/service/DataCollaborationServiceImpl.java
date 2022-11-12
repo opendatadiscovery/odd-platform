@@ -7,9 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
-import org.opendatadiscovery.oddplatform.api.contract.model.MessageState;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventRequest;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -79,7 +78,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     }
 
     @Override
-    public Mono<Void> enqueueMessageEvent(final MessageEventDto messageEvent) {
+    public Mono<Void> enqueueMessageEvent(final MessageEventRequest messageEvent) {
         return messageProviderEventHandlerFactory
             .getOrFail(messageEvent.provider())
             .enqueueEvent(messageEvent);

@@ -5,7 +5,7 @@ import com.slack.api.model.event.MessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventRequest;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventPayload;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
@@ -22,7 +22,7 @@ public class SlackMessageProviderEventHandler implements MessageProviderEventHan
     private final MessageRepository messageRepository;
 
     @Override
-    public Mono<Void> enqueueEvent(final MessageEventDto messageEvent) {
+    public Mono<Void> enqueueEvent(final MessageEventRequest messageEvent) {
         final String parentMessageProviderId = switch (messageEvent.action()) {
             case CREATE -> ((MessageEvent) messageEvent.event()).getThreadTs();
             case UPDATE -> ((MessageChangedEvent) messageEvent.event()).getMessage().getThreadTs();

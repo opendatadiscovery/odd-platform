@@ -23,7 +23,8 @@ springfox-core = '3.0.0'
 mapstruct = '1.4.2.Final'
 opentelemetry = '1.6.0'
 opentelemetry-alpha = '1.6.0-alpha'
-slack-api-model = '1.24.0'
+slack-api = '1.27.0'
+uuid-generator = '4.0.1'
 shedlock-version = '4.42.0'
 lombok = '1.18.24'
 testcontainers = '1.17.1'
@@ -75,7 +76,9 @@ opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref
 opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
-slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api-model' }
+slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api' }
+slack-api = { module = 'com.slack.api:slack-api-client', version.ref = 'slack-api' }
+uuid-generator = { module = 'com.fasterxml.uuid:java-uuid-generator', version.ref = 'uuid-generator' }
 shedlock = { module = 'net.javacrumbs.shedlock:shedlock-spring', version.ref = 'shedlock-version' }
 shedlock-jdbc-lock-provider = { module = 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template', version.ref = 'shedlock-version' }
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }

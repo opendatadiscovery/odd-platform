@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventActionDto;
-import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventRequest;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.utils.GsonHelper;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
@@ -75,7 +75,7 @@ public class SlackEventParser {
 
             return ParseResult.builder()
                 .type(ParseResult.ParseResultType.PAYLOAD)
-                .messageEvent(MessageEventDto.builder()
+                .messageEvent(MessageEventRequest.builder()
                     .event(messageEvent)
                     .action(MessageEventActionDto.CREATE)
                     .provider(MessageProviderDto.SLACK)
@@ -96,7 +96,7 @@ public class SlackEventParser {
 
             return ParseResult.builder()
                 .type(ParseResult.ParseResultType.PAYLOAD)
-                .messageEvent(MessageEventDto.builder()
+                .messageEvent(MessageEventRequest.builder()
                     .event(messageEvent)
                     .action(MessageEventActionDto.UPDATE)
                     .provider(MessageProviderDto.SLACK)
