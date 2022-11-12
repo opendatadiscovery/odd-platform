@@ -4,6 +4,7 @@ components:
       type: string
       enum:
         - DATA_COLLABORATION
+        - ALERT_NOTIFICATIONS
 
     FeatureList:
       type: object

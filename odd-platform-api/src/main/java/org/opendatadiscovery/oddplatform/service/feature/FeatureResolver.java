@@ -7,6 +7,7 @@ public interface FeatureResolver {
     String DATA_COLLABORATION_ENABLED_PROPERTY_SPEL = "${datacollaboration.enabled}";
 
     String NOTIFICATIONS_ENABLED_PROPERTY = "notifications.enabled";
+    String NOTIFICATIONS_ENABLED_PROPERTY_SPEL = "${notifications.enabled}";
 
     FeatureList resolveActiveFeatures();
 }

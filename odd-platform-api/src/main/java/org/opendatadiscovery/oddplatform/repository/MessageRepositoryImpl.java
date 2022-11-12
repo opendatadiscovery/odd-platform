@@ -70,7 +70,6 @@ public class MessageRepositoryImpl implements MessageRepository {
             .where(conditions)
             .orderBy(MESSAGE.CREATED_AT.desc(), MESSAGE.UUID.desc());
 
-
         final Name messageCteName = name(MESSAGE_CTE_NAME);
         final var messageSelect = applySeekPagination(lastMessageId, cteQuery, size);
         final Table<Record> messageSelectTable = messageSelect.asTable(MESSAGE_CTE_NAME);
@@ -80,7 +79,7 @@ public class MessageRepositoryImpl implements MessageRepository {
             .select(messageSelectTable.fields())
             .select(count(MESSAGE.UUID).as(CHILDREN_MESSAGES_COUNT))
             .from(messageCteName)
-            .join(MESSAGE).on(MESSAGE.PARENT_MESSAGE_UUID.eq(messageSelectTable.field(MESSAGE.UUID)))
+            .leftJoin(MESSAGE).on(MESSAGE.PARENT_MESSAGE_UUID.eq(messageSelectTable.field(MESSAGE.UUID)))
             .groupBy(messageSelectTable.fields());
 
         return jooqReactiveOperations.flux(query)

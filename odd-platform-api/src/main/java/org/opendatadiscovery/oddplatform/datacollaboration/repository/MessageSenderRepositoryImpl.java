@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
 import org.springframework.stereotype.Repository;
 
 import static java.util.stream.Collectors.toSet;
@@ -103,6 +104,17 @@ public class MessageSenderRepositoryImpl implements MessageSenderRepository {
             .set(MESSAGE.STATE, MessageStateDto.SENT.getCode())
             .where(MESSAGE.UUID.eq(messageKey))
             .and(MESSAGE.CREATED_AT.eq(messageCreatedAt))
+            .execute();
+    }
+
+    @Override
+    public void markMessageAsFailed(final DSLContext dslContext,
+                                    final UUID messageUuid,
+                                    final String error) {
+        dslContext.update(MESSAGE)
+            .set(MESSAGE.STATE, MessageStateDto.ERROR_SENDING.getCode())
+            .where(MESSAGE.UUID.eq(messageUuid))
+            .and(MESSAGE.CREATED_AT.eq(UUIDHelper.extractDateTimeFromUUID(messageUuid)))
             .execute();
     }
 

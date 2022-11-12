@@ -55,12 +55,18 @@ public class DataCollaborationMessageSenderJob extends Thread {
                             throw new RuntimeException();
                         }
 
-                        final String messageTs = messageProviderClient
-                            .postMessage(message.getProviderChannelId(), message.getText(), messageContext.get())
-                            .block();
+                        final String messageTs;
+                        try {
+                            messageTs = messageProviderClient
+                                .postMessage(message.getProviderChannelId(), message.getText(), messageContext.get())
+                                .block();
 
-                        messageSenderRepository.updateMessage(dslContext, message.getUuid(), message.getCreatedAt(),
-                            messageTs);
+                            messageSenderRepository.updateMessage(dslContext, message.getUuid(),
+                                message.getCreatedAt(), messageTs);
+                        } catch (final Exception e) {
+                            log.error("Couldn't send a message to {}: {}", message.getProvider(), e.getMessage());
+                            messageSenderRepository.markMessageAsFailed(dslContext, message.getUuid(), e.getMessage());
+                        }
                     }
 
                     TimeUnit.SECONDS.sleep(1);

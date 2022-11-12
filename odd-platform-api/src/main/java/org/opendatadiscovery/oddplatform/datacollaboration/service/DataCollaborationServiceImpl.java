@@ -74,14 +74,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
                     .setProviderChannelName(channel.name())
                     .setText(messageRequest.getText());
 
-                return messageRepository.create(messagePojo)
-                    // TODO: mapper
-                    .map(pojo -> new Message()
-                        .id(messageUUID)
-                        .text(pojo.getText())
-                        .createdAt(pojo.getCreatedAt())
-                        .state(MessageState.PENDING_SEND)
-                    );
+                return messageRepository.create(messagePojo).map(messageMapper::mapPojo);
             }));
     }
 

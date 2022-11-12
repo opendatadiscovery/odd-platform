@@ -20,4 +20,6 @@ public interface MessageSenderRepository {
                        final UUID messageKey,
                        final OffsetDateTime messageCreatedAt,
                        final String providerMessageId);
+
+    void markMessageAsFailed(final DSLContext dslContext, final UUID uuid, final String error);
 }

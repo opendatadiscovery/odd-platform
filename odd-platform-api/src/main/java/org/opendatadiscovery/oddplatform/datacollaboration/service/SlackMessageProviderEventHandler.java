@@ -28,7 +28,6 @@ public class SlackMessageProviderEventHandler implements MessageProviderEventHan
             case UPDATE -> ((MessageChangedEvent) messageEvent.event()).getMessage().getThreadTs();
         };
 
-        // TODO: check that messages are coming from channels where an app is
         return messageRepository.getUUIDByProviderInfo(parentMessageProviderId, messageEvent.provider())
             .switchIfEmpty(Mono.defer(() -> {
                 log.debug("Message is not a reply thread for tracked messages: {}", messageEvent.event());
