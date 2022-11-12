@@ -14,7 +14,13 @@ export const initialState: DataCollaborationState = {
 export const dataCollaborationSlice = createSlice({
   name: dataCollaborationActTypePrefix,
   initialState,
-  reducers: { clearCollaborationState: () => initialState },
+  reducers: {
+    clearCollaborationState: () => initialState,
+    clearThreadState: state => ({
+      ...state,
+      relatedMessages: { messages: [], pageInfo: { hasNext: true } },
+    }),
+  },
   extraReducers: builder => {
     builder.addCase(thunks.fetchDataEntityMessages.fulfilled, (state, { payload }) => {
       const { messages, pageInfo } = payload;
@@ -41,13 +47,17 @@ export const dataCollaborationSlice = createSlice({
     });
 
     builder.addCase(thunks.fetchRelatedMessages.fulfilled, (state, { payload }) => {
-      state.relatedMessages = payload;
+      const { pageInfo, messages } = payload;
+
+      state.relatedMessages.messages = [...state.relatedMessages.messages, ...messages];
+      state.relatedMessages.pageInfo = pageInfo;
 
       return state;
     });
   },
 });
 
-export const { clearCollaborationState } = dataCollaborationSlice.actions;
+export const { clearCollaborationState, clearThreadState } =
+  dataCollaborationSlice.actions;
 
 export default dataCollaborationSlice.reducer;

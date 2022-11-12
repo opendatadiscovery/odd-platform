@@ -11,7 +11,7 @@ interface CurrentMessageProps {
 }
 
 const CurrentMessage: React.FC<CurrentMessageProps> = ({ messageDate }) => (
-  <S.Container container>
+  <S.Container container id='thread-messages-list'>
     <React.Suspense fallback={<AppCircularProgress size={40} background='transparent' />}>
       <Switch>
         <Route

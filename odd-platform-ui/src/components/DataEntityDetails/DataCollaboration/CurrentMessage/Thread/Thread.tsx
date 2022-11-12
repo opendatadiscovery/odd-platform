@@ -9,8 +9,8 @@ import {
 } from 'redux/selectors';
 import { fetchRelatedMessages, messagesListSize as size } from 'redux/thunks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import type { DataEntityApiGetMessagesRequest } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
+import { clearThreadState } from 'redux/slices/dataCollaboration.slice';
 import ThreadContent from './ThreadContent/ThreadContent';
 
 interface ThreadProps {
@@ -25,27 +25,29 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
   const mainMessage = useAppSelector(getDataEntityMessage(messageDate, messageId));
   const relatedMessages = useAppSelector(getRelatedMessages);
   const { lastId, hasNext } = useAppSelector(getRelatedMessagesPageInfo);
-  const { isLoading: isRelatedMessagesLoading } = useAppSelector(
-    getRelatedMessagesFetchingStatuses
-  );
+  const { isLoading: isRelatedMessagesLoading, isLoaded: isRelatedMessagesLoaded } =
+    useAppSelector(getRelatedMessagesFetchingStatuses);
   const relatedMessagesError = useAppSelector(getRelatedMessagesError);
 
-  const fetchRelatedMessagesParams = React.useMemo<DataEntityApiGetMessagesRequest>(
-    () => ({ dataEntityId, messageId, size, lastMessageId: lastId }),
-    [dataEntityId, messageId, size, lastId]
-  );
-  console.log('mes', messageId, hasNext);
   React.useEffect(() => {
     if (relatedMessagesError) {
       history.push(dataEntityCollaborationPath(dataEntityId));
     }
-    dispatch(fetchRelatedMessages(fetchRelatedMessagesParams));
-  }, [fetchRelatedMessagesParams, relatedMessagesError]);
+    dispatch(
+      fetchRelatedMessages({ dataEntityId, messageId, size, lastMessageId: lastId })
+    );
+
+    return () => {
+      dispatch(clearThreadState());
+    };
+  }, [dataEntityId, messageId, size]);
 
   const fetchNextMessages = React.useCallback(() => {
     if (!hasNext) return;
-    dispatch(fetchRelatedMessages(fetchRelatedMessagesParams));
-  }, [fetchRelatedMessagesParams, hasNext]);
+    dispatch(
+      fetchRelatedMessages({ dataEntityId, messageId, size, lastMessageId: lastId })
+    );
+  }, [dataEntityId, messageId, size, lastId, hasNext]);
 
   return (
     <ThreadContent
@@ -54,6 +56,7 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
       relatedMessages={relatedMessages}
       hasNext={hasNext}
       fetchNextMessages={fetchNextMessages}
+      isRelatedMessagesLoaded={isRelatedMessagesLoaded}
       isRelatedMessagesLoading={isRelatedMessagesLoading}
     />
   );

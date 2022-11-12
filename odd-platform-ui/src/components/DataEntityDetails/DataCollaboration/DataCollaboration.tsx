@@ -25,30 +25,29 @@ const DataCollaboration: React.FC = () => {
   const messagesByDate = useAppSelector(getDataEntityMessages);
   const messagesLength = useAppSelector(getLengthOfDataEntityMessages);
   const { lastId, hasNext } = useAppSelector(getDataEntityMessagesPageInfo);
-  const { isLoading: isMessagesLoading } = useAppSelector(
+  const { isLoading: isMessagesLoading, isLoaded: isMessagesLoaded } = useAppSelector(
     getDataEntityMessagesFetchingStatuses
   );
   const { isLoading: isMessageCreating } = useAppSelector(
     getMessageToSlackCreatingStatuses
   );
 
-  const fetchMessagesParams = React.useMemo(
-    () => ({ dataEntityId, channelId, size, lastMessageId: lastId }),
-    [dataEntityId, channelId, size, lastId]
-  );
-
   React.useEffect(() => {
-    dispatch(fetchDataEntityMessages(fetchMessagesParams));
+    dispatch(
+      fetchDataEntityMessages({ dataEntityId, channelId, size, lastMessageId: lastId })
+    );
 
     return () => {
       dispatch(clearCollaborationState());
     };
-  }, [fetchMessagesParams, isMessageCreating]);
+  }, [dataEntityId, channelId, isMessageCreating]);
 
   const fetchNextMessages = React.useCallback(() => {
     if (!hasNext) return;
-    dispatch(fetchDataEntityMessages(fetchMessagesParams));
-  }, [fetchMessagesParams, hasNext]);
+    dispatch(
+      fetchDataEntityMessages({ dataEntityId, channelId, size, lastMessageId: lastId })
+    );
+  }, [dataEntityId, channelId, hasNext, lastId]);
 
   const handleSetChannelId = React.useCallback(
     (id: string | undefined) => setChannelId(id),
@@ -71,6 +70,7 @@ const DataCollaboration: React.FC = () => {
         fetchNextMessages={fetchNextMessages}
         hasNext={hasNext}
         isMessagesLoading={isMessagesLoading}
+        isMessagesLoaded={isMessagesLoaded}
         handleSetMessageDate={handleSetMessageDate}
       />
       <CurrentMessage messageDate={messageDate} />

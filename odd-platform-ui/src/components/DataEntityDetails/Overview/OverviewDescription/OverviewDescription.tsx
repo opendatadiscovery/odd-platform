@@ -133,7 +133,7 @@ const OverviewDescription: React.FC = () => {
         )}
       </div>
       {DEExternalDescription ? (
-        <div>
+        <div data-color-mode='light'>
           <Typography variant='h4'>Pre-defined</Typography>
           <Typography variant='subtitle1'>
             <MDEditor.Markdown source={DEExternalDescription} />

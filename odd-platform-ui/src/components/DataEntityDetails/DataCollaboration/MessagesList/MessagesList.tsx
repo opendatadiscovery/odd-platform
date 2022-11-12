@@ -15,6 +15,7 @@ interface MessagesListProps {
   fetchNextMessages: () => void;
   messagesByDate: MessagesByDate;
   isMessagesLoading: boolean;
+  isMessagesLoaded: boolean;
   handleSetMessageDate: (date: string) => void;
 }
 
@@ -24,6 +25,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
   fetchNextMessages,
   messagesByDate,
   isMessagesLoading,
+  isMessagesLoaded,
   handleSetMessageDate,
 }) => {
   const history = useHistory();
@@ -39,36 +41,35 @@ const MessagesList: React.FC<MessagesListProps> = ({
 
   return (
     <S.Container container>
-      {!isMessagesLoading && messagesLength ? (
-        <S.MessagesContainer container id='messages-list'>
-          <InfiniteScroll
-            dataLength={messagesLength}
-            next={fetchNextMessages}
-            hasMore={hasNext}
-            loader={isMessagesLoading && <MessageSkeleton />}
-            scrollThreshold='200px'
-            scrollableTarget='messages-list'
-          >
-            {Object.entries(messagesByDate).map(([messageDate, messages], index) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Grid key={`${messageDate}-${index}`} container>
-                <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
-                  {messageDate}
-                </Typography>
-                {messages.map(message => (
-                  <Message
-                    key={message.id}
-                    message={message}
-                    isActive={routerMessageId === message.id}
-                    handleSetMessageDate={handleSetMessageDate}
-                    messageOnClick={handleMessageOnClick(message.id)}
-                  />
-                ))}
-              </Grid>
-            ))}
-          </InfiniteScroll>
-        </S.MessagesContainer>
-      ) : (
+      <S.MessagesContainer container id='messages-list'>
+        <InfiniteScroll
+          dataLength={messagesLength}
+          next={fetchNextMessages}
+          hasMore={hasNext}
+          loader={isMessagesLoading && <MessageSkeleton />}
+          scrollThreshold='200px'
+          scrollableTarget='messages-list'
+        >
+          {Object.entries(messagesByDate).map(([messageDate, messages], index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <Grid key={`${messageDate}-${index}`} container>
+              <Typography variant='h5' color='texts.secondary' sx={{ py: 1 }}>
+                {messageDate}
+              </Typography>
+              {messages.map(message => (
+                <Message
+                  key={message.id}
+                  message={message}
+                  isActive={routerMessageId === message.id}
+                  handleSetMessageDate={handleSetMessageDate}
+                  messageOnClick={handleMessageOnClick(message.id)}
+                />
+              ))}
+            </Grid>
+          ))}
+        </InfiniteScroll>
+      </S.MessagesContainer>
+      {isMessagesLoaded && !messagesLength && (
         <EmptyContentPlaceholder text='No messages' />
       )}
     </S.Container>

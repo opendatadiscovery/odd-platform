@@ -1,18 +1,14 @@
 import React from 'react';
 import { Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import {
-  AppCircularProgress,
-  AppIconButton,
-  EmptyContentPlaceholder,
-} from 'components/shared';
+import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
 import { useHistory } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import ThreadMessageSkeleton from './ThreadMessage/ThreadMessageSkeleton';
-import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
 import ThreadMessage from './ThreadMessage/ThreadMessage';
+import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
+import ThreadMessageSkeleton from './ThreadMessage/ThreadMessageSkeleton';
 
 interface ThreadContentProps {
   dataEntityId: number;
@@ -21,6 +17,7 @@ interface ThreadContentProps {
   fetchNextMessages: () => void;
   hasNext: boolean;
   isRelatedMessagesLoading: boolean;
+  isRelatedMessagesLoaded: boolean;
 }
 
 const ThreadContent: React.FC<ThreadContentProps> = ({
@@ -30,13 +27,12 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
   fetchNextMessages,
   hasNext,
   isRelatedMessagesLoading,
+  isRelatedMessagesLoaded,
 }) => {
   const history = useHistory();
   const { dataEntityCollaborationPath } = useAppPaths();
 
-  return isRelatedMessagesLoading ? (
-    <AppCircularProgress size={40} background='transparent' />
-  ) : (
+  return (
     <Grid
       container
       flexDirection='column'
@@ -58,20 +54,19 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
       </Grid>
       <MainThreadMessage mainMessage={mainMessage} />
       <Grid container flexDirection='column' pl={3} pr={0.5}>
-        {!isRelatedMessagesLoading && relatedMessages?.length ? (
-          <InfiniteScroll
-            dataLength={relatedMessages?.length}
-            next={fetchNextMessages}
-            hasMore={hasNext}
-            loader={isRelatedMessagesLoading && <ThreadMessageSkeleton />}
-            scrollThreshold='200px'
-            scrollableTarget='messages-list'
-          >
-            {relatedMessages.map(message => (
-              <ThreadMessage key={message.id} message={message} />
-            ))}
-          </InfiniteScroll>
-        ) : (
+        <InfiniteScroll
+          dataLength={relatedMessages.length}
+          next={fetchNextMessages}
+          hasMore={hasNext}
+          loader={isRelatedMessagesLoading && <ThreadMessageSkeleton />}
+          scrollThreshold='200px'
+          scrollableTarget='thread-messages-list'
+        >
+          {relatedMessages.map(message => (
+            <ThreadMessage key={message.id} message={message} />
+          ))}
+        </InfiniteScroll>
+        {isRelatedMessagesLoaded && !relatedMessages?.length && (
           <EmptyContentPlaceholder text='No messages' />
         )}
       </Grid>
