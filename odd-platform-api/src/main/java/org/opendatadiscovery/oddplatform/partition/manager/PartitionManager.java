@@ -17,7 +17,9 @@ public interface PartitionManager {
         return emptyList();
     }
 
-    default void runAdditionalQueriesForPartition(final Connection connection, final String partitionName)
-        throws SQLException {
+    default void runAdditionalQueriesForPartition(
+        final Connection connection,
+        final String partitionName
+    ) throws SQLException {
     }
 }

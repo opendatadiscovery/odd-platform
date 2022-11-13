@@ -74,13 +74,17 @@ public class MessageRepositoryImpl implements MessageRepository {
         final var messageSelect = applySeekPagination(lastMessageId, cteQuery, size);
         final Table<Record> messageSelectTable = messageSelect.asTable(MESSAGE_CTE_NAME);
 
-        final SelectHavingStep<Record> query = DSL.with(messageCteName)
+        final var query = DSL.with(messageCteName)
             .as(messageSelect)
             .select(messageSelectTable.fields())
             .select(count(MESSAGE.UUID).as(CHILDREN_MESSAGES_COUNT))
             .from(messageCteName)
             .leftJoin(MESSAGE).on(MESSAGE.PARENT_MESSAGE_UUID.eq(messageSelectTable.field(MESSAGE.UUID)))
-            .groupBy(messageSelectTable.fields());
+            .groupBy(messageSelectTable.fields())
+            .orderBy(
+                messageSelectTable.field(MESSAGE.CREATED_AT).desc(),
+                messageSelectTable.field(MESSAGE.UUID).desc()
+            );
 
         return jooqReactiveOperations.flux(query)
             .map(r -> MessageDto.builder()

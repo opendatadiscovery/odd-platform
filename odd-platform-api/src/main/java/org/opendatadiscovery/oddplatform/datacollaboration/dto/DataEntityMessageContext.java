@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.dto;
 
+import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 import lombok.Builder;
@@ -10,10 +11,12 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 @Builder
 public record DataEntityMessageContext(
     MessagePojo message,
-    DataEntity dataEntity
+    DataEntity dataEntity,
+    List<String> degNames
 ) {
     @Builder
     public record DataEntity(long dataEntityId,
+                             String dataEntityOddrn,
                              String dataEntityName,
                              @Nullable String dataSourceName,
                              @Nullable String namespaceName,

@@ -40,8 +40,8 @@ public class SlackMessageGenerator {
         final List<LayoutBlock> blocks = new ArrayList<>();
         final DataEntityMessageContext.DataEntity dataEntity = messageContext.dataEntity();
 
-        blocks.add(section(c -> c.text(markdownText(":speech_balloon: " +
-            buildDataEntityLink(dataEntity.dataEntityId(), dataEntity.dataEntityName(), dataEntity.type())))));
+        blocks.add(section(c -> c.text(markdownText(":speech_balloon: "
+            + buildDataEntityLink(dataEntity.dataEntityId(), dataEntity.dataEntityName(), dataEntity.type())))));
 
         blocks.add(divider());
         blocks.add(section(c -> c.text(markdownText(messageContext.message().getText()))));
@@ -51,6 +51,7 @@ public class SlackMessageGenerator {
 
         resolveOwnerContextSection(dataEntity.owners()).ifPresent(blocks::add);
         resolveTagsContextSection(dataEntity.tags()).ifPresent(blocks::add);
+        resolveDEGContextSection(messageContext.degNames()).ifPresent(blocks::add);
 
         final Attachment attachment = Attachment.builder()
             .color(MESSAGE_COLOR)
@@ -138,6 +139,16 @@ public class SlackMessageGenerator {
 
         return Optional.of(context(c ->
             c.elements(List.of(BlockCompositions.markdownText("Tags: " + String.join(", ", tags))))));
+    }
+
+    private Optional<LayoutBlock> resolveDEGContextSection(final List<String> degNames) {
+        if (degNames.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(context(c ->
+            c.elements(List.of(BlockCompositions.markdownText("Contains in: " + String.join(", ", degNames))))));
+
     }
 
     private Optional<List<LayoutBlock>> resolveDownstreamSections(final List<AlertedDataEntity> dataEntities) {

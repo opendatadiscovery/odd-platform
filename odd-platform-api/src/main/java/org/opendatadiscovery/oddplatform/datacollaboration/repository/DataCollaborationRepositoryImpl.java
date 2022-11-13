@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record2;
+import org.jooq.SelectConditionStep;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
@@ -32,6 +34,7 @@ import static org.jooq.impl.DSL.jsonEntry;
 import static org.jooq.impl.DSL.jsonObject;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EVENT;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -59,6 +62,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
                 DATA_ENTITY.TYPE_ID,
                 DATA_ENTITY.EXTERNAL_NAME,
                 DATA_ENTITY.INTERNAL_NAME,
+                DATA_ENTITY.ODDRN,
                 DATA_SOURCE.NAME.as(DATA_SOURCE_NAME_FIELD_ALIAS),
                 NAMESPACE.NAME.as(NAMESPACE_NAME_FIELD_ALIAS)
             ),
@@ -66,7 +70,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
         ).toList();
 
         // @formatter:off
-        return dslContext
+        final Optional<Record> ctxRecord = dslContext
             .select(MESSAGE.fields())
             .select(fields)
             .select(jsonArrayAgg(jsonObject(
@@ -89,9 +93,29 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .groupBy(fields)
             .orderBy(MESSAGE.CREATED_AT.desc()).limit(1)
-            .fetchOptional()
-            .map(this::mapMessageContextRecord);
+            .fetchOptional();
         // @formatter:on
+
+        if (ctxRecord.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final SelectConditionStep<Record2<String, String>> degQuery = dslContext
+            .selectDistinct(DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME)
+            .from(DATA_ENTITY)
+            .leftJoin(GROUP_ENTITY_RELATIONS).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(ctxRecord.get().get(DATA_ENTITY.ODDRN)));
+
+        final List<String> degNames;
+        try (final Stream<Record2<String, String>> degStream = degQuery.fetchStream()) {
+            degNames = degStream
+                .map(r -> r.get(DATA_ENTITY.INTERNAL_NAME) == null
+                    ? r.get(DATA_ENTITY.EXTERNAL_NAME)
+                    : r.get(DATA_ENTITY.INTERNAL_NAME))
+                .toList();
+        }
+
+        return Optional.of(mapMessageContextRecord(ctxRecord.get(), degNames));
     }
 
     @Override
@@ -149,7 +173,6 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .where(MESSAGE.PROVIDER.eq(provider.toString()))
             .and(MESSAGE.PROVIDER_MESSAGE_ID.eq(providerMessageId))
             .execute();
-
     }
 
     @Override
@@ -167,22 +190,22 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .execute();
     }
 
-    private DataEntityMessageContext mapMessageContextRecord(final Record record) {
-        final MessagePojo message = record.into(MessagePojo.class);
-        final String dataEntityName = record.get(DATA_ENTITY.INTERNAL_NAME) == null
-            ? record.get(DATA_ENTITY.EXTERNAL_NAME)
-            : record.get(DATA_ENTITY.INTERNAL_NAME);
+    private DataEntityMessageContext mapMessageContextRecord(final Record ctxRecord, final List<String> degNames) {
+        final MessagePojo message = ctxRecord.into(MessagePojo.class);
+        final String dataEntityName = ctxRecord.get(DATA_ENTITY.INTERNAL_NAME) == null
+            ? ctxRecord.get(DATA_ENTITY.EXTERNAL_NAME)
+            : ctxRecord.get(DATA_ENTITY.INTERNAL_NAME);
 
         final Set<OwnershipPair> owners = jooqRecordHelper
-            .extractAggRelation(record, OWNERS_FIELD_ALIAS, new TypeReference<OwnershipPair>() {
+            .extractAggRelation(ctxRecord, OWNERS_FIELD_ALIAS, new TypeReference<OwnershipPair>() {
             })
             .stream()
             .filter(o -> o.ownerName() != null && o.titleName() != null)
             .collect(toSet());
 
-        final Set<String> tags = jooqRecordHelper.extractAggRelation(record, TAGS_FIELD_ALIAS, String.class);
+        final Set<String> tags = jooqRecordHelper.extractAggRelation(ctxRecord, TAGS_FIELD_ALIAS, String.class);
 
-        final Integer typeId = record.get(DATA_ENTITY.TYPE_ID, Integer.class);
+        final Integer typeId = ctxRecord.get(DATA_ENTITY.TYPE_ID, Integer.class);
         if (typeId == null) {
             throw new IllegalStateException("Query returned null as a type id");
         }
@@ -192,12 +215,14 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
 
         return DataEntityMessageContext.builder()
             .message(message)
+            .degNames(degNames)
             .dataEntity(DataEntityMessageContext.DataEntity.builder()
-                .dataEntityId(record.get(DATA_ENTITY.ID))
+                .dataEntityId(ctxRecord.get(DATA_ENTITY.ID))
+                .dataEntityOddrn(ctxRecord.get(DATA_ENTITY.ODDRN))
                 .dataEntityName(dataEntityName)
                 .type(entityType)
-                .dataSourceName(record.get(DATA_SOURCE_NAME_FIELD_ALIAS, String.class))
-                .namespaceName(record.get(NAMESPACE_NAME_FIELD_ALIAS, String.class))
+                .dataSourceName(ctxRecord.get(DATA_SOURCE_NAME_FIELD_ALIAS, String.class))
+                .namespaceName(ctxRecord.get(NAMESPACE_NAME_FIELD_ALIAS, String.class))
                 .owners(owners)
                 .tags(tags)
                 .build())

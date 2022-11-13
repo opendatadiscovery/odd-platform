@@ -88,7 +88,6 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                     eventPayload = messageProviderEventHandlerFactory
                         .getOrFail(messageProvider)
                         .payloadForCreate(event.event());
-
                 } catch (final Exception e) {
                     throw new DataCollaborationMessageEventProcessingException(
                         "Couldn't retrieve payload to create a message from %s provider".formatted(messageProvider), e);

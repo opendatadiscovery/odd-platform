@@ -26,8 +26,10 @@ public class MessageTablePartitionManager extends AbstractPartitionManager imple
     private final List<String> tableNameExclusions = singletonList(Tables.MESSAGE_PROVIDER_EVENT.getName());
 
     @Override
-    public void runAdditionalQueriesForPartition(final Connection connection, final String partitionName)
-        throws SQLException {
+    public void runAdditionalQueriesForPartition(
+        final Connection connection,
+        final String partitionName
+    ) throws SQLException {
         final String sql = String.format("""
             CREATE UNIQUE INDEX external_%s_unique_idx
             ON %s (provider_message_id, provider) WHERE provider_message_id IS NOT NULL
