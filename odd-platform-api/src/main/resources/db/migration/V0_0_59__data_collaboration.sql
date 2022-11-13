@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS message
     created_at              TIMESTAMP WITH TIME ZONE NOT NULL,
     sent_at                 TIMESTAMP WITH TIME ZONE NULL,
     state                   SMALLINT                 NOT NULL,
+    owner_id                BIGINT,
     provider                VARCHAR(64)              NOT NULL,
     provider_channel_id     VARCHAR(128)             NOT NULL,
     provider_channel_name   VARCHAR(128)             NOT NULL,
@@ -14,7 +15,8 @@ CREATE TABLE IF NOT EXISTS message
     provider_message_author VARCHAR(256),
 
     PRIMARY KEY (created_at, uuid),
-    CONSTRAINT fk_message_data_entity_id FOREIGN KEY (data_entity_id) REFERENCES data_entity (id)
+    CONSTRAINT fk_message_data_entity_id FOREIGN KEY (data_entity_id) REFERENCES data_entity (id),
+    CONSTRAINT fk_message_owner_id FOREIGN KEY (owner_id) REFERENCES owner (id)
 ) PARTITION BY RANGE (created_at);
 
 CREATE INDEX IF NOT EXISTS message_created_at_idx ON message (created_at);

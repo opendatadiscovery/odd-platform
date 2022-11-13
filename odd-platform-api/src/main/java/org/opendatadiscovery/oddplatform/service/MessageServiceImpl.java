@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -15,7 +16,9 @@ import org.opendatadiscovery.oddplatform.datacollaboration.service.MessageProvid
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.MessageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -28,6 +31,7 @@ import static reactor.function.TupleUtils.function;
 public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final MessageProviderUserProfileResolver userProfileResolver;
+    private final ReactiveOwnerRepository ownerRepository;
     private final MessageMapper messageMapper;
 
     @Override
@@ -38,7 +42,15 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository
             .listParentMessagesByDataEntityId(dataEntityId, channelId, lastMessageId, size)
             .collectList()
-            .map(messageMapper::mapDtos);
+            .flatMap(messages -> {
+                final List<Long> ownerIds = messages.stream()
+                    .map(m -> m.message().getOwnerId())
+                    .toList();
+
+                return Mono.just(messages)
+                    .zipWith(ownerRepository.get(ownerIds).collectMap(OwnerPojo::getId, OwnerPojo::getName));
+            })
+            .map(function(messageMapper::mapDtos));
     }
 
     @Override

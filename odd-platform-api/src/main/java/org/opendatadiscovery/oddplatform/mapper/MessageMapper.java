@@ -35,8 +35,12 @@ public interface MessageMapper {
         return new MessageList().items(messagePojos.stream().map(this::mapPojo).toList());
     }
 
-    default MessageList mapDtos(final List<MessageDto> messageDtos) {
-        return new MessageList().items(messageDtos.stream().map(this::mapDto).toList());
+    default MessageList mapDtos(final List<MessageDto> messageDtos, final Map<Long, String> ownerNameRepo) {
+        return new MessageList().items(
+            messageDtos.stream()
+                .map(m -> mapDto(m).username(ownerNameRepo.get(m.message().getOwnerId())))
+                .toList()
+        );
     }
 
     default MessageList mapPojos(final List<MessagePojo> messagePojos, final Map<String, MessageUserDto> messageUsers) {

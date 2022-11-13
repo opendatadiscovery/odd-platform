@@ -16,7 +16,6 @@ import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectForUpdateStep;
-import org.jooq.SelectHavingStep;
 import org.jooq.SelectSeekStep2;
 import org.jooq.Table;
 import org.jooq.impl.DSL;

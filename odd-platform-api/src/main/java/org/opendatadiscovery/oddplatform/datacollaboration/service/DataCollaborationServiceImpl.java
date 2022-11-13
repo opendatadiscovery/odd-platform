@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Message;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageRequest;
+import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventRequest;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
@@ -30,6 +32,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     private final MessageRepository messageRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final MessageMapper messageMapper;
+    private final AuthIdentityProvider authIdentityProvider;
     private final MessageProviderClientFactory messageProviderClientFactory;
     private final MessageProviderEventHandlerFactory messageProviderEventHandlerFactory;
 
@@ -59,22 +62,11 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
                 .getOrFail(messageProvider)
                 .getChannelById(messageRequest.getChannelId())
             )
-            .flatMap(function((dataEntityId, channel) -> {
-                final UUID messageUUID = UUIDHelper.generateUUIDv1();
-                final OffsetDateTime createdAt = UUIDHelper.extractDateTimeFromUUID(messageUUID);
-
-                final MessagePojo messagePojo = new MessagePojo()
-                    .setUuid(messageUUID)
-                    .setCreatedAt(createdAt)
-                    .setDataEntityId(messageRequest.getDataEntityId())
-                    .setState(MessageStateDto.PENDING_SEND.getCode())
-                    .setProvider(messageProvider.toString())
-                    .setProviderChannelId(channel.id())
-                    .setProviderChannelName(channel.name())
-                    .setText(messageRequest.getText());
-
-                return messageRepository.create(messagePojo).map(messageMapper::mapPojo);
-            }));
+            .flatMap(function((dataEntityId, channel) -> authIdentityProvider.fetchAssociatedOwner()
+                .map(owner -> createMessagePojo(messageRequest, messageProvider, channel, owner.getId()))
+                .switchIfEmpty(Mono.just(createMessagePojo(messageRequest, messageProvider, channel)))
+                .flatMap(messageRepository::create)
+                .map(messageMapper::mapPojo)));
     }
 
     @Override
@@ -90,5 +82,30 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
             .flatMap(messageIdentity -> messageProviderClientFactory
                 .getOrFail(messageIdentity.messageProvider())
                 .resolveMessageUrl(messageIdentity.providerMessageChannel(), messageIdentity.providerMessageId()));
+    }
+
+    private MessagePojo createMessagePojo(final MessageRequest messageRequest,
+                                          final MessageProviderDto messageProvider,
+                                          final MessageChannelDto channel) {
+        return createMessagePojo(messageRequest, messageProvider, channel, null);
+    }
+
+    private MessagePojo createMessagePojo(final MessageRequest messageRequest,
+                                          final MessageProviderDto messageProvider,
+                                          final MessageChannelDto channel,
+                                          final Long ownerId) {
+        final UUID messageUUID = UUIDHelper.generateUUIDv1();
+        final OffsetDateTime createdAt = UUIDHelper.extractDateTimeFromUUID(messageUUID);
+
+        return new MessagePojo()
+            .setUuid(messageUUID)
+            .setCreatedAt(createdAt)
+            .setDataEntityId(messageRequest.getDataEntityId())
+            .setState(MessageStateDto.PENDING_SEND.getCode())
+            .setProvider(messageProvider.toString())
+            .setProviderChannelId(channel.id())
+            .setProviderChannelName(channel.name())
+            .setOwnerId(ownerId)
+            .setText(messageRequest.getText());
     }
 }
