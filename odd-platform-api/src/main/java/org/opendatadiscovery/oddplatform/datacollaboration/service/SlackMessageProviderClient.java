@@ -1,8 +1,13 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.service;
 
+import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.slack.api.model.Attachment;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient;
@@ -16,16 +21,32 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
+
 @Component
 @RequiredArgsConstructor
 @ConditionalOnDataCollaboration
 public class SlackMessageProviderClient implements MessageProviderClient {
+    private static final String CACHE_FIXED_KEY = "CACHE_FIXED_KEY";
+
     private final SlackMessageGenerator slackMessageGenerator;
     private final SlackAPIClient slackAPIClient;
+    private AsyncLoadingCache<String, Map<String, MessageChannelDto>> cache;
+
+    @PostConstruct
+    public void init() {
+        this.cache = Caffeine.newBuilder()
+            .maximumSize(1)
+            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .buildAsync((key, ex) -> slackAPIClient.getSlackChannels()
+                .collectMap(MessageChannelDto::id, identity())
+                .toFuture());
+    }
 
     @Override
     public Flux<MessageChannelDto> getChannels(final String nameLike) {
-        final Flux<MessageChannelDto> messages = slackAPIClient.getSlackChannels();
+        final Flux<MessageChannelDto> messages =
+            Mono.fromFuture(cache.get(CACHE_FIXED_KEY)).flatMapIterable(Map::values);
 
         if (StringUtils.isNotEmpty(nameLike)) {
             return messages.filter(slackChannel -> slackChannel.name().startsWith(nameLike));

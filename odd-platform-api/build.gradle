@@ -40,6 +40,7 @@ dependencies {
     implementation libs.shedlock
     implementation libs.shedlock.jdbc.lock.provider
     implementation libs.json.schema.validator
+    implementation libs.caffeine
 
     compileOnly libs.lombok
 
