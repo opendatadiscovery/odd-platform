@@ -71,7 +71,6 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
 
         // @formatter:off
         final Optional<Record> ctxRecord = dslContext
-            .select(MESSAGE.fields())
             .select(fields)
             .select(jsonArrayAgg(jsonObject(
                 jsonEntry("owner_name", OWNER.NAME),
