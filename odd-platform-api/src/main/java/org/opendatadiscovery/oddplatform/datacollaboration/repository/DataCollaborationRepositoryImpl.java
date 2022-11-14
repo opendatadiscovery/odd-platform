@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record2;
-import org.jooq.SelectConditionStep;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
@@ -99,20 +97,14 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             return Optional.empty();
         }
 
-        final SelectConditionStep<Record2<String, String>> degQuery = dslContext
+        final List<String> degNames = dslContext
             .selectDistinct(DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME)
             .from(DATA_ENTITY)
             .leftJoin(GROUP_ENTITY_RELATIONS).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(ctxRecord.get().get(DATA_ENTITY.ODDRN)));
-
-        final List<String> degNames;
-        try (final Stream<Record2<String, String>> degStream = degQuery.fetchStream()) {
-            degNames = degStream
-                .map(r -> r.get(DATA_ENTITY.INTERNAL_NAME) == null
-                    ? r.get(DATA_ENTITY.EXTERNAL_NAME)
-                    : r.get(DATA_ENTITY.INTERNAL_NAME))
-                .toList();
-        }
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(ctxRecord.get().get(DATA_ENTITY.ODDRN)))
+            .fetch(r -> r.get(DATA_ENTITY.INTERNAL_NAME) == null
+                ? r.get(DATA_ENTITY.EXTERNAL_NAME)
+                : r.get(DATA_ENTITY.INTERNAL_NAME));
 
         return Optional.of(mapMessageContextRecord(ctxRecord.get(), degNames));
     }
