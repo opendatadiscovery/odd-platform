@@ -13,7 +13,7 @@ public class DataCollaborationFeatureCondition implements Condition {
         final MultiValueMap<String, Object> attributes =
             metadata.getAllAnnotationAttributes(ConditionalOnDataCollaboration.class.getName());
 
-        final boolean enableParameter = (boolean) attributes.getFirst("enabled");
+        final boolean enableParameter = attributes == null || (boolean) attributes.getFirst("enabled");
 
         final boolean featureEnabled = context
             .getEnvironment()

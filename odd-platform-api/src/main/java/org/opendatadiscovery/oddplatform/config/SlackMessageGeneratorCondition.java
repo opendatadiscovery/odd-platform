@@ -12,7 +12,6 @@ public class SlackMessageGeneratorCondition extends AnyNestedCondition {
     }
 
     @Conditional(DataCollaborationFeatureCondition.class)
-    @ConditionalOnDataCollaboration
     static class DataCollaboration {
     }
 
