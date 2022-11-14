@@ -136,8 +136,6 @@ public class DataCollaborationMessageEventProcessor extends Thread {
             .setUuid(messageUUID)
             .setCreatedAt(UUIDHelper.extractDateTimeFromUUID(messageUUID))
             .setParentMessageUuid(event.parentMessage().getUuid())
-            .setProviderChannelId(event.parentMessage().getProviderChannelId())
-            .setProviderChannelName(event.parentMessage().getProviderChannelName())
             .setDataEntityId(event.parentMessage().getDataEntityId())
             .setText(eventPayload.messageText())
             .setProviderMessageId(eventPayload.messageId())
