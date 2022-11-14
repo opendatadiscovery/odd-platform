@@ -1,6 +1,6 @@
 import CustomElement from './custom-element';
 
-export default class Alert extends CustomElement {
+export default class Text extends CustomElement {
   /**
    * Checks if the alert is visible
    */
