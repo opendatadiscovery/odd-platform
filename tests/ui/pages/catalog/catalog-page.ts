@@ -1,3 +1,4 @@
+import Alert from '../../elements/alert';
 import InputField from '../../elements/input-field';
 import List from '../../elements/list';
 import BasePage from '../base-page';
@@ -58,14 +59,16 @@ export default class CatalogPage extends BasePage {
     await this.page.locator(SELECTORS.searchBar).press('Enter');
   }
 
+  get alertNoMatchesFound() {
+    return new Alert(this.page, SELECTORS.noMatchesFound);
+  }
+
   async isAlertVisible(): Promise<boolean> {
-    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'visible' });
-    return this.page.locator(SELECTORS.noMatchesFound).isVisible();
+    return this.alertNoMatchesFound.isVisible();
   }
 
   async isAlertHidden(): Promise<boolean> {
-    await this.page.locator(SELECTORS.noMatchesFound).waitFor({ state: 'hidden' });
-    return this.page.locator(SELECTORS.noMatchesFound).isHidden();
+    return this.alertNoMatchesFound.isHidden();
   }
 
   get resultsList() {
