@@ -200,6 +200,22 @@ export default class List extends CustomElement {
 
     return listItem.getAttribute(attribute);
   }
+
+  /**
+   * Counts the number of list items in the list
+   */
+  async count() {
+    await this.waitForElementToBeVisible();
+    return this.customElement.locator(this.listItem).count();
+  }
+
+  /**
+   * Checks if list items are presented in the list
+   */
+  async isListNotEmpty(): Promise<boolean> {
+    await this.waitForElementToBeVisible();
+    return this.customElement.locator(this.listItem).isVisible();
+  }
 }
 
 export type ForEachCallback<T> = (elem: T, index: number) => Promise<void> | void;

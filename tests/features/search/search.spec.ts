@@ -28,7 +28,8 @@ test.describe('Search by name of data-entity', () => {
     test(`Display an empty list with invalid expression`, async ({ steps: { pages } }) => {
       await test.step(`When fill an invalid expression in search input`, async () => {
         await pages.catalog.searchBy('entityNameWithAlphabeticChars');
-        expect(await pages.catalog.isListVisible()).toBeFalsy();
+        expect(await pages.catalog.resultsList.isListNotEmpty()).toBeFalsy();
+
         expect(await pages.catalog.isAlertVisible()).toBeTruthy();
       });
     });
