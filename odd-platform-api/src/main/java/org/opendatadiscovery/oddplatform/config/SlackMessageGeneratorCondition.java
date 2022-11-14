@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.config;
 
-import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.DataCollaborationFeatureCondition;
 import org.opendatadiscovery.oddplatform.notification.config.NotificationsFeatureCondition;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
