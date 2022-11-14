@@ -45,7 +45,7 @@ public class LoginFormSecurityConfiguration {
         return http
             .csrf().disable()
             .authorizeExchange()
-            .pathMatchers("/actuator/health", "/favicon.ico", "/ingestion/entities").permitAll()
+            .pathMatchers("/actuator/health", "/favicon.ico", "/ingestion/entities", "/api/slack/events").permitAll()
             .pathMatchers("/**").authenticated()
             .and().formLogin().authenticationSuccessHandler(authHandler)
             .and().logout()

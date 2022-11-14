@@ -6,8 +6,8 @@ import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnD
 import org.opendatadiscovery.oddplatform.datacollaboration.controller.parser.SlackEventParser;
 import org.opendatadiscovery.oddplatform.datacollaboration.service.DataCollaborationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -19,7 +19,7 @@ public class EventApiController {
     private final DataCollaborationService dataCollaborationService;
     private final SlackEventParser slackEventParser;
 
-    @RequestMapping("/api/slack/events")
+    @PostMapping(path = "/api/slack/events")
     public Mono<ResponseEntity<SlackEventResponse>> handleSlackEvent(
         @RequestBody final Mono<String> rawRequestBody
     ) {

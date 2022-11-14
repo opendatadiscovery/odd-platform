@@ -71,8 +71,8 @@ import static org.springframework.http.HttpMethod.PUT;
 
 @UtilityClass
 public final class SecurityConstants {
-
-    public static final String[] WHITELIST_PATHS = {"/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**"};
+    public static final String[] WHITELIST_PATHS =
+        {"/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**", "/api/slack/events"};
 
     public static final List<SecurityRule> SECURITY_RULES = List.of(
         new SecurityRule(NO_CONTEXT,
