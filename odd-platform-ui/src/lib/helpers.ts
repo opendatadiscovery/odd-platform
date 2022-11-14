@@ -39,12 +39,12 @@ export const formatDate = (date: number, dateFormat: string) => format(date, dat
 
 export const toDateWithoutOffset = (dateToCast: number): Date => {
   const date = new Date(dateToCast);
-  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  const userTimezoneOffset = date.getTimezoneOffset();
   return new Date(date.getTime() - userTimezoneOffset);
 };
 
 export const toTimestampWithoutOffset = (dateToCast: Date): number => {
-  const userTimezoneOffset = dateToCast.getTimezoneOffset() * 60000;
+  const userTimezoneOffset = dateToCast.getTimezoneOffset();
   return dateToCast.getTime() + userTimezoneOffset;
 };
 
