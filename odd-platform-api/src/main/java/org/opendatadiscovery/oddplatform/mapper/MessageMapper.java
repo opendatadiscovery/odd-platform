@@ -21,7 +21,10 @@ public interface MessageMapper {
     @Mapping(target = "channel", source = ".", qualifiedByName = "messageChannel")
     @Mapping(target = "url", source = ".", qualifiedByName = "urlRef")
     @Mapping(target = "id", source = "uuid")
-    @Mapping(target = "createdAt", expression = "java(messagePojo.getCreatedAt().withOffsetSameInstant(java.time.ZoneOffset.UTC))")
+    @Mapping(
+        target = "createdAt",
+        expression = "java(messagePojo.getCreatedAt().withOffsetSameInstant(java.time.ZoneOffset.UTC))"
+    )
     Message mapPojo(final MessagePojo messagePojo);
 
     default Message mapDto(final MessageDto messageDto) {
@@ -32,16 +35,16 @@ public interface MessageMapper {
         return mapPojo(messageDto.message()).childrenMessagesCount(messageDto.childrenMessagesCount());
     }
 
-    default MessageList mapPojos(final List<MessagePojo> messagePojos) {
-        return new MessageList().items(messagePojos.stream().map(this::mapPojo).toList());
-    }
-
     default MessageList mapDtos(final List<MessageDto> messageDtos, final Map<Long, String> ownerNameRepo) {
         return new MessageList().items(
             messageDtos.stream()
                 .map(m -> mapDto(m).username(ownerNameRepo.get(m.message().getOwnerId())))
                 .toList()
         );
+    }
+
+    default MessageList mapPojos(final List<MessagePojo> messagePojos) {
+        return new MessageList().items(messagePojos.stream().map(this::mapPojo).toList());
     }
 
     default MessageList mapPojos(final List<MessagePojo> messagePojos, final Map<String, MessageUserDto> messageUsers) {

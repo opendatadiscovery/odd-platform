@@ -148,7 +148,6 @@ public class SlackMessageGenerator {
 
         return Optional.of(context(c ->
             c.elements(List.of(BlockCompositions.markdownText("Contains in: " + String.join(", ", degNames))))));
-
     }
 
     private Optional<List<LayoutBlock>> resolveDownstreamSections(final List<AlertedDataEntity> dataEntities) {
