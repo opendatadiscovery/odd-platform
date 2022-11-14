@@ -56,7 +56,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
             )
             .flatMap(function((dataEntityId, channel) -> authIdentityProvider.fetchAssociatedOwner()
                 .map(owner -> createMessagePojo(messageRequest, messageProvider, channel, owner.getId()))
-                .switchIfEmpty(Mono.just(createMessagePojo(messageRequest, messageProvider, channel)))
+                .switchIfEmpty(Mono.defer(() -> Mono.just(createMessagePojo(messageRequest, messageProvider, channel))))
                 .flatMap(messageRepository::create)
                 .map(messageMapper::mapPojo)));
     }
