@@ -11,6 +11,7 @@ servers:
   - url: 'http://localhost'
     description: stub
 tags:
+  - name: feature
   - name: identity
   - name: owner
   - name: namespace
@@ -33,10 +34,26 @@ tags:
   - name: term
   - name: activity
   - name: ownerAssociationRequest
+  - name: dataCollaboration
   - name: policy
   - name: role
   - name: permission
 paths:
+  /api/features/active:
+    get:
+      summary: Active features
+      description: Gets features that are currently enabled
+      operationId: getActiveFeatures
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/FeatureList'
+      tags:
+        - feature
+
   /api/identity/whoami:
     get:
       summary: whoami
@@ -51,6 +68,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/AssociatedOwner'
       tags:
         - identity
+
   /api/owners:
     get:
       summary: List of owners
@@ -97,6 +115,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Forbidden'
       tags:
         - owner
+
   /api/owners/{owner_id}:
     put:
       summary: Update owner
@@ -140,6 +159,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - owner
+
   /api/namespaces:
     get:
       summary: List of namespaces
@@ -177,6 +197,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/Namespace'
       tags:
         - namespace
+
   /api/namespaces/{namespace_id}:
     get:
       summary: Get Namespace details
@@ -240,6 +261,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - namespace
+
   /api/titles:
     get:
       summary: List of titles
@@ -258,6 +280,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/TitleList'
       tags:
         - title
+
   /api/tags:
     get:
       summary: List of popular tags
@@ -296,6 +319,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/TagList'
       tags:
         - tag
+
   /api/tags/{tag_id}:
     put:
       summary: Update tag
@@ -339,6 +363,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - tag
+
   /api/labels:
     get:
       summary: List of structure field labels
@@ -376,6 +401,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/LabelList'
       tags:
         - label
+
   /api/labels/{label_id}:
     put:
       summary: Update label
@@ -419,6 +445,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - label
+
   /api/datasources:
     get:
       summary: List of data sources
@@ -456,6 +483,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSource'
       tags:
         - dataSource
+
   /api/datasources/{data_source_id}:
     put:
       summary: Update data source
@@ -499,6 +527,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataSource
+
   /api/datasources/{data_source_id}/token:
     put:
       summary: Regenerate data source token
@@ -520,6 +549,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSource'
       tags:
         - dataSource
+
   /api/collectors:
     get:
       summary: List of collectors
@@ -557,6 +587,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/Collector'
       tags:
         - collector
+
   /api/collectors/{collector_id}:
     put:
       summary: Update collector
@@ -600,6 +631,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - collector
+
   /api/collectors/{collector_id}/token:
     put:
       summary: Regenerate collector token
@@ -621,6 +653,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/Collector'
       tags:
         - collector
+
   /api/search:
     post:
       summary: Search by query
@@ -641,6 +674,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/SearchFacetsData'
       tags:
         - search
+
   /api/search/{search_id}:
     get:
       summary: Get search facets by search ID
@@ -688,6 +722,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/SearchFacetsData'
       tags:
         - search
+
   /api/search/{search_id}/facet/{facet_type}:
     get:
       summary: Get countable filters for chosen facet type
@@ -719,6 +754,7 @@ paths:
                   $ref: './components.yaml/#/components/schemas/CountableSearchFilter'
       tags:
         - search
+
   /api/search/{search_id}/results:
     get:
       summary: Get search results by search ID
@@ -742,6 +778,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - search
+
   /api/search/suggestions:
     get:
       summary: Get search suggestions by query
@@ -768,6 +805,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - search
+
   /api/dataentities/usage:
     get:
       summary: Get data entities usage info
@@ -782,6 +820,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityUsageInfo'
       tags:
         - dataEntity
+
   /api/dataentities/my:
     get:
       summary: Get my objects
@@ -799,6 +838,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - dataEntity
+
   /api/dataentities/my/upstream:
     get:
       summary: Get my objects with upstream dependencies
@@ -816,6 +856,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - dataEntity
+
   /api/dataentities/my/downstream:
     get:
       summary: Get my objects with downstream dependencies
@@ -833,6 +874,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - dataEntity
+
   /api/dataentities/popular:
     get:
       summary: Get popular entities
@@ -850,6 +892,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - dataEntity
+
   /api/dataentities/classes:
     get:
       summary: Get Data Entity dictionary
@@ -864,6 +907,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityClassAndTypeDictionary'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}:
     get:
       summary: Get DataEntity details
@@ -880,6 +924,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityDetails'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/description:
     put:
       summary: Upsert DataEntity's internal description
@@ -902,6 +947,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/InternalDescription'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/name:
     put:
       summary: Upsert DataEntity's internal name
@@ -924,6 +970,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/InternalName'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/term:
     post:
       summary: Add term to data entity
@@ -946,6 +993,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/TermRef'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/term/{term_id}:
     delete:
       summary: Delete term from Data entity
@@ -959,6 +1007,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/data_entity_group:
     post:
       summary: Add data entity to group
@@ -981,6 +1030,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRef'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/data_entity_group/{data_entity_group_id}:
     delete:
       summary: Delete data entity from DEG
@@ -994,6 +1044,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/ownership:
     post:
       summary: Create new ownership
@@ -1016,6 +1067,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/Ownership'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/ownership/{ownership_id}:
     put:
       summary: Update existing ownership
@@ -1051,6 +1103,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/tags:
     put:
       summary: Creates tags relations for DataEntity entity
@@ -1073,6 +1126,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/TagList'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/metadata:
     post:
       summary: Create DataEntity's metadata field value
@@ -1095,6 +1149,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/MetadataFieldValueList'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/metadata/{metadata_field_id}:
     put:
       summary: Upsert DataEntity's metadata field value
@@ -1272,6 +1327,97 @@ paths:
                   $ref: './components.yaml/#/components/schemas/Activity'
       tags:
         - dataEntity
+
+  /api/dataentities/{data_entity_id}/messages:
+    get:
+      summary: Get messages by data entity id
+      operationId: getDataEntityMessages
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: channel_id
+          in: query
+          schema:
+            type: string
+        - name: last_message_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MessageList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/messages/{message_id}:
+    get:
+      summary: Get messages for data entity
+      operationId: getMessages
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: message_id
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - name: last_message_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MessageList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/channels:
+    get:
+      summary: Get top X channels in which there are messages about this data entity
+      operationId: getChannels
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: channel_name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MessageChannelList'
+      tags:
+        - dataEntity
+
+  /api/messages/{message_id}/url:
+    get:
+      summary: Redirects user to correspondent message in the provider
+      operationId: redirect
+      parameters:
+        - name: message_id
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '301':
+          description: Moved Permanently
+      tags:
+        - dataCollaboration
 
   /api/datasets/{data_entity_id}/structure:
     get:
@@ -2434,3 +2580,44 @@ paths:
                 $ref: './components.yaml/#/components/schemas/PermissionList'
       tags:
         - permission
+
+  /api/datacollaboration/providers/slack/channels:
+    get:
+      summary: Public Slack channels ready to be written to
+      description: Gets Slack active channels ready to be written to
+      operationId: getSlackChannels
+      parameters:
+        - name: channel_name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MessageChannelList'
+      tags:
+        - dataCollaboration
+
+  /api/datacollaboration/providers/slack/messages:
+    post:
+      summary: Post a message in Slack
+      description: Posts a message in Slack
+      operationId: postMessageInSlack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/MessageRequest'
+      responses:
+        '202':
+          description: The message has been queued for posting
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Message'
+      tags:
+        - dataCollaboration

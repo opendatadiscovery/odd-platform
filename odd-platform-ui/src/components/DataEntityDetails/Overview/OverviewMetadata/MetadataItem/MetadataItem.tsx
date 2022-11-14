@@ -8,7 +8,7 @@ import {
   MetadataFieldValueUpdateFormData,
   Permission,
 } from 'generated-sources';
-import { DeleteIcon, DropdownIcon, EditIcon } from 'components/shared/Icons';
+import { DeleteIcon, EditIcon, DropdownIcon } from 'components/shared/Icons';
 import {
   AppButton,
   AppIconButton,
@@ -35,8 +35,8 @@ interface MetadataItemProps {
 const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem }) => {
   const dispatch = useAppDispatch();
 
-  const [editMode, setEditMode] = React.useState<boolean>(false);
-  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  const [editMode, setEditMode] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
 
   const methods = useForm<MetadataFieldValueUpdateFormData>({
     mode: 'onChange',

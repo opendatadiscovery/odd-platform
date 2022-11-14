@@ -20,6 +20,7 @@ export * from './metadata.thunks';
 export * from './dataEntityRun.thunk';
 export * from './activity.thunks';
 export * from './ownerAssociation.thunks';
+export * from './dataCollaboration.thunks';
 export * from './roles.thunks';
 export * from './policy.thunks';
 export * from './permissions.thunks';

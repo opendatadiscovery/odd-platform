@@ -1,4 +1,8 @@
-import { AsyncThunk, AsyncThunkPayloadCreator, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  type AsyncThunk,
+  type AsyncThunkPayloadCreator,
+  createAsyncThunk,
+} from '@reduxjs/toolkit';
 import { getResponse, showServerErrorToast, showSuccessToast } from 'lib/errorHandling';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

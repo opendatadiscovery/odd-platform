@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.notification.processor.message;
 
+import com.slack.api.model.Attachment;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.block.SectionBlock;
 import com.slack.api.model.block.composition.BlockCompositions;
@@ -10,8 +11,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
-import org.opendatadiscovery.oddplatform.notification.dto.OwnershipPair;
 
 import static com.slack.api.model.block.Blocks.context;
 import static com.slack.api.model.block.Blocks.divider;
@@ -19,6 +22,7 @@ import static com.slack.api.model.block.Blocks.header;
 import static com.slack.api.model.block.Blocks.section;
 import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
 import static com.slack.api.model.block.composition.BlockCompositions.plainText;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.joining;
 import static org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage.AlertEventType;
@@ -27,10 +31,37 @@ import static org.opendatadiscovery.oddplatform.notification.processor.message.M
 import static org.opendatadiscovery.oddplatform.notification.processor.message.MrkdwnUtils.buildLink;
 
 @RequiredArgsConstructor
-public class SlackNotificationMessageGenerator {
+public class SlackMessageGenerator {
+    private static final String MESSAGE_COLOR = "#0080f0";
+
     private final URL platformBaseUrl;
 
-    public List<LayoutBlock> generate(final AlertNotificationMessage message) {
+    public List<Attachment> generateMessage(final DataEntityMessageContext messageContext) {
+        final List<LayoutBlock> blocks = new ArrayList<>();
+        final DataEntityMessageContext.DataEntity dataEntity = messageContext.dataEntity();
+
+        blocks.add(section(c -> c.text(markdownText(":speech_balloon: "
+            + buildDataEntityLink(dataEntity.dataEntityId(), dataEntity.dataEntityName(), dataEntity.type())))));
+
+        blocks.add(divider());
+        blocks.add(section(c -> c.text(markdownText(messageContext.message().getText()))));
+
+        resolveInformationalContextSection(dataEntity.dataSourceName(), dataEntity.namespaceName())
+            .ifPresent(blocks::add);
+
+        resolveOwnerContextSection(dataEntity.owners()).ifPresent(blocks::add);
+        resolveTagsContextSection(dataEntity.tags()).ifPresent(blocks::add);
+        resolveDEGContextSection(messageContext.degNames()).ifPresent(blocks::add);
+
+        final Attachment attachment = Attachment.builder()
+            .color(MESSAGE_COLOR)
+            .blocks(blocks)
+            .build();
+
+        return singletonList(attachment);
+    }
+
+    public List<LayoutBlock> generateAlertMessage(final AlertNotificationMessage message) {
         final AlertedDataEntity dataEntity = message.getDataEntity();
 
         final List<LayoutBlock> blocks = new ArrayList<>();
@@ -63,20 +94,24 @@ public class SlackNotificationMessageGenerator {
     }
 
     private Optional<LayoutBlock> resolveInformationalContextSection(final AlertedDataEntity dataEntity) {
-        if (dataEntity.namespaceName() == null && dataEntity.dataSourceName() == null) {
+        return resolveInformationalContextSection(dataEntity.dataSourceName(), dataEntity.namespaceName());
+    }
+
+    private Optional<LayoutBlock> resolveInformationalContextSection(final String dataSource, final String namespace) {
+        if (dataSource == null && namespace == null) {
             return Optional.empty();
         }
 
         final StringBuilder sb = new StringBuilder();
-        if (dataEntity.dataSourceName() != null) {
+        if (dataSource != null) {
             sb.append("Data Source: ");
-            sb.append(dataEntity.dataSourceName());
+            sb.append(dataSource);
         }
 
-        if (dataEntity.namespaceName() != null) {
+        if (namespace != null) {
             sb.append(", ");
             sb.append("Namespace: ");
-            sb.append(dataEntity.namespaceName());
+            sb.append(namespace);
         }
 
         return Optional.of(
@@ -84,13 +119,35 @@ public class SlackNotificationMessageGenerator {
     }
 
     private Optional<LayoutBlock> resolveOwnerContextSection(final AlertedDataEntity dataEntity) {
-        if (dataEntity.owners().isEmpty()) {
+        return resolveOwnerContextSection(dataEntity.owners());
+    }
+
+    private Optional<LayoutBlock> resolveOwnerContextSection(final Set<OwnershipPair> owners) {
+        if (owners.isEmpty()) {
             return Optional.empty();
         }
 
         return Optional.of(
-            context(c -> c.elements(List.of(BlockCompositions.markdownText(extractOwners(dataEntity.owners())))))
+            context(c -> c.elements(List.of(BlockCompositions.markdownText(extractOwners(owners)))))
         );
+    }
+
+    private Optional<LayoutBlock> resolveTagsContextSection(final Set<String> tags) {
+        if (tags.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(context(c ->
+            c.elements(List.of(BlockCompositions.markdownText("Tags: " + String.join(", ", tags))))));
+    }
+
+    private Optional<LayoutBlock> resolveDEGContextSection(final List<String> degNames) {
+        if (degNames.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(context(c ->
+            c.elements(List.of(BlockCompositions.markdownText("Contains in: " + String.join(", ", degNames))))));
     }
 
     private Optional<List<LayoutBlock>> resolveDownstreamSections(final List<AlertedDataEntity> dataEntities) {
@@ -125,9 +182,13 @@ public class SlackNotificationMessageGenerator {
     }
 
     private String buildDataEntityLink(final AlertedDataEntity dataEntity) {
+        return buildDataEntityLink(dataEntity.id(), dataEntity.name(), dataEntity.type());
+    }
+
+    private String buildDataEntityLink(final long id, final String name, final DataEntityTypeDto type) {
         return buildLink(
-            String.format("%s %s", dataEntity.type().resolveName(), bold(dataEntity.name())),
-            buildDataEntityUrl(dataEntity.id())
+            String.format("%s %s", bold(type.resolveName()), bold(name)),
+            buildDataEntityUrl(id)
         );
     }
 

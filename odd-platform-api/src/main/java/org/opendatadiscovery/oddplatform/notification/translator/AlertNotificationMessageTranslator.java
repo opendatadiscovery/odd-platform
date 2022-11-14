@@ -14,6 +14,7 @@ import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
@@ -21,7 +22,6 @@ import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessa
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage.AlertedDataEntity;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage.Operation;
-import org.opendatadiscovery.oddplatform.notification.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 
 import static java.util.Collections.emptyList;

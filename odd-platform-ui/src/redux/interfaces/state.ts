@@ -34,22 +34,24 @@ import type {
   TermRef,
   Permission,
   PermissionResourceType,
+  Feature,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
-import type { CurrentPageInfo } from './common';
+import type { CurrentPageInfo, PageInfo } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
 import type { DataEntityDetailsState } from './dataentities';
 import type { Alert } from './alerts';
-import type { Activity, ActivityQueryParams } from './activities';
+import type { Activity, ActivityPageInfo, ActivityQueryParams } from './activities';
 import type {
   FacetOptionsByName,
   SearchTotalsByName,
   SearchFacetsByName,
 } from './dataEntitySearch';
 import type { TermSearchFacetOptionsByName, TermSearchFacetsByName } from './termSearch';
+import type { MessagesByDate, Message } from './dataCollaboration';
 
 export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo: CurrentPageInfo;
@@ -138,6 +140,11 @@ export interface OwnersState {
   };
 }
 
+export interface DataCollaborationState {
+  messages: { messagesByDate: MessagesByDate; pageInfo: PageInfo };
+  relatedMessages: { messages: Message[]; pageInfo: PageInfo };
+}
+
 export interface DataEntitiesState {
   byId: { [dataEntityId: string]: DataEntity & DataEntityDetailsState };
   allIds: number[];
@@ -182,7 +189,8 @@ export interface OwnerAssociationState {
 }
 
 export interface AppInfoState {
-  appInfo?: AppInfo;
+  appInfo: AppInfo;
+  activeFeatures: Feature[];
 }
 
 export interface TermsState {
@@ -208,7 +216,7 @@ export interface TermLinkedListState {
 
 export interface ActivitiesState {
   activitiesByDate: { [date: string]: Activity[] };
-  pageInfo: { hasNext: boolean; lastEventId?: number; lastEventDateTime?: number };
+  pageInfo: ActivityPageInfo;
   counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
 }

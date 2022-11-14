@@ -1,14 +1,22 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton, EntityClassItem, EntityTypeItem, LabelItem } from 'components/shared';
+import {
+  AppButton,
+  EntityClassItem,
+  EntityTypeItem,
+  LabelItem,
+  WithFeature,
+} from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
-import { DataEntityDetails, Permission } from 'generated-sources';
-import { AddIcon, EditIcon, TimeGapIcon } from 'components/shared/Icons';
+import { DataEntityDetails, Feature, Permission } from 'generated-sources';
+import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/Icons';
 import { formatDistanceToNowStrict } from 'date-fns';
+import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
 
 interface DataEntityDetailsHeaderProps {
+  dataEntityId: DataEntityDetails['id'];
   internalName: DataEntityDetails['internalName'];
   externalName: DataEntityDetails['externalName'];
   entityClasses: DataEntityDetails['entityClasses'];
@@ -23,6 +31,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   externalName,
   internalName,
   type,
+  dataEntityId,
 }) => {
   const entityUpdatedAt = React.useMemo(
     () =>
@@ -54,7 +63,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
       <Grid container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={10} alignItems='center' flexWrap='nowrap'>
+        <Grid container item lg={9} alignItems='center' flexWrap='nowrap'>
           <Typography variant='h1' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -95,12 +104,27 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
         <Grid
           container
           item
-          lg={2}
+          lg={3}
           sx={{ ml: 1 }}
           alignItems='center'
           flexWrap='nowrap'
           justifyContent='flex-end'
         >
+          <WithFeature featureName={Feature.DATA_COLLABORATION}>
+            <CreateMessageForm
+              dataEntityId={dataEntityId}
+              btnCreateEl={
+                <AppButton
+                  size='medium'
+                  color='primaryLight'
+                  startIcon={<SlackIcon />}
+                  sx={{ mr: 2 }}
+                >
+                  Share
+                </AppButton>
+              }
+            />
+          </WithFeature>
           {entityUpdatedAt}
           {manuallyCreated && (
             <DataEntityGroupControls

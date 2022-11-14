@@ -1,5 +1,5 @@
 import React from 'react';
-import toast, { ToastType } from 'react-hot-toast';
+import toast, { type ToastType } from 'react-hot-toast';
 import AppToast from '../components/shared/AppToast/AppToast';
 
 export const getResponse = async (

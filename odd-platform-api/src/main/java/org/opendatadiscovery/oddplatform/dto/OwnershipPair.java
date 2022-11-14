@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.notification.dto;
+package org.opendatadiscovery.oddplatform.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

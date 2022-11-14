@@ -17,11 +17,7 @@ type ObjectRenderInteractiveSpanProps = {
 export const ObjectRenderInteractiveSpan = styled(
   ObjectRenderSpan
 )<ObjectRenderInteractiveSpanProps>(({ $interactive }) =>
-  $interactive
-    ? {
-        cursor: 'pointer',
-      }
-    : {}
+  $interactive ? { cursor: 'pointer' } : {}
 );
 
 ObjectRenderInteractiveSpan.displayName = 'ObjectRenderInteractiveSpan';

@@ -50,6 +50,12 @@ interface TextType {
   action: string;
 }
 
+interface Border {
+  primary: string;
+  secondary: string;
+  element: string;
+}
+
 interface ButtonType {
   primary: ItemCondition;
   primaryLight: ItemCondition;
@@ -108,6 +114,7 @@ declare module '@mui/material/styles' {
     textField: ItemCondition;
     activityEvent: ActivityEventType;
     slaStatus: SLAStatus;
+    border: Border;
     toast: Toast;
   }
 
@@ -126,6 +133,7 @@ declare module '@mui/material/styles' {
     textField?: ItemCondition;
     activityEvent?: ActivityEventType;
     slaStatus: SLAStatus;
+    border: Border;
     toast: Toast;
   }
 }

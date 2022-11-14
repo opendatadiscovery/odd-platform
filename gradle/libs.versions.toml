@@ -23,14 +23,16 @@ springfox-core = '3.0.0'
 mapstruct = '1.4.2.Final'
 opentelemetry = '1.6.0'
 opentelemetry-alpha = '1.6.0-alpha'
-slack-api-model = '1.24.0'
+slack-api = '1.27.0'
+uuid-generator = '4.0.1'
 shedlock-version = '4.42.0'
+json-schema-validator = '1.0.73'
+caffeine = '3.1.1'
 lombok = '1.18.24'
 testcontainers = '1.17.1'
 slf4j-api = '1.7.30'
 logback = '1.2.11'
 easy-random-core = '5.0.0'
-json-schema-validator = '1.0.73'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
@@ -75,9 +77,13 @@ opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref
 opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
-slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api-model' }
+slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api' }
+slack-api = { module = 'com.slack.api:slack-api-client', version.ref = 'slack-api' }
+uuid-generator = { module = 'com.fasterxml.uuid:java-uuid-generator', version.ref = 'uuid-generator' }
 shedlock = { module = 'net.javacrumbs.shedlock:shedlock-spring', version.ref = 'shedlock-version' }
 shedlock-jdbc-lock-provider = { module = 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template', version.ref = 'shedlock-version' }
+json-schema-validator = { module = 'com.networknt:json-schema-validator', version.ref = 'json-schema-validator' }
+caffeine = { module = 'com.github.ben-manes.caffeine:caffeine', version.ref = 'caffeine' }
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
 slf4j-api = { module = 'org.slf4j:slf4j-api', version.ref = 'slf4j-api' }
 jul-to-slf4j = { module = 'org.slf4j:jul-to-slf4j', version.ref = 'slf4j-api' }
@@ -89,7 +95,6 @@ testcontainers = { module = 'org.testcontainers:testcontainers', version.ref = '
 testcontainers-postgresql = { module = 'org.testcontainers:postgresql', version.ref = 'testcontainers' }
 testcontainers-junit-jupiter = { module = 'org.testcontainers:junit-jupiter', version.ref = 'testcontainers' }
 easy-random-core = { module = 'org.jeasy:easy-random-core', version.ref = 'easy-random-core' }
-json-schema-validator = { module = 'com.networknt:json-schema-validator', version.ref = 'json-schema-validator' }
 
 [bundles]
 spring = [

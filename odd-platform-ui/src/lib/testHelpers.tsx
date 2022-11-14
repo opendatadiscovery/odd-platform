@@ -1,5 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react';
-import React, { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
 

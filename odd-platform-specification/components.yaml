@@ -1,5 +1,21 @@
 components:
   schemas:
+    Feature:
+      type: string
+      enum:
+        - DATA_COLLABORATION
+        - ALERT_NOTIFICATIONS
+
+    FeatureList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Feature'
+      required:
+        - items
+
     Identity:
       type: object
       properties:
@@ -2406,6 +2422,92 @@ components:
         - DATA_ENTITY
         - TERM
         - MANAGEMENT
+
+    MessageChannel:
+      type: object
+      properties:
+        channel_id:
+          type: string
+        name:
+          type: string
+      required:
+        - channel_id
+        - name
+
+    MessageChannelList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageChannel'
+      required:
+        - items
+
+    MessageRequest:
+      type: object
+      properties:
+        data_entity_id:
+          type: integer
+          format: int64
+        channel_id:
+          type: string
+        text:
+          type: string
+      required:
+        - data_entity_id
+        - channel_id
+        - text
+
+    MessageState:
+      type: string
+      enum:
+        - PENDING_SEND
+        - SENT
+        - EXTERNAL
+        - DELETED
+        - ERROR_SENDING
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        text:
+          type: string
+        username:
+          type: string
+        username_avatar:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+        channel:
+          $ref: '#/components/schemas/MessageChannel'
+        state:
+          $ref: '#/components/schemas/MessageState'
+        children_messages_count:
+          type: integer
+          format: int64
+      required:
+        - id
+        - text
+        - created_at
+        - channel
+        - status
+
+    MessageList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+      required:
+        - items
 
     ErrorResponse:
       type: object

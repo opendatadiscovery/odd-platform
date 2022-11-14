@@ -1,4 +1,4 @@
-import { ConfigurationParameters, DataQualityTestSeverity } from 'generated-sources';
+import { type ConfigurationParameters, DataQualityTestSeverity } from 'generated-sources';
 
 export const BASE_PARAMS: ConfigurationParameters = {
   basePath: import.meta.env.VITE_API_URL || '',
@@ -15,6 +15,7 @@ export const ORDERED_SEVERITY = [
 // content width constants
 export const toolbarHeight = 49;
 export const maxSidebarWidth = 240;
+export const maxChannelsWidth = 200;
 export const activitySidebarWidth = 192;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;
@@ -30,6 +31,7 @@ export const tabsContainerMargin = 16;
 
 // time formats
 export const alertDateFormat = 'd MMM yyyy, HH:mm';
+export const datedListFormat = 'MMMM dd, yyyy';
 
 // empty structures
 export const emptyArr = [];

@@ -1,4 +1,4 @@
-import {
+import type {
   AlertViewType,
   ManagementViewType,
   OwnerAssociationRequestsViewType,
@@ -14,6 +14,7 @@ interface RouteParams {
   termSearchId: string;
   versionId: string;
   searchId: string;
+  messageId: string;
   policyId: string;
   viewType:
     | TermsViewType
@@ -29,6 +30,7 @@ interface AppRouteParams {
   termSearchId: string;
   versionId: number;
   searchId: string;
+  messageId: string;
   policyId: number;
   viewType:
     | TermsViewType
@@ -47,6 +49,7 @@ export const useAppParams = (): AppRouteParams => {
     dataQATestId,
     versionId,
     searchId,
+    messageId,
     policyId,
   } = useParams<RouteParams>();
 
@@ -58,6 +61,7 @@ export const useAppParams = (): AppRouteParams => {
     viewType,
     versionId: parseInt(versionId, 10),
     searchId,
+    messageId,
     policyId: parseInt(policyId, 10),
   };
 };

@@ -20,6 +20,7 @@ const DataEntityDetailsTabs: React.FC = () => {
     dataEntityHistoryPath,
     dataEntityAlertsPath,
     dataEntityActivityPath,
+    dataEntityCollaborationPath,
   } = useAppPaths();
 
   const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
@@ -81,6 +82,11 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: 'Activity',
         link: dataEntityActivityPath(dataEntityId),
         value: 'activity',
+      },
+      {
+        name: 'Collaboration',
+        link: dataEntityCollaborationPath(dataEntityId),
+        value: 'collaboration',
       },
     ]);
   }, [

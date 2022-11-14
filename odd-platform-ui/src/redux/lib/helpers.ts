@@ -1,4 +1,5 @@
 import { toTimestampWithoutOffset } from 'lib/helpers';
+import type { PageInfo } from 'redux/interfaces/common';
 
 export const assignWith = <
   TargetType extends Record<string, any>,
@@ -27,7 +28,7 @@ export const createActionType = (actionPrefix: string, action: string) =>
 export const isDateType = (value: unknown): value is Date =>
   typeof value === 'object' && value instanceof Date;
 
-export const castItemDatesToTimestampInArray = <
+export const castDatesToTimestampInItemsArray = <
   Data extends object,
   RData extends object
 >(
@@ -37,11 +38,23 @@ export const castItemDatesToTimestampInArray = <
     Object.entries(item).reduce<RData>(
       (memo, [key, value]) =>
         isDateType(value)
-          ? {
-              ...memo,
-              [key]: toTimestampWithoutOffset(value),
-            }
+          ? { ...memo, [key]: toTimestampWithoutOffset(value) }
           : { ...memo, [key]: value },
       {} as RData
     )
   );
+
+export const setPageInfo = <Item extends { id: string; createdAt: number }>(
+  items: Item[],
+  maxItemsSize: number
+): PageInfo => {
+  const lastItem = items.slice(-1);
+  let pageInfo: PageInfo;
+  if (items.length < maxItemsSize) {
+    pageInfo = { hasNext: false };
+    return pageInfo;
+  }
+
+  pageInfo = { hasNext: true, lastId: lastItem[0].id };
+  return pageInfo;
+};

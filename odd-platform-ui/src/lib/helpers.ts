@@ -1,7 +1,11 @@
-import { DataQualityTestExpectation, DataSetFieldTypeTypeEnum } from 'generated-sources';
+import {
+  type DataQualityTestExpectation,
+  DataSetFieldTypeTypeEnum,
+} from 'generated-sources';
 import capitalize from 'lodash/capitalize';
-import { Theme } from '@mui/material';
-import { CRUDType } from 'lib/interfaces';
+import { type Theme } from '@mui/material';
+import { type CRUDType } from 'lib/interfaces';
+import { format } from 'date-fns';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
   [
@@ -31,14 +35,16 @@ export const stringFormatted = (
     .join(' ');
 };
 
+export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
+
 export const toDateWithoutOffset = (dateToCast: number): Date => {
   const date = new Date(dateToCast);
-  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  const userTimezoneOffset = date.getTimezoneOffset();
   return new Date(date.getTime() - userTimezoneOffset);
 };
 
 export const toTimestampWithoutOffset = (dateToCast: Date): number => {
-  const userTimezoneOffset = dateToCast.getTimezoneOffset() * 60000;
+  const userTimezoneOffset = dateToCast.getTimezoneOffset();
   return dateToCast.getTime() + userTimezoneOffset;
 };
 
@@ -80,3 +86,8 @@ export const pseudoRandNum = (function xoshiro128p() {
     return (r >>> 0) / 4294967296;
   };
 })();
+
+export const createUrl = (endpoint: string | undefined) =>
+  endpoint
+    ? `${window.location.protocol}//${window.location.host}${endpoint}`
+    : `${window.location.protocol}//${window.location.host}`;

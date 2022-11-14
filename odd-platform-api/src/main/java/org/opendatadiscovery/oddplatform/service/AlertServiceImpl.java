@@ -90,7 +90,6 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     // TODO: handle other alert types
-    // TODO: refactor this bullshit
     @ReactiveTransactional
     public Mono<Void> handleExternalAlerts(final List<ExternalAlert> externalAlerts) {
         final List<AlertPojo> alerts = externalAlerts.stream().map(a -> {

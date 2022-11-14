@@ -1,4 +1,4 @@
-import { parse, stringify, StringifyOptions } from 'query-string';
+import { parse, stringify, type StringifyOptions } from 'query-string';
 
 const useAppQuery = <QueryParams extends object>(
   queryParams?: QueryParams,

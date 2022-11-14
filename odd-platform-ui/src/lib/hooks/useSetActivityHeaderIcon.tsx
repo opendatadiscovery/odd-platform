@@ -4,7 +4,7 @@ import {
   ActivityUpdatedIcon,
   ActivityDeletedIcon,
 } from 'components/shared/Icons';
-import { CRUDType } from 'lib/interfaces';
+import { type CRUDType } from 'lib/interfaces';
 
 const useSetActivityHeaderIcon = (eventType: CRUDType | string) => {
   const [icon, setHeaderIcon] = React.useState<JSX.Element | null>(null);

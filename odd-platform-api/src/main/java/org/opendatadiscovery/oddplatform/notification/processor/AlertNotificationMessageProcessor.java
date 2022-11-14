@@ -3,16 +3,16 @@ package org.opendatadiscovery.oddplatform.notification.processor;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.notification.config.ConditionalOnNotifications;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
 import org.opendatadiscovery.oddplatform.notification.exception.NotificationSenderException;
 import org.opendatadiscovery.oddplatform.notification.sender.NotificationSender;
 import org.opendatadiscovery.oddplatform.notification.translator.NotificationMessageTranslator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(value = "notifications.enabled", havingValue = "true")
+@ConditionalOnNotifications
 @RequiredArgsConstructor
 @Slf4j
 public class AlertNotificationMessageProcessor implements PostgresWALMessageProcessor {

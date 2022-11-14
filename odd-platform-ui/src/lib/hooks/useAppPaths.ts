@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { AlertViewType, ManagementViewType } from 'lib/interfaces';
+import type { AlertViewType, ManagementViewType } from 'lib/interfaces';
 
 const useAppPaths = () => {
   const location = useLocation();
@@ -52,6 +52,15 @@ const useAppPaths = () => {
 
   const dataEntityActivityPath = (entityId: number, query?: string) =>
     `${dataEntityDetailsPath(entityId)}/activity?${query}`;
+
+  const dataEntityCollaborationPath = (entityId: number) =>
+    `${dataEntityDetailsPath(entityId)}/collaboration`;
+
+  const dataEntityCollaborationMessagePath = (entityId: number, messageId: string) =>
+    `${dataEntityDetailsPath(entityId)}/collaboration/${messageId}`;
+
+  const dataEntityCollaborationCreateMessagePath = (entityId: number) =>
+    `${dataEntityDetailsPath(entityId)}/collaboration/createMessage`;
 
   // Test reports details
   const testReportDetailsOverviewPath = (entityId: number, testId: number) =>
@@ -106,6 +115,9 @@ const useAppPaths = () => {
     alertsPath,
     managementPath,
     activityPath,
+    dataEntityCollaborationPath,
+    dataEntityCollaborationMessagePath,
+    dataEntityCollaborationCreateMessagePath,
     policyDetailsPath,
     createPolicyPath,
   };

@@ -43,6 +43,9 @@ const QualityTestHistory = React.lazy(
 const DataEntityActivity = React.lazy(
   () => import('./DataEntityActivity/DataEntityActivity')
 );
+const DataCollaboration = React.lazy(
+  () => import('./DataCollaboration/DataCollaboration')
+);
 
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -106,6 +109,7 @@ const DataEntityDetails: React.FC = () => {
             resourcePermissions={resourcePermissions}
             render={() => (
               <DataEntityDetailsHeader
+                dataEntityId={dataEntityId}
                 internalName={details.internalName}
                 externalName={details.externalName}
                 entityClasses={details.entityClasses}
@@ -216,6 +220,15 @@ const DataEntityDetails: React.FC = () => {
                 '/embedded/dataentities/:dataEntityId/activity',
               ]}
               component={DataEntityActivity}
+            />
+            <Route
+              exact
+              path={[
+                '/dataentities/:dataEntityId/collaboration',
+                '/dataentities/:dataEntityId/collaboration/createMessage',
+                '/dataentities/:dataEntityId/collaboration/:messageId',
+              ]}
+              component={DataCollaboration}
             />
             <Redirect
               from='/dataentities/:dataEntityId'

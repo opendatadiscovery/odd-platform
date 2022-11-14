@@ -1,4 +1,4 @@
-import { DataQualityTest } from 'generated-sources';
+import { type DataQualityTest } from 'generated-sources';
 
 export interface DataSetQualityTestsStatusCount {
   success: number;

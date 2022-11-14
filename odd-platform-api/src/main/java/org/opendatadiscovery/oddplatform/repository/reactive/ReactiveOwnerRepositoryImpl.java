@@ -1,10 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
@@ -19,6 +22,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
@@ -41,6 +45,16 @@ public class ReactiveOwnerRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDR
                                        final JooqRecordHelper jooqRecordHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, OWNER, OwnerPojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
+    }
+
+    @Override
+    public Flux<OwnerPojo> get(final Collection<Long> ownerIds) {
+        final Set<Long> ownerIdSet = new HashSet<>(ownerIds);
+        final SelectConditionStep<Record> query = DSL.select(OWNER.asterisk())
+            .from(OWNER)
+            .where(OWNER.ID.in(ownerIdSet));
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(OwnerPojo.class));
     }
 
     @Override

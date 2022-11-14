@@ -4,6 +4,7 @@ import { getIdentity, getOwnership } from 'redux/selectors';
 import {
   createDataEntitiesSearch,
   createTermSearch,
+  fetchActiveFeatures,
   fetchAppInfo,
   fetchIdentity,
 } from 'redux/thunks';
@@ -57,6 +58,7 @@ const AppToolbar: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchIdentity());
     dispatch(fetchAppInfo());
+    dispatch(fetchActiveFeatures());
   }, []);
 
   const [tabs] = React.useState<AppTabItem[]>([

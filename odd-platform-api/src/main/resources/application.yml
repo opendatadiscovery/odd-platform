@@ -123,9 +123,23 @@ notifications:
 #  receivers:
 #    slack:
 #      url:
-#      platform-base-url:
 #    webhook:
 #      url:
+
+partition:
+  advisory-lock-id: 90
+
+datacollaboration:
+  receive-event-advisory-lock-id: 110
+  sender-message-advisory-lock-id: 120
+  message-partition-period: 30
+  enabled: false
+#  slack-oauth-token:
+
+odd:
+  platform-base-url: http://localhost:8080
+  activity:
+    partition-period: 30
 
 management:
   endpoints:
@@ -148,11 +162,6 @@ management:
     redis:
       enabled: false
 
-odd:
-  activity:
-    partition-period: 30
-    advisory-lock-id: 130
-
 logging:
   level:
     org.springframework.transaction.interceptor: info
@@ -161,4 +170,6 @@ logging:
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
     org.opendatadiscovery.oddplatform.housekeeping: info
+    org.opendatadiscovery.oddplatform.partition: info
+    org.opendatadiscovery.oddplatform.datacollaboration: info
     org.opendatadiscovery.oddplatform.service.ingestion: info

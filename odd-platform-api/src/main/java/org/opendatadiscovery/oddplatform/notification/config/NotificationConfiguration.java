@@ -1,12 +1,10 @@
 package org.opendatadiscovery.oddplatform.notification.config;
 
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
-import org.opendatadiscovery.oddplatform.notification.processor.message.SlackNotificationMessageGenerator;
+import org.opendatadiscovery.oddplatform.notification.processor.message.SlackMessageGenerator;
 import org.opendatadiscovery.oddplatform.notification.sender.NotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.SlackNotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.WebhookNotificationSender;
@@ -15,12 +13,13 @@ import org.opendatadiscovery.oddplatform.notification.translator.NotificationMes
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(value = "notifications.enabled", havingValue = "true")
-@Slf4j
+@ConditionalOnNotifications
+@EnableConfigurationProperties(NotificationsProperties.class)
 public class NotificationConfiguration {
     @Bean
     public HttpClient httpClient() {
@@ -32,7 +31,7 @@ public class NotificationConfiguration {
     public NotificationSender<AlertNotificationMessage> slackNotificationSender(
         @Value("${notifications.receivers.slack.url}") final URI slackWebhookUrl,
         final HttpClient httpClient,
-        final SlackNotificationMessageGenerator messageGenerator
+        final SlackMessageGenerator messageGenerator
     ) {
         if (slackWebhookUrl.toString().isEmpty()) {
             throw new IllegalArgumentException("Slack webhook URL is empty");
@@ -65,12 +64,5 @@ public class NotificationConfiguration {
         }
 
         return new AlertNotificationMessageTranslator(dslContext, jooqRecordHelper, downstreamEntitiesDepth);
-    }
-
-    @Bean
-    public SlackNotificationMessageGenerator slackNotificationMessageGenerator(
-        @Value("${notifications.receivers.slack.platform-base-url}") final URL platformBaseUrl
-    ) {
-        return new SlackNotificationMessageGenerator(platformBaseUrl);
     }
 }

@@ -23,6 +23,7 @@ import termSearch from './termSearch.slice';
 import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 import ownerAssociation from './ownerAssociation.slice';
+import dataCollaboration from './dataCollaboration.slice';
 import roles from './roles.slice';
 
 export default combineReducers({
@@ -51,4 +52,5 @@ export default combineReducers({
   ownerAssociation,
   roles,
   policies,
+  dataCollaboration,
 });

@@ -15,7 +15,7 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type { Alert, CurrentPageInfo } from 'redux/interfaces';
-import { castItemDatesToTimestampInArray } from 'redux/lib/helpers';
+import { castDatesToTimestampInItemsArray } from 'redux/lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -42,7 +42,7 @@ export const fetchAllAlertList = handleResponseAsyncThunk<
     const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
 
     return {
-      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
       pageInfo: { ...pageInfo, page },
     };
   },
@@ -57,7 +57,7 @@ export const fetchMyAlertList = handleResponseAsyncThunk<
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
     return {
-      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
       pageInfo: { ...pageInfo, page },
     };
   },
@@ -72,7 +72,7 @@ export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
     return {
-      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
       pageInfo: { ...pageInfo, page },
     };
   },
@@ -108,7 +108,7 @@ export const fetchDataEntityAlerts = handleResponseAsyncThunk<
   async ({ dataEntityId }) => {
     const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({ dataEntityId });
     return {
-      items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
       pageInfo,
     };
   },
