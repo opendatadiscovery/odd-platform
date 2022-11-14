@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty(value = "notifications.enabled", havingValue = "true")
+@ConditionalOnNotifications
 @EnableConfigurationProperties(NotificationsProperties.class)
 public class NotificationConfiguration {
     @Bean
