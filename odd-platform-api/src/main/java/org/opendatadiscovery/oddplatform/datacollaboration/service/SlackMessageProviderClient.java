@@ -4,6 +4,7 @@ import com.slack.api.model.Attachment;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.datacollaboration.client.SlackAPIClient;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
@@ -23,14 +24,14 @@ public class SlackMessageProviderClient implements MessageProviderClient {
     private final SlackAPIClient slackAPIClient;
 
     @Override
-    public Flux<MessageChannelDto> getChannels() {
-        return slackAPIClient.getSlackChannels();
-    }
-
-    @Override
     public Flux<MessageChannelDto> getChannels(final String nameLike) {
-        return slackAPIClient.getSlackChannels()
-            .filter(slackChannel -> slackChannel.name().startsWith(nameLike));
+        final Flux<MessageChannelDto> messages = slackAPIClient.getSlackChannels();
+
+        if (StringUtils.isNotEmpty(nameLike)) {
+            return messages.filter(slackChannel -> slackChannel.name().startsWith(nameLike));
+        }
+
+        return messages;
     }
 
     @Override

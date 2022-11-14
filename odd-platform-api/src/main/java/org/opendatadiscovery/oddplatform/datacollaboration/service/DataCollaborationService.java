@@ -9,8 +9,6 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDt
 import reactor.core.publisher.Mono;
 
 public interface DataCollaborationService {
-    Mono<MessageChannelList> getChannels(final MessageProviderDto messageProvider);
-
     Mono<MessageChannelList> getChannels(final String nameLike, final MessageProviderDto messageProvider);
 
     Mono<Message> createAndSendMessage(final MessageRequest message, final MessageProviderDto messageProvider);

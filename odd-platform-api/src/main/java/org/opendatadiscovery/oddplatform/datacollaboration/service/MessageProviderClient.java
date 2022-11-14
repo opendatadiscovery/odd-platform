@@ -9,8 +9,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface MessageProviderClient {
-    Flux<MessageChannelDto> getChannels();
-
     Flux<MessageChannelDto> getChannels(final String nameLike);
 
     Mono<MessageChannelDto> getChannelById(final String channelId);

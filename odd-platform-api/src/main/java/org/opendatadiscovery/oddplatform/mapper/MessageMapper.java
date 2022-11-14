@@ -21,6 +21,7 @@ public interface MessageMapper {
     @Mapping(target = "channel", source = ".", qualifiedByName = "messageChannel")
     @Mapping(target = "url", source = ".", qualifiedByName = "urlRef")
     @Mapping(target = "id", source = "uuid")
+    @Mapping(target = "createdAt", expression = "java(messagePojo.getCreatedAt().withOffsetSameInstant(java.time.ZoneOffset.UTC))")
     Message mapPojo(final MessagePojo messagePojo);
 
     default Message mapDto(final MessageDto messageDto) {

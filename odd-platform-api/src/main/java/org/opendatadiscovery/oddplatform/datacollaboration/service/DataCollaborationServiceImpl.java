@@ -37,14 +37,6 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     private final MessageProviderEventHandlerFactory messageProviderEventHandlerFactory;
 
     @Override
-    public Mono<MessageChannelList> getChannels(final MessageProviderDto messageProvider) {
-        return messageProviderClientFactory.getOrFail(messageProvider)
-            .getChannels()
-            .collectList()
-            .map(messageMapper::mapSlackChannelList);
-    }
-
-    @Override
     public Mono<MessageChannelList> getChannels(final String nameLike, final MessageProviderDto messageProvider) {
         return messageProviderClientFactory.getOrFail(messageProvider)
             .getChannels(nameLike)
