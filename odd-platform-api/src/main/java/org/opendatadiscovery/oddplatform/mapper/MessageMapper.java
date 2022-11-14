@@ -66,10 +66,10 @@ public interface MessageMapper {
     }
 
     default MessageState mapMessageState(final Short messageStateCode) {
-        final MessageStateDto messageState = MessageStateDto.fromCode(messageStateCode);
-        if (messageState == null) {
-            throw new IllegalStateException("There's no message state with code %d".formatted(messageStateCode));
-        }
+        final MessageStateDto messageState = MessageStateDto
+            .fromCode(messageStateCode)
+            .orElseThrow(
+                () -> new IllegalStateException("There's no message state with code %d".formatted(messageStateCode)));
 
         return MessageState.fromValue(messageState.toString());
     }

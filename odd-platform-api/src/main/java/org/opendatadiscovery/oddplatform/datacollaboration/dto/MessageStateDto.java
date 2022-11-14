@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.datacollaboration.dto;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +28,7 @@ public enum MessageStateDto {
         this.code = ((short) code);
     }
 
-    public static MessageStateDto fromCode(final short code) {
-        return DICT.get(code);
+    public static Optional<MessageStateDto> fromCode(final short code) {
+        return Optional.ofNullable(DICT.get(code));
     }
 }

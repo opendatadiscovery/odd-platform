@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.datacollaboration.job;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                             handleEvent(event, dataCollaborationRepository);
                         } catch (final DataCollaborationMessageEventProcessingException e) {
                             log.error(e.getMessage());
+                            dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                             continue;
                         } catch (final Exception e) {
                             log.error("Error while handling provider events: {}", e.getMessage());
@@ -76,9 +78,14 @@ public class DataCollaborationMessageEventProcessor extends Thread {
     private void handleEvent(final MessageEventDto event,
                              final DataCollaborationRepository dataCollaborationRepository) {
         final MessageProviderDto messageProvider = MessageProviderDto.valueOf(event.event().getProvider());
-        final MessageEventActionDto eventAction = MessageEventActionDto.fromCode(event.event().getAction());
+        final Optional<MessageEventActionDto> eventAction = MessageEventActionDto.fromCode(event.event().getAction());
 
-        switch (eventAction) {
+        if (eventAction.isEmpty()) {
+            throw new DataCollaborationMessageEventProcessingException(
+                "Unknown event action code: %d".formatted(event.event().getAction()));
+        }
+
+        switch (eventAction.get()) {
             case CREATE -> {
                 final MessageEventPayload eventPayload;
                 try {
@@ -86,7 +93,6 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         .getOrFail(messageProvider)
                         .payloadForCreate(event.event());
                 } catch (final Exception e) {
-                    dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                     throw new DataCollaborationMessageEventProcessingException(
                         "Couldn't retrieve payload to create a message from %s provider".formatted(messageProvider), e);
                 }
@@ -100,7 +106,6 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         .getOrFail(messageProvider)
                         .payloadForUpdate(event.event());
                 } catch (final Exception e) {
-                    dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                     throw new DataCollaborationMessageEventProcessingException(
                         "Couldn't retrieve payload to update a message from %s provider".formatted(messageProvider), e);
                 }

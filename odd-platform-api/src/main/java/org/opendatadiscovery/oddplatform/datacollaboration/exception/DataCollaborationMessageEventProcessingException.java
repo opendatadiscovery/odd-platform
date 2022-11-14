@@ -8,4 +8,8 @@ public class DataCollaborationMessageEventProcessingException extends RuntimeExc
     public DataCollaborationMessageEventProcessingException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    public DataCollaborationMessageEventProcessingException(final String message) {
+        super(message);
+    }
 }
