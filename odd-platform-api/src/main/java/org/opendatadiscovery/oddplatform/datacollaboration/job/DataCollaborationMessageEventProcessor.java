@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.impl.DSL;
@@ -39,23 +38,22 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                     dataCollaborationRepositoryFactory.create(DSL.using(connection));
 
                 while (true) {
-                    try (final Stream<MessageEventDto> pendingEventsStream =
-                             dataCollaborationRepository.getPendingEventsStream()) {
-                        for (final MessageEventDto event : pendingEventsStream.toList()) {
-                            try {
-                                handleEvent(event, dataCollaborationRepository);
-                            } catch (final DataCollaborationMessageEventProcessingException e) {
-                                log.error(e.getMessage());
-                            }
-
-                            dataCollaborationRepository.deleteEvent(event.event().getId());
+                    for (final MessageEventDto event : dataCollaborationRepository.getPendingEvents()) {
+                        try {
+                            handleEvent(event, dataCollaborationRepository);
+                        } catch (final DataCollaborationMessageEventProcessingException e) {
+                            log.error(e.getMessage());
+                            continue;
+                        } catch (final Exception e) {
+                            log.error("Error while handling provider events: {}", e.getMessage());
+                            connection.rollback();
+                            break;
                         }
-                        connection.commit();
-                    } catch (final Exception e) {
-                        log.error("Error while handling provider events: {}", e.getMessage());
-                        connection.rollback();
+
+                        dataCollaborationRepository.deleteEvent(event.event().getId());
                     }
 
+                    connection.commit();
                     TimeUnit.SECONDS.sleep(1);
                 }
             } catch (final InterruptedException e) {

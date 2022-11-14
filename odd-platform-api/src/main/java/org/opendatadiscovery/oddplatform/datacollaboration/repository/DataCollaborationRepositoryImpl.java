@@ -141,7 +141,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
     }
 
     @Override
-    public Stream<MessageEventDto> getPendingEventsStream() {
+    public List<MessageEventDto> getPendingEvents() {
         // @formatter:off
         return dslContext
             .select(MESSAGE_PROVIDER_EVENT.fields())
@@ -154,8 +154,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .orderBy(MESSAGE_PROVIDER_EVENT.CREATED_AT)
             .limit(10)
             .forUpdate().of(MESSAGE_PROVIDER_EVENT)
-            .fetchStream()
-            .map(r -> new MessageEventDto(
+            .fetch(r -> new MessageEventDto(
                 r.into(MESSAGE_PROVIDER_EVENT).into(MessageProviderEventPojo.class),
                 r.into(MESSAGE).into(MessagePojo.class)
             ));

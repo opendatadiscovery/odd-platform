@@ -1,9 +1,9 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.repository;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
@@ -16,7 +16,7 @@ public interface DataCollaborationRepository {
 
     void markMessageAsFailed(final UUID messageUUID, final String errorMessage);
 
-    Stream<MessageEventDto> getPendingEventsStream();
+    List<MessageEventDto> getPendingEvents();
 
     void createMessage(final MessageRecord record);
 
