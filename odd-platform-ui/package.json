@@ -105,7 +105,7 @@
     "eslint-plugin-lodash": "^7.4.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.31.10",
-    "husky": "^4.3.8",
+    "husky": "^8.0.2",
     "jest": "^27.5.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.6.2",
