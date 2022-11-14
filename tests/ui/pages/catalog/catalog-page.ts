@@ -1,4 +1,5 @@
 import InputField from '../../elements/input-field';
+import List from '../../elements/list';
 import BasePage from '../base-page';
 
 const SELECTORS = {
@@ -68,16 +69,10 @@ export default class CatalogPage extends BasePage {
   }
 
   get resultsList() {
-    return this.page.locator(SELECTORS.resultList);
+    return new List(this.page, SELECTORS.resultList, SELECTORS.listItem);
   }
 
-  async isListVisible(): Promise<boolean> {
-    return this.resultsList.locator(SELECTORS.listItem).isVisible();
-  }
-
-  async countListItems() {
-    const listItems = this.resultsList.locator(SELECTORS.listItem);
-    await listItems.first().waitFor();
-    return listItems.count();
+  async countListItems(): Promise<number> {
+    return this.resultsList.count();
   }
 }
