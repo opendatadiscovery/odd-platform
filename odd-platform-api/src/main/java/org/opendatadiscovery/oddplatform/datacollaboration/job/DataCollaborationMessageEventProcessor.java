@@ -46,7 +46,6 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                                 handleEvent(event, dataCollaborationRepository);
                             } catch (final DataCollaborationMessageEventProcessingException e) {
                                 log.error(e.getMessage());
-                                dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                             }
 
                             dataCollaborationRepository.deleteEvent(event.event().getId());
@@ -89,6 +88,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         .getOrFail(messageProvider)
                         .payloadForCreate(event.event());
                 } catch (final Exception e) {
+                    dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                     throw new DataCollaborationMessageEventProcessingException(
                         "Couldn't retrieve payload to create a message from %s provider".formatted(messageProvider), e);
                 }
@@ -102,6 +102,7 @@ public class DataCollaborationMessageEventProcessor extends Thread {
                         .getOrFail(messageProvider)
                         .payloadForUpdate(event.event());
                 } catch (final Exception e) {
+                    dataCollaborationRepository.markEventAsFailed(event.event().getId(), e.getMessage());
                     throw new DataCollaborationMessageEventProcessingException(
                         "Couldn't retrieve payload to update a message from %s provider".formatted(messageProvider), e);
                 }

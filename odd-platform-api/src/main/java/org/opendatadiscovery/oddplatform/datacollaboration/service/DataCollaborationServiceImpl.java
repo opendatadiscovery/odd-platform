@@ -56,7 +56,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
     public Mono<Message> createAndSendMessage(final MessageRequest messageRequest,
                                               final MessageProviderDto messageProvider) {
         return dataEntityRepository.get(messageRequest.getDataEntityId())
-            .flatMap(dataEntity -> !dataEntity.getHollow() ? Mono.just(dataEntity.getId()) : Mono.empty())
+            .filter(dataEntity -> !dataEntity.getHollow())
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity", messageRequest.getDataEntityId())))
             .zipWith(messageProviderClientFactory
                 .getOrFail(messageProvider)

@@ -65,11 +65,8 @@ public class MessageServiceImpl implements MessageService {
             })
             .thenMany(messageRepository.listChildrenMessages(messageId, lastMessageId, size))
             .collectList()
+            .filter(CollectionUtils::isNotEmpty)
             .zipWhen(messages -> {
-                if (CollectionUtils.isEmpty(messages)) {
-                    return Mono.empty();
-                }
-
                 // assuming children messages have the same provider as the parent message
                 final Set<String> userIds = messages.stream()
                     .map(MessagePojo::getProviderMessageAuthor)
@@ -80,7 +77,7 @@ public class MessageServiceImpl implements MessageService {
                     .map(MessagePojo::getProvider)
                     .map(MessageProviderDto::valueOf)
                     .findFirst()
-                    .get();
+                    .orElseThrow();
 
                 return userProfileResolver.resolve(userIds, provider).collectMap(MessageUserDto::id, identity());
             })

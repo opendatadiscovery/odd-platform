@@ -92,7 +92,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.getCode()))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .groupBy(fields)
-            .orderBy(MESSAGE.CREATED_AT.desc()).limit(1)
+            .orderBy(MESSAGE.CREATED_AT).limit(1)
             .fetchOptional();
         // @formatter:on
 
@@ -134,6 +134,7 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
     public void markMessageAsFailed(final UUID messageUUID, final String errorMessage) {
         dslContext.update(MESSAGE)
             .set(MESSAGE.STATE, MessageStateDto.ERROR_SENDING.getCode())
+            .set(MESSAGE.ERROR_MESSAGE, errorMessage)
             .where(MESSAGE.UUID.eq(messageUUID))
             .and(MESSAGE.CREATED_AT.eq(UUIDHelper.extractDateTimeFromUUID(messageUUID)))
             .execute();

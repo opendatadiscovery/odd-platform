@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS message
     created_at              TIMESTAMP WITH TIME ZONE NOT NULL,
     sent_at                 TIMESTAMP WITH TIME ZONE NULL,
     state                   SMALLINT                 NOT NULL,
+    error_message           TEXT,
     owner_id                BIGINT,
     provider                VARCHAR(64)              NOT NULL,
     provider_channel_id     VARCHAR(128)             NOT NULL,

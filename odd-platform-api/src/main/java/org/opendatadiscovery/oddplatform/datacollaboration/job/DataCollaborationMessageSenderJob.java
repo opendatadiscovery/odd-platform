@@ -47,13 +47,13 @@ public class DataCollaborationMessageSenderJob extends Thread {
                         final String messageTs;
                         try {
                             messageTs = messageProviderClient.postMessage(messageCtx).block();
-
-                            dataCollaborationRepository.enrichMessage(message.getUuid(), message.getCreatedAt(),
-                                messageTs);
                         } catch (final Exception e) {
                             log.error("Couldn't send a message to {}: {}", message.getProvider(), e.getMessage());
                             dataCollaborationRepository.markMessageAsFailed(message.getUuid(), e.getMessage());
+                            continue;
                         }
+
+                        dataCollaborationRepository.enrichMessage(message.getUuid(), message.getCreatedAt(), messageTs);
                     }
 
                     TimeUnit.SECONDS.sleep(1);
