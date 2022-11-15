@@ -6,7 +6,6 @@ import {
   DataEntityDetails,
   DataQualityTest,
 } from 'generated-sources';
-import { formatDistanceStrict } from 'date-fns';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
   AppButton,
@@ -32,7 +31,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   datasetsList,
 }) => {
   const { dataEntityDetailsPath, dataEntityHistoryPath } = useAppPaths();
-  const { qualityTestFormattedDateTime } = useAppDateTime();
+  const { qualityTestFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const displayedEntitiesNumber = 10;
 

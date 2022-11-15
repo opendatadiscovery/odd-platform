@@ -1,7 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { DataEntityRun } from 'generated-sources';
-import { formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TestRunStatusReasonModal from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
@@ -20,7 +19,8 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
   dataQATestName,
   dataQATestRun,
 }) => {
-  const { qualityTestRunFormattedDateTime } = useAppDateTime();
+  const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
+
   return (
     <Container container>
       <ColContainer item $colType='md'>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { AppButton, AppMenuItem, AppSelect, LabeledInfoItem } from 'components/shared';
-import { formatDistanceStrict } from 'date-fns';
 import {
   DataQualityTestExpectation,
   DataQualityTestSeverity,
@@ -24,7 +23,7 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
-  const { qualityTestRunFormattedDateTime } = useAppDateTime();
+  const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
 

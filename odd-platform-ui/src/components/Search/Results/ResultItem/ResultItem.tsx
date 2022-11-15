@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
@@ -30,7 +29,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
   showClassIcons,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
-  const { dataEntityFormattedDateTime } = useAppDateTime();
+  const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
   const resultItemPreview = React.useCallback(

@@ -1,4 +1,12 @@
 import { formatInTimeZone } from 'date-fns-tz';
+import { formatDistanceToNowStrict, formatDistanceStrict } from 'date-fns';
+import {
+  datedListFormat,
+  mainEUDateFormat,
+  mainEUDateTimeFormat,
+  mainUSDateFormat,
+  mainUSDateTimeFormat,
+} from 'lib/constants';
 
 type DateTimePatternNames =
   | 'datasetStructureVersion'
@@ -11,20 +19,22 @@ type DateTimePatternNames =
   | 'datasetField'
   | 'linkedEntity'
   | 'qualityTest'
-  | 'qualityTestRun';
+  | 'qualityTestRun'
+  | 'datedList';
 type TimeZones = 'us' | 'eu';
 type DateTimePatterns = Record<DateTimePatternNames, { [key in TimeZones]: string }>;
-
-const useAppDateTime = (): Record<
+type UseAppDateTimeReturn = Record<
   `${DateTimePatternNames}FormattedDateTime`,
   (date: number) => string
-> => {
-  const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+> & {
+  formatDistanceStrict: (...args: Parameters<typeof formatDistanceStrict>) => string;
+  formatDistanceToNowStrict: (
+    ...args: Parameters<typeof formatDistanceToNowStrict>
+  ) => string;
+};
 
-  const mainEUDateTimeFormat = 'd MMM yyyy, HH:mm';
-  const mainUSDateTimeFormat = 'MMM d yyyy, h:mm a';
-  const mainEUDateFormat = 'd MMM yyyy';
-  const mainUSDateFormat = 'MMM d yyyy';
+const useAppDateTime = (): UseAppDateTimeReturn => {
+  const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const dateTimePatterns: DateTimePatterns = {
     datasetStructureVersion: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
@@ -38,6 +48,7 @@ const useAppDateTime = (): Record<
     linkedEntity: { us: mainUSDateFormat, eu: mainEUDateFormat },
     qualityTest: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
     qualityTestRun: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
+    datedList: { us: datedListFormat, eu: datedListFormat },
   };
 
   const formatDate = (datePattern: DateTimePatternNames) => (date: number) => {
@@ -52,6 +63,8 @@ const useAppDateTime = (): Record<
   };
 
   return {
+    formatDistanceToNowStrict,
+    formatDistanceStrict,
     datasetStructureVersionFormattedDateTime: formatDate('datasetStructureVersion'),
     alertFormattedDateTime: formatDate('alert'),
     associationRequestFormattedDateTime: formatDate('associationRequest'),
@@ -63,6 +76,7 @@ const useAppDateTime = (): Record<
     linkedEntityFormattedDateTime: formatDate('linkedEntity'),
     qualityTestFormattedDateTime: formatDate('qualityTest'),
     qualityTestRunFormattedDateTime: formatDate('qualityTestRun'),
+    datedListFormattedDateTime: formatDate('datedList'),
   };
 };
 

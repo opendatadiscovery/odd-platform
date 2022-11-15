@@ -8,7 +8,6 @@ import {
 } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
-import { formatDistanceStrict } from 'date-fns';
 import { SkeletonWrapper, TestRunStatusItem } from 'components/shared';
 import TestRunStatusReasonModal from '../../../QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
@@ -17,7 +16,7 @@ import * as S from './TestReportDetailsHistoryStyles';
 const TestReportDetailsHistory: React.FC = () => {
   const { dataQATestId } = useAppParams();
   const dispatch = useAppDispatch();
-  const { qualityTestRunFormattedDateTime } = useAppDateTime();
+  const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const dataQATestRunsList = useAppSelector(getDataEntityRunList);
   const dataQATestName = useAppSelector(state =>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { formatDistanceToNowStrict } from 'date-fns';
 import { Term } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
@@ -15,7 +14,7 @@ interface TermsResultItemProps {
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult }) => {
   const { termDetailsOverviewPath } = useAppPaths();
-  const { termFormattedDateTime } = useAppDateTime();
+  const { termFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
 
   const termDetailsOverviewLink = termDetailsOverviewPath(termSearchResult.id);
 

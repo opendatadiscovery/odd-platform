@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity } from 'generated-sources';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
@@ -12,7 +11,7 @@ interface LinkedItemProps {
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
   const { dataEntityDetailsPath } = useAppPaths();
-  const { linkedEntityFormattedDateTime } = useAppDateTime();
+  const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
   const detailsLink = dataEntityDetailsPath(linkedItem.id);
 
   return (

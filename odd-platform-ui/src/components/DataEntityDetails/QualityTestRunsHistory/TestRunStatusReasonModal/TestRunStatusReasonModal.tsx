@@ -2,7 +2,6 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { DataEntityRun } from 'generated-sources';
-import { formatDistanceStrict } from 'date-fns';
 import {
   AppButton,
   DialogWrapper,
@@ -26,7 +25,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
   dataQATestRun,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
-  const { qualityTestRunFormattedDateTime } = useAppDateTime();
+  const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const modalTitle = (
     <Grid container justifyContent='space-between' alignItems='center'>
