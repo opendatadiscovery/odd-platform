@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { format, formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity } from 'generated-sources';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
-import { useAppPaths } from 'lib/hooks';
+import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { Container, ItemLink } from './LinkedItemStyles';
 
 interface LinkedItemProps {
@@ -12,6 +12,7 @@ interface LinkedItemProps {
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
   const { dataEntityDetailsPath } = useAppPaths();
+  const { linkedEntityFormattedDateTime } = useAppDateTime();
   const detailsLink = dataEntityDetailsPath(linkedItem.id);
 
   return (
@@ -48,32 +49,26 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
           <Typography
             variant='body1'
             title={
-              linkedItem.createdAt
-                ? format(linkedItem.createdAt, 'd MMM yyyy')
-                : undefined
+              linkedItem.createdAt &&
+              linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())
             }
             noWrap
           >
-            {linkedItem.createdAt ? format(linkedItem.createdAt, 'd MMM yyyy') : null}
+            {linkedItem.createdAt &&
+              linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())}
           </Typography>
         </ColContainer>
         <ColContainer item $colType='colxs'>
           <Typography
             variant='body1'
             title={
-              linkedItem.updatedAt
-                ? formatDistanceToNowStrict(linkedItem.updatedAt, {
-                    addSuffix: true,
-                  })
-                : undefined
+              linkedItem.updatedAt &&
+              formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })
             }
             noWrap
           >
-            {linkedItem.updatedAt
-              ? formatDistanceToNowStrict(linkedItem.updatedAt, {
-                  addSuffix: true,
-                })
-              : null}
+            {linkedItem.updatedAt &&
+              formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })}
           </Typography>
         </ColContainer>
       </Container>

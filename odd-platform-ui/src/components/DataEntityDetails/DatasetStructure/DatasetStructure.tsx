@@ -20,8 +20,9 @@ import {
   AppSelect,
   NumberFormatted,
   SkeletonWrapper,
+  AppMenuItem,
 } from 'components/shared';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppParams, useAppPaths, useAppDateTime } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
@@ -33,6 +34,7 @@ const DatasetStructure: React.FC = () => {
   const history = useHistory();
   const { dataEntityId, versionId } = useAppParams();
   const { datasetStructurePath } = useAppPaths();
+  const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
 
   const [searchText, setSearchText] = React.useState<string>('');
   const [indexToScroll, setIndexToScroll] = React.useState(-1);
@@ -130,7 +132,7 @@ const DatasetStructure: React.FC = () => {
                 </Typography>
               </Typography>
             </Grid>
-            <Grid item xs={7.7} container flexWrap='nowrap'>
+            <Grid item xs={6.2} container flexWrap='nowrap'>
               <DatasetStructureTypeCountLabelList
                 fieldsCount={datasetStats.fieldsCount}
                 typesCount={typesCount}
@@ -139,7 +141,7 @@ const DatasetStructure: React.FC = () => {
             </Grid>
             <Grid
               item
-              xs={3.5}
+              xs={5}
               container
               flexWrap='nowrap'
               alignItems='center'
@@ -161,19 +163,26 @@ const DatasetStructure: React.FC = () => {
                 }}
               />
               <>
-                <Typography variant='subtitle2'>Current Revision:</Typography>
+                <Typography variant='subtitle2' whiteSpace='nowrap' mr={1}>
+                  Current Revision:
+                </Typography>
                 <AppSelect
-                  sx={{ width: 52, ml: 1 }}
-                  fullWidth={false}
-                  type='number'
-                  native
                   defaultValue={datasetStructureVersion}
                   onChange={handleRevisionChange}
                 >
                   {datasetVersions?.map(rev => (
-                    <option key={rev.id} value={rev.id}>
-                      {rev.version}
-                    </option>
+                    <AppMenuItem key={rev.id} value={rev.id}>
+                      <Grid container flexWrap='nowrap'>
+                        <Typography variant='body1' mr={1}>
+                          {rev.version}
+                        </Typography>
+                        <Typography variant='body1' color='texts.hint'>
+                          {`(${datasetStructureVersionFormattedDateTime(
+                            rev.createdAt.getTime()
+                          )})`}
+                        </Typography>
+                      </Grid>
+                    </AppMenuItem>
                   ))}
                 </AppSelect>
               </>

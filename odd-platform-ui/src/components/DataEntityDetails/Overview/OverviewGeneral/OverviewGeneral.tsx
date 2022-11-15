@@ -1,20 +1,21 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { format } from 'date-fns';
 import { CopyButton, LabeledInfoItem } from 'components/shared';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useAppDateTime, useAppParams } from 'lib/hooks';
 import * as S from './OverviewGeneralStyles';
 import OwnersSection from './OwnersSection/OwnersSection';
 
 const OverviewGeneral: React.FC = () => {
   const { dataEntityId } = useAppParams();
+  const { dataEntityFormattedDateTime } = useAppDateTime();
 
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
   const createdAt =
-    dataEntityDetails.createdAt && format(dataEntityDetails.createdAt, 'd MMM yyyy');
+    dataEntityDetails.createdAt &&
+    dataEntityFormattedDateTime(dataEntityDetails.createdAt.getTime());
 
   return (
     <Grid container>

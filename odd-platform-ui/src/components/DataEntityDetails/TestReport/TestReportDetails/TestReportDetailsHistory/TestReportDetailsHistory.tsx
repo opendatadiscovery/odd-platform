@@ -6,10 +6,10 @@ import {
   getDataEntityRunsFetchingStatuses,
   getQualityTestNameByTestId,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
-import { format, formatDistanceStrict } from 'date-fns';
-import { TestRunStatusItem, SkeletonWrapper } from 'components/shared';
+import { formatDistanceStrict } from 'date-fns';
+import { SkeletonWrapper, TestRunStatusItem } from 'components/shared';
 import TestRunStatusReasonModal from '../../../QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
 import * as S from './TestReportDetailsHistoryStyles';
@@ -17,6 +17,8 @@ import * as S from './TestReportDetailsHistoryStyles';
 const TestReportDetailsHistory: React.FC = () => {
   const { dataQATestId } = useAppParams();
   const dispatch = useAppDispatch();
+  const { qualityTestRunFormattedDateTime } = useAppDateTime();
+
   const dataQATestRunsList = useAppSelector(getDataEntityRunList);
   const dataQATestName = useAppSelector(state =>
     getQualityTestNameByTestId(state, dataQATestId)
@@ -26,13 +28,7 @@ const TestReportDetailsHistory: React.FC = () => {
   );
 
   React.useEffect(() => {
-    dispatch(
-      fetchDataEntityRuns({
-        dataEntityId: dataQATestId,
-        page: 1,
-        size: 10,
-      })
-    );
+    dispatch(fetchDataEntityRuns({ dataEntityId: dataQATestId, page: 1, size: 10 }));
   }, [fetchDataEntityRuns, dataQATestId]);
   return (
     <Grid container sx={{ mt: 2 }}>
@@ -48,7 +44,7 @@ const TestReportDetailsHistory: React.FC = () => {
                 <Grid container item lg={6} justifyContent='flex-start'>
                   <Typography variant='body1'>
                     {dataQATestRun?.startTime &&
-                      format(dataQATestRun?.startTime, 'd MMM yyyy, HH:MM a')}
+                      qualityTestRunFormattedDateTime(dataQATestRun?.startTime.getTime())}
                   </Typography>
                 </Grid>
                 <Grid container item lg={3} justifyContent='center'>

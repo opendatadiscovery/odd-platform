@@ -1,14 +1,13 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   MetadataFieldType,
-  MetadataFieldValue,
-  MetadataFieldValueUpdateFormData,
+  type MetadataFieldValue,
+  type MetadataFieldValueUpdateFormData,
   Permission,
 } from 'generated-sources';
-import { DeleteIcon, EditIcon, DropdownIcon } from 'components/shared/Icons';
+import { DeleteIcon, DropdownIcon, EditIcon } from 'components/shared/Icons';
 import {
   AppButton,
   AppIconButton,
@@ -24,6 +23,7 @@ import {
   updateDataEntityCustomMetadata,
 } from 'redux/thunks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useAppDateTime } from 'lib/hooks';
 import MetadataValueEditor from '../../../Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
 
@@ -34,6 +34,7 @@ interface MetadataItemProps {
 
 const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem }) => {
   const dispatch = useAppDispatch();
+  const { metadataFormattedDateTime } = useAppDateTime();
 
   const [editMode, setEditMode] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -69,7 +70,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
         metadataVal = metadataItem.value === 'true' ? 'Yes' : 'No';
         break;
       case MetadataFieldType.DATETIME:
-        metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
+        metadataVal = metadataFormattedDateTime(new Date(metadataItem.value).getTime());
         break;
       case MetadataFieldType.ARRAY:
         metadataVal = JSON.parse(metadataItem.value).join(', ');

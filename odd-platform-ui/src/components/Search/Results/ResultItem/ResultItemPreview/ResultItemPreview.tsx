@@ -7,7 +7,6 @@ import {
   NumberFormatted,
 } from 'components/shared';
 import { MetadataFieldType, MetadataFieldValue } from 'generated-sources';
-import { format } from 'date-fns';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -18,6 +17,7 @@ import {
   getDataEntityDetailsFetchingStatuses,
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors';
+import { useAppDateTime } from 'lib/hooks';
 import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
@@ -30,6 +30,8 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   fetchData,
 }) => {
   const dispatch = useAppDispatch();
+  const { metadataFormattedDateTime } = useAppDateTime();
+
   const metadataNum = 5;
 
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
@@ -54,7 +56,7 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
           metadataVal = <BooleanFormatted value={metadataItem.value} />;
           break;
         case MetadataFieldType.DATETIME:
-          metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
+          metadataVal = metadataFormattedDateTime(new Date(metadataItem.value).getTime());
           break;
         case MetadataFieldType.ARRAY:
           metadataVal = JSON.parse(metadataItem.value).join(', ');

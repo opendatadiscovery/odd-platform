@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { format, formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
@@ -9,7 +9,7 @@ import {
   TruncatedCell,
 } from 'components/shared';
 import { ColumnsIcon, InformationIcon } from 'components/shared/Icons';
-import { useAppPaths } from 'lib/hooks';
+import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import * as S from 'components/Search/Results/ResultsStyles';
 import RowsIcon from 'components/shared/Icons/RowsIcon';
 import { GridSizesByBreakpoints, NameContainer, SearchCol } from '../ResultsStyles';
@@ -30,6 +30,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
   showClassIcons,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityFormattedDateTime } = useAppDateTime();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
   const resultItemPreview = React.useCallback(
@@ -39,12 +40,11 @@ const ResultItem: React.FC<ResultItemProps> = ({
 
   const updatedAt =
     searchResult.updatedAt &&
-    formatDistanceToNowStrict(searchResult.updatedAt, {
-      addSuffix: true,
-    });
+    formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true });
 
   const createdAt =
-    searchResult.createdAt && format(searchResult.createdAt, 'd MMM yyyy');
+    searchResult.createdAt &&
+    dataEntityFormattedDateTime(searchResult.createdAt.getTime());
 
   return (
     <ItemLink to={detailsLink}>
