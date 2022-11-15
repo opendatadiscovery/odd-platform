@@ -1,6 +1,6 @@
 import InputField from '../../elements/input-field';
 import List from '../../elements/list';
-import Text from '../../elements/text';
+import TextBox from '../../elements/text-box';
 import BasePage from '../base-page';
 
 const SELECTORS = {
@@ -60,7 +60,7 @@ export default class CatalogPage extends BasePage {
   }
 
   get alertNoMatchesFound() {
-    return new Text(this.page, SELECTORS.noMatchesFound);
+    return new TextBox(this.page, SELECTORS.noMatchesFound);
   }
 
   async isAlertVisible(): Promise<boolean> {

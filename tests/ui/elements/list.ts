@@ -205,15 +205,26 @@ export default class List extends CustomElement {
    * Counts the number of items in the list
    */
   async count(): Promise<number> {
-    await this.getListItem(0); // wait for first element to be visible
-    return this.customElement.locator(this.listItem).count();
+    await this.waitForFirstElementToBeVisible();
+    return this.listItems.count();
   }
 
   /**
    * Check if at least one item is presented in the list
    */
   async isListNotEmpty(): Promise<boolean> {
-    return this.customElement.locator(this.listItem).isVisible();
+    return this.listItems.isVisible();
+  }
+
+  get listItems() {
+    return this.customElement.locator(this.listItem);
+  }
+
+  /**
+   * Wait for first element to be visible
+   */
+  private async waitForFirstElementToBeVisible() {
+    await this.listItems.first().waitFor();
   }
 }
 
