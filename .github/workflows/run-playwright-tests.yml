@@ -32,6 +32,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
+      - name: Build docker container
+        run: ./gradlew jibDockerBuild -x test -x checkstyleMain -x checkstyleTest --image odd-platform:e2e-latest-build
       - name: Start containers
         run: |
           cd tests

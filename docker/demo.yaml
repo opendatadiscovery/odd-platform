@@ -25,13 +25,13 @@ services:
   odd-platform-enricher:
     image: python:3.9.12-alpine3.15
     volumes:
-      - ./injector:/injector
+      - ../injector:/injector
+      - ./config/injector:/samples
     command:
       - sh
       - ./injector/start.sh
     environment:
       - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
-      - APP_PATH=./injector
       - PYTHONUNBUFFERED=1
     depends_on:
       - odd-platform
