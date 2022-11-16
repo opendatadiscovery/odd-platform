@@ -128,4 +128,20 @@ export default class TextBox extends CustomElement {
   async focus() {
     await this.customElement.click();
   }
+
+  /**
+   * Checks if the text is visible
+   */
+  async isVisible(): Promise<boolean> {
+    await this.customElement.waitFor({ state: 'visible' });
+    return this.customElement.isVisible();
+  }
+
+  /**
+   * Checks if the text is hidden
+   */
+  async isHidden(): Promise<boolean> {
+    await this.customElement.waitFor({ state: 'hidden' });
+    return this.customElement.isHidden();
+  }
 }

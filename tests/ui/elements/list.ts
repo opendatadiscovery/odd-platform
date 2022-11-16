@@ -20,6 +20,13 @@ export default class List extends CustomElement {
   }
 
   /**
+   * Gets all list items
+   */
+  get listItems() {
+    return this.customElement.locator(this.listItem);
+  }
+
+  /**
    * Calls the callback function on each list element
    *
    * @param {Function} cb
@@ -199,6 +206,21 @@ export default class List extends CustomElement {
     if (innerSelector) return listItem.locator(innerSelector).getAttribute(attribute);
 
     return listItem.getAttribute(attribute);
+  }
+
+  /**
+   * Counts the number of items in the list
+   */
+  async count(): Promise<number> {
+    await this.listItems.first().waitFor();
+    return this.listItems.count();
+  }
+
+  /**
+   * Check if at least one item is presented in the list
+   */
+  async isListNotEmpty(): Promise<boolean> {
+    return this.listItems.isVisible();
   }
 }
 
