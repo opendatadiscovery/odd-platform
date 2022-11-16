@@ -27,7 +27,7 @@
   {
     "name": "Air_flights",
     "oddrn": "//airflow/host/aws.airflow.aws.com/air",
-    "description": "_!+AirFlights",
+    "description": "_!AirFlights",
     "namespace_name": "ETL",
     "active": true,
     "pulling_interval": 60,
