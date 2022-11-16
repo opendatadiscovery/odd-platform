@@ -20,6 +20,13 @@ export default class List extends CustomElement {
   }
 
   /**
+   * Gets all list items
+   */
+  get listItems() {
+    return this.customElement.locator(this.listItem);
+  }
+
+  /**
    * Calls the callback function on each list element
    *
    * @param {Function} cb
@@ -205,7 +212,7 @@ export default class List extends CustomElement {
    * Counts the number of items in the list
    */
   async count(): Promise<number> {
-    await this.waitForFirstElementToBeVisible();
+    await this.listItems.first().waitFor();
     return this.listItems.count();
   }
 
@@ -214,17 +221,6 @@ export default class List extends CustomElement {
    */
   async isListNotEmpty(): Promise<boolean> {
     return this.listItems.isVisible();
-  }
-
-  get listItems() {
-    return this.customElement.locator(this.listItem);
-  }
-
-  /**
-   * Wait for first element to be visible
-   */
-  private async waitForFirstElementToBeVisible() {
-    await this.listItems.first().waitFor();
   }
 }
 
