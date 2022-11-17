@@ -27,7 +27,7 @@ You'd be prompted to select an issue type, whether this is a bug report or a fea
 
 Find and click a `Fork` button in GitHub and proceed with additional settings such as fork name, target account, etc
 
-<figure><img src="../.gitbook/assets/Screenshot 2022-10-13 at 12.09.27.png" alt=""><figcaption><p>Fork button in GitHub</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/Screenshot 2022-10-13 at 12.09.27 (1) (1).png" alt=""><figcaption><p>Fork button in GitHub</p></figcaption></figure>
 
 Clone the **forked** repository
 
