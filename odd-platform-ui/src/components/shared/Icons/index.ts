@@ -33,3 +33,4 @@ export { default as SlackIcon } from './SlackIcon';
 export { default as GitBookIcon } from './GitBookIcon';
 export { default as GitHubIcon } from './GitHubIcon';
 export { default as InfoIcon } from './InfoIcon';
+export { default as TargetIcon } from './TargetIcon';

@@ -45,6 +45,8 @@
     "@mui/x-date-pickers": "^5.0.3",
     "@reduxjs/toolkit": "^1.8.5",
     "@uiw/react-md-editor": "^3.19.0",
+    "@visx/group": "^2.10.0",
+    "@visx/zoom": "^2.10.0",
     "ajv": "^8.11.0",
     "d3-hierarchy": "^3.1.1",
     "d3-interpolate": "^3.0.1",

@@ -25,8 +25,8 @@ interface AppGraphNodeProps {
     my: number;
   };
   compactView: boolean;
-  enableLegacyTransitions: boolean;
-  transitionDuration: number;
+  // enableLegacyTransitions: boolean;
+  // transitionDuration: number;
   reverse?: boolean;
   hasChildren: boolean;
   nodeDepth: number;
@@ -37,23 +37,23 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   appGraphNodeType,
   rootNodeId,
   data,
-  transitionDuration,
+  // transitionDuration,
   position,
   parent,
   nodeSize,
   compactView,
-  enableLegacyTransitions,
+  // enableLegacyTransitions,
   reverse,
   hasChildren,
   nodeDepth,
   setInitialDepth,
 }) => {
   const history = useHistory();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityLineagePath } = useAppPaths();
 
   const detailsLink =
     parent && data.externalName
-      ? dataEntityDetailsPath(data.originalGroupId ? data.originalGroupId : data.id)
+      ? dataEntityLineagePath(data.originalGroupId ? data.originalGroupId : data.id)
       : '#';
 
   const handleNodeClick = () => {
@@ -108,27 +108,27 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   const transform = setTransform(position, parent, true);
 
   const initialStyle = {
-    opacity: 0,
+    // opacity: 1,
   };
 
-  const applyTransform = (
-    curTransform: string,
-    curTransitionDuration: AppGraphNodeProps['transitionDuration'],
-    opacity = 1,
-    done = () => {}
-  ) => {
-    if (enableLegacyTransitions) {
-      select(nodeRef)
-        .transition()
-        .duration(curTransitionDuration)
-        .attr('transform', curTransform)
-        .style('opacity', opacity)
-        .on('end', done);
-    } else {
-      select(nodeRef).attr('transform', curTransform).style('opacity', opacity);
-      done();
-    }
-  };
+  // const applyTransform = (
+  //   curTransform: string,
+  //   curTransitionDuration: AppGraphNodeProps['transitionDuration'],
+  //   opacity = 1,
+  //   done = () => {}
+  // ) => {
+  //   if (enableLegacyTransitions) {
+  //     select(nodeRef)
+  //       .transition()
+  //       .duration(curTransitionDuration)
+  //       .attr('transform', curTransform)
+  //       .style('opacity', opacity)
+  //       .on('end', done);
+  //   } else {
+  //     select(nodeRef).attr('transform', curTransform).style('opacity', opacity);
+  //     done();
+  //   }
+  // };
 
   const upstreamArrow = (
     <svg
@@ -164,14 +164,14 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     </svg>
   );
 
-  const commitTransform = () => {
-    const newTransform = setTransform(position, parent);
-    applyTransform(newTransform, transitionDuration);
-  };
+  // const commitTransform = () => {
+  //   const newTransform = setTransform(position, parent);
+  //   applyTransform(newTransform, transitionDuration);
+  // };
 
-  React.useEffect(() => {
-    commitTransform();
-  }, [commitTransform]);
+  // React.useEffect(() => {
+  //   commitTransform();
+  // }, [commitTransform]);
 
   const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
   const [hideLoadMore, setHideLoadMore] = React.useState<boolean>(false);
@@ -359,19 +359,19 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         ))}
       </S.NodeContainer>
 
-      {!hasChildren && !hideLoadMore && showLoadMore && hasMoreLineage && !isDEG && (
-        <LoadMoreButton
-          hideLoadMore={hideLoadMoreHandler}
-          rootNodeId={rootNodeId}
-          dataEntityId={data.id}
-          loadMoreLayout={loadMoreLayout}
-          appGraphNodeType={appGraphNodeType}
-          reverse={reverse}
-          loadMoreCount={
-            appGraphNodeType === 'downstream' ? data.childrenCount : data.parentsCount
-          }
-        />
-      )}
+      {/* {!hasChildren && !hideLoadMore && showLoadMore && hasMoreLineage && !isDEG && ( */}
+      {/*   <LoadMoreButton */}
+      {/*     hideLoadMore={hideLoadMoreHandler} */}
+      {/*     rootNodeId={rootNodeId} */}
+      {/*     dataEntityId={data.id} */}
+      {/*     loadMoreLayout={loadMoreLayout} */}
+      {/*     appGraphNodeType={appGraphNodeType} */}
+      {/*     reverse={reverse} */}
+      {/*     loadMoreCount={ */}
+      {/*       appGraphNodeType === 'downstream' ? data.childrenCount : data.parentsCount */}
+      {/*     } */}
+      {/*   /> */}
+      {/* )} */}
     </g>
   );
 };

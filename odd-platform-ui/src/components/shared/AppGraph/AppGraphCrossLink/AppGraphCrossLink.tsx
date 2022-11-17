@@ -14,8 +14,8 @@ interface AppGraphLinkProps {
     my: number;
   };
   reverse?: boolean;
-  enableLegacyTransitions: boolean;
-  transitionDuration: number;
+  // enableLegacyTransitions: boolean;
+  // transitionDuration: number;
   replacedCrossLinks: TreeLinkDatum[];
 }
 
@@ -23,8 +23,8 @@ const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
   linkData,
   nodeSize,
   reverse,
-  enableLegacyTransitions,
-  transitionDuration,
+  // enableLegacyTransitions,
+  // transitionDuration,
   replacedCrossLinks,
 }) => {
   let linkRef: SVGPathElement;
@@ -52,9 +52,9 @@ const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
       : [target.y + nodeSize.x, target.x + nodeSize.y / 1.5],
   };
 
-  React.useEffect(() => {
-    applyOpacity(linkRef, enableLegacyTransitions, transitionDuration, 1);
-  }, []);
+  // React.useEffect(() => {
+  //   applyOpacity(linkRef, enableLegacyTransitions, transitionDuration, 1);
+  // }, []);
 
   const drawPath = () => linkHorizontal()(crossLinkCoords) || undefined;
 

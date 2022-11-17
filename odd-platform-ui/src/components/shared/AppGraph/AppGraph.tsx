@@ -42,7 +42,7 @@ const AppGraph: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
-  const data = useAppSelector(state => getDataEntityLineage(state, dataEntityId));
+  const data = useAppSelector(getDataEntityLineage(dataEntityId));
   const {
     isLoading: isUpstreamFetching,
     isLoaded: isUpstreamLoaded,
@@ -472,8 +472,8 @@ const AppGraph: React.FC = () => {
                   key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
                   linkData={linkData}
                   nodeSize={nodeSize}
-                  enableLegacyTransitions={enableLegacyTransitions}
-                  transitionDuration={transitionDuration}
+                  // enableLegacyTransitions={enableLegacyTransitions}
+                  // transitionDuration={transitionDuration}
                   replacedCrossLinks={replacedCrossLinksDown}
                 />
               ))}
@@ -484,8 +484,8 @@ const AppGraph: React.FC = () => {
                   reverse
                   linkData={linkData}
                   nodeSize={nodeSize}
-                  enableLegacyTransitions={enableLegacyTransitions}
-                  transitionDuration={transitionDuration}
+                  // enableLegacyTransitions={enableLegacyTransitions}
+                  // transitionDuration={transitionDuration}
                   replacedCrossLinks={replacedCrossLinksUp}
                 />
               ))}
@@ -500,8 +500,8 @@ const AppGraph: React.FC = () => {
                   parent={node.parent}
                   nodeSize={nodeSize}
                   compactView={compactView}
-                  enableLegacyTransitions={enableLegacyTransitions}
-                  transitionDuration={transitionDuration}
+                  // enableLegacyTransitions={enableLegacyTransitions}
+                  // transitionDuration={transitionDuration}
                   hasChildren={!!node.children?.length}
                   nodeDepth={node.depth}
                   setInitialDepth={setInitialDepth}
@@ -517,8 +517,8 @@ const AppGraph: React.FC = () => {
                   parent={node.parent}
                   nodeSize={nodeSize}
                   compactView={compactView}
-                  enableLegacyTransitions={enableLegacyTransitions}
-                  transitionDuration={transitionDuration}
+                  // enableLegacyTransitions={enableLegacyTransitions}
+                  // transitionDuration={transitionDuration}
                   hasChildren={!!node.children?.length}
                   nodeDepth={node.depth}
                   setInitialDepth={setInitialDepth}
@@ -532,8 +532,8 @@ const AppGraph: React.FC = () => {
                   reverse
                   linkData={linkData}
                   nodeSize={nodeSize}
-                  enableLegacyTransitions={enableLegacyTransitions}
-                  transitionDuration={transitionDuration}
+                  // enableLegacyTransitions={enableLegacyTransitions}
+                  // transitionDuration={transitionDuration}
                 />
               ))}
               {linksDown?.map((linkData, idx) => (
@@ -542,8 +542,8 @@ const AppGraph: React.FC = () => {
                   key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
                   linkData={linkData}
                   nodeSize={nodeSize}
-                  enableLegacyTransitions={enableLegacyTransitions}
-                  transitionDuration={transitionDuration}
+                  // enableLegacyTransitions={enableLegacyTransitions}
+                  // transitionDuration={transitionDuration}
                 />
               ))}
             </g>

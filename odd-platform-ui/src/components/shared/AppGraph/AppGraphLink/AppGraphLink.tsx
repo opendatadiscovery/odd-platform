@@ -14,16 +14,16 @@ interface AppGraphLinkProps {
     my: number;
   };
   reverse?: boolean;
-  enableLegacyTransitions: boolean;
-  transitionDuration: number;
+  // enableLegacyTransitions: boolean;
+  // transitionDuration: number;
 }
 
 const AppGraphLink: React.FC<AppGraphLinkProps> = ({
   linkData,
   nodeSize,
   reverse,
-  enableLegacyTransitions,
-  transitionDuration,
+  // enableLegacyTransitions,
+  // transitionDuration,
 }) => {
   let linkRef: SVGPathElement;
   const { source, target } = linkData;
@@ -36,9 +36,9 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
       : [target.y, target.x + nodeSize.y / 2],
   };
 
-  React.useEffect(() => {
-    applyOpacity(linkRef, enableLegacyTransitions, transitionDuration, 1);
-  }, []);
+  // React.useEffect(() => {
+  //   applyOpacity(linkRef, enableLegacyTransitions, transitionDuration, 1);
+  // }, []);
 
   const drawPath = () => linkHorizontal()(coords) || undefined;
 
