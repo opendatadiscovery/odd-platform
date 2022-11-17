@@ -16,7 +16,7 @@
 * [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
 * [Enable security](configuration-and-deployment/enable-security/README.md)
   * [Authentication](configuration-and-deployment/enable-security/authentication/README.md)
-    * [Disable authentication](configuration-and-deployment/enable-security/authentication/disable-authentication.md)
+    * [Disabled authentication](configuration-and-deployment/enable-security/authentication/disabled-authentication.md)
     * [Login form](configuration-and-deployment/enable-security/authentication/login-form.md)
     * [OAUTH2/OIDC](configuration-and-deployment/enable-security/authentication/oauth2-oidc.md)
     * [LDAP](configuration-and-deployment/enable-security/authentication/ldap.md)

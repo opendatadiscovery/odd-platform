@@ -4,7 +4,7 @@ This section provides detailed explanations on how to enable one of the authenti
 
 ### Contents
 
-* [disable-authentication.md](disable-authentication.md "mention")
+* [disabled-authentication.md](disabled-authentication.md "mention")
 * [login-form.md](login-form.md "mention")
 * [oauth2-oidc.md](oauth2-oidc.md "mention")
 * [ldap.md](ldap.md "mention")

@@ -1,6 +1,6 @@
 # Roles
 
-There are 2 type of roles in ODD Platform:
+Role is useful for combining multiple policies together. There are 2 type of roles in ODD Platform:
 
 * User roles
 * Owner roles
