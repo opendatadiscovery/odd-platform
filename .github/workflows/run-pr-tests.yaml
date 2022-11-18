@@ -1,4 +1,4 @@
-name: PR build
+name: Run tests in a branch
 on:
   workflow_dispatch:
   pull_request:
