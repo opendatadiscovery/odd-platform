@@ -231,7 +231,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .setDataEntityOddrn(dataEntityOddrn)
             .setDescription(description)
             .setMessengerEntityOddrn(messengerOddrn)
-            .setType(alertType.name())
+            .setType(alertType.getCode())
             .setStatus(AlertStatusEnum.OPEN.getCode())
             .setStatusUpdatedAt(LocalDateTime.now());
     }

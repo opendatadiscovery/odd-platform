@@ -64,12 +64,12 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             ? message.getColumnValue(ALERT.CREATED_AT.getName())
             : message.getColumnValue(ALERT.STATUS_UPDATED_AT.getName());
 
-        final String alertTypeString = message.getColumnValue(ALERT.TYPE.getName());
+        final short alertType = Short.parseShort(message.getColumnValue(ALERT.TYPE.getName()));
 
         return AlertNotificationMessage.builder()
             .alertDescription(alertDescription)
             .eventAt(Timestamp.valueOf(eventAtString).toLocalDateTime())
-            .alertType(resolveAlertType(alertTypeString))
+            .alertType(resolveAlertType(alertType))
             .eventType(resolveAlertEventType(message.operation(), status))
             .updatedBy(updatedBy)
             .dataEntity(fetchAlertedDataEntity(dataEntityOddrn))
@@ -77,9 +77,9 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .build();
     }
 
-    private AlertTypeEnum resolveAlertType(final String alertTypeName) {
-        return AlertTypeEnum.getByName(alertTypeName)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid alert type: %s".formatted(alertTypeName)));
+    private AlertTypeEnum resolveAlertType(final short alertTypeCode) {
+        return AlertTypeEnum.fromCode(alertTypeCode)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid alert type code: %s".formatted(alertTypeCode)));
     }
 
     private AlertedDataEntity fetchAlertedDataEntity(final String dataEntityOddrn) {

@@ -107,7 +107,7 @@ public class AlertServiceImpl implements AlertService {
             return new AlertPojo()
                 .setCreatedAt(now)
                 .setStatusUpdatedAt(now)
-                .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.name())
+                .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.getCode())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
                 .setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl))
                 .setStatus(AlertStatusEnum.OPEN.getCode());

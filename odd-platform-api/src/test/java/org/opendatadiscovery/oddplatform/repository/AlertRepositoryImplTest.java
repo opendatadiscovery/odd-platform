@@ -393,7 +393,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
 
     private AlertPojo createAlertPojo(final String dataEntityOddrn, final AlertStatusEnum status) {
         return new AlertPojo()
-            .setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name())
+            .setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode())
             .setDescription(UUID.randomUUID().toString())
             .setStatus(status.getCode())
             .setDataEntityOddrn(dataEntityOddrn)

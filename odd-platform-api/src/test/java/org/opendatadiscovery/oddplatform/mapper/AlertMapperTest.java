@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
@@ -48,7 +49,7 @@ class AlertMapperTest {
         when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(dataEntityRef);
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
-        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
+        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
         alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final AssociatedOwner associatedOwner = new AssociatedOwner();
@@ -80,7 +81,7 @@ class AlertMapperTest {
         when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(dataEntityRef);
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
-        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
+        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
         alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
@@ -115,7 +116,7 @@ class AlertMapperTest {
         when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(dataEntityRef);
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
-        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
+        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
         alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
@@ -145,9 +146,14 @@ class AlertMapperTest {
     }
 
     private void assertActualAlertList(final Alert alert, final AlertPojo alertPojo) {
+        final AlertType expectedAlertType = AlertTypeEnum.fromCode(alertPojo.getType())
+            .map(AlertTypeEnum::name)
+            .map(AlertType::fromValue)
+            .orElseThrow(() -> new IllegalStateException("Unknown type code %d".formatted(alertPojo.getType())));
+
         assertThat(alert).isNotNull();
         assertThat(alert.getId()).isEqualTo(alertPojo.getId());
-        assertThat(alert.getType().getValue()).isEqualTo(alertPojo.getType());
+        assertThat(alert.getType()).isEqualTo(expectedAlertType);
         assertThat(alert.getDescription()).isEqualTo(alertPojo.getDescription());
         assertThat(alert.getStatusUpdatedAt())
             .hasToString(alertPojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC).toString());
