@@ -43,9 +43,6 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveOwnerRepository ownerRepository;
 
     @Autowired
-    private LineageRepository lineageRepository;
-
-    @Autowired
     private LineageService lineageService;
 
     @Test
@@ -88,7 +85,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             .assertNext(r -> {
                 assertThat(r.getStatusUpdatedBy()).isEqualTo(updatingUser);
                 assertThat(r.getStatusUpdatedAt()).isAfter(alertPojo.getStatusUpdatedAt());
-                assertThat(r.getStatus()).isEqualTo(AlertStatusEnum.RESOLVED.name());
+                assertThat(r.getStatus()).isEqualTo(AlertStatusEnum.RESOLVED.getCode());
                 assertThat(r)
                     .usingRecursiveComparison()
                     .ignoringFields("statusUpdatedAt", "statusUpdatedBy", "status")
@@ -121,14 +118,14 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                 .hasSize(4)
                 .isSortedAccordingTo(comparator)
                 .extracting(dto -> dto.getAlert().getStatus())
-                .containsOnly(AlertStatusEnum.OPEN.name()))
+                .containsOnly(AlertStatusEnum.OPEN.getCode()))
             .verifyComplete();
         alertRepository.listAllWithStatusOpen(2, 4).as(StepVerifier::create)
             .assertNext(secondPage -> assertThat(secondPage.getData())
                 .hasSize(3)
                 .isSortedAccordingTo(comparator)
                 .extracting(dto -> dto.getAlert().getStatus())
-                .containsOnly(AlertStatusEnum.OPEN.name()))
+                .containsOnly(AlertStatusEnum.OPEN.getCode()))
             .verifyComplete();
     }
 
@@ -159,14 +156,14 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                 .hasSize(3)
                 .isSortedAccordingTo(comparator)
                 .extracting(dto -> dto.getAlert().getStatus())
-                .containsOnly(AlertStatusEnum.OPEN.name()))
+                .containsOnly(AlertStatusEnum.OPEN.getCode()))
             .verifyComplete();
         alertRepository.listByOwner(2, 3, ownerPojo.getId()).as(StepVerifier::create)
             .assertNext(secondPage -> assertThat(secondPage.getData())
                 .hasSize(1)
                 .isSortedAccordingTo(comparator)
                 .extracting(dto -> dto.getAlert().getStatus())
-                .containsOnly(AlertStatusEnum.OPEN.name()))
+                .containsOnly(AlertStatusEnum.OPEN.getCode()))
             .verifyComplete();
     }
 
@@ -398,7 +395,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         return new AlertPojo()
             .setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name())
             .setDescription(UUID.randomUUID().toString())
-            .setStatus(status.name())
+            .setStatus(status.getCode())
             .setDataEntityOddrn(dataEntityOddrn)
             .setStatusUpdatedAt(LocalDateTime.now());
     }
@@ -420,7 +417,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     private AlertPojo findOpenAlertByEntityOddrn(final Collection<AlertPojo> alerts, final String entityOddrn) {
         return alerts.stream()
             .filter(a -> a.getDataEntityOddrn().equals(entityOddrn)
-                && a.getStatus().equals(AlertStatusEnum.OPEN.name()))
+                && a.getStatus().equals(AlertStatusEnum.OPEN.getCode()))
             .findFirst()
             .orElseThrow();
     }

@@ -110,7 +110,7 @@ public class AlertServiceImpl implements AlertService {
                 .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.name())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
                 .setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl))
-                .setStatus(AlertStatusEnum.OPEN.name());
+                .setStatus(AlertStatusEnum.OPEN.getCode());
         }).collect(Collectors.toList());
 
         return createAlerts(alerts).then();

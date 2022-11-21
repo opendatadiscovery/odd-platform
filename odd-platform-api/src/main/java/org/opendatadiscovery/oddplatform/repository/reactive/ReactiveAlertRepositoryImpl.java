@@ -64,7 +64,7 @@ public class ReactiveAlertRepositoryImpl
     public Mono<Page<AlertDto>> listAllWithStatusOpen(final int page, final int size) {
         final SelectConditionStep<AlertRecord> baseQuery = DSL
             .selectFrom(ALERT)
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()));
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()));
 
         final List<OrderByField> orderByFields = List.of(
             new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
@@ -89,7 +89,7 @@ public class ReactiveAlertRepositoryImpl
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())).and(OWNERSHIP.OWNER_ID.eq(ownerId));
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())).and(OWNERSHIP.OWNER_ID.eq(ownerId));
 
         final List<OrderByField> orderByFields = List.of(
             new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
@@ -137,7 +137,7 @@ public class ReactiveAlertRepositoryImpl
             .join(cte.getName())
             .on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)
                 .eq(DATA_ENTITY.ODDRN))
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()))
             .and(DATA_ENTITY.ODDRN.notIn(ownOddrns));
 
         final List<OrderByField> orderByFields = List.of(
@@ -207,7 +207,7 @@ public class ReactiveAlertRepositoryImpl
         return jooqReactiveOperations
             .mono(DSL.selectCount()
                 .from(ALERT)
-                .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))
+                .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())))
             .map(r -> r.component1().longValue())
             .defaultIfEmpty(0L);
     }
@@ -220,7 +220,7 @@ public class ReactiveAlertRepositoryImpl
                 .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
                 .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
                 .where(OWNERSHIP.OWNER_ID.eq(ownerId))
-                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))
+                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())))
             .map(r -> r.component1().longValue())
             .defaultIfEmpty(0L);
     }
@@ -235,7 +235,7 @@ public class ReactiveAlertRepositoryImpl
                 .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()))
                     .eq(ALERT.DATA_ENTITY_ODDRN))
                 .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
-                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))
+                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())))
             .map(r -> r.component1().longValue())
             .defaultIfEmpty(0L);
     }
@@ -244,7 +244,7 @@ public class ReactiveAlertRepositoryImpl
     public Mono<AlertPojo> updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
         return jooqReactiveOperations
             .mono(DSL.update(ALERT)
-                .set(ALERT.STATUS, status.toString())
+                .set(ALERT.STATUS, status.getCode())
                 .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
                 .set(ALERT.STATUS_UPDATED_BY, userName)
                 .where(ALERT.ID.eq(alertId))

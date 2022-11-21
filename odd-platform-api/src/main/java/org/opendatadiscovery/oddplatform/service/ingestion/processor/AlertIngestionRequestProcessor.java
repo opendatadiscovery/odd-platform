@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.service.AlertLocator;
+import org.opendatadiscovery.oddplatform.service.ingestion.rnd.AlertResolverService;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AlertIngestionRequestProcessor implements IngestionRequestProcessor {
     private final ReactiveAlertRepository alertRepository;
+    private final AlertResolverService alertResolverService;
     private final AlertLocator alertLocator;
 
     @Override
@@ -18,7 +20,7 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
         return alertLocator.locateAlerts(request)
             .collectList()
             .flatMap(alertRepository::createAlerts)
-            .then();
+            .then(alertResolverService.tryResolve(request));
     }
 
     @Override

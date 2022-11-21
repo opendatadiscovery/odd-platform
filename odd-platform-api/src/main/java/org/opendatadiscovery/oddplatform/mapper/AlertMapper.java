@@ -7,11 +7,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,6 +45,19 @@ public abstract class AlertMapper {
     @Mapping(source = "alertDto", target = "statusUpdatedBy", qualifiedByName = "statusUpdatedBy")
     @Mapping(source = "alertDto", target = "dataEntity", qualifiedByName = "dataEntity")
     abstract Alert mapAlert(final AlertDto alertDto);
+
+    public AlertStatus mapStatus(final Short code) {
+        return AlertStatusEnum.fromCode(code)
+            .map(ase -> {
+                // TODO: pass to frontend RESOLVED_AUTOMATICALLY as well
+                if (AlertStatusEnum.RESOLVED_AUTOMATICALLY.equals(ase)) {
+                    return AlertStatus.RESOLVED;
+                }
+
+                return AlertStatus.fromValue(ase.name());
+            })
+            .orElseThrow(() -> new IllegalStateException("Unknown alert status code %d".formatted(code)));
+    }
 
     public AlertList mapAlerts(final Page<AlertDto> alerts) {
         final PageInfo pageInfo = new PageInfo();

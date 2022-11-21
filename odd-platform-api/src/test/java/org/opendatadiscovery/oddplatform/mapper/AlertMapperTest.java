@@ -49,7 +49,7 @@ class AlertMapperTest {
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
         alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
-        alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+        alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final AssociatedOwner associatedOwner = new AssociatedOwner();
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
@@ -81,7 +81,7 @@ class AlertMapperTest {
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
         alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
-        alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+        alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
         final Owner owner = new EasyRandom().nextObject(Owner.class);
@@ -116,7 +116,7 @@ class AlertMapperTest {
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
         alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
-        alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+        alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
         final Owner owner = new EasyRandom().nextObject(Owner.class);

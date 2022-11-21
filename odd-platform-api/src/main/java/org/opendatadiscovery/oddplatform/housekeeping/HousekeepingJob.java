@@ -47,7 +47,7 @@ public class HousekeepingJob {
 
             final int deletedResolvedAlerts = dslContext
                 .deleteFrom(ALERT)
-                .where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.toString()))
+                .where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.getCode()))
                 .and(ALERT.STATUS_UPDATED_AT.lessOrEqual(
                     DSL.currentLocalDateTime().minus(housekeepingTTLProperties.getResolvedAlertsDays())))
                 .execute();
