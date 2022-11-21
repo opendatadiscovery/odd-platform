@@ -59,4 +59,4 @@ jobs:
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-        run: ./gradlew test jib ${{ github.event.inputs.buildOptions }} --no-daemon --scan --image ghcr.io/opendatadiscovery/odd-platform -Pversion=${{ steps.get-version.outputs.version }}
+        run: ./gradlew test jib ${{ github.event.inputs.buildOptions }} --no-daemon --scan --image ghcr.io/opendatadiscovery/odd-platform -Pversion=${{ steps.get-version.outputs.version }} -PcontainerBuildArm=true -PcontainerBuildAmd=true

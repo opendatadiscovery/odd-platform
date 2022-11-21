@@ -93,12 +93,14 @@ sourceSets {
 jib {
     from {
         image = 'openjdk:17.0.2'
-        if (multiArchContainerBuild == true) {
-            platforms {
+        platforms {
+            if (amdBuild == true) {
                 platform {
                     architecture = 'amd64'
                     os = 'linux'
                 }
+            }
+            if (armBuild == true) {
                 platform {
                     architecture = 'arm64'
                     os = 'linux'

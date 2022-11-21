@@ -8,7 +8,13 @@ configure([project(':odd-platform-api-contract'), project(':odd-platform-api')])
 
 ext {
     env = findProperty('env') ?: 'prod'
-    multiArchContainerBuild = (findProperty('multiArchContainerBuild') ?: 'true').toBoolean()
+    armBuild = resolveBooleanProperty("containerBuildArm")
+    amdBuild = resolveBooleanProperty("containerBuildAmd", !armBuild)
+}
+
+boolean resolveBooleanProperty(String propertyName, boolean defaultValue = false) {
+    def propertyValueStr = findProperty(propertyName)
+    return propertyValueStr == null ? defaultValue : propertyValueStr.toBoolean();
 }
 
 if (hasProperty('buildScan')) {
