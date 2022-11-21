@@ -3,31 +3,39 @@
 ## Prerequisites
 
 - Node.js and npm
+- Java 17
 - [jq](https://github.com/stedolan/jq/wiki/Installation)
 - Docker Engine 19.03.0+
 - Preferably the latest docker-compose
 
 ## Usage
 
-1. Clone the repo
+1. Clone the repo and go to its directory
 
-1. Go to `tests` dir
+2. Build ODD Platform's docker image locally:
+   
+       ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build
+   or use the following command if your environment is ARM based
+ 
+       ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build -PcontainerBuildArm=true
 
-1. Install dependencies:
+3. Go to `tests` directory
+
+4. Install dependencies:
 
         npm install
 
-1. Install browsers:
+5. Install browsers:
 
         npx playwright install --with-deps chromium
 
-1. Configure and run ODD Platform (inside the docker containers):
+6. Configure and run ODD Platform (inside the docker containers):
 
         npm run odd-up
 
     Note: Check the instructions in Step 1 of [this manual](../docker/README.md) if you encounter any problems.
 
-1. Run test suite:
+7. Run test suite:
 
     - in headful mode:
 
@@ -37,7 +45,7 @@
 
             npm run test:ci
 
-1. Tear down all parts of the ODD platform (i.e. stop and remove containers):
+8. Tear down all parts of the ODD platform (i.e. stop and remove containers):
 
         npm run odd-down
 
