@@ -12,30 +12,30 @@
 
 1. Clone the repo and go to its directory
 
-2. Build ODD Platform's docker image locally:
+1. Build ODD Platform's docker image locally:
    
        ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build
    or use the following command if your environment is ARM based
  
        ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build -PcontainerBuildArm=true
 
-3. Go to `tests` directory
+1. Go to `tests` directory
 
-4. Install dependencies:
+1. Install dependencies:
 
         npm install
 
-5. Install browsers:
+1. Install browsers:
 
         npx playwright install --with-deps chromium
 
-6. Configure and run ODD Platform (inside the docker containers):
+1. Configure and run ODD Platform (inside the docker containers):
 
         npm run odd-up
 
     Note: Check the instructions in Step 1 of [this manual](../docker/README.md) if you encounter any problems.
 
-7. Run test suite:
+1. Run test suite:
 
     - in headful mode:
 
@@ -45,7 +45,7 @@
 
             npm run test:ci
 
-8. Tear down all parts of the ODD platform (i.e. stop and remove containers):
+1. Tear down all parts of the ODD platform (i.e. stop and remove containers):
 
         npm run odd-down
 
