@@ -20,8 +20,8 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
+import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import org.opendatadiscovery.oddplatform.repository.util.ReactiveJooqFTSHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -50,7 +50,7 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CO
 @RequiredArgsConstructor
 public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEntrypointRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
-    private final ReactiveJooqFTSHelper jooqFTSHelper;
+    private final JooqFTSHelper jooqFTSHelper;
 
     @Override
     @ReactiveTransactional

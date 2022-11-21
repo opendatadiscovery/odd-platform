@@ -22,7 +22,6 @@ import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.mapper.SearchMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
-import org.opendatadiscovery.oddplatform.repository.SearchFacetRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchFacetRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.springframework.stereotype.Service;

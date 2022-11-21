@@ -3,7 +3,10 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -28,5 +31,10 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataEntityPojo> setInternalDescription(final long dataEntityId, final String description);
 
-    Mono<Boolean> userIsDataEntityOwner(final long dataEntityId, final String username);
+    Mono<Long> countByState(final FacetStateDto state);
+
+    Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner);
+
+    Flux<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
+                                            final Boolean manuallyCreated);
 }

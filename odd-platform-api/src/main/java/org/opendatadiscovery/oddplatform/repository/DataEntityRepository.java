@@ -53,13 +53,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     Optional<Long> incrementViewCount(final long id);
 
-    Long countByState(final FacetStateDto state);
-
-    Long countByState(final FacetStateDto state, final OwnerPojo ownerPojo);
-
-    List<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
-                                            final Boolean manuallyCreated);
-
     List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                               final Integer page,
                                                               final Integer size);
