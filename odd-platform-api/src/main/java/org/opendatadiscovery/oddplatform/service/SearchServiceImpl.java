@@ -91,12 +91,17 @@ public class SearchServiceImpl implements SearchService {
 
         return fetchFacetState(searchId)
             .map(facetsRecord -> {
+                log.info("Updating facets for search {}", searchId);
                 final FacetStateDto currentState = facetStateMapper.pojoToState(facetsRecord);
                 final FacetStateDto mergedState = FacetStateDto.merge(currentState, delta);
                 return facetStateMapper.mapStateToPojo(searchId, mergedState);
             })
             .flatMap(searchFacetRepository::update)
-            .flatMap(p -> getFacetsData(p.getId(), facetStateMapper.pojoToState(p)));
+            .flatMap(p -> {
+                log.info("Updated search facets: {}", p);
+                return getFacetsData(p.getId(), facetStateMapper.pojoToState(p));
+            })
+            .log();
     }
 
     @Override
@@ -137,6 +142,9 @@ public class SearchServiceImpl implements SearchService {
 
         return Mono.zip(entityClassFacet, allCount, myObjectsCount).map(
             function((entityClassFacetMap, totalCount, myObjectsTotalCount) -> {
+                log.info("Got facets data: {}", entityClassFacetMap);
+                log.info("Got total count: {}", totalCount);
+                log.info("Got my objects count: {}", myObjectsTotalCount);
                 final List<CountableSearchFilter> entityClasses = entityClassFacetMap.entrySet().stream()
                     .map(e -> searchMapper.mapCountableSearchFilter(e.getKey(), e.getValue()))
                     .sorted(Comparator.comparing(CountableSearchFilter::getCount).reversed())

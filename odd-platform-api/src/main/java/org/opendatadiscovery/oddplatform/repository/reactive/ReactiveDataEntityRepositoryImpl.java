@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,7 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DAT
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
 @Repository
+@Slf4j
 public class ReactiveDataEntityRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<DataEntityRecord, DataEntityPojo>
     implements ReactiveDataEntityRepository {
@@ -174,6 +176,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner) {
+        log.info("Counting data entities by state: {}", state);
         final List<Condition> conditions = new ArrayList<>(jooqFTSHelper
             .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES)));
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
@@ -197,7 +200,11 @@ public class ReactiveDataEntityRepositoryImpl
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID));
         select.where(conditions);
 
-        return jooqReactiveOperations.mono(select).map(r -> r.value1().longValue());
+        return jooqReactiveOperations.mono(select).map(r -> {
+            log.info("Counted data entities by state: {}", state);
+            log.info("Counted data entities by state: {}", r.value1().longValue());
+            return r.value1().longValue();
+        });
     }
 
     @Override

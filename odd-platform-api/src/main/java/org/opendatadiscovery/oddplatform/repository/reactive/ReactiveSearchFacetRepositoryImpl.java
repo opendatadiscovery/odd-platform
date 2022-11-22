@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
@@ -52,6 +53,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TERM_SEARCH_ENTRYPO
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRepository {
 
     private final JooqReactiveOperations jooqReactiveOperations;
@@ -154,6 +156,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
 
     @Override
     public Mono<Map<SearchFilterId, Long>> getEntityClassFacetForDataEntity(final FacetStateDto state) {
+        log.info("Get entity class facet for data entity");
         final List<Condition> conditions = getDataEntityDefaultConditions();
 
         final String entityClassUnnestedField = "entity_class_id";
