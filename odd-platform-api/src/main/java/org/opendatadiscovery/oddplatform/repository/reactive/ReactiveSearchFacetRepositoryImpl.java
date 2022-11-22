@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
@@ -54,7 +52,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TERM_SEARCH_ENTRYPO
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
 public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRepository {
 
     private final JooqReactiveOperations jooqReactiveOperations;
@@ -78,7 +75,6 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
     @Override
     public Mono<SearchFacetsPojo> update(final SearchFacetsPojo pojo) {
         final SearchFacetsRecord record = jooqReactiveOperations.newRecord(SEARCH_FACETS, pojo);
-        record.changed(SEARCH_FACETS.ID, false);
 
         final var query = DSL.update(SEARCH_FACETS)
             .set(record)
@@ -93,7 +89,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
     @Override
     public Mono<SearchFacetsPojo> get(final UUID id) {
         final var query = DSL.update(SEARCH_FACETS)
-            .set(SEARCH_FACETS.LAST_ACCESSED_AT, OffsetDateTime.now())
+            .set(SEARCH_FACETS.LAST_ACCESSED_AT, DSL.currentOffsetDateTime())
             .where(SEARCH_FACETS.ID.eq(id))
             .returning();
 
@@ -157,7 +153,6 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
 
     @Override
     public Mono<Map<SearchFilterId, Long>> getEntityClassFacetForDataEntity(final FacetStateDto state) {
-        log.info("Get entity class facet for data entity");
         final List<Condition> conditions = getDataEntityDefaultConditions();
 
         final String entityClassUnnestedField = "entity_class_id";
