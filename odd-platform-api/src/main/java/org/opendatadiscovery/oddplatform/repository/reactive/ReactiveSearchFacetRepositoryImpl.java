@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +93,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
     @Override
     public Mono<SearchFacetsPojo> get(final UUID id) {
         final var query = DSL.update(SEARCH_FACETS)
-            .set(SEARCH_FACETS.LAST_ACCESSED_AT, DSL.currentOffsetDateTime())
+            .set(SEARCH_FACETS.LAST_ACCESSED_AT, OffsetDateTime.now())
             .where(SEARCH_FACETS.ID.eq(id))
             .returning();
 
