@@ -9,6 +9,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectForUpdateOfStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
@@ -89,6 +90,16 @@ public class ReactiveDataSourceRepositoryImpl
             .and(DATA_SOURCE.IS_DELETED.isFalse());
 
         return jooqReactiveOperations.mono(query).map(this::mapRecordIntoDto);
+    }
+
+    @Override
+    public Mono<Long> getIdByOddrnForUpdate(final String oddrn) {
+        final SelectForUpdateOfStep<Record1<Long>> query = DSL.select(DATA_SOURCE.ID)
+            .from(DATA_SOURCE)
+            .where(addSoftDeleteFilter(DATA_SOURCE.ODDRN.eq(oddrn)))
+            .forUpdate();
+
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override

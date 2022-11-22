@@ -40,7 +40,6 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.I
 @RequiredArgsConstructor
 public class AlertLocatorImpl implements AlertLocator {
     private final DatasetStructureService datasetStructureService;
-
     private final ReactiveDataQualityTestRelationRepository dataQualityTestRelationRepository;
 
     private static final Set<IngestionTaskRunStatus> TASK_RUN_BAD_STATUSES = Set.of(
@@ -50,11 +49,12 @@ public class AlertLocatorImpl implements AlertLocator {
 
     @Override
     public Flux<AlertPojo> locateAlerts(final IngestionRequest request) {
-        return Mono.fromCallable(() -> request.getExistingEntities()
-                .stream()
-                .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
-                .map(EnrichedDataEntityIngestionDto::getId)
-                .toList())
+        return Mono.fromCallable(
+                () -> request.getExistingEntities().stream()
+                    .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+                    .map(EnrichedDataEntityIngestionDto::getId)
+                    .toList()
+            )
             .flatMapMany(changedDatasetIds -> Flux.concat(
                 locateDataEntityRunFailed(request.getTaskRuns()),
                 locateBackIncSchemaChanged(changedDatasetIds, request.getSpecificAttributesDeltas())
