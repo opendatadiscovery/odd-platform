@@ -33,9 +33,7 @@ public class SearchController implements SearchApi {
         final String query,
         final ServerWebExchange exchange
     ) {
-        return Mono.just(searchService
-                .getFilterOptions(searchId, facetType, page, size, query)
-                .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(searchService.getFilterOptions(searchId, facetType, page, size, query))
             .map(ResponseEntity::ok);
     }
 
@@ -43,7 +41,6 @@ public class SearchController implements SearchApi {
     public Mono<ResponseEntity<SearchFacetsData>> getSearchFacetList(final UUID searchId,
                                                                      final ServerWebExchange exchange) {
         return searchService.getFacets(searchId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -62,7 +59,6 @@ public class SearchController implements SearchApi {
     public Mono<ResponseEntity<SearchFacetsData>> search(@Valid final Mono<SearchFormData> searchFormData,
                                                          final ServerWebExchange exchange) {
         return searchFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(searchService::search)
             .map(ResponseEntity::ok);
     }
@@ -72,7 +68,6 @@ public class SearchController implements SearchApi {
                                                                      @Valid final Mono<SearchFormData> searchFormData,
                                                                      final ServerWebExchange exchange) {
         return searchFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> searchService.updateFacets(searchId, form))
             .map(ResponseEntity::ok);
     }
@@ -82,8 +77,7 @@ public class SearchController implements SearchApi {
                                                                           final Integer entityClassId,
                                                                           final Boolean manuallyCreated,
                                                                           final ServerWebExchange exchange) {
-        return Mono.just(searchService.getQuerySuggestions(query, entityClassId, manuallyCreated)
-                .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(searchService.getQuerySuggestions(query, entityClassId, manuallyCreated))
             .map(ResponseEntity::ok);
     }
 }
