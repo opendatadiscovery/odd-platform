@@ -74,10 +74,10 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
 
     @Override
     public Mono<SearchFacetsPojo> update(final SearchFacetsPojo pojo) {
-        final SearchFacetsRecord record = jooqReactiveOperations.newRecord(SEARCH_FACETS, pojo);
-
         final var query = DSL.update(SEARCH_FACETS)
-            .set(record)
+            .set(SEARCH_FACETS.FILTERS, pojo.getFilters())
+            .set(SEARCH_FACETS.QUERY_STRING, pojo.getQueryString())
+            .set(SEARCH_FACETS.LAST_ACCESSED_AT, pojo.getLastAccessedAt())
             .where(SEARCH_FACETS.ID.eq(pojo.getId()))
             .returning();
 
