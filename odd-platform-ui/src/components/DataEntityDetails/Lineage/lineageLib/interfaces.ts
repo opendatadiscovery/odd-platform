@@ -1,9 +1,7 @@
-import React from 'react';
-import { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
-import { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
-import { TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces';
-import { DataEntityLineageEdge } from 'generated-sources';
-import { defaultGraphState } from 'components/DataEntityDetails/Lineage/lineageLib/constants';
+import type { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
+import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
+import type { TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces';
+import type { DataEntityLineageEdge } from 'generated-sources';
 
 export interface Zoom extends ProvidedZoom<SVGSVGElement> {
   transformMatrix: TransformMatrix;
@@ -15,11 +13,27 @@ export interface Separation {
   nonSiblings: number;
 }
 
-export interface NodeSize {
+interface Position {
   x: number;
   y: number;
-  mx: number;
-  my: number;
+}
+
+interface Size {
+  width: number;
+  height: number;
+}
+
+export interface NodeSize {
+  size: Size & { mx: number; my: number; contentWidth: number };
+  content: NodeContentLayout;
+}
+
+export interface NodeContentLayout {
+  title: Position & Pick<Size, 'width'>;
+  hiddenDeps: Position;
+  info: Position & { lineHeight: number; labelWidth: number; contentWidth: number };
+  classes: Position & Size & { mx: number };
+  loadMore: { layer: Position & Size; button: Position & Size };
 }
 
 export interface LineageGraphState {

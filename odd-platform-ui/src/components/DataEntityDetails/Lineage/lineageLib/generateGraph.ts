@@ -55,7 +55,10 @@ export const generateTree = ({
   if (!parsedData) return defaultGraphState;
 
   const treeUp = d3tree<TreeNodeDatum>()
-    .nodeSize([nodeSize.y + nodeSize.my, -(nodeSize.x + nodeSize.mx)])
+    .nodeSize([
+      nodeSize.size.height + nodeSize.size.my,
+      -(nodeSize.size.width + nodeSize.size.mx),
+    ])
     .separation((a, b) =>
       a.parent?.data.d3attrs.id === b.parent?.data.d3attrs.id
         ? separation.siblings || 1
@@ -107,7 +110,10 @@ export const generateTree = ({
   );
 
   const treeDown = d3tree<TreeNodeDatum>()
-    .nodeSize([nodeSize.y + nodeSize.my, nodeSize.x + nodeSize.mx])
+    .nodeSize([
+      nodeSize.size.height + nodeSize.size.my,
+      nodeSize.size.width + nodeSize.size.mx,
+    ])
     .separation((a, b) =>
       a.parent?.data.d3attrs.id === b.parent?.data.d3attrs.id
         ? separation.siblings || 1

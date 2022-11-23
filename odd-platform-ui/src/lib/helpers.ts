@@ -91,3 +91,31 @@ export const createUrl = (endpoint: string | undefined) =>
   endpoint
     ? `${window.location.protocol}//${window.location.host}${endpoint}`
     : `${window.location.protocol}//${window.location.host}`;
+
+export const getEllipsisTextByWidth = (
+  el: SVGTextElement | SVGTSpanElement | null,
+  text: string | undefined,
+  width: number
+) => {
+  if (!el || !text) return;
+  if (!document.body.contains(el)) return;
+
+  if (typeof el.getSubStringLength !== 'undefined') {
+    el.textContent = text;
+    let len = text.length;
+    // eslint-disable-next-line no-plusplus
+    while (el.getSubStringLength(0, len--) > width) {
+      el.textContent = `${text.slice(0, len)}...`;
+    }
+  } else if (typeof el.getComputedTextLength !== 'undefined') {
+    while (el.getComputedTextLength() > width) {
+      text = text.slice(0, -1);
+      el.textContent = `${text}...`;
+    }
+  } else {
+    while (el.getBBox().width > width) {
+      text = text.slice(0, -1);
+      el.textContent = `${text}...`;
+    }
+  }
+};

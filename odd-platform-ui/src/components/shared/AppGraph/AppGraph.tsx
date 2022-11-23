@@ -525,27 +525,27 @@ const AppGraph: React.FC = () => {
                 />
               ))}
 
-              {linksUp?.map((linkData, idx) => (
-                <AppGraphLink
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-                  reverse
-                  linkData={linkData}
-                  nodeSize={nodeSize}
-                  // enableLegacyTransitions={enableLegacyTransitions}
-                  // transitionDuration={transitionDuration}
-                />
-              ))}
-              {linksDown?.map((linkData, idx) => (
-                <AppGraphLink
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-                  linkData={linkData}
-                  nodeSize={nodeSize}
-                  // enableLegacyTransitions={enableLegacyTransitions}
-                  // transitionDuration={transitionDuration}
-                />
-              ))}
+              {/* {linksUp?.map((linkData, idx) => ( */}
+              {/*   <AppGraphLink */}
+              {/*     // eslint-disable-next-line react/no-array-index-key */}
+              {/*     key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`} */}
+              {/*     reverse */}
+              {/*     linkData={linkData} */}
+              {/*     nodeSize={nodeSize} */}
+              {/*     // enableLegacyTransitions={enableLegacyTransitions} */}
+              {/*     // transitionDuration={transitionDuration} */}
+              {/*   /> */}
+              {/* ))} */}
+              {/* {linksDown?.map((linkData, idx) => ( */}
+              {/*   <AppGraphLink */}
+              {/*     // eslint-disable-next-line react/no-array-index-key */}
+              {/*     key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`} */}
+              {/*     linkData={linkData} */}
+              {/*     nodeSize={nodeSize} */}
+              {/*     // enableLegacyTransitions={enableLegacyTransitions} */}
+              {/*     // transitionDuration={transitionDuration} */}
+              {/*   /> */}
+              {/* ))} */}
             </g>
           </S.Layer>
         </S.Container>

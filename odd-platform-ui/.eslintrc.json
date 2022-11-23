@@ -77,16 +77,7 @@
       }
     ],
     "@typescript-eslint/no-unused-vars": "warn",
-    "no-param-reassign": [
-      "warn",
-      {
-        "props": true,
-        "ignorePropertyModificationsFor": [
-          "state",
-          "localState"
-        ]
-      }
-    ],
+    "no-param-reassign": "off",
     "@typescript-eslint/return-await": "off",
     "import/no-cycle": "error",
     "import/no-unresolved": "error"

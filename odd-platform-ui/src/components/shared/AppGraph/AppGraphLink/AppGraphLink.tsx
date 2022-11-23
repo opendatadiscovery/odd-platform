@@ -3,16 +3,12 @@ import { linkHorizontal } from 'd3-shape';
 import type { TreeLinkDatum } from 'redux/interfaces';
 import { applyOpacity } from 'components/shared/AppGraph/helpers/lineageHelpers';
 import type { DefaultLinkObject } from 'd3';
+import { NodeSize } from 'components/DataEntityDetails/Lineage/lineageLib/interfaces';
 import * as S from './AppGraphLinkStyles';
 
 interface AppGraphLinkProps {
   linkData: TreeLinkDatum;
-  nodeSize: {
-    x: number;
-    y: number;
-    mx: number;
-    my: number;
-  };
+  nodeSize: NodeSize;
   reverse?: boolean;
   // enableLegacyTransitions: boolean;
   // transitionDuration: number;
@@ -27,20 +23,20 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
 }) => {
   let linkRef: SVGPathElement;
   const { source, target } = linkData;
-  const coords: DefaultLinkObject = {
-    source: reverse
-      ? [source.y, source.x + nodeSize.y / 2]
-      : [source.y + nodeSize.x, source.x + nodeSize.y / 2],
-    target: reverse
-      ? [target.y + nodeSize.x, target.x + nodeSize.y / 2]
-      : [target.y, target.x + nodeSize.y / 2],
-  };
+  // const coords: DefaultLinkObject = {
+  //   source: reverse
+  //     ? [source.y, source.x + nodeSize.y / 2]
+  //     : [source.y + nodeSize.x, source.x + nodeSize.y / 2],
+  //   target: reverse
+  //     ? [target.y + nodeSize.x, target.x + nodeSize.y / 2]
+  //     : [target.y, target.x + nodeSize.y / 2],
+  // };
 
   // React.useEffect(() => {
   //   applyOpacity(linkRef, enableLegacyTransitions, transitionDuration, 1);
   // }, []);
 
-  const drawPath = () => linkHorizontal()(coords) || undefined;
+  // const drawPath = () => linkHorizontal()(coords) || undefined;
 
   return (
     <>
@@ -60,8 +56,8 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
         ref={l => {
           if (l) linkRef = l;
         }}
-        style={{ opacity: 0 }}
-        d={drawPath()}
+        // style={{ opacity: 0 }}
+        // d={drawPath()}
         data-source-id={source.id}
         data-target-id={target.id}
         markerStart={reverse ? 'url(#head)' : ''}

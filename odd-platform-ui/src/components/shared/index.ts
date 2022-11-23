@@ -58,3 +58,4 @@ export { default as AppJSONEditor } from './AppJSONEditor/AppJSONEditor';
 export { default as AppToast } from './AppToast/AppToast';
 export { default as AppErrorPage } from './AppErrorPage/AppErrorPage';
 export { default as WithFeature } from './WithFeature/WithFeature';
+export { default as TruncatedSVGText } from './TruncatedSVGText/TruncatedSVGText';

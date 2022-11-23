@@ -1,12 +1,13 @@
 import React from 'react';
 import { HierarchyPointNode } from 'd3-hierarchy';
-import { select } from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { useHistory } from 'react-router-dom';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { StreamType } from 'redux/interfaces';
 import { useAppPaths } from 'lib/hooks';
+import { Group } from '@visx/group';
 import NodeListButton from './NodeListButton/NodeListButton';
 import GroupedEntitiesListModal from './GroupedEntitiesListModal/GroupedEntitiesListModal';
 import * as S from './AppGraphNodeStyles';
@@ -91,21 +92,21 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     mx: 16,
   };
 
-  const setTransform = (
-    currPosition: AppGraphNodeProps['position'],
-    curParent: AppGraphNodeProps['parent'],
-    shouldTranslateToOrigin = false
-  ) => {
-    if (shouldTranslateToOrigin) {
-      const hasParent = curParent !== null && curParent !== undefined;
-      const originX = hasParent ? curParent?.x : 0;
-      const originY = hasParent ? curParent?.y : 0;
-      return `translate(${originY},${originX})`;
-    }
-    return `translate(${currPosition.y},${currPosition.x})`;
-  };
+  // const setTransform = (
+  //   currPosition: AppGraphNodeProps['position'],
+  //   curParent: AppGraphNodeProps['parent'],
+  //   shouldTranslateToOrigin = false
+  // ) => {
+  //   if (shouldTranslateToOrigin) {
+  //     const hasParent = curParent !== null && curParent !== undefined;
+  //     const originX = hasParent ? curParent?.x : 0;
+  //     const originY = hasParent ? curParent?.y : 0;
+  //     return `translate(${originY},${originX})`;
+  //   }
+  //   return `translate(${currPosition.y},${currPosition.x})`;
+  // };
 
-  const transform = setTransform(position, parent, true);
+  // const transform = setTransform(position, parent, true);
 
   const initialStyle = {
     // opacity: 1,
@@ -129,6 +130,35 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   //     done();
   //   }
   // };
+
+  const wrapLabels = () => {
+    selectAll('.wrap-text').call(text =>
+      text.each(function () {
+        const txt = select(this);
+        const chars = txt.select('title').text().split('');
+        const numChars = chars.length;
+
+        const ellipsis = txt.select<SVGTSpanElement>('tspan.ellip');
+        const width =
+          parseFloat(txt.attr('width')) - (ellipsis.node()?.getComputedTextLength() || 0);
+
+        const tspan = txt
+          .select<SVGTSpanElement>('tspan.visible-text')
+          .text(chars.join(''));
+        while ((tspan.node()?.getComputedTextLength() || 0) > width && chars.length) {
+          chars.pop();
+          tspan.text(chars.join(''));
+        }
+        if (chars.length === numChars) {
+          ellipsis.style('display', 'none');
+        }
+      })
+    );
+  };
+
+  React.useEffect(() => {
+    wrapLabels();
+  }, []);
 
   const upstreamArrow = (
     <svg
@@ -197,13 +227,15 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     : Boolean(data.parentsCount);
 
   return (
-    <g
+    <Group
+      top={position.x}
+      left={position.y}
       id={data.d3attrs.id}
       ref={n => {
         if (n) nodeRef = n;
       }}
       style={initialStyle}
-      transform={transform}
+      // transform={transform}
       onMouseEnter={handleLoadMoreMouseEnter}
       onMouseLeave={handleLoadMoreMouseLeave}
     >
@@ -359,20 +391,20 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         ))}
       </S.NodeContainer>
 
-      {/* {!hasChildren && !hideLoadMore && showLoadMore && hasMoreLineage && !isDEG && ( */}
-      {/*   <LoadMoreButton */}
-      {/*     hideLoadMore={hideLoadMoreHandler} */}
-      {/*     rootNodeId={rootNodeId} */}
-      {/*     dataEntityId={data.id} */}
-      {/*     loadMoreLayout={loadMoreLayout} */}
-      {/*     appGraphNodeType={appGraphNodeType} */}
-      {/*     reverse={reverse} */}
-      {/*     loadMoreCount={ */}
-      {/*       appGraphNodeType === 'downstream' ? data.childrenCount : data.parentsCount */}
-      {/*     } */}
-      {/*   /> */}
-      {/* )} */}
-    </g>
+      {!hasChildren && !hideLoadMore && showLoadMore && hasMoreLineage && !isDEG && (
+        <LoadMoreButton
+          hideLoadMore={hideLoadMoreHandler}
+          rootNodeId={rootNodeId}
+          dataEntityId={data.id}
+          loadMoreLayout={loadMoreLayout}
+          appGraphNodeType={appGraphNodeType}
+          reverse={reverse}
+          loadMoreCount={
+            appGraphNodeType === 'downstream' ? data.childrenCount : data.parentsCount
+          }
+        />
+      )}
+    </Group>
   );
 };
 

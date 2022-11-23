@@ -1,7 +1,4 @@
 import React from 'react';
-import AppGraph from 'components/shared/AppGraph/AppGraph';
-import * as S from 'components/shared/AppGraph/AppGraphStyles';
-import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityLineage,
@@ -11,22 +8,31 @@ import {
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
-import { AppErrorPage } from 'components/shared';
+import { AppErrorPage, AppCircularProgress } from 'components/shared';
 import { Zoom } from '@visx/zoom';
-import ZoomableLineage from 'components/DataEntityDetails/Lineage/ZoomableLineage/ZoomableLineage';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
-import { defaultDepth } from 'components/DataEntityDetails/Lineage/lineageLib/constants';
-import { SelectChangeEvent } from '@mui/material';
-import { Container } from './LineageStyles';
+import { type SelectChangeEvent } from '@mui/material';
+import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
+import { defaultDepth } from './lineageLib/constants';
+import LineageProvider from './lineageLib/LineageContext/LineageProvider';
+import * as S from './LineageStyles';
 
 const Lineage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
+  const [isLineageFetching, setIsLineageFetching] = React.useState(true);
   const [lineageDepth, setLineageDepth] = React.useState(defaultDepth);
+  const [compact, setCompact] = React.useState(false);
+
+  const setCompactView = React.useCallback(
+    (isCompact: boolean) => setCompact(isCompact),
+    []
+  );
+
   const handleDepthChange = React.useCallback(
     (depth: SelectChangeEvent<unknown> | number) => {
       if (typeof depth === 'number') {
@@ -41,32 +47,23 @@ const Lineage: React.FC = () => {
   React.useEffect(() => {
     const params = { dataEntityId, lineageDepth, rootNodeId: dataEntityId };
 
-    dispatch(fetchDataEntityDownstreamLineage(params));
-    dispatch(fetchDataEntityUpstreamLineage(params));
+    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+      dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+        setIsLineageFetching(false)
+      )
+    );
   }, [lineageDepth, dataEntityId]);
 
   const data = useAppSelector(getDataEntityLineage(dataEntityId));
-  const {
-    isLoading: isUpstreamFetching,
-    isLoaded: isUpstreamLoaded,
-    isNotLoaded: isUpstreamNotFetched,
-  } = useAppSelector(getUpstreamLineageFetchingStatuses);
-  const {
-    isLoading: isDownstreamFetching,
-    isLoaded: isDownstreamLoaded,
-    isNotLoaded: isDownstreamNotFetched,
-  } = useAppSelector(getDownstreamLineageFetchingStatuses);
+  const { isNotLoaded: isUpstreamNotFetched } = useAppSelector(
+    getUpstreamLineageFetchingStatuses
+  );
+  const { isNotLoaded: isDownstreamNotFetched } = useAppSelector(
+    getDownstreamLineageFetchingStatuses
+  );
   const upstreamError = useAppSelector(getUpstreamLineageFetchingError);
   const downstreamError = useAppSelector(getDownstreamLineageFetchingError);
 
-  const isLineageFetching = React.useMemo(
-    () => isUpstreamFetching || isDownstreamFetching,
-    [isUpstreamFetching, isDownstreamFetching]
-  );
-  const isLineageFetched = React.useMemo(
-    () => isUpstreamLoaded && isDownstreamLoaded,
-    [isUpstreamLoaded, isDownstreamLoaded]
-  );
   const isLineageNotFetched = React.useMemo(
     () => isUpstreamNotFetched || isDownstreamNotFetched,
     [isUpstreamNotFetched, isDownstreamNotFetched]
@@ -75,50 +72,54 @@ const Lineage: React.FC = () => {
   const height = 780;
   const width = 1408;
   const initialTransformMatrix = {
-    scaleX: 1 / 2,
-    scaleY: 1 / 2,
-    translateX: 0,
-    translateY: 0,
+    scaleX: 0.75,
+    scaleY: 0.75,
+    translateX: width / 2.4,
+    translateY: height / 2.5,
     skewX: 0,
     skewY: 0,
   };
 
   return (
-    <Container>
+    <S.Container>
       {isLineageFetching ? (
         <S.LoaderContainer>
           <AppCircularProgress size={16} text='Loading lineage' />
         </S.LoaderContainer>
       ) : null}
-      {isLineageFetched && (
+
+      {!isLineageFetching && (
         <Zoom<SVGSVGElement>
           width={width}
           height={height}
-          scaleXMin={0.05}
-          scaleXMax={4}
-          scaleYMin={0.05}
-          scaleYMax={4}
+          scaleXMin={0.2}
+          scaleXMax={2}
+          scaleYMin={0.2}
+          scaleYMax={2}
           initialTransformMatrix={initialTransformMatrix}
         >
           {zoom => (
-            <ZoomableLineage
-              data={data}
-              width={width}
-              height={height}
-              zoom={zoom}
-              dataEntityId={dataEntityId}
-              handleDepthChange={handleDepthChange}
-              lineageDepth={lineageDepth}
-            />
+            <LineageProvider compact={compact} setCompactView={setCompactView}>
+              <ZoomableLineage
+                data={data}
+                width={width}
+                height={height}
+                zoom={zoom}
+                dataEntityId={dataEntityId}
+                handleDepthChange={handleDepthChange}
+                lineageDepth={lineageDepth}
+              />
+            </LineageProvider>
           )}
         </Zoom>
       )}
+
       <AppErrorPage
         isNotContentLoaded={isLineageNotFetched}
         error={upstreamError || downstreamError}
         offsetTop={132}
       />
-    </Container>
+    </S.Container>
   );
 };
 

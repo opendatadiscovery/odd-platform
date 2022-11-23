@@ -87,14 +87,14 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
       .attr('stroke-linecap', 'round')
       .attr('stroke-dasharray', 2 * Math.PI * radius)
       .attr('stroke-dashoffset', 50)
-      .transition()
-      .duration(2000)
-      .attrTween('transform', () =>
-        interpolateString(
-          `translate(0, 0) rotate(0, ${centerX}, ${centerY})`,
-          `translate(0, 0) rotate(360, ${centerX}, ${centerY})`
-        )
-      )
+      // .transition()
+      // .duration(2000)
+      // .attrTween('transform', () =>
+      //   interpolateString(
+      //     `translate(0, 0) rotate(0, ${centerX}, ${centerY})`,
+      //     `translate(0, 0) rotate(360, ${centerX}, ${centerY})`
+      //   )
+      // )
       .attr('stroke-dashoffset', 0)
       .on('end', loadMoreSpinnerTransform);
   };
