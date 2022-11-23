@@ -146,6 +146,7 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
         final String searchId = createSearchId();
 
         final SearchFormData filterByDataSource = new SearchFormData()
+            .query("")
             .filters(new SearchFormDataFilters().datasources(List.of(new SearchFilterState()
                 .entityId(createdDataSource.getId())
                 .entityName(createdDataSource.getName())

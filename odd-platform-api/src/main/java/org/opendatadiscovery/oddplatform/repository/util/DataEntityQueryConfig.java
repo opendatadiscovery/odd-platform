@@ -19,6 +19,7 @@ public class DataEntityQueryConfig {
     public static final String AGG_OWNER_FIELD = "owner";
     public static final String AGG_TITLE_FIELD = "title";
     public static final String HAS_ALERTS_FIELD = "has_alerts";
+    public static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
 
     private List<Condition> cteSelectConditions;
     private DataEntityQueryConfig.LimitOffset cteLimitOffset;
