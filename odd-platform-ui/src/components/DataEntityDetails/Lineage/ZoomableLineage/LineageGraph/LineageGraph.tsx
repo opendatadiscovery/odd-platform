@@ -1,6 +1,6 @@
 import React from 'react';
-import AppGraphLink from 'components/shared/AppGraph/AppGraphLink/AppGraphLink';
 import { type DataEntityLineageById } from 'redux/interfaces';
+import Link from './Link/Link';
 import { type LineageGraphState } from '../../lineageLib/interfaces';
 import { defaultGraphState } from '../../lineageLib/constants';
 import { generateTree, parseData } from '../../lineageLib/generateGraph';
@@ -20,18 +20,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
     const separation = { siblings: 1, nonSiblings: 1 };
 
     const [
-      {
-        nodesUp,
-        linksUp,
-        crossLinksUp,
-        replacedCrossLinksUp,
-        nodesDown,
-        linksDown,
-        crossLinksDown,
-        replacedCrossLinksDown,
-        // TODO depth unnecessary?
-        depth,
-      },
+      { nodesUp, linksUp, crossLinksUp, nodesDown, linksDown, crossLinksDown },
       setGraphState,
     ] = React.useState<LineageGraphState>(defaultGraphState);
 
@@ -44,29 +33,21 @@ const LineageGraph = React.memo<LineageGraphProps>(
 
     return (
       <>
-        {/* {crossLinksDown?.map((linkData, idx) => ( */}
-        {/*   <AppGraphCrossLink */}
-        {/*     // eslint-disable-next-line react/no-array-index-key */}
-        {/*     key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`} */}
-        {/*     linkData={linkData} */}
-        {/*     nodeSize={nodeSize} */}
-        {/*     // enableLegacyTransitions={enableLegacyTransitions} */}
-        {/*     // transitionDuration={transitionDuration} */}
-        {/*     replacedCrossLinks={replacedCrossLinksDown} */}
-        {/*   /> */}
-        {/* ))} */}
-        {/* {crossLinksUp?.map((linkData, idx) => ( */}
-        {/*   <AppGraphCrossLink */}
-        {/*     // eslint-disable-next-line react/no-array-index-key */}
-        {/*     key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`} */}
-        {/*     reverse */}
-        {/*     linkData={linkData} */}
-        {/*     nodeSize={nodeSize} */}
-        {/*     // enableLegacyTransitions={enableLegacyTransitions} */}
-        {/*     // transitionDuration={transitionDuration} */}
-        {/*     replacedCrossLinks={replacedCrossLinksUp} */}
-        {/*   /> */}
-        {/* ))} */}
+        {crossLinksDown?.map((linkData, idx) => (
+          <Link
+            // eslint-disable-next-line react/no-array-index-key
+            key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+            linkData={linkData}
+          />
+        ))}
+        {crossLinksUp?.map((linkData, idx) => (
+          <Link
+            // eslint-disable-next-line react/no-array-index-key
+            key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+            reverse
+            linkData={linkData}
+          />
+        ))}
         {nodesUp?.map(node => (
           <Node
             streamType='upstream'
@@ -96,20 +77,18 @@ const LineageGraph = React.memo<LineageGraphProps>(
         ))}
 
         {linksUp?.map((linkData, idx) => (
-          <AppGraphLink
+          <Link
             // eslint-disable-next-line react/no-array-index-key
             key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
             reverse
             linkData={linkData}
-            nodeSize={nodeSize}
           />
         ))}
         {linksDown?.map((linkData, idx) => (
-          <AppGraphLink
+          <Link
             // eslint-disable-next-line react/no-array-index-key
             key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
             linkData={linkData}
-            nodeSize={nodeSize}
           />
         ))}
       </>

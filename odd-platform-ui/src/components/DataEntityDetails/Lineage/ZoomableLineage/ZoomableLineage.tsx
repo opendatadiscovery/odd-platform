@@ -35,7 +35,6 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
           ref={zoom.containerRef}
           width='100%'
           height='100%'
-          viewBox={`0 0 ${width} ${height}`}
           onMouseDown={() => zoom.dragStart}
           onMouseUp={() => zoom.dragEnd}
           onMouseMove={e => zoom.dragMove(e)}

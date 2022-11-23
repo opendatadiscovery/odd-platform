@@ -89,10 +89,12 @@ export const generateTree = ({
         const crossLink = {
           source: sourceNode,
           target: targetNode,
+          crossLink: true,
         };
         const replacedCrossLink = {
           source: targetNode,
           target: sourceNode,
+          crossLink: true,
         };
 
         if (sourceNode.depth < targetNode.depth) {
@@ -144,10 +146,12 @@ export const generateTree = ({
         const crossLink = {
           source: sourceNode,
           target: targetNode,
+          crossLink: true,
         };
         const replacedCrossLink = {
           source: targetNode,
           target: sourceNode,
+          crossLink: true,
         };
 
         if (sourceNode.depth < targetNode.depth) {
