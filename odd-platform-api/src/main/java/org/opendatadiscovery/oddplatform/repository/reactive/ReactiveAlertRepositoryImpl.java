@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -17,7 +17,6 @@ import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.SelectSeekStep2;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -32,6 +31,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -47,18 +47,11 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
-public class ReactiveAlertRepositoryImpl
-    extends ReactiveAbstractCRUDRepository<AlertRecord, AlertPojo>
-    implements ReactiveAlertRepository {
-
+@RequiredArgsConstructor
+public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
+    private final JooqReactiveOperations jooqReactiveOperations;
+    private final JooqQueryHelper jooqQueryHelper;
     private final JooqRecordHelper jooqRecordHelper;
-
-    public ReactiveAlertRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                       final JooqQueryHelper jooqQueryHelper,
-                                       final JooqRecordHelper jooqRecordHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, ALERT, AlertPojo.class);
-        this.jooqRecordHelper = jooqRecordHelper;
-    }
 
     @Override
     public Mono<Page<AlertDto>> listAllWithStatusOpen(final int page, final int size) {
@@ -66,20 +59,16 @@ public class ReactiveAlertRepositoryImpl
             .selectFrom(ALERT)
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()));
 
-        final List<OrderByField> orderByFields = List.of(
-            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
-        final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
-        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final var query = createAlertOuterSelect(alertSelect, alertCte);
+        final Pair<Select<?>, String> query = createAlertJoinQuery(baseQuery, (page - 1) * size, size);
 
         return jooqReactiveOperations
-            .flux(query)
+            .flux(query.getLeft())
             .collectList()
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
-                r -> mapRecordToDto(r, alertCte.getName()),
-                countAlertsWithStatusOpen())
-            );
+                r -> mapRecordToDto(r, query.getRight()),
+                countAlertsWithStatusOpen()
+            ));
     }
 
     @Override
@@ -91,18 +80,14 @@ public class ReactiveAlertRepositoryImpl
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())).and(OWNERSHIP.OWNER_ID.eq(ownerId));
 
-        final List<OrderByField> orderByFields = List.of(
-            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
-        final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
-        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final var query = createAlertOuterSelect(alertSelect, alertCte);
+        final Pair<Select<?>, String> query = createAlertJoinQuery(baseQuery, (page - 1) * size, size);
 
         return jooqReactiveOperations
-            .flux(query)
+            .flux(query.getLeft())
             .collectList()
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
-                r -> mapRecordToDto(r, alertCte.getName()),
+                r -> mapRecordToDto(r, query.getRight()),
                 countAlertsWithStatusOpen())
             );
     }
@@ -140,18 +125,14 @@ public class ReactiveAlertRepositoryImpl
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()))
             .and(DATA_ENTITY.ODDRN.notIn(ownOddrns));
 
-        final List<OrderByField> orderByFields = List.of(
-            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
-        final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
-        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final var query = createAlertOuterSelect(alertSelect, alertCte);
+        final Pair<Select<?>, String> query = createAlertJoinQuery(baseQuery, (page - 1) * size, size);
 
         return jooqReactiveOperations
-            .flux(query)
+            .flux(query.getLeft())
             .collectList()
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
-                r -> mapRecordToDto(r, alertCte.getName()),
+                r -> mapRecordToDto(r, query.getRight()),
                 countDependentObjectsAlerts(ownOddrns))
             );
     }
@@ -330,5 +311,16 @@ public class ReactiveAlertRepositoryImpl
             .leftJoin(USER_OWNER_MAPPING)
             .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
+    }
+
+    private Pair<Select<?>, String> createAlertJoinQuery(final Select<?> baseQuery, final int offset, final int limit) {
+        final List<OrderByField> orderByFields = List.of(
+            new OrderByField(ALERT.LAST_CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
+
+        final Select<? extends Record> alertSelect = jooqQueryHelper.paginate(baseQuery, orderByFields, offset, limit);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
+
+        return Pair.of(query, alertCte.getName());
     }
 }

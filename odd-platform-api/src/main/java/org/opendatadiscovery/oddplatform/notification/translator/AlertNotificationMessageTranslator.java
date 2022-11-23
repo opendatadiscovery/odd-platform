@@ -61,7 +61,7 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         final AlertEventType eventType = resolveAlertEventType(message.operation(), status);
 
         final String eventAtString = AlertEventType.CREATED.equals(eventType)
-            ? message.getColumnValue(ALERT.CREATED_AT.getName())
+            ? message.getColumnValue(ALERT.LAST_CREATED_AT.getName())
             : message.getColumnValue(ALERT.STATUS_UPDATED_AT.getName());
 
         final short alertType = Short.parseShort(message.getColumnValue(ALERT.TYPE.getName()));

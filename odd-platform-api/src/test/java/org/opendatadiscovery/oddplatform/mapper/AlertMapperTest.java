@@ -157,7 +157,7 @@ class AlertMapperTest {
         assertThat(alert.getDescription()).isEqualTo(alertPojo.getDescription());
         assertThat(alert.getStatusUpdatedAt())
             .hasToString(alertPojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC).toString());
-        assertThat(alert.getCreatedAt()).hasToString(alertPojo.getCreatedAt().atOffset(ZoneOffset.UTC).toString());
+        assertThat(alert.getCreatedAt()).hasToString(alertPojo.getLastCreatedAt().atOffset(ZoneOffset.UTC).toString());
         assertThat(alert.getStatusUpdatedBy().getIdentity().getUsername()).isEqualTo(alertPojo.getStatusUpdatedBy());
     }
 }

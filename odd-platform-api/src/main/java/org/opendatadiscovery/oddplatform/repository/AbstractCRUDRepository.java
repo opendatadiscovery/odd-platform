@@ -73,6 +73,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     @Override
     public Page<P> list(final int page, final int size, final String query) {
         final List<? extends Record> records = jooqQueryHelper
+            // TODO: bug with 'page - 1'
             .paginate(baseSelectQuery(query), idField, page - 1, size)
             .fetchStream()
             .collect(Collectors.toList());

@@ -9,7 +9,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Mono;
 
-public interface ReactiveAlertRepository extends ReactiveCRUDRepository<AlertPojo> {
+public interface ReactiveAlertRepository {
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN.

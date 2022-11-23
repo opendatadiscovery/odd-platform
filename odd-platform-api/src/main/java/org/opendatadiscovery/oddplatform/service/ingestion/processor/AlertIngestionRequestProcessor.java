@@ -17,8 +17,6 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
 
     @Override
     public Mono<Void> process(final IngestionRequest request) {
-        // 1. eliminate alerts in the IR -- new alerts
-        // 2. resolve alerts in the database (IR is the first repository to check) -- update
         return alertLocator.locateAlerts(request)
             .collectList()
             .flatMap(alertRepository::createAlerts)

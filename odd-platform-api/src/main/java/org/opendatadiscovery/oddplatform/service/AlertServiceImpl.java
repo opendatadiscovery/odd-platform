@@ -105,7 +105,8 @@ public class AlertServiceImpl implements AlertService {
             final LocalDateTime now = LocalDateTime.now();
 
             return new AlertPojo()
-                .setCreatedAt(now)
+                .setLastCreatedAt(now)
+                .setCreatedAts(new LocalDateTime[] {now})
                 .setStatusUpdatedAt(now)
                 .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.getCode())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))

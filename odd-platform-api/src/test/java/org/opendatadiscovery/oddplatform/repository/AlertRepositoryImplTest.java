@@ -62,7 +62,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                     assertThat(alertPojo.getDescription()).isEqualTo(firstAlert.getDescription());
                     assertThat(alertPojo.getType()).isEqualTo(firstAlert.getType());
                     assertThat(alertPojo.getStatusUpdatedAt()).isNotNull();
-                    assertThat(alertPojo.getCreatedAt()).isNotNull();
+                    assertThat(alertPojo.getLastCreatedAt()).isNotNull();
                     assertThat(alertPojo.getDataEntityOddrn()).isEqualTo(firstAlert.getDataEntityOddrn());
                     assertThat(alertPojo.getMessengerEntityOddrn()).isEqualTo(firstAlert.getMessengerEntityOddrn());
                     assertThat(alertPojo.getStatusUpdatedBy()).isEqualTo(firstAlert.getStatusUpdatedBy());
@@ -401,7 +401,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     }
 
     private Comparator<AlertDto> getAlertsComparator() {
-        final Comparator<AlertDto> createdAtComparator = Comparator.comparing(dto -> dto.getAlert().getCreatedAt());
+        final Comparator<AlertDto> createdAtComparator = Comparator.comparing(dto -> dto.getAlert().getLastCreatedAt());
         final Comparator<AlertDto> reversedCreatedAtComparator = createdAtComparator.reversed();
         final Comparator<AlertDto> idComparator = reversedCreatedAtComparator
             .thenComparing(dto -> dto.getAlert().getId());
