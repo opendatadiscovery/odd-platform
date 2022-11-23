@@ -1,7 +1,6 @@
 import React from 'react';
 import { type DataEntityLineageById } from 'redux/interfaces';
 import Link from './Link/Link';
-import { type LineageGraphState } from '../../lineageLib/interfaces';
 import { defaultGraphState } from '../../lineageLib/constants';
 import { generateTree, parseData } from '../../lineageLib/generateGraph';
 import LineageContext from '../../lineageLib/LineageContext/LineageContext';
@@ -19,17 +18,11 @@ const LineageGraph = React.memo<LineageGraphProps>(
 
     const separation = { siblings: 1, nonSiblings: 1 };
 
-    const [
-      { nodesUp, linksUp, crossLinksUp, nodesDown, linksDown, crossLinksDown },
-      setGraphState,
-    ] = React.useState<LineageGraphState>(defaultGraphState);
-
-    React.useEffect(() => {
-      const parsedData = parseData(data);
-      setGraphState(
-        generateTree({ parsedData, defaultGraphState, separation, nodeSize })
-      );
-    }, [data, nodeSize]);
+    const { linksUp, crossLinksUp, nodesDown, linksDown, crossLinksDown, nodesUp } =
+      React.useMemo(() => {
+        const parsedData = parseData(data);
+        return generateTree({ parsedData, defaultGraphState, separation, nodeSize });
+      }, [data, nodeSize]);
 
     return (
       <>

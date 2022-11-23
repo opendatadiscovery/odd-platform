@@ -26,110 +26,112 @@ interface NodeProps {
   setInitialDepth: (depth: number) => void;
 }
 
-const Node: React.FC<NodeProps> = ({
-  streamType,
-  rootNodeId,
-  data,
-  position,
-  parent,
-  reverse,
-  hasChildren,
-  nodeDepth,
-  setInitialDepth,
-}) => {
-  const history = useHistory();
-  const { dataEntityLineagePath } = useAppPaths();
-  const { nodeSize } = React.useContext(LineageContext);
+const Node = React.memo<NodeProps>(
+  ({
+    streamType,
+    rootNodeId,
+    data,
+    position,
+    parent,
+    reverse,
+    hasChildren,
+    nodeDepth,
+    setInitialDepth,
+  }) => {
+    const history = useHistory();
+    const { dataEntityLineagePath } = useAppPaths();
+    const { nodeSize } = React.useContext(LineageContext);
 
-  const lineageLink =
-    parent && data.externalName
-      ? dataEntityLineagePath(data.originalGroupId ? data.originalGroupId : data.id)
-      : '#';
+    const lineageLink =
+      parent && data.externalName
+        ? dataEntityLineagePath(data.originalGroupId ? data.originalGroupId : data.id)
+        : '#';
 
-  const handleTitleClick = React.useCallback(() => {
-    setInitialDepth(nodeDepth);
-    history.push(lineageLink);
-  }, [lineageLink, nodeDepth]);
+    const handleTitleClick = React.useCallback(() => {
+      setInitialDepth(nodeDepth);
+      history.push(lineageLink);
+    }, [lineageLink, nodeDepth]);
 
-  const [showLoadMore, setShowLoadMore] = React.useState(false);
-  const [hideLoadMore, setHideLoadMore] = React.useState(false);
-  const hideLoadMoreHandler = React.useCallback(() => setHideLoadMore(true), []);
+    const [showLoadMore, setShowLoadMore] = React.useState(false);
+    const [hideLoadMore, setHideLoadMore] = React.useState(false);
+    const hideLoadMoreHandler = React.useCallback(() => setHideLoadMore(true), []);
 
-  const handleLoadMoreMouseEnter = () => setShowLoadMore(true);
-  const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
+    const handleLoadMoreMouseEnter = () => setShowLoadMore(true);
+    const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
 
-  const isDEG = !!data.entityClasses?.find(
-    entityClass => entityClass.name === DataEntityClassNameEnum.ENTITY_GROUP
-  );
+    const isDEG = !!data.entityClasses?.find(
+      entityClass => entityClass.name === DataEntityClassNameEnum.ENTITY_GROUP
+    );
 
-  const hasMoreLineage =
-    streamType === 'downstream'
-      ? Boolean(data.childrenCount)
-      : Boolean(data.parentsCount);
+    const hasMoreLineage =
+      streamType === 'downstream'
+        ? Boolean(data.childrenCount)
+        : Boolean(data.parentsCount);
 
-  return (
-    <Group
-      top={position.x}
-      left={position.y}
-      id={data.d3attrs.id}
-      style={{ cursor: 'initial' }}
-      onMouseEnter={handleLoadMoreMouseEnter}
-      onMouseLeave={handleLoadMoreMouseLeave}
-    >
-      <S.NodeContainer>
-        <S.RootNodeRect
-          width={nodeSize.size.width}
-          height={nodeSize.size.height}
-          $parent={!!parent}
-        />
-        <NodeTitle
-          externalName={data.externalName}
-          internalName={data.internalName}
-          handleTitleClick={handleTitleClick}
-        />
-        <HiddenDependencies
-          reverse={reverse}
-          childrenCount={data.childrenCount}
-          parentsCount={data.parentsCount}
-          externalName={data.externalName}
-        />
-        <Info
-          id={data.id}
-          dataSource={data.dataSource}
-          rootNodeId={rootNodeId}
-          nodesRelatedWithDEG={data.nodesRelatedWithDEG}
-          internalName={data.internalName}
-          externalName={data.externalName}
-          streamType={streamType}
-        />
-        <Classes entityClasses={data.entityClasses} />
-        <rect
-          width={nodeSize.content.loadMore.layer.width}
-          height={nodeSize.content.loadMore.layer.height}
-          transform={
-            reverse
-              ? `translate(${-nodeSize.content.loadMore.layer.width}, ${-nodeSize.content
-                  .loadMore.layer.y})`
-              : `translate(${nodeSize.content.loadMore.layer.x}, ${nodeSize.content.loadMore.layer.y})`
-          }
-          fill='transparent'
-        />
-      </S.NodeContainer>
+    return (
+      <Group
+        top={position.x}
+        left={position.y}
+        id={data.d3attrs.id}
+        style={{ cursor: 'initial' }}
+        onMouseEnter={handleLoadMoreMouseEnter}
+        onMouseLeave={handleLoadMoreMouseLeave}
+      >
+        <S.NodeContainer>
+          <S.RootNodeRect
+            width={nodeSize.size.width}
+            height={nodeSize.size.height}
+            $parent={!!parent}
+          />
+          <NodeTitle
+            externalName={data.externalName}
+            internalName={data.internalName}
+            handleTitleClick={handleTitleClick}
+          />
+          <HiddenDependencies
+            reverse={reverse}
+            childrenCount={data.childrenCount}
+            parentsCount={data.parentsCount}
+            externalName={data.externalName}
+          />
+          <Info
+            id={data.id}
+            dataSource={data.dataSource}
+            rootNodeId={rootNodeId}
+            nodesRelatedWithDEG={data.nodesRelatedWithDEG}
+            internalName={data.internalName}
+            externalName={data.externalName}
+            streamType={streamType}
+          />
+          <Classes entityClasses={data.entityClasses} />
+          <rect
+            width={nodeSize.content.loadMore.layer.width}
+            height={nodeSize.content.loadMore.layer.height}
+            transform={
+              reverse
+                ? `translate(${-nodeSize.content.loadMore.layer.width}, ${-nodeSize
+                    .content.loadMore.layer.y})`
+                : `translate(${nodeSize.content.loadMore.layer.x}, ${nodeSize.content.loadMore.layer.y})`
+            }
+            fill='transparent'
+          />
+        </S.NodeContainer>
 
-      {!hasChildren && !hideLoadMore && showLoadMore && hasMoreLineage && !isDEG && (
-        <LoadMoreButton
-          hideLoadMore={hideLoadMoreHandler}
-          rootNodeId={rootNodeId}
-          dataEntityId={data.id}
-          streamType={streamType}
-          reverse={reverse}
-          loadMoreCount={
-            streamType === 'downstream' ? data.childrenCount : data.parentsCount
-          }
-        />
-      )}
-    </Group>
-  );
-};
+        {!hasChildren && !hideLoadMore && showLoadMore && hasMoreLineage && !isDEG && (
+          <LoadMoreButton
+            hideLoadMore={hideLoadMoreHandler}
+            rootNodeId={rootNodeId}
+            dataEntityId={data.id}
+            streamType={streamType}
+            reverse={reverse}
+            loadMoreCount={
+              streamType === 'downstream' ? data.childrenCount : data.parentsCount
+            }
+          />
+        )}
+      </Group>
+    );
+  }
+);
 
 export default Node;

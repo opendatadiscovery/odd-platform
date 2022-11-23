@@ -74,7 +74,7 @@ const Lineage: React.FC = () => {
   const initialTransformMatrix = {
     scaleX: 0.75,
     scaleY: 0.75,
-    translateX: width / 2.4,
+    translateX: width / 2.3,
     translateY: height / 2.5,
     skewX: 0,
     skewY: 0,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Group } from '@visx/group';
 import { Grid, type SelectChangeEvent } from '@mui/material';
 import { type DataEntityLineageById } from 'redux/interfaces';
+import { localPoint } from '@visx/event';
 import { type Zoom } from '../lineageLib/interfaces';
 import * as S from './ZoomableLineageStyles';
 import LineageControls from './LineageControls/LineageControls';
@@ -33,11 +34,18 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
         <S.Container
           $isDragging={zoom.isDragging}
           ref={zoom.containerRef}
-          width='100%'
-          height='100%'
-          onMouseDown={() => zoom.dragStart}
-          onMouseUp={() => zoom.dragEnd}
-          onMouseMove={e => zoom.dragMove(e)}
+          width={width}
+          height={height}
+          onMouseDown={zoom.dragStart}
+          onMouseMove={zoom.dragMove}
+          onMouseUp={zoom.dragEnd}
+          onMouseLeave={() => {
+            if (zoom.isDragging) zoom.dragEnd();
+          }}
+          onDoubleClick={event => {
+            const point = localPoint(event) || { x: 0, y: 0 };
+            zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
+          }}
         >
           <rect width={width} height={height} fill='#F4F5F7' />
           <Group transform={zoom.toString()}>

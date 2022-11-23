@@ -11,7 +11,7 @@ interface LinkProps {
   linkData: TreeLinkDatum;
   reverse?: boolean;
 }
-const Link: React.FC<LinkProps> = ({ linkData, reverse }) => {
+const Link = React.memo<LinkProps>(({ linkData, reverse }) => {
   const { nodeSize } = React.useContext(LineageContext);
 
   const { source, target } = linkData;
@@ -49,6 +49,6 @@ const Link: React.FC<LinkProps> = ({ linkData, reverse }) => {
       />
     </>
   );
-};
+});
 
 export default Link;
