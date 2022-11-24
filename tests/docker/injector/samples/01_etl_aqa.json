@@ -5,9 +5,9 @@
       "oddrn": "//airflow/host/2.1.3.5/jobs/Books_aqa",
       "name": "Book_ETL_aqa",
       "version": null,
-      "description": null,
+      "description": "the newest books in the city",
       "owner": null,
-      "tags": [{"name": "aqa"}],
+      "tags": [{"name": "aqa"}, {"name": "tagForSearching"}],
       "metadata": [
         {
           "schema_url": "http://none",
@@ -35,7 +35,7 @@
             "Lineage data": "None",
             "Subdag": "None",
             "Autocommit": "No",
-            "Database": "None",
+            "Database": "Base_of_books",
             "On success callback": "None",
             "Postgres conn id": "postgres_default",
             "Retries": 0,

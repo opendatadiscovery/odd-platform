@@ -124,6 +124,156 @@
       "data_entity_group": null
     },
     {
+      "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/magazines_aqa",
+      "name": "magazines_aqa",
+      "version": null,
+      "description": "",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 1500,
+        "field_list": [
+          {
+            "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/magazines_aqa/fields/is_new",
+            "name": "is_new",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/souvenirs_aqa",
+      "name": "souvenirs_aqa",
+      "version": null,
+      "description": "gifts for family and friends",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 1500,
+        "field_list": [
+          {
+            "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/souvenirs_aqa/fields/is_edible",
+            "name": "is_edible",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/art_aqa",
+      "name": "art_aqa",
+      "version": null,
+      "description": "",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 1500,
+        "field_list": [
+          {
+            "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/art_aqa/fields/isLocal",
+            "name": "isLocal",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
       "oddrn": "//oracle/host/1.2.3.4/databases/bookshop/tables/books",
       "name": "books_aqa",
       "version": null,

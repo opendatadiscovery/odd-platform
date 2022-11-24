@@ -9,6 +9,7 @@ import OwnersPage from './management/owners-page';
 import TagsPage from './management/tags-page';
 import { Modals } from './modals';
 import TopPanel from './shared/top-panel';
+import StructurePage from "./data_entity/structure";
 
 export class Pages {
   readonly topPanel: TopPanel;
@@ -25,6 +26,8 @@ export class Pages {
 
   readonly overview: OverviewPage;
 
+  readonly structure: StructurePage;
+
   readonly owners: OwnersPage;
 
   readonly tags: TagsPage;
@@ -36,6 +39,7 @@ export class Pages {
     this.management = new ManagementPage(this);
     this.dataEntity = new DataEntityPage(this);
     this.overview = new OverviewPage(this);
+    this.structure = new StructurePage(this);
     this.catalog = new CatalogPage(this);
     this.owners = new OwnersPage(this);
     this.tags = new TagsPage(this);
