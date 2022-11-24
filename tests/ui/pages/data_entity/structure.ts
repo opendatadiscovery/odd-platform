@@ -24,18 +24,16 @@ export default class StructurePage extends DataEntityPage {
     get inputLabel() {
         return new InputField(this.page, SELECTORS.inputLabel);
     }
+
     get inputDescription() {
         return new InputField(this.page, SELECTORS.inputDescription);
     }
-    async getField(inputName: 'Label' | 'Description', name: string) {
+
+    async getField(inputName: 'Label' , name: string) {
         await this[`input${inputName}`].fill(name);
-        if (inputName === 'Label') {
-            await this.page.locator(SELECTORS.autocomplete(`No result. Create new label "${name}"`)).click();
-        }
-        else {
-            return
-        }
+        await this.page.locator(SELECTORS.autocomplete(`No result. Create new label "${name}"`)).click();
     }
+
 
     get submitButton() {
         return new Button(this.page, SELECTORS.submitButton);
