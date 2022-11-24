@@ -21,7 +21,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/111
      */
-    test.only(`Display an expected item with expression in internal description`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in internal description`, async ({steps: {pages}}) => {
         const customDescription = `This data-entity shows and describe new books in the First avenue`
         await test.step(`When filling a valid expression in the search input`, async () => {
             await pages.catalog.searchBy(entityNameWithAlphabeticChars);
@@ -36,7 +36,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/112
      */
-    test.only(`Display an expected item with expression in tag`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in tag`, async ({steps: {pages}}) => {
         await test.step(`When filling a valid expression in the search input`, async () => {
             await pages.catalog.searchBy('tagForSearching');
             expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
@@ -45,7 +45,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/113
      */
-    test.only(`Display an expected item with expression in custom metadata`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in custom metadata`, async ({steps: {pages}}) => {
         await test.step(`When filling a valid expression in the search input`, async () => {
             await pages.catalog.searchBy(entityNameWithAlphabeticChars);
             await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
@@ -58,7 +58,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/114
      */
-    test.only(`Display an expected item with expression in dataset field name`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in dataset field name`, async ({steps: {pages}}) => {
         await test.step(`When filling a valid expression in the search input`, async () => {
             await pages.catalog.searchBy('genre_id');
             expect(await pages.catalog.isListItemVisible(entityWithStructure)).toBeTruthy();
@@ -67,7 +67,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/115
      */
-    test.only(`Display an expected item with expression in namespace`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in namespace`, async ({steps: {pages}}) => {
         await test.step(`When filling a valid expression in the search input`, async () => {
             await pages.catalog.searchBy('ETL');
             expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
@@ -76,7 +76,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/116
      */
-    test.only(`Display an expected item with expression in datasource name`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in datasource name`, async ({steps: {pages}}) => {
         await test.step(`When filling a valid expression in the search input`, async () => {
             await pages.catalog.searchBy('oracle_airplanes');
             expect(await pages.catalog.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
@@ -85,7 +85,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/118
      */
-    test.only(`Display an expected item with expression in owner's name`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in owner's name`, async ({steps: {pages}}) => {
         const ownerName4 = 'ownerName4';
         const ownerTitle4 = 'ownerTitle4'
         await test.step(`When filling a valid expression in the search input`, async () => {
@@ -103,7 +103,7 @@ test.describe('Search by data in data-entity', () => {
     /**
      * /project/1/test-cases/119
      */
-    test.only(`Display an expected item with expression in name and owner`, async ({steps: {pages}}) => {
+    test(`Display an expected item with expression in name and owner`, async ({steps: {pages}}) => {
         const ownerName6 = 'ownerName6';
         const ownerTitle6 = 'ownerTitle6';
         await test.step(`When filling a valid expression in the search input`, async () => {
@@ -121,7 +121,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/120
          */
-        test.only(`Display an expected item with expression in "about" field and owner`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in "about" field and owner`, async ({steps: {pages}}) => {
             const ownerName7 = 'ownerName7';
             const ownerTitle7 = 'ownerTitle7';
             await test.step(`When filling a valid expression in the search input`, async () => {
@@ -139,7 +139,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/121
          */
-        test.only(`Display an expected item with expression in metadata and dataset field name`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in metadata and dataset field name`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
                 await pages.catalog.searchBy('gifts edible');
                 expect(await pages.catalog.isListItemVisible('souvenirs_aqa')).toBeTruthy();
@@ -148,7 +148,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/122
          */
-        test.only(`Display an expected item with expression in custom name`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in custom name`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
                 await pages.catalog.searchBy(entityNameBeforeRename);
                 await pages.catalog.clickOnListItem(entityNameBeforeRename);
@@ -162,7 +162,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/123
          */
-        test.only(`Display an expected item with expression in pre-defined metadata`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in pre-defined metadata`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
                 await pages.catalog.searchBy('Base_of_books');
                 expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
@@ -171,7 +171,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/124
          */
-        test.only(`Display an expected item with expression in external description`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in external description`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
                 await pages.catalog.searchBy(externalDescription);
                 expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
@@ -180,7 +180,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/125
          */
-        test.only(`Display an expected item with expression in owner's title`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in owner's title`, async ({steps: {pages}}) => {
             const ownerName5 = 'ownerName5';
             const ownerTitle5 = 'ownerTitle5';
             await test.step(`When filling a valid expression in the search input`, async () => {
@@ -198,7 +198,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/128
          */
-        test.only(` Display an expected item with expression in label names`, async ({steps: {pages}}) => {
+        test(` Display an expected item with expression in label names`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
                 await pages.catalog.searchBy('art_aqa');
                 await pages.catalog.clickOnListItem('art_aqa');
@@ -212,7 +212,7 @@ test.describe('Search by data in data-entity', () => {
         /**
          * /project/1/test-cases/136
          */
-        test.only(` Display an expected item with expression in custom name by external name`, async ({steps: {pages}}) => {
+        test(` Display an expected item with expression in custom name by external name`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
                 await pages.catalog.searchBy(entityNameBeforeRename2);
                 await pages.catalog.clickOnListItem(entityNameBeforeRename2);
