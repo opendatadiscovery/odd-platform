@@ -102,6 +102,7 @@ export default class OverviewPage extends DataEntityPage {
   get inputMetadata() {
       return new InputField(this.page, SELECTORS.inputCustomMetadata)
   }
+
   get addCustomMetadata() {
       return new Button(this.page, SELECTORS.addCustomMetadata);
   }
