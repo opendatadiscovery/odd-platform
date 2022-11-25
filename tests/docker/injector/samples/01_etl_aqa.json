@@ -7,7 +7,7 @@
       "version": null,
       "description": "the newest books in the city",
       "owner": null,
-      "tags": [{"name": "aqa"}, {"name": "tagForSearching"}],
+      "tags": [{ "name": "aqa" }, { "name": "tagForSearching" }],
       "metadata": [
         {
           "schema_url": "http://none",
@@ -59,12 +59,8 @@
       "data_transformer": {
         "source_code_url": null,
         "sql": null,
-        "inputs": [
-          "//postgresql/host/1.2.3.5/databases/bookshop/tables/plan"
-        ],
-        "outputs": [
-          "//redshift/host/5.3.2.1/databases/data_lake/tables/sales"
-        ]
+        "inputs": ["//postgresql/host/1.2.3.5/databases/bookshop/tables/plan"],
+        "outputs": ["//redshift/host/5.3.2.1/databases/data_lake/tables/sales"]
       },
       "data_transformer_run": null,
       "data_quality_test": null,

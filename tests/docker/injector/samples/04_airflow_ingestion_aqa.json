@@ -58,12 +58,8 @@
       "data_transformer": {
         "source_code_url": null,
         "sql": null,
-        "inputs": [
-          "//s3/cloud/aws/account/111111111111/region/us-west-2/flights/arrives"
-        ],
-        "outputs": [
-          "//s3/cloud/aws/account/111111111111/region/us-west-2/flights/departure"
-        ]
+        "inputs": ["//s3/cloud/aws/account/111111111111/region/us-west-2/flights/arrives"],
+        "outputs": ["//s3/cloud/aws/account/111111111111/region/us-west-2/flights/departure"]
       },
       "data_transformer_run": null,
       "data_quality_test": null,
