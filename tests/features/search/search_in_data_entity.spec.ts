@@ -11,7 +11,7 @@ const entityNameAfterRename2 = 'renamed_data_entity2';
 const externalDescription = 'the newest books in the city';
 
 
-test.describe('Search by data in data-entity', () => {
+test.describe('Search by data in data-entity in the Catalog', () => {
     test.beforeEach(async ({steps: {pages}, page}) => {
         await test.step(`I open Catalog page`, async () => {
             await page.goto('');
@@ -118,108 +118,127 @@ test.describe('Search by data in data-entity', () => {
             expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
         });
     });
-        /**
-         * /project/1/test-cases/120
-         */
-        test(`Display an expected item with expression in "about" field and owner`, async ({steps: {pages}}) => {
-            const ownerName7 = 'ownerName7';
-            const ownerTitle7 = 'ownerTitle7';
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy(entityNameWithAlphabeticChars);
-                await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
-                await pages.overview.createOwner(
-                    ownerName7,
-                    ownerTitle7,
-                );
-                await pages.topPanel.clickTab('Catalog');
-                await pages.catalog.searchBy(`${externalDescription} ${ownerName7}`);
-                expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
-            });
+    /**
+     * /project/1/test-cases/120
+     */
+    test(`Display an expected item with expression in "about" field and owner`, async ({steps: {pages}}) => {
+        const ownerName7 = 'ownerName7';
+        const ownerTitle7 = 'ownerTitle7';
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy(entityNameWithAlphabeticChars);
+            await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
+            await pages.overview.createOwner(
+                ownerName7,
+                ownerTitle7,
+            );
+            await pages.topPanel.clickTab('Catalog');
+            await pages.catalog.searchBy(`${externalDescription} ${ownerName7}`);
+            expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
         });
-        /**
-         * /project/1/test-cases/121
-         */
-        test(`Display an expected item with expression in metadata and dataset field name`, async ({steps: {pages}}) => {
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy('gifts edible');
-                expect(await pages.catalog.isListItemVisible('souvenirs_aqa')).toBeTruthy();
-            });
+    });
+    /**
+     * /project/1/test-cases/121
+     */
+    test(`Display an expected item with expression in metadata and dataset field name`, async ({steps: {pages}}) => {
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy('gifts edible');
+            expect(await pages.catalog.isListItemVisible('souvenirs_aqa')).toBeTruthy();
         });
-        /**
-         * /project/1/test-cases/122
-         */
-        test(`Display an expected item with expression in custom name`, async ({steps: {pages}}) => {
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy(entityNameBeforeRename);
-                await pages.catalog.clickOnListItem(entityNameBeforeRename);
-                await pages.overview.addCustomName(entityNameAfterRename);
-                await pages.topPanel.clickTab('Catalog');
-                await pages.catalog.searchBy(entityNameAfterRename);
-                expect(await pages.catalog.isListItemVisible(entityNameAfterRename)).toBeTruthy();
+    });
+    /**
+     * /project/1/test-cases/122
+     */
+    test(`Display an expected item with expression in custom name`, async ({steps: {pages}}) => {
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy(entityNameBeforeRename);
+            await pages.catalog.clickOnListItem(entityNameBeforeRename);
+            await pages.overview.addCustomName(entityNameAfterRename);
+            await pages.topPanel.clickTab('Catalog');
+            await pages.catalog.searchBy(entityNameAfterRename);
+            expect(await pages.catalog.isListItemVisible(entityNameAfterRename)).toBeTruthy();
 
+        });
+    });
+    /**
+     * /project/1/test-cases/123
+     */
+    test(`Display an expected item with expression in pre-defined metadata`, async ({steps: {pages}}) => {
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy('Base_of_books');
+            expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
+        });
+    });
+    /**
+     * /project/1/test-cases/124
+     */
+    test(`Display an expected item with expression in external description`, async ({steps: {pages}}) => {
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy(externalDescription);
+            expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
+        });
+    });
+    /**
+     * /project/1/test-cases/125
+     */
+    test(`Display an expected item with expression in owner's title`, async ({steps: {pages}}) => {
+        const ownerName5 = 'ownerName5';
+        const ownerTitle5 = 'ownerTitle5';
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy(entityNameWithAlphabeticChars);
+            await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
+            await pages.overview.createOwner(
+                ownerName5,
+                ownerTitle5,
+            );
+            await pages.topPanel.clickTab('Catalog');
+            await pages.catalog.searchBy(ownerTitle5);
+            expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
+        });
+    });
+    /**
+     * /project/1/test-cases/128
+     */
+    test(` Display an expected item with expression in label names`, async ({steps: {pages}}) => {
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy('art_aqa');
+            await pages.catalog.clickOnListItem('art_aqa');
+            await pages.structure.goToStructureTab.click();
+            await pages.structure.addLabel('isLocal', 'famous', 'new local brands');
+            await pages.topPanel.clickTab('Catalog');
+            await pages.catalog.searchBy('famous');
+            expect(await pages.catalog.isListItemVisible('art_aqa')).toBeTruthy();
+        });
+    });
+    /**
+     * /project/1/test-cases/136
+     */
+    test(` Display an expected item with expression in custom name by external name`, async ({steps: {pages}}) => {
+        await test.step(`When filling a valid expression in the search input`, async () => {
+            await pages.catalog.searchBy(entityNameBeforeRename2);
+            await pages.catalog.clickOnListItem(entityNameBeforeRename2);
+            await pages.overview.addCustomName(entityNameAfterRename2);
+            await pages.topPanel.clickTab('Catalog');
+            await pages.catalog.searchBy(entityNameBeforeRename2);
+            expect(await pages.catalog.isListItemVisible(entityNameAfterRename2)).toBeTruthy();
+        });
+    });
+});
+    test.describe('Search by data in data-entity in the main page', () => {
+        test.beforeEach(async ({steps: {pages}, page}) => {
+            await test.step(`I open main page`, async () => {
+                await page.goto('');
             });
         });
         /**
-         * /project/1/test-cases/123
+         * /project/1/test-cases/137
          */
-        test(`Display an expected item with expression in pre-defined metadata`, async ({steps: {pages}}) => {
+        test(`Display an expected item with expression in dropdown in the main page`, async ({steps: {pages}}) => {
             await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy('Base_of_books');
-                expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
-            });
-        });
-        /**
-         * /project/1/test-cases/124
-         */
-        test(`Display an expected item with expression in external description`, async ({steps: {pages}}) => {
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy(externalDescription);
-                expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
-            });
-        });
-        /**
-         * /project/1/test-cases/125
-         */
-        test(`Display an expected item with expression in owner's title`, async ({steps: {pages}}) => {
-            const ownerName5 = 'ownerName5';
-            const ownerTitle5 = 'ownerTitle5';
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy(entityNameWithAlphabeticChars);
-                await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
-                await pages.overview.createOwner(
-                    ownerName5,
-                    ownerTitle5,
-                );
-                await pages.topPanel.clickTab('Catalog');
-                await pages.catalog.searchBy(ownerTitle5);
-                expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
-            });
-        });
-        /**
-         * /project/1/test-cases/128
-         */
-        test(` Display an expected item with expression in label names`, async ({steps: {pages}}) => {
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy('art_aqa');
-                await pages.catalog.clickOnListItem('art_aqa');
-                await pages.structure.goToStructureTab.click();
-                await pages.structure.addLabel('isLocal', 'famous', 'new local brands');
-                await pages.topPanel.clickTab('Catalog');
-                await pages.catalog.searchBy('famous');
-                expect(await pages.catalog.isListItemVisible('art_aqa')).toBeTruthy();
-            });
-        });
-        /**
-         * /project/1/test-cases/136
-         */
-        test(` Display an expected item with expression in custom name by external name`, async ({steps: {pages}}) => {
-            await test.step(`When filling a valid expression in the search input`, async () => {
-                await pages.catalog.searchBy(entityNameBeforeRename2);
-                await pages.catalog.clickOnListItem(entityNameBeforeRename2);
-                await pages.overview.addCustomName(entityNameAfterRename2);
-                await pages.topPanel.clickTab('Catalog');
-                await pages.catalog.searchBy(entityNameBeforeRename2);
-                expect(await pages.catalog.isListItemVisible(entityNameAfterRename2)).toBeTruthy();
+                await pages.main.search('pilots');
+                expect(await pages.main.isListItemVisible('embraer')).toBeTruthy();
+                expect(await pages.catalog.isListItemVisible('airbus')).toBeTruthy();
+                expect(await pages.catalog.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
+
             });
         });
     });
