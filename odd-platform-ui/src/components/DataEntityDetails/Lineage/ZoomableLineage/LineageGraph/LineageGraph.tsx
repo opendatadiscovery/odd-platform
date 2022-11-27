@@ -14,7 +14,7 @@ interface LineageGraphProps {
 
 const LineageGraph = React.memo<LineageGraphProps>(
   ({ data, dataEntityId, handleDepthChange }) => {
-    const { nodeSize } = React.useContext(LineageContext);
+    const { nodeSize, setRenderedNodes, fullTitles } = React.useContext(LineageContext);
 
     const separation = { siblings: 1, nonSiblings: 1 };
 
@@ -23,6 +23,10 @@ const LineageGraph = React.memo<LineageGraphProps>(
         const parsedData = parseData(data);
         return generateTree({ parsedData, defaultGraphState, separation, nodeSize });
       }, [data, nodeSize]);
+
+    React.useEffect(() => {
+      setRenderedNodes([...nodesUp, ...nodesDown]);
+    }, [fullTitles]);
 
     return (
       <>

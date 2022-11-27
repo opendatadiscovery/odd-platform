@@ -14,14 +14,15 @@ export const defaultGraphState: LineageGraphState = {
 
 export const defaultDepth = 1;
 
-export const NODE_WIDTH = 200;
-export const NODE_HEIGHT = 120;
-export const NODE_COMPACT_HEIGHT = 70;
+export const NODE_WIDTH = 300;
+export const NODE_HEIGHT_WITHOUT_TITLE = 115;
+export const NODE_COMPACT_HEIGHT_WITHOUT_TITLE = 65;
 export const NODE_INDENT_LEFT = 12;
 export const INFO_HEIGHT = 20;
 export const INFO_LABEL_WIDTH = 50;
 export const NODE_LINE_HEIGHT = 10;
 export const NODE_LINE_MX = 5;
+export const NODE_MIN_TITLE_HEIGHT = 20;
 
 export const LOAD_MORE_LAYER_WIDTH = 60;
 export const LOAD_MORE_BUTTON_WIDTH = 91;
@@ -30,7 +31,7 @@ export const LOAD_MORE_BUTTON_HEIGHT = 24;
 export const nodeSizeInitial: NodeSize = {
   size: {
     width: NODE_WIDTH,
-    height: NODE_HEIGHT,
+    height: NODE_HEIGHT_WITHOUT_TITLE,
     mx: 150,
     my: 24,
     contentWidth: NODE_WIDTH - NODE_INDENT_LEFT * 3,
@@ -39,6 +40,7 @@ export const nodeSizeInitial: NodeSize = {
     title: {
       x: NODE_INDENT_LEFT,
       y: NODE_LINE_HEIGHT * 2,
+      height: 40,
       width: NODE_WIDTH - NODE_INDENT_LEFT * 2,
     },
     hiddenDeps: { x: NODE_INDENT_LEFT, y: NODE_LINE_HEIGHT * 2 + NODE_LINE_MX },

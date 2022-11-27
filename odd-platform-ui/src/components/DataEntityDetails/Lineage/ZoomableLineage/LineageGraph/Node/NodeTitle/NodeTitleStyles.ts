@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled, { CSSObject } from 'styled-components';
 
-export const Title = styled('text')(({ theme }) => ({
+export const Title = styled('foreignObject')(({ theme }) => ({
   fill: theme.palette.common.black,
   fontSize: theme.typography.h4.fontSize,
   fontWeight: theme.typography.h4.fontWeight,
@@ -8,10 +8,20 @@ export const Title = styled('text')(({ theme }) => ({
   cursor: 'pointer',
 }));
 
+export const TitleWrapper = styled('div')(
+  () =>
+    ({
+      wordBreak: 'break-all',
+      display: 'flex',
+      alignItems: 'center',
+      height: '100%',
+    } as CSSObject)
+);
+
 export const UnknownEntityNameCircle = styled('circle')(({ theme }) => ({
   cx: 5,
   cy: 0,
-  r: 5,
+  r: 8,
   strokeWidth: 2,
   stroke: theme.palette.common.black,
 }));
@@ -20,8 +30,8 @@ export const UnknownEntityNameCrossedLine = styled('rect')(({ theme }) => ({
   x: 0,
   y: 0.81418,
   width: 2,
-  height: 9.37199,
+  height: 17.37199,
   rx: 1,
-  transform: 'rotate(-45deg) translateY(-2px) translateX(2.4px)',
+  transform: 'rotate(-45deg) translateY(-6px) translateX(2.6px)',
   fill: theme.palette.common.black,
 }));

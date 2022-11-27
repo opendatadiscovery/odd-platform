@@ -29,7 +29,7 @@ export interface NodeSize {
 }
 
 export interface NodeContentLayout {
-  title: Position & Pick<Size, 'width'>;
+  title: Position & Size;
   hiddenDeps: Position;
   info: Position & { lineHeight: number; labelWidth: number; contentWidth: number };
   classes: Position & Size & { mx: number };
@@ -38,7 +38,7 @@ export interface NodeContentLayout {
 
 export interface LineageGraphState {
   nodesUp: HierarchyPointNode<TreeNodeDatum>[];
-  linksUp: TreeLinkDatum[];
+  linksUp: HierarchyPointLink<TreeNodeDatum>[];
   crossLinksUp: HierarchyPointLink<TreeNodeDatum>[];
   replacedCrossLinksUp: TreeLinkDatum[];
   nodesDown: HierarchyPointNode<TreeNodeDatum>[];

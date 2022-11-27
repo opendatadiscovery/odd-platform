@@ -1,8 +1,8 @@
 import React from 'react';
 import { Group } from '@visx/group';
-import { TruncatedSVGText } from 'components/shared';
-import LineageContext from '../../../../lineageLib/LineageContext/LineageContext';
+import truncate from 'lodash/truncate';
 import * as S from './NodeTitleStyles';
+import LineageContext from '../../../../lineageLib/LineageContext/LineageContext';
 
 interface NodeTitleProps {
   externalName: string | undefined;
@@ -15,25 +15,34 @@ const NodeTitle: React.FC<NodeTitleProps> = ({
   internalName,
   handleTitleClick,
 }) => {
-  const { nodeSize } = React.useContext(LineageContext);
+  const { nodeSize, fullTitles } = React.useContext(LineageContext);
 
   return (
     <Group top={nodeSize.content.title.y} left={nodeSize.content.title.x}>
       {externalName ? (
-        <S.Title>
-          <TruncatedSVGText
-            tagName='tspan'
-            text={internalName || externalName}
-            title={internalName || externalName}
-            width={nodeSize.size.contentWidth}
-            onClick={handleTitleClick}
-          />
-        </S.Title>
-      ) : (
         <>
+          <title>{internalName || externalName}</title>
+          <S.Title
+            onClick={handleTitleClick}
+            width={nodeSize.content.title.width}
+            height={nodeSize.content.title.height}
+          >
+            <S.TitleWrapper>
+              {fullTitles
+                ? internalName || externalName
+                : truncate(internalName || externalName, { length: 40 })}
+            </S.TitleWrapper>
+          </S.Title>
+        </>
+      ) : (
+        <Group
+          alignmentBaseline='middle'
+          top={nodeSize.content.title.y + 5}
+          left={nodeSize.content.title.x - 5}
+        >
           <S.UnknownEntityNameCircle />
           <S.UnknownEntityNameCrossedLine />
-        </>
+        </Group>
       )}
     </Group>
   );

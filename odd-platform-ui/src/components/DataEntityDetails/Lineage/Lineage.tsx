@@ -27,9 +27,14 @@ const Lineage: React.FC = () => {
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
   const [lineageDepth, setLineageDepth] = React.useState(defaultDepth);
   const [compact, setCompact] = React.useState(false);
+  const [fullTitles, setFullTitles] = React.useState(false);
 
   const setCompactView = React.useCallback(
     (isCompact: boolean) => setCompact(isCompact),
+    []
+  );
+  const setFullTitlesView = React.useCallback(
+    (isFullTitle: boolean) => setFullTitles(isFullTitle),
     []
   );
 
@@ -99,7 +104,12 @@ const Lineage: React.FC = () => {
           initialTransformMatrix={initialTransformMatrix}
         >
           {zoom => (
-            <LineageProvider compact={compact} setCompactView={setCompactView}>
+            <LineageProvider
+              compact={compact}
+              setCompactView={setCompactView}
+              fullTitles={fullTitles}
+              setFullTitlesView={setFullTitlesView}
+            >
               <ZoomableLineage
                 data={data}
                 width={width}

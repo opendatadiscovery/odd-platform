@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppButton, AppTabs, AppSelect } from 'components/shared';
+import { AppButton, AppTabs, AppSelect, AppSwitch } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
 import { type SelectChangeEvent, Typography } from '@mui/material';
 import * as S from './LineageControlsStyles';
@@ -12,10 +12,16 @@ interface LineageControlsProps {
 }
 const LineageControls = React.memo<LineageControlsProps>(
   ({ handleCenterRoot, lineageDepth, handleDepthChange }) => {
-    const { compact, setCompactView } = React.useContext(LineageContext);
+    const { compact, setCompactView, fullTitles, setFullTitlesView } =
+      React.useContext(LineageContext);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setFullTitlesView(event.target.checked);
+    };
 
     return (
       <S.ControlsContainer>
+        <AppSwitch label='Full titles' checked={fullTitles} onChange={handleChange} />
         <AppButton
           color='primaryLight'
           size='medium'
@@ -24,6 +30,7 @@ const LineageControls = React.memo<LineageControlsProps>(
         >
           Main
         </AppButton>
+
         <AppTabs
           type='secondarySmall'
           orientation='horizontal'

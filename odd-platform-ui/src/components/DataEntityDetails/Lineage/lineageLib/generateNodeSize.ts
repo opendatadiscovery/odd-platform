@@ -6,19 +6,22 @@ import {
   INFO_LABEL_WIDTH,
   NODE_LINE_HEIGHT,
   NODE_LINE_MX,
-  NODE_HEIGHT,
-  NODE_COMPACT_HEIGHT,
+  NODE_HEIGHT_WITHOUT_TITLE,
+  NODE_COMPACT_HEIGHT_WITHOUT_TITLE,
   LOAD_MORE_LAYER_WIDTH,
   LOAD_MORE_BUTTON_WIDTH,
   LOAD_MORE_BUTTON_HEIGHT,
+  NODE_MIN_TITLE_HEIGHT,
 } from './constants';
 
-export const generateNodeSize = (compact: boolean): NodeSize => {
+export const generateNodeSize = (compact: boolean, titleHeight: number): NodeSize => {
   type Content = NodeSize['content'];
 
   const size: NodeSize['size'] = {
     width: NODE_WIDTH,
-    height: compact ? NODE_COMPACT_HEIGHT : NODE_HEIGHT,
+    height: compact
+      ? NODE_COMPACT_HEIGHT_WITHOUT_TITLE + titleHeight
+      : NODE_HEIGHT_WITHOUT_TITLE + titleHeight,
     mx: 150,
     my: 24,
     contentWidth: NODE_WIDTH - NODE_INDENT_LEFT * 3,
@@ -26,18 +29,19 @@ export const generateNodeSize = (compact: boolean): NodeSize => {
 
   const title: Content['title'] = {
     x: NODE_INDENT_LEFT,
-    y: NODE_LINE_HEIGHT * 2,
+    y: NODE_LINE_HEIGHT,
+    height: titleHeight || NODE_MIN_TITLE_HEIGHT,
     width: size.width - NODE_INDENT_LEFT * 2,
   };
 
   const hiddenDeps: Content['hiddenDeps'] = {
     x: NODE_INDENT_LEFT,
-    y: title.y + NODE_LINE_MX,
+    y: title.y + title.height + 4,
   };
 
   const info: Content['info'] = {
     x: NODE_INDENT_LEFT,
-    y: hiddenDeps.y + NODE_LINE_MX * 5,
+    y: hiddenDeps.y + NODE_LINE_MX * 5 + 4,
     lineHeight: INFO_HEIGHT,
     labelWidth: INFO_LABEL_WIDTH,
     contentWidth: size.width - title.x * 3 - INFO_LABEL_WIDTH,

@@ -44,7 +44,7 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
           }}
           onDoubleClick={event => {
             const point = localPoint(event) || { x: 0, y: 0 };
-            zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
+            zoom.scale({ scaleX: 2, scaleY: 2, point });
           }}
         >
           <rect width={width} height={height} fill='#F4F5F7' />
