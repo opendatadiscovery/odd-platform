@@ -1,8 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Term } from 'generated-sources';
-import { useAppPaths } from 'lib/hooks';
+import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
@@ -15,6 +14,7 @@ interface TermsResultItemProps {
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult }) => {
   const { termDetailsOverviewPath } = useAppPaths();
+  const { termFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
 
   const termDetailsOverviewLink = termDetailsOverviewPath(termSearchResult.id);
 
@@ -52,15 +52,13 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
         <TermSearchResultsColContainer item $colType='colsm'>
           <Typography variant='body1' noWrap>
             {termSearchResult.createdAt &&
-              format(termSearchResult.createdAt, 'd MMM yyyy')}
+              termFormattedDateTime(termSearchResult.createdAt.getTime())}
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType='colsm'>
           <Typography variant='body1' noWrap>
             {termSearchResult.updatedAt &&
-              formatDistanceToNowStrict(termSearchResult.updatedAt, {
-                addSuffix: true,
-              })}
+              formatDistanceToNowStrict(termSearchResult.updatedAt, { addSuffix: true })}
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType='colxs' />

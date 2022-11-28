@@ -12,7 +12,7 @@ import { WithPermissions } from 'components/shared/contexts';
 import { Permission, TermDetails } from 'generated-sources';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { useAppDateTime } from 'lib/hooks';
 
 interface TermDetailsHeaderProps {
   name: TermDetails['name'];
@@ -26,6 +26,8 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
   updatedAt,
   handleTermDelete,
 }) => {
+  const { formatDistanceToNowStrict } = useAppDateTime();
+
   const termUpdatedAt = React.useMemo(
     () => (
       <>

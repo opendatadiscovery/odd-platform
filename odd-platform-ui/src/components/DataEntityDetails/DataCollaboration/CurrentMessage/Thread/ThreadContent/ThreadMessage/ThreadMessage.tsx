@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppAvatar } from 'components/shared';
 import { Message } from 'redux/interfaces';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { useAppDateTime } from 'lib/hooks';
 import * as S from './ThreadMessageStyles';
 
 interface ThreadMessageProps {
@@ -12,6 +12,8 @@ interface ThreadMessageProps {
 const ThreadMessage: React.FC<ThreadMessageProps> = ({
   message: { username, usernameAvatar, text, createdAt },
 }) => {
+  const { formatDistanceToNowStrict } = useAppDateTime();
+
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
 
   return (

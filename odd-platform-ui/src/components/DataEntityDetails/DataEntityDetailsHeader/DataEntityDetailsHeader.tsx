@@ -10,7 +10,7 @@ import {
 import { WithPermissions } from 'components/shared/contexts';
 import { DataEntityDetails, Feature, Permission } from 'generated-sources';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/Icons';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { useAppDateTime } from 'lib/hooks';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
@@ -33,6 +33,8 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   type,
   dataEntityId,
 }) => {
+  const { formatDistanceToNowStrict } = useAppDateTime();
+
   const entityUpdatedAt = React.useMemo(
     () =>
       updatedAt && (
