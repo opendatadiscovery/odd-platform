@@ -17,7 +17,7 @@ import LoadMoreButton from './LoadMoreButton/LoadMoreButton';
 interface NodeProps {
   streamType: StreamType;
   rootNodeId: number;
-  data: TreeNodeDatum;
+  node: HierarchyPointNode<TreeNodeDatum>;
   position: Point;
   parent: HierarchyPointNode<TreeNodeDatum> | null;
   reverse?: boolean;
@@ -30,7 +30,7 @@ const Node = React.memo<NodeProps>(
   ({
     streamType,
     rootNodeId,
-    data,
+    node,
     position,
     parent,
     reverse,
@@ -43,8 +43,10 @@ const Node = React.memo<NodeProps>(
     const { nodeSize } = React.useContext(LineageContext);
 
     const lineageLink =
-      parent && data.externalName
-        ? dataEntityLineagePath(data.originalGroupId ? data.originalGroupId : data.id)
+      parent && node.data.externalName
+        ? dataEntityLineagePath(
+            node.data.originalGroupId ? node.data.originalGroupId : node.data.id
+          )
         : '#';
 
     const handleTitleClick = React.useCallback(() => {
@@ -59,20 +61,20 @@ const Node = React.memo<NodeProps>(
     const handleLoadMoreMouseEnter = () => setShowLoadMore(true);
     const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
 
-    const isDEG = !!data.entityClasses?.find(
+    const isDEG = !!node.data.entityClasses?.find(
       entityClass => entityClass.name === DataEntityClassNameEnum.ENTITY_GROUP
     );
 
     const hasMoreLineage =
       streamType === 'downstream'
-        ? Boolean(data.childrenCount)
-        : Boolean(data.parentsCount);
+        ? Boolean(node.data.childrenCount)
+        : Boolean(node.data.parentsCount);
 
     return (
       <Group
         top={position.x}
         left={position.y}
-        id={data.d3attrs.id}
+        id={node.data.d3attrs.id}
         style={{ cursor: 'initial' }}
         onMouseEnter={handleLoadMoreMouseEnter}
         onMouseLeave={handleLoadMoreMouseLeave}
@@ -84,26 +86,26 @@ const Node = React.memo<NodeProps>(
             $parent={!!parent}
           />
           <NodeTitle
-            externalName={data.externalName}
-            internalName={data.internalName}
+            externalName={node.data.externalName}
+            internalName={node.data.internalName}
             handleTitleClick={handleTitleClick}
           />
           <HiddenDependencies
             reverse={reverse}
-            childrenCount={data.childrenCount}
-            parentsCount={data.parentsCount}
-            externalName={data.externalName}
+            childrenCount={node.data.childrenCount}
+            parentsCount={node.data.parentsCount}
+            externalName={node.data.externalName}
           />
           <Info
-            id={data.id}
-            dataSource={data.dataSource}
+            id={node.data.id}
+            dataSource={node.data.dataSource}
             rootNodeId={rootNodeId}
-            nodesRelatedWithDEG={data.nodesRelatedWithDEG}
-            internalName={data.internalName}
-            externalName={data.externalName}
+            nodesRelatedWithDEG={node.data.nodesRelatedWithDEG}
+            internalName={node.data.internalName}
+            externalName={node.data.externalName}
             streamType={streamType}
           />
-          <Classes entityClasses={data.entityClasses} />
+          <Classes entityClasses={node.data.entityClasses} />
           <rect
             width={nodeSize.content.loadMore.layer.width}
             height={nodeSize.content.loadMore.layer.height}
@@ -121,11 +123,13 @@ const Node = React.memo<NodeProps>(
           <LoadMoreButton
             hideLoadMore={hideLoadMoreHandler}
             rootNodeId={rootNodeId}
-            dataEntityId={data.id}
+            dataEntityId={node.data.id}
             streamType={streamType}
             reverse={reverse}
             loadMoreCount={
-              streamType === 'downstream' ? data.childrenCount : data.parentsCount
+              streamType === 'downstream'
+                ? node.data.childrenCount
+                : node.data.parentsCount
             }
           />
         )}

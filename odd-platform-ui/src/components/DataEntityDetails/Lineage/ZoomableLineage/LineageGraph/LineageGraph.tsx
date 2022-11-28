@@ -51,7 +51,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
             rootNodeId={dataEntityId}
             key={`node-${node.x}${node.y}`}
             reverse
-            data={node.data}
+            node={node}
             position={{ x: node.x, y: node.y }}
             parent={node.parent}
             hasChildren={!!node.children?.length}
@@ -64,7 +64,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
             streamType='downstream'
             rootNodeId={dataEntityId}
             key={`node-${node.x}${node.y}`}
-            data={node.data}
+            node={node}
             position={{ x: node.x, y: node.y }}
             parent={node.parent}
             hasChildren={!!node.children?.length}

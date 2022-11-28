@@ -38,14 +38,19 @@ const Link = React.memo<LinkProps>(({ linkData, reverse }) => {
 
   return (
     <>
-      <MarkerArrow id='head' fill='#A8B0BD' size={6} />
-      <MarkerArrow id='crossHead' fill='#66B3FF' size={4} />
+      <MarkerArrow id='head' fill='#A8B0BD' size={6} orient='auto-start-reverse' />
+      <MarkerArrow id='crossHead' fill='#66B3FF' size={4} orient='auto-start-reverse' />
       <LinePath
         curve={curveBasis}
         d={drawPath()}
         stroke={linkData?.crossLink ? '#66B3FF' : '#A8B0BD'}
         strokeWidth='2'
-        markerEnd={linkData?.crossLink ? 'url(#crossHead)' : 'url(#head)'}
+        markerStart={
+          // eslint-disable-next-line no-nested-ternary
+          reverse ? (linkData?.crossLink ? 'url(#crossHead)' : 'url(#head)') : ''
+        }
+        // eslint-disable-next-line no-nested-ternary
+        markerEnd={reverse ? '' : linkData?.crossLink ? 'url(#crossHead)' : 'url(#head)'}
       />
     </>
   );
