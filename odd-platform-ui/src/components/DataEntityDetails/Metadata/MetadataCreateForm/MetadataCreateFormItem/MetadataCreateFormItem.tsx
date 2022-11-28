@@ -156,7 +156,7 @@ const MetadataCreateFormItem: React.FC = () => {
             renderInput={params => (
               <AppInput
                 {...params}
-                dataQAId='Add_custom_metadata_input'
+                dataQAId='add_custom_metadata_input'
                 ref={params.InputProps.ref}
                 placeholder='Metadata Name'
                 customEndAdornment={{
