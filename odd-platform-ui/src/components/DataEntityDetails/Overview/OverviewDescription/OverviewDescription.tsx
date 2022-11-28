@@ -69,6 +69,7 @@ const OverviewDescription: React.FC = () => {
           {editMode ? null : (
             <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
               <AppButton
+                data-qa='add_description'
                 onClick={onEditClick}
                 size='medium'
                 color='primaryLight'

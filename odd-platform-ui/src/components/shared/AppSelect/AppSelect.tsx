@@ -25,14 +25,19 @@ interface AppSelectProps
     | 'children'
     | 'onOpen'
     | 'ref'
+    | 'inputProps'
   > {
   size?: AppSelectSizes;
   containerSx?: SxProps<Theme>;
   maxMenuHeight?: number;
+  dataQAId?: string;
 }
 
 const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
-  ({ size = 'medium', fullWidth = true, label, maxMenuHeight, ...props }, ref) => (
+  (
+    { size = 'medium', fullWidth = true, label, maxMenuHeight, dataQAId, ...props },
+    ref
+  ) => (
     <Grid
       sx={props.containerSx || { mt: label ? 2 : 0, width: fullWidth ? '100%' : 'auto' }}
     >
@@ -47,6 +52,7 @@ const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
         IconComponent={DropdownIcon}
         notched
         ref={ref}
+        inputProps={{ ...props.inputProps, 'data-qa': dataQAId }}
         MenuProps={{
           anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
           transformOrigin: { vertical: 'top', horizontal: 'left' },
