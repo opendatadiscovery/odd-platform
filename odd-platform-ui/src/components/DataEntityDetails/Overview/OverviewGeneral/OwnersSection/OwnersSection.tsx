@@ -81,6 +81,7 @@ const OwnersSection: React.FC = () => {
             dataEntityId={dataEntityId}
             ownerEditBtn={
               <AppButton
+                data-qa='add_owner'
                 sx={{ mt: 0.25 }}
                 size='medium'
                 color='tertiary'

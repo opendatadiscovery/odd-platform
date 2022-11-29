@@ -10,7 +10,7 @@ import {
 import { WithPermissions } from 'components/shared/contexts';
 import { DataEntityDetails, Feature, Permission } from 'generated-sources';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/Icons';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { useAppDateTime } from 'lib/hooks';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
@@ -33,6 +33,8 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   type,
   dataEntityId,
 }) => {
+  const { formatDistanceToNowStrict } = useAppDateTime();
+
   const entityUpdatedAt = React.useMemo(
     () =>
       updatedAt && (
@@ -78,25 +80,15 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
             <InternalNameFormDialog
               btnCreateEl={
-                internalName ? (
-                  <AppButton
-                    size='small'
-                    color='tertiary'
-                    sx={{ ml: 1 }}
-                    startIcon={<EditIcon />}
-                  >
-                    Edit
-                  </AppButton>
-                ) : (
-                  <AppButton
-                    size='small'
-                    color='tertiary'
-                    sx={{ ml: 1 }}
-                    startIcon={<AddIcon />}
-                  >
-                    Add business name
-                  </AppButton>
-                )
+                <AppButton
+                  data-qa='add_business_name'
+                  size='small'
+                  color='tertiary'
+                  sx={{ ml: 1 }}
+                  startIcon={internalName ? <EditIcon /> : <AddIcon />}
+                >
+                  {internalName ? 'Edit' : 'Add business name'}
+                </AppButton>
               }
             />
           </WithPermissions>

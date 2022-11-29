@@ -2,14 +2,13 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { DataEntityRun } from 'generated-sources';
-import { format, formatDistanceStrict } from 'date-fns';
 import {
-  TestRunStatusItem,
   AppButton,
   DialogWrapper,
   LabeledInfoItem,
+  TestRunStatusItem,
 } from 'components/shared';
-import { useAppPaths } from 'lib/hooks';
+import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { StatsContainer, StatusReasonContainer } from './TestRunStatusReasonModalStyles';
 
 interface TestRunStatusReasonModalProps {
@@ -26,6 +25,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
   dataQATestRun,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
+  const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const modalTitle = (
     <Grid container justifyContent='space-between' alignItems='center'>
@@ -42,7 +42,8 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
 
   const runDate = React.useMemo(
     () =>
-      dataQATestRun.startTime && format(dataQATestRun.startTime, 'd MMM yyyy, HH:MM a'),
+      dataQATestRun.startTime &&
+      qualityTestRunFormattedDateTime(dataQATestRun.startTime.getTime()),
     [dataQATestRun.startTime]
   );
 

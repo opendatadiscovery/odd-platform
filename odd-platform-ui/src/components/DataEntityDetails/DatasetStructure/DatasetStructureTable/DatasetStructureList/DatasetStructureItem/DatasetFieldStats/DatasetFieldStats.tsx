@@ -7,8 +7,8 @@ import {
 } from 'redux/interfaces';
 import { LabeledInfoItem, NumberFormatted } from 'components/shared';
 import { DataSetField, DataSetFieldTypeTypeEnum, DataSetStats } from 'generated-sources';
-import { format } from 'date-fns';
 import round from 'lodash/round';
+import { useAppDateTime } from 'lib/hooks';
 import * as S from './DatsetFieldStatsStyles';
 
 interface DatasetFieldStatsProps {
@@ -20,6 +20,8 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
   datasetField,
   rowsCount,
 }) => {
+  const { datasetFieldFormattedDateTime } = useAppDateTime();
+
   let fieldStats = {} as DataSetFormattedStats;
   switch (datasetField.type.type) {
     case DataSetFieldTypeTypeEnum.STRING:
@@ -69,7 +71,7 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
               <S.StatCellContainer item lg={1.5} key={fieldStatName}>
                 <LabeledInfoItem label={label}>
                   {datasetField.type.type === DataSetFieldTypeTypeEnum.DATETIME ? (
-                    format(value, 'd MMM yyyy')
+                    datasetFieldFormattedDateTime((value as unknown as Date).getTime())
                   ) : (
                     <NumberFormatted value={value} precision={1} />
                   )}

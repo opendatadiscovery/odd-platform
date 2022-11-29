@@ -9,11 +9,9 @@ import {
   EntityClassItem,
 } from 'components/shared';
 import { Typography } from '@mui/material';
-import { format } from 'date-fns';
-import { alertDateFormat } from 'lib/constants';
 import { KebabIcon } from 'components/shared/Icons';
-import { useAppPaths, usePermissions } from 'lib/hooks';
-import { Alert } from 'redux/interfaces';
+import { useAppDateTime, useAppPaths, usePermissions } from 'lib/hooks';
+import type { Alert } from 'redux/interfaces';
 import { AlertStatus } from 'generated-sources';
 import * as S from './AlertItemContentStyles';
 import { ColContainer } from '../../AlertsListStyles';
@@ -48,6 +46,7 @@ const AlertItemContent: React.FC<AlertItemContentProps> = ({
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const { isAllowedTo: alertProcessing } = usePermissions();
+  const { alertFormattedDateTime } = useAppDateTime();
 
   return (
     <S.Container container>
@@ -88,15 +87,11 @@ const AlertItemContent: React.FC<AlertItemContentProps> = ({
         <AlertStatusItem typeName={status} />
       </ColContainer>
       <ColContainer item $colType='createdTime'>
-        <Typography variant='body1'>
-          {createdAt && format(createdAt, alertDateFormat)}
-        </Typography>
+        <Typography variant='body1'>{alertFormattedDateTime(createdAt)}</Typography>
       </ColContainer>
       <ColContainer item $colType='updatedBy' />
       <ColContainer item $colType='updatedAt'>
-        <Typography variant='body1'>
-          {statusUpdatedAt && format(statusUpdatedAt, alertDateFormat)}
-        </Typography>
+        <Typography variant='body1'>{alertFormattedDateTime(statusUpdatedAt)}</Typography>
       </ColContainer>
       <ColContainer item $colType='actionBtn'>
         <S.OptionsBtn>

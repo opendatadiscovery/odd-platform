@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { AppButton, AppMenuItem, AppSelect, LabeledInfoItem } from 'components/shared';
-import { format, formatDistanceStrict } from 'date-fns';
 import {
   DataQualityTestExpectation,
   DataQualityTestSeverity,
@@ -12,7 +11,7 @@ import {
   getQualityTestByTestId,
 } from 'redux/selectors';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -24,6 +23,7 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
+  const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
 
@@ -31,16 +31,17 @@ const TestReportDetailsOverview: React.FC = () => {
     getDatasetTestListFetchingStatuses
   );
 
-  const handleSeverityChange = (e: SelectChangeEvent<unknown>) =>
+  const handleSeverityChange = (e: SelectChangeEvent<unknown>) => {
+    const severity = e.target.value as DataQualityTestSeverity;
+
     dispatch(
       setDataQATestSeverity({
         dataEntityId,
         dataqaTestId: dataQATestId,
-        dataQualityTestSeverityForm: {
-          severity: e.target.value as DataQualityTestSeverity,
-        },
+        dataQualityTestSeverityForm: { severity },
       })
     );
+  };
 
   const stringifyParams = JSON.stringify(qualityTest?.expectation, null, 2);
   const [showSeeMore, setShowSeeMore] = React.useState(false);
@@ -62,7 +63,9 @@ const TestReportDetailsOverview: React.FC = () => {
           <Grid item sx={{ mt: 2 }} xs={12}>
             <LabeledInfoItem label='Date' inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
-                format(qualityTest?.latestRun?.startTime, 'd MMM yyyy, HH:MM a')}
+                qualityTestRunFormattedDateTime(
+                  qualityTest?.latestRun?.startTime.getTime()
+                )}
             </LabeledInfoItem>
             <LabeledInfoItem label='Duration' inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
