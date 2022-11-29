@@ -80,25 +80,15 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
             <InternalNameFormDialog
               btnCreateEl={
-                internalName ? (
-                  <AppButton
-                    size='small'
-                    color='tertiary'
-                    sx={{ ml: 1 }}
-                    startIcon={<EditIcon />}
-                  >
-                    Edit
-                  </AppButton>
-                ) : (
-                  <AppButton
-                    size='small'
-                    color='tertiary'
-                    sx={{ ml: 1 }}
-                    startIcon={<AddIcon />}
-                  >
-                    Add business name
-                  </AppButton>
-                )
+                <AppButton
+                  data-qa='add_business_name'
+                  size='small'
+                  color='tertiary'
+                  sx={{ ml: 1 }}
+                  startIcon={internalName ? <EditIcon /> : <AddIcon />}
+                >
+                  {internalName ? 'Edit' : 'Add business name'}
+                </AppButton>
               }
             />
           </WithPermissions>

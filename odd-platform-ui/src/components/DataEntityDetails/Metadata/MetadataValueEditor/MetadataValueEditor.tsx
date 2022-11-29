@@ -78,13 +78,13 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
               <FormControlLabel
                 key='true'
                 value='true'
-                control={<AppRadio />}
+                control={<AppRadio dataQAId='add_custom_metadata_radio_button_true' />}
                 label='Yes'
               />
               <FormControlLabel
                 key='false'
                 value='false'
-                control={<AppRadio />}
+                control={<AppRadio dataQAId='add_custom_metadata_radio_button_false' />}
                 label='No'
               />
             </Grid>

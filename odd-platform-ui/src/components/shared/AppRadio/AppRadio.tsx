@@ -1,13 +1,13 @@
 import React from 'react';
-import { RadioProps } from '@mui/material';
+import type { InputBaseComponentProps, RadioProps } from '@mui/material';
 import * as S from './AppRadioStyles';
 
-type AppRadioProps = RadioProps;
+type AppRadioProps = RadioProps & { dataQAId?: string };
 
-const AppRadio: React.FC<AppRadioProps> = props => (
+const AppRadio: React.FC<AppRadioProps> = ({ dataQAId, ...props }) => (
   <S.StyledRadio
-    // eslint-disable-next-line react/jsx-props-no-spreading
     {...props}
+    inputProps={{ ...props.inputProps, 'data-qa': dataQAId } as InputBaseComponentProps}
     disableRipple
     icon={<S.Icon />}
     checkedIcon={<S.IconChecked />}

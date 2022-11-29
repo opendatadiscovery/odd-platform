@@ -43,6 +43,7 @@ export interface AppInputProps
   size?: AppInputSizes;
   customStartAdornment?: AdornmentProps;
   customEndAdornment?: AdornmentProps;
+  dataQAId?: string;
 }
 
 const AppInput: React.FC<AppInputProps> = React.forwardRef(
@@ -52,6 +53,7 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
       customStartAdornment,
       customEndAdornment,
       fullWidth = true,
+      dataQAId,
       ...props
     },
     ref
@@ -86,12 +88,15 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
     return (
       <StyledAppInput
         {...props}
+        data-qa='input'
         $size={size}
         $isLabeled={!!props.label}
         variant='outlined'
         fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
         ref={ref}
+        inputProps={{ ...props.inputProps, 'data-qa': dataQAId }}
+        // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
           ...props.InputProps,
           startAdornment: (
