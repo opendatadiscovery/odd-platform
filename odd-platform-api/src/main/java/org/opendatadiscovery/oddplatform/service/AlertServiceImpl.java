@@ -89,8 +89,6 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    // TODO: handle other alert types
-    @ReactiveTransactional
     public Mono<Void> handleExternalAlerts(final List<ExternalAlert> externalAlerts) {
         final List<AlertPojo> alerts = externalAlerts.stream().map(a -> {
             final String alertTime =
@@ -126,8 +124,7 @@ public class AlertServiceImpl implements AlertService {
 
     private Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts, final Set<String> em) {
         final List<AlertPojo> alertPojos = alerts.stream()
-            .filter(
-                a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
+            .filter(a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
             .toList();
         return alertRepository.createAlerts(alertPojos);
     }

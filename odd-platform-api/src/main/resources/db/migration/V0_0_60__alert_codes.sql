@@ -1,13 +1,6 @@
 ALTER TABLE alert
     ADD COLUMN IF NOT EXISTS status_code SMALLINT,
-    ADD COLUMN IF NOT EXISTS type_code   SMALLINT,
-    ADD COLUMN IF NOT EXISTS created_ats TIMESTAMP WITHOUT TIME ZONE[];
-
-ALTER TABLE alert
-    RENAME COLUMN created_at TO last_created_at;
-
-ALTER TABLE alert
-    ALTER COLUMN last_created_at SET NOT NULL;
+    ADD COLUMN IF NOT EXISTS type_code   SMALLINT;
 
 UPDATE alert
 SET status_code
@@ -24,9 +17,6 @@ SET type_code
               WHEN type = 'FAILED_JOB' THEN 3
               WHEN type = 'DISTRIBUTION_ANOMALY' THEN 4
         END;
-
-UPDATE alert
-SET created_ats = ARRAY [last_created_at];
 
 ALTER TABLE alert
     DROP COLUMN status,

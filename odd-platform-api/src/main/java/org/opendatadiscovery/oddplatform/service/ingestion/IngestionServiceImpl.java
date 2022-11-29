@@ -204,7 +204,7 @@ public class IngestionServiceImpl implements IngestionService {
             return emptyList();
         }
 
-        return dto.getDatasetQualityTest().datasetList()
+        return dto.getDataQualityTest().datasetList()
             .stream()
             .map(dsOddrn -> new DataQualityTestRelationsPojo(dsOddrn, dto.getOddrn()))
             .collect(Collectors.toList());
