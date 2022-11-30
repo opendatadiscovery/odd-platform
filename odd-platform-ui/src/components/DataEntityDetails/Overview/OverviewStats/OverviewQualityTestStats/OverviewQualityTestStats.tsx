@@ -6,13 +6,12 @@ import {
   DataEntityDetails,
   DataQualityTest,
 } from 'generated-sources';
-import { format, formatDistanceStrict } from 'date-fns';
-import { useAppPaths } from 'lib/hooks';
+import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
-  EntitiesListModal,
   AppButton,
-  LabeledInfoItem,
+  EntitiesListModal,
   EntityClassItem,
+  LabeledInfoItem,
 } from 'components/shared';
 import * as S from './OverviewQualityTestStatsStyles';
 
@@ -32,6 +31,8 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   datasetsList,
 }) => {
   const { dataEntityDetailsPath, dataEntityHistoryPath } = useAppPaths();
+  const { qualityTestFormattedDateTime, formatDistanceStrict } = useAppDateTime();
+
   const displayedEntitiesNumber = 10;
 
   return (
@@ -104,7 +105,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </LabeledInfoItem>
           <LabeledInfoItem inline label='Date' labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
-              format(qualityTest?.latestRun?.startTime, 'd MMM yyyy, HH:MM a')}
+              qualityTestFormattedDateTime(qualityTest?.latestRun?.startTime.getTime())}
           </LabeledInfoItem>
           <LabeledInfoItem inline label='Duration' labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
@@ -112,9 +113,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
               formatDistanceStrict(
                 qualityTest.latestRun.endTime,
                 qualityTest.latestRun.startTime,
-                {
-                  addSuffix: false,
-                }
+                { addSuffix: false }
               )}
           </LabeledInfoItem>
           <Grid container>

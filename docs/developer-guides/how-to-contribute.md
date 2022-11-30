@@ -19,7 +19,7 @@ The whole process is similar across repositories, so here it's considered using 
 
 Look for issues under \`Issues\` tab. If you'd like to report a bug or create a feature request, please file an issue.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>ODD Platform issues page</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption><p>ODD Platform issues page</p></figcaption></figure>
 
 You'd be prompted to select an issue type, whether this is a bug report or a feature request. Please fill issue's title and description with meaningful information and submit it. Our maintainers will be glad to pick it up, label and clarify the details with you.
 
@@ -27,7 +27,7 @@ You'd be prompted to select an issue type, whether this is a bug report or a fea
 
 Find and click a `Fork` button in GitHub and proceed with additional settings such as fork name, target account, etc
 
-<figure><img src="../.gitbook/assets/Screenshot 2022-10-13 at 12.09.27 (1) (1).png" alt=""><figcaption><p>Fork button in GitHub</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/Screenshot 2022-10-13 at 12.09.27 (1).png" alt=""><figcaption><p>Fork button in GitHub</p></figcaption></figure>
 
 Clone the **forked** repository
 

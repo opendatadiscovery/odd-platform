@@ -10,8 +10,8 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
+import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import org.opendatadiscovery.oddplatform.repository.util.ReactiveJooqFTSHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -31,7 +31,7 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CO
 public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermSearchEntrypointRepository {
 
     private final JooqReactiveOperations jooqReactiveOperations;
-    private final ReactiveJooqFTSHelper jooqFTSHelper;
+    private final JooqFTSHelper jooqFTSHelper;
 
     @Override
     public Mono<Integer> updateTermVectors(final long termId) {

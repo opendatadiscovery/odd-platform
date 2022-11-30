@@ -5,6 +5,7 @@ import {
   Box,
   Grid,
   Typography,
+  useAutocomplete,
 } from '@mui/material';
 import {
   DataEntityGroupFormData,
@@ -23,6 +24,8 @@ import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
+import { AppMenu } from 'components/shared/index';
+import { jsx } from '@emotion/react';
 import type { AppInputProps } from '../../AppInput/AppInput';
 import AppButton from '../../AppButton/AppButton';
 import AppInput from '../../AppInput/AppInput';
@@ -178,6 +181,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     <Grid container flexWrap='nowrap' alignItems='center'>
       <AppInput
         {...params}
+        dataQAId='search_string'
         placeholder={inputParams?.placeholder}
         size={inputParams?.size}
         label={inputParams?.label}
@@ -204,6 +208,12 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     searchText && !disableSuggestions ? setAutocompleteOpen(true) : null;
   const handleClose = () => setAutocompleteOpen(false);
 
+  const listboxComponent = React.useCallback(
+    (props: React.HTMLAttributes<HTMLElement>) =>
+      React.createElement('ul', { ...props, 'data-qa': 'search_dropdown' }),
+    []
+  );
+
   return (
     <Autocomplete
       sx={{ mt: 1.5 }}
@@ -222,6 +232,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
       clearIcon={<ClearIcon />}
       renderInput={renderInput}
       renderOption={renderOption}
+      ListboxComponent={listboxComponent}
     />
   );
 };

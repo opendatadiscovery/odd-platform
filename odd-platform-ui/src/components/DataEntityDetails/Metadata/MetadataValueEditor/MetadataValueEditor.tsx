@@ -1,16 +1,10 @@
 import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
-import { format, isAfter, isBefore, isValid } from 'date-fns';
+import { isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
-import {
-  AppInput,
-  AppRadio,
-  AppDatePicker,
-  maxDate,
-  metadataDatePickerInputFormat,
-  minDate,
-} from 'components/shared';
+import { AppDatePicker, AppInput, AppRadio, maxDate, minDate } from 'components/shared';
+import { useAppDateTime } from 'lib/hooks';
 
 interface MetadataValueEditFieldProps {
   metadataType: MetadataFieldType | '';
@@ -28,6 +22,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   size,
 }) => {
   const { control } = useFormContext();
+  const { metadataFormattedDateTime } = useAppDateTime();
 
   const defaultText =
     metadataType === MetadataFieldType.ARRAY ? 'item1,item2,...' : 'Value';
@@ -39,7 +34,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         control={control}
         name={fieldName}
         defaultValue={
-          metadataValue && format(new Date(metadataValue), metadataDatePickerInputFormat)
+          metadataValue && metadataFormattedDateTime(new Date(metadataValue).getTime())
         }
         rules={{
           required: true,
@@ -83,13 +78,13 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
               <FormControlLabel
                 key='true'
                 value='true'
-                control={<AppRadio />}
+                control={<AppRadio dataQAId='add_custom_metadata_radio_button_true' />}
                 label='Yes'
               />
               <FormControlLabel
                 key='false'
                 value='false'
-                control={<AppRadio />}
+                control={<AppRadio dataQAId='add_custom_metadata_radio_button_false' />}
                 label='No'
               />
             </Grid>

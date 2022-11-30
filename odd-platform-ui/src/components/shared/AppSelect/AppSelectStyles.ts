@@ -33,8 +33,8 @@ export const AppSelect = styled(Select)<AppSelectStyleProps>(
       },
 
       [`& .${selectClasses.select}`]: {
-        marginRight: theme.spacing(2),
         padding: theme.spacing(isMedium($size) ? 0.75 : 0.5, 1),
+        paddingRight: theme.spacing(2),
       },
 
       [`& .${nativeSelectClasses.select}`]: {
