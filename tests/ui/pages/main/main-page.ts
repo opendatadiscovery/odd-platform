@@ -1,10 +1,11 @@
 import InputField from '../../elements/input-field';
+import List from '../../elements/list';
 import BasePage from '../base-page';
 
 const SELECTORS = {
-  searchBar: `.MuiBox-root.css-18l5dsu div input`,
+  searchBar: `[placeholder="Search data tables, feature groups, jobs and ML models via keywords"]`,
   searchDropdown: `[data-popper-placement="bottom"]`,
-  dropdownString: name => `[role="presentation"]:has-text('${name}')`,
+  dropdownString: `li`,
 };
 export default class MainPage extends BasePage {
   get searchBar() {
@@ -16,8 +17,11 @@ export default class MainPage extends BasePage {
     await this.locator(SELECTORS.searchDropdown).isVisible();
   }
 
+  get resultList() {
+    return new List(this.page, SELECTORS.searchDropdown, SELECTORS.dropdownString);
+  }
+
   async isListItemVisible(name: string): Promise<boolean> {
-    await this.page.locator(SELECTORS.dropdownString(name)).waitFor({ state: 'visible' });
-    return this.page.locator(SELECTORS.dropdownString(name)).isVisible();
+    return this.resultList.isListItemVisible(name);
   }
 }

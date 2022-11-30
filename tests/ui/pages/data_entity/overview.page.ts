@@ -7,7 +7,6 @@ const SELECTORS = {
   addOwnerButton: `text=Add Owner`,
   inputOwnerName: `[placeholder="Search name"]`,
   inputOwnerTitle: `[placeholder="Search title"]`,
-  autocomplete: text => `[role="presentation"]:has-text('${text}')`,
   saveNewOwnerButton: `[type="submit"]`,
   addTagButton: `.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add Tags')`,
   inputTagName: `[role="combobox"]`,
@@ -17,20 +16,22 @@ const SELECTORS = {
   saveDescriptionButton: `button:text-is('Save')`,
   addCustomMetadata: `.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium:has-text('Add metadata')`,
   inputCustomMetadata: `[placeholder="Metadata Name"]`,
-  customMetadataSelectType: `[role="listbox"]`,
-  customMetadataInputType: `input[placeholder="Type"] >> ..`,
-  customMetadataTypeOption: `li`,
-  radioButtonType: name => `label:has-text('${name}')`,
+  customMetadataDropdownList: `[role="listbox"]`,
+  addMetadataInputField: `input[placeholder="Type"] >> ..`,
+  customMetadataListItem: `li`,
+  typeRadioButton: name => `label:has-text('${name}')`,
   addCustomName: `.MuiButtonBase-root:has-text('Add business name')`,
   inputCustomName: `[name="internalName"]`,
+  createNewEntityLink: `[role="presentation"]:has-text('Create new')`,
 };
+type InputName = 'Name' | 'Tag' | 'Title' | 'Metadata';
 
 export default class OverviewPage extends DataEntityPage {
   get saveButton() {
     return new Button(this.page, SELECTORS.saveButton);
   }
 
-  get addOwner() {
+  get addOwnerButton() {
     return new Button(this.page, SELECTORS.addOwnerButton);
   }
 
@@ -46,45 +47,19 @@ export default class OverviewPage extends DataEntityPage {
     return new InputField(this.page, SELECTORS.inputTagName);
   }
 
-  async getField(inputName: 'Name' | 'Tag' | 'Title' | 'Metadata', name: string) {
-    await this[`input${inputName}`].fill(name);
-    if (inputName === 'Name') {
-      await this.page
-        .locator(SELECTORS.autocomplete(`No result. Create new owner "${name}"`))
-        .click();
-    } else if (inputName === 'Tag') {
-      await this.page
-        .locator(SELECTORS.autocomplete(`No result. Create new tag "${name}"`))
-        .click();
-    } else if (inputName === 'Metadata') {
-      await this.page
-        .locator(SELECTORS.autocomplete(`No result. Create new custom data "${name}"`))
-        .click();
-    } else {
-      await this.page
-        .locator(SELECTORS.autocomplete(`No result. Create new title "${name}"`))
-        .click();
-    }
+  get createNewEntityLink() {
+    return new Button(this.page, SELECTORS.createNewEntityLink);
   }
 
-  async createOwner(name: string, title: string) {
-    await this.addOwner.click();
-    await this.getField('Name', name);
-    await this.getField('Title', title);
-    await this.saveButton.click();
+  async getField(inputName: InputName, name: string) {
+    await this[`input${inputName}`].fill(name);
   }
 
   get addTag() {
     return new Button(this.page, SELECTORS.addTagButton);
   }
 
-  async createTag(name: string) {
-    await this.addTag.click();
-    await this.getField('Tag', name);
-    await this.saveButton.click();
-  }
-
-  get addCustomDescription() {
+  get addCustomDescriptionButton() {
     return new Button(this.page, SELECTORS.addCustomDescription);
   }
 
@@ -94,12 +69,6 @@ export default class OverviewPage extends DataEntityPage {
 
   get saveDescriptionButton() {
     return new Button(this.page, SELECTORS.saveDescriptionButton);
-  }
-
-  async fillCustomDescriptionInput(text: string) {
-    await this.addCustomDescription.click();
-    await this.customDescriptionText.fill(text);
-    await this.saveDescriptionButton.click();
   }
 
   get inputMetadata() {
@@ -113,18 +82,10 @@ export default class OverviewPage extends DataEntityPage {
   get openTypeSelect() {
     return new Dropdown(
       this.page,
-      SELECTORS.customMetadataInputType,
-      SELECTORS.customMetadataSelectType,
-      SELECTORS.customMetadataTypeOption,
+      SELECTORS.addMetadataInputField,
+      SELECTORS.customMetadataDropdownList,
+      SELECTORS.customMetadataListItem,
     );
-  }
-
-  async createCustomMetadata(name: string) {
-    await this.addCustomMetadata.click();
-    await this.getField('Metadata', name);
-    await this.openTypeSelect.set('Boolean', { open: true });
-    await this.page.locator(SELECTORS.radioButtonType('Yes')).click();
-    await this.saveButton.click();
   }
 
   get customNameButton() {
@@ -133,6 +94,35 @@ export default class OverviewPage extends DataEntityPage {
 
   get inputCustomName() {
     return new InputField(this.page, SELECTORS.inputCustomName);
+  }
+
+  async createOwner(name: string, title: string) {
+    await this.addOwnerButton.click();
+    await this.getField('Name', name);
+    await this.createNewEntityLink.click();
+    await this.getField('Title', title);
+    await this.createNewEntityLink.click();
+    await this.saveButton.click();
+  }
+
+  async createTag(name: string) {
+    await this.addTag.click();
+    await this.getField('Tag', name);
+    await this.saveButton.click();
+  }
+
+  async fillCustomDescriptionInput(text: string) {
+    await this.addCustomDescriptionButton.click();
+    await this.customDescriptionText.fill(text);
+    await this.saveDescriptionButton.click();
+  }
+
+  async createCustomMetadata(name: string) {
+    await this.addCustomMetadata.click();
+    await this.getField('Metadata', name);
+    await this.openTypeSelect.set('Boolean', { open: true });
+    await this.page.locator(SELECTORS.typeRadioButton('Yes')).click();
+    await this.saveButton.click();
   }
 
   async addCustomName(name: string) {

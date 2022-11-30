@@ -4,11 +4,11 @@ import DataEntityPage from './data_entity.page';
 
 const SELECTORS = {
   structureTab: `[role="tab"]:has-text("Structure")`,
-  autocomplete: text => `[role="presentation"]:has-text('${text}')`,
   submitButton: `[type="submit"]`,
   columnString: name => `.MuiGrid-root.MuiGrid-container.css-1rwljbm:has-text('${name}')`,
   inputLabel: `[placeholder="Enter label name…"]`,
   inputDescription: `[name="internalDescription"]`,
+  createNewLabelLink: `[role="presentation"]:has-text('Create new')`,
 };
 
 export default class StructurePage extends DataEntityPage {
@@ -27,11 +27,12 @@ export default class StructurePage extends DataEntityPage {
     return new InputField(this.page, SELECTORS.inputDescription);
   }
 
+  get createNewLabelLink() {
+    return new Button(this.page, SELECTORS.createNewLabelLink);
+  }
+
   async getField(inputName: 'Label', name: string) {
     await this[`input${inputName}`].fill(name);
-    await this.page
-      .locator(SELECTORS.autocomplete(`No result. Create new label "${name}"`))
-      .click();
   }
 
   get submitButton() {
@@ -45,6 +46,7 @@ export default class StructurePage extends DataEntityPage {
   async addLabel(name: string, label: string, description: string) {
     await this.editColumn(`${name}`);
     await this.getField('Label', label);
+    await this.createNewLabelLink.click();
     await this.inputDescription.fill(description);
     await this.submitButton.click();
   }
