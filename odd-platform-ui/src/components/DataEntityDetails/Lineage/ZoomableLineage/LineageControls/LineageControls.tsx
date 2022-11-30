@@ -1,7 +1,7 @@
 import React from 'react';
-import { AppButton, AppTabs, AppSelect, AppSwitch } from 'components/shared';
+import { AppButton, AppSelect, AppTabs, AppCheckbox } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
-import { type SelectChangeEvent, Typography } from '@mui/material';
+import { Grid, type SelectChangeEvent, Typography } from '@mui/material';
 import * as S from './LineageControlsStyles';
 import LineageContext from '../../lineageLib/LineageContext/LineageContext';
 
@@ -21,7 +21,12 @@ const LineageControls = React.memo<LineageControlsProps>(
 
     return (
       <S.ControlsContainer>
-        <AppSwitch label='Full titles' checked={fullTitles} onChange={handleChange} />
+        <Grid display='flex' flexWrap='nowrap'>
+          <AppCheckbox value={fullTitles} onChange={handleChange} sx={{ mr: 1 }} />
+          <Typography variant='body1' color='texts.info'>
+            Show full names
+          </Typography>
+        </Grid>
         <AppButton
           color='primaryLight'
           size='medium'
@@ -40,7 +45,7 @@ const LineageControls = React.memo<LineageControlsProps>(
         />
         <Typography variant='subtitle2'>Depth:</Typography>
         <AppSelect
-          sx={{ width: 48 }}
+          sx={{ width: 48, backgroundColor: 'white' }}
           native
           fullWidth={false}
           size='small'

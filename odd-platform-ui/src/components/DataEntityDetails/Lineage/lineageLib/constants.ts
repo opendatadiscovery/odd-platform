@@ -13,8 +13,8 @@ export const defaultGraphState: LineageGraphState = {
 export const defaultDepth = 1;
 
 export const NODE_WIDTH = 300;
-export const NODE_HEIGHT_WITHOUT_TITLE = 115;
-export const NODE_COMPACT_HEIGHT_WITHOUT_TITLE = 65;
+export const NODE_HEIGHT_WITHOUT_TITLE = 120;
+export const NODE_COMPACT_HEIGHT_WITHOUT_TITLE = 70;
 export const NODE_INDENT_LEFT = 12;
 export const INFO_HEIGHT = 20;
 export const INFO_LABEL_WIDTH = 50;

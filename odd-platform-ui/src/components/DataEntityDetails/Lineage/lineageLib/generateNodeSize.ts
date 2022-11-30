@@ -49,7 +49,7 @@ export const generateNodeSize = (compact: boolean, titleHeight: number): NodeSiz
 
   const classes: Content['classes'] = {
     x: NODE_INDENT_LEFT,
-    y: compact ? info.y - NODE_LINE_MX : info.y + NODE_LINE_MX * 9,
+    y: compact ? info.y - NODE_LINE_MX : info.y + NODE_LINE_HEIGHT * 5,
     width: 24,
     height: 16,
     mx: 2,
