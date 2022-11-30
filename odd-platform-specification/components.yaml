@@ -1479,6 +1479,8 @@ components:
         id:
           type: integer
           format: int64
+        oddrn:
+          type: string
         external_name:
           type: string
         internal_name:
@@ -1500,6 +1502,7 @@ components:
           type: integer
       required:
         - id
+        - oddrn
         - name
         - type
 
