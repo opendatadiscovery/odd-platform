@@ -1,6 +1,6 @@
 import type { ProvidedZoom, TransformMatrix } from '@visx/zoom/lib/types';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
-import type { TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces';
+import type { TreeNodeDatum } from 'redux/interfaces';
 import type { DataEntityLineageEdge } from 'generated-sources';
 
 export interface Zoom extends ProvidedZoom<SVGSVGElement> {
@@ -40,11 +40,9 @@ export interface LineageGraphState {
   nodesUp: HierarchyPointNode<TreeNodeDatum>[];
   linksUp: HierarchyPointLink<TreeNodeDatum>[];
   crossLinksUp: HierarchyPointLink<TreeNodeDatum>[];
-  replacedCrossLinksUp: TreeLinkDatum[];
   nodesDown: HierarchyPointNode<TreeNodeDatum>[];
   linksDown: HierarchyPointLink<TreeNodeDatum>[];
   crossLinksDown: HierarchyPointLink<TreeNodeDatum>[];
-  replacedCrossLinksDown: TreeLinkDatum[];
   depth: { upstream: number; downstream: number };
 }
 

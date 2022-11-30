@@ -1,11 +1,20 @@
 import React from 'react';
 import { type TreeNodeDatum } from 'redux/interfaces';
 import { getMaxTitleHeight } from 'components/DataEntityDetails/Lineage/lineageLib/helpers';
-import { type HierarchyPointNode } from 'd3-hierarchy';
+import { HierarchyPointLink, type HierarchyPointNode } from 'd3-hierarchy';
 import { generateNodeSize } from '../generateNodeSize';
 import LineageContext, { type LineageContextProps } from './LineageContext';
 
-type LineageProviderProps = Omit<LineageContextProps, 'nodeSize' | 'setRenderedNodes'>;
+type LineageProviderProps = Omit<
+  LineageContextProps,
+  | 'nodeSize'
+  | 'setRenderedNodes'
+  | 'setRenderedLinks'
+  | 'getHighLightedLinks'
+  | 'highLightedLinks'
+  | 'setHighLightedLinks'
+  | 'renderedLinks'
+>;
 
 const LineageProvider: React.FC<LineageProviderProps> = ({
   compact,
@@ -16,6 +25,12 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
 }) => {
   const [renderedNodes, setRenderedNodes] = React.useState<
     HierarchyPointNode<TreeNodeDatum>[]
+  >([]);
+  const [renderedLinks, setRenderedLinks] = React.useState<
+    HierarchyPointLink<TreeNodeDatum>[]
+  >([]);
+  const [highLightedLinks, setHighLightedLinks] = React.useState<
+    HierarchyPointLink<TreeNodeDatum>[]
   >([]);
 
   const titleHeight = React.useMemo(
@@ -36,8 +51,19 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
       fullTitles,
       setFullTitlesView,
       setRenderedNodes,
+      renderedLinks,
+      setRenderedLinks,
+      highLightedLinks,
+      setHighLightedLinks,
     }),
-    [compact, setCompactView, fullTitles, setFullTitlesView]
+    [
+      compact,
+      setCompactView,
+      fullTitles,
+      setFullTitlesView,
+      renderedLinks,
+      highLightedLinks,
+    ]
   );
 
   return (

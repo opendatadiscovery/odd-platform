@@ -1,19 +1,19 @@
 import { hierarchy, tree as d3tree } from 'd3-hierarchy';
-import {
+import type {
   DataEntityLineageById,
   DataEntityLineageStreamById,
   TreeLinkDatum,
   TreeNodeDatum,
 } from 'redux/interfaces';
 import maxBy from 'lodash/maxBy';
-import {
+import type { DataEntityLineageNode } from 'generated-sources';
+import { v4 as uuidv4 } from 'uuid';
+import entries from 'lodash/entries';
+import type {
   GenerateGraphProps,
   LineageGraphState,
   LineageParsedData,
-} from 'components/DataEntityDetails/Lineage/lineageLib/interfaces';
-import { DataEntityLineageNode } from 'generated-sources';
-import { v4 as uuidv4 } from 'uuid';
-import entries from 'lodash/entries';
+} from './interfaces';
 
 export const parseData = (data: DataEntityLineageById): LineageParsedData | undefined => {
   const assignUuidToNode = (nodeData: DataEntityLineageNode): TreeNodeDatum => ({
@@ -78,30 +78,13 @@ export const generateTree = ({
   const nUp = rootNodeUp.descendants();
   const lUp = rootNodeUp.links();
 
-  const replacedCrossLinksUp: TreeLinkDatum[] = [];
-
   const crossLUp = parsedData.upstream.crossEdges?.reduce<TreeLinkDatum[]>(
     (memo, edge) => {
       const sourceNode = nUp.find(node => node.data.id === edge.sourceId);
       const targetNode = nUp.find(node => node.data.id === edge.targetId);
 
       if (sourceNode && targetNode) {
-        const crossLink = {
-          source: sourceNode,
-          target: targetNode,
-          crossLink: true,
-        };
-        const replacedCrossLink = {
-          source: targetNode,
-          target: sourceNode,
-          crossLink: true,
-        };
-
-        if (sourceNode.depth < targetNode.depth) {
-          replacedCrossLinksUp.push(replacedCrossLink);
-          memo.push(replacedCrossLink);
-          return memo;
-        }
+        const crossLink = { source: targetNode, target: sourceNode };
 
         memo.push(crossLink);
       }
@@ -135,30 +118,13 @@ export const generateTree = ({
   const nDown = rootNodeDown.descendants();
   const lDown = rootNodeDown.links();
 
-  const replacedCrossLinksDown: TreeLinkDatum[] = [];
-
   const crossLDown = parsedData.downstream.crossEdges?.reduce<TreeLinkDatum[]>(
     (memo, edge) => {
       const sourceNode = nDown.find(node => node.data.id === edge.sourceId);
       const targetNode = nDown.find(node => node.data.id === edge.targetId);
 
       if (sourceNode && targetNode) {
-        const crossLink = {
-          source: sourceNode,
-          target: targetNode,
-          crossLink: true,
-        };
-        const replacedCrossLink = {
-          source: targetNode,
-          target: sourceNode,
-          crossLink: true,
-        };
-
-        if (sourceNode.depth < targetNode.depth) {
-          replacedCrossLinksDown.push(replacedCrossLink);
-          memo.push(replacedCrossLink);
-          return memo;
-        }
+        const crossLink = { source: sourceNode, target: targetNode };
 
         memo.push(crossLink);
       }
@@ -172,11 +138,9 @@ export const generateTree = ({
     nodesUp: nUp,
     linksUp: lUp,
     crossLinksUp: crossLUp,
-    replacedCrossLinksUp,
     nodesDown: nDown,
     linksDown: lDown,
     crossLinksDown: crossLDown,
-    replacedCrossLinksDown,
     depth: {
       upstream: maxBy(nUp, node => node.depth)?.depth || 0,
       downstream: maxBy(nDown, node => node.depth)?.depth || 0,

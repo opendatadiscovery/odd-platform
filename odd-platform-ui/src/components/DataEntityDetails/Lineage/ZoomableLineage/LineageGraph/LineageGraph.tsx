@@ -1,5 +1,7 @@
 import React from 'react';
 import { type DataEntityLineageById } from 'redux/interfaces';
+import { setHighlightedLinksFirst } from 'components/DataEntityDetails/Lineage/lineageLib/helpers';
+import CrossLink from 'components/DataEntityDetails/Lineage/ZoomableLineage/LineageGraph/CrossLink/CrossLink';
 import Link from './Link/Link';
 import { defaultGraphState } from '../../lineageLib/constants';
 import { generateTree, parseData } from '../../lineageLib/generateGraph';
@@ -14,7 +16,8 @@ interface LineageGraphProps {
 
 const LineageGraph = React.memo<LineageGraphProps>(
   ({ data, dataEntityId, handleDepthChange }) => {
-    const { nodeSize, setRenderedNodes, fullTitles } = React.useContext(LineageContext);
+    const { nodeSize, setRenderedNodes, setRenderedLinks, fullTitles, highLightedLinks } =
+      React.useContext(LineageContext);
 
     const separation = { siblings: 1, nonSiblings: 1 };
 
@@ -28,20 +31,37 @@ const LineageGraph = React.memo<LineageGraphProps>(
       setRenderedNodes([...nodesUp, ...nodesDown]);
     }, [fullTitles]);
 
+    React.useEffect(() => {
+      setRenderedLinks([...linksDown, ...crossLinksDown, ...linksUp, ...crossLinksUp]);
+    }, [data]);
+
     return (
       <>
-        {crossLinksDown?.map((linkData, idx) => (
-          <Link
-            // eslint-disable-next-line react/no-array-index-key
-            key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+        {setHighlightedLinksFirst(crossLinksDown, highLightedLinks, false)?.map(
+          linkData => (
+            <CrossLink
+              key={`link-${linkData.source.data.d3attrs.id}-${linkData.target.data.d3attrs.id}`}
+              linkData={linkData}
+            />
+          )
+        )}
+        {setHighlightedLinksFirst(crossLinksUp, highLightedLinks, true)?.map(linkData => (
+          <CrossLink
+            key={`link-${linkData.source.data.d3attrs.id}-${linkData.target.data.d3attrs.id}`}
+            reverse
             linkData={linkData}
           />
         ))}
-        {crossLinksUp?.map((linkData, idx) => (
+        {setHighlightedLinksFirst(linksUp, highLightedLinks, true).map(linkData => (
           <Link
-            // eslint-disable-next-line react/no-array-index-key
-            key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
+            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
             reverse
+            linkData={linkData}
+          />
+        ))}
+        {setHighlightedLinksFirst(linksDown, highLightedLinks, false).map(linkData => (
+          <Link
+            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
             linkData={linkData}
           />
         ))}
@@ -70,22 +90,6 @@ const LineageGraph = React.memo<LineageGraphProps>(
             hasChildren={!!node.children?.length}
             nodeDepth={node.depth}
             setInitialDepth={handleDepthChange}
-          />
-        ))}
-
-        {linksUp?.map((linkData, idx) => (
-          <Link
-            // eslint-disable-next-line react/no-array-index-key
-            key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-            reverse
-            linkData={linkData}
-          />
-        ))}
-        {linksDown?.map((linkData, idx) => (
-          <Link
-            // eslint-disable-next-line react/no-array-index-key
-            key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
-            linkData={linkData}
           />
         ))}
       </>

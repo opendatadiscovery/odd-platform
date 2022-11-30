@@ -14,5 +14,5 @@ export interface TreeNodeDatum extends GroupedDataEntityLineageNode {
 export interface TreeLinkDatum {
   source: HierarchyPointNode<TreeNodeDatum>;
   target: HierarchyPointNode<TreeNodeDatum>;
-  crossLink?: boolean;
+  isHighlighted?: boolean;
 }

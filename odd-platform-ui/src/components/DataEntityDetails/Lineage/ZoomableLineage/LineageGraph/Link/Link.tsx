@@ -14,7 +14,8 @@ interface LinkProps {
 const Link = React.memo<LinkProps>(({ linkData, reverse }) => {
   const { nodeSize } = React.useContext(LineageContext);
 
-  const { source, target } = linkData;
+  const { source, target, isHighlighted } = linkData;
+
   const coords: DefaultLinkObject = {
     source: reverse
       ? [source.y, source.x + nodeSize.size.height / 2]
@@ -24,33 +25,24 @@ const Link = React.memo<LinkProps>(({ linkData, reverse }) => {
       : [target.y, target.x + nodeSize.size.height / 2],
   };
 
-  const crossLinkCoords: DefaultLinkObject = {
-    source: reverse
-      ? [source.y + nodeSize.size.width, source.x + nodeSize.size.height / 1.5]
-      : [source.y, source.x + nodeSize.size.height / 1.5],
-    target: reverse
-      ? [target.y, target.x + nodeSize.size.height / 1.5]
-      : [target.y + nodeSize.size.width, target.x + nodeSize.size.height / 1.5],
-  };
-
-  const drawPath = () =>
-    linkHorizontal()(linkData?.crossLink ? crossLinkCoords : coords) || undefined;
+  const drawPath = () => linkHorizontal()(coords) || undefined;
 
   return (
     <>
       <MarkerArrow id='head' fill='#A8B0BD' size={6} orient='auto-start-reverse' />
-      <MarkerArrow id='crossHead' fill='#66B3FF' size={4} orient='auto-start-reverse' />
+      <MarkerArrow
+        id='head-highlighted'
+        fill='#0080FF'
+        size={6}
+        orient='auto-start-reverse'
+      />
       <LinePath
         curve={curveBasis}
         d={drawPath()}
-        stroke={linkData?.crossLink ? '#66B3FF' : '#A8B0BD'}
+        stroke={isHighlighted ? '#0080FF' : '#A8B0BD'}
         strokeWidth='2'
-        markerStart={
-          // eslint-disable-next-line no-nested-ternary
-          reverse ? (linkData?.crossLink ? 'url(#crossHead)' : 'url(#head)') : ''
-        }
-        // eslint-disable-next-line no-nested-ternary
-        markerEnd={reverse ? '' : linkData?.crossLink ? 'url(#crossHead)' : 'url(#head)'}
+        markerStart={reverse ? `url(#head${isHighlighted ? '-highlighted' : ''})` : ''}
+        markerEnd={reverse ? '' : `url(#head${isHighlighted ? '-highlighted' : ''})`}
       />
     </>
   );

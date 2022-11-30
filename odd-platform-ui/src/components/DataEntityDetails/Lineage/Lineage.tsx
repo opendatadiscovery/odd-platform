@@ -94,22 +94,22 @@ const Lineage: React.FC = () => {
       ) : null}
 
       {!isLineageFetching && (
-        <Zoom<SVGSVGElement>
-          width={width}
-          height={height}
-          scaleXMin={0.2}
-          scaleXMax={2}
-          scaleYMin={0.2}
-          scaleYMax={2}
-          initialTransformMatrix={initialTransformMatrix}
+        <LineageProvider
+          compact={compact}
+          setCompactView={setCompactView}
+          fullTitles={fullTitles}
+          setFullTitlesView={setFullTitlesView}
         >
-          {zoom => (
-            <LineageProvider
-              compact={compact}
-              setCompactView={setCompactView}
-              fullTitles={fullTitles}
-              setFullTitlesView={setFullTitlesView}
-            >
+          <Zoom<SVGSVGElement>
+            width={width}
+            height={height}
+            scaleXMin={0.2}
+            scaleXMax={2}
+            scaleYMin={0.2}
+            scaleYMax={2}
+            initialTransformMatrix={initialTransformMatrix}
+          >
+            {zoom => (
               <ZoomableLineage
                 data={data}
                 width={width}
@@ -119,9 +119,9 @@ const Lineage: React.FC = () => {
                 handleDepthChange={handleDepthChange}
                 lineageDepth={lineageDepth}
               />
-            </LineageProvider>
-          )}
-        </Zoom>
+            )}
+          </Zoom>
+        </LineageProvider>
       )}
 
       <AppErrorPage

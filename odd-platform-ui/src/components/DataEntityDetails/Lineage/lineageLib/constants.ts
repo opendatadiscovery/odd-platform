@@ -4,11 +4,9 @@ export const defaultGraphState: LineageGraphState = {
   nodesUp: [],
   linksUp: [],
   crossLinksUp: [],
-  replacedCrossLinksUp: [],
   nodesDown: [],
   linksDown: [],
   crossLinksDown: [],
-  replacedCrossLinksDown: [],
   depth: { upstream: 0, downstream: 0 },
 };
 
@@ -53,8 +51,18 @@ export const nodeSizeInitial: NodeSize = {
     },
     classes: { x: NODE_INDENT_LEFT, y: 108, width: 24, height: 16, mx: 2 },
     loadMore: {
-      layer: { x: 1, y: 1, width: 1, height: 1 },
-      button: { x: 1, y: 1, width: 1, height: 1 },
+      layer: {
+        x: NODE_WIDTH,
+        y: 0,
+        width: LOAD_MORE_LAYER_WIDTH,
+        height: NODE_HEIGHT_WITHOUT_TITLE,
+      },
+      button: {
+        x: NODE_WIDTH + LOAD_MORE_BUTTON_WIDTH / 2 + 16,
+        y: NODE_HEIGHT_WITHOUT_TITLE / 2 + LOAD_MORE_BUTTON_HEIGHT / 6,
+        width: LOAD_MORE_BUTTON_WIDTH,
+        height: LOAD_MORE_BUTTON_HEIGHT,
+      },
     },
   },
 };
