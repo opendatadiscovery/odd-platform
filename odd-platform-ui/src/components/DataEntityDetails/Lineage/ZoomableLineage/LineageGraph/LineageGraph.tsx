@@ -37,6 +37,19 @@ const LineageGraph = React.memo<LineageGraphProps>(
 
     return (
       <>
+        {setHighlightedLinksFirst(linksUp, highLightedLinks, true).map(linkData => (
+          <Link
+            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
+            reverse
+            linkData={linkData}
+          />
+        ))}
+        {setHighlightedLinksFirst(linksDown, highLightedLinks, false).map(linkData => (
+          <Link
+            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
+            linkData={linkData}
+          />
+        ))}
         {setHighlightedLinksFirst(crossLinksDown, highLightedLinks, false)?.map(
           linkData => (
             <CrossLink
@@ -49,19 +62,6 @@ const LineageGraph = React.memo<LineageGraphProps>(
           <CrossLink
             key={`link-${linkData.source.data.d3attrs.id}-${linkData.target.data.d3attrs.id}`}
             reverse
-            linkData={linkData}
-          />
-        ))}
-        {setHighlightedLinksFirst(linksUp, highLightedLinks, true).map(linkData => (
-          <Link
-            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
-            reverse
-            linkData={linkData}
-          />
-        ))}
-        {setHighlightedLinksFirst(linksDown, highLightedLinks, false).map(linkData => (
-          <Link
-            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
             linkData={linkData}
           />
         ))}

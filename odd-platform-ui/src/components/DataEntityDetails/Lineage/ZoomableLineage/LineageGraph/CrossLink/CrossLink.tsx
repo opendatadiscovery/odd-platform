@@ -18,11 +18,11 @@ const CrossLink: React.FC<CrossLinkProps> = ({ linkData, reverse }) => {
 
   const crossLinkCoords: DefaultLinkObject = {
     source: reverse
-      ? [source.y, source.x + nodeSize.size.height / 1.5]
-      : [source.y + nodeSize.size.width, source.x + nodeSize.size.height / 1.5],
+      ? [source.y + nodeSize.size.width, source.x + nodeSize.size.height / 1.5]
+      : [source.y, source.x + nodeSize.size.height / 1.5],
     target: reverse
-      ? [target.y + nodeSize.size.width, target.x + nodeSize.size.height / 1.5]
-      : [target.y, target.x + nodeSize.size.height / 1.5],
+      ? [target.y, target.x + nodeSize.size.height / 1.5]
+      : [target.y + nodeSize.size.width, target.x + nodeSize.size.height / 1.5],
   };
 
   const drawPath = () => linkHorizontal()(crossLinkCoords) || undefined;
