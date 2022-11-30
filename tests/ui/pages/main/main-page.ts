@@ -3,8 +3,8 @@ import List from '../../elements/list';
 import BasePage from '../base-page';
 
 const SELECTORS = {
-  searchBar: `[placeholder="Search data tables, feature groups, jobs and ML models via keywords"]`,
-  searchDropdown: `[data-popper-placement="bottom"]`,
+  searchBar: `[data-qa="search_string"]`,
+  searchDropdown: `[data-qa="search_dropdown"]`,
   dropdownString: `li`,
 };
 export default class MainPage extends BasePage {

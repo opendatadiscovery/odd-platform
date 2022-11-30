@@ -2,25 +2,25 @@ import Button from '../../elements/button';
 import Dropdown from '../../elements/dropdown';
 import InputField from '../../elements/input-field';
 import DataEntityPage from './data_entity.page';
+import Radio from "../../elements/radio";
 
 const SELECTORS = {
   addOwnerButton: `text=Add Owner`,
   inputOwnerName: `[placeholder="Search name"]`,
   inputOwnerTitle: `[placeholder="Search title"]`,
   saveNewOwnerButton: `[type="submit"]`,
-  addTagButton: `.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeSmall:has-text('Add Tags')`,
   inputTagName: `[role="combobox"]`,
   saveButton: `[type="submit"]`,
-  addCustomDescription: `.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium:has-text('Add description')`,
-  customDescriptionInput: `.w-md-editor-text-input`,
+  addCustomDescription: `[data-qa="add_description"]`,
+  customDescriptionInput: `textarea`,
   saveDescriptionButton: `button:text-is('Save')`,
-  addCustomMetadata: `.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium:has-text('Add metadata')`,
-  inputCustomMetadata: `[placeholder="Metadata Name"]`,
+  addCustomMetadata: `[data-qa="add_metadata"]`,
+  inputCustomMetadata: `[data-qa="add_custom_metadata_input"]`,
   customMetadataDropdownList: `[role="listbox"]`,
-  addMetadataInputField: `input[placeholder="Type"] >> ..`,
+  addMetadataInputField: `[data-qa="add_custom_metadata_type_select"] >> ..`,
   customMetadataListItem: `li`,
-  typeRadioButton: name => `label:has-text('${name}')`,
-  addCustomName: `.MuiButtonBase-root:has-text('Add business name')`,
+  typeRadioButtonTrue: `[data-qa="add_custom_metadata_radio_button_true"]`,
+  addCustomName: `[data-qa="add_business_name"]`,
   inputCustomName: `[name="internalName"]`,
   createNewEntityLink: `[role="presentation"]:has-text('Create new')`,
 };
@@ -53,10 +53,6 @@ export default class OverviewPage extends DataEntityPage {
 
   async getField(inputName: InputName, name: string) {
     await this[`input${inputName}`].fill(name);
-  }
-
-  get addTag() {
-    return new Button(this.page, SELECTORS.addTagButton);
   }
 
   get addCustomDescriptionButton() {
@@ -96,18 +92,16 @@ export default class OverviewPage extends DataEntityPage {
     return new InputField(this.page, SELECTORS.inputCustomName);
   }
 
+  get typeRadioButtonTrue() {
+      return new Radio(this.page, SELECTORS.typeRadioButtonTrue)
+  }
+
   async createOwner(name: string, title: string) {
     await this.addOwnerButton.click();
     await this.getField('Name', name);
     await this.createNewEntityLink.click();
     await this.getField('Title', title);
     await this.createNewEntityLink.click();
-    await this.saveButton.click();
-  }
-
-  async createTag(name: string) {
-    await this.addTag.click();
-    await this.getField('Tag', name);
     await this.saveButton.click();
   }
 
@@ -120,8 +114,9 @@ export default class OverviewPage extends DataEntityPage {
   async createCustomMetadata(name: string) {
     await this.addCustomMetadata.click();
     await this.getField('Metadata', name);
-    await this.openTypeSelect.set('Boolean', { open: true });
-    await this.page.locator(SELECTORS.typeRadioButton('Yes')).click();
+      await this.createNewEntityLink.click();
+      await this.openTypeSelect.set('Boolean', { open: true });
+    await this.typeRadioButtonTrue.click();
     await this.saveButton.click();
   }
 
