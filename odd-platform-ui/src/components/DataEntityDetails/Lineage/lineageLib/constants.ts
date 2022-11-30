@@ -16,7 +16,8 @@ export const NODE_WIDTH = 300;
 export const NODE_HEIGHT_WITHOUT_TITLE = 120;
 export const NODE_COMPACT_HEIGHT_WITHOUT_TITLE = 70;
 export const NODE_INDENT_LEFT = 12;
-export const INFO_HEIGHT = 20;
+export const INFO_LINE_HEIGHT = 20;
+export const INFO_MIN_ODDRN_HEIGHT = 30;
 export const INFO_LABEL_WIDTH = 50;
 export const NODE_LINE_HEIGHT = 10;
 export const NODE_LINE_MX = 5;
@@ -45,7 +46,8 @@ export const nodeSizeInitial: NodeSize = {
     info: {
       x: NODE_INDENT_LEFT,
       y: NODE_LINE_HEIGHT * 2 + NODE_LINE_MX + NODE_LINE_MX * 5,
-      lineHeight: INFO_HEIGHT,
+      oddrnHeight: INFO_MIN_ODDRN_HEIGHT,
+      lineHeight: INFO_LINE_HEIGHT,
       labelWidth: INFO_LABEL_WIDTH,
       contentWidth: 114,
     },

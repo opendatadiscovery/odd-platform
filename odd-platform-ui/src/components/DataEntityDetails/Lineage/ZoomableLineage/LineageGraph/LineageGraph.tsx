@@ -29,7 +29,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
 
     React.useEffect(() => {
       setRenderedNodes([...nodesUp, ...nodesDown]);
-    }, [fullTitles]);
+    }, [fullTitles, data]);
 
     React.useEffect(() => {
       setRenderedLinks([...linksDown, ...crossLinksDown, ...linksUp, ...crossLinksUp]);

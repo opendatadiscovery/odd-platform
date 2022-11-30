@@ -1,21 +1,22 @@
 import type { StreamType, TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
-import React from 'react';
-import { NODE_INDENT_LEFT, NODE_MIN_TITLE_HEIGHT, NODE_WIDTH } from './constants';
+import {
+  INFO_MIN_ODDRN_HEIGHT,
+  NODE_INDENT_LEFT,
+  NODE_MIN_TITLE_HEIGHT,
+  NODE_WIDTH,
+} from './constants';
 
-export const getMaxTitleHeight = (
-  nodes: HierarchyPointNode<TreeNodeDatum>[],
-  fullTitles: boolean
-): number => {
-  if (nodes.length === 0 || !fullTitles) return NODE_MIN_TITLE_HEIGHT;
-
-  const titles = nodes.map(node => node.data.internalName || node.data.externalName);
-  const heights = titles.map(title => {
-    if (!title) return NODE_MIN_TITLE_HEIGHT;
+const getContentHeights = (
+  content: Array<string | undefined>,
+  defaultHeight: number
+): number[] =>
+  content?.map(text => {
+    if (!text) return defaultHeight;
 
     const el = document.createElement('div');
-    const content = document.createTextNode(title);
-    el.appendChild(content);
+    const textContent = document.createTextNode(text);
+    el.appendChild(textContent);
 
     el.style.fontFamily = 'Roboto';
     el.style.fontSize = '14px';
@@ -33,7 +34,27 @@ export const getMaxTitleHeight = (
     el?.parentNode?.removeChild(el);
 
     return height;
-  });
+  }) || [];
+
+export const getMaxTitleHeight = (
+  nodes: HierarchyPointNode<TreeNodeDatum>[],
+  fullTitles: boolean
+): number => {
+  if (nodes.length === 0 || !fullTitles) return NODE_MIN_TITLE_HEIGHT;
+
+  const titles = nodes.map(node => node.data.internalName || node.data.externalName);
+  const heights = getContentHeights(titles, NODE_MIN_TITLE_HEIGHT);
+
+  return Math.max(...heights);
+};
+
+export const getMaxODDRNHeight = (nodes: HierarchyPointNode<TreeNodeDatum>[]): number => {
+  if (nodes.length === 0 || nodes.every(node => node.data.externalName))
+    return INFO_MIN_ODDRN_HEIGHT;
+
+  const oddrns = nodes.map(node => (node.data.externalName ? '' : node.data.oddrn));
+  console.log('oddrns', oddrns);
+  const heights = getContentHeights(oddrns, INFO_MIN_ODDRN_HEIGHT);
 
   return Math.max(...heights);
 };

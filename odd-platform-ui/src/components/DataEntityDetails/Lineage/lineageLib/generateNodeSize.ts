@@ -2,7 +2,7 @@ import type { NodeSize } from './interfaces';
 import {
   NODE_WIDTH,
   NODE_INDENT_LEFT,
-  INFO_HEIGHT,
+  INFO_LINE_HEIGHT,
   INFO_LABEL_WIDTH,
   NODE_LINE_HEIGHT,
   NODE_LINE_MX,
@@ -12,16 +12,27 @@ import {
   LOAD_MORE_BUTTON_WIDTH,
   LOAD_MORE_BUTTON_HEIGHT,
   NODE_MIN_TITLE_HEIGHT,
+  INFO_MIN_ODDRN_HEIGHT,
 } from './constants';
 
-export const generateNodeSize = (compact: boolean, titleHeight: number): NodeSize => {
+interface GenerateNodeSizeProps {
+  compact: boolean;
+  titleHeight: number;
+  oddrnHeight?: number;
+}
+
+export const generateNodeSize = ({
+  compact,
+  titleHeight,
+  oddrnHeight = INFO_MIN_ODDRN_HEIGHT,
+}: GenerateNodeSizeProps): NodeSize => {
   type Content = NodeSize['content'];
 
   const size: NodeSize['size'] = {
     width: NODE_WIDTH,
     height: compact
       ? NODE_COMPACT_HEIGHT_WITHOUT_TITLE + titleHeight
-      : NODE_HEIGHT_WITHOUT_TITLE + titleHeight,
+      : NODE_HEIGHT_WITHOUT_TITLE + titleHeight + oddrnHeight / 2,
     mx: 150,
     my: 24,
     contentWidth: NODE_WIDTH - NODE_INDENT_LEFT * 3,
@@ -42,14 +53,15 @@ export const generateNodeSize = (compact: boolean, titleHeight: number): NodeSiz
   const info: Content['info'] = {
     x: NODE_INDENT_LEFT,
     y: hiddenDeps.y + NODE_LINE_MX * 5 + 4,
-    lineHeight: INFO_HEIGHT,
+    oddrnHeight: oddrnHeight + 8,
+    lineHeight: INFO_LINE_HEIGHT,
     labelWidth: INFO_LABEL_WIDTH,
     contentWidth: size.width - title.x * 3 - INFO_LABEL_WIDTH,
   };
 
   const classes: Content['classes'] = {
     x: NODE_INDENT_LEFT,
-    y: compact ? info.y - NODE_LINE_MX : info.y + NODE_LINE_HEIGHT * 5,
+    y: compact ? info.y - NODE_LINE_MX : info.y + info.lineHeight * 3.5,
     width: 24,
     height: 16,
     mx: 2,

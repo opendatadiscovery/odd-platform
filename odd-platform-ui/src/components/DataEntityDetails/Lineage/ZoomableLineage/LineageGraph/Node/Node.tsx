@@ -113,6 +113,7 @@ const Node: React.FC<NodeProps> = ({
           nodesRelatedWithDEG={node.data.nodesRelatedWithDEG}
           internalName={node.data.internalName}
           externalName={node.data.externalName}
+          oddrn={node.data.oddrn}
           streamType={streamType}
         />
         <Classes entityClasses={node.data.entityClasses} />

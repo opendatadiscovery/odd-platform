@@ -3,6 +3,7 @@ import { Group } from '@visx/group';
 import type { DataEntityLineageNode, DataSource } from 'generated-sources';
 import { TruncatedSVGText } from 'components/shared';
 import type { StreamType } from 'redux/interfaces';
+import { INFO_MIN_ODDRN_HEIGHT } from '../../../../lineageLib/constants';
 import GroupedEntitiesListModal from './GroupedEntitiesListModal/GroupedEntitiesListModal';
 import ItemsButton from './ItemsButton/ItemsButton';
 import LineageContext from '../../../../lineageLib/LineageContext/LineageContext';
@@ -16,6 +17,7 @@ interface InfoProps {
   internalName: string | undefined;
   externalName: string | undefined;
   streamType: StreamType;
+  oddrn: string;
 }
 
 const Info: React.FC<InfoProps> = ({
@@ -26,8 +28,9 @@ const Info: React.FC<InfoProps> = ({
   rootNodeId,
   internalName,
   externalName,
+  oddrn,
 }) => {
-  const { nodeSize, compact } = React.useContext(LineageContext);
+  const { nodeSize, compact, fullTitles } = React.useContext(LineageContext);
 
   if (compact && !externalName) {
     return (
@@ -41,8 +44,15 @@ const Info: React.FC<InfoProps> = ({
     );
   }
 
-  return !compact ? (
-    <Group top={nodeSize.content.info.y} left={nodeSize.content.info.x}>
+  const verticalODDRNOffset = fullTitles ? -nodeSize.content.title.height / 2 : 0;
+  const verticalInfoOffset =
+    nodeSize.content.info.oddrnHeight > INFO_MIN_ODDRN_HEIGHT ? 10 : 0;
+
+  return !compact && externalName ? (
+    <Group
+      top={nodeSize.content.info.y + verticalInfoOffset}
+      left={nodeSize.content.info.x}
+    >
       <S.Attribute>
         <S.AttributeLabel
           key={`nsl-${id}`}
@@ -117,7 +127,27 @@ const Info: React.FC<InfoProps> = ({
         </>
       )}
     </Group>
-  ) : null;
+  ) : (
+    <Group
+      top={nodeSize.content.info.y + verticalODDRNOffset}
+      left={nodeSize.content.info.x}
+    >
+      <S.ODDRNLabel
+        key={`ODDRN-${id}`}
+        x={0}
+        y={0}
+        width={nodeSize.content.info.labelWidth}
+      >
+        ODDRN
+      </S.ODDRNLabel>
+      <foreignObject
+        width={nodeSize.content.info.labelWidth + nodeSize.content.info.contentWidth}
+        height={nodeSize.content.info.oddrnHeight}
+      >
+        <S.ODDRNWrapper>{oddrn}</S.ODDRNWrapper>
+      </foreignObject>
+    </Group>
+  );
 };
 
 export default Info;

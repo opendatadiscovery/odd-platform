@@ -31,7 +31,12 @@ export interface NodeSize {
 export interface NodeContentLayout {
   title: Position & Size;
   hiddenDeps: Position;
-  info: Position & { lineHeight: number; labelWidth: number; contentWidth: number };
+  info: Position & {
+    lineHeight: number;
+    labelWidth: number;
+    contentWidth: number;
+    oddrnHeight: number;
+  };
   classes: Position & Size & { mx: number };
   loadMore: { layer: Position & Size; button: Position & Size };
 }

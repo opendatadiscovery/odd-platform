@@ -160,7 +160,7 @@ export const dataEntityLineageSlice = createSlice({
             .map(groupNode => {
               const group = localDownstreamState.allGroups.find(
                 g => g.id === groupNode.groupId
-              );
+              )!;
               const resultNode: GroupedDataEntityLineageNode = {
                 ...group,
                 id: groupNode.depthGroupId,
@@ -315,7 +315,7 @@ export const dataEntityLineageSlice = createSlice({
           .map(groupNode => {
             const group = localUpstreamState.allGroups.find(
               g => g.id === groupNode.groupId
-            );
+            )!;
             const resultNode: GroupedDataEntityLineageNode = {
               ...group,
               id: groupNode.depthGroupId,
