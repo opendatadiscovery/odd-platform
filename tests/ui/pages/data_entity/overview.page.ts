@@ -1,8 +1,8 @@
 import Button from '../../elements/button';
 import Dropdown from '../../elements/dropdown';
 import InputField from '../../elements/input-field';
+import Radio from '../../elements/radio';
 import DataEntityPage from './data_entity.page';
-import Radio from "../../elements/radio";
 
 const SELECTORS = {
   addOwnerButton: `text=Add Owner`,
@@ -14,14 +14,14 @@ const SELECTORS = {
   addCustomDescription: `[data-qa="add_description"]`,
   customDescriptionInput: `textarea`,
   saveDescriptionButton: `button:text-is('Save')`,
-  addCustomMetadata: `[data-qa="add_metadata"]`,
+  addCustomMetadataButton: `[data-qa="add_metadata"]`,
   inputCustomMetadata: `[data-qa="add_custom_metadata_input"]`,
   customMetadataDropdownList: `[role="listbox"]`,
   addMetadataInputField: `[data-qa="add_custom_metadata_type_select"] >> ..`,
   customMetadataListItem: `li`,
-  typeRadioButtonTrue: `[data-qa="add_custom_metadata_radio_button_true"]`,
+  addCustomMetadataTrueRadioButton: `[data-qa="add_custom_metadata_radio_button_true"]`,
   addCustomName: `[data-qa="add_business_name"]`,
-  inputCustomName: `[name="internalName"]`,
+  customNameInput: `[name="internalName"]`,
   createNewEntityLink: `[role="presentation"]:has-text('Create new')`,
 };
 type InputName = 'Name' | 'Tag' | 'Title' | 'Metadata';
@@ -71,11 +71,11 @@ export default class OverviewPage extends DataEntityPage {
     return new InputField(this.page, SELECTORS.inputCustomMetadata);
   }
 
-  get addCustomMetadata() {
-    return new Button(this.page, SELECTORS.addCustomMetadata);
+  get addCustomMetadataButton() {
+    return new Button(this.page, SELECTORS.addCustomMetadataButton);
   }
 
-  get openTypeSelect() {
+  get typeDropdown() {
     return new Dropdown(
       this.page,
       SELECTORS.addMetadataInputField,
@@ -88,12 +88,12 @@ export default class OverviewPage extends DataEntityPage {
     return new Button(this.page, SELECTORS.addCustomName);
   }
 
-  get inputCustomName() {
-    return new InputField(this.page, SELECTORS.inputCustomName);
+  get customNameInput() {
+    return new InputField(this.page, SELECTORS.customNameInput);
   }
 
-  get typeRadioButtonTrue() {
-      return new Radio(this.page, SELECTORS.typeRadioButtonTrue)
+  get addCustomMetadataTrueRadioButton() {
+    return new Radio(this.page, SELECTORS.addCustomMetadataTrueRadioButton);
   }
 
   async createOwner(name: string, title: string) {
@@ -112,17 +112,17 @@ export default class OverviewPage extends DataEntityPage {
   }
 
   async createCustomMetadata(name: string) {
-    await this.addCustomMetadata.click();
+    await this.addCustomMetadataButton.click();
     await this.getField('Metadata', name);
-      await this.createNewEntityLink.click();
-      await this.openTypeSelect.set('Boolean', { open: true });
-    await this.typeRadioButtonTrue.click();
+    await this.createNewEntityLink.click();
+    await this.typeDropdown.set('Boolean', { open: true });
+    await this.addCustomMetadataTrueRadioButton.click();
     await this.saveButton.click();
   }
 
   async addCustomName(name: string) {
     await this.customNameButton.click();
-    await this.inputCustomName.fill(name);
+    await this.customNameInput.fill(name);
     await this.saveButton.click();
   }
 }

@@ -1,26 +1,27 @@
 import Button from '../../elements/button';
 import InputField from '../../elements/input-field';
+import List from '../../elements/list';
 import DataEntityPage from './data_entity.page';
 
 const SELECTORS = {
   structureTab: `[role="tab"]:has-text("Structure")`,
   submitButton: `[type="submit"]`,
-  columnString: name => `.MuiGrid-root.MuiGrid-container.css-1rwljbm:has-text('${name}')`,
   inputLabel: `[placeholder="Enter label name…"]`,
   inputDescription: `[name="internalDescription"]`,
   createNewLabelLink: `[role="presentation"]:has-text('Create new')`,
+  resultsList: `[aria-label="grid"]`,
+  listItem: `[role="rowgroup"] >> div`,
+  editButton: `button:has-text('Edit')`,
 };
 
 export default class StructurePage extends DataEntityPage {
-  async editColumn(name: string) {
-    await this.page
-      .locator(SELECTORS.columnString(name))
-      .locator('button', { hasText: 'Edit' })
-      .click();
+  async clickEditButton(listItemName: string) {
+    const listItem = this.resultsList.getListElement(listItemName);
+    await listItem.locator(SELECTORS.editButton).click();
   }
 
-  get inputLabel() {
-    return new InputField(this.page, SELECTORS.inputLabel);
+  get resultsList() {
+    return new List(this.page, SELECTORS.resultsList, SELECTORS.listItem);
   }
 
   get inputDescription() {
@@ -31,8 +32,8 @@ export default class StructurePage extends DataEntityPage {
     return new Button(this.page, SELECTORS.createNewLabelLink);
   }
 
-  async getField(inputName: 'Label', name: string) {
-    await this[`input${inputName}`].fill(name);
+  get inputField() {
+    return new InputField(this.page, SELECTORS.inputLabel);
   }
 
   get submitButton() {
@@ -44,8 +45,8 @@ export default class StructurePage extends DataEntityPage {
   }
 
   async addLabel(name: string, label: string, description: string) {
-    await this.editColumn(`${name}`);
-    await this.getField('Label', label);
+    await this.clickEditButton(name);
+    await this.inputField.fill(label);
     await this.createNewLabelLink.click();
     await this.inputDescription.fill(description);
     await this.submitButton.click();
