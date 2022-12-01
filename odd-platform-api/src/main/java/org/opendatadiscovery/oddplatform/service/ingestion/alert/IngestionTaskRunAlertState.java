@@ -23,7 +23,7 @@ public class IngestionTaskRunAlertState {
     private final String dataEntityOddrn;
 
     private Long lastAlertId;
-    private List<String> alertPartDescriptions = new ArrayList<>();
+    private List<String> alertChunkDescriptions = new ArrayList<>();
     private boolean lastAlertIdActive;
 
     private AlertPojo currentAlert;
@@ -49,8 +49,8 @@ public class IngestionTaskRunAlertState {
     }
 
     public List<AlertAction> getActions() {
-        if (!alertPartDescriptions.isEmpty()) {
-            actions.add(new AlertAction.StackAlertAction(lastAlertId, alertPartDescriptions));
+        if (!alertChunkDescriptions.isEmpty()) {
+            actions.add(new AlertAction.StackAlertAction(lastAlertId, alertChunkDescriptions));
         }
 
         if (currentAlert != null) {
@@ -75,7 +75,7 @@ public class IngestionTaskRunAlertState {
 
     private void reportFailed(final IngestionTaskRun taskRun) {
         if (lastAlertIdActive) {
-            alertPartDescriptions.add("");
+            alertChunkDescriptions.add("");
         }
 
         if (currentAlert == null) {
@@ -91,7 +91,7 @@ public class IngestionTaskRunAlertState {
             // TODO: end_time?
             final LocalDateTime now = now();
             // TODO: test that last created at is put right
-            currentAlert.setCreatedAts(ArrayUtils.add(currentAlert.getCreatedAts(), now));
+//            currentAlert.setCreatedAts(ArrayUtils.add(currentAlert.getCreatedAts(), now));
             currentAlert.setLastCreatedAt(now);
         }
     }

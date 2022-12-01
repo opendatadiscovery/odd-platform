@@ -5,13 +5,13 @@ UPDATE alert
 SET messenger_entity_oddrn = NULL
 WHERE type IN (1, 3, 4);
 
-CREATE TABLE alert_part
+CREATE TABLE alert_chunk
 (
     alert_id BIGINT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
     description TEXT,
 
-    CONSTRAINT alert_part_fk FOREIGN KEY (alert_id) REFERENCES alert (id)
+    CONSTRAINT alert_chunk_fk FOREIGN KEY (alert_id) REFERENCES alert (id)
 );
 
 WITH cte AS (
@@ -45,7 +45,7 @@ WITH cte AS (
     FROM alert_temp
     WHERE json_array_length(payload) > 1
 )
-INSERT INTO alert_part (alert_id, created_at, description)
+INSERT INTO alert_chunk (alert_id, created_at, description)
 SELECT cte.alert_id::bigint, (cte.payload->>'created_at')::timestamp, cte.payload->>'description'
 FROM cte;
 

@@ -44,7 +44,6 @@ public abstract class AlertMapper {
     }
 
     @Mapping(source = "alert", target = ".")
-    @Mapping(source = "alert.lastCreatedAt", target = "createdAt")
     @Mapping(source = "alertDto", target = "statusUpdatedBy", qualifiedByName = "statusUpdatedBy")
     @Mapping(source = "alertDto", target = "dataEntity", qualifiedByName = "dataEntity")
     abstract Alert mapAlert(final AlertDto alertDto);

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
@@ -104,7 +103,7 @@ public class AlertServiceImpl implements AlertService {
 
             return new AlertPojo()
                 .setLastCreatedAt(now)
-                .setCreatedAts(new LocalDateTime[] {now})
+//                .setCreatedAts(new LocalDateTime[] {now})
                 .setStatusUpdatedAt(now)
                 .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.getCode())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
