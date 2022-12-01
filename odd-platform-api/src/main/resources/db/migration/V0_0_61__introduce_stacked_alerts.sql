@@ -5,7 +5,7 @@ UPDATE alert
 SET messenger_entity_oddrn = NULL
 WHERE type IN (1, 3, 4);
 
-CREATE TABLE alert_chunk
+CREATE TABLE IF NOT EXISTS alert_chunk
 (
     alert_id BIGINT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
