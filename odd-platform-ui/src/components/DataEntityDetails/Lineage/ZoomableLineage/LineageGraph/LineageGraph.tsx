@@ -75,7 +75,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
             position={{ x: node.x, y: node.y }}
             parent={node.parent}
             hasChildren={!!node.children?.length}
-            nodeDepth={node.depth}
+            nodeDepth={node.depth || 1}
             setInitialDepth={handleDepthChange}
           />
         ))}
@@ -88,7 +88,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
             position={{ x: node.x, y: node.y }}
             parent={node.parent}
             hasChildren={!!node.children?.length}
-            nodeDepth={node.depth}
+            nodeDepth={node.depth || 1}
             setInitialDepth={handleDepthChange}
           />
         ))}

@@ -93,7 +93,7 @@ const Lineage: React.FC = () => {
         </S.LoaderContainer>
       ) : null}
 
-      {!isLineageFetching && (
+      {!isLineageFetching && !isLineageNotFetched && (
         <LineageProvider
           compact={compact}
           setCompactView={setCompactView}
