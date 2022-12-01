@@ -12,13 +12,13 @@ export default class MainPage extends BasePage {
     return new InputField(this.page, SELECTORS.searchBar);
   }
 
+  get resultList() {
+    return new List(this.page, SELECTORS.searchDropdown, SELECTORS.dropdownString);
+  }
+
   async search(text: string) {
     await this.searchBar.type(text);
     await this.locator(SELECTORS.searchDropdown).isVisible();
-  }
-
-  get resultList() {
-    return new List(this.page, SELECTORS.searchDropdown, SELECTORS.dropdownString);
   }
 
   async isListItemVisible(name: string): Promise<boolean> {

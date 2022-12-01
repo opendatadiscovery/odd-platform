@@ -15,11 +15,6 @@ const SELECTORS = {
 };
 
 export default class StructurePage extends DataEntityPage {
-  async clickEditButton(listItemName: string) {
-    const listItem = this.resultsList.getListElement(listItemName);
-    await listItem.locator(SELECTORS.editButton).click();
-  }
-
   get resultsList() {
     return new List(this.page, SELECTORS.resultsList, SELECTORS.listItem);
   }
@@ -42,6 +37,11 @@ export default class StructurePage extends DataEntityPage {
 
   get goToStructureTab() {
     return new Button(this.page, SELECTORS.structureTab);
+  }
+
+  async clickEditButton(listItemName: string) {
+    const listItem = this.resultsList.getListElement(listItemName);
+    await listItem.locator(SELECTORS.editButton).click();
   }
 
   async addLabel(name: string, label: string, description: string) {

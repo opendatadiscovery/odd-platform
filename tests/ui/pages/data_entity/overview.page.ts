@@ -51,10 +51,6 @@ export default class OverviewPage extends DataEntityPage {
     return new Button(this.page, SELECTORS.createNewEntityLink);
   }
 
-  async getField(inputName: InputName, name: string) {
-    await this[`input${inputName}`].fill(name);
-  }
-
   get addCustomDescriptionButton() {
     return new Button(this.page, SELECTORS.addCustomDescription);
   }
@@ -94,6 +90,10 @@ export default class OverviewPage extends DataEntityPage {
 
   get addCustomMetadataTrueRadioButton() {
     return new Radio(this.page, SELECTORS.addCustomMetadataTrueRadioButton);
+  }
+
+  async getField(inputName: InputName, name: string) {
+    await this[`input${inputName}`].fill(name);
   }
 
   async createOwner(name: string, title: string) {
