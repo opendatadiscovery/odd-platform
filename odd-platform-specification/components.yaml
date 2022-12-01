@@ -1764,6 +1764,18 @@ components:
       required:
         - filters
 
+    AlertChunk:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+      required:
+        - created_at
+        - description
+
     Alert:
       type: object
       properties:
@@ -1772,8 +1784,6 @@ components:
           format: int64
         data_entity:
           $ref: '#/components/schemas/DataEntityRef'
-        description:
-          type: string
         type:
           $ref: '#/components/schemas/AlertType'
         status:
@@ -1783,11 +1793,10 @@ components:
         status_updated_at:
           type: string
           format: date-time
-        created_at:
+        alert_chunk_list:
           type: array
           items:
-            type: string
-            format: date-time
+            $ref: '#/components/schemas/AlertChunk'
       required:
         - id
         - type
