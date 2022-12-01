@@ -1,18 +1,18 @@
 ALTER TABLE alert
-    ADD COLUMN IF NOT EXISTS created_ats TIMESTAMP WITHOUT TIME ZONE[];
-
-ALTER TABLE alert
     RENAME COLUMN created_at TO last_created_at;
-
-ALTER TABLE alert
-    ALTER COLUMN last_created_at SET NOT NULL;
-
-UPDATE alert
-SET created_ats = ARRAY [last_created_at];
 
 UPDATE alert
 SET messenger_entity_oddrn = NULL
 WHERE type IN (1, 3, 4);
+
+CREATE TABLE alert_part
+(
+    alert_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+    description TEXT,
+
+    CONSTRAINT alert_part_fk FOREIGN KEY (alert_id) REFERENCES alert (id)
+);
 
 WITH cte AS (
     SELECT
@@ -30,28 +30,24 @@ WHERE alert.id = cte.alert_id;
 CREATE TEMPORARY TABLE alert_temp ON COMMIT DROP AS
 SELECT
     messenger_entity_oddrn,
-    json_agg(json_build_object('alert_id', alert.id, 'created_at', alert.last_created_at) order by alert.id) AS payload
+    json_agg(json_build_object(
+        'alert_id', alert.id,
+        'created_at', alert.last_created_at,
+        'description', alert.description
+    ) order by alert.id) AS payload
 FROM alert
 GROUP BY messenger_entity_oddrn;
 
-with alerts_to_update AS (
+WITH cte AS (
     SELECT
-        payload->-1->>'alert_id' AS alert_id_to_update,
-        json_array_elements(payload)->>'created_at' AS created_at
+        payload->-1->>'alert_id' AS alert_id,
+        json_array_elements(jsonb_path_query_array(payload::jsonb, '$[0 to LAST - 1]')::json) AS payload
     FROM alert_temp
     WHERE json_array_length(payload) > 1
-),
-alerts_to_update_agg AS (
-    SELECT
-        alert_id_to_update::bigint,
-        array_agg(created_at)::timestamp[] AS created_ats
-    FROM alerts_to_update
-    GROUP BY alert_id_to_update
 )
-UPDATE alert
-SET created_ats = alerts_to_update_agg.created_ats
-FROM alerts_to_update_agg
-WHERE alert.id = alerts_to_update_agg.alert_id_to_update;
+INSERT INTO alert_part (alert_id, created_at, description)
+SELECT cte.alert_id::bigint, (cte.payload->>'created_at')::timestamp, cte.payload->>'description'
+FROM cte;
 
 DELETE FROM alert
 WHERE id in (

@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.MultiValuedMap;
-import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
@@ -23,7 +22,6 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
-import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -112,15 +110,13 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
             if (action instanceof AlertAction.CreateAlertAction) {
                 toCreate.add(((AlertAction.CreateAlertAction) action).getAlertPojo());
             }
+
             if (action instanceof AlertAction.ResolveAutomaticallyAlertAction) {
                 toResolve.add(((AlertAction.ResolveAutomaticallyAlertAction) action).getAlertId());
             }
 
+            // TODO: stack alerts
             if (action instanceof AlertAction.StackAlertAction) {
-                toStack.add(Pair.of(
-                    ((AlertAction.StackAlertAction) action).getAlertId(),
-                    ((AlertAction.StackAlertAction) action).getTime())
-                );
             }
         });
 
@@ -129,15 +125,13 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
             .where(ALERT.ID.in(toResolve));
 
         // TODO: stack alerts
-
         return Mono.zip(
             jooqReactiveOperations.mono(resolveQuery),
             alertRepository.createAlerts(toCreate)
         ).then();
     }
 
-    private Mono<Map<String, Map<Short, AlertPojo>>> fetchLastOpenAlertStates(
-        final Set<String> dataEntityOddrns) {
+    private Mono<Map<String, Map<Short, AlertPojo>>> fetchLastOpenAlertStates(final Set<String> dataEntityOddrns) {
         if (CollectionUtils.isEmpty(dataEntityOddrns)) {
             return Mono.just(emptyMap());
         }

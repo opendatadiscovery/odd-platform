@@ -13,7 +13,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import static java.time.LocalDateTime.now;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
 
-// state -> data_entity_oddrn + alert type
 public class IngestionTaskRunAlertState {
     private static final Set<IngestionTaskRunStatus> TASK_RUN_FAIL_STATUSES = Set.of(
         IngestionTaskRunStatus.BROKEN,
@@ -24,7 +23,7 @@ public class IngestionTaskRunAlertState {
     private final String dataEntityOddrn;
 
     private Long lastAlertId;
-    private List<LocalDateTime> stackedDates = new ArrayList<>();
+    private List<String> alertPartDescriptions = new ArrayList<>();
     private boolean lastAlertIdActive;
 
     private AlertPojo currentAlert;
@@ -50,8 +49,8 @@ public class IngestionTaskRunAlertState {
     }
 
     public List<AlertAction> getActions() {
-        if (!stackedDates.isEmpty()) {
-            actions.add(new AlertAction.StackAlertAction(lastAlertId, stackedDates));
+        if (!alertPartDescriptions.isEmpty()) {
+            actions.add(new AlertAction.StackAlertAction(lastAlertId, alertPartDescriptions));
         }
 
         if (currentAlert != null) {
@@ -76,7 +75,7 @@ public class IngestionTaskRunAlertState {
 
     private void reportFailed(final IngestionTaskRun taskRun) {
         if (lastAlertIdActive) {
-            stackedDates.add(now());
+            alertPartDescriptions.add("");
         }
 
         if (currentAlert == null) {
@@ -110,7 +109,6 @@ public class IngestionTaskRunAlertState {
             .setType(alertType.getCode())
             .setStatus(AlertStatusEnum.OPEN.getCode())
             .setLastCreatedAt(now)
-            .setCreatedAts(new LocalDateTime[] {now})
             .setStatusUpdatedAt(now);
     }
 }

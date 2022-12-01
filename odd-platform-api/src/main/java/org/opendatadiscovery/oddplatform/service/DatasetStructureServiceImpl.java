@@ -90,7 +90,8 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
     private List<DatasetStructurePojo> getDatasetPojoStructure(
         final Map<String, List<DatasetFieldPojo>> datasetFields,
         final Map<String, DatasetFieldPojo> datasetFieldPojoMap,
-        final List<DatasetVersionPojo> createdVersions) {
+        final List<DatasetVersionPojo> createdVersions
+    ) {
         return createdVersions.stream()
             .flatMap(createdVersion -> datasetFields.get(createdVersion.getDatasetOddrn()).stream()
                 .map(f -> datasetFieldPojoMap.get(f.getOddrn()))

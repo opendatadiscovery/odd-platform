@@ -1,19 +1,12 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.alert;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
 public abstract class AlertAction {
-    public abstract ActionType getActionType();
-
-    // TODO: MessageEventActionDto is similar
-    public enum ActionType {
-        INSERT,
-        UPDATE
-    }
+    public abstract int order();
 
     @RequiredArgsConstructor
     public static class CreateAlertAction extends AlertAction {
@@ -21,8 +14,8 @@ public abstract class AlertAction {
         private final AlertPojo alertPojo;
 
         @Override
-        public ActionType getActionType() {
-            return ActionType.INSERT;
+        public int order() {
+            return 1;
         }
     }
 
@@ -32,8 +25,8 @@ public abstract class AlertAction {
         private final long alertId;
 
         @Override
-        public ActionType getActionType() {
-            return ActionType.UPDATE;
+        public int order() {
+            return 1;
         }
     }
 
@@ -43,11 +36,12 @@ public abstract class AlertAction {
         private final long alertId;
 
         @Getter
-        private final List<LocalDateTime> time;
+        private final List<String> descriptions;
 
         @Override
-        public ActionType getActionType() {
-            return ActionType.UPDATE;
+        public int order() {
+            // StackAlertActions must be executed after CreateAlertActions
+            return 2;
         }
     }
 }
