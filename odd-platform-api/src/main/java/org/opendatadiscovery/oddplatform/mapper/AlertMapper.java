@@ -57,14 +57,7 @@ public abstract class AlertMapper {
 
     public AlertStatus mapStatus(final Short code) {
         return AlertStatusEnum.fromCode(code)
-            .map(ase -> {
-                // TODO: pass to frontend RESOLVED_AUTOMATICALLY as well
-                if (AlertStatusEnum.RESOLVED_AUTOMATICALLY.equals(ase)) {
-                    return AlertStatus.RESOLVED;
-                }
-
-                return AlertStatus.fromValue(ase.name());
-            })
+            .map(ase -> AlertStatus.fromValue(ase.name()))
             .orElseThrow(() -> new IllegalStateException("Unknown alert status code %d".formatted(code)));
     }
 

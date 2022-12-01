@@ -1402,6 +1402,42 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/alert_config:
+    get:
+      summary: Get alert config for data entity
+      operationId: getAlertConfig
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityAlertConfig'
+      tags:
+        - dataEntity
+    put:
+      summary: Updates data entity alert config
+      operationId: updateAlertConfig
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityAlertConfig'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityAlertConfig'
+      tags:
+        - dataEntity
+
   /api/messages/{message_id}/url:
     get:
       summary: Redirects user to correspondent message in the provider

@@ -60,6 +60,7 @@ components:
         - DATA_ENTITY_ADD_TERM
         - DATA_ENTITY_DELETE_TERM
         - DATA_ENTITY_ALERT_RESOLVE
+        - DATA_ENTITY_ALERT_CONFIG_UPDATE
         - DATASET_TEST_RUN_SET_SEVERITY
         - DATASET_FIELD_INFO_UPDATE
         - DATASET_FIELD_ENUMS_UPDATE
@@ -1783,8 +1784,10 @@ components:
           type: string
           format: date-time
         created_at:
-          type: string
-          format: date-time
+          type: array
+          items:
+            type: string
+            format: date-time
       required:
         - id
         - type
@@ -1805,6 +1808,7 @@ components:
       enum:
         - OPEN
         - RESOLVED
+        - RESOLVED_AUTOMATICALLY
 
     AlertStatusFormData:
       type: object
@@ -1837,6 +1841,22 @@ components:
         dependent_total:
           type: integer
           format: int64
+
+    DataEntityAlertConfig:
+      type: object
+      properties:
+        failed_job_halt_until:
+          type: string
+          format: date-time
+        failed_dq_test_halt_until:
+          type: string
+          format: date-time
+        incompatible_schema_halt_until:
+          type: string
+          format: date-time
+        distribution_anomaly_halt_until:
+          type: string
+          format: date-time
 
     AppInfo:
       type: object
