@@ -1,5 +1,5 @@
 import React from 'react';
-import { HierarchyPointLink, type HierarchyPointNode } from 'd3-hierarchy';
+import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
 import { type TreeNodeDatum } from 'redux/interfaces';
 import { nodeSizeInitial } from '../constants';
 import { type NodeSize } from '../interfaces';

@@ -10,6 +10,10 @@ import {
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useAppPaths } from 'lib/hooks';
 import type { StreamType } from 'redux/interfaces';
+import {
+  expandEntitiesFromDownstreamGroup,
+  expandEntitiesFromUpstreamGroup,
+} from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
 import * as S from './GroupedEntitiesListModalStyles';
 
 interface GroupedEntitiesListModalProps {
@@ -32,15 +36,33 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
 
   const [isLoadMoreClicked, setIsLoadMoreClicked] = React.useState(false);
 
-  const loadMoreButtonHandler = (dataEntityId: number) => {
-    const params = { dataEntityId, lineageDepth: 1, rootNodeId };
+  const handleLoadMore =
+    (dataEntityId: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+
+      const params = { dataEntityId, lineageDepth: 1, rootNodeId };
+      if (streamType === 'downstream') {
+        dispatch(fetchDataEntityDownstreamLineage(params));
+      }
+
+      if (streamType === 'upstream') {
+        dispatch(fetchDataEntityUpstreamLineage(params));
+      }
+
+      setIsLoadMoreClicked(true);
+    };
+
+  const idsToExclude = React.useMemo(() => entities.map(entity => entity.id), [entities]);
+
+  const handleExpandButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (streamType === 'downstream') {
-      dispatch(fetchDataEntityDownstreamLineage(params));
+      dispatch(expandEntitiesFromDownstreamGroup({ rootNodeId, idsToExclude }));
+    } else {
+      dispatch(expandEntitiesFromUpstreamGroup({ rootNodeId, idsToExclude }));
     }
 
-    if (streamType === 'upstream') {
-      dispatch(fetchDataEntityUpstreamLineage(params));
-    }
+    setIsLoadMoreClicked(true);
   };
 
   const listItem = (item: DataEntityLineageNode) => (
@@ -60,15 +82,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
             />
           ))}
         </Grid>
-        <AppButton
-          color='primaryLight'
-          size='medium'
-          onClick={e => {
-            e.preventDefault();
-            loadMoreButtonHandler(item.id);
-            setIsLoadMoreClicked(true);
-          }}
-        >
+        <AppButton color='primaryLight' size='medium' onClick={handleLoadMore(item.id)}>
           Load more
         </AppButton>
       </S.ListItemContainer>
@@ -76,7 +90,17 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   );
 
   const modalTitle = (
-    <Typography variant='h4'>{`Entities list of ${dataEntityName}`}</Typography>
+    <Grid container justifyContent='space-between' alignItems='center'>
+      <Typography variant='h4'>{`Entities list of ${dataEntityName}`}</Typography>
+      <AppButton
+        sx={{ mr: 1 }}
+        color='primaryLight'
+        size='medium'
+        onClick={handleExpandButton}
+      >
+        Show all entities
+      </AppButton>
+    </Grid>
   );
 
   const sortByName = (a: DataEntityLineageNode, b: DataEntityLineageNode) => {

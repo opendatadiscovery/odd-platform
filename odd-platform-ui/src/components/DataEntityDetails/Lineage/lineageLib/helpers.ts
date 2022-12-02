@@ -53,7 +53,7 @@ export const getMaxODDRNHeight = (nodes: HierarchyPointNode<TreeNodeDatum>[]): n
     return INFO_MIN_ODDRN_HEIGHT;
 
   const oddrns = nodes.map(node => (node.data.externalName ? '' : node.data.oddrn));
-  console.log('oddrns', oddrns);
+
   const heights = getContentHeights(oddrns, INFO_MIN_ODDRN_HEIGHT);
 
   return Math.max(...heights);

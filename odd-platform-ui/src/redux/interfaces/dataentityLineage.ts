@@ -1,4 +1,5 @@
 import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
+import type { DataEntityLineageState } from 'redux/interfaces';
 
 export interface DataEntityLineageById<
   NodeT = DataEntityLineageNode,
@@ -28,7 +29,7 @@ export interface GroupedDataEntityLineageNode extends DataEntityLineageNode {
   originalGroupId?: number;
 }
 
-export interface LocalState {
+export interface LocalLineageState {
   allNodes: Array<DataEntityLineageNode | GroupedDataEntityLineageNode>;
   nodeIds: Set<number>;
   allEdges: DataEntityLineageEdge[];
@@ -64,3 +65,29 @@ export interface FilterUpstreamEdges {
 }
 
 export type StreamType = 'downstream' | 'upstream';
+
+export interface GroupNodesAndFilterEdgesParams {
+  rootNodeId: number;
+  localLineageState: LocalLineageState;
+  minGroupSize: number;
+}
+
+export interface GroupedNodesAndFilteredEdges {
+  nodes: DataEntityLineageNode[];
+  edges: DataEntityLineageEdge[];
+  crossEdges: DataEntityLineageEdge[];
+}
+
+export interface ParseLineageParams {
+  state: DataEntityLineageState;
+  rootNodeId: number;
+  rootNode?: DataEntityLineageNode;
+  edges: DataEntityLineageEdge[];
+  nodes: DataEntityLineageNode[];
+  crossEdges: DataEntityLineageEdge[];
+  dataEntityLineageInitialState: DataEntityLineageStreamById;
+}
+
+export interface ExpandEntitiesFromGroupParams {
+  payload: { rootNodeId: number; idsToExclude: number[] };
+}
