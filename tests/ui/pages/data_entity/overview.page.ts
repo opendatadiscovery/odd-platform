@@ -27,51 +27,51 @@ const SELECTORS = {
 type InputName = 'Name' | 'Tag' | 'Title' | 'Metadata';
 
 export default class OverviewPage extends DataEntityPage {
-  get saveButton() {
+  private get saveButton() {
     return new Button(this.page, SELECTORS.saveButton);
   }
 
-  get addOwnerButton() {
+  private get addOwnerButton() {
     return new Button(this.page, SELECTORS.addOwnerButton);
   }
 
-  get inputName() {
+  private get inputName() {
     return new InputField(this.page, SELECTORS.inputOwnerName);
   }
 
-  get inputTitle() {
+  private get inputTitle() {
     return new InputField(this.page, SELECTORS.inputOwnerTitle);
   }
 
-  get inputTag() {
+  private get inputTag() {
     return new InputField(this.page, SELECTORS.inputTagName);
   }
 
-  get createNewEntityLink() {
+  private get createNewEntityLink() {
     return new Button(this.page, SELECTORS.createNewEntityLink);
   }
 
-  get addCustomDescriptionButton() {
+  private get addCustomDescriptionButton() {
     return new Button(this.page, SELECTORS.addCustomDescription);
   }
 
-  get customDescriptionText() {
+  private get customDescriptionText() {
     return new InputField(this.page, SELECTORS.customDescriptionInput);
   }
 
-  get saveDescriptionButton() {
+  private get saveDescriptionButton() {
     return new Button(this.page, SELECTORS.saveDescriptionButton);
   }
 
-  get inputMetadata() {
+  private get inputMetadata() {
     return new InputField(this.page, SELECTORS.inputCustomMetadata);
   }
 
-  get addCustomMetadataButton() {
+  private get addCustomMetadataButton() {
     return new Button(this.page, SELECTORS.addCustomMetadataButton);
   }
 
-  get typeDropdown() {
+  private get typeDropdown() {
     return new Dropdown(
       this.page,
       SELECTORS.addMetadataInputField,
@@ -80,19 +80,19 @@ export default class OverviewPage extends DataEntityPage {
     );
   }
 
-  get customNameButton() {
+  private get customNameButton() {
     return new Button(this.page, SELECTORS.addCustomName);
   }
 
-  get customNameInput() {
+  private get customNameInput() {
     return new InputField(this.page, SELECTORS.customNameInput);
   }
 
-  get addCustomMetadataTrueRadioButton() {
+  private get addCustomMetadataTrueRadioButton() {
     return new Radio(this.page, SELECTORS.addCustomMetadataTrueRadioButton);
   }
 
-  async getField(inputName: InputName, name: string) {
+  private async getField(inputName: InputName, name: string) {
     await this[`input${inputName}`].fill(name);
   }
 

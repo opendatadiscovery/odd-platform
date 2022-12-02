@@ -15,23 +15,23 @@ const SELECTORS = {
 };
 
 export default class StructurePage extends DataEntityPage {
-  get resultsList() {
+  private get resultsList() {
     return new List(this.page, SELECTORS.resultsList, SELECTORS.listItem);
   }
 
-  get inputDescription() {
+  private get inputDescription() {
     return new InputField(this.page, SELECTORS.inputDescription);
   }
 
-  get createNewLabelLink() {
+  private get createNewLabelLink() {
     return new Button(this.page, SELECTORS.createNewLabelLink);
   }
 
-  get inputField() {
+  private get inputField() {
     return new InputField(this.page, SELECTORS.inputLabel);
   }
 
-  get submitButton() {
+  private get submitButton() {
     return new Button(this.page, SELECTORS.submitButton);
   }
 
@@ -39,7 +39,7 @@ export default class StructurePage extends DataEntityPage {
     return new Button(this.page, SELECTORS.structureTab);
   }
 
-  async clickEditButton(listItemName: string) {
+  private async clickEditButton(listItemName: string) {
     const listItem = this.resultsList.getListElement(listItemName);
     await listItem.locator(SELECTORS.editButton).click();
   }

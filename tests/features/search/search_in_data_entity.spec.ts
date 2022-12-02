@@ -17,6 +17,35 @@ test.describe('Search by data in data-entity in the Catalog', () => {
       await pages.topPanel.clickTab('Catalog');
     });
   });
+
+  /**
+   * /project/1/test-cases/112
+   */
+  /**
+   * /project/1/test-cases/115
+   */
+  /**
+   * /project/1/test-cases/123
+   */
+  /**
+   * /project/1/test-cases/124
+   */
+  const parameters = [
+    { testName: 'tag', inputValue: 'tagForSearching' },
+    { testName: 'namespace', inputValue: 'ETL' },
+    { testName: 'pre-defined metadata', inputValue: 'Base_of_books' },
+    { testName: 'external description', inputValue: externalDescription },
+  ];
+  for (const parameter of parameters) {
+    test(`Display an expected item with expression in ${parameter.testName}`, async ({
+      steps: { pages },
+    }) => {
+      await test.step(`When filling a valid expression in the search input`, async () => {
+        await pages.catalog.searchBy(`${parameter.inputValue}`);
+        expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
+      });
+    });
+  }
   /**
    * /project/1/test-cases/111
    */
@@ -30,15 +59,6 @@ test.describe('Search by data in data-entity in the Catalog', () => {
       await pages.overview.fillCustomDescriptionInput(customDescription);
       await pages.topPanel.clickTab('Catalog');
       await pages.catalog.searchBy('first');
-      expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
-    });
-  });
-  /**
-   * /project/1/test-cases/112
-   */
-  test(`Display an expected item with expression in tag`, async ({ steps: { pages } }) => {
-    await test.step(`When filling a valid expression in the search input`, async () => {
-      await pages.catalog.searchBy('tagForSearching');
       expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
     });
   });
@@ -66,15 +86,6 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy('genre_id');
       expect(await pages.catalog.isListItemVisible(entityWithStructure)).toBeTruthy();
-    });
-  });
-  /**
-   * /project/1/test-cases/115
-   */
-  test(`Display an expected item with expression in namespace`, async ({ steps: { pages } }) => {
-    await test.step(`When filling a valid expression in the search input`, async () => {
-      await pages.catalog.searchBy('ETL');
-      expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
     });
   });
   /**
@@ -159,28 +170,6 @@ test.describe('Search by data in data-entity in the Catalog', () => {
       await pages.topPanel.clickTab('Catalog');
       await pages.catalog.searchBy(entityNameAfterRename);
       expect(await pages.catalog.isListItemVisible(entityNameAfterRename)).toBeTruthy();
-    });
-  });
-  /**
-   * /project/1/test-cases/123
-   */
-  test(`Display an expected item with expression in pre-defined metadata`, async ({
-    steps: { pages },
-  }) => {
-    await test.step(`When filling a valid expression in the search input`, async () => {
-      await pages.catalog.searchBy('Base_of_books');
-      expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
-    });
-  });
-  /**
-   * /project/1/test-cases/124
-   */
-  test(`Display an expected item with expression in external description`, async ({
-    steps: { pages },
-  }) => {
-    await test.step(`When filling a valid expression in the search input`, async () => {
-      await pages.catalog.searchBy(externalDescription);
-      expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
     });
   });
   /**
