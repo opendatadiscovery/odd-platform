@@ -2,14 +2,17 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveAlertRepository {
+    Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(final Collection<String> dataEntityOddrns);
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN.
@@ -89,6 +92,8 @@ public interface ReactiveAlertRepository {
      */
     Mono<AlertPojo> updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
 
+    Mono<Void> resolveAutomatically(final List<Long> alertIds);
+
     /**
      * Creates new alerts.
      *
@@ -96,6 +101,8 @@ public interface ReactiveAlertRepository {
      * @return - List of {@link AlertPojo}
      */
     Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alerts);
+
+    Mono<Void> createChunks(final List<AlertChunkPojo> chunks);
 
     /**
      * Retrieves existing messengers by provided list of alerts.

@@ -4,10 +4,14 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
@@ -17,9 +21,11 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
+import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -121,11 +127,39 @@ public class AlertServiceImpl implements AlertService {
             .switchIfEmpty(createAlerts(alerts, Set.of()));
     }
 
-    private Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts, final Set<String> em) {
-        final List<AlertPojo> alertPojos = alerts.stream()
-            .filter(a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
-            .toList();
-        return alertRepository.createAlerts(alertPojos);
+    @Override
+    public Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(
+        final Collection<String> dataEntityOddrns
+    ) {
+        return alertRepository.getOpenAlertsForEntities(dataEntityOddrns);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<Void> applyAlertActions(final List<AlertAction> alertActions) {
+        final List<AlertPojo> toCreate = new ArrayList<>();
+        final List<Long> toResolve = new ArrayList<>();
+        final List<AlertChunkPojo> toStack = new ArrayList<>();
+
+        alertActions.forEach(action -> {
+            // TODO: create
+            if (action instanceof AlertAction.CreateAlertAction a) {
+                toCreate.add(a.getAlertPojo());
+            }
+
+            if (action instanceof AlertAction.ResolveAutomaticallyAlertAction a) {
+                toResolve.add(a.getAlertId());
+            }
+
+            if (action instanceof AlertAction.StackAlertAction a) {
+                toStack.addAll(a.getChunks());
+            }
+        });
+
+        return Mono.zip(
+            alertRepository.resolveAutomatically(toResolve),
+            alertRepository.createChunks(toStack)
+        ).then();
     }
 
     @Override
@@ -135,4 +169,12 @@ public class AlertServiceImpl implements AlertService {
             .flatMap(oddrns -> alertRepository.listDependentObjectsAlerts(page, size, oddrns))
             .map(alertMapper::mapAlerts);
     }
+
+    private Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts, final Set<String> em) {
+        final List<AlertPojo> alertPojos = alerts.stream()
+            .filter(a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
+            .toList();
+        return alertRepository.createAlerts(alertPojos);
+    }
+
 }

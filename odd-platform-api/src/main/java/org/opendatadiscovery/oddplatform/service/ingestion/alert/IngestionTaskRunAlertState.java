@@ -4,15 +4,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.ArrayUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
 import static java.time.LocalDateTime.now;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunType;
 
+@Slf4j
 public class IngestionTaskRunAlertState {
     private static final Set<IngestionTaskRunStatus> TASK_RUN_FAIL_STATUSES = Set.of(
         IngestionTaskRunStatus.BROKEN,
@@ -21,21 +24,40 @@ public class IngestionTaskRunAlertState {
 
     private final List<AlertAction> actions = new ArrayList<>();
     private final String dataEntityOddrn;
+    private final String descriptionFormat;
+    private final AlertTypeEnum alertType;
 
     private Long lastAlertId;
-    private List<String> alertChunkDescriptions = new ArrayList<>();
+
+    private final List<String> lastAlertChunkDescriptions = new ArrayList<>();
     private boolean lastAlertIdActive;
 
     private AlertPojo currentAlert;
+    private final List<String> currentAlertChunkDescriptions = new ArrayList<>();
 
-    public IngestionTaskRunAlertState(final String dataEntityOddrn) {
+    public IngestionTaskRunAlertState(final String dataEntityOddrn, final IngestionTaskRunType taskRunType) {
         this.dataEntityOddrn = dataEntityOddrn;
+
+        switch (taskRunType) {
+            case DATA_TRANSFORMER_RUN -> {
+                this.descriptionFormat = "Job %s failed with status %s";
+                this.alertType = AlertTypeEnum.FAILED_JOB;
+            }
+            case DATA_QUALITY_TEST_RUN -> {
+                this.descriptionFormat = "Test %s failed with status %s";
+                this.alertType = AlertTypeEnum.FAILED_DQ_TEST;
+            }
+            default -> throw new IllegalStateException("Unknown task run type: %s".formatted(taskRunType));
+        }
     }
 
-    public IngestionTaskRunAlertState(final String dataEntityOddrn, final long lastAlertId) {
+    public IngestionTaskRunAlertState(final String dataEntityOddrn,
+                                      final IngestionTaskRunType taskRunType,
+                                      final long lastAlertId) {
+        this(dataEntityOddrn, taskRunType);
+
         this.lastAlertId = lastAlertId;
         this.lastAlertIdActive = true;
-        this.dataEntityOddrn = dataEntityOddrn;
     }
 
     public void report(final IngestionTaskRun taskRun) {
@@ -46,15 +68,21 @@ public class IngestionTaskRunAlertState {
         if (TASK_RUN_FAIL_STATUSES.contains(taskRun.getStatus())) {
             reportFailed(taskRun);
         }
+
+        log.debug("Skipping task run {} with status {} in state", taskRun.getOddrn(), taskRun.getStatus());
     }
 
     public List<AlertAction> getActions() {
-        if (!alertChunkDescriptions.isEmpty()) {
-            actions.add(new AlertAction.StackAlertAction(lastAlertId, alertChunkDescriptions));
+        if (!lastAlertChunkDescriptions.isEmpty()) {
+            final List<AlertChunkPojo> chunks = lastAlertChunkDescriptions.stream()
+                .map(d -> new AlertChunkPojo().setAlertId(lastAlertId).setDescription(d))
+                .toList();
+
+            actions.add(new AlertAction.StackAlertAction(chunks));
         }
 
         if (currentAlert != null) {
-            actions.add(new AlertAction.CreateAlertAction(currentAlert));
+            actions.add(new AlertAction.CreateAlertAction(currentAlert, currentAlertChunkDescriptions));
         }
 
         return actions;
@@ -68,32 +96,32 @@ public class IngestionTaskRunAlertState {
 
         if (currentAlert != null) {
             currentAlert.setStatus(AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode());
-            actions.add(new AlertAction.CreateAlertAction(currentAlert));
+            actions.add(new AlertAction.CreateAlertAction(currentAlert, currentAlertChunkDescriptions));
             currentAlert = null;
+            currentAlertChunkDescriptions.clear();
         }
     }
 
     private void reportFailed(final IngestionTaskRun taskRun) {
         if (lastAlertIdActive) {
-            alertChunkDescriptions.add("");
+            lastAlertChunkDescriptions.add(buildDescription(taskRun));
+            return;
         }
 
         if (currentAlert == null) {
-            final AlertTypeEnum alertType = switch (taskRun.getType()) {
-                case DATA_TRANSFORMER_RUN -> AlertTypeEnum.FAILED_JOB;
-                case DATA_QUALITY_TEST_RUN -> AlertTypeEnum.FAILED_DQ_TEST;
-            };
-
-            // TODO: messenger oddrn and description
-            currentAlert = buildAlert(dataEntityOddrn, alertType, null, "");
+            currentAlert = buildAlert(
+                dataEntityOddrn,
+                alertType,
+                alertType == AlertTypeEnum.FAILED_DQ_TEST ? taskRun.getTaskOddrn() : null,
+                buildDescription(taskRun)
+            );
         } else {
-            // TODO: not effective array op
-            // TODO: end_time?
-            final LocalDateTime now = now();
-            // TODO: test that last created at is put right
-//            currentAlert.setCreatedAts(ArrayUtils.add(currentAlert.getCreatedAts(), now));
-            currentAlert.setLastCreatedAt(now);
+            currentAlertChunkDescriptions.add(buildDescription(taskRun));
         }
+    }
+
+    private String buildDescription(final IngestionTaskRun taskRun) {
+        return descriptionFormat.formatted(taskRun.getTaskRunName(), taskRun.getStatus());
     }
 
     private AlertPojo buildAlert(final String dataEntityOddrn,

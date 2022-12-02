@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,87 +7,59 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.MultiValuedMap;
-import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
-import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
+import org.apache.commons.collections4.SetValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityTestRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.service.AlertLocator;
+import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertActionResolver;
-import org.opendatadiscovery.oddplatform.utils.Pair;
+import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertActionResolverFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import static java.util.Collections.emptyMap;
-import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataQualityTestIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunType;
+import static reactor.function.TupleUtils.function;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class AlertIngestionRequestProcessor implements IngestionRequestProcessor {
     private final ReactiveDataQualityTestRelationRepository dataQualityTestRelationRepository;
-    private final JooqReactiveOperations jooqReactiveOperations;
-    private final AlertActionResolver alertActionResolver;
-    private final ReactiveAlertRepository alertRepository;
+    private final AlertActionResolverFactory alertActionResolverFactory;
+    private final AlertLocator alertLocator;
+    private final AlertService alertService;
 
     @Override
     public Mono<Void> process(final IngestionRequest request) {
-        if (CollectionUtils.isEmpty(request.getTaskRuns())) {
-            return Mono.empty();
-        }
-
-        final Set<String> dataEntityOddrns = new HashSet<>();
-        final Set<String> dataQualityTestOddrns = new HashSet<>();
-        final MultiValuedMap<String, String> helperMap = MultiMapUtils.newSetValuedHashMap();
-
-        // TODO: add ifNotEmpty
-        for (final IngestionTaskRun taskRun : request.getTaskRuns()) {
-            switch (taskRun.getType()) {
-                case DATA_TRANSFORMER_RUN -> dataEntityOddrns.add(taskRun.getTaskOddrn());
-                case DATA_QUALITY_TEST_RUN -> dataQualityTestOddrns.add(taskRun.getTaskOddrn());
-            }
-        }
-
-        for (final EnrichedDataEntityIngestionDto entity : request.getAllEntities()) {
-            if (entity.getDataQualityTest() != null) {
-                if (dataQualityTestOddrns.remove(entity.getOddrn())) {
-                    dataEntityOddrns.addAll(entity.getDataQualityTest().datasetList());
-                    for (final String s : entity.getDataQualityTest().datasetList()) {
-                        helperMap.put(entity.getOddrn(), s);
-                    }
-                }
-            }
-        }
-
-        // data_entity -> last open alert of each type
-        final Mono<Map<String, Map<Short, AlertPojo>>> state;
-        if (!dataQualityTestOddrns.isEmpty()) {
-            state = dataQualityTestRelationRepository.getRelations(dataQualityTestOddrns)
-                // TODO: wtf
-                .doOnNext(re -> helperMap.put(re.getDataQualityTestOddrn(), re.getDatasetOddrn()))
-                .map(DataQualityTestRelationsPojo::getDatasetOddrn)
-                .mergeWith(Flux.fromIterable(dataEntityOddrns))
-                .collect(Collectors.toSet())
-                .flatMap(this::fetchLastOpenAlertStates);
-        } else {
-            state = fetchLastOpenAlertStates(dataEntityOddrns);
-        }
-
-        return state.map(s -> alertActionResolver.resolveActions(s, helperMap, request.getTaskRuns()))
-            .flatMap(this::applyActions);
+        return Mono.defer(() -> getAlertStateSnapshotKey(request))
+            .flatMap(stateSnapshotKey -> alertService
+                .getOpenAlertsForEntities(stateSnapshotKey.dataEntityOddrns())
+                .map(openAlerts -> Tuples.of(
+                    alertActionResolverFactory.create(openAlerts),
+                    stateSnapshotKey.dqtToDataset()
+                )))
+            .flatMapMany(function((alertActionResolver, dqtToDatasets) -> alertLocator
+                .getAlertBISCandidates(request.getSpecificAttributesDeltas(), request.getChangedDatasetIds())
+                .collectList()
+                .flatMapMany(candidates -> Flux.fromStream(alertActionResolver.resolveActions(candidates)))
+                .mergeWith(actionsForIngestionTaskRuns(alertActionResolver, request.getTaskRuns(), dqtToDatasets))))
+            .collectList()
+            .flatMap(alertService::applyAlertActions);
     }
 
     @Override
@@ -101,74 +72,92 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
         return IngestionProcessingPhase.FINALIZING;
     }
 
-    private Mono<Void> applyActions(final Collection<AlertAction> alertActions) {
-        final List<AlertPojo> toCreate = new ArrayList<>();
-        final List<Long> toResolve = new ArrayList<>();
-        final List<Pair<Long, List<LocalDateTime>>> toStack = new ArrayList<>();
-
-        alertActions.forEach(action -> {
-            if (action instanceof AlertAction.CreateAlertAction) {
-                toCreate.add(((AlertAction.CreateAlertAction) action).getAlertPojo());
-            }
-
-            if (action instanceof AlertAction.ResolveAutomaticallyAlertAction) {
-                toResolve.add(((AlertAction.ResolveAutomaticallyAlertAction) action).getAlertId());
-            }
-
-            // TODO: stack alerts
-            if (action instanceof AlertAction.StackAlertAction) {
-            }
-        });
-
-        final var resolveQuery = DSL.update(ALERT)
-            .set(ALERT.STATUS, AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode())
-            .where(ALERT.ID.in(toResolve));
-
-        // TODO: stack alerts
-        return Mono.zip(
-            jooqReactiveOperations.mono(resolveQuery),
-            alertRepository.createAlerts(toCreate)
-        ).then();
-    }
-
-    private Mono<Map<String, Map<Short, AlertPojo>>> fetchLastOpenAlertStates(final Set<String> dataEntityOddrns) {
-        if (CollectionUtils.isEmpty(dataEntityOddrns)) {
-            return Mono.just(emptyMap());
+    private Mono<AlertStateSnapshotKey> getAlertStateSnapshotKey(final IngestionRequest request) {
+        if (CollectionUtils.isEmpty(request.getTaskRuns())) {
+            return Mono.fromCallable(request::getChangedDatasetOddrns)
+                .map(oddrns -> new AlertStateSnapshotKey(oddrns, emptyMap()));
         }
 
-        final var query = DSL.select(ALERT.fields())
-            .from(ALERT)
-            .where(ALERT.DATA_ENTITY_ODDRN.in(dataEntityOddrns))
-            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()))
-            .and(ALERT.TYPE.in(
-                List.of(AlertTypeEnum.FAILED_JOB.getCode(), AlertTypeEnum.FAILED_DQ_TEST.getCode())))
-            // TODO: think this through
-            .forUpdate();
+        final Set<String> alertDEOddrns = new HashSet<>(request.getChangedDatasetOddrns());
+        final Set<String> dqtOddrnsInIR = new HashSet<>();
+        final MultiValuedMap<String, String> dqtToDatasets = MultiMapUtils.newSetValuedHashMap();
 
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(AlertPojo.class))
+        for (final IngestionTaskRun taskRun : request.getTaskRuns()) {
+            switch (taskRun.getType()) {
+                case DATA_TRANSFORMER_RUN -> alertDEOddrns.add(taskRun.getTaskOddrn());
+                case DATA_QUALITY_TEST_RUN -> dqtOddrnsInIR.add(taskRun.getTaskOddrn());
+            }
+        }
+
+        // Trying to map data quality test runs to target datasets using information from IngestionRequest.
+        for (final EnrichedDataEntityIngestionDto entity : request.getAllEntities()) {
+            final DataQualityTestIngestionDto dataQualityTest = entity.getDataQualityTest();
+
+            if (dataQualityTest != null) {
+                if (dqtOddrnsInIR.remove(entity.getOddrn())) {
+                    alertDEOddrns.addAll(dataQualityTest.datasetList());
+                    for (final String datasetOddrn : dataQualityTest.datasetList()) {
+                        dqtToDatasets.put(entity.getOddrn(), datasetOddrn);
+                    }
+                }
+            }
+        }
+
+        if (dqtOddrnsInIR.isEmpty()) {
+            return Mono.just(new AlertStateSnapshotKey(alertDEOddrns, dqtToDatasets.asMap()));
+        }
+
+        // if IR doesn't contain information for all test runs, fetch missing data from database
+        return dataQualityTestRelationRepository.getRelations(dqtOddrnsInIR)
             .collectList()
-            .map(alerts -> {
-                // TODO: rewrite to streams?
-                // assumes that there are no duplicates of schema:
-                //  data_entity_oddrn -> type + messenger_oddrn, where type is in [FAILED_JOB, FAILED_DQ_TEST]
-                // since data entity can be represented in several classes,
-                //  it can contain open alerts with several types
-                final Map<String, Map<Short, AlertPojo>> result = new HashMap<>();
-                for (final AlertPojo alert : alerts) {
-                    result.compute(alert.getDataEntityOddrn(), (k, v) -> {
-                        if (v == null) {
-                            final HashMap<Short, AlertPojo> vv = new HashMap<>();
-                            vv.putIfAbsent(alert.getType(), alert);
-                            return vv;
-                        }
-
-                        v.putIfAbsent(alert.getType(), alert);
-                        return v;
-                    });
+            .map(relations -> {
+                final SetValuedMap<String, String> dqt = new HashSetValuedHashMap<>(dqtToDatasets);
+                final Set<String> dataEntityOddrns = new HashSet<>(alertDEOddrns);
+                for (final DataQualityTestRelationsPojo relation : relations) {
+                    dqt.put(relation.getDataQualityTestOddrn(), relation.getDatasetOddrn());
+                    dataEntityOddrns.add(relation.getDatasetOddrn());
                 }
 
-                return result;
+                return new AlertStateSnapshotKey(dataEntityOddrns, dqt.asMap());
             });
+    }
+
+    private Flux<AlertAction> actionsForIngestionTaskRuns(final AlertActionResolver alertActionResolver,
+                                                          final List<IngestionTaskRun> taskRuns,
+                                                          final Map<String, Collection<String>> dqtToDatasets) {
+        final Map<String, List<IngestionTaskRun>> dtr = new HashMap<>();
+        final Map<String, List<IngestionTaskRun>> dqt = new HashMap<>();
+
+        for (final IngestionTaskRun run : taskRuns) {
+            switch (run.getType()) {
+                case DATA_TRANSFORMER_RUN -> dtr.compute(run.getTaskOddrn(), (oddrn, queue) -> compute(run, queue));
+                case DATA_QUALITY_TEST_RUN ->
+                    // TODO: can NPE occur here?
+                    dqtToDatasets.get(run.getTaskOddrn()).forEach(
+                        datasetOddrn -> dqt.compute(datasetOddrn, (oddrn, queue) -> compute(run, queue)));
+            }
+        }
+
+        return Flux.fromStream(Stream.concat(
+            alertActionResolver.resolveActions(dqt, IngestionTaskRunType.DATA_QUALITY_TEST_RUN),
+            alertActionResolver.resolveActions(dtr, IngestionTaskRunType.DATA_TRANSFORMER_RUN)
+        ));
+    }
+
+    // TODO: util method?
+    private List<IngestionTaskRun> compute(final IngestionTaskRun run,
+                                           final List<IngestionTaskRun> list) {
+        if (list == null) {
+            final ArrayList<IngestionTaskRun> l = new ArrayList<>();
+            l.add(run);
+            return l;
+        }
+
+        list.add(run);
+        return list;
+    }
+
+    private record AlertStateSnapshotKey(Collection<String> dataEntityOddrns,
+                                         Map<String, Collection<String>> dqtToDataset) {
     }
 }

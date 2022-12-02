@@ -41,7 +41,8 @@ GROUP BY messenger_entity_oddrn;
 WITH cte AS (
     SELECT
         payload->-1->>'alert_id' AS alert_id,
-        json_array_elements(jsonb_path_query_array(payload::jsonb, '$[0 to LAST - 1]')::json) AS payload
+--         json_array_elements(jsonb_path_query_array(payload::jsonb, '$[0 to LAST - 1]')::json) AS payload
+        json_array_elements(payload) AS payload
     FROM alert_temp
     WHERE json_array_length(payload) > 1
 )
@@ -58,5 +59,5 @@ WHERE id in (
     WHERE json_array_length(payload) > 1
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS alert_unique ON alert (data_entity_oddrn, messenger_entity_oddrn)
+CREATE UNIQUE INDEX IF NOT EXISTS alert_unique ON alert (data_entity_oddrn, type, messenger_entity_oddrn)
     WHERE messenger_entity_oddrn IS NOT NULL;
