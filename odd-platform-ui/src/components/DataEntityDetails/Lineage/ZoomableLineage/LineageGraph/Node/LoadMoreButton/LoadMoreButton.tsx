@@ -30,7 +30,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   loadMoreCount,
   hideLoadMore,
 }) => {
-  const { nodeSize } = React.useContext(LineageContext);
+  const { nodeSize, expandGroups } = React.useContext(LineageContext);
   const dispatch = useAppDispatch();
 
   const { isLoading: isUpstreamFetching } = useAppSelector(
@@ -46,7 +46,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   );
 
   const loadMoreButtonHandler = () => {
-    const params = { dataEntityId, lineageDepth: 1, rootNodeId };
+    const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups };
     if (streamType === 'downstream') {
       dispatch(fetchDataEntityDownstreamLineage(params)).then(() => hideLoadMore());
     }

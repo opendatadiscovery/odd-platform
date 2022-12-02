@@ -522,7 +522,7 @@ export const parseDownstreamLineage = ({
   crossEdges,
   dataEntityLineageInitialState,
 }: ParseLineageParams): DataEntityLineageById => ({
-  rootNode: rootNode || state[rootNodeId].rootNode,
+  rootNode: rootNode || state[rootNodeId]?.rootNode,
   upstream: {
     ...(state[rootNodeId]?.upstream || dataEntityLineageInitialState),
   },
@@ -640,7 +640,7 @@ export const parseUpstreamLineage = ({
   crossEdges,
   dataEntityLineageInitialState,
 }: ParseLineageParams): DataEntityLineageById => ({
-  rootNode: rootNode || state[rootNodeId].rootNode,
+  rootNode: rootNode || state[rootNodeId]?.rootNode,
   upstream: {
     edgesById: edges.reduce<DataEntityLineageStreamById['edgesById']>(
       (edgesById, edge) => ({

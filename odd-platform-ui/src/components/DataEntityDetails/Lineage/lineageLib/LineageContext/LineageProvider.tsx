@@ -22,6 +22,8 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
   setCompactView,
   setFullTitlesView,
   fullTitles,
+  expandGroups,
+  setExpandGroups,
 }) => {
   const [renderedNodes, setRenderedNodes] = React.useState<
     HierarchyPointNode<TreeNodeDatum>[]
@@ -60,6 +62,8 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
       setRenderedLinks,
       highLightedLinks,
       setHighLightedLinks,
+      expandGroups,
+      setExpandGroups,
     }),
     [
       compact,
@@ -68,6 +72,7 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
       setFullTitlesView,
       renderedLinks,
       highLightedLinks,
+      expandGroups,
     ]
   );
 

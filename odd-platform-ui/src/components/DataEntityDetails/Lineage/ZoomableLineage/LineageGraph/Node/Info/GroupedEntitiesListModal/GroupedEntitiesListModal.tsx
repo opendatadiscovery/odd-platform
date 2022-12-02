@@ -14,6 +14,7 @@ import {
   expandEntitiesFromDownstreamGroup,
   expandEntitiesFromUpstreamGroup,
 } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import LineageContext from '../../../../../lineageLib/LineageContext/LineageContext';
 import * as S from './GroupedEntitiesListModalStyles';
 
 interface GroupedEntitiesListModalProps {
@@ -33,6 +34,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
+  const { expandGroups } = React.useContext(LineageContext);
 
   const [isLoadMoreClicked, setIsLoadMoreClicked] = React.useState(false);
 
@@ -40,7 +42,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
     (dataEntityId: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
 
-      const params = { dataEntityId, lineageDepth: 1, rootNodeId };
+      const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups };
       if (streamType === 'downstream') {
         dispatch(fetchDataEntityDownstreamLineage(params));
       }

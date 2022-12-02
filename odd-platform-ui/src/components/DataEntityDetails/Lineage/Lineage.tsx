@@ -15,6 +15,7 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { type SelectChangeEvent } from '@mui/material';
+import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
 import { defaultDepth } from './lineageLib/constants';
 import LineageProvider from './lineageLib/LineageContext/LineageProvider';
@@ -28,6 +29,7 @@ const Lineage: React.FC = () => {
   const [lineageDepth, setLineageDepth] = React.useState(defaultDepth);
   const [compact, setCompact] = React.useState(false);
   const [fullTitles, setFullTitles] = React.useState(false);
+  const [expandGroups, setExpandGroups] = React.useState(false);
 
   const setCompactView = React.useCallback(
     (isCompact: boolean) => setCompact(isCompact),
@@ -50,14 +52,16 @@ const Lineage: React.FC = () => {
   );
 
   React.useEffect(() => {
-    const params = { dataEntityId, lineageDepth, rootNodeId: dataEntityId };
+    const params = { dataEntityId, lineageDepth, rootNodeId: dataEntityId, expandGroups };
 
-    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-      dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
-        setIsLineageFetching(false)
-      )
-    );
-  }, [lineageDepth, dataEntityId]);
+    if (!expandGroups) {
+      dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+        dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+          setIsLineageFetching(false)
+        )
+      );
+    }
+  }, [lineageDepth, dataEntityId, expandGroups]);
 
   const data = useAppSelector(getDataEntityLineage(dataEntityId));
   const { isNotLoaded: isUpstreamNotFetched } = useAppSelector(
@@ -73,6 +77,12 @@ const Lineage: React.FC = () => {
     () => isUpstreamNotFetched || isDownstreamNotFetched,
     [isUpstreamNotFetched, isDownstreamNotFetched]
   );
+
+  React.useEffect(() => {
+    const rootNodeId = data?.rootNode.id;
+
+    dispatch(expandAllGroups({ rootNodeId, isExpanded: expandGroups }));
+  }, [expandGroups]);
 
   const height = 780;
   const width = 1408;
@@ -99,6 +109,8 @@ const Lineage: React.FC = () => {
           setCompactView={setCompactView}
           fullTitles={fullTitles}
           setFullTitlesView={setFullTitlesView}
+          expandGroups={expandGroups}
+          setExpandGroups={setExpandGroups}
         >
           <Zoom<SVGSVGElement>
             width={width}

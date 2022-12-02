@@ -12,17 +12,41 @@ interface LineageControlsProps {
 }
 const LineageControls = React.memo<LineageControlsProps>(
   ({ handleCenterRoot, lineageDepth, handleDepthChange }) => {
-    const { compact, setCompactView, fullTitles, setFullTitlesView } =
-      React.useContext(LineageContext);
+    const {
+      compact,
+      setCompactView,
+      fullTitles,
+      setFullTitlesView,
+      expandGroups,
+      setExpandGroups,
+    } = React.useContext(LineageContext);
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFullTitlesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setFullTitlesView(event.target.checked);
+    };
+
+    const handleExpandGroupsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setExpandGroups(event.target.checked);
     };
 
     return (
       <S.ControlsContainer>
         <Grid display='flex' flexWrap='nowrap'>
-          <AppCheckbox value={fullTitles} onChange={handleChange} sx={{ mr: 1 }} />
+          <AppCheckbox
+            value={expandGroups}
+            onChange={handleExpandGroupsChange}
+            sx={{ mr: 1 }}
+          />
+          <Typography variant='body1' color='texts.info'>
+            Expand all nested items
+          </Typography>
+        </Grid>
+        <Grid display='flex' flexWrap='nowrap'>
+          <AppCheckbox
+            value={fullTitles}
+            onChange={handleFullTitlesChange}
+            sx={{ mr: 1 }}
+          />
           <Typography variant='body1' color='texts.info'>
             Show full names
           </Typography>

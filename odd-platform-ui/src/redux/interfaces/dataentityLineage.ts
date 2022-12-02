@@ -1,8 +1,9 @@
 import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
 import type { DataEntityLineageState } from 'redux/interfaces';
+import { DataEntityLineage } from 'generated-sources';
 
 export interface DataEntityLineageById<
-  NodeT = DataEntityLineageNode,
+  NodeT = GroupedDataEntityLineageNode,
   EdgeT = DataEntityLineageEdge
 > {
   rootNode: NodeT;
@@ -11,7 +12,7 @@ export interface DataEntityLineageById<
 }
 
 export interface DataEntityLineageStreamById<
-  NodeT = DataEntityLineageNode,
+  NodeT = GroupedDataEntityLineageNode,
   EdgeT = DataEntityLineageEdge
 > {
   nodesById: { [nodeId: number]: NodeT };
@@ -20,8 +21,16 @@ export interface DataEntityLineageStreamById<
   crossEdges: EdgeT[];
 }
 
-export interface DataEntityLineageRootNodeId {
+export interface DataEntityLineageRequestParams {
   rootNodeId: number;
+  expandGroups: boolean;
+}
+
+export interface DataEntityLineageResponse {
+  rootNodeId: number;
+  dataEntityId: number;
+  dataEntityLineage: DataEntityLineage;
+  expandGroups?: boolean;
 }
 
 export interface GroupedDataEntityLineageNode extends DataEntityLineageNode {
@@ -36,6 +45,7 @@ export interface LocalLineageState {
   allGroups: DataEntityLineageNode[];
   groupIds: Set<number>;
   excludedIds: Set<number>;
+  idsToExclude: Set<number>;
 }
 
 export interface GroupingUpstreamNodes {
@@ -73,7 +83,7 @@ export interface GroupNodesAndFilterEdgesParams {
 }
 
 export interface GroupedNodesAndFilteredEdges {
-  nodes: DataEntityLineageNode[];
+  nodes: GroupedDataEntityLineageNode[];
   edges: DataEntityLineageEdge[];
   crossEdges: DataEntityLineageEdge[];
 }

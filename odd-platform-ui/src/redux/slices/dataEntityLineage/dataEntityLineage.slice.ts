@@ -7,6 +7,7 @@ import type {
   LocalLineageState,
 } from 'redux/interfaces';
 import { dataEntityLineageActionTypePrefix } from 'redux/actions';
+import { notEmpty } from 'redux/lib/helpers';
 import {
   groupNodesAndFilterEdgesForDownstream,
   groupNodesAndFilterEdgesForUpstream,
@@ -32,6 +33,7 @@ const localUpstreamState: LocalLineageState = {
   allGroups: [],
   groupIds: new Set<number>(),
   excludedIds: new Set<number>(),
+  idsToExclude: new Set<number>(),
 };
 
 const localDownstreamState: LocalLineageState = {
@@ -41,6 +43,7 @@ const localDownstreamState: LocalLineageState = {
   allGroups: [],
   groupIds: new Set<number>(),
   excludedIds: new Set<number>(),
+  idsToExclude: new Set<number>(),
 };
 
 const minGroupSize = 4;
@@ -49,6 +52,74 @@ export const dataEntityLineageSlice = createSlice({
   name: dataEntityLineageActionTypePrefix,
   initialState,
   reducers: {
+    expandAllGroups: (
+      state,
+      {
+        payload,
+      }: {
+        payload: Omit<ExpandEntitiesFromGroupParams['payload'], 'idsToExclude'> & {
+          isExpanded: boolean;
+        };
+      }
+    ): DataEntityLineageState => {
+      const { rootNodeId, isExpanded } = payload;
+
+      localDownstreamState.excludedIds = new Set<number>(
+        !isExpanded ? [rootNodeId] : [...localDownstreamState.idsToExclude]
+      );
+
+      const {
+        nodes: downstreamNodes,
+        edges: downstreamEdges,
+        crossEdges: downstreamCrossEdges,
+      } = groupNodesAndFilterEdgesForDownstream({
+        rootNodeId,
+        localLineageState: localDownstreamState,
+        minGroupSize,
+      });
+
+      const parsedDownstreamLineage = parseDownstreamLineage({
+        state,
+        rootNodeId,
+        nodes: downstreamNodes,
+        edges: downstreamEdges,
+        crossEdges: downstreamCrossEdges,
+        dataEntityLineageInitialState,
+      });
+
+      localUpstreamState.excludedIds = new Set<number>(
+        !isExpanded ? [rootNodeId] : [...localUpstreamState.idsToExclude]
+      );
+
+      const {
+        nodes: upstreamNodes,
+        edges: upstreamEdges,
+        crossEdges: upstreamCrossEdges,
+      } = groupNodesAndFilterEdgesForUpstream({
+        rootNodeId,
+        localLineageState: localUpstreamState,
+        minGroupSize,
+      });
+
+      const parsedUpstreamLineage = parseUpstreamLineage({
+        state,
+        rootNodeId,
+        nodes: upstreamNodes,
+        edges: upstreamEdges,
+        crossEdges: upstreamCrossEdges,
+        dataEntityLineageInitialState,
+      });
+
+      return {
+        ...state,
+        [rootNodeId]: {
+          rootNode: state[rootNodeId]?.rootNode,
+          upstream: { ...parsedUpstreamLineage.upstream },
+          downstream: { ...parsedDownstreamLineage.downstream },
+        },
+      };
+    },
+
     expandEntitiesFromDownstreamGroup: (
       state,
       { payload }: ExpandEntitiesFromGroupParams
@@ -125,7 +196,7 @@ export const dataEntityLineageSlice = createSlice({
     builder.addCase(
       thunks.fetchDataEntityDownstreamLineage.fulfilled,
       (state, { payload }) => {
-        const { rootNodeId, dataEntityId, dataEntityLineage } = payload;
+        const { rootNodeId, dataEntityId, dataEntityLineage, expandGroups } = payload;
         const { root, downstream } = dataEntityLineage;
         const {
           edges: downstreamEdges,
@@ -154,6 +225,23 @@ export const dataEntityLineageSlice = createSlice({
         });
 
         localDownstreamState.excludedIds.add(root.id);
+
+        const idsToExclude = downstreamNodes
+          .map(n => {
+            const groupIds = n.groupIdList;
+            const currentGroupIds = Array.from(localDownstreamState.groupIds);
+            const isNodeInsideGroup = currentGroupIds.some(el => groupIds?.includes(el));
+
+            if (isNodeInsideGroup) return n.id;
+            return null;
+          })
+          .filter(notEmpty);
+
+        idsToExclude.forEach(id => {
+          localDownstreamState.idsToExclude?.add(id);
+
+          if (expandGroups) localDownstreamState.excludedIds.add(id);
+        });
 
         const rootNode = setRootNode(state, rootNodeId, dataEntityId, root);
 
@@ -187,7 +275,7 @@ export const dataEntityLineageSlice = createSlice({
     builder.addCase(
       thunks.fetchDataEntityUpstreamLineage.fulfilled,
       (state, { payload }) => {
-        const { rootNodeId, dataEntityId, dataEntityLineage } = payload;
+        const { rootNodeId, dataEntityId, dataEntityLineage, expandGroups } = payload;
         const { root, upstream } = dataEntityLineage;
         const {
           edges: upstreamEdges,
@@ -216,6 +304,23 @@ export const dataEntityLineageSlice = createSlice({
         });
 
         localUpstreamState.excludedIds.add(root.id);
+
+        const idsToExclude = upstreamNodes
+          .map(n => {
+            const groupIds = n.groupIdList;
+            const currentGroupIds = Array.from(localUpstreamState.groupIds);
+            const isNodeInsideGroup = currentGroupIds.some(el => groupIds?.includes(el));
+
+            if (isNodeInsideGroup) return n.id;
+            return null;
+          })
+          .filter(notEmpty);
+
+        idsToExclude.forEach(id => {
+          localUpstreamState.idsToExclude?.add(id);
+
+          if (expandGroups) localUpstreamState.excludedIds.add(id);
+        });
 
         const rootNode = setRootNode(state, rootNodeId, dataEntityId, root);
 
@@ -248,7 +353,10 @@ export const dataEntityLineageSlice = createSlice({
   },
 });
 
-export const { expandEntitiesFromDownstreamGroup, expandEntitiesFromUpstreamGroup } =
-  dataEntityLineageSlice.actions;
+export const {
+  expandEntitiesFromDownstreamGroup,
+  expandEntitiesFromUpstreamGroup,
+  expandAllGroups,
+} = dataEntityLineageSlice.actions;
 
 export default dataEntityLineageSlice.reducer;
