@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.housekeeping;
 
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static org.opendatadiscovery.oddplatform.model.Tables.ALERT_CHUNK;
 import static org.opendatadiscovery.oddplatform.model.tables.Alert.ALERT;
 import static org.opendatadiscovery.oddplatform.model.tables.SearchFacets.SEARCH_FACETS;
 
@@ -45,15 +46,33 @@ public class HousekeepingJob {
 
             log.debug("Housekeeping job deleted {} outdated search facets", deletedSearchFacets);
 
-            final int deletedResolvedAlerts = dslContext
-                .deleteFrom(ALERT)
+            final List<Long> alertsToDelete = dslContext.select(ALERT.ID)
+                .from(ALERT)
                 .where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.getCode()))
+                .or(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode()))
                 .and(ALERT.STATUS_UPDATED_AT.lessOrEqual(
                     DSL.currentLocalDateTime().minus(housekeepingTTLProperties.getResolvedAlertsDays())))
-                .execute();
+                .fetch(ALERT.ID);
 
-            log.debug("Housekeeping job deleted {} resolved alerts", deletedResolvedAlerts);
-        } catch (final SQLException e) {
+            connection.setAutoCommit(false);
+
+            try {
+                dslContext.deleteFrom(ALERT_CHUNK)
+                    .where(ALERT_CHUNK.ALERT_ID.in(alertsToDelete))
+                    .execute();
+
+                final int deletedResolvedAlerts = dslContext
+                    .deleteFrom(ALERT)
+                    .where(ALERT.ID.in(alertsToDelete))
+                    .execute();
+
+                connection.commit();
+                log.debug("Housekeeping job deleted {} resolved alerts", deletedResolvedAlerts);
+            } catch (final Exception e) {
+                connection.rollback();
+                throw e;
+            }
+        } catch (final Exception e) {
             log.error("Failed to run a housekeeping job", e);
         }
     }

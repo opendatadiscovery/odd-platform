@@ -139,7 +139,6 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
             switch (run.getType()) {
                 case DATA_TRANSFORMER_RUN -> dtr.compute(run.getTaskOddrn(), (oddrn, queue) -> compute(run, queue));
                 case DATA_QUALITY_TEST_RUN ->
-                    // TODO: can NPE occur here?
                     dqtToDatasets.get(run.getTaskOddrn()).forEach(
                         datasetOddrn -> dqt.compute(datasetOddrn, (oddrn, queue) -> compute(run, queue)));
             }
@@ -151,7 +150,7 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
         ));
     }
 
-    // TODO: util method?
+    // TODO: util method in some lib?
     private List<IngestionTaskRun> compute(final IngestionTaskRun run,
                                            final List<IngestionTaskRun> list) {
         if (list == null) {

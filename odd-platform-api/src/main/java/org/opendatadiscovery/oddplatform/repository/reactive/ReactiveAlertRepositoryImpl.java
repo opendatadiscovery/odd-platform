@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
@@ -40,10 +42,11 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static org.jooq.impl.DSL.arrayAgg;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT_CHUNK;
@@ -56,6 +59,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 @Repository
 @RequiredArgsConstructor
 public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
+    private static final String ALERT_CHUNK_FIELD = "alert_chunks";
+
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqQueryHelper jooqQueryHelper;
     private final JooqRecordHelper jooqRecordHelper;
@@ -140,14 +145,18 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
     @Override
     public Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId) {
+        final List<Field<?>> groupByFields = Stream.of(ALERT.fields(), DATA_ENTITY.fields(), OWNER.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
         final SelectConditionStep<Record> query = DSL
-            .select(ALERT.fields())
-            .select(DATA_ENTITY.fields())
-            .select(OWNER.fields())
+            .select(groupByFields)
+            .select(jsonArrayAgg(field(ALERT_CHUNK.asterisk().toString())).as(ALERT_CHUNK_FIELD))
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
+            .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(ALERT.ID))
             .where(DATA_ENTITY.ID.eq(dataEntityId));
 
         return jooqReactiveOperations
@@ -157,8 +166,9 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    public Mono<Page<AlertDto>> listDependentObjectsAlerts(
-        final int page, final int size, final List<String> ownOddrns) {
+    public Mono<Page<AlertDto>> listDependentObjectsAlerts(final int page,
+                                                           final int size,
+                                                           final List<String> ownOddrns) {
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
 
         final SelectConditionStep<Record> baseQuery = DSL.with(cte)
@@ -194,39 +204,6 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .flux(query)
             .map(r -> r.into(String.class))
             .collectList();
-    }
-
-    /**
-     * Gets all child oddrns for the list of oddrns. As the query works recursively
-     * it excludes parents oddrns from the query. So in the final query we have only child oddrns
-     *
-     * @param ownOddrns - parent oddrns
-     * @return - Query for execution
-     */
-    private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
-        final Name cteName = name("t");
-        final Field<String[]> parentOddrnArrayField = DSL.array(LINEAGE.PARENT_ODDRN).as("parent_oddrn_array");
-
-        final SelectOnConditionStep<Record> selectLinage = DSL
-            .select(LINEAGE.asterisk())
-            .select(field("%s || %s".formatted(parentOddrnArrayField, LINEAGE.PARENT_ODDRN)))
-            .from(LINEAGE)
-            .join(cteName)
-            .on(LINEAGE.CHILD_ODDRN.eq(
-                field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))
-            .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)));
-
-        final CommonTableExpression<Record> cte = cteName.as(DSL
-            .select(LINEAGE.asterisk())
-            .select(parentOddrnArrayField)
-            .from(LINEAGE)
-            .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
-            .unionAll(selectLinage));
-
-        return name("t2")
-            .as(DSL.withRecursive(cte)
-                .selectDistinct(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class))
-                .from(cte.getName()));
     }
 
     @Override
@@ -353,9 +330,43 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .map(Record1::value1);
     }
 
+    /**
+     * Gets all child oddrns for the list of oddrns. As the query works recursively
+     * it excludes parents oddrns from the query. So in the final query we have only child oddrns
+     *
+     * @param ownOddrns - parent oddrns
+     * @return - Query for execution
+     */
+    private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
+        final Name cteName = name("t");
+        final Field<String[]> parentOddrnArrayField = DSL.array(LINEAGE.PARENT_ODDRN).as("parent_oddrn_array");
+
+        final SelectOnConditionStep<Record> selectLinage = DSL
+            .select(LINEAGE.asterisk())
+            .select(field("%s || %s".formatted(parentOddrnArrayField, LINEAGE.PARENT_ODDRN)))
+            .from(LINEAGE)
+            .join(cteName)
+            .on(LINEAGE.CHILD_ODDRN.eq(
+                field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))
+            .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)));
+
+        final CommonTableExpression<Record> cte = cteName.as(DSL
+            .select(LINEAGE.asterisk())
+            .select(parentOddrnArrayField)
+            .from(LINEAGE)
+            .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
+            .unionAll(selectLinage));
+
+        return name("t2")
+            .as(DSL.withRecursive(cte)
+                .selectDistinct(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class))
+                .from(cte.getName()));
+    }
+
     private AlertDto mapRecordToDto(final Record r, final String alertCteName) {
         return new AlertDto(
             jooqRecordHelper.remapCte(r, alertCteName, ALERT).into(AlertPojo.class),
+            jooqRecordHelper.extractAggRelation(r, ALERT_CHUNK_FIELD, AlertChunkPojo.class),
             jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class),
             jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class)
         );
@@ -364,22 +375,10 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     private AlertDto mapRecordToDto(final Record r) {
         return new AlertDto(
             jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
+            jooqRecordHelper.extractAggRelation(r, ALERT_CHUNK_FIELD, AlertChunkPojo.class),
             jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class),
             jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class)
         );
-    }
-
-    private SelectOnConditionStep<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
-                                                                 final Table<? extends Record> alertCte) {
-        return DSL.with(alertCte.getName()).as(alertSelect)
-            .select(alertCte.fields())
-            .select(DATA_ENTITY.fields())
-            .select(OWNER.fields())
-            .from(alertCte.getName())
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
-            .leftJoin(USER_OWNER_MAPPING)
-            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
     }
 
     private Pair<Select<?>, String> createAlertJoinQuery(final Select<?> baseQuery, final int offset, final int limit) {
@@ -391,5 +390,25 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
 
         return Pair.of(query, alertCte.getName());
+    }
+
+    private SelectOnConditionStep<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
+                                                                 final Table<? extends Record> alertCte) {
+        final List<Field<?>> groupByFields = Stream.of(alertCte.fields(), DATA_ENTITY.fields(), OWNER.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        // @formatter:off
+        return DSL.with(alertCte.getName()).as(alertSelect)
+            .select(groupByFields)
+            .select(jsonArrayAgg(field(ALERT_CHUNK.asterisk().toString())).as(ALERT_CHUNK_FIELD))
+            .from(alertCte.getName())
+            .join(DATA_ENTITY)
+                .on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
+            .leftJoin(USER_OWNER_MAPPING)
+                .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
+            .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(alertCte.field(ALERT.ID)));
+        // @formatter:on
     }
 }

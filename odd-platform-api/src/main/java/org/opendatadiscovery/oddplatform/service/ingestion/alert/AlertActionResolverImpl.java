@@ -17,11 +17,12 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertHaltConfigPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptyMap;
 import static org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA;
 import static org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum.FAILED_DQ_TEST;
 import static org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum.FAILED_JOB;
+import static org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.AlertUniqueConstraint;
 import static org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.CreateAlertAction;
+import static org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.ResolveAutomaticallyAlertAction;
 import static org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.StackAlertAction;
 
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class AlertActionResolverImpl implements AlertActionResolver {
                 final boolean toHalt = toHalt(haltConfigs.get(e.getKey()), alertType, baseline);
 
                 return resolveTaskRunActions(e.getKey(), e.getValue(), alertType, openAlerts.get(e.getKey()))
-                    .filter(a -> !toHalt || a instanceof AlertAction.ResolveAutomaticallyAlertAction);
+                    .filter(a -> !toHalt || a instanceof ResolveAutomaticallyAlertAction);
             });
     }
 
@@ -92,14 +93,20 @@ public class AlertActionResolverImpl implements AlertActionResolver {
         return candidateToAction(c, null);
     }
 
-    private AlertAction candidateToAction(final AlertBISCandidate c, final Long alertId) {
+    private AlertAction candidateToAction(final AlertBISCandidate candidate, final Long alertId) {
         if (alertId == null) {
+            final AlertPojo alert = buildAlert(candidate.dataEntityOddrn(), BACKWARDS_INCOMPATIBLE_SCHEMA, null);
+            final AlertChunkPojo chunk = new AlertChunkPojo().setDescription(candidate.description());
+
             return new CreateAlertAction(
-                buildAlert(c.dataEntityOddrn(), BACKWARDS_INCOMPATIBLE_SCHEMA, null, c.description()),
-                emptyMap());
+                alert,
+                Map.of(AlertUniqueConstraint.fromAlert(alert), List.of(chunk))
+            );
         }
 
-        return new StackAlertAction(new AlertChunkPojo().setAlertId(alertId).setDescription(c.description()));
+        return new StackAlertAction(new AlertChunkPojo()
+            .setAlertId(alertId)
+            .setDescription(candidate.description()));
     }
 
     private boolean toHalt(final AlertHaltConfigPojo haltCfg,
@@ -120,16 +127,13 @@ public class AlertActionResolverImpl implements AlertActionResolver {
     }
 
     // TODO: duplicate
-    // TODO: do not store descriptions in alert table
     private AlertPojo buildAlert(final String dataEntityOddrn,
                                  final AlertTypeEnum alertType,
-                                 final String messengerOddrn,
-                                 final String description) {
+                                 final String messengerOddrn) {
         final LocalDateTime now = now();
 
         return new AlertPojo()
             .setDataEntityOddrn(dataEntityOddrn)
-            .setDescription(description)
             .setMessengerEntityOddrn(messengerOddrn)
             .setType(alertType.getCode())
             .setStatus(AlertStatusEnum.OPEN.getCode())
