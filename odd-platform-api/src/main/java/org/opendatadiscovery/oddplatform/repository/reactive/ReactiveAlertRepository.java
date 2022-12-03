@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveAlertRepository {
@@ -98,9 +99,9 @@ public interface ReactiveAlertRepository {
      * Creates new alerts.
      *
      * @param alerts - List of new alerts
-     * @return - List of {@link AlertPojo}
+     * @return - Flux of {@link AlertPojo}
      */
-    Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alerts);
+    Flux<AlertPojo> createAlerts(final Collection<AlertPojo> alerts);
 
     Mono<Void> createChunks(final List<AlertChunkPojo> chunks);
 

@@ -6,11 +6,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
@@ -26,12 +28,15 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
+import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.AlertUniqueConstraint;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AlertServiceImpl implements AlertService {
     private static final DateTimeFormatter ALERT_MANAGER_TIME_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -109,7 +114,6 @@ public class AlertServiceImpl implements AlertService {
 
             return new AlertPojo()
                 .setLastCreatedAt(now)
-//                .setCreatedAts(new LocalDateTime[] {now})
                 .setStatusUpdatedAt(now)
                 .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.getCode())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
@@ -137,29 +141,42 @@ public class AlertServiceImpl implements AlertService {
     @Override
     @ReactiveTransactional
     public Mono<Void> applyAlertActions(final List<AlertAction> alertActions) {
-        final List<AlertPojo> toCreate = new ArrayList<>();
-        final List<Long> toResolve = new ArrayList<>();
-        final List<AlertChunkPojo> toStack = new ArrayList<>();
+        final List<AlertPojo> alertsToCreate = new ArrayList<>();
+        final List<Long> idsToResolve = new ArrayList<>();
+        final List<AlertChunkPojo> chunks = new ArrayList<>();
+        final Map<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks = new HashMap<>();
 
-        alertActions.forEach(action -> {
-            // TODO: create
-            if (action instanceof AlertAction.CreateAlertAction a) {
-                toCreate.add(a.getAlertPojo());
-            }
-
+        for (final AlertAction action : alertActions) {
             if (action instanceof AlertAction.ResolveAutomaticallyAlertAction a) {
-                toResolve.add(a.getAlertId());
+                idsToResolve.add(a.getAlertId());
             }
 
             if (action instanceof AlertAction.StackAlertAction a) {
-                toStack.addAll(a.getChunks());
+                chunks.addAll(a.getChunks());
             }
-        });
 
-        return Mono.zip(
-            alertRepository.resolveAutomatically(toResolve),
-            alertRepository.createChunks(toStack)
-        ).then();
+            if (action instanceof AlertAction.CreateAlertAction a) {
+                alertsToCreate.add(a.getAlertPojo());
+                alertToChunks.putAll(a.getChunks());
+            }
+        }
+
+        return alertRepository.createAlerts(alertsToCreate)
+            .flatMap(createdAlert -> {
+                final List<AlertChunkPojo> createdAlertChunks =
+                    alertToChunks.get(AlertUniqueConstraint.fromAlert(createdAlert));
+
+                if (createdAlertChunks == null) {
+                    return Flux.error(new IllegalStateException("Alert chunks are empty for created alert"));
+                }
+
+                return Flux.fromStream(createdAlertChunks.stream()
+                    .map(c -> new AlertChunkPojo(c).setAlertId(createdAlert.getId())));
+            })
+            .mergeWith(Flux.fromIterable(chunks))
+            .collectList()
+            .flatMap(alertRepository::createChunks)
+            .then(alertRepository.resolveAutomatically(idsToResolve));
     }
 
     @Override
@@ -174,7 +191,7 @@ public class AlertServiceImpl implements AlertService {
         final List<AlertPojo> alertPojos = alerts.stream()
             .filter(a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
             .toList();
-        return alertRepository.createAlerts(alertPojos);
-    }
 
+        return alertRepository.createAlerts(alertPojos).collectList();
+    }
 }

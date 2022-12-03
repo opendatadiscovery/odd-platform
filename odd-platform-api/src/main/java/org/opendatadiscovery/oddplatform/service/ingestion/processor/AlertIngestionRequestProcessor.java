@@ -19,6 +19,7 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngesti
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.repository.AlertHaltConfigRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.service.AlertLocator;
 import org.opendatadiscovery.oddplatform.service.AlertService;
@@ -41,6 +42,7 @@ import static reactor.function.TupleUtils.function;
 public class AlertIngestionRequestProcessor implements IngestionRequestProcessor {
     private final ReactiveDataQualityTestRelationRepository dataQualityTestRelationRepository;
     private final AlertActionResolverFactory alertActionResolverFactory;
+    private final AlertHaltConfigRepository alertHaltConfigRepository;
     private final AlertLocator alertLocator;
     private final AlertService alertService;
 
@@ -49,10 +51,11 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
         return Mono.defer(() -> getAlertStateSnapshotKey(request))
             .flatMap(stateSnapshotKey -> alertService
                 .getOpenAlertsForEntities(stateSnapshotKey.dataEntityOddrns())
-                .map(openAlerts -> Tuples.of(
-                    alertActionResolverFactory.create(openAlerts),
+                .zipWith(alertHaltConfigRepository.getByOddrns(stateSnapshotKey.dataEntityOddrns()))
+                .map(function((openAlerts, haltConfigs) -> Tuples.of(
+                    alertActionResolverFactory.create(openAlerts, haltConfigs),
                     stateSnapshotKey.dqtToDataset()
-                )))
+                ))))
             .flatMapMany(function((alertActionResolver, dqtToDatasets) -> alertLocator
                 .getAlertBISCandidates(request.getSpecificAttributesDeltas(), request.getChangedDatasetIds())
                 .collectList()
@@ -89,7 +92,7 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
             }
         }
 
-        // Trying to map data quality test runs to target datasets using information from IngestionRequest.
+        // Trying to map data quality test runs to target datasets using information from IngestionRequest
         for (final EnrichedDataEntityIngestionDto entity : request.getAllEntities()) {
             final DataQualityTestIngestionDto dataQualityTest = entity.getDataQualityTest();
 
@@ -125,6 +128,10 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
     private Flux<AlertAction> actionsForIngestionTaskRuns(final AlertActionResolver alertActionResolver,
                                                           final List<IngestionTaskRun> taskRuns,
                                                           final Map<String, Collection<String>> dqtToDatasets) {
+        if (CollectionUtils.isEmpty(taskRuns)) {
+            return Flux.just();
+        }
+
         final Map<String, List<IngestionTaskRun>> dtr = new HashMap<>();
         final Map<String, List<IngestionTaskRun>> dqt = new HashMap<>();
 

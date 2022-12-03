@@ -37,6 +37,7 @@ import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
@@ -288,9 +289,9 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    public Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alertPojos) {
+    public Flux<AlertPojo> createAlerts(final Collection<AlertPojo> alertPojos) {
         if (alertPojos.isEmpty()) {
-            return Mono.just(emptyList());
+            return Flux.just();
         }
 
         final List<AlertRecord> alertRecords =
@@ -305,8 +306,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         return jooqReactiveOperations.flux(insertStep.set(alertRecords.get(alertRecords.size() - 1))
                 .onDuplicateKeyIgnore()
                 .returning(ALERT.fields()))
-            .map(r -> r.into(AlertPojo.class))
-            .collectList();
+            .map(r -> r.into(AlertPojo.class));
     }
 
     @Override

@@ -52,14 +52,13 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
 
-        final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert));
+        final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert)).collectList();
 
         createdAlerts.as(StepVerifier::create)
             .assertNext(alertPojos -> assertThat(alertPojos)
                 .hasSize(1)
                 .allSatisfy(alertPojo -> {
                     assertThat(alertPojo.getId()).isNotNull();
-                    assertThat(alertPojo.getDescription()).isEqualTo(firstAlert.getDescription());
                     assertThat(alertPojo.getType()).isEqualTo(firstAlert.getType());
                     assertThat(alertPojo.getStatusUpdatedAt()).isNotNull();
                     assertThat(alertPojo.getLastCreatedAt()).isNotNull();
@@ -77,7 +76,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final AlertPojo alertPojo = alertRepository.createAlerts(List.of(firstAlert)).block().get(0);
+        final AlertPojo alertPojo = alertRepository.createAlerts(List.of(firstAlert)).collectList().block().get(0);
         final String updatingUser = "user";
 
         alertRepository.updateAlertStatus(alertPojo.getId(), AlertStatusEnum.RESOLVED, updatingUser)
@@ -104,10 +103,14 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
 
-        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(openPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(7))
             .verifyComplete();
-        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(resolvedPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(3))
             .verifyComplete();
         final Comparator<AlertDto> comparator = getAlertsComparator();
@@ -143,10 +146,14 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(openPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(4))
             .verifyComplete();
-        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(resolvedPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(3))
             .verifyComplete();
         final Comparator<AlertDto> comparator = getAlertsComparator();
@@ -175,8 +182,8 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        final List<AlertPojo> resolvedAlerts = alertRepository.createAlerts(resolvedPojos).block();
-        final List<AlertPojo> openAlerts = alertRepository.createAlerts(openPojos).block();
+        final List<AlertPojo> resolvedAlerts = alertRepository.createAlerts(resolvedPojos).collectList().block();
+        final List<AlertPojo> openAlerts = alertRepository.createAlerts(openPojos).collectList().block();
 
         alertRepository.getAlertsByDataEntityId(dataEntityPojo.getId())
             .as(StepVerifier::create)
@@ -218,7 +225,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final List<AlertPojo> alerts = alertRepository.createAlerts(List.of(
             createAlertPojo(dataEntityPojos.get(0).getOddrn()), createAlertPojo(dataEntityPojos.get(1).getOddrn()),
             createAlertPojo(dataEntityPojos.get(2).getOddrn()), createAlertPojo(dataEntityPojos.get(3).getOddrn())
-        )).block();
+        )).collectList().block();
         final List<String> objByOwnerList = alertRepository.getObjectsOddrnsByOwner(ownerPojo.getId()).block();
 
         alertRepository.listDependentObjectsAlerts(1, 10, objByOwnerList).as(StepVerifier::create)
@@ -274,7 +281,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             createAlertPojo(dataEntityPojos.get(6).getOddrn()), createAlertPojo(dataEntityPojos.get(7).getOddrn()),
             createAlertPojo(dataEntityPojos.get(0).getOddrn(), AlertStatusEnum.RESOLVED),
             createAlertPojo(dataEntityPojos.get(4).getOddrn(), AlertStatusEnum.RESOLVED)
-        )).block();
+        )).collectList().block();
         final List<String> objByOwnerList = alertRepository.getObjectsOddrnsByOwner(ownerPojo.getId()).block();
 
         alertRepository.listDependentObjectsAlerts(1, 10, objByOwnerList).as(StepVerifier::create)
@@ -305,10 +312,14 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 7);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(openPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(7))
             .verifyComplete();
-        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(resolvedPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(3))
             .verifyComplete();
 
@@ -332,10 +343,14 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(openPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(4))
             .verifyComplete();
-        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+        alertRepository.createAlerts(resolvedPojos)
+            .collectList()
+            .as(StepVerifier::create)
             .assertNext(a -> assertThat(a).hasSize(3))
             .verifyComplete();
 
@@ -370,7 +385,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         alertRepository.createAlerts(List.of(
             createAlertPojo(dataEntityPojos.get(0).getOddrn()), createAlertPojo(dataEntityPojos.get(1).getOddrn()),
             createAlertPojo(dataEntityPojos.get(2).getOddrn()), createAlertPojo(dataEntityPojos.get(3).getOddrn())
-        )).block();
+        )).collectList().block();
         final List<String> objByOwnerList = alertRepository.getObjectsOddrnsByOwner(ownerPojo.getId()).block();
 
         alertRepository.countDependentObjectsAlerts(objByOwnerList)
@@ -394,7 +409,6 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     private AlertPojo createAlertPojo(final String dataEntityOddrn, final AlertStatusEnum status) {
         return new AlertPojo()
             .setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode())
-            .setDescription(UUID.randomUUID().toString())
             .setStatus(status.getCode())
             .setDataEntityOddrn(dataEntityOddrn)
             .setStatusUpdatedAt(LocalDateTime.now());

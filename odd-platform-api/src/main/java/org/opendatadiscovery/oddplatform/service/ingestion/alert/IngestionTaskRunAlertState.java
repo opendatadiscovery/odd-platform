@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service.ingestion.alert;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
@@ -13,7 +14,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
 import static java.time.LocalDateTime.now;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
-import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunType;
 
 @Slf4j
 public class IngestionTaskRunAlertState {
@@ -33,28 +33,23 @@ public class IngestionTaskRunAlertState {
     private boolean lastAlertIdActive;
 
     private AlertPojo currentAlert;
-    private final List<String> currentAlertChunkDescriptions = new ArrayList<>();
+    private final List<AlertChunkPojo> currentAlertChunkDescriptions = new ArrayList<>();
 
-    public IngestionTaskRunAlertState(final String dataEntityOddrn, final IngestionTaskRunType taskRunType) {
+    public IngestionTaskRunAlertState(final String dataEntityOddrn, final AlertTypeEnum alertType) {
         this.dataEntityOddrn = dataEntityOddrn;
+        this.alertType = alertType;
 
-        switch (taskRunType) {
-            case DATA_TRANSFORMER_RUN -> {
-                this.descriptionFormat = "Job %s failed with status %s";
-                this.alertType = AlertTypeEnum.FAILED_JOB;
-            }
-            case DATA_QUALITY_TEST_RUN -> {
-                this.descriptionFormat = "Test %s failed with status %s";
-                this.alertType = AlertTypeEnum.FAILED_DQ_TEST;
-            }
-            default -> throw new IllegalStateException("Unknown task run type: %s".formatted(taskRunType));
-        }
+        this.descriptionFormat = switch (alertType) {
+            case FAILED_JOB -> "Job %s failed with status %s";
+            case FAILED_DQ_TEST -> "Test %s failed with status %s";
+            default -> throw new IllegalStateException("Unknown alert type: %s".formatted(alertType));
+        };
     }
 
     public IngestionTaskRunAlertState(final String dataEntityOddrn,
-                                      final IngestionTaskRunType taskRunType,
+                                      final AlertTypeEnum alertType,
                                       final long lastAlertId) {
-        this(dataEntityOddrn, taskRunType);
+        this(dataEntityOddrn, alertType);
 
         this.lastAlertId = lastAlertId;
         this.lastAlertIdActive = true;
@@ -82,7 +77,10 @@ public class IngestionTaskRunAlertState {
         }
 
         if (currentAlert != null) {
-            actions.add(new AlertAction.CreateAlertAction(currentAlert, currentAlertChunkDescriptions));
+            actions.add(new AlertAction.CreateAlertAction(
+                currentAlert,
+                Map.of(AlertAction.AlertUniqueConstraint.fromAlert(currentAlert), currentAlertChunkDescriptions)
+            ));
         }
 
         return actions;
@@ -96,9 +94,11 @@ public class IngestionTaskRunAlertState {
 
         if (currentAlert != null) {
             currentAlert.setStatus(AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode());
-            actions.add(new AlertAction.CreateAlertAction(currentAlert, currentAlertChunkDescriptions));
+            actions.add(new AlertAction.CreateAlertAction(
+                currentAlert,
+                Map.of(AlertAction.AlertUniqueConstraint.fromAlert(currentAlert), currentAlertChunkDescriptions)
+            ));
             currentAlert = null;
-            currentAlertChunkDescriptions.clear();
         }
     }
 
@@ -116,8 +116,12 @@ public class IngestionTaskRunAlertState {
                 buildDescription(taskRun)
             );
         } else {
-            currentAlertChunkDescriptions.add(buildDescription(taskRun));
+            currentAlertChunkDescriptions.add(buildAlertChunk(taskRun));
         }
+    }
+
+    private AlertChunkPojo buildAlertChunk(final IngestionTaskRun taskRun) {
+        return new AlertChunkPojo().setDescription(buildDescription(taskRun));
     }
 
     private String buildDescription(final IngestionTaskRun taskRun) {
