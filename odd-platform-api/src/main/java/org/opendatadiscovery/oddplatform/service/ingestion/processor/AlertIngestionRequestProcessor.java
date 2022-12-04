@@ -67,7 +67,8 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
 
     @Override
     public boolean shouldProcess(final IngestionRequest request) {
-        return true;
+        return CollectionUtils.isNotEmpty(request.getTaskRuns()) ||
+            CollectionUtils.isNotEmpty(request.getExistingEntities());
     }
 
     @Override
@@ -77,8 +78,9 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
 
     private Mono<AlertStateSnapshotKey> getAlertStateSnapshotKey(final IngestionRequest request) {
         if (CollectionUtils.isEmpty(request.getTaskRuns())) {
-            return Mono.fromCallable(request::getChangedDatasetOddrns)
-                .map(oddrns -> new AlertStateSnapshotKey(oddrns, emptyMap()));
+            return CollectionUtils.isNotEmpty(request.getChangedDatasetOddrns())
+                ? Mono.fromCallable(request::getChangedDatasetOddrns).map(AlertStateSnapshotKey::fromOddrns)
+                : Mono.empty();
         }
 
         final Set<String> alertDEOddrns = new HashSet<>(request.getChangedDatasetOddrns());
@@ -138,9 +140,8 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
         for (final IngestionTaskRun run : taskRuns) {
             switch (run.getType()) {
                 case DATA_TRANSFORMER_RUN -> dtr.compute(run.getTaskOddrn(), (oddrn, queue) -> compute(run, queue));
-                case DATA_QUALITY_TEST_RUN ->
-                    dqtToDatasets.get(run.getTaskOddrn()).forEach(
-                        datasetOddrn -> dqt.compute(datasetOddrn, (oddrn, queue) -> compute(run, queue)));
+                case DATA_QUALITY_TEST_RUN -> dqtToDatasets.get(run.getTaskOddrn()).forEach(
+                    datasetOddrn -> dqt.compute(datasetOddrn, (oddrn, queue) -> compute(run, queue)));
             }
         }
 
@@ -165,5 +166,8 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
 
     private record AlertStateSnapshotKey(Collection<String> dataEntityOddrns,
                                          Map<String, Collection<String>> dqtToDataset) {
+        public static AlertStateSnapshotKey fromOddrns(final Collection<String> oddrns) {
+            return new AlertStateSnapshotKey(oddrns, emptyMap());
+        }
     }
 }

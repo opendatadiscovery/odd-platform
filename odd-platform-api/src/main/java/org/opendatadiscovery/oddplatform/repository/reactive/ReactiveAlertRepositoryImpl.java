@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -21,6 +22,7 @@ import org.jooq.Record1;
 import org.jooq.Row2;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectHavingStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
@@ -78,29 +80,13 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()))
             // While BIS and FDT type of alerts usually are engaged in one ingestion request
             //  FDQT type more likely can be reported from various data sources.
-            //  In such cases 'for update' clause prevents races
+            //  In such cases 'for update' clause prevents potential concurrent issues
             .forUpdate();
 
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(AlertPojo.class))
             .collectList()
-            .map(alerts -> {
-                final Map<String, Map<Short, AlertPojo>> result = new HashMap<>();
-                for (final AlertPojo alert : alerts) {
-                    result.compute(alert.getDataEntityOddrn(), (k, v) -> {
-                        if (v == null) {
-                            final HashMap<Short, AlertPojo> vv = new HashMap<>();
-                            vv.putIfAbsent(alert.getType(), alert);
-                            return vv;
-                        }
-
-                        v.putIfAbsent(alert.getType(), alert);
-                        return v;
-                    });
-                }
-
-                return result;
-            });
+            .map(this::mapOpenAlerts);
     }
 
     @Override
@@ -148,7 +134,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .flatMap(Arrays::stream)
             .toList();
 
-        final SelectConditionStep<Record> query = DSL
+        final SelectHavingStep<Record> query = DSL
             .select(groupByFields)
             .select(jsonArrayAgg(field(ALERT_CHUNK.asterisk().toString())).as(ALERT_CHUNK_FIELD))
             .from(ALERT)
@@ -156,7 +142,8 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
             .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(ALERT.ID))
-            .where(DATA_ENTITY.ID.eq(dataEntityId));
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .groupBy(groupByFields);
 
         return jooqReactiveOperations
             .flux(query)
@@ -417,5 +404,23 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
             .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(alertCte.field(ALERT.ID)));
         // @formatter:on
+    }
+
+    private Map<String, Map<Short, AlertPojo>> mapOpenAlerts(final List<AlertPojo> alerts) {
+        final Map<String, Map<Short, AlertPojo>> result = new HashMap<>();
+        for (final AlertPojo alert : alerts) {
+            result.compute(alert.getDataEntityOddrn(), (k, v) -> {
+                if (v == null) {
+                    final HashMap<Short, AlertPojo> vv = new HashMap<>();
+                    vv.putIfAbsent(alert.getType(), alert);
+                    return vv;
+                }
+
+                v.putIfAbsent(alert.getType(), alert);
+                return v;
+            });
+        }
+
+        return result;
     }
 }
