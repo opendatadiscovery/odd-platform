@@ -29,10 +29,6 @@ public abstract class AlertAction {
     public static class StackAlertAction extends AlertAction {
         @Getter
         private final List<AlertChunkPojo> chunks;
-
-        public StackAlertAction(final AlertChunkPojo singleChunk) {
-            this(singletonList(singleChunk));
-        }
     }
 
     // Unique constraint on Alert table

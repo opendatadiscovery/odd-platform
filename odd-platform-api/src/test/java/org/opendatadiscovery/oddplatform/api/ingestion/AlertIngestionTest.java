@@ -96,9 +96,8 @@ public class AlertIngestionTest extends BaseIngestionTest {
             assertThat(actual.getVersionList().get(1).getVersion()).isEqualTo(2);
         });
 
-        // Assert that two alerts were created as 2 fields were removed from the schema
-
-        assertAlerts(foundEntityId, 2, AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA);
+        // Assert that alerts were created as 2 fields were removed from the schema
+        assertAlerts(foundEntityId, 1, 2, AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA);
     }
 
     /**
@@ -147,22 +146,22 @@ public class AlertIngestionTest extends BaseIngestionTest {
         });
 
         // no alerts are expected as the job is successful
-        assertAlerts(jobId, 0, AlertType.FAILED_JOB);
+        assertAlerts(jobId, 0, 0, AlertType.FAILED_JOB);
 
         jobRun.getDataTransformerRun().setStatus(JobRunStatus.FAILED);
         ingestAndAssert(dataEntityList);
 
-        assertAlerts(jobId, 1, AlertType.FAILED_JOB);
+        assertAlerts(jobId, 1, 1, AlertType.FAILED_JOB);
 
         jobRun.getDataTransformerRun().setStatus(JobRunStatus.BROKEN);
         ingestAndAssert(dataEntityList);
 
-        assertAlerts(jobId, 2, AlertType.FAILED_JOB);
+        assertAlerts(jobId, 1, 2, AlertType.FAILED_JOB);
 
         jobRun.getDataTransformerRun().setStatus(JobRunStatus.SUCCESS);
         ingestAndAssert(dataEntityList);
 
-        assertAlerts(jobId, 2, AlertType.FAILED_JOB);
+        assertAlerts(jobId, 1, 2, AlertType.FAILED_JOB, AlertStatus.RESOLVED_AUTOMATICALLY);
     }
 
     @Test
@@ -240,13 +239,12 @@ public class AlertIngestionTest extends BaseIngestionTest {
                 }
             });
 
-        assertAlerts(ingestionMap.get(dataset.getOddrn()), 0, AlertType.FAILED_DQ_TEST);
+        assertAlerts(ingestionMap.get(dataset.getOddrn()), 0, 0, AlertType.FAILED_DQ_TEST);
         dataQualityTestRun.getDataQualityTestRun().setStatus(QualityRunStatus.FAILED);
         ingestAndAssert(dataEntityList);
-        assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, AlertType.FAILED_DQ_TEST);
+        assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, 1, AlertType.FAILED_DQ_TEST);
     }
 
-    // TODO: i'd add a javadoc explaining what is going on here
     @Test
     @DisplayName("Simple resolve of an alert 'Failed DQ Test'")
     public void simpleAlertResolvingTestForDQ() {
@@ -283,7 +281,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
 
         final Map<String, Long> ingestionMap = extractIngestedEntitiesAndAssert(createdDataSource, 2);
 
-        assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, AlertType.FAILED_DQ_TEST);
+        assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, 1, AlertType.FAILED_DQ_TEST);
 
         final DataEntity successDataQualityTestRun = IngestionModelGenerator
             .generateSimpleDataEntity(DataEntityType.JOB_RUN)
@@ -300,7 +298,8 @@ public class AlertIngestionTest extends BaseIngestionTest {
             .items(List.of(successDataQualityTestRun))
         );
 
-        assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, AlertType.FAILED_DQ_TEST, AlertStatus.RESOLVED);
+        assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, 1, AlertType.FAILED_DQ_TEST,
+            AlertStatus.RESOLVED_AUTOMATICALLY);
     }
 
     @Test
@@ -332,7 +331,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
 
         final long dtId = extractIngestedEntityIdAndAssert(createdDataSource);
 
-        assertAlerts(dtId, 1, AlertType.FAILED_JOB);
+        assertAlerts(dtId, 1, 1, AlertType.FAILED_JOB);
 
         final DataEntity successfulJobRun = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
             .dataTransformerRun(new DataTransformerRun()
@@ -347,17 +346,19 @@ public class AlertIngestionTest extends BaseIngestionTest {
             .items(List.of(job, successfulJobRun))
         );
 
-        assertAlerts(dtId, 1, AlertType.FAILED_JOB, AlertStatus.RESOLVED);
+        assertAlerts(dtId, 1, 1, AlertType.FAILED_JOB, AlertStatus.RESOLVED_AUTOMATICALLY);
     }
 
     private void assertAlerts(final long dataEntityId,
                               final int expectedAlertsCount,
+                              final int expectedChunksCount,
                               final AlertType expectedAlertType) {
-        assertAlerts(dataEntityId, expectedAlertsCount, expectedAlertType, AlertStatus.OPEN);
+        assertAlerts(dataEntityId, expectedAlertsCount, expectedChunksCount, expectedAlertType, AlertStatus.OPEN);
     }
 
     private void assertAlerts(final long dataEntityId,
                               final int expectedAlertsCount,
+                              final int expectedChunksCount,
                               final AlertType expectedAlertType,
                               final AlertStatus expectedAlertStatus) {
         webTestClient.get()
@@ -370,6 +371,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
                 actual.getItems().forEach(alert -> {
                     assertThat(alert.getType()).isEqualTo(expectedAlertType);
                     assertThat(alert.getStatus()).isEqualTo(expectedAlertStatus);
+                    assertThat(alert.getAlertChunkList()).hasSize(expectedChunksCount);
                 });
             });
     }

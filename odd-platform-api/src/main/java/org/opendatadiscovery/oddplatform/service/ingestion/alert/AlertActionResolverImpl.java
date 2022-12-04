@@ -17,6 +17,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertHaltConfigPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
 import static java.time.LocalDateTime.now;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA;
 import static org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum.FAILED_DQ_TEST;
 import static org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum.FAILED_JOB;
@@ -57,14 +59,19 @@ public class AlertActionResolverImpl implements AlertActionResolver {
         }
 
         return candidates.stream()
-            .map(c -> {
-                final Map<Short, AlertPojo> alertDict = openAlerts.get(c.dataEntityOddrn());
+            .collect(groupingBy(AlertBISCandidate::dataEntityOddrn, toList()))
+            .entrySet()
+            .stream()
+            .map(e -> {
+                final Map<Short, AlertPojo> alertDict = openAlerts.get(e.getKey());
                 if (alertDict == null) {
-                    return candidateToAction(c);
+                    return candidateToAction(e.getKey(), e.getValue());
                 }
                 final AlertPojo lastAlert = alertDict.get(BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
 
-                return lastAlert != null ? candidateToAction(c, lastAlert.getId()) : candidateToAction(c);
+                return lastAlert != null
+                    ? candidateToAction(e.getKey(), e.getValue(), lastAlert.getId())
+                    : candidateToAction(e.getKey(), e.getValue());
             });
     }
 
@@ -88,24 +95,27 @@ public class AlertActionResolverImpl implements AlertActionResolver {
         return state.getActions().stream();
     }
 
-    private AlertAction candidateToAction(final AlertBISCandidate c) {
-        return candidateToAction(c, null);
+    private AlertAction candidateToAction(final String dataEntityOddrn, final List<AlertBISCandidate> candidates) {
+        return candidateToAction(dataEntityOddrn, candidates, null);
     }
 
-    private AlertAction candidateToAction(final AlertBISCandidate candidate, final Long alertId) {
+    private AlertAction candidateToAction(final String dataEntityOddrn,
+                                          final List<AlertBISCandidate> candidates,
+                                          final Long alertId) {
+        final List<AlertChunkPojo> chunks = candidates.stream()
+            .map(c -> new AlertChunkPojo().setDescription(c.description()))
+            .toList();
+
         if (alertId == null) {
-            final AlertPojo alert = buildAlert(candidate.dataEntityOddrn(), BACKWARDS_INCOMPATIBLE_SCHEMA, null);
-            final AlertChunkPojo chunk = new AlertChunkPojo().setDescription(candidate.description());
+            final AlertPojo alert = buildAlert(dataEntityOddrn, BACKWARDS_INCOMPATIBLE_SCHEMA, null);
 
             return new CreateAlertAction(
                 alert,
-                Map.of(AlertUniqueConstraint.fromAlert(alert), List.of(chunk))
+                Map.of(AlertUniqueConstraint.fromAlert(alert), chunks)
             );
         }
 
-        return new StackAlertAction(new AlertChunkPojo()
-            .setAlertId(alertId)
-            .setDescription(candidate.description()));
+        return new StackAlertAction(chunks);
     }
 
     private boolean toHalt(final AlertHaltConfigPojo haltCfg,
