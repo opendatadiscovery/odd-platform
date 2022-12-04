@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertChunk;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
@@ -16,6 +17,7 @@ import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +48,10 @@ public abstract class AlertMapper {
     @Mapping(source = "alert", target = ".")
     @Mapping(source = "alertDto", target = "statusUpdatedBy", qualifiedByName = "statusUpdatedBy")
     @Mapping(source = "alertDto", target = "dataEntity", qualifiedByName = "dataEntity")
+    @Mapping(source = "chunks", target = "alertChunkList")
     abstract Alert mapAlert(final AlertDto alertDto);
+
+    abstract AlertChunk mapAlertChunk(final AlertChunkPojo alertChunkPojo);
 
     public AlertType mapType(final Short code) {
         return AlertTypeEnum.fromCode(code)

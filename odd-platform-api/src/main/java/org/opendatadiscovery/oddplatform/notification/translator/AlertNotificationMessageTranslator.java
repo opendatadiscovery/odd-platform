@@ -54,7 +54,10 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
 
     @Override
     public AlertNotificationMessage translate(final DecodedWALMessage message) {
-        final String alertDescription = message.getColumnValue(ALERT.DESCRIPTION.getName());
+        // TODO: fuck
+//        final String alertDescription = message.getColumnValue(ALERT.DESCRIPTION.getName());
+
+        final String alertDescription = "";
         final String dataEntityOddrn = message.getColumnValue(ALERT.DATA_ENTITY_ODDRN.getName());
         final String status = message.getColumnValue(ALERT.STATUS.getName());
         final String updatedBy = message.getColumnValue(ALERT.STATUS_UPDATED_BY.getName());

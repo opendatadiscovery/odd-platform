@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +74,7 @@ public class OwnerAssociationRequestMapperTest {
         final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, null);
 
         when(associatedOwnerMapper.mapAssociatedOwner(null)).thenReturn(null);
-        when(offsetDateTimeMapper.map(null)).thenReturn(null);
+        when(offsetDateTimeMapper.mapLocalDateTime(null)).thenReturn(null);
         final OwnerAssociationRequest request = mapper.mapToOwnerAssociationRequest(dto);
         assertThat(request.getId()).isEqualTo(pojo.getId());
         assertThat(request.getUsername()).isEqualTo(pojo.getUsername());
@@ -99,7 +98,7 @@ public class OwnerAssociationRequestMapperTest {
             .identity(new Identity().username(pojo.getUsername()))
             .owner(new Owner().name(updatedUserOwnerName));
         when(associatedOwnerMapper.mapAssociatedOwner(ownerDto)).thenReturn(identity);
-        when(offsetDateTimeMapper.map(pojo.getStatusUpdatedAt())).thenReturn(offsetDateTime);
+        when(offsetDateTimeMapper.mapLocalDateTime(pojo.getStatusUpdatedAt())).thenReturn(offsetDateTime);
         final OwnerAssociationRequest request = mapper.mapToOwnerAssociationRequest(dto);
         assertThat(request.getId()).isEqualTo(pojo.getId());
         assertThat(request.getUsername()).isEqualTo(pojo.getUsername());

@@ -43,7 +43,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyMap;
-import static org.jooq.impl.DSL.arrayAgg;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
@@ -258,6 +257,10 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
     @Override
     public Mono<Void> resolveAutomatically(final List<Long> alertIds) {
+        if (CollectionUtils.isEmpty(alertIds)) {
+            return Mono.empty();
+        }
+
         final var resolveQuery = DSL.update(ALERT)
             .set(ALERT.STATUS, AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode())
             .where(ALERT.ID.in(alertIds));
@@ -288,6 +291,10 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
     @Override
     public Mono<Void> createChunks(final List<AlertChunkPojo> chunks) {
+        if (CollectionUtils.isEmpty(chunks)) {
+            return Mono.empty();
+        }
+
         return jooqReactiveOperations.executeInPartition(chunks, cc -> {
             final List<Row2<Long, String>> rows = cc.stream()
                 .map(c -> DSL.row(c.getAlertId(), c.getDescription()))

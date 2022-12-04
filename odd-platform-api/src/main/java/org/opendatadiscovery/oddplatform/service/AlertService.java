@@ -26,8 +26,6 @@ public interface AlertService {
 
     Mono<AlertList> listDependentObjectsAlerts(int page, int size);
 
-    Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts);
-
     Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(final Collection<String> dataEntityOddrns);
 
     Mono<Void> applyAlertActions(final List<AlertAction> alertActions);

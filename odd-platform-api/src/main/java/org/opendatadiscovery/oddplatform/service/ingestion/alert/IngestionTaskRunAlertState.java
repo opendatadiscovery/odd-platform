@@ -90,6 +90,7 @@ public class IngestionTaskRunAlertState {
         if (lastAlertIdActive) {
             actions.add(new AlertAction.ResolveAutomaticallyAlertAction(lastAlertId));
             lastAlertIdActive = false;
+            return;
         }
 
         if (currentAlert != null) {
@@ -112,12 +113,11 @@ public class IngestionTaskRunAlertState {
             currentAlert = buildAlert(
                 dataEntityOddrn,
                 alertType,
-                alertType == AlertTypeEnum.FAILED_DQ_TEST ? taskRun.getTaskOddrn() : null,
-                buildDescription(taskRun)
+                alertType == AlertTypeEnum.FAILED_DQ_TEST ? taskRun.getTaskOddrn() : null
             );
-        } else {
-            currentAlertChunkDescriptions.add(buildAlertChunk(taskRun));
         }
+
+        currentAlertChunkDescriptions.add(buildAlertChunk(taskRun));
     }
 
     private AlertChunkPojo buildAlertChunk(final IngestionTaskRun taskRun) {
@@ -130,13 +130,11 @@ public class IngestionTaskRunAlertState {
 
     private AlertPojo buildAlert(final String dataEntityOddrn,
                                  final AlertTypeEnum alertType,
-                                 final String messengerOddrn,
-                                 final String description) {
+                                 final String messengerOddrn) {
         final LocalDateTime now = now();
 
         return new AlertPojo()
             .setDataEntityOddrn(dataEntityOddrn)
-            .setDescription(description)
             .setMessengerEntityOddrn(messengerOddrn)
             .setType(alertType.getCode())
             .setStatus(AlertStatusEnum.OPEN.getCode())

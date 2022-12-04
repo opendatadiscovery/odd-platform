@@ -7,11 +7,19 @@ import org.mapstruct.Mapper;
 
 @Mapper(config = MapperConfig.class)
 public interface OffsetDateTimeMapper {
-    default OffsetDateTime map(final LocalDateTime localDateTime) {
+    default OffsetDateTime mapLocalDateTime(final LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
         }
 
         return localDateTime.atOffset(ZoneOffset.UTC);
+    }
+
+    default LocalDateTime mapOffsetDateTime(final OffsetDateTime offsetDateTime) {
+        if (offsetDateTime == null) {
+            return null;
+        }
+
+        return offsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
     }
 }

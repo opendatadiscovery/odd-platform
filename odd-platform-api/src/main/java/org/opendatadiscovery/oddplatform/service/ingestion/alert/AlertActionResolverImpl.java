@@ -72,7 +72,6 @@ public class AlertActionResolverImpl implements AlertActionResolver {
                                                       final List<IngestionTaskRun> taskRuns,
                                                       final AlertTypeEnum alertType,
                                                       final Map<Short, AlertPojo> alertDict) {
-
         final IngestionTaskRunAlertState state;
         if (alertDict == null) {
             state = new IngestionTaskRunAlertState(dataEntityOddrn, alertType);
