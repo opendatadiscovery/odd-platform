@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -270,8 +269,8 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             insertStep.set(alertRecords.get(i)).newRecord();
         }
 
-        return jooqReactiveOperations.flux(insertStep.set(alertRecords.get(alertRecords.size() - 1))
-                .onDuplicateKeyIgnore()
+        return jooqReactiveOperations.flux(insertStep
+                .set(alertRecords.get(alertRecords.size() - 1))
                 .returning(ALERT.fields()))
             .map(r -> r.into(AlertPojo.class));
     }
