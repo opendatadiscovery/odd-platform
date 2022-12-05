@@ -37,6 +37,7 @@ import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @RequiredArgsConstructor
@@ -131,8 +132,12 @@ public class AlertServiceImpl implements AlertService {
                 .setStatus(AlertStatusEnum.OPEN.getCode());
 
             alerts.add(alert);
-            alertToChunks.put(AlertUniqueConstraint.fromAlert(alert), singletonList(
-                new AlertChunkPojo().setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl))));
+
+            final AlertChunkPojo chunk = new AlertChunkPojo()
+                .setCreatedAt(now)
+                .setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl));
+
+            alertToChunks.put(AlertUniqueConstraint.fromAlert(alert), singletonList(chunk));
         }
 
         return createAlerts(alerts, alertToChunks, emptyList());
@@ -201,6 +206,14 @@ public class AlertServiceImpl implements AlertService {
             })
             .collectList()
             .map(chunks -> Stream.concat(additionalChunks.stream(), chunks.stream()).distinct().toList())
-            .flatMap(alertRepository::createChunks);
+            .flatMap(alertRepository::createChunks)
+            .then(Mono.just(
+                additionalChunks.stream().collect(toMap(
+                    AlertChunkPojo::getAlertId,
+                    AlertChunkPojo::getCreatedAt,
+                    (o1, o2) -> o2
+                ))
+            ))
+            .flatMap(alertRepository::setLastCreatedAt);
     }
 }

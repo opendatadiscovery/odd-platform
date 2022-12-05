@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.alert;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,6 @@ public class IngestionTaskRunAlertState {
     private final AlertTypeEnum alertType;
 
     private Long lastAlertId;
-
     private final List<String> lastAlertChunkDescriptions = new ArrayList<>();
     private boolean lastAlertIdActive;
 
@@ -71,8 +71,12 @@ public class IngestionTaskRunAlertState {
 
     public List<AlertAction> getActions() {
         if (!lastAlertChunkDescriptions.isEmpty()) {
+            final LocalDateTime now = now();
+
             final List<AlertChunkPojo> chunks = lastAlertChunkDescriptions.stream()
-                .map(d -> new AlertChunkPojo().setAlertId(lastAlertId).setDescription(d))
+                .map(d -> new AlertChunkPojo().setAlertId(lastAlertId)
+                    .setDescription(d)
+                    .setCreatedAt(now))
                 .toList();
 
             actions.add(new AlertAction.StackAlertAction(chunks));
@@ -99,9 +103,13 @@ public class IngestionTaskRunAlertState {
             currentAlert.setStatus(AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode());
             actions.add(new AlertAction.CreateAlertAction(
                 currentAlert,
-                Map.of(AlertAction.AlertUniqueConstraint.fromAlert(currentAlert), currentAlertChunkDescriptions)
+                Map.of(
+                    AlertAction.AlertUniqueConstraint.fromAlert(currentAlert),
+                    new ArrayList<>(currentAlertChunkDescriptions)
+                )
             ));
             currentAlert = null;
+            currentAlertChunkDescriptions.clear();
         }
     }
 
@@ -115,15 +123,16 @@ public class IngestionTaskRunAlertState {
             currentAlert = buildAlert(
                 dataEntityOddrn,
                 alertType,
-                alertType == AlertTypeEnum.FAILED_DQ_TEST ? taskRun.getTaskOddrn() : null
+                alertType == AlertTypeEnum.FAILED_DQ_TEST ? taskRun.getTaskOddrn() : null,
+                now()
             );
         }
 
-        currentAlertChunkDescriptions.add(buildAlertChunk(taskRun));
+        currentAlertChunkDescriptions.add(buildAlertChunk(taskRun, currentAlert.getLastCreatedAt()));
     }
 
-    private AlertChunkPojo buildAlertChunk(final IngestionTaskRun taskRun) {
-        return new AlertChunkPojo().setDescription(buildDescription(taskRun));
+    private AlertChunkPojo buildAlertChunk(final IngestionTaskRun taskRun, final LocalDateTime createdAt) {
+        return new AlertChunkPojo().setDescription(buildDescription(taskRun)).setCreatedAt(createdAt);
     }
 
     private String buildDescription(final IngestionTaskRun taskRun) {
@@ -132,15 +141,14 @@ public class IngestionTaskRunAlertState {
 
     private AlertPojo buildAlert(final String dataEntityOddrn,
                                  final AlertTypeEnum alertType,
-                                 final String messengerOddrn) {
-        final LocalDateTime now = now();
-
+                                 final String messengerOddrn,
+                                 final LocalDateTime createdAt) {
         return new AlertPojo()
             .setDataEntityOddrn(dataEntityOddrn)
             .setMessengerEntityOddrn(messengerOddrn)
             .setType(alertType.getCode())
             .setStatus(AlertStatusEnum.OPEN.getCode())
-            .setLastCreatedAt(now)
-            .setStatusUpdatedAt(now);
+            .setLastCreatedAt(createdAt)
+            .setStatusUpdatedAt(createdAt);
     }
 }

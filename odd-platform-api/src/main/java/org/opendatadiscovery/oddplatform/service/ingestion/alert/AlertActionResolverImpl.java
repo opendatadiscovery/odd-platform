@@ -163,15 +163,17 @@ public class AlertActionResolverImpl implements AlertActionResolver {
     private AlertAction candidateToAction(final String dataEntityOddrn,
                                           final List<AlertBISCandidate> candidates,
                                           final Long alertId) {
+        final LocalDateTime now = now();
+
         final List<AlertChunkPojo> chunks = candidates.stream()
-            .map(c -> new AlertChunkPojo().setDescription(c.description()))
+            .map(c -> new AlertChunkPojo().setDescription(c.description()).setCreatedAt(now))
             .toList();
 
         if (alertId == null) {
             final AlertUniqueConstraint constraint =
                 new AlertUniqueConstraint(dataEntityOddrn, BACKWARDS_INCOMPATIBLE_SCHEMA.getCode(), null);
 
-            return new CreateAlertAction(constraint.toOpenAlert(), Map.of(constraint, chunks));
+            return new CreateAlertAction(constraint.toOpenAlert(now), Map.of(constraint, chunks));
         }
 
         return new StackAlertAction(chunks);

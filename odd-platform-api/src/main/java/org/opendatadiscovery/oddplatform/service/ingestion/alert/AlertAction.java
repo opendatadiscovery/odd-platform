@@ -43,16 +43,14 @@ public abstract class AlertAction {
             );
         }
 
-        public AlertPojo toOpenAlert() {
-            final LocalDateTime now = now();
-
+        public AlertPojo toOpenAlert(final LocalDateTime createdAt) {
             return new AlertPojo()
                 .setDataEntityOddrn(dataEntityOddrn)
                 .setMessengerEntityOddrn(messengerEntityOddrn)
                 .setType(type)
                 .setStatus(AlertStatusEnum.OPEN.getCode())
-                .setLastCreatedAt(now)
-                .setStatusUpdatedAt(now);
+                .setLastCreatedAt(createdAt)
+                .setStatusUpdatedAt(createdAt);
         }
     }
 }

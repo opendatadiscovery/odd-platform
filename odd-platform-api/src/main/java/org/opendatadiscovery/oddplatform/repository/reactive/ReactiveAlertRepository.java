@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,8 @@ public interface ReactiveAlertRepository {
     Flux<AlertPojo> createAlerts(final Collection<AlertPojo> alerts);
 
     Mono<Void> createChunks(final List<AlertChunkPojo> chunks);
+
+    Mono<Void> setLastCreatedAt(final Map<Long, LocalDateTime> alertIdToLastCreatedAt);
 
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
 }

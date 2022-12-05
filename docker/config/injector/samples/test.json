@@ -1,0 +1,41 @@
+{
+  "data_source_oddrn" : "//ge",
+  "items" : [
+    {
+      "oddrn" : "//ge/test/dq_test_for_tpch_sf100_nation_2",
+      "name" : "//ge/test/dq_test_for_tpch_sf100_nation_2",
+      "type" : "JOB",
+      "data_quality_test" : {
+        "suite_name" : "data_lake_sales_denorm_qualification_test",
+        "dataset_list" : [
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
+        ],
+        "expectation" : {
+          "type" : "expect_qualification_to_pass"
+        }
+      }
+    },
+    {
+      "oddrn" : "//ge/test/dq_test_for_data_lake_sales_denorm_0/run/asdasdasdasdaaasasdasddsdsd",
+      "name" : "Run at 10-Oct-2021 (18:26:53)",
+      "type" : "JOB_RUN",
+      "data_quality_test_run" : {
+        "data_quality_test_oddrn" : "//ge/test/dq_test_for_tpch_sf100_nation_2",
+        "start_time" : "2021-10-10T18:26:53+00:00",
+        "end_time" : "2021-10-10T18:27:08+00:00",
+        "status" : "FAILED"
+      }
+    },
+    {
+      "oddrn" : "//ge/test/dq_test_for_data_lake_sales_denorm_0/run/asdasasdasdasddasdasdaasdqwesd",
+      "name" : "Run at 10-Oct-2021 (18:26:53)",
+      "type" : "JOB_RUN",
+      "data_quality_test_run" : {
+        "data_quality_test_oddrn" : "//ge/test/dq_test_for_tpch_sf100_nation_2",
+        "start_time" : "2021-10-10T18:26:53+00:00",
+        "end_time" : "2021-10-11T18:27:08+00:00",
+        "status" : "FAILED"
+      }
+    }
+  ]
+}
