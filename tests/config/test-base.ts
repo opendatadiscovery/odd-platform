@@ -12,7 +12,7 @@ import { goToPage } from '../ui/steps/login';
 import { configuration, UserType } from './configuration';
 import { odd } from './environments.json';
 
-const workersFolder = `./dist/workers`;
+const workersFolder = `./tests/dist/workers`;
 const saveWorkerId = (workerId: string) => {
   fs.writeFileSync(path.resolve(`${workersFolder}/${workerId}`), workerId, { flag: 'w' });
 };
