@@ -6,9 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -364,13 +361,13 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
         final Select<? extends Record> alertSelect = jooqQueryHelper.paginate(baseQuery, orderByFields, offset, limit);
         final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
+        final var query = createAlertOuterSelect(alertSelect, alertCte);
 
         return Pair.of(query, alertCte.getName());
     }
 
-    private SelectOnConditionStep<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
-                                                                 final Table<? extends Record> alertCte) {
+    private SelectHavingStep<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
+                                                            final Table<? extends Record> alertCte) {
         final List<Field<?>> groupByFields = Stream.of(alertCte.fields(), DATA_ENTITY.fields(), OWNER.fields())
             .flatMap(Arrays::stream)
             .toList();
@@ -385,7 +382,8 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .leftJoin(USER_OWNER_MAPPING)
                 .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
-            .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(alertCte.field(ALERT.ID)));
+            .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(alertCte.field(ALERT.ID)))
+            .groupBy(groupByFields);
         // @formatter:on
     }
 
