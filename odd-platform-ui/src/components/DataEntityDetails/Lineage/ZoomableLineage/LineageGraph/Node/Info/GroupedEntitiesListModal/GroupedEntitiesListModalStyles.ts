@@ -8,12 +8,5 @@ export const ListItemContainer = styled(Grid)(({ theme }) => ({
   justifyContent: 'space-between',
   padding: theme.spacing(1.25, 1),
   flexWrap: 'nowrap',
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.primary,
-  },
-}));
-
-export const ListItemTypesContainer = styled(Grid)(() => ({
-  justifyContent: 'flex-end',
-  flexBasis: '20%',
+  '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
 }));

@@ -1,7 +1,9 @@
 import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
+import type { DataEntityLineageState } from 'redux/interfaces';
+import { DataEntityLineage } from 'generated-sources';
 
 export interface DataEntityLineageById<
-  NodeT = DataEntityLineageNode,
+  NodeT = GroupedDataEntityLineageNode,
   EdgeT = DataEntityLineageEdge
 > {
   rootNode: NodeT;
@@ -10,7 +12,7 @@ export interface DataEntityLineageById<
 }
 
 export interface DataEntityLineageStreamById<
-  NodeT = DataEntityLineageNode,
+  NodeT = GroupedDataEntityLineageNode,
   EdgeT = DataEntityLineageEdge
 > {
   nodesById: { [nodeId: number]: NodeT };
@@ -19,8 +21,16 @@ export interface DataEntityLineageStreamById<
   crossEdges: EdgeT[];
 }
 
-export interface DataEntityLineageRootNodeId {
+export interface DataEntityLineageRequestParams {
   rootNodeId: number;
+  expandGroups: boolean;
+}
+
+export interface DataEntityLineageResponse {
+  rootNodeId: number;
+  dataEntityId: number;
+  dataEntityLineage: DataEntityLineage;
+  expandGroups?: boolean;
 }
 
 export interface GroupedDataEntityLineageNode extends DataEntityLineageNode {
@@ -28,13 +38,14 @@ export interface GroupedDataEntityLineageNode extends DataEntityLineageNode {
   originalGroupId?: number;
 }
 
-export interface LocalState {
+export interface LocalLineageState {
   allNodes: Array<DataEntityLineageNode | GroupedDataEntityLineageNode>;
   nodeIds: Set<number>;
   allEdges: DataEntityLineageEdge[];
   allGroups: DataEntityLineageNode[];
   groupIds: Set<number>;
   excludedIds: Set<number>;
+  idsToExclude: Set<number>;
 }
 
 export interface GroupingUpstreamNodes {
@@ -64,3 +75,29 @@ export interface FilterUpstreamEdges {
 }
 
 export type StreamType = 'downstream' | 'upstream';
+
+export interface GroupNodesAndFilterEdgesParams {
+  rootNodeId: number;
+  localLineageState: LocalLineageState;
+  minGroupSize: number;
+}
+
+export interface GroupedNodesAndFilteredEdges {
+  nodes: GroupedDataEntityLineageNode[];
+  edges: DataEntityLineageEdge[];
+  crossEdges: DataEntityLineageEdge[];
+}
+
+export interface ParseLineageParams {
+  state: DataEntityLineageState;
+  rootNodeId: number;
+  rootNode?: DataEntityLineageNode;
+  edges: DataEntityLineageEdge[];
+  nodes: DataEntityLineageNode[];
+  crossEdges: DataEntityLineageEdge[];
+  dataEntityLineageInitialState: DataEntityLineageStreamById;
+}
+
+export interface ExpandEntitiesFromGroupParams {
+  payload: { rootNodeId: number; idsToExclude: number[] };
+}
