@@ -409,7 +409,6 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     private Map<String, SetValuedMap<Short, AlertPojo>> mapOpenAlerts(final List<AlertPojo> alerts) {
-
         final Map<String, SetValuedMap<Short, AlertPojo>> result = new HashMap<>();
         for (final AlertPojo alert : alerts) {
             result.compute(alert.getDataEntityOddrn(), (k, v) -> {
