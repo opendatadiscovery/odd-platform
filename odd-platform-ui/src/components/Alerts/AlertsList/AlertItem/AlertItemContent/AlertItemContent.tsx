@@ -20,7 +20,7 @@ interface AlertItemContentProps {
   alertEntity: Alert['dataEntity'];
   id: Alert['id'];
   type: Alert['type'];
-  description: Alert['description'];
+  // description: Alert['description'];
   createdAt: Alert['createdAt'];
   status: Alert['status'];
   statusUpdatedAt: Alert['statusUpdatedAt'];
@@ -38,7 +38,7 @@ const AlertItemContent: React.FC<AlertItemContentProps> = ({
   createdAt,
   alertStatusHandler,
   alertOnClickHandle,
-  description,
+  // description,
   status,
   statusUpdatedAt,
   type,
@@ -78,11 +78,11 @@ const AlertItemContent: React.FC<AlertItemContentProps> = ({
           ))}
         </S.TypesContainer>
       </ColContainer>
-      <ColContainer item $colType='description'>
-        <Typography variant='body1' title={type} noWrap>
-          {description}
-        </Typography>
-      </ColContainer>
+      {/* <ColContainer item $colType='description'> */}
+      {/*   <Typography variant='body1' title={type} noWrap> */}
+      {/*     {description} */}
+      {/*   </Typography> */}
+      {/* </ColContainer> */}
       <ColContainer item container $colType='status' justifyContent='center'>
         <AlertStatusItem typeName={status} />
       </ColContainer>

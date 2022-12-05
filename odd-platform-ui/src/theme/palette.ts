@@ -265,6 +265,7 @@ export const palette = createPalette({
   alert: {
     OPEN: { background: colors.red10, border: colors.red20 },
     RESOLVED: { background: colors.blue10, border: colors.blue20 },
+    RESOLVED_AUTOMATICALLY: { background: colors.blue10, border: colors.blue20 },
   },
   associationRequestStatus: {
     APPROVED: { background: colors.green10, border: colors.green20 },

@@ -15,7 +15,7 @@ interface DataEntityAlertItemProps {
 }
 
 const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
-  alert: { createdAt, type, description, statusUpdatedAt, statusUpdatedBy, status },
+  alert: { createdAt, type, statusUpdatedAt, statusUpdatedBy, status },
   alertStatusHandler,
 }) => {
   const { alertFormattedDateTime } = useAppDateTime();
@@ -32,11 +32,11 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
           </Typography>
         </AppTooltip>
       </ColContainer>
-      <ColContainer item $colType='description'>
-        <Typography variant='body1' title={description} noWrap>
-          {description}
-        </Typography>
-      </ColContainer>
+      {/* <ColContainer item $colType='description'> */}
+      {/*   <Typography variant='body1' title={description} noWrap> */}
+      {/*     {description} */}
+      {/*   </Typography> */}
+      {/* </ColContainer> */}
       <ColContainer item $colType='status'>
         <AlertStatusItem typeName={status} />
       </ColContainer>
