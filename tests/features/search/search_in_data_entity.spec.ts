@@ -63,12 +63,13 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
+    const matadataName = `isOnSale + ${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy(entityNameWithAlphabeticChars);
       await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
-      await pages.overview.createCustomMetadata(`isOnSale + ${workerId}`);
+      await pages.overview.createCustomMetadata(matadataName);
       await pages.topPanel.clickTab('Catalog');
-      await pages.catalog.searchBy(`isOnSale + ${workerId}`);
+      await pages.catalog.searchBy(matadataName);
       expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
     });
   });
@@ -197,17 +198,14 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
+    const label = `famous + ${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy('art_aqa');
       await pages.catalog.clickOnListItem('art_aqa');
       await pages.structure.goToStructureTab.click();
-      await pages.structure.addLabel(
-        `isLocal`,
-        `famous + ${workerId}`,
-        `new local brands + ${workerId}`,
-      );
+      await pages.structure.addLabel(`isLocal`, label, `new local brands + ${workerId}`);
       await pages.topPanel.clickTab('Catalog');
-      await pages.catalog.searchBy(`famous + ${workerId}`);
+      await pages.catalog.searchBy(label);
       expect(await pages.catalog.isListItemVisible('art_aqa')).toBeTruthy();
     });
   });
