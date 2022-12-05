@@ -56,9 +56,8 @@ const Node: React.FC<NodeProps> = ({
   }, [lineageLink, nodeDepth]);
 
   const [showLoadMore, setShowLoadMore] = React.useState(false);
-  const [hideLoadMore, setHideLoadMore] = React.useState(false);
+  const [hideLoadMore] = React.useState(false);
   const hideLoadMoreHandler = React.useCallback(() => {
-    setHideLoadMore(true);
     setHighLightedLinks([]);
   }, []);
 
