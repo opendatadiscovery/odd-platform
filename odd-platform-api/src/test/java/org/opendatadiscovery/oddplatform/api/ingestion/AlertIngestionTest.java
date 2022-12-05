@@ -4,13 +4,17 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.ListUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
+import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
@@ -34,6 +38,8 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransforme
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.JobRunStatus;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AlertIngestionTest extends BaseIngestionTest {
@@ -146,7 +152,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
         });
 
         // no alerts are expected as the job is successful
-        assertAlerts(jobId, 0, 0, AlertType.FAILED_JOB);
+        assertNoAlerts(jobId);
 
         jobRun.getDataTransformerRun().setStatus(JobRunStatus.FAILED);
         ingestAndAssert(dataEntityList);
@@ -239,7 +245,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
                 }
             });
 
-        assertAlerts(ingestionMap.get(dataset.getOddrn()), 0, 0, AlertType.FAILED_DQ_TEST);
+        assertNoAlerts(ingestionMap.get(dataset.getOddrn()));
         dataQualityTestRun.getDataQualityTestRun().setStatus(QualityRunStatus.FAILED);
         ingestAndAssert(dataEntityList);
         assertAlerts(ingestionMap.get(dataset.getOddrn()), 1, 1, AlertType.FAILED_DQ_TEST);
@@ -347,6 +353,129 @@ public class AlertIngestionTest extends BaseIngestionTest {
         );
 
         assertAlerts(dtId, 1, 1, AlertType.FAILED_JOB, AlertStatus.RESOLVED_AUTOMATICALLY);
+    }
+
+    @Test
+    @DisplayName("Complex scenario for alert ingestion")
+    public void complexScenarioForAlertIngestion() {
+        final DataSource createdDataSource = createDataSource();
+        final List<String> inputs = List.of("input1", "input2");
+        final List<String> outputs = List.of("output1", "output2");
+
+        final DataEntity view = IngestionModelGenerator
+            .generateSimpleDataEntity(DataEntityType.VIEW)
+            .dataTransformer(new DataTransformer().inputs(inputs).outputs(outputs))
+            .dataset(new DataSet().rowsNumber(1_000L).fieldList(IngestionModelGenerator.generateDatasetFields(5)));
+
+        final OffsetDateTime jobStartTime = OffsetDateTime
+            .of(LocalDateTime.now(), ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.MILLIS);
+
+        final DataEntity dataQualityTest1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataQualityTest(new DataQualityTest()
+                .datasetList(List.of(view.getOddrn()))
+                .suiteName(UUID.randomUUID().toString())
+                .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
+            );
+
+        final DataEntity dataQualityTestRun1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest1.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final DataEntity dataQualityTest2 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataQualityTest(new DataQualityTest()
+                .datasetList(List.of(view.getOddrn()))
+                .suiteName(UUID.randomUUID().toString())
+                .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
+            );
+
+        final DataEntity dataQualityTestRun2 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest2.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final DataEntity jobRun = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataTransformerRun(new DataTransformerRun()
+                .transformerOddrn(view.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(JobRunStatus.SUCCESS)
+            );
+
+        final var dataEntityList = new DataEntityList()
+            .dataSourceOddrn(createdDataSource.getOddrn())
+            .items(List.of(view, dataQualityTest1, dataQualityTestRun1, dataQualityTest2, dataQualityTestRun2, jobRun));
+
+        ingestAndAssert(dataEntityList);
+
+        final long viewId = extractIngestedEntitiesAndAssert(createdDataSource, 3).get(view.getOddrn());
+
+        assertAlerts(viewId, 2, 1, AlertType.FAILED_DQ_TEST);
+
+        // triggering every alert that can be in a context of this entity
+        view.getDataTransformer().setInputs(List.of("input3"));
+        view.getDataTransformer().setOutputs(List.of("output3"));
+        view.getDataset().setFieldList(
+            ListUtils.union(
+                view.getDataset().getFieldList().subList(0, 3),
+                IngestionModelGenerator.generateDatasetFields(2)
+            )
+        );
+
+        jobRun.setOddrn(UUID.randomUUID().toString());
+        jobRun.getDataTransformerRun().setStatus(JobRunStatus.FAILED);
+        dataQualityTest2.setOddrn(UUID.randomUUID().toString());
+        dataQualityTestRun2.getDataQualityTestRun().setStatus(QualityRunStatus.SUCCESS);
+
+        ingestAndAssert(dataEntityList);
+
+        webTestClient.get()
+            .uri("/api/dataentities/{data_entity_id}/alerts", viewId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AlertList.class)
+            .value(actual -> {
+                final Map<AlertType, List<Alert>> actualAlertMap =
+                    actual.getItems().stream().collect(groupingBy(Alert::getType, toList()));
+
+                assertThat(actualAlertMap.size()).isEqualTo(3);
+
+                final List<Alert> jobAlerts = actualAlertMap.get(AlertType.FAILED_JOB);
+                assertThat(jobAlerts).hasSize(1);
+                assertThat(jobAlerts.get(0).getStatus()).isEqualTo(AlertStatus.OPEN);
+                assertThat(jobAlerts.get(0).getAlertChunkList()).hasSize(1);
+
+                final List<Alert> bisAlerts = actualAlertMap.get(AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA);
+                assertThat(bisAlerts).hasSize(1);
+                assertThat(bisAlerts.get(0).getStatus()).isEqualTo(AlertStatus.OPEN);
+                // missing input1 + input2 + output1 + output2 + (2 fields from dataset schema) = 6
+                assertThat(bisAlerts.get(0).getAlertChunkList()).hasSize(6);
+
+                final List<Alert> dqAlerts = new ArrayList<>(actualAlertMap.get(AlertType.FAILED_DQ_TEST));
+                assertThat(dqAlerts).hasSize(2);
+                dqAlerts.sort(Comparator.comparing(a -> a.getStatus().toString()));
+                assertThat(dqAlerts.get(0).getStatus()).isEqualTo(AlertStatus.OPEN);
+                assertThat(dqAlerts.get(0).getAlertChunkList()).hasSize(2);
+
+                assertThat(dqAlerts.get(1).getStatus()).isEqualTo(AlertStatus.RESOLVED_AUTOMATICALLY);
+                assertThat(dqAlerts.get(1).getAlertChunkList()).hasSize(1);
+            });
+    }
+
+    private void assertNoAlerts(final long dataEntityId) {
+        webTestClient.get()
+            .uri("/api/dataentities/{data_entity_id}/alerts", dataEntityId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AlertList.class)
+            .value(actual -> assertThat(actual.getItems()).isEmpty());
     }
 
     private void assertAlerts(final long dataEntityId,

@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
-import static java.util.Collections.singletonList;
-
 public abstract class AlertAction {
     @RequiredArgsConstructor
     public static class CreateAlertAction extends AlertAction {

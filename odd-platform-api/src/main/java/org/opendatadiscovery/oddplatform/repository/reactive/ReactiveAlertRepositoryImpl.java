@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MultiMapUtils;
+import org.apache.commons.collections4.SetValuedMap;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -66,7 +68,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     private final JooqRecordHelper jooqRecordHelper;
 
     @Override
-    public Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(
+    public Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(
         final Collection<String> dataEntityOddrns
     ) {
         if (CollectionUtils.isEmpty(dataEntityOddrns)) {
@@ -107,6 +109,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
+    // TODO: group by
     public Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId) {
         final SelectConditionStep<Record> baseQuery = DSL
             .select(ALERT.fields())
@@ -405,17 +408,18 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         // @formatter:on
     }
 
-    private Map<String, Map<Short, AlertPojo>> mapOpenAlerts(final List<AlertPojo> alerts) {
-        final Map<String, Map<Short, AlertPojo>> result = new HashMap<>();
+    private Map<String, SetValuedMap<Short, AlertPojo>> mapOpenAlerts(final List<AlertPojo> alerts) {
+
+        final Map<String, SetValuedMap<Short, AlertPojo>> result = new HashMap<>();
         for (final AlertPojo alert : alerts) {
             result.compute(alert.getDataEntityOddrn(), (k, v) -> {
                 if (v == null) {
-                    final HashMap<Short, AlertPojo> vv = new HashMap<>();
-                    vv.putIfAbsent(alert.getType(), alert);
+                    final SetValuedMap<Short, AlertPojo> vv = MultiMapUtils.newSetValuedHashMap();
+                    vv.put(alert.getType(), alert);
                     return vv;
                 }
 
-                v.putIfAbsent(alert.getType(), alert);
+                v.put(alert.getType(), alert);
                 return v;
             });
         }

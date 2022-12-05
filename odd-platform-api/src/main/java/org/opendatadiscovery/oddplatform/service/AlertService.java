@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections4.SetValuedMap;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
@@ -26,7 +27,7 @@ public interface AlertService {
 
     Mono<AlertList> listDependentObjectsAlerts(int page, int size);
 
-    Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(final Collection<String> dataEntityOddrns);
+    Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(final Collection<String> dataEntityOddrns);
 
     Mono<Void> applyAlertActions(final List<AlertAction> alertActions);
 }

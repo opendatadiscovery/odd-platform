@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections4.SetValuedMap;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
@@ -13,7 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveAlertRepository {
-    Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(final Collection<String> dataEntityOddrns);
+    Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(final Collection<String> dataEntityOddrns);
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN.

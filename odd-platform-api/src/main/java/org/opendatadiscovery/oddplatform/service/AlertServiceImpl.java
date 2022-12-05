@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.SetValuedMap;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
@@ -139,7 +140,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<Map<String, Map<Short, AlertPojo>>> getOpenAlertsForEntities(
+    public Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(
         final Collection<String> dataEntityOddrns
     ) {
         return alertRepository.getOpenAlertsForEntities(dataEntityOddrns);
