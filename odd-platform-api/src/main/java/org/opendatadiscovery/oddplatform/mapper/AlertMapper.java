@@ -31,10 +31,16 @@ public abstract class AlertMapper {
 
     @Named("statusUpdatedBy")
     public AssociatedOwner mapAssociatedOwner(final AlertDto alertDto) {
+        if (alertDto.getAlert().getStatusUpdatedBy() == null) {
+            return null;
+        }
+
         return associatedOwnerMapper.mapAssociatedOwner(
-            new AssociatedOwnerDto(alertDto.getAlert().getStatusUpdatedBy(),
+            new AssociatedOwnerDto(
+                alertDto.getAlert().getStatusUpdatedBy(),
                 alertDto.getUpdatedByOwner(),
-                null)
+                null
+            )
         );
     }
 
