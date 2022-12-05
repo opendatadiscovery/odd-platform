@@ -62,7 +62,7 @@ test.describe('Search by name of data-entity', () => {
       test(`Not displayed alert message when list is not empty`, async ({ steps: { pages } }) => {
         await test.step(`When fill an empty expression`, async () => {
           await pages.catalog.searchBy('');
-          expect(await pages.catalog.countListItems()).toBeGreaterThanOrEqual(30);
+          expect(await pages.catalog.countListItems()).toBeGreaterThanOrEqual(6);
           expect(await pages.catalog.isAlertHidden()).toBeTruthy();
         });
       });

@@ -97,7 +97,12 @@ const OverviewMetadata: React.FC = () => {
                 <MetadataCreateForm
                   dataEntityId={dataEntityId}
                   btnCreateEl={
-                    <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
+                    <AppButton
+                      data-qa='add_metadata'
+                      size='medium'
+                      color='primaryLight'
+                      startIcon={<AddIcon />}
+                    >
                       Add metadata
                     </AppButton>
                   }

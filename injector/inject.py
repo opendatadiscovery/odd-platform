@@ -6,7 +6,7 @@ import time
 from typing import Union, Dict, Any, Tuple, List
 
 REACH_TRIES_NUMBER = 20
-APP_PATH = os.getenv("APP_PATH") or "."
+SAMPLE_PATH = os.getenv("SAMPLE_PATH") or "/samples"
 DATA_SOURCES_ONLY = os.getenv("DATA_SOURCES_ONLY") or False
 
 platform_host_url = os.environ["PLATFORM_HOST_URL"]
@@ -20,7 +20,7 @@ def read_sample_json(json_filename: str) -> Tuple[str, Dict[str, Any]]:
 
 
 def read_datasources_json() -> List[Dict[str, Any]]:
-    with open(f"{APP_PATH}/datasources/datasources.json", "r") as f:
+    with open(f"{SAMPLE_PATH}/datasources/datasources.json", "r") as f:
         return json.loads(f.read())
 
 
@@ -86,7 +86,7 @@ if not healthy:
 print("Starting to injecting metadata")
 existing_datasources_grouped = {ds['oddrn']: ds for ds in fetch_existing_datasources()}
 
-payload_files = sorted(glob.glob(f"{APP_PATH}/samples/*.json"))
+payload_files = sorted(glob.glob(f"{SAMPLE_PATH}/samples/*.json"))
 
 for payload_file in payload_files:
     ds_oddrn, metadata = read_sample_json(payload_file)

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { format } from 'date-fns';
 import {
   AppButton,
   AppIconButton,
@@ -11,7 +10,7 @@ import {
 import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { deleteTermOwnership } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
@@ -22,6 +21,7 @@ import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 const OverviewGeneral: React.FC = () => {
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
+  const { termFormattedDateTime } = useAppDateTime();
 
   const termDetails = useAppSelector(getTermDetails(termId));
   const ownership = useAppSelector(state => getTermOwnership(state, termId));
@@ -29,7 +29,8 @@ const OverviewGeneral: React.FC = () => {
   const handleOwnershipDelete = (ownershipId: number) => () =>
     dispatch(deleteTermOwnership({ termId, ownershipId }));
 
-  const createdAt = termDetails.createdAt && format(termDetails.createdAt, 'd MMM yyyy');
+  const createdAt =
+    termDetails.createdAt && termFormattedDateTime(termDetails.createdAt.getTime());
 
   return (
     <Grid container>

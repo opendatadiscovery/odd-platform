@@ -3,15 +3,23 @@
 ## Prerequisites
 
 - Node.js and npm
+- Java 17
 - [jq](https://github.com/stedolan/jq/wiki/Installation)
 - Docker Engine 19.03.0+
 - Preferably the latest docker-compose
 
 ## Usage
 
-1. Clone the repo
+1. Clone the repo and go to its directory
 
-1. Go to `tests` dir
+1. Build ODD Platform's docker image locally:
+   
+       ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build
+   or use the following command if your environment is ARM based
+ 
+       ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build -PcontainerBuildArm=true
+
+1. Go to `tests` directory
 
 1. Install dependencies:
 

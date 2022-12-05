@@ -10,14 +10,10 @@ const groupsFilter = 'Groups';
 const datasourceOptionBookETL = 'Book_ETL_aqa';
 const namespaceOption = 'ETL';
 const bookETLDataEntity = 'Book_ETL_aqa';
-const tagFilterOption = 'aqa_tag';
+const tagFilterOption = 'aqa';
 const groupsOption = 'group_bookshop';
 const transformersTab = 'Transformers';
-const firstOwner = 'firstOwner';
-const titleAdmin = 'admin';
-const noResultsOwnerText = 'No result. Create new owner "firstOwner"';
-const noResultsTitleText = 'No result. Create new title "admin"';
-const noResultsTagText = 'No result. Create new tag "aqa_tag"';
+
 
 test.describe('Check filters', () => {
   test.describe('When apply single filter', () => {
@@ -53,17 +49,17 @@ test.describe('Check filters', () => {
      * /project/1/test-cases/25
      */
     test('Should display the expected item with Owner filter', async ({ steps: { pages } }) => {
-      await test.step('Apply filter Owner', async () => {
+        const ownerName1 = 'ownerName1';
+        const ownerTitle1 = 'ownerTitle1';
+        await test.step('Apply filter Owner', async () => {
         await pages.catalog.searchBy(bookETLDataEntity);
         await pages.catalog.clickOnListItem(bookETLDataEntity);
         await pages.overview.createOwner(
-          firstOwner,
-          noResultsOwnerText,
-          titleAdmin,
-          noResultsTitleText,
+          ownerName1,
+          ownerTitle1,
         );
         await pages.topPanel.clickTab('Catalog');
-        await pages.catalog.searchByTextInFilter('Owner', 'firstOwner');
+        await pages.catalog.searchByTextInFilter(ownerFilter, ownerName1);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
@@ -72,11 +68,7 @@ test.describe('Check filters', () => {
      */
     test('Should display the expected item with Tag filter', async ({ steps: { pages } }) => {
       await test.step('Apply filter Tag', async () => {
-        await pages.catalog.searchBy(bookETLDataEntity);
-        await pages.catalog.clickOnListItem(bookETLDataEntity);
-        await pages.overview.createTag(tagFilterOption, noResultsTagText);
-        await pages.topPanel.clickTab('Catalog');
-        await pages.catalog.searchByTextInFilter('Tag', 'aqa_tag');
+        await pages.catalog.searchByTextInFilter(tagFilter, tagFilterOption);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
@@ -117,21 +109,33 @@ test.describe('Check filters', () => {
     test('Should display the expected item with different types of filters', async ({
       steps: { pages },
     }) => {
-      await test.step('Apply filter Tag', async () => {
+        const ownerName2 = 'ownerName2';
+        const ownerTitle2 = 'ownerTitle2';
+        await test.step('Apply filter Namespace', async () => {
         await pages.catalog.openFilterWithSelect(namespaceFilter);
         await pages.catalog.chooseOption(namespaceOption);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
       await test.step('Apply filter Owner', async () => {
-        await pages.catalog.openFilterWithInput(ownerFilter);
-        await pages.catalog.chooseOption(firstOwner);
-        expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
+
+          await pages.catalog.searchBy(bookETLDataEntity);
+          await pages.catalog.clickOnListItem(bookETLDataEntity);
+          await pages.overview.createOwner(
+              ownerName2,
+              ownerTitle2,
+          );
+          await pages.topPanel.clickTab('Catalog');
+          await pages.catalog.searchByTextInFilter(ownerFilter, ownerName2);
+
+          expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });
     /**
      * /project/1/test-cases/103
      */
     test('Should display the expected item with all filters', async ({ steps: { pages } }) => {
+        const ownerName3 = 'ownerName3';
+        const ownerTitle3 = 'ownerTitle3'
       await test.step('Apply filter Datasource', async () => {
         await pages.catalog.openFilterWithSelect(datasourceFilter);
         await pages.catalog.chooseOption(datasourceOptionBookETL);
@@ -141,16 +145,20 @@ test.describe('Check filters', () => {
         await pages.catalog.chooseOption(namespaceOption);
       });
       await test.step('Apply filter Owner', async () => {
-        await pages.catalog.openFilterWithInput(ownerFilter);
-        await pages.catalog.chooseOption(firstOwner);
+          await pages.catalog.searchBy(bookETLDataEntity);
+          await pages.catalog.clickOnListItem(bookETLDataEntity);
+          await pages.overview.createOwner(
+              ownerName3,
+              ownerTitle3,
+          );
+          await pages.topPanel.clickTab('Catalog');
+        await pages.catalog.searchByTextInFilter(ownerFilter,ownerName3);
       });
       await test.step('Apply filter Tag', async () => {
-        await pages.catalog.openFilterWithInput(tagFilter);
-        await pages.catalog.chooseOption(tagFilterOption);
+        await pages.catalog.searchByTextInFilter(tagFilter,tagFilterOption);
       });
       await test.step('Apply filter Group', async () => {
-        await pages.catalog.openFilterWithInput(groupsFilter);
-        await pages.catalog.chooseOption(groupsOption);
+        await pages.catalog.searchByTextInFilter(groupsFilter,groupsOption);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
     });

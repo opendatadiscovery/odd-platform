@@ -14,6 +14,18 @@
 
 * [Try locally](configuration-and-deployment/trylocally.md)
 * [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
+* [Enable security](configuration-and-deployment/enable-security/README.md)
+  * [Authentication](configuration-and-deployment/enable-security/authentication/README.md)
+    * [Disabled authentication](configuration-and-deployment/enable-security/authentication/disabled-authentication.md)
+    * [Login form](configuration-and-deployment/enable-security/authentication/login-form.md)
+    * [OAUTH2/OIDC](configuration-and-deployment/enable-security/authentication/oauth2-oidc.md)
+    * [LDAP](configuration-and-deployment/enable-security/authentication/ldap.md)
+  * [Authorization](configuration-and-deployment/enable-security/authorization/README.md)
+    * [Policies](configuration-and-deployment/enable-security/authorization/policies.md)
+    * [Permissions](configuration-and-deployment/enable-security/authorization/permissions.md)
+    * [Roles](configuration-and-deployment/enable-security/authorization/roles.md)
+    * [Owners](configuration-and-deployment/enable-security/authorization/owners.md)
+    * [User-owner association](configuration-and-deployment/enable-security/authorization/user-owner-association.md)
 
 ## Developer Guides
 

@@ -30,25 +30,34 @@ export default class OverviewPage extends DataEntityPage {
     return new InputField(this.page, SELECTORS.inputTagName);
   }
 
-  async getField(inputName: 'Name' | 'Tag' | 'Title', name: string, text: string) {
+  async getField(inputName: 'Name' | 'Tag' | 'Title', name: string) {
     await this[`input${inputName}`].fill(name);
-    await this.page.locator(SELECTORS.autocomplete(text)).click();
+    if (inputName === 'Name') {
+    await this.page.locator(SELECTORS.autocomplete(`No result. Create new owner "${name}"`)).click();
+    }
+    else if (inputName === 'Tag') {
+        await this.page.locator(SELECTORS.autocomplete(`No result. Create new tag "${name}"`)).click();
+    }
+    else {
+        await this.page.locator(SELECTORS.autocomplete(`No result. Create new title "${name}"`)).click();
+    }
   }
 
-  async createOwner(name: string, textName: string, title: string, textTitle: string) {
+  async createOwner(name: string, title: string) {
     await this.addOwner.click();
-    await this.getField('Name', name, textName);
-    await this.getField('Title', title, textTitle);
+    await this.getField('Name', name);
+    await this.getField('Title', title);
     await this.page.locator(SELECTORS.saveNewOwnerButton).click();
   }
+
 
   get addTag() {
     return new Button(this.page, SELECTORS.addTagButton);
   }
 
-  async createTag(name: string, text: string) {
+  async createTag(name: string) {
     await this.addTag.click();
-    await this.getField('Tag', name, text);
+    await this.getField('Tag', name);
     await this.page.locator(SELECTORS.saveButton).click();
   }
 }

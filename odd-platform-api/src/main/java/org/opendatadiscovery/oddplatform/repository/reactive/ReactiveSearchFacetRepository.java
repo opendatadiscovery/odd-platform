@@ -24,4 +24,26 @@ public interface ReactiveSearchFacetRepository {
                                                           final int page,
                                                           final int size,
                                                           final FacetStateDto state);
+
+    Mono<Map<SearchFilterId, Long>> getEntityClassFacetForDataEntity(final FacetStateDto state);
+
+    Mono<Map<SearchFilterId, Long>> getTypeFacetForDataEntity(final String facetQuery,
+                                                              final int page,
+                                                              final int size,
+                                                              final FacetStateDto state);
+
+    Mono<Map<SearchFilterId, Long>> getOwnerFacetForDataEntity(final String facetQuery,
+                                                               final int page,
+                                                               final int size,
+                                                               final FacetStateDto state);
+
+    Mono<Map<SearchFilterId, Long>> getTagFacetForDataEntity(final String facetQuery,
+                                                             final int page,
+                                                             final int size,
+                                                             final FacetStateDto state);
+
+    Mono<Map<SearchFilterId, Long>> getGroupFacetForDataEntity(final String facetQuery,
+                                                               final int page,
+                                                               final int size,
+                                                               final FacetStateDto state);
 }

@@ -3,7 +3,6 @@ import { Activity } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
 import GearIcon from 'components/shared/Icons/GearIcon';
 import UserIcon from 'components/shared/Icons/UserIcon';
-import { format } from 'date-fns';
 import { ActivityEventType } from 'generated-sources';
 import OwnerActivityField from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerActivityField';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
@@ -15,6 +14,7 @@ import TermActivityField from 'components/shared/Activity/ActivityFields/TermAct
 import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
 import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
 import * as S from 'components/DataEntityDetails/DataEntityActivity/ActivityResults/ActivityItem/ActivityItemStyles';
+import { useAppDateTime } from 'lib/hooks';
 
 interface ActivityItemProps {
   activity: Activity;
@@ -22,6 +22,8 @@ interface ActivityItemProps {
 }
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
+  const { activityFormattedDateTime } = useAppDateTime();
+
   const tagStateItem = React.useCallback(
     (name, important) => (
       <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
@@ -169,7 +171,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             </Grid>
           )}
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-            at {format(activity.createdAt, 'p')}
+            at {activityFormattedDateTime(activity.createdAt)}
           </Typography>
         </Grid>
       </Grid>

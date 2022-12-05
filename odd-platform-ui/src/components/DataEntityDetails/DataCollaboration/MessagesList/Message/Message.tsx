@@ -1,11 +1,9 @@
 import React from 'react';
 import type { Message as MessageModel } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import { formatDistanceToNowStrict } from 'date-fns';
 import { AppAvatar, AppButton, WithFeature } from 'components/shared';
 import { Feature } from 'generated-sources';
-import { formatDate } from 'lib/helpers';
-import { datedListFormat } from 'lib/constants';
+import { useAppDateTime } from 'lib/hooks';
 import * as S from './MessageStyles';
 
 interface MessageProps {
@@ -28,12 +26,14 @@ const Message: React.FC<MessageProps> = ({
   messageOnClick,
   handleSetMessageDate,
 }) => {
+  const { formatDistanceToNowStrict, datedListFormattedDateTime } = useAppDateTime();
+
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
   const messagesCount = childrenMessagesCount ?? 0;
 
   React.useEffect(() => {
     if (isActive) {
-      const formattedDate = formatDate(createdAt, datedListFormat);
+      const formattedDate = datedListFormattedDateTime(createdAt);
       handleSetMessageDate(formattedDate);
     }
   }, [isActive, createdAt, handleSetMessageDate]);

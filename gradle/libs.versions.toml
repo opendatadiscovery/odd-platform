@@ -7,6 +7,7 @@ oddrn-generator-java = '0.1.10'
 apache-collections = '4.4'
 apache-lang = '3.12.0'
 r2dbc-spi = '1.0.0.RELEASE'
+r2dbc-postgresql = '0.9.3.RELEASE'
 r2dbc-pool = '0.8.8.RELEASE'
 jooq = '3.16.6'
 jooq-codegen = '3.14.9'
@@ -57,7 +58,7 @@ oddrn-generator-java = { module = 'org.opendatadiscovery:oddrn-generator-java', 
 apache-collections = { module = 'org.apache.commons:commons-collections4', version.ref = 'apache-collections' }
 apache-lang = { module = 'org.apache.commons:commons-lang3', version.ref = 'apache-lang' }
 r2dbc-spi = { module = 'io.r2dbc:r2dbc-spi', version.ref = 'r2dbc-spi' }
-r2dbc-postgresql = { module = 'io.r2dbc:r2dbc-postgresql' }
+r2dbc-postgresql = { module = 'org.postgresql:r2dbc-postgresql', version.ref = 'r2dbc-postgresql'}
 r2dbc-pool = { module = 'io.r2dbc:r2dbc-pool', version.ref = 'r2dbc-pool' }
 jooq = { module = 'org.jooq:jooq', version.ref = 'jooq' }
 jooq-codegen = { module = 'org.jooq:jooq-codegen', version.ref = 'jooq-codegen' }
