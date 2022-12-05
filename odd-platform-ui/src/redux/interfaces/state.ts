@@ -43,7 +43,7 @@ import type { CurrentPageInfo, PageInfo } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
 import type { DataEntityDetailsState } from './dataentities';
-import type { Alert } from './alerts';
+import type { Alert, AlertsConfig } from './alerts';
 import type { Activity, ActivityPageInfo, ActivityQueryParams } from './activities';
 import type {
   FacetOptionsByName,
@@ -174,6 +174,7 @@ export interface DataEntitySearchState {
 export interface AlertsState extends EntityState<Alert> {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
+  configs: EntityState<AlertsConfig>;
 }
 
 export interface ProfileState {

@@ -1,5 +1,5 @@
 import { toTimestampWithoutOffset } from 'lib/helpers';
-import type { PageInfo } from 'redux/interfaces/common';
+import type { PageInfo, SerializeDateToNumber } from 'redux/interfaces/common';
 
 export const assignWith = <
   TargetType extends Record<string, any>,
@@ -25,8 +25,13 @@ export const assignWith = <
 export const createActionType = (actionPrefix: string, action: string) =>
   `${actionPrefix}/${action}`;
 
-export const isDateType = (value: unknown): value is Date =>
+export const isDateObject = (value: unknown): value is Date =>
   typeof value === 'object' && value instanceof Date;
+
+export const isNotDateObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && !(value instanceof Date);
+
+export const isArray = (value: unknown): value is Array<unknown> => Array.isArray(value);
 
 export const castDatesToTimestampInItemsArray = <
   Data extends object,
@@ -37,7 +42,7 @@ export const castDatesToTimestampInItemsArray = <
   data.map<RData>(item =>
     Object.entries(item).reduce<RData>(
       (memo, [key, value]) =>
-        isDateType(value)
+        isDateObject(value)
           ? { ...memo, [key]: toTimestampWithoutOffset(value) }
           : { ...memo, [key]: value },
       {} as RData
@@ -58,3 +63,25 @@ export const setPageInfo = <Item extends { id: string; createdAt: number }>(
   pageInfo = { hasNext: true, lastId: lastItem[0].id };
   return pageInfo;
 };
+
+export function castDatesToTimestamp<Data>(
+  data: Array<Data>
+): SerializeDateToNumber<Data>[];
+export function castDatesToTimestamp<Data>(data: Data): SerializeDateToNumber<Data>;
+export function castDatesToTimestamp<Data>(data: Array<Data> | Data) {
+  if (!data) return {};
+
+  if (Array.isArray(data)) {
+    return data.map(item => castDatesToTimestamp(item));
+  }
+
+  return Object.entries(data).reduce((memo, [key, value]) => {
+    if (isNotDateObject(value) || isArray(value)) {
+      return { ...memo, [key]: value ? castDatesToTimestamp(value) : undefined };
+    }
+
+    return isDateObject(value)
+      ? { ...memo, [key]: toTimestampWithoutOffset(value) }
+      : { ...memo, [key]: value };
+  }, {});
+}

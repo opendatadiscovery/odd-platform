@@ -1,5 +1,4 @@
 import {
-  type Alert as GeneratedAlert,
   AlertApi,
   type AlertApiChangeAlertStatusRequest,
   type AlertApiGetAllAlertsRequest,
@@ -9,23 +8,26 @@ import {
   type AlertTotals,
   Configuration,
   DataEntityApi,
+  DataEntityApiGetAlertConfigRequest,
   type DataEntityApiGetDataEntityAlertsRequest,
+  DataEntityApiUpdateAlertConfigRequest,
   type PageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import type { Alert, CurrentPageInfo } from 'redux/interfaces';
-import { castDatesToTimestampInItemsArray } from 'redux/lib/helpers';
+import type {
+  Alert,
+  AlertsConfig,
+  AlertsResponse,
+  SerializeDateToNumber,
+} from 'redux/interfaces';
+import { castDatesToTimestamp } from 'redux/lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
+import { toDateWithoutOffset } from 'lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
 const dataEntityApi = new DataEntityApi(apiClientConf);
-
-export interface AlertsResponse {
-  items: Alert[];
-  pageInfo: CurrentPageInfo;
-}
 
 export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
@@ -42,7 +44,7 @@ export const fetchAllAlertList = handleResponseAsyncThunk<
     const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
 
     return {
-      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestamp(items),
       pageInfo: { ...pageInfo, page },
     };
   },
@@ -57,7 +59,7 @@ export const fetchMyAlertList = handleResponseAsyncThunk<
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
     return {
-      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestamp(items),
       pageInfo: { ...pageInfo, page },
     };
   },
@@ -72,7 +74,7 @@ export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
     return {
-      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
+      items: castDatesToTimestamp(items),
       pageInfo: { ...pageInfo, page },
     };
   },
@@ -107,10 +109,46 @@ export const fetchDataEntityAlerts = handleResponseAsyncThunk<
   actions.fetchDataEntityAlertsActionType,
   async ({ dataEntityId }) => {
     const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({ dataEntityId });
-    return {
-      items: castDatesToTimestampInItemsArray<GeneratedAlert, Alert>(items),
-      pageInfo,
-    };
+
+    return { items: castDatesToTimestamp(items), pageInfo };
   },
   {}
+);
+
+export const fetchDataEntityAlertsConfig = handleResponseAsyncThunk<
+  AlertsConfig,
+  DataEntityApiGetAlertConfigRequest
+>(
+  actions.getDataEntityAlertsConfig,
+  async ({ dataEntityId }) => {
+    const config = await dataEntityApi.getAlertConfig({ dataEntityId });
+
+    return { dataEntityId, config: castDatesToTimestamp(config) };
+  },
+  {}
+);
+
+export const updateDataEntityAlertsConfig = handleResponseAsyncThunk<
+  AlertsConfig,
+  SerializeDateToNumber<DataEntityApiUpdateAlertConfigRequest>
+>(
+  actions.updateDataEntityAlertsConfig,
+  async ({ dataEntityId, dataEntityAlertConfig }) => {
+    const entries = Object.entries(dataEntityAlertConfig).map(
+      ([alertType, timeStamp]) => [alertType, toDateWithoutOffset(timeStamp)]
+    );
+    const parsedConfig = Object.fromEntries(entries);
+    const config = await dataEntityApi.updateAlertConfig({
+      dataEntityId,
+      dataEntityAlertConfig: parsedConfig,
+    });
+
+    return { dataEntityId, config: castDatesToTimestamp(config) };
+  },
+  {
+    setSuccessOptions: ({ dataEntityId }) => ({
+      id: `Alert-config-updating-${dataEntityId}`,
+      message: `Alert config successfully updated.`,
+    }),
+  }
 );
