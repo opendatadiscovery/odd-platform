@@ -146,17 +146,8 @@ public class AlertActionResolverImpl implements AlertActionResolver {
             if (CollectionUtils.isEmpty(lastAlerts)) {
                 state = new IngestionTaskRunAlertState(dataEntityOddrn, alertType);
             } else {
-                return lastAlerts.stream()
-                    .flatMap(a -> {
-                        final IngestionTaskRunAlertState s =
-                            new IngestionTaskRunAlertState(dataEntityOddrn, alertType, a.getId());
-
-                        taskRuns.stream()
-                            .filter(tr -> a.getMessengerEntityOddrn().equals(tr.getTaskOddrn()))
-                            .forEach(s::report);
-
-                        return s.getActions().stream();
-                    });
+                final AlertPojo lastAlert = lastAlerts.stream().findFirst().get();
+                state = new IngestionTaskRunAlertState(dataEntityOddrn, alertType, lastAlert.getId());
             }
         }
 

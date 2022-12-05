@@ -298,25 +298,6 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    public Mono<Set<String>> getExistingMessengers(final Collection<AlertPojo> alerts) {
-        if (CollectionUtils.isEmpty(alerts)) {
-            return Mono.empty();
-        }
-
-        final Set<String> messengerOddrns = alerts.stream()
-            .map(AlertPojo::getMessengerEntityOddrn)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
-
-        final SelectConditionStep<Record1<String>> query = DSL.select(ALERT.MESSENGER_ENTITY_ODDRN)
-            .from(ALERT)
-            .where(ALERT.MESSENGER_ENTITY_ODDRN.in(messengerOddrns));
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(String.class))
-            .collect(Collectors.toSet());
-    }
-
-    @Override
     public Mono<Long> getDataEntityIdByAlertId(final long alertId) {
         final var query = DSL.select(DATA_ENTITY.ID)
             .from(ALERT)
@@ -409,7 +390,6 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     private Map<String, SetValuedMap<Short, AlertPojo>> mapOpenAlerts(final List<AlertPojo> alerts) {
-
         final Map<String, SetValuedMap<Short, AlertPojo>> result = new HashMap<>();
         for (final AlertPojo alert : alerts) {
             result.compute(alert.getDataEntityOddrn(), (k, v) -> {

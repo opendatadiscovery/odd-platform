@@ -67,8 +67,8 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
 
     @Override
     public boolean shouldProcess(final IngestionRequest request) {
-        return CollectionUtils.isNotEmpty(request.getTaskRuns()) ||
-            CollectionUtils.isNotEmpty(request.getExistingEntities());
+        return CollectionUtils.isNotEmpty(request.getTaskRuns())
+            || CollectionUtils.isNotEmpty(request.getExistingEntities());
     }
 
     @Override
