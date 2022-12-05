@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.SetValuedMap;
 import org.jooq.CommonTableExpression;
@@ -18,6 +19,7 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Row2;
+import org.jooq.Row3;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
@@ -249,6 +251,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         final var resolveQuery = DSL.update(ALERT)
             .set(ALERT.STATUS, AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode())
             .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
+            .set(ALERT.STATUS_UPDATED_BY, DSL.inline(null, String.class))
             .where(ALERT.ID.in(alertIds));
 
         return jooqReactiveOperations.mono(resolveQuery).then();
@@ -263,16 +266,17 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         final List<AlertRecord> alertRecords =
             alertPojos.stream().map(a -> jooqReactiveOperations.newRecord(ALERT, a)).toList();
 
-        final InsertSetStep<AlertRecord> insertStep = DSL.insertInto(ALERT);
+        return jooqReactiveOperations.executeInPartitionReturning(alertRecords, ar -> {
+            final InsertSetStep<AlertRecord> insertStep = DSL.insertInto(ALERT);
 
-        for (int i = 0; i < alertRecords.size() - 1; i++) {
-            insertStep.set(alertRecords.get(i)).newRecord();
-        }
+            for (int i = 0; i < alertRecords.size() - 1; i++) {
+                insertStep.set(alertRecords.get(i)).newRecord();
+            }
 
-        return jooqReactiveOperations.flux(insertStep
+            return jooqReactiveOperations.flux(insertStep
                 .set(alertRecords.get(alertRecords.size() - 1))
-                .returning(ALERT.fields()))
-            .map(r -> r.into(AlertPojo.class));
+                .returning(ALERT.fields()));
+        }).map(r -> r.into(AlertPojo.class));
     }
 
     @Override
@@ -282,13 +286,35 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         }
 
         return jooqReactiveOperations.executeInPartition(chunks, cc -> {
-            final List<Row2<Long, String>> rows = cc.stream()
-                .map(c -> DSL.row(c.getAlertId(), c.getDescription()))
+            final List<Row3<Long, String, LocalDateTime>> rows = cc.stream()
+                .map(c -> DSL.row(c.getAlertId(), c.getDescription(), c.getCreatedAt()))
                 .toList();
 
             final var query = DSL
-                .insertInto(ALERT_CHUNK, ALERT_CHUNK.ALERT_ID, ALERT_CHUNK.DESCRIPTION)
+                .insertInto(ALERT_CHUNK, ALERT_CHUNK.ALERT_ID, ALERT_CHUNK.DESCRIPTION, ALERT_CHUNK.CREATED_AT)
                 .valuesOfRows(rows);
+
+            return jooqReactiveOperations.mono(query);
+        });
+    }
+
+    @Override
+    public Mono<Void> setLastCreatedAt(final Map<Long, LocalDateTime> alertIdToLastCreatedAt) {
+        if (MapUtils.isEmpty(alertIdToLastCreatedAt)) {
+            return Mono.empty();
+        }
+
+        final List<AlertRecord> records = alertIdToLastCreatedAt.entrySet().stream()
+            .map(e -> new AlertRecord().setId(e.getKey()).setLastCreatedAt(e.getValue()))
+            .toList();
+
+        return jooqReactiveOperations.executeInPartition(records, rs -> {
+            final Table<?> table = DSL.table(jooqReactiveOperations.newResult(ALERT, rs));
+
+            final var query = DSL.update(ALERT)
+                .set(ALERT.LAST_CREATED_AT, table.field(ALERT.LAST_CREATED_AT))
+                .from(table)
+                .where(ALERT.ID.eq(table.field(ALERT.ID.getName(), Long.class)));
 
             return jooqReactiveOperations.mono(query);
         });

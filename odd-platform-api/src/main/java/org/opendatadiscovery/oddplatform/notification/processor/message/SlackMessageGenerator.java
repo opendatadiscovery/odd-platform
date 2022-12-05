@@ -72,7 +72,8 @@ public class SlackMessageGenerator {
 
         blocks.add(divider());
         blocks.add(section(c -> c.text(
-            markdownText(buildDataEntityLink(dataEntity) + "\n" + message.getAlertDescription()))));
+            // TODO: make descriptions
+            markdownText(buildDataEntityLink(dataEntity) + "\n" + ""))));
 
         if (message.getUpdatedBy() != null) {
             final String updatedByText = switch (message.getEventType()) {
