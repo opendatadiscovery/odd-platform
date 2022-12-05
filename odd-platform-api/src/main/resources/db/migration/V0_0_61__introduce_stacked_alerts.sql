@@ -62,7 +62,9 @@ ALTER TABLE alert
     DROP COLUMN IF EXISTS description;
 
 CREATE UNIQUE INDEX IF NOT EXISTS alert_unique_messenger_oddrn_is_present ON alert (data_entity_oddrn, type, messenger_entity_oddrn)
-    WHERE messenger_entity_oddrn IS NOT NULL;
+    WHERE messenger_entity_oddrn IS NOT NULL
+    AND status = 1;
 
 CREATE UNIQUE INDEX IF NOT EXISTS alert_unique_messenger_oddrn_is_missing ON alert (data_entity_oddrn, type)
-    WHERE messenger_entity_oddrn IS NULL;
+    WHERE messenger_entity_oddrn IS NULL
+    AND status = 1;

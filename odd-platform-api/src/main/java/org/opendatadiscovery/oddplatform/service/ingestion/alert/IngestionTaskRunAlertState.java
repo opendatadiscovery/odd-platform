@@ -58,10 +58,12 @@ public class IngestionTaskRunAlertState {
     public void report(final IngestionTaskRun taskRun) {
         if (IngestionTaskRunStatus.SUCCESS.equals(taskRun.getStatus())) {
             reportSuccess();
+            return;
         }
 
         if (TASK_RUN_FAIL_STATUSES.contains(taskRun.getStatus())) {
             reportFailed(taskRun);
+            return;
         }
 
         log.debug("Skipping task run {} with status {} in state", taskRun.getOddrn(), taskRun.getStatus());
