@@ -17,7 +17,7 @@ const SELECTORS = {
   addCustomMetadataButton: `[data-qa="add_metadata"]`,
   inputCustomMetadata: `[data-qa="add_custom_metadata_input"]`,
   customMetadataDropdownList: `[role="listbox"]`,
-  addMetadataInputField: `[data-qa="add_custom_metadata_type_select"] >> ..`,
+  addMetadataInputAnchor: `[data-qa="add_custom_metadata_type_select"] >> ..`,
   customMetadataListItem: `li`,
   addCustomMetadataTrueRadioButton: `[data-qa="add_custom_metadata_radio_button_true"]`,
   addCustomName: `[data-qa="add_business_name"]`,
@@ -74,7 +74,7 @@ export default class OverviewPage extends DataEntityPage {
   private get typeDropdown() {
     return new Dropdown(
       this.page,
-      SELECTORS.addMetadataInputField,
+      SELECTORS.addMetadataInputAnchor,
       SELECTORS.customMetadataDropdownList,
       SELECTORS.customMetadataListItem,
     );
