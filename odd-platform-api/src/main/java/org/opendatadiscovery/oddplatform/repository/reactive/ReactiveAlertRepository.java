@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.commons.collections4.SetValuedMap;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
@@ -106,14 +105,6 @@ public interface ReactiveAlertRepository {
     Flux<AlertPojo> createAlerts(final Collection<AlertPojo> alerts);
 
     Mono<Void> createChunks(final List<AlertChunkPojo> chunks);
-
-    /**
-     * Retrieves existing messengers by provided list of alerts.
-     *
-     * @param alerts - List of alerts
-     * @return - List of existing messengers
-     */
-    Mono<Set<String>> getExistingMessengers(final Collection<AlertPojo> alerts);
 
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
 }
