@@ -1,11 +1,15 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.alert;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+
+import static java.time.LocalDateTime.now;
 
 public abstract class AlertAction {
     @RequiredArgsConstructor
@@ -37,6 +41,18 @@ public abstract class AlertAction {
                 alertPojo.getType(),
                 alertPojo.getMessengerEntityOddrn()
             );
+        }
+
+        public AlertPojo toOpenAlert() {
+            final LocalDateTime now = now();
+
+            return new AlertPojo()
+                .setDataEntityOddrn(dataEntityOddrn)
+                .setMessengerEntityOddrn(messengerEntityOddrn)
+                .setType(type)
+                .setStatus(AlertStatusEnum.OPEN.getCode())
+                .setLastCreatedAt(now)
+                .setStatusUpdatedAt(now);
         }
     }
 }

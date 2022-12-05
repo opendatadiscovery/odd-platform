@@ -134,16 +134,14 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
             return Flux.just();
         }
 
-        // TODO: Multimap
         final Map<String, List<IngestionTaskRun>> dtr = new HashMap<>();
         final Map<String, List<IngestionTaskRun>> dqt = new HashMap<>();
 
         for (final IngestionTaskRun run : taskRuns) {
             switch (run.getType()) {
-                // TODO: merge
-                case DATA_TRANSFORMER_RUN -> dtr.compute(run.getTaskOddrn(), (oddrn, list) -> compute(run, list));
+                case DATA_TRANSFORMER_RUN -> dtr.compute(run.getTaskOddrn(), (oddrn, list) -> computeList(run, list));
                 case DATA_QUALITY_TEST_RUN -> dqtToDatasets.get(run.getTaskOddrn()).forEach(
-                    datasetOddrn -> dqt.compute(datasetOddrn, (oddrn, list) -> compute(run, list)));
+                    datasetOddrn -> dqt.compute(datasetOddrn, (oddrn, list) -> computeList(run, list)));
             }
         }
 
@@ -153,12 +151,12 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
         ));
     }
 
-    private List<IngestionTaskRun> compute(final IngestionTaskRun run,
-                                           final List<IngestionTaskRun> list) {
+    private List<IngestionTaskRun> computeList(final IngestionTaskRun run,
+                                               final List<IngestionTaskRun> list) {
         if (list == null) {
-            final ArrayList<IngestionTaskRun> l = new ArrayList<>();
-            l.add(run);
-            return l;
+            final ArrayList<IngestionTaskRun> newList = new ArrayList<>();
+            newList.add(run);
+            return newList;
         }
 
         list.add(run);

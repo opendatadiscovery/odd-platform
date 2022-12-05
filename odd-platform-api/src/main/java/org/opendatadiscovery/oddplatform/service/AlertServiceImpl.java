@@ -97,7 +97,6 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    // TODO: fuck what to do with chunks?
     public Mono<AlertList> getDataEntityAlerts(final long dataEntityId) {
         return alertRepository.getAlertsByDataEntityId(dataEntityId)
             .map(alertMapper::mapAlerts);

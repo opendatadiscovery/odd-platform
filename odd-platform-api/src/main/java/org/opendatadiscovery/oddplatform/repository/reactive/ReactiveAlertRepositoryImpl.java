@@ -109,7 +109,6 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    // TODO: group by
     public Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId) {
         final SelectConditionStep<Record> baseQuery = DSL
             .select(ALERT.fields())
@@ -252,6 +251,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
         final var resolveQuery = DSL.update(ALERT)
             .set(ALERT.STATUS, AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode())
+            .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
             .where(ALERT.ID.in(alertIds));
 
         return jooqReactiveOperations.mono(resolveQuery).then();

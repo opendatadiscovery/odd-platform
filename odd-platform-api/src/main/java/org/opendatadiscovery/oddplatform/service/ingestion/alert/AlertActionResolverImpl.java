@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetValuedMap;
-import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunType;
@@ -178,12 +177,10 @@ public class AlertActionResolverImpl implements AlertActionResolver {
             .toList();
 
         if (alertId == null) {
-            final AlertPojo alert = buildAlert(dataEntityOddrn, BACKWARDS_INCOMPATIBLE_SCHEMA, null);
+            final AlertUniqueConstraint constraint =
+                new AlertUniqueConstraint(dataEntityOddrn, BACKWARDS_INCOMPATIBLE_SCHEMA.getCode(), null);
 
-            return new CreateAlertAction(
-                alert,
-                Map.of(AlertUniqueConstraint.fromAlert(alert), chunks)
-            );
+            return new CreateAlertAction(constraint.toOpenAlert(), Map.of(constraint, chunks));
         }
 
         return new StackAlertAction(chunks);
@@ -204,20 +201,5 @@ public class AlertActionResolverImpl implements AlertActionResolver {
         };
 
         return haltUntil.compareTo(baseline) > 0;
-    }
-
-    // TODO: duplicate
-    private AlertPojo buildAlert(final String dataEntityOddrn,
-                                 final AlertTypeEnum alertType,
-                                 final String messengerOddrn) {
-        final LocalDateTime now = now();
-
-        return new AlertPojo()
-            .setDataEntityOddrn(dataEntityOddrn)
-            .setMessengerEntityOddrn(messengerOddrn)
-            .setType(alertType.getCode())
-            .setStatus(AlertStatusEnum.OPEN.getCode())
-            .setLastCreatedAt(now)
-            .setStatusUpdatedAt(now);
     }
 }
