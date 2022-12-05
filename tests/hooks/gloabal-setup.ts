@@ -6,7 +6,7 @@ import path from 'path';
 
 import { configuration } from '../config/configuration';
 
-const make_dir_if_not_exists = dir => {
+const makeDirIfNotExists = dir => {
     if (!fs.existsSync(dir)) {
         console.log(`creating ${dir} directory..`);
         fs.mkdirSync(path.resolve(dir), { recursive: true });
@@ -15,8 +15,8 @@ const make_dir_if_not_exists = dir => {
 };
 
 const setup = (config: FullConfig): void => {
-    make_dir_if_not_exists('./dist');
-    make_dir_if_not_exists('./dist/workers');
+    makeDirIfNotExists('./dist');
+    makeDirIfNotExists('./dist/workers');
     console.log(`playwright checks: 
       directory to run: ${config.rootDir}
       tests to run: ${config.grep}
