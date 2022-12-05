@@ -92,15 +92,11 @@ export default class OverviewPage extends DataEntityPage {
     return new Radio(this.page, SELECTORS.addCustomMetadataTrueRadioButton);
   }
 
-  private async getField(inputName: InputName, name: string) {
-    await this[`input${inputName}`].fill(name);
-  }
-
   async createOwner(name: string, title: string) {
     await this.addOwnerButton.click();
-    await this.getField('Name', name);
+    await this.inputName.fill(name);
     await this.createNewEntityLink.click();
-    await this.getField('Title', title);
+    await this.inputTitle.fill(title);
     await this.createNewEntityLink.click();
     await this.saveButton.click();
   }
@@ -113,7 +109,7 @@ export default class OverviewPage extends DataEntityPage {
 
   async createCustomMetadata(name: string) {
     await this.addCustomMetadataButton.click();
-    await this.getField('Metadata', name);
+    await this.inputMetadata.fill(name);
     await this.createNewEntityLink.click();
     await this.typeDropdown.set('Boolean', { open: true });
     await this.addCustomMetadataTrueRadioButton.click();
