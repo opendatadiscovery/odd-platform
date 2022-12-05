@@ -98,6 +98,12 @@ interface ActivityEventType {
 
 type Toast = Record<ToastType, string>;
 
+interface SwitchColors {
+  checked: string;
+  track: string;
+  thumb: string;
+}
+
 declare module '@mui/material/styles' {
   interface Palette {
     entityClass: EntityClasses;
@@ -116,6 +122,7 @@ declare module '@mui/material/styles' {
     slaStatus: SLAStatus;
     border: Border;
     toast: Toast;
+    switch: SwitchColors;
   }
 
   interface PaletteOptions {
@@ -135,6 +142,7 @@ declare module '@mui/material/styles' {
     slaStatus: SLAStatus;
     border: Border;
     toast: Toast;
+    switch: SwitchColors;
   }
 }
 

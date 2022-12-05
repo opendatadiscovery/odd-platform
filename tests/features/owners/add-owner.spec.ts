@@ -2,8 +2,8 @@ import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
 test.describe('Owners', () => {
-  test('Add new Owner', async ({ steps: { pages }, page }) => {
-    const ownerName = 'Test_ownerName';
+  test('Add new Owner', async ({workerId, steps: { pages }, page }) => {
+    const ownerName = `Test_ownerName + ${workerId}`;
 
     await test.step('I open Owners page', async () => {
       await page.goto('');

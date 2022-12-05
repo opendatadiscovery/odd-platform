@@ -58,3 +58,6 @@ export const setPageInfo = <Item extends { id: string; createdAt: number }>(
   pageInfo = { hasNext: true, lastId: lastItem[0].id };
   return pageInfo;
 };
+
+export const notEmpty = <TValue>(value: TValue | null | undefined): value is TValue =>
+  value !== null && value !== undefined;

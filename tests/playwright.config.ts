@@ -31,6 +31,11 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  outputDir: './test-results',
+  // reporter: [['list', { printSteps: false }], ['./tests/config/allure-reporter.ts']],
+  // repeatEach: 8, // <-- use this to check stability
+  // testDir: './dist/playwright-checks',
+  globalSetup: './hooks/global-setup.ts',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
