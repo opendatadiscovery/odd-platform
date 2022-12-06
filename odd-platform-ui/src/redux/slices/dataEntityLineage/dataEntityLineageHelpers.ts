@@ -1,14 +1,21 @@
 import type {
+  DataEntityLineageById,
   DataEntityLineageState,
-  StreamType,
+  DataEntityLineageStreamById,
   FilterDownstreamEdges,
   FilterUpstreamEdges,
   GroupedDataEntityLineageNode,
+  GroupedNodesAndFilteredEdges,
   GroupingDownstreamNodes,
   GroupingUpstreamNodes,
-  LocalState,
+  GroupNodesAndFilterEdgesParams,
+  LocalLineageState,
+  ParseLineageParams,
+  StreamType,
 } from 'redux/interfaces';
 import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
+import uniqWith from 'lodash/uniqWith';
+import isEqual from 'lodash/isEqual';
 
 export const isRootNodeIdsEqual = (rootNodeId: number, currentRootNodeId: number) =>
   rootNodeId === currentRootNodeId;
@@ -23,7 +30,7 @@ export const setRootNode = (
     ? rootNode
     : state[rootNodeId].rootNode;
 
-export const resetLocalState = (localState: LocalState) => {
+export const resetLocalState = (localState: LocalLineageState) => {
   localState.allNodes = [];
   localState.nodeIds = new Set();
   localState.allEdges = [];
@@ -421,3 +428,239 @@ export const groupingDownstreamNodes = (
 
   return groupedNodes;
 };
+
+export const groupNodesAndFilterEdgesForDownstream = ({
+  rootNodeId,
+  localLineageState,
+  minGroupSize,
+}: GroupNodesAndFilterEdgesParams): GroupedNodesAndFilteredEdges => {
+  const { filteredEdges, targetIdsMapByDepth, crossEdges } = filterDownstreamEdges(
+    rootNodeId,
+    localLineageState.allEdges
+  );
+
+  const groupIdsByTargetId = generateGroupIdsMap(localLineageState.allNodes);
+
+  const groupedDownstreamNodes = groupingDownstreamNodes(
+    groupIdsByTargetId,
+    targetIdsMapByDepth,
+    minGroupSize,
+    true,
+    localLineageState.excludedIds
+  );
+
+  const depthGroupIdByTargetId = new Map<number, number>();
+  groupedDownstreamNodes.forEach(node => {
+    node.targetIds.forEach(targetId =>
+      depthGroupIdByTargetId.set(targetId, node.depthGroupId)
+    );
+  });
+
+  const replacedEdges = filteredEdges.map(edge => {
+    const depthTargetGroupId = depthGroupIdByTargetId.get(edge.targetId);
+
+    if (depthTargetGroupId) {
+      return {
+        sourceId: edge.sourceId,
+        targetId: depthGroupIdByTargetId.has(edge.targetId)
+          ? depthTargetGroupId
+          : edge.targetId,
+      };
+    }
+    return { sourceId: edge.sourceId, targetId: edge.targetId };
+  });
+
+  const resultDownstreamEdges: DataEntityLineageEdge[] = uniqWith(replacedEdges, isEqual);
+
+  const replacedCrossEdges = crossEdges.map(edge => {
+    const depthTargetGroupId = depthGroupIdByTargetId.get(edge.targetId);
+
+    if (depthTargetGroupId) {
+      return {
+        sourceId: edge.sourceId,
+        targetId: depthGroupIdByTargetId.has(edge.targetId)
+          ? depthTargetGroupId
+          : edge.targetId,
+      };
+    }
+    return { sourceId: edge.sourceId, targetId: edge.targetId };
+  });
+
+  const resultDownstreamCrossEdges: DataEntityLineageEdge[] = uniqWith(
+    replacedCrossEdges,
+    isEqual
+  );
+
+  const resultDownstreamNodes: GroupedDataEntityLineageNode[] = groupedDownstreamNodes
+    .map(groupNode => {
+      const group = localLineageState.allGroups.find(g => g.id === groupNode.groupId)!;
+      const resultNode: GroupedDataEntityLineageNode = {
+        ...group,
+        id: groupNode.depthGroupId,
+        nodesRelatedWithDEG: localLineageState.allNodes.filter(n =>
+          groupNode.targetIds.includes(n.id)
+        ),
+        originalGroupId: group?.id,
+      };
+      return resultNode;
+    })
+    .concat(localLineageState.allNodes);
+
+  return {
+    nodes: resultDownstreamNodes,
+    edges: resultDownstreamEdges,
+    crossEdges: resultDownstreamCrossEdges,
+  };
+};
+
+export const parseDownstreamLineage = ({
+  state,
+  rootNodeId,
+  rootNode,
+  edges,
+  nodes,
+  crossEdges,
+  dataEntityLineageInitialState,
+}: ParseLineageParams): DataEntityLineageById => ({
+  rootNode: rootNode || state[rootNodeId]?.rootNode,
+  upstream: {
+    ...(state[rootNodeId]?.upstream || dataEntityLineageInitialState),
+  },
+  downstream: {
+    edgesById: edges.reduce<DataEntityLineageStreamById['edgesById']>(
+      (edgesById, edge) => ({
+        ...edgesById,
+        [edge.sourceId]: edgesById[edge.sourceId]
+          ? [...edgesById[edge.sourceId], edge]
+          : [edge],
+      }),
+      {}
+    ),
+    nodesById: nodes.reduce<DataEntityLineageStreamById['nodesById']>(
+      (nodesById, node) => ({
+        ...nodesById,
+        [node.id]: node,
+      }),
+      {}
+    ),
+    crossEdges,
+  },
+});
+
+export const groupNodesAndFilterEdgesForUpstream = ({
+  rootNodeId,
+  localLineageState,
+  minGroupSize,
+}: GroupNodesAndFilterEdgesParams): GroupedNodesAndFilteredEdges => {
+  const { filteredEdges, sourceIdsMapByDepth, crossEdges } = filterUpstreamEdges(
+    rootNodeId,
+    localLineageState.allEdges
+  );
+
+  const groupIdsBySourceId = generateGroupIdsMap(localLineageState.allNodes);
+
+  const groupedUpstreamNodes = groupingUpstreamNodes(
+    groupIdsBySourceId,
+    sourceIdsMapByDepth,
+    minGroupSize,
+    true,
+    localLineageState.excludedIds
+  );
+
+  const depthGroupIdBySourceId = new Map<number, number>();
+  groupedUpstreamNodes.forEach(node => {
+    node.sourceIds.forEach(sourceId =>
+      depthGroupIdBySourceId.set(sourceId, node.depthGroupId)
+    );
+  });
+
+  const replacedEdges = filteredEdges.map(edge => {
+    const depthSourceGroupId = depthGroupIdBySourceId.get(edge.sourceId);
+
+    if (depthSourceGroupId) {
+      return {
+        sourceId: depthGroupIdBySourceId.has(edge.sourceId)
+          ? depthSourceGroupId
+          : edge.sourceId,
+        targetId: edge.targetId,
+      };
+    }
+    return { sourceId: edge.sourceId, targetId: edge.targetId };
+  });
+
+  const resultUpstreamEdges: DataEntityLineageEdge[] = uniqWith(replacedEdges, isEqual);
+
+  const replacedCrossEdges = crossEdges.map(edge => {
+    const depthSourceGroupId = depthGroupIdBySourceId.get(edge.sourceId);
+
+    if (depthSourceGroupId) {
+      return {
+        sourceId: depthGroupIdBySourceId.has(edge.sourceId)
+          ? depthSourceGroupId
+          : edge.sourceId,
+        targetId: edge.targetId,
+      };
+    }
+    return { sourceId: edge.sourceId, targetId: edge.targetId };
+  });
+
+  const resultUpstreamCrossEdges: DataEntityLineageEdge[] = uniqWith(
+    replacedCrossEdges,
+    isEqual
+  );
+
+  const resultUpstreamNodes: GroupedDataEntityLineageNode[] = groupedUpstreamNodes
+    .map(groupNode => {
+      const group = localLineageState.allGroups.find(g => g.id === groupNode.groupId)!;
+      const resultNode: GroupedDataEntityLineageNode = {
+        ...group,
+        id: groupNode.depthGroupId,
+        nodesRelatedWithDEG: localLineageState.allNodes.filter(n =>
+          groupNode.sourceIds.includes(n.id)
+        ),
+        originalGroupId: group?.id,
+      };
+      return resultNode;
+    })
+    .concat(localLineageState.allNodes);
+
+  return {
+    nodes: resultUpstreamNodes,
+    edges: resultUpstreamEdges,
+    crossEdges: resultUpstreamCrossEdges,
+  };
+};
+
+export const parseUpstreamLineage = ({
+  state,
+  rootNodeId,
+  rootNode,
+  edges,
+  nodes,
+  crossEdges,
+  dataEntityLineageInitialState,
+}: ParseLineageParams): DataEntityLineageById => ({
+  rootNode: rootNode || state[rootNodeId]?.rootNode,
+  upstream: {
+    edgesById: edges.reduce<DataEntityLineageStreamById['edgesById']>(
+      (edgesById, edge) => ({
+        ...edgesById,
+        [edge.targetId]: edgesById[edge.targetId]
+          ? [...edgesById[edge.targetId], edge]
+          : [edge],
+      }),
+      {}
+    ),
+    nodesById: nodes.reduce<DataEntityLineageStreamById['nodesById']>(
+      (nodesById, node) => ({
+        ...nodesById,
+        [node.id]: node,
+      }),
+      {}
+    ),
+    crossEdges,
+  },
+  downstream: {
+    ...(state[rootNodeId]?.downstream || dataEntityLineageInitialState),
+  },
+});

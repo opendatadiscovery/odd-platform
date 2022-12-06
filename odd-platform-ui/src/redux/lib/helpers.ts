@@ -64,6 +64,9 @@ export const setPageInfo = <Item extends { id: string; createdAt: number }>(
   return pageInfo;
 };
 
+export const notEmpty = <TValue>(value: TValue | null | undefined): value is TValue =>
+  value !== null && value !== undefined;
+
 export function castDatesToTimestamp<Data>(
   data: Array<Data>
 ): SerializeDateToNumber<Data>[];

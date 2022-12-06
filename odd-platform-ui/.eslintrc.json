@@ -43,6 +43,7 @@
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/anchor-is-valid": "off",
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": [
       "error",
@@ -77,16 +78,7 @@
       }
     ],
     "@typescript-eslint/no-unused-vars": "warn",
-    "no-param-reassign": [
-      "warn",
-      {
-        "props": true,
-        "ignorePropertyModificationsFor": [
-          "state",
-          "localState"
-        ]
-      }
-    ],
+    "no-param-reassign": "off",
     "@typescript-eslint/return-await": "off",
     "import/no-cycle": "error",
     "import/no-unresolved": "error"

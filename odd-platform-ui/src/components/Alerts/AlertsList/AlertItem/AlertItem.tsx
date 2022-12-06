@@ -58,7 +58,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, alertStatusHandler }) => {
           id={alert.id}
           type={alert.type}
           // description={alert.description}
-          createdAt={alert.createdAt}
+          // createdAt={alert.createdAt}
           status={alert.status}
           statusUpdatedAt={alert.statusUpdatedAt}
           isPermissionsFetching={isPermissionsFetching}

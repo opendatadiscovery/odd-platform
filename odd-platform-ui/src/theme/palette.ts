@@ -292,4 +292,9 @@ export const palette = createPalette({
     blank: '',
     custom: '',
   },
+  switch: {
+    checked: colors.green40,
+    track: colors.black10,
+    thumb: colors.white,
+  },
 });

@@ -82,7 +82,7 @@
     "chai-as-promised": "7.1.1",
     "docx4js": "^3.2.20",
     "dotenv": "10.0.0",
-    "eslint": "^8.23.1",
+    "eslint": "8.22.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",

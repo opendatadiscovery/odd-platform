@@ -1,22 +1,34 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Alert, AlertStatus } from 'generated-sources';
-import { updateAlertStatus } from 'redux/thunks';
+import { AlertStatus, Permission } from 'generated-sources';
+import { fetchDataEntityAlertsConfig, updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityAlertListFetchingStatus,
   getAlertList,
+  getDataEntityAlertConfig,
+  getDataEntityAlertsFetchingError,
 } from 'redux/selectors/alert.selectors';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { useAppParams } from 'lib/hooks';
+import type { Alert } from 'redux/interfaces';
+import AppButton from 'components/shared/AppButton/AppButton';
+import NotificationSettings from 'components/DataEntityDetails/DataEntityAlerts/NotificationSettings/NotificationSettings';
+import { WithPermissions } from 'components/shared/contexts';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
 import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading: isAlertsFetching } = useAppSelector(
-    getDataEntityAlertListFetchingStatus
-  );
+  const { dataEntityId } = useAppParams();
+
+  const {
+    isLoading: isAlertsFetching,
+    isNotLoaded: isAlertsNotFetched,
+    isLoaded: isAlertsFetched,
+  } = useAppSelector(getDataEntityAlertListFetchingStatus);
+  const alertsListError = useAppSelector(getDataEntityAlertsFetchingError);
   const alertsList = useAppSelector(getAlertList);
 
   const alertStatusHandler = React.useCallback(
@@ -29,9 +41,23 @@ const DataEntityAlerts: React.FC = () => {
     [updateAlertStatus]
   );
 
+  React.useEffect(() => {
+    dispatch(fetchDataEntityAlertsConfig({ dataEntityId }));
+  }, [dataEntityId]);
+
   return (
-    <Grid container sx={{ mt: 2 }}>
-      <AlertsTableHeader container>
+    <Grid container sx={{ mt: 2.25 }}>
+      {/* <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}> */}
+      <NotificationSettings
+        btnCreateEl={
+          <AppButton size='medium' color='tertiary'>
+            Notification settings
+          </AppButton>
+        }
+      />
+      {/* </WithPermissions> */}
+
+      <AlertsTableHeader container sx={{ mt: 2.25 }}>
         <ColContainer item $colType='date'>
           <Typography variant='caption'>Date</Typography>
         </ColContainer>
@@ -65,7 +91,11 @@ const DataEntityAlerts: React.FC = () => {
           ))}
         </Grid>
       )}
-      {!isAlertsFetching && !alertsList.length ? <EmptyContentPlaceholder /> : null}
+      <EmptyContentPlaceholder
+        isContentLoaded={isAlertsFetched}
+        isContentEmpty={!alertsList.length}
+      />
+      <AppErrorPage isNotContentLoaded={isAlertsNotFetched} error={alertsListError} />
     </Grid>
   );
 };

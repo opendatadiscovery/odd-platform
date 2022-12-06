@@ -21,7 +21,7 @@ interface AlertItemContentProps {
   id: Alert['id'];
   type: Alert['type'];
   // description: Alert['description'];
-  createdAt: Alert['createdAt'];
+  // createdAt: Alert['createdAt'];
   status: Alert['status'];
   statusUpdatedAt: Alert['statusUpdatedAt'];
   isPermissionsFetching: boolean;
@@ -35,7 +35,7 @@ interface AlertItemContentProps {
 const AlertItemContent: React.FC<AlertItemContentProps> = ({
   alertEntity,
   id,
-  createdAt,
+  // createdAt,
   alertStatusHandler,
   alertOnClickHandle,
   // description,
@@ -86,12 +86,16 @@ const AlertItemContent: React.FC<AlertItemContentProps> = ({
       <ColContainer item container $colType='status' justifyContent='center'>
         <AlertStatusItem typeName={status} />
       </ColContainer>
-      <ColContainer item $colType='createdTime'>
-        <Typography variant='body1'>{alertFormattedDateTime(createdAt)}</Typography>
-      </ColContainer>
+      {/* <ColContainer item $colType='createdTime'> */}
+      {/*   <Typography variant='body1'>{alertFormattedDateTime(createdAt)}</Typography> */}
+      {/* </ColContainer> */}
       <ColContainer item $colType='updatedBy' />
       <ColContainer item $colType='updatedAt'>
-        <Typography variant='body1'>{alertFormattedDateTime(statusUpdatedAt)}</Typography>
+        {statusUpdatedAt && (
+          <Typography variant='body1'>
+            {alertFormattedDateTime(statusUpdatedAt)}
+          </Typography>
+        )}
       </ColContainer>
       <ColContainer item $colType='actionBtn'>
         <S.OptionsBtn>
