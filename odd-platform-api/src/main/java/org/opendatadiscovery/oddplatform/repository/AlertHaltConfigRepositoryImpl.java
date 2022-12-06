@@ -51,7 +51,8 @@ public class AlertHaltConfigRepositoryImpl implements AlertHaltConfigRepository 
 
         final InsertResultStep<AlertHaltConfigRecord> query = DSL.insertInto(ALERT_HALT_CONFIG)
             .set(record)
-            .onDuplicateKeyUpdate()
+            .onConflict(ALERT_HALT_CONFIG.DATA_ENTITY_ID)
+            .doUpdate()
             .set(ALERT_HALT_CONFIG.DISTRIBUTION_ANOMALY_HALT_UNTIL, cfg.getDistributionAnomalyHaltUntil())
             .set(ALERT_HALT_CONFIG.INCOMPATIBLE_SCHEMA_HALT_UNTIL, cfg.getIncompatibleSchemaHaltUntil())
             .set(ALERT_HALT_CONFIG.FAILED_DQ_TEST_HALT_UNTIL, cfg.getFailedDqTestHaltUntil())
