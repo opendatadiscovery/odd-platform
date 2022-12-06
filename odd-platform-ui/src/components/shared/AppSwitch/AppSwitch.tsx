@@ -4,7 +4,14 @@ import { StyledSwitch } from './AppSwitchStyles';
 
 type AppSwitchProps = Pick<
   SwitchProps,
-  'checked' | 'onChange' | 'defaultChecked' | 'disabled'
+  | 'checked'
+  | 'onChange'
+  | 'defaultChecked'
+  | 'disabled'
+  | 'value'
+  | 'onBlur'
+  | 'name'
+  | 'ref'
 > & { label?: string };
 
 const AppSwitch: React.FC<AppSwitchProps> = ({ label, ...props }) => (

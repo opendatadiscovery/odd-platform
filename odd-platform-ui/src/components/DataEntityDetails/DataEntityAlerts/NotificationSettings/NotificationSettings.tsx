@@ -7,12 +7,20 @@ import {
   getDataEntityAlertsConfigUpdatingError,
   getDataEntityAlertsConfigUpdatingStatus,
 } from 'redux/selectors';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useController, useForm } from 'react-hook-form';
 import { updateDataEntityAlertsConfig } from 'redux/thunks';
-import { Grid, Typography } from '@mui/material';
-import { AppButton, AppInput, DialogWrapper } from 'components/shared';
+import { FormControlLabel, Grid, Radio, RadioGroup, Typography } from '@mui/material';
+import {
+  AppButton,
+  AppInput,
+  AppRadio,
+  AppSwitch,
+  DialogWrapper,
+} from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import type { SerializeDateToNumber } from 'redux/interfaces';
+import { minutesToMilliseconds } from 'date-fns';
+import { toDateWithoutOffset } from 'lib/helpers';
 
 interface NotificationSettingsProps {
   btnCreateEl: JSX.Element;
@@ -27,6 +35,18 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
   const { dataEntityId } = useAppParams();
 
   const config = useAppSelector(state => getDataEntityAlertConfig(state, dataEntityId));
+
+  type TimeRange = (30 | 60 | 180 | 1440 | 10080) | number;
+  const defaultTimeRange = 30;
+  const defaultDisableNotification = React.useCallback(() => {
+    if (config?.config?.incompatibleSchemaHaltUntil) return false;
+    return true;
+  }, [config]);
+  console.log('def', defaultDisableNotification());
+  const [disableNotification, setDisableNotification] = React.useState(() =>
+    defaultDisableNotification()
+  );
+  const [timeRange, setTimeRange] = React.useState<TimeRange>(defaultTimeRange);
 
   const {
     isLoading: isDataEntityAlertConfigUpdating,
@@ -52,12 +72,17 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
     defaultValues: getDefaultValues(),
   });
 
+  const { field: schemaField } = useController<FormData>({
+    control,
+    name: 'incompatibleSchemaHaltUntil',
+  });
+
   const clearState = React.useCallback(() => {
     reset();
   }, []);
 
   const handleSubmitForm = (dataEntityAlertConfig: FormData) => {
-    console.log('da', dataEntityAlertConfig);
+    console.log('formData', dataEntityAlertConfig);
     dispatch(updateDataEntityAlertsConfig({ dataEntityId, dataEntityAlertConfig })).then(
       () => clearState()
     );
@@ -68,6 +93,36 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
       Notification settings
     </Typography>
   );
+
+  const getEndTimeInMs = (value: string | number) => {
+    const rangeInMinutes = Number(value) ?? 0;
+    const rangeInMs = minutesToMilliseconds(rangeInMinutes);
+    const currentDateInMs = new Date().getTime();
+    const endDateInMs = currentDateInMs + rangeInMs;
+
+    return endDateInMs;
+  };
+
+  const handleRadioChange = (value: string, onChange: (val: unknown) => void) => {
+    const rangeInMinutes = Number(value) ?? 0;
+    // const rangeInMs = minutesToMilliseconds(rangeInMinutes);
+    // const currentDateInMs = new Date().getTime();
+    const endDateInMs = getEndTimeInMs(value);
+
+    setTimeRange(rangeInMinutes);
+    onChange(endDateInMs);
+  };
+
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDisableNotification(prev => !prev);
+    const endDateInMs = getEndTimeInMs(defaultTimeRange);
+    console.log('dis', disableNotification);
+    if (!disableNotification) {
+      schemaField.onChange(endDateInMs);
+    } else {
+      schemaField.onChange(undefined);
+    }
+  };
 
   const formContent = () => (
     <form
@@ -80,26 +135,47 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
           notifications
         </Typography>
       </Grid>
-      {/* <Controller */}
-      {/*   name='name' */}
-      {/*   control={control} */}
-      {/*   rules={{ required: true, validate: value => !!value.trim() }} */}
-      {/*   render={({ field }) => ( */}
-      {/*     <AppInput */}
-      {/*       {...field} */}
-      {/*       placeholder='Data Entity Group Name' */}
-      {/*       label='Name' */}
-      {/*       customEndAdornment={{ */}
-      {/*         variant: 'clear', */}
-      {/*         showAdornment: !!field.value, */}
-      {/*         onCLick: () => field.onChange(''), */}
-      {/*         icon: <ClearIcon />, */}
-      {/*       }} */}
-      {/*     /> */}
-      {/*   )} */}
-      {/* /> */}
+      <Controller
+        name='incompatibleSchemaHaltUntil'
+        control={control}
+        defaultValue={30}
+        render={({ field }) => (
+          <Grid container flexDirection='column'>
+            <Grid
+              sx={{ mt: 1.5 }}
+              container
+              flexWrap='nowrap'
+              alignItems='center'
+              justifyContent='space-between'
+            >
+              <Typography variant='body1'>
+                Backwords incompatible schema change
+              </Typography>
+              <AppSwitch checked={!disableNotification} onChange={handleSwitchChange} />
+            </Grid>
+            {disableNotification && (
+              <RadioGroup
+                {...field}
+                defaultValue={30}
+                value={timeRange}
+                onChange={e => handleRadioChange(e.target.value, field.onChange)}
+              >
+                <FormControlLabel
+                  value={30}
+                  control={<AppRadio />}
+                  label='Half an hour'
+                />
+                <FormControlLabel value={60} control={<AppRadio />} label='Hour' />
+                <FormControlLabel value={180} control={<AppRadio />} label='3 hours' />
+                <FormControlLabel value={1440} control={<AppRadio />} label='1 day' />
+                <FormControlLabel value={10080} control={<AppRadio />} label='Week' />
+              </RadioGroup>
+            )}
+          </Grid>
+        )}
+      />
       <Grid>
-        <Typography variant='caption'>
+        <Typography variant='caption' letterSpacing='0.01em'>
           When the time is up, the notifications type “Fail job” will turn on
           automatically.
         </Typography>

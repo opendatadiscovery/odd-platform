@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AlertStatus } from 'generated-sources';
+import { AlertStatus, Permission } from 'generated-sources';
 import { fetchDataEntityAlertsConfig, updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
@@ -14,6 +14,7 @@ import { useAppParams } from 'lib/hooks';
 import type { Alert } from 'redux/interfaces';
 import AppButton from 'components/shared/AppButton/AppButton';
 import NotificationSettings from 'components/DataEntityDetails/DataEntityAlerts/NotificationSettings/NotificationSettings';
+import { WithPermissions } from 'components/shared/contexts';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
 import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
@@ -46,6 +47,7 @@ const DataEntityAlerts: React.FC = () => {
 
   return (
     <Grid container sx={{ mt: 2.25 }}>
+      {/* <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}> */}
       <NotificationSettings
         btnCreateEl={
           <AppButton size='medium' color='tertiary'>
@@ -53,6 +55,8 @@ const DataEntityAlerts: React.FC = () => {
           </AppButton>
         }
       />
+      {/* </WithPermissions> */}
+
       <AlertsTableHeader container sx={{ mt: 2.25 }}>
         <ColContainer item $colType='date'>
           <Typography variant='caption'>Date</Typography>
