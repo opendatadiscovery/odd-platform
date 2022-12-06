@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.service.ingestion.alert;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -95,28 +94,14 @@ public class AlertActionResolverImpl implements AlertActionResolver {
 
             if (alertDict == null) {
                 return taskRunsByMessenger.values().stream()
-                    .flatMap(trs -> {
-                        final IngestionTaskRunAlertState state =
-                            new IngestionTaskRunAlertState(dataEntityOddrn, alertType);
-
-                        trs.forEach(state::report);
-
-                        return state.getActions().stream();
-                    });
+                    .flatMap(trs -> streamActions(trs, dataEntityOddrn, alertType));
             }
 
             final Set<AlertPojo> lastAlerts = alertDict.get(alertType.getCode());
 
             if (lastAlerts == null) {
                 return taskRunsByMessenger.values().stream()
-                    .flatMap(trs -> {
-                        final IngestionTaskRunAlertState state =
-                            new IngestionTaskRunAlertState(dataEntityOddrn, alertType);
-
-                        trs.forEach(state::report);
-
-                        return state.getActions().stream();
-                    });
+                    .flatMap(trs -> streamActions(trs, dataEntityOddrn, alertType));
             }
 
             final Map<String, AlertPojo> lastAlertsByMessenger = lastAlerts
@@ -126,32 +111,38 @@ public class AlertActionResolverImpl implements AlertActionResolver {
                 .flatMap(e -> {
                     final AlertPojo lastAlert = lastAlertsByMessenger.get(e.getKey());
                     if (lastAlert == null) {
-                        throw new IllegalStateException("Inconsistent data");
+                        throw new IllegalStateException("Internal inconsistent data of messengers oddrns to task runs");
                     }
 
-                    final IngestionTaskRunAlertState state =
-                        new IngestionTaskRunAlertState(dataEntityOddrn, alertType, lastAlert.getId());
-
-                    e.getValue().forEach(state::report);
-
-                    return state.getActions().stream();
+                    return streamActions(e.getValue(), dataEntityOddrn, alertType, lastAlert.getId());
                 });
         }
 
-        final IngestionTaskRunAlertState state;
         if (alertDict == null) {
-            state = new IngestionTaskRunAlertState(dataEntityOddrn, alertType);
+            return streamActions(taskRuns, dataEntityOddrn, alertType);
         } else {
             final Set<AlertPojo> lastAlerts = alertDict.get(alertType.getCode());
-            if (CollectionUtils.isEmpty(lastAlerts)) {
-                state = new IngestionTaskRunAlertState(dataEntityOddrn, alertType);
-            } else {
-                final AlertPojo lastAlert = lastAlerts.iterator().next();
-                state = new IngestionTaskRunAlertState(dataEntityOddrn, alertType, lastAlert.getId());
-            }
+            return CollectionUtils.isEmpty(lastAlerts)
+                ? streamActions(taskRuns, dataEntityOddrn, alertType)
+                : streamActions(taskRuns, dataEntityOddrn, alertType, lastAlerts.iterator().next().getId());
         }
+    }
 
-        taskRuns.stream().sorted(Comparator.comparing(IngestionTaskRun::getEndTime)).forEach(state::report);
+    private Stream<AlertAction> streamActions(final List<IngestionTaskRun> trs,
+                                              final String dataEntityOddrn,
+                                              final AlertTypeEnum alertType) {
+        return streamActions(trs, dataEntityOddrn, alertType, null);
+    }
+
+    private Stream<AlertAction> streamActions(final List<IngestionTaskRun> trs,
+                                              final String dataEntityOddrn,
+                                              final AlertTypeEnum alertType,
+                                              final Long lastAlertId) {
+        final IngestionTaskRunAlertState state = lastAlertId == null
+            ? new IngestionTaskRunAlertState(dataEntityOddrn, alertType)
+            : new IngestionTaskRunAlertState(dataEntityOddrn, alertType, lastAlertId);
+
+        trs.forEach(state::report);
 
         return state.getActions().stream();
     }
