@@ -9,8 +9,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MultiMapUtils;
+import org.apache.commons.collections4.SetValuedMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
@@ -356,6 +357,98 @@ public class AlertIngestionTest extends BaseIngestionTest {
     }
 
     @Test
+    @DisplayName("Inject resolved alerts with chunks")
+    public void injectResolvedAlertWithChunksTest() {
+        final DataSource createdDataSource = createDataSource();
+
+        final DataEntity dataset = IngestionModelGenerator
+            .generateSimpleDataEntity(DataEntityType.TABLE)
+            .dataset(new DataSet().rowsNumber(1_000L).fieldList(IngestionModelGenerator.generateDatasetFields(5)));
+
+        final OffsetDateTime jobStartTime = OffsetDateTime
+            .of(LocalDateTime.now(), ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.MILLIS);
+
+        final DataEntity dataQualityTest = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataQualityTest(new DataQualityTest()
+                .datasetList(List.of(dataset.getOddrn()))
+                .suiteName(UUID.randomUUID().toString())
+                .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
+            );
+
+        final DataEntity dataQualityTestRun1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final DataEntity dataQualityTestRun2 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(2))
+                .status(QualityRunStatus.SUCCESS)
+            );
+
+        final DataEntity dataQualityTestRun3 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(3))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final DataEntity dataQualityTestRun4 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(4))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final DataEntity dataQualityTestRun5 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(5))
+                .status(QualityRunStatus.SUCCESS)
+            );
+
+        final var dataEntityList = new DataEntityList()
+            .dataSourceOddrn(createdDataSource.getOddrn())
+            .items(List.of(dataset, dataQualityTest, dataQualityTestRun1, dataQualityTestRun2, dataQualityTestRun3,
+                dataQualityTestRun4, dataQualityTestRun5));
+
+        ingestAndAssert(dataEntityList);
+
+        final long datasetId = extractIngestedEntitiesAndAssert(createdDataSource, 2).get(dataset.getOddrn());
+
+        webTestClient.get()
+            .uri("/api/dataentities/{data_entity_id}/alerts", datasetId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AlertList.class)
+            .value(actual -> {
+                assertThat(actual.getItems()).hasSize(2);
+                final List<Alert> alerts = actual.getItems()
+                    .stream()
+                    .sorted(Comparator.comparing(a -> a.getAlertChunkList().size()))
+                    .toList();
+
+                final Alert firstAlert = alerts.get(0);
+                final Alert secondAlert = alerts.get(1);
+
+                assertThat(firstAlert.getAlertChunkList().size()).isEqualTo(1);
+                assertThat(secondAlert.getAlertChunkList().size()).isEqualTo(2);
+
+                assertThat(firstAlert.getStatus()).isEqualTo(AlertStatus.RESOLVED_AUTOMATICALLY);
+                assertThat(secondAlert.getStatus()).isEqualTo(AlertStatus.RESOLVED_AUTOMATICALLY);
+            });
+    }
+
+    @Test
     @DisplayName("Complex scenario for alert ingestion")
     public void complexScenarioForAlertIngestion() {
         final DataSource createdDataSource = createDataSource();
@@ -467,6 +560,19 @@ public class AlertIngestionTest extends BaseIngestionTest {
                 assertThat(dqAlerts.get(1).getStatus()).isEqualTo(AlertStatus.RESOLVED_AUTOMATICALLY);
                 assertThat(dqAlerts.get(1).getAlertChunkList()).hasSize(1);
             });
+    }
+
+    @Test
+    public void test() {
+        final SetValuedMap<String, List<String>> map = MultiMapUtils.newSetValuedHashMap();
+
+        final Map<String, List<String>> map1= Map.of("key", List.of("value1", "value2"));
+        final Map<String, List<String>> map2 = Map.of("key", List.of("value3"));
+
+        map.putAll(map1);
+        map.putAll(map2);
+
+        System.out.println(map);
     }
 
     private void assertNoAlerts(final long dataEntityId) {

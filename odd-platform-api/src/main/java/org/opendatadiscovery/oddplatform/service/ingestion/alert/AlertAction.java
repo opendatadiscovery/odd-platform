@@ -9,8 +9,6 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
-import static java.time.LocalDateTime.now;
-
 public abstract class AlertAction {
     @RequiredArgsConstructor
     public static class CreateAlertAction extends AlertAction {
