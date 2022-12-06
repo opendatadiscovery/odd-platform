@@ -91,6 +91,7 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertStatus> updateStatus(final long alertId,
                                           final AlertStatus alertStatus) {
+        // TODO: error message if this kind of alert exists in OPEN state
         return authIdentityProvider.getCurrentUser()
             .flatMap(u -> alertRepository.updateAlertStatus(
                 alertId, AlertStatusEnum.valueOf(alertStatus.name()), u.username()))

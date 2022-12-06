@@ -79,7 +79,6 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .build();
     }
 
-
     private AlertTypeEnum resolveAlertType(final short alertTypeCode) {
         return AlertTypeEnum.fromCode(alertTypeCode)
             .orElseThrow(() -> new IllegalArgumentException("Invalid alert type code: %s".formatted(alertTypeCode)));
