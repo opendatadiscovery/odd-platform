@@ -6,14 +6,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.SetValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
@@ -110,7 +113,9 @@ public class AlertServiceImpl implements AlertService {
             return Mono.empty();
         }
 
-        final Map<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks = new HashMap<>();
+        final SetValuedMap<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks =
+            MultiMapUtils.newSetValuedHashMap();
+
         final List<AlertPojo> alerts = new ArrayList<>();
         final LocalDateTime now = LocalDateTime.now();
 
@@ -160,7 +165,9 @@ public class AlertServiceImpl implements AlertService {
         final List<AlertPojo> alertsToCreate = new ArrayList<>();
         final List<Long> idsToResolve = new ArrayList<>();
         final List<AlertChunkPojo> chunks = new ArrayList<>();
-        final Map<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks = new HashMap<>();
+
+        final SetValuedMap<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks =
+            MultiMapUtils.newSetValuedHashMap();
 
         for (final AlertAction action : alertActions) {
             if (action instanceof AlertAction.ResolveAutomaticallyAlertAction a) {
@@ -190,19 +197,31 @@ public class AlertServiceImpl implements AlertService {
     }
 
     private Mono<Void> createAlerts(final List<AlertPojo> alerts,
-                                    final Map<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks,
+                                    final SetValuedMap<AlertUniqueConstraint, List<AlertChunkPojo>> alertToChunks,
                                     final List<AlertChunkPojo> additionalChunks) {
+        final SetValuedMap<AlertUniqueConstraint, List<AlertChunkPojo>> modifiableAlertToChunks =
+            new HashSetValuedHashMap<>(alertToChunks);
+
         return alertRepository.createAlerts(alerts)
             .flatMap(createdAlert -> {
-                final List<AlertChunkPojo> createdAlertChunks =
-                    alertToChunks.get(AlertUniqueConstraint.fromAlert(createdAlert));
+                final Set<List<AlertChunkPojo>> createdAlertChunks =
+                    modifiableAlertToChunks.get(AlertUniqueConstraint.fromAlert(createdAlert));
 
-                if (createdAlertChunks == null) {
+                if (CollectionUtils.isEmpty(createdAlertChunks)) {
                     return Flux.error(new IllegalStateException("Alert chunks are empty for created alert"));
                 }
 
-                return Flux.fromStream(createdAlertChunks.stream()
-                    .map(c -> new AlertChunkPojo(c).setAlertId(createdAlert.getId())));
+                final long createdAlertId = createdAlert.getId();
+
+                if (createdAlertChunks.size() == 1) {
+                    return prepareChunksForInsert(createdAlertId, createdAlertChunks.iterator().next());
+                }
+
+                final Iterator<List<AlertChunkPojo>> iterator = createdAlertChunks.iterator();
+                final List<AlertChunkPojo> chunks = iterator.next();
+                iterator.remove();
+
+                return prepareChunksForInsert(createdAlertId, chunks);
             })
             .collectList()
             .map(chunks -> Stream.concat(additionalChunks.stream(), chunks.stream()).distinct().toList())
@@ -215,5 +234,10 @@ public class AlertServiceImpl implements AlertService {
                 ))
             ))
             .flatMap(alertRepository::setLastCreatedAt);
+    }
+
+    private Flux<AlertChunkPojo> prepareChunksForInsert(final long createdAlertId,
+                                                        final List<AlertChunkPojo> chunks) {
+        return Flux.fromStream(chunks.stream().map(c -> new AlertChunkPojo(c).setAlertId(createdAlertId)));
     }
 }
