@@ -15,22 +15,23 @@ interface DataEntityAlertItemProps {
 }
 
 const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
-  alert: { createdAt, type, statusUpdatedAt, statusUpdatedBy, status },
+  alert: { type, statusUpdatedAt, statusUpdatedBy, status },
   alertStatusHandler,
 }) => {
   const { alertFormattedDateTime } = useAppDateTime();
-
+  // console.log('statusUpdatedBy', statusUpdatedBy);
+  // console.log('createdAt', createdAt);
   return (
     <S.Container container>
-      <ColContainer item $colType='date'>
-        <Typography variant='body1'>{alertFormattedDateTime(createdAt)}</Typography>
-      </ColContainer>
+      {/* <ColContainer item $colType='date'> */}
+      {/*   <Typography variant='body1'>{alertFormattedDateTime(createdAt)}</Typography> */}
+      {/* </ColContainer> */}
       <ColContainer item $colType='type'>
-        <AppTooltip title={() => lowerCase(type)}>
-          <Typography variant='body1' title={type} noWrap>
-            {lowerCase(type)}
-          </Typography>
-        </AppTooltip>
+        {/* <AppTooltip title={() => lowerCase(type)}> */}
+        {/*   <Typography variant='body1' title={type} noWrap> */}
+        {/*     {lowerCase(type)} */}
+        {/*   </Typography> */}
+        {/* </AppTooltip> */}
       </ColContainer>
       {/* <ColContainer item $colType='description'> */}
       {/*   <Typography variant='body1' title={description} noWrap> */}
@@ -42,12 +43,12 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </ColContainer>
       <ColContainer item $colType='updatedBy'>
         <Typography variant='body1'>
-          {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity.username}
+          {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity?.username || ''}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType='updatedTime'>
-        <Typography variant='body1'>{alertFormattedDateTime(statusUpdatedAt)}</Typography>
-      </ColContainer>
+      {/* <ColContainer item $colType='updatedTime'> */}
+      {/*   <Typography variant='body1'>{alertFormattedDateTime(statusUpdatedAt)}</Typography> */}
+      {/* </ColContainer> */}
       <S.ActionButtonsContainer item $colType='actionBtn'>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
           <AppButton size='medium' color='primaryLight' onClick={alertStatusHandler}>

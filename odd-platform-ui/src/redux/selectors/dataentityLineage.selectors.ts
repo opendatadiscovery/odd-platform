@@ -25,8 +25,5 @@ export const getDownstreamLineageFetchingError = createErrorSelector(
   actions.fetchDataEntityDownstreamLineageActionType
 );
 
-export const getDataEntityLineage = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntityLineage, dataEntityId) => dataEntityLineage[dataEntityId]
-);
+export const getDataEntityLineage = (dataEntityId: number) =>
+  createSelector(dataEntitiesState, dataEntityLineage => dataEntityLineage[dataEntityId]);

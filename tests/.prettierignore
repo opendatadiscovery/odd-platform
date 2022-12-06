@@ -2,6 +2,7 @@
 build
 coverage
 playwright-report
+dist/
 
 # markdown files
 *.md

@@ -7,6 +7,7 @@ import {
   type AlertStatus,
   type AlertTotals,
   Configuration,
+  DataEntityAlertConfig,
   DataEntityApi,
   DataEntityApiGetAlertConfigRequest,
   type DataEntityApiGetDataEntityAlertsRequest,
@@ -112,7 +113,7 @@ export const fetchDataEntityAlerts = handleResponseAsyncThunk<
 
     return { items: castDatesToTimestamp(items), pageInfo };
   },
-  {}
+  { switchOffErrorMessage: true }
 );
 
 export const fetchDataEntityAlertsConfig = handleResponseAsyncThunk<
@@ -135,9 +136,13 @@ export const updateDataEntityAlertsConfig = handleResponseAsyncThunk<
   actions.updateDataEntityAlertsConfig,
   async ({ dataEntityId, dataEntityAlertConfig }) => {
     const entries = Object.entries(dataEntityAlertConfig).map(
-      ([alertType, timeStamp]) => [alertType, toDateWithoutOffset(timeStamp)]
+      ([alertType, timeStamp]) => [
+        alertType,
+        timeStamp ? toDateWithoutOffset(timeStamp) : undefined,
+      ]
     );
-    const parsedConfig = Object.fromEntries(entries);
+
+    const parsedConfig: DataEntityAlertConfig = Object.fromEntries(entries);
     const config = await dataEntityApi.updateAlertConfig({
       dataEntityId,
       dataEntityAlertConfig: parsedConfig,

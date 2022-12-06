@@ -1,10 +1,9 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  Alert,
-  AlertApiGetAllAlertsRequest,
-  AlertApiGetAssociatedUserAlertsRequest,
-  AlertApiGetDependentEntitiesAlertsRequest,
+  type AlertApiGetAllAlertsRequest,
+  type AlertApiGetAssociatedUserAlertsRequest,
+  type AlertApiGetDependentEntitiesAlertsRequest,
   AlertStatus,
 } from 'generated-sources';
 import {
@@ -14,11 +13,12 @@ import {
   getMyAlertListFetchingStatus,
   getMyDependentsAlertListFetchingStatus,
 } from 'redux/selectors';
-import { AlertsResponse, updateAlertStatus } from 'redux/thunks';
+import { updateAlertStatus } from 'redux/thunks';
 import { EmptyContentPlaceholder } from 'components/shared';
 import { Box, Grid, Typography } from '@mui/material';
 import { AsyncThunk } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import type { AlertsResponse, Alert } from 'redux/interfaces';
 import AlertListSkeleton from './AlertSkeletonItem/AlertSkeletonItem';
 import * as S from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';

@@ -4,23 +4,28 @@ import EmptyIcon from 'components/shared/Icons/EmptyIcon';
 
 interface EmptyContentPlaceholderProps {
   text?: string;
+  isContentLoaded?: boolean;
+  isContentEmpty?: boolean;
 }
 
 const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
   text = 'No content',
-}) => (
-  <Typography
-    variant='subtitle2'
-    sx={{
-      mt: 2,
-      display: 'flex',
-      alignItems: 'center',
-      alignSelf: 'flex-start',
-    }}
-  >
-    <EmptyIcon sx={{ mr: 0.5 }} />
-    {text}
-  </Typography>
-);
+  isContentLoaded = true,
+  isContentEmpty = true,
+}) =>
+  isContentLoaded && isContentEmpty ? (
+    <Typography
+      variant='subtitle2'
+      sx={{
+        mt: 2,
+        display: 'flex',
+        alignItems: 'center',
+        alignSelf: 'flex-start',
+      }}
+    >
+      <EmptyIcon sx={{ mr: 0.5 }} />
+      {text}
+    </Typography>
+  ) : null;
 
 export default EmptyContentPlaceholder;

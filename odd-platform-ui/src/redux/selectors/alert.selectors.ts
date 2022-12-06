@@ -1,7 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { AlertsState, RootState } from 'redux/interfaces';
 import { alertsAdapter, alertsConfigAdapter } from 'redux/slices/alerts.slice';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { AlertStatus } from 'generated-sources';
 
@@ -27,6 +30,17 @@ export const getMyDependentsAlertListFetchingStatus = createStatusesSelector(
 export const getDataEntityAlertListFetchingStatus = createStatusesSelector(
   actions.fetchDataEntityAlertsActionType
 );
+export const getDataEntityAlertsFetchingError = createErrorSelector(
+  actions.fetchDataEntityAlertsActionType
+);
+
+export const getDataEntityAlertsConfigUpdatingStatus = createStatusesSelector(
+  actions.updateDataEntityAlertsConfig
+);
+export const getDataEntityAlertsConfigUpdatingError = createErrorSelector(
+  actions.updateDataEntityAlertsConfig
+);
+
 export const getAlertTotals = createSelector(
   getAlertsState,
   alertsState => alertsState.totals

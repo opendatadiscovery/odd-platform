@@ -1,13 +1,12 @@
 import React from 'react';
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
+  type AutocompleteRenderInputParams,
   Box,
   Grid,
   Typography,
-  useAutocomplete,
 } from '@mui/material';
-import {
+import type {
   DataEntityGroupFormData,
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
@@ -20,15 +19,13 @@ import {
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
-import { AppMenu } from 'components/shared/index';
-import { jsx } from '@emotion/react';
 import type { AppInputProps } from '../../AppInput/AppInput';
-import AppButton from '../../AppButton/AppButton';
 import AppInput from '../../AppInput/AppInput';
+import AppButton from '../../AppButton/AppButton';
 import EntityClassItem from '../../EntityClassItem/EntityClassItem';
 
 interface SearchSuggestionsAutocompleteProps {
