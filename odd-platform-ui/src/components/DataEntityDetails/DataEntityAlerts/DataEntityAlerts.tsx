@@ -1,27 +1,23 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AlertStatus, Permission } from 'generated-sources';
-import { fetchDataEntityAlertsConfig, updateAlertStatus } from 'redux/thunks';
+import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  getDataEntityAlertListFetchingStatus,
   getAlertList,
-  getDataEntityAlertConfig,
+  getDataEntityAlertListFetchingStatus,
   getDataEntityAlertsFetchingError,
 } from 'redux/selectors/alert.selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
-import { useAppParams } from 'lib/hooks';
+import { AppErrorPage, EmptyContentPlaceholder, AppButton } from 'components/shared';
 import type { Alert } from 'redux/interfaces';
-import AppButton from 'components/shared/AppButton/AppButton';
-import NotificationSettings from 'components/DataEntityDetails/DataEntityAlerts/NotificationSettings/NotificationSettings';
 import { WithPermissions } from 'components/shared/contexts';
+import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
 import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
 
   const {
     isLoading: isAlertsFetching,
@@ -41,22 +37,17 @@ const DataEntityAlerts: React.FC = () => {
     [updateAlertStatus]
   );
 
-  React.useEffect(() => {
-    dispatch(fetchDataEntityAlertsConfig({ dataEntityId }));
-  }, [dataEntityId]);
-
   return (
     <Grid container sx={{ mt: 2.25 }}>
-      {/* <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}> */}
-      <NotificationSettings
-        btnCreateEl={
-          <AppButton size='medium' color='tertiary'>
-            Notification settings
-          </AppButton>
-        }
-      />
-      {/* </WithPermissions> */}
-
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
+        <NotificationSettings
+          btnCreateEl={
+            <AppButton size='medium' color='tertiary'>
+              Notification settings
+            </AppButton>
+          }
+        />
+      </WithPermissions>
       <AlertsTableHeader container sx={{ mt: 2.25 }}>
         <ColContainer item $colType='date'>
           <Typography variant='caption'>Date</Typography>

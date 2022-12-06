@@ -34,6 +34,9 @@ export const getDataEntityAlertsFetchingError = createErrorSelector(
   actions.fetchDataEntityAlertsActionType
 );
 
+export const getDataEntityAlertsConfigFetchingStatus = createStatusesSelector(
+  actions.fetchDataEntityAlertsConfig
+);
 export const getDataEntityAlertsConfigUpdatingStatus = createStatusesSelector(
   actions.updateDataEntityAlertsConfig
 );

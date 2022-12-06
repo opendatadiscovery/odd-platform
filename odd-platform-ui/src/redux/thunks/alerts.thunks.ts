@@ -120,7 +120,7 @@ export const fetchDataEntityAlertsConfig = handleResponseAsyncThunk<
   AlertsConfig,
   DataEntityApiGetAlertConfigRequest
 >(
-  actions.getDataEntityAlertsConfig,
+  actions.fetchDataEntityAlertsConfig,
   async ({ dataEntityId }) => {
     const config = await dataEntityApi.getAlertConfig({ dataEntityId });
 

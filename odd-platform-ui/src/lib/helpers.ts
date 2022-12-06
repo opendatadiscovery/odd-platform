@@ -44,7 +44,7 @@ export const toDateWithoutOffset = (dateToCast: number): Date => {
 };
 
 export const toTimestampWithoutOffset = (dateToCast: Date): number => {
-  const userTimezoneOffset = dateToCast.getTimezoneOffset();
+  const userTimezoneOffset = dateToCast.getTimezoneOffset() * 60000;
   return dateToCast.getTime() + userTimezoneOffset;
 };
 

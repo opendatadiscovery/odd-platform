@@ -32,9 +32,9 @@ export const fetchDataEntityAlertsActionType = createActionType(
   'fetchDataEntityAlerts'
 );
 
-export const getDataEntityAlertsConfig = createActionType(
+export const fetchDataEntityAlertsConfig = createActionType(
   alertsActionPrefix,
-  'getDataEntityAlertsConfig'
+  'fetchDataEntityAlertsConfig'
 );
 
 export const updateDataEntityAlertsConfig = createActionType(
