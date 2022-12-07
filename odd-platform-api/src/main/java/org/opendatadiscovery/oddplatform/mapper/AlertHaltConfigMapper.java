@@ -14,7 +14,8 @@ public interface AlertHaltConfigMapper {
     AlertHaltConfigPojo mapForm(final Long dataEntityId, final DataEntityAlertConfig form);
 
     default OffsetDateTime mapTime(final LocalDateTime untilDateTime) {
-        if (untilDateTime.isBefore(OffsetDateTime.now().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())) {
+        if (untilDateTime == null
+            || untilDateTime.isBefore(OffsetDateTime.now().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())) {
             return null;
         }
 
