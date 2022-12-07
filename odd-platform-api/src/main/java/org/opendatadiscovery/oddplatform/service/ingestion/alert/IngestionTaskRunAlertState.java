@@ -74,7 +74,8 @@ public class IngestionTaskRunAlertState {
             final LocalDateTime now = now();
 
             final List<AlertChunkPojo> chunks = lastAlertChunkDescriptions.stream()
-                .map(d -> new AlertChunkPojo().setAlertId(lastAlertId)
+                .map(d -> new AlertChunkPojo()
+                    .setAlertId(lastAlertId)
                     .setDescription(d)
                     .setCreatedAt(now))
                 .toList();

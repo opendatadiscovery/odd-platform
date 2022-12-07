@@ -38,8 +38,8 @@ public class AlertNotificationMessage extends NotificationMessage {
 
     public enum AlertEventType {
         CREATED,
-        STACKED,
         RESOLVED,
+        RESOLVED_AUTOMATICALLY,
         REOPENED
     }
 }

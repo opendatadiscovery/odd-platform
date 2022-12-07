@@ -15,6 +15,7 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
@@ -57,10 +58,12 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
     @Override
     public AlertNotificationMessage translate(final DecodedWALMessage message) {
         final long alertId = Long.parseLong(message.getColumnValue(ALERT.ID.getName()));
+        final List<AlertChunkPojo> alertChunks = fetchAlertChunks(alertId);
+
         final String dataEntityOddrn = message.getColumnValue(ALERT.DATA_ENTITY_ODDRN.getName());
         final String status = message.getColumnValue(ALERT.STATUS.getName());
         final String updatedBy = message.getColumnValue(ALERT.STATUS_UPDATED_BY.getName());
-        final AlertEventType eventType = resolveAlertEventType(message.operation(), status);
+        final AlertEventType eventType = resolveAlertEventType(message.operation(), Short.parseShort(status));
 
         final String eventAtString = AlertEventType.CREATED.equals(eventType)
             ? message.getColumnValue(ALERT.LAST_CREATED_AT.getName())
@@ -69,10 +72,10 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         final short alertType = Short.parseShort(message.getColumnValue(ALERT.TYPE.getName()));
 
         return AlertNotificationMessage.builder()
-            .alertChunks(fetchAlertChunks(alertId))
+            .alertChunks(alertChunks)
             .eventAt(Timestamp.valueOf(eventAtString).toLocalDateTime())
             .alertType(resolveAlertType(alertType))
-            .eventType(resolveAlertEventType(message.operation(), status))
+            .eventType(eventType)
             .updatedBy(updatedBy)
             .dataEntity(fetchAlertedDataEntity(dataEntityOddrn))
             .downstream(fetchDownstream(dataEntityOddrn))
@@ -182,10 +185,18 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         return fetchAlertedDataEntities(downstreamEntitiesOddrns);
     }
 
-    private AlertEventType resolveAlertEventType(final Operation operation, final String status) {
+    private AlertEventType resolveAlertEventType(final Operation operation, final short status) {
+        final AlertStatusEnum statusEnum = AlertStatusEnum
+            .fromCode(status)
+            .orElseThrow(() -> new IllegalStateException("Unknown status code: %d".formatted(status)));
+
         return switch (operation) {
             case INSERT -> AlertEventType.CREATED;
-            case UPDATE -> "OPEN".equals(status) ? AlertEventType.REOPENED : AlertEventType.RESOLVED;
+            case UPDATE -> switch (statusEnum) {
+                case OPEN -> AlertEventType.REOPENED;
+                case RESOLVED -> AlertEventType.RESOLVED;
+                case RESOLVED_AUTOMATICALLY -> AlertEventType.RESOLVED_AUTOMATICALLY;
+            };
         };
     }
 

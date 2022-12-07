@@ -157,7 +157,10 @@ public class AlertActionResolverImpl implements AlertActionResolver {
         final LocalDateTime now = now();
 
         final List<AlertChunkPojo> chunks = candidates.stream()
-            .map(c -> new AlertChunkPojo().setDescription(c.description()).setCreatedAt(now))
+            .map(c -> new AlertChunkPojo()
+                .setAlertId(alertId)
+                .setDescription(c.description())
+                .setCreatedAt(now))
             .toList();
 
         if (alertId == null) {
