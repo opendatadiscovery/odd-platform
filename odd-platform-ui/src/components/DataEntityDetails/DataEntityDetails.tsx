@@ -191,7 +191,10 @@ const DataEntityDetails: React.FC = () => {
               ]}
               render={() => (
                 <WithPermissionsProvider
-                  allowedPermissions={[Permission.DATA_ENTITY_ALERT_RESOLVE]}
+                  allowedPermissions={[
+                    Permission.DATA_ENTITY_ALERT_RESOLVE,
+                    Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE,
+                  ]}
                   resourcePermissions={resourcePermissions}
                   Component={DataEntityAlerts}
                 />

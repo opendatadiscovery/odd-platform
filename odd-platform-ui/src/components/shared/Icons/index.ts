@@ -34,3 +34,7 @@ export { default as GitBookIcon } from './GitBookIcon';
 export { default as GitHubIcon } from './GitHubIcon';
 export { default as InfoIcon } from './InfoIcon';
 export { default as TargetIcon } from './TargetIcon';
+export { default as AlertAnomalyIcon } from './AlertAnomalyIcon';
+export { default as AlertSchemaIcon } from './AlertSchemaIcon';
+export { default as AlertDQTestIcon } from './AlertDQTestIcon';
+export { default as AlertJobIcon } from './AlertJobIcon';

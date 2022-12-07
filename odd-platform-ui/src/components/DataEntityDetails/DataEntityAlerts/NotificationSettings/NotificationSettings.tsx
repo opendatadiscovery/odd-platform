@@ -100,7 +100,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
         />
         <Grid sx={{ mt: 1.5 }}>
           <Typography variant='caption' letterSpacing='0.01em'>
-            When the time is up, disabled notifications will turn on automatically.
+            When the time is up, disabled alert types will turn on automatically.
           </Typography>
         </Grid>
       </form>
@@ -120,7 +120,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
 
   return (
     <DialogWrapper
-      maxWidth='xs'
+      maxWidth='sm'
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, {
           onClick: () => {

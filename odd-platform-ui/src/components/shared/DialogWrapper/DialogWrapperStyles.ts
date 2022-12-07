@@ -16,18 +16,21 @@ export const MainDialog = styled(Dialog)<{
   $isLoading?: boolean;
 }>(({ theme, $isLoading }) => ({
   [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
-  [`& .${dialogClasses.paperWidthSm}`]: { maxWidth: '560px' },
-  [`& .${dialogClasses.paperWidthMd}`]: {
+  [`& .${dialogClasses.paperWidthSm}`]: { maxWidth: '420px' },
+  [`& .${dialogClasses.paperWidthMd}`]: { maxWidth: '560px' },
+  [`& .${dialogClasses.paperWidthLg}`]: {
     minHeight: '320px',
     maxWidth: '640px',
     maxHeight: '70vh',
   },
+  [`& .${dialogClasses.paperWidthXl}`]: { maxWidth: '800px' },
+
   [`& .${dialogClasses.paper}`]: {
     border: ' 1px solid',
     borderColor: theme.palette.backgrounds.secondary,
     borderRadius: '4px',
   },
-  [`& .${dialogClasses.paperWidthXl}`]: { maxWidth: '800px' },
+
   pointerEvents: $isLoading ? 'none' : 'all',
 }));
 

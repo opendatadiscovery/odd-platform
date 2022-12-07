@@ -1,10 +1,16 @@
 import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
-import { AppRadio, AppSwitch } from 'components/shared';
+import { AppButton, AppRadio, AppSwitch } from 'components/shared';
 import { useController, type UseControllerProps } from 'react-hook-form';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityAlertConfig } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
+import {
+  AlertAnomalyIcon,
+  AlertDQTestIcon,
+  AlertJobIcon,
+  AlertSchemaIcon,
+} from 'components/shared/Icons';
 import { type FormData } from '../NotificationSettings';
 
 type TimeRange = (30 | 60 | 180 | 1440 | 10080) | number;
@@ -50,9 +56,8 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
     const rangeInMinutes = Number(value) ?? 0;
     const rangeInMs = minutesToMilliseconds(rangeInMinutes);
     const currentDateInMs = new Date().getTime();
-    const endDateInMs = currentDateInMs + rangeInMs;
 
-    return endDateInMs;
+    return currentDateInMs + rangeInMs;
   };
 
   const getRangeToEnableNotification = () => {
@@ -104,6 +109,21 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
     }
   };
 
+  const icon = React.useMemo(() => {
+    const width = '24px';
+    const height = '24px';
+    if (name === 'incompatibleSchemaHaltUntil')
+      return <AlertSchemaIcon width={width} height={height} />;
+    if (name === 'failedJobHaltUntil')
+      return <AlertJobIcon width={width} height={height} />;
+    if (name === 'failedDqTestHaltUntil')
+      return <AlertDQTestIcon width={width} height={height} />;
+    if (name === 'distributionAnomalyHaltUntil')
+      return <AlertAnomalyIcon width={width} height={height} />;
+
+    return null;
+  }, [name]);
+
   return (
     <Grid container flexDirection='column'>
       <Grid
@@ -113,10 +133,21 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
         alignItems='center'
         justifyContent='space-between'
       >
-        <Grid container flexDirection='column'>
+        {icon}
+        <Grid container flexDirection='column' sx={{ ml: 0.5 }}>
           <Typography variant='body1'>{namesMap.get(name)}</Typography>
           {showEndTime && (
-            <Typography variant='caption'>{`${rangeToEnableNotification} to turn on`}</Typography>
+            <Grid container flexWrap='nowrap' alignItems='center'>
+              <Typography variant='caption'>{`${rangeToEnableNotification} to turn on`}</Typography>
+              <AppButton
+                sx={{ ml: 0.5 }}
+                size='medium'
+                color='tertiary'
+                onClick={() => setIsValueUpdated(prev => !prev)}
+              >
+                Edit
+              </AppButton>
+            </Grid>
           )}
         </Grid>
         <AppSwitch checked={!disableNotification} onChange={handleSwitchChange} />
@@ -124,6 +155,7 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
       {disableNotification && isValueUpdated && (
         <RadioGroup
           {...field}
+          sx={{ ml: 4 }}
           value={timeRange}
           onChange={e => handleRadioChange(e.target.value, field.onChange)}
         >

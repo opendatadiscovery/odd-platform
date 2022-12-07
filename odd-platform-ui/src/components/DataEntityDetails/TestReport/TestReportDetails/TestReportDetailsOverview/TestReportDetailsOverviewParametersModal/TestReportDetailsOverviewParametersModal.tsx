@@ -33,7 +33,7 @@ const TestReportDetailsOverviewParametersModal: React.FC<
       }
       title={modalTitle}
       renderContent={renderContent}
-      maxWidth='md'
+      maxWidth='lg'
     />
   );
 };

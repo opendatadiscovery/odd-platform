@@ -39,15 +39,17 @@ const DataEntityAlerts: React.FC = () => {
 
   return (
     <Grid container sx={{ mt: 2.25 }}>
-      <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
-        <NotificationSettings
-          btnCreateEl={
-            <AppButton size='medium' color='tertiary'>
-              Notification settings
-            </AppButton>
-          }
-        />
-      </WithPermissions>
+      <Grid container justifyContent='flex-end'>
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
+          <NotificationSettings
+            btnCreateEl={
+              <AppButton size='medium' color='tertiary'>
+                Notification settings
+              </AppButton>
+            }
+          />
+        </WithPermissions>
+      </Grid>
       <AlertsTableHeader container sx={{ mt: 2.25 }}>
         <ColContainer item $colType='date'>
           <Typography variant='caption'>Date</Typography>
