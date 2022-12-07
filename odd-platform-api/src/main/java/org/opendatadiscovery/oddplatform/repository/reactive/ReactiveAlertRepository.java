@@ -110,4 +110,6 @@ public interface ReactiveAlertRepository {
     Mono<Void> setLastCreatedAt(final Map<Long, LocalDateTime> alertIdToLastCreatedAt);
 
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
+
+    Mono<Boolean> existsOpen(long alertId);
 }

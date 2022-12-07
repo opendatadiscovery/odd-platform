@@ -25,6 +25,7 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
@@ -91,14 +92,26 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertStatus> updateStatus(final long alertId,
                                           final AlertStatus alertStatus) {
-        // TODO: error message if this kind of alert exists in OPEN state
-        return authIdentityProvider.getCurrentUser()
-            .flatMap(u -> alertRepository.updateAlertStatus(
-                alertId, AlertStatusEnum.valueOf(alertStatus.name()), u.username()))
-            .switchIfEmpty(alertRepository
-                .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), null))
+        final AlertStatusEnum status = AlertStatusEnum.valueOf(alertStatus.name());
+
+        final Mono<AlertStatus> updateStatusMono = authIdentityProvider.getCurrentUser()
+            .flatMap(u -> alertRepository.updateAlertStatus(alertId, status, u.username()))
+            .switchIfEmpty(alertRepository.updateAlertStatus(alertId, status, null))
             .switchIfEmpty(Mono.error(new NotFoundException("Alert", alertId)))
             .thenReturn(alertStatus);
+
+        if (AlertStatusEnum.OPEN.equals(status)) {
+            return alertRepository.existsOpen(alertId)
+                .handle((exists, sink) -> {
+                    if (exists) {
+                        sink.error(new BadUserRequestException(
+                            "Cannot reopen alert since the system already has an open alert of the same type"));
+                    }
+                })
+                .then(updateStatusMono);
+        }
+
+        return updateStatusMono;
     }
 
     @Override

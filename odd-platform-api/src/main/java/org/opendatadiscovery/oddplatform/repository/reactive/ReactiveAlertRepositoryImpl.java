@@ -330,6 +330,17 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .map(Record1::value1);
     }
 
+    @Override
+    public Mono<Boolean> existsOpen(final long alertId) {
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
+            DSL.selectFrom(ALERT)
+                .where(ALERT.ID.eq(alertId))
+                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()))
+        );
+
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
     /**
      * Gets all child oddrns for the list of oddrns. As the query works recursively
      * it excludes parents oddrns from the query. So in the final query we have only child oddrns

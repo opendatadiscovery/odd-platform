@@ -566,7 +566,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
     public void test() {
         final SetValuedMap<String, List<String>> map = MultiMapUtils.newSetValuedHashMap();
 
-        final Map<String, List<String>> map1= Map.of("key", List.of("value1", "value2"));
+        final Map<String, List<String>> map1 = Map.of("key", List.of("value1", "value2"));
         final Map<String, List<String>> map2 = Map.of("key", List.of("value3"));
 
         map.putAll(map1);
