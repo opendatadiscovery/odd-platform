@@ -18,10 +18,12 @@ import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
@@ -90,15 +92,16 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<AlertStatus> updateStatus(final long alertId,
-                                          final AlertStatus alertStatus) {
+    public Mono<Alert> updateStatus(final long alertId,
+                                    final AlertStatus alertStatus) {
         final AlertStatusEnum status = AlertStatusEnum.valueOf(alertStatus.name());
 
-        final Mono<AlertStatus> updateStatusMono = authIdentityProvider.getCurrentUser()
+        final Mono<Alert> updateStatusMono = authIdentityProvider.getCurrentUser()
             .flatMap(u -> alertRepository.updateAlertStatus(alertId, status, u.username()))
             .switchIfEmpty(alertRepository.updateAlertStatus(alertId, status, null))
             .switchIfEmpty(Mono.error(new NotFoundException("Alert", alertId)))
-            .thenReturn(alertStatus);
+            .then(alertRepository.get(alertId))
+            .map(alertMapper::mapAlert);
 
         if (AlertStatusEnum.OPEN.equals(status)) {
             return alertRepository.existsOpen(alertId)

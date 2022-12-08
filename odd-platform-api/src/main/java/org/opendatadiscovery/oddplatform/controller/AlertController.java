@@ -2,8 +2,8 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.AlertApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
-import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
 import org.opendatadiscovery.oddplatform.service.AlertService;
@@ -18,9 +18,9 @@ public class AlertController implements AlertApi {
     private final AlertService alertService;
 
     @Override
-    public Mono<ResponseEntity<AlertStatus>> changeAlertStatus(final Long alertId,
-                                                               final Mono<AlertStatusFormData> alertStatusFormData,
-                                                               final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Alert>> changeAlertStatus(final Long alertId,
+                                                         final Mono<AlertStatusFormData> alertStatusFormData,
+                                                         final ServerWebExchange exchange) {
         return alertStatusFormData
             .flatMap(s -> alertService.updateStatus(alertId, s.getStatus()))
             .map(ResponseEntity::ok);
