@@ -14,6 +14,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveAlertRepository {
+    Mono<AlertDto> get(final long id);
+
     Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(
         final Collection<String> dataEntityOddrns);
 

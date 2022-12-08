@@ -55,7 +55,7 @@ public abstract class AlertMapper {
     @Mapping(source = "alertDto", target = "statusUpdatedBy", qualifiedByName = "statusUpdatedBy")
     @Mapping(source = "alertDto", target = "dataEntity", qualifiedByName = "dataEntity")
     @Mapping(source = "chunks", target = "alertChunkList")
-    abstract Alert mapAlert(final AlertDto alertDto);
+    public abstract Alert mapAlert(final AlertDto alertDto);
 
     abstract AlertChunk mapAlertChunk(final AlertChunkPojo alertChunkPojo);
 

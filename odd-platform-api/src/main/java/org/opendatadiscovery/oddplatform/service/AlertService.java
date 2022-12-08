@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.SetValuedMap;
+import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
@@ -19,7 +20,7 @@ public interface AlertService {
 
     Mono<AlertTotals> getTotals();
 
-    Mono<AlertStatus> updateStatus(final long alertId, final AlertStatus alertStatus);
+    Mono<Alert> updateStatus(final long alertId, final AlertStatus alertStatus);
 
     Mono<AlertList> getDataEntityAlerts(final long dataEntityId);
 
