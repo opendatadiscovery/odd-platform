@@ -54,22 +54,18 @@ test.describe('Tags', () => {
    * /project/1/test-cases/6
    */
   test(`Add several unimportant tags`, async ({ steps: { pages } }) => {
-    let tags;
-    let tagsAll;
     await test.step(`I add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
       expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
       expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
     });
     await test.step(`I fill inputs and click 'create' button`, async () => {
-      tags = await pages.modals.addTag.fillAllTagName('tag');
+      await pages.modals.addTag.fillAllTagName('tag');
       await pages.modals.addTag.addNewTag.click();
-      tagsAll = await pages.tags.getAllTags();
-      await pages.tags.waitUntilTagVisible(tags);
     });
     await test.step(`I check new tags`, async () => {
-      expect(await pages.tags.tagsList.isVisible()).toBeTruthy();
-      expect(tagsAll).toEqual(expect.arrayContaining(tags));
+      expect(await pages.tags.tagsList.isListItemVisible('tag_0')).toBeTruthy();
+      expect(await pages.tags.tagsList.isListItemVisible('tag_1')).toBeTruthy();
     });
   });
 
