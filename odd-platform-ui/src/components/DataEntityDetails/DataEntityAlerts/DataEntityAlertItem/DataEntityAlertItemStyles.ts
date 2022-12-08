@@ -1,19 +1,20 @@
 import { Grid } from '@mui/material';
-import { ColContainer } from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsStyles';
-import styled from 'styled-components';
-
-export const ActionButtonsContainer = styled(ColContainer)(() => ({
-  opacity: 0,
-}));
+import styled, { CSSObject } from 'styled-components';
 
 export const Container = styled(Grid)(({ theme }) => ({
-  padding: theme.spacing(1.25, 0),
-  borderBottom: '1px solid',
-  borderBottomColor: theme.palette.divider,
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.primary,
-    [`${ActionButtonsContainer}`]: {
-      opacity: 1,
-    },
-  },
+  height: 'fit-content',
+  padding: theme.spacing(1.5),
+  borderRadius: theme.spacing(1),
+  border: '1px solid',
+  borderColor: theme.palette.divider,
+  rowGap: theme.spacing(1),
 }));
+
+export const Wrapper = styled(Grid)(
+  () =>
+    ({
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+    } as CSSObject)
+);

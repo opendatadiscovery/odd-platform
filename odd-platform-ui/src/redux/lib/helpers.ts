@@ -1,4 +1,4 @@
-import { toTimestampWithoutOffset } from 'lib/helpers';
+import { toTimestamp } from 'lib/helpers';
 import type { PageInfo, SerializeDateToNumber } from 'redux/interfaces/common';
 
 export const assignWith = <
@@ -43,7 +43,7 @@ export const castDatesToTimestampInItemsArray = <
     Object.entries(item).reduce<RData>(
       (memo, [key, value]) =>
         isDateObject(value)
-          ? { ...memo, [key]: toTimestampWithoutOffset(value) }
+          ? { ...memo, [key]: toTimestamp(value) }
           : { ...memo, [key]: value },
       {} as RData
     )
@@ -84,7 +84,7 @@ export function castDatesToTimestamp<Data>(data: Array<Data> | Data) {
     }
 
     return isDateObject(value)
-      ? { ...memo, [key]: toTimestampWithoutOffset(value) }
+      ? { ...memo, [key]: toTimestamp(value) }
       : { ...memo, [key]: value };
   }, {});
 }

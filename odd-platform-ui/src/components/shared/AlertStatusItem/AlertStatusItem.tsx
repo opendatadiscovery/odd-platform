@@ -1,16 +1,20 @@
 import React from 'react';
 import capitalize from 'lodash/capitalize';
-import * as S from 'components/shared/AlertStatusItem/AlertStatusItemStyles';
-import { AlertStatus } from 'generated-sources';
+import type { AlertStatus } from 'generated-sources';
+import * as S from './AlertStatusItemStyles';
 
 interface AlertStatusItemProps {
-  typeName: AlertStatus;
+  status: AlertStatus;
 }
 
-const AlertStatusItem: React.FC<AlertStatusItemProps> = ({ typeName }) => (
-  <S.Container title={typeName}>
-    <S.FilledContainer $typeName={typeName}>{capitalize(typeName)}</S.FilledContainer>
-  </S.Container>
-);
+const AlertStatusItem: React.FC<AlertStatusItemProps> = ({ status }) => {
+  const statusText = status === 'RESOLVED_AUTOMATICALLY' ? 'Resolved' : status;
+
+  return (
+    <S.Container title={status}>
+      <S.FilledContainer $status={status}>{capitalize(statusText)}</S.FilledContainer>
+    </S.Container>
+  );
+};
 
 export default AlertStatusItem;

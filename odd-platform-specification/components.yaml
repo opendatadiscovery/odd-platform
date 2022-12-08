@@ -1796,6 +1796,9 @@ components:
         status_updated_at:
           type: string
           format: date-time
+        last_created_at:
+          type: string
+          format: date-time
         alert_chunk_list:
           type: array
           items:

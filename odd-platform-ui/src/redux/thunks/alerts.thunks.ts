@@ -24,7 +24,7 @@ import type {
 } from 'redux/interfaces';
 import { castDatesToTimestamp } from 'redux/lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-import { toDateWithoutOffset } from 'lib/helpers';
+import { toDate } from 'lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
@@ -136,10 +136,7 @@ export const updateDataEntityAlertsConfig = handleResponseAsyncThunk<
   actions.updateDataEntityAlertsConfig,
   async ({ dataEntityId, dataEntityAlertConfig }) => {
     const entries = Object.entries(dataEntityAlertConfig).map(
-      ([alertType, timeStamp]) => [
-        alertType,
-        timeStamp ? toDateWithoutOffset(timeStamp) : undefined,
-      ]
+      ([alertType, timeStamp]) => [alertType, timeStamp ? toDate(timeStamp) : undefined]
     );
 
     const parsedConfig: DataEntityAlertConfig = Object.fromEntries(entries);

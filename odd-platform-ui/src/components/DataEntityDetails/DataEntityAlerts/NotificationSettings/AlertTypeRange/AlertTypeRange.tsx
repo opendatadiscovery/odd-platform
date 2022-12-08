@@ -1,16 +1,10 @@
 import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
-import { AppButton, AppRadio, AppSwitch } from 'components/shared';
+import { AppButton, AppRadio, AppSwitch, AlertIcon } from 'components/shared';
 import { useController, type UseControllerProps } from 'react-hook-form';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityAlertConfig } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
-import {
-  AlertAnomalyIcon,
-  AlertDQTestIcon,
-  AlertJobIcon,
-  AlertSchemaIcon,
-} from 'components/shared/Icons';
 import { type FormData } from '../NotificationSettings';
 
 type TimeRange = (30 | 60 | 180 | 1440 | 10080) | number;
@@ -27,7 +21,7 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
   const config = useAppSelector(state => getDataEntityAlertConfig(state, dataEntityId));
 
   const namesMap = new Map<keyof FormData, string>([
-    ['incompatibleSchemaHaltUntil', 'Backwords incompatible schema change'],
+    ['incompatibleSchemaHaltUntil', 'Backwards incompatible schema change'],
     ['failedDqTestHaltUntil', 'Failed data quality test'],
     ['failedJobHaltUntil', 'Failed job'],
     ['distributionAnomalyHaltUntil', 'Distribution anomaly'],
@@ -109,21 +103,6 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
     }
   };
 
-  const icon = React.useMemo(() => {
-    const width = '24px';
-    const height = '24px';
-    if (name === 'incompatibleSchemaHaltUntil')
-      return <AlertSchemaIcon width={width} height={height} />;
-    if (name === 'failedJobHaltUntil')
-      return <AlertJobIcon width={width} height={height} />;
-    if (name === 'failedDqTestHaltUntil')
-      return <AlertDQTestIcon width={width} height={height} />;
-    if (name === 'distributionAnomalyHaltUntil')
-      return <AlertAnomalyIcon width={width} height={height} />;
-
-    return null;
-  }, [name]);
-
   return (
     <Grid container flexDirection='column'>
       <Grid
@@ -133,8 +112,7 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
         alignItems='center'
         justifyContent='space-between'
       >
-        {icon}
-        <Grid container flexDirection='column' sx={{ ml: 0.5 }}>
+        <Grid container flexDirection='column' sx={{ ml: 1 }}>
           <Typography variant='body1'>{namesMap.get(name)}</Typography>
           {showEndTime && (
             <Grid container flexWrap='nowrap' alignItems='center'>
