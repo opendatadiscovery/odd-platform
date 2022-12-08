@@ -239,9 +239,8 @@ test.describe('Search by data in data-entity in the main page', () => {
   }) => {
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.main.search('pilots');
-      expect(await pages.main.isListItemVisible('embraer')).toBeTruthy();
-      expect(await pages.catalog.isListItemVisible('airbus')).toBeTruthy();
-      expect(await pages.catalog.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
+      expect(await pages.main.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
+      expect(await pages.main.resultList.count()).toBeGreaterThanOrEqual(3);
     });
   });
 });
