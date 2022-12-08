@@ -217,10 +217,11 @@ export default class List extends CustomElement {
   }
 
   /**
-   * Check if at least one item is presented in the list
+   * Check if list is empty
    */
-  async isListNotEmpty(): Promise<boolean> {
-    return this.listItems.isVisible();
+  async isListEmpty(): Promise<boolean> {
+    await this.listItems.first().waitFor({ state: 'hidden' });
+    return this.listItems.isHidden();
   }
 }
 

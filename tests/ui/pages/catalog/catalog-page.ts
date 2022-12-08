@@ -15,7 +15,7 @@ const SELECTORS = {
   searchButton: `[placeholder="Search"] >> ..`,
   noMatchesFound: `text=No matches found`,
   resultList: `#results-list`,
-  listItem: `a`,
+  listItem: `a[class][href]`,
 };
 export default class CatalogPage extends BasePage {
   get searchBar() {
@@ -50,8 +50,7 @@ export default class CatalogPage extends BasePage {
   }
 
   async isListItemVisible(name: string): Promise<boolean> {
-    await this.page.locator(SELECTORS.listItemName(name)).waitFor({ state: 'visible' });
-    return this.page.locator(SELECTORS.listItemName(name)).isVisible();
+    return this.resultsList.isListItemVisible(name);
   }
 
   async clickOnListItem(name: string) {
