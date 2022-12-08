@@ -49,12 +49,7 @@ export const alertsSlice = createSlice({
       state.pageInfo = { ...pageInfo, page: 1 };
     });
     builder.addCase(thunks.updateAlertStatus.fulfilled, (state, { payload }) => {
-      const { alertId, status } = payload;
-
-      const currentAlert = state.entities[alertId];
-      if (currentAlert) {
-        currentAlert.status = status;
-      }
+      alertsAdapter.setOne(state, payload);
     });
     builder.addCase(
       thunks.fetchDataEntityAlertsConfig.fulfilled,

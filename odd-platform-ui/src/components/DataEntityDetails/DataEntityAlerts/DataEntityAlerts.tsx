@@ -9,9 +9,9 @@ import {
 } from 'redux/selectors/alert.selectors';
 import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
+import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
 import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
-import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import * as S from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
@@ -36,15 +36,13 @@ const DataEntityAlerts: React.FC = () => {
           />
         </Grid>
       </WithPermissions>
-      {isAlertsFetching ? (
-        <DataEntityAlertsSkeleton length={5} />
-      ) : (
-        <S.AlertsContainer container rowGap={1}>
-          {alertsList.map(alert => (
-            <DataEntityAlertItem key={alert.id} alert={alert} />
-          ))}
-        </S.AlertsContainer>
-      )}
+      <S.AlertsContainer container rowGap={1}>
+        {isAlertsFetching ? (
+          <DataEntityAlertsSkeleton length={5} />
+        ) : (
+          alertsList.map(alert => <DataEntityAlertItem key={alert.id} alert={alert} />)
+        )}
+      </S.AlertsContainer>
       <EmptyContentPlaceholder
         isContentLoaded={isAlertsFetched}
         isContentEmpty={!alertsList.length}

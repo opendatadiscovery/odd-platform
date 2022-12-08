@@ -8,7 +8,7 @@ import {
   WithFeature,
 } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
-import { DataEntityDetails, Feature, Permission } from 'generated-sources';
+import { type DataEntityDetails, Feature, Permission } from 'generated-sources';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/Icons';
 import { useAppDateTime } from 'lib/hooks';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
@@ -102,21 +102,6 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           flexWrap='nowrap'
           justifyContent='flex-end'
         >
-          <WithFeature featureName={Feature.DATA_COLLABORATION}>
-            <CreateMessageForm
-              dataEntityId={dataEntityId}
-              btnCreateEl={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
-                  startIcon={<SlackIcon />}
-                  sx={{ mr: 2 }}
-                >
-                  Share
-                </AppButton>
-              }
-            />
-          </WithFeature>
           {entityUpdatedAt}
           {manuallyCreated && (
             <DataEntityGroupControls
@@ -124,6 +109,21 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
               externalName={externalName}
             />
           )}
+          <WithFeature featureName={Feature.DATA_COLLABORATION}>
+            <CreateMessageForm
+              dataEntityId={dataEntityId}
+              btnCreateEl={
+                <AppButton
+                  size='large'
+                  color='primaryLight'
+                  startIcon={<SlackIcon />}
+                  sx={{ ml: 2 }}
+                >
+                  Share
+                </AppButton>
+              }
+            />
+          </WithFeature>
         </Grid>
       </Grid>
       {originalName}

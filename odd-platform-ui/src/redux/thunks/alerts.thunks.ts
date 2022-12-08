@@ -4,7 +4,6 @@ import {
   type AlertApiGetAllAlertsRequest,
   type AlertApiGetAssociatedUserAlertsRequest,
   type AlertApiGetDependentEntitiesAlertsRequest,
-  type AlertStatus,
   type AlertTotals,
   Configuration,
   DataEntityAlertConfig,
@@ -83,17 +82,14 @@ export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
 );
 
 export const updateAlertStatus = handleResponseAsyncThunk<
-  { alertId: number; status: AlertStatus },
+  Alert,
   AlertApiChangeAlertStatusRequest
 >(
   actions.updateAlertStatusActionType,
-  async ({ alertId, alertStatusFormData }) => {
-    const status = await alertApi.changeAlertStatus({
-      alertId,
-      alertStatusFormData,
-    });
+  async params => {
+    const alert = await alertApi.changeAlertStatus(params);
 
-    return { alertId, status };
+    return castDatesToTimestamp(alert);
   },
   {
     setSuccessOptions: ({ alertStatusFormData, alertId }) => ({

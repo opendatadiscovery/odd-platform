@@ -7,7 +7,6 @@ export const Container = styled(Grid)(({ theme }) => ({
   borderRadius: theme.spacing(1),
   border: '1px solid',
   borderColor: theme.palette.divider,
-  rowGap: theme.spacing(1),
 }));
 
 export const Wrapper = styled(Grid)(
