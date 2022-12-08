@@ -29,14 +29,24 @@ WHERE alert.id = cte.alert_id;
 
 CREATE TEMPORARY TABLE alert_temp ON COMMIT DROP AS
 SELECT
-    messenger_entity_oddrn,
     json_agg(json_build_object(
         'alert_id', alert.id,
         'created_at', alert.last_created_at,
         'description', alert.description
     ) order by alert.id) AS payload
 FROM alert
-GROUP BY messenger_entity_oddrn;
+WHERE alert.type = 2
+GROUP BY messenger_entity_oddrn
+UNION ALL
+SELECT
+    json_agg(json_build_object(
+        'alert_id', alert.id,
+        'created_at', alert.last_created_at,
+        'description', alert.description
+    ) order by alert.id) AS payload
+FROM alert
+WHERE alert.type != 2
+GROUP BY data_entity_oddrn, type;
 
 WITH cte AS (
     SELECT
