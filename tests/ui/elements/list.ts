@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
-
 import Button from './button';
+
 import CustomElement from './custom-element';
 
 const SELECTORS = {
@@ -160,9 +160,9 @@ export default class List extends CustomElement {
    * @returns
    */
   async isListItemVisible(identifier: string | number): Promise<boolean> {
-    this.customElement = await this.getListItem(identifier);
-
-    return this.isVisible();
+    const listItem: Locator = await this.getListItem(identifier);
+    await listItem.waitFor();
+    return listItem.isVisible();
   }
 
   /**
