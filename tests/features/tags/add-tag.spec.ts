@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
 test.describe('Tags', () => {
-  let tagName;
+  let tagName: string;
 
   test.beforeEach(async ({ steps: { pages }, page }) => {
     await test.step(`I open Tags page`, async () => {
@@ -46,7 +46,7 @@ test.describe('Tags', () => {
       await pages.modals.addTag.addNewTag.click();
       await pages.tags.waitUntilTagVisible(tagName);
       expect(await pages.tags.isTagVisible(`${tagName}`)).toBeTruthy();
-      expect(await pages.tags.isTagImportant(`${tagName}`)).toBeTruthy();
+      await expect(pages.tags.importantFlag(tagName)).toBeVisible();
     });
   });
 
@@ -91,7 +91,7 @@ test.describe('Tags', () => {
     await test.step(`I check new tags`, async () => {
       expect(await pages.tags.tagsList.isVisible()).toBeTruthy();
       expect(tagsAll).toEqual(expect.arrayContaining(tags));
-      expect(await pages.tags.isTagImportant(`tag_test_1`)).toBeTruthy();
+      await expect(pages.tags.importantFlag('tag_test_1')).toBeVisible();
     });
   });
 
@@ -117,8 +117,8 @@ test.describe('Tags', () => {
     await test.step(`I check new tags`, async () => {
       expect(await pages.tags.tagsList.isVisible()).toBeTruthy();
       expect(tagsAll).toEqual(expect.arrayContaining(tags));
-      expect(await pages.tags.isTagImportant(`new_test_0`)).toBeTruthy();
-      expect(await pages.tags.isTagImportant(`new_test_1`)).toBeTruthy();
+      await expect(pages.tags.importantFlag('new_test_0')).toBeVisible();
+      await expect(pages.tags.importantFlag('new_test_1')).toBeVisible();
     });
   });
 });
