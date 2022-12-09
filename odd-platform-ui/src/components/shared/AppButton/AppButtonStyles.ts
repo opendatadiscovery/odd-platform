@@ -25,8 +25,7 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
   ({ theme, $color, $isOverflowed }) => ({
     // overrides of MUI Button styles
     [`&.${buttonClasses.root}`]: {
-      minWidth: '66px',
-      minHeight: '24px',
+      minWidth: 0,
       borderRadius: isTertiary($color) ? '4px' : '16px',
       letterSpacing: '0em',
       textAlign: 'center',
