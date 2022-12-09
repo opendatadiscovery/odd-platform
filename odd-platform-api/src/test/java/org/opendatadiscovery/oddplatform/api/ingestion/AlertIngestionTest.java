@@ -562,19 +562,6 @@ public class AlertIngestionTest extends BaseIngestionTest {
             });
     }
 
-    @Test
-    public void test() {
-        final SetValuedMap<String, List<String>> map = MultiMapUtils.newSetValuedHashMap();
-
-        final Map<String, List<String>> map1 = Map.of("key", List.of("value1", "value2"));
-        final Map<String, List<String>> map2 = Map.of("key", List.of("value3"));
-
-        map.putAll(map1);
-        map.putAll(map2);
-
-        System.out.println(map);
-    }
-
     private void assertNoAlerts(final long dataEntityId) {
         webTestClient.get()
             .uri("/api/dataentities/{data_entity_id}/alerts", dataEntityId)
