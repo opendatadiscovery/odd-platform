@@ -6,7 +6,7 @@ const entityNameWithAlphabeticChars = 'Book_ETL_aqa'
 test.describe('Check filters', () => {
     test.describe('When apply single filter', () => {
         test.beforeEach(async ({steps: {pages}, page}) => {
-            await test.step(`I open catalog page`, async () => {
+            await test.step(`I open activity page`, async () => {
                 await page.goto('');
                 await pages.topPanel.clickTab('Activity');
             });
