@@ -38,6 +38,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
@@ -255,7 +256,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
         return jooqReactiveOperations
             .mono(DSL.update(ALERT)
                 .set(ALERT.STATUS, status.getCode())
-                .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
+                .set(ALERT.STATUS_UPDATED_AT, DateTimeUtil.generateNow())
                 .set(ALERT.STATUS_UPDATED_BY, userName)
                 .where(ALERT.ID.eq(alertId))
                 .returning(ALERT.fields())

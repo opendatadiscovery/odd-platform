@@ -16,8 +16,8 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.Ingestio
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertHaltConfigPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 
-import static java.time.LocalDateTime.now;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -38,7 +38,7 @@ public class AlertActionResolverImpl implements AlertActionResolver {
     @Override
     public Stream<AlertAction> resolveActions(final Map<String, List<IngestionTaskRun>> taskRuns,
                                               final IngestionTaskRunType taskRunType) {
-        final LocalDateTime baseline = now();
+        final LocalDateTime baseline = DateTimeUtil.generateNow();
 
         return taskRuns.entrySet()
             .stream()
@@ -61,7 +61,7 @@ public class AlertActionResolverImpl implements AlertActionResolver {
             return Stream.empty();
         }
 
-        final LocalDateTime baseline = now();
+        final LocalDateTime baseline = DateTimeUtil.generateNow();
 
         return candidates.stream()
             .collect(groupingBy(AlertBISCandidate::dataEntityOddrn, toList()))
@@ -154,7 +154,7 @@ public class AlertActionResolverImpl implements AlertActionResolver {
     private AlertAction candidateToAction(final String dataEntityOddrn,
                                           final List<AlertBISCandidate> candidates,
                                           final Long alertId) {
-        final LocalDateTime now = now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<AlertChunkPojo> chunks = candidates.stream()
             .map(c -> new AlertChunkPojo()
@@ -187,6 +187,6 @@ public class AlertActionResolverImpl implements AlertActionResolver {
             case DISTRIBUTION_ANOMALY -> haltCfg.getDistributionAnomalyHaltUntil();
         };
 
-        return haltUntil.isAfter(baseline);
+        return haltUntil != null && haltUntil.isAfter(baseline);
     }
 }

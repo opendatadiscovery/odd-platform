@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.alert;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,8 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 
-import static java.time.LocalDateTime.now;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
 
 @Slf4j
@@ -71,7 +70,7 @@ public class IngestionTaskRunAlertState {
 
     public List<AlertAction> getActions() {
         if (!lastAlertChunkDescriptions.isEmpty()) {
-            final LocalDateTime now = now();
+            final LocalDateTime now = DateTimeUtil.generateNow();
 
             final List<AlertChunkPojo> chunks = lastAlertChunkDescriptions.stream()
                 .map(d -> new AlertChunkPojo()
@@ -92,6 +91,7 @@ public class IngestionTaskRunAlertState {
 
         return actions;
     }
+
 
     private void reportSuccess() {
         if (lastAlertIdActive) {
@@ -125,7 +125,7 @@ public class IngestionTaskRunAlertState {
                 dataEntityOddrn,
                 alertType,
                 alertType == AlertTypeEnum.FAILED_DQ_TEST ? taskRun.getTaskOddrn() : null,
-                now()
+                DateTimeUtil.generateNow()
             );
         }
 
