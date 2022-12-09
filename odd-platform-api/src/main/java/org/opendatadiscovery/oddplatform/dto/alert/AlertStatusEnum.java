@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-@RequiredArgsConstructor
 public enum AlertStatusEnum {
     OPEN(1),
     RESOLVED(2),
@@ -23,7 +21,7 @@ public enum AlertStatusEnum {
         .collect(toMap(AlertStatusEnum::getCode, identity()));
 
     AlertStatusEnum(final int code) {
-        this((short) code);
+        this.code = (short) code;
     }
 
     public static Optional<AlertStatusEnum> fromCode(final short code) {

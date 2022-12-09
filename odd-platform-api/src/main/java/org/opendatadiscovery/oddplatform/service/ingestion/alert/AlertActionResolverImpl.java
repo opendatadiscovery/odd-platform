@@ -79,7 +79,7 @@ public class AlertActionResolverImpl implements AlertActionResolver {
 
                 return alertDict.get(BACKWARDS_INCOMPATIBLE_SCHEMA.getCode()).stream().findFirst()
                     .map(lastAlert -> candidateToAction(e.getKey(), e.getValue(), lastAlert.getId()))
-                    .orElse(candidateToAction(e.getKey(), e.getValue()));
+                    .orElseGet(() -> candidateToAction(e.getKey(), e.getValue()));
             })
             .filter(Objects::nonNull);
     }
@@ -187,6 +187,6 @@ public class AlertActionResolverImpl implements AlertActionResolver {
             case DISTRIBUTION_ANOMALY -> haltCfg.getDistributionAnomalyHaltUntil();
         };
 
-        return haltUntil.compareTo(baseline) > 0;
+        return haltUntil.isAfter(baseline);
     }
 }

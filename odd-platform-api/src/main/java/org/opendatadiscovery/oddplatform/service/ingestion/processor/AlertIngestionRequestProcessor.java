@@ -101,9 +101,7 @@ public class AlertIngestionRequestProcessor implements IngestionRequestProcessor
             if (dataQualityTest != null) {
                 if (dqtOddrnsInIR.remove(entity.getOddrn())) {
                     alertDEOddrns.addAll(dataQualityTest.datasetList());
-                    for (final String datasetOddrn : dataQualityTest.datasetList()) {
-                        dqtToDatasets.put(entity.getOddrn(), datasetOddrn);
-                    }
+                    dqtToDatasets.putAll(entity.getOddrn(), dataQualityTest.datasetList());
                 }
             }
         }

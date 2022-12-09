@@ -21,7 +21,7 @@ public class AlertHaltConfigServiceImpl implements AlertHaltConfigService {
         return dataEntityRepository.exists(dataEntityId)
             .filter(exists -> exists)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("data entity", dataEntityId)))
-            .flatMap(exists -> alertHaltConfigRepository.get(dataEntityId))
+            .then(alertHaltConfigRepository.get(dataEntityId))
             .map(alertHaltConfigMapper::mapPojo)
             .switchIfEmpty(Mono.just(new DataEntityAlertConfig()));
     }
