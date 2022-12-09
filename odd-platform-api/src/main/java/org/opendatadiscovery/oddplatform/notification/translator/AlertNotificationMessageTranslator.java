@@ -107,10 +107,7 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
     private List<AlertChunkPojo> fetchAlertChunks(final long alertId) {
         return dslContext.selectFrom(ALERT_CHUNK)
             .where(ALERT_CHUNK.ALERT_ID.eq(alertId))
-            .fetch()
-            .stream()
-            .map(r -> r.into(AlertChunkPojo.class))
-            .toList();
+            .fetchInto(AlertChunkPojo.class);
     }
 
     private List<AlertedDataEntity> fetchAlertedDataEntities(final Collection<String> oddrns) {
@@ -138,10 +135,7 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .where(DATA_ENTITY.ODDRN.in(oddrns))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .groupBy(fields)
-            .fetch()
-            .stream()
-            .map(this::mapAlertedEntityRecord)
-            .toList();
+            .fetch(this::mapAlertedEntityRecord);
         // @formatter:on
     }
 
