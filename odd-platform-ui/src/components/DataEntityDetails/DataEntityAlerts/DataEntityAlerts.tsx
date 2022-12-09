@@ -36,13 +36,21 @@ const DataEntityAlerts: React.FC = () => {
           />
         </Grid>
       </WithPermissions>
-      <S.AlertsContainer container rowGap={1}>
-        {isAlertsFetching ? (
+
+      {isAlertsFetching && (
+        <S.AlertsContainer container rowGap={1}>
           <DataEntityAlertsSkeleton length={5} />
-        ) : (
-          alertsList.map(alert => <DataEntityAlertItem key={alert.id} alert={alert} />)
-        )}
-      </S.AlertsContainer>
+        </S.AlertsContainer>
+      )}
+
+      {isAlertsFetched && alertsList.length > 0 && (
+        <S.AlertsContainer container rowGap={1}>
+          {alertsList.map(alert => (
+            <DataEntityAlertItem key={alert.id} alert={alert} />
+          ))}
+        </S.AlertsContainer>
+      )}
+
       <EmptyContentPlaceholder
         isContentLoaded={isAlertsFetched}
         isContentEmpty={!alertsList.length}

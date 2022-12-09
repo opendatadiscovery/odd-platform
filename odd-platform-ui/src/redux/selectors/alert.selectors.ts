@@ -20,11 +20,20 @@ export const { selectById: getDataEntityAlertConfig } =
 export const getAlertListFetchingStatus = createStatusesSelector(
   actions.fetchAlertListActionType
 );
+export const getMyAlertListFetchingError = createErrorSelector(
+  actions.fetchMyAlertListActionType
+);
 export const getMyAlertListFetchingStatus = createStatusesSelector(
   actions.fetchMyAlertListActionType
 );
+export const getMyDependentsAlertListFetchingError = createErrorSelector(
+  actions.fetchMyDependentsAlertListActionType
+);
 export const getMyDependentsAlertListFetchingStatus = createStatusesSelector(
   actions.fetchMyDependentsAlertListActionType
+);
+export const getAlertListFetchingError = createErrorSelector(
+  actions.fetchAlertListActionType
 );
 
 export const getDataEntityAlertListFetchingStatus = createStatusesSelector(

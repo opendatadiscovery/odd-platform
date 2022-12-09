@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Alert } from 'redux/interfaces';
-import { AlertStatus, AlertType, Permission } from 'generated-sources';
+import { AlertStatus, Permission } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -8,6 +8,7 @@ import { Collapse, Grid, Typography } from '@mui/material';
 import { AlertStatusItem, AppButton } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
 import { GearIcon, UserIcon } from 'components/shared/Icons';
+import { alertTitlesMap } from 'lib/constants';
 import * as S from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps {
@@ -36,13 +37,6 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
 
     dispatch(updateAlertStatus({ alertId, alertStatusFormData: { status } }));
   };
-
-  const alertTitlesMap = new Map<AlertType, string>([
-    [AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA, 'Backwards incompatible schema'],
-    [AlertType.FAILED_JOB, 'Failed job'],
-    [AlertType.FAILED_DQ_TEST, 'Failed DQ test'],
-    [AlertType.DISTRIBUTION_ANOMALY, 'Distribution anomaly'],
-  ]);
 
   const resolvedInfo = React.useMemo(() => {
     const updatedAt = statusUpdatedAt && (
@@ -122,7 +116,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
         </S.Wrapper>
       </Grid>
       <Collapse in={showHistory} timeout={0} unmountOnExit>
-        <Grid container flexDirection='column' flexWrap='nowrap'>
+        <Grid container flexDirection='column' flexWrap='nowrap' sx={{ mt: 2 }}>
           {alertChunkList?.map(alertChunk => (
             <Grid container flexWrap='nowrap' sx={{ py: 0.75 }}>
               {alertChunk.createdAt && (

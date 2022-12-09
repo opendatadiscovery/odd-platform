@@ -16,12 +16,7 @@ const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
   isContentLoaded && isContentEmpty ? (
     <Typography
       variant='subtitle2'
-      sx={{
-        mt: 2,
-        display: 'flex',
-        alignItems: 'center',
-        alignSelf: 'flex-start',
-      }}
+      sx={{ display: 'flex', alignItems: 'center', alignSelf: 'flex-start' }}
     >
       <EmptyIcon sx={{ mr: 0.5 }} />
       {text}
