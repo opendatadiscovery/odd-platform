@@ -47,9 +47,13 @@ test.describe('Check filters', () => {
     /**
      * /project/1/test-cases/25
      */
-    test('Should display the expected item with Owner filter', async ({ steps: { pages } }) => {
-      const ownerName1 = 'ownerName1';
-      const ownerTitle1 = 'ownerTitle1';
+    test('Should display the expected item with Owner filter', async ({
+      workerId,
+      steps: { pages },
+    }) => {
+      const ownerName1 = `ownerName1${workerId}`;
+      const ownerTitle1 = `ownerTitle1${workerId}`;
+
       await test.step('Apply filter Owner', async () => {
         await pages.catalog.searchBy(bookETLDataEntity);
         await pages.catalog.clickOnListItem(bookETLDataEntity);
@@ -103,10 +107,11 @@ test.describe('Check filters', () => {
      * /project/1/test-cases/28
      */
     test('Should display the expected item with different types of filters', async ({
+      workerId,
       steps: { pages },
     }) => {
-      const ownerName2 = 'ownerName2';
-      const ownerTitle2 = 'ownerTitle2';
+      const ownerName2 = `ownerName2${workerId}`;
+      const ownerTitle2 = `ownerName2${workerId}`;
       await test.step('Apply filter Namespace', async () => {
         await pages.catalog.openFilterWithSelect(namespaceFilter);
         await pages.catalog.chooseOption(namespaceOption);
@@ -125,9 +130,12 @@ test.describe('Check filters', () => {
     /**
      * /project/1/test-cases/103
      */
-    test('Should display the expected item with all filters', async ({ steps: { pages } }) => {
-      const ownerName3 = 'ownerName3';
-      const ownerTitle3 = 'ownerTitle3';
+    test('Should display the expected item with all filters', async ({
+      workerId,
+      steps: { pages },
+    }) => {
+      const ownerName3 = `ownerName3${workerId}`;
+      const ownerTitle3 = `ownerTitle3${workerId}`;
       await test.step('Apply filter Datasource', async () => {
         await pages.catalog.openFilterWithSelect(datasourceFilter);
         await pages.catalog.chooseOption(datasourceOptionBookETL);
