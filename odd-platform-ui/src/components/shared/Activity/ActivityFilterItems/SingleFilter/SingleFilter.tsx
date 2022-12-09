@@ -13,12 +13,14 @@ interface SingleFilterProps<OptionType> {
   name: string;
   filterOptions: Array<OptionType>;
   filterName: ActivityQueryName;
+  dataQA?: string;
 }
 
 const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventType>({
   name,
   filterOptions,
   filterName,
+  dataQA,
 }: PropsWithChildren<SingleFilterProps<OptionType>>) => {
   const dispatch = useAppDispatch();
   const dispatchQueryParam = (queryData: null | number | ActivityEventType) =>
@@ -102,6 +104,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
           label={name}
           id={`filter-${filterName}`}
           value={selectedOption}
+          dataQAId={dataQA}
         >
           <AppMenuItem value='All' onClick={() => handleFilterSelect('All')}>
             All
