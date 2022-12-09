@@ -23,10 +23,14 @@ export default class TagsPage extends ManagementPage {
     return new List(this.page, SELECTORS.tagLineRoot, SELECTORS.tagLineItem);
   }
 
-  public importantFlag(tagName: string): Locator {
+  public importantTag(tagName: string): Locator {
     return this.page
       .locator(SELECTORS.tagString(tagName))
       .locator(SELECTORS.tagImportantMark, { hasText: 'important' });
+  }
+
+  public normalTag(tagName: string): Locator {
+    return this.page.locator(SELECTORS.tagString(tagName));
   }
 
   async getAllTags() {
