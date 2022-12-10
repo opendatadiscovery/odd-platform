@@ -32,7 +32,7 @@ public class DataEntityIngestionDto {
     protected DataSetIngestionDto dataSet;
     protected DataTransformerIngestionDto dataTransformer;
     protected DataConsumerIngestionDto dataConsumer;
-    protected DataQualityTestIngestionDto datasetQualityTest;
+    protected DataQualityTestIngestionDto dataQualityTest;
     protected DataInputIngestionDto dataInput;
     protected DataEntityGroupDto dataEntityGroup;
 

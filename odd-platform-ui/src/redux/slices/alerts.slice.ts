@@ -1,16 +1,20 @@
-import type { AlertsState, Alert } from 'redux/interfaces';
+import type { AlertsState, Alert, AlertsConfig } from 'redux/interfaces';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { alertsActionPrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 
 export const alertsAdapter = createEntityAdapter<Alert>({
   selectId: alert => alert.id,
-  sortComparer: (a, b) => b.createdAt - a.createdAt,
+});
+
+export const alertsConfigAdapter = createEntityAdapter<AlertsConfig>({
+  selectId: config => config.dataEntityId,
 });
 
 export const initialState: AlertsState = {
   totals: {},
   pageInfo: { total: 0, page: 0, hasNext: true },
+  configs: { ...alertsConfigAdapter.getInitialState() },
   ...alertsAdapter.getInitialState(),
 };
 
@@ -45,13 +49,20 @@ export const alertsSlice = createSlice({
       state.pageInfo = { ...pageInfo, page: 1 };
     });
     builder.addCase(thunks.updateAlertStatus.fulfilled, (state, { payload }) => {
-      const { alertId, status } = payload;
-
-      const currentAlert = state.entities[alertId];
-      if (currentAlert) {
-        currentAlert.status = status;
-      }
+      alertsAdapter.setOne(state, payload);
     });
+    builder.addCase(
+      thunks.fetchDataEntityAlertsConfig.fulfilled,
+      (state, { payload }) => {
+        alertsConfigAdapter.setOne(state.configs, payload);
+      }
+    );
+    builder.addCase(
+      thunks.updateDataEntityAlertsConfig.fulfilled,
+      (state, { payload }) => {
+        alertsConfigAdapter.setOne(state.configs, payload);
+      }
+    );
   },
 });
 export const { changeAlertsFilterAction } = alertsSlice.actions;

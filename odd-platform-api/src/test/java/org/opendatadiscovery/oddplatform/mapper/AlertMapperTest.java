@@ -10,7 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertChunk;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
@@ -18,6 +20,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -48,14 +51,17 @@ class AlertMapperTest {
         when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(dataEntityRef);
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
-        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
-        alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+        final List<AlertChunkPojo> chunks = new EasyRandom().objects(AlertChunkPojo.class, 10)
+            .peek(a -> a.setAlertId(alertPojo.getId()))
+            .toList();
+        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
+        alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final AssociatedOwner associatedOwner = new AssociatedOwner();
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
         when(associatedOwnerMapper.mapAssociatedOwner(any())).thenReturn(associatedOwner);
 
-        final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, null));
+        final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, chunks, dataEntityPojo, null));
 
         //when
         final AlertList alertList = alertMapper.mapAlerts(alertDtos);
@@ -63,7 +69,7 @@ class AlertMapperTest {
         //then
         assertThat(alertList).isNotNull();
         final Alert actual = alertList.getItems().get(0);
-        assertActualAlertList(actual, alertPojo);
+        assertActualAlertList(actual, alertPojo, chunks);
         assertThat(actual.getStatusUpdatedBy().getOwner()).isNull();
         assertThat(alertList.getPageInfo()).isNotNull();
         assertThat(alertList.getPageInfo().getTotal()).isEqualTo(alertDtos.size());
@@ -80,8 +86,8 @@ class AlertMapperTest {
         when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(dataEntityRef);
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
-        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
-        alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
+        alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
         final Owner owner = new EasyRandom().nextObject(Owner.class);
@@ -90,7 +96,10 @@ class AlertMapperTest {
         associatedOwner.setOwner(owner);
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
         when(associatedOwnerMapper.mapAssociatedOwner(any())).thenReturn(associatedOwner);
-        final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
+        final List<AlertChunkPojo> chunks = new EasyRandom().objects(AlertChunkPojo.class, 10)
+            .peek(a -> a.setAlertId(alertPojo.getId()))
+            .toList();
+        final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, chunks, dataEntityPojo, updatedByOwner));
 
         //when
         final AlertList alertList = alertMapper.mapAlerts(alertDtos);
@@ -98,7 +107,7 @@ class AlertMapperTest {
         //then
         assertThat(alertList).isNotNull();
         final Alert actual = alertList.getItems().get(0);
-        assertActualAlertList(actual, alertPojo);
+        assertActualAlertList(actual, alertPojo, chunks);
         assertThat(actual.getStatusUpdatedBy().getOwner().getName()).isEqualTo(owner.getName());
         assertThat(alertList.getPageInfo()).isNotNull();
         assertThat(alertList.getPageInfo().getTotal()).isEqualTo(alertDtos.size());
@@ -115,8 +124,8 @@ class AlertMapperTest {
         when(dataEntityMapper.mapRef(any(DataEntityPojo.class))).thenReturn(dataEntityRef);
 
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
-        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
-        alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+        alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.getCode());
+        alertPojo.setStatus(AlertStatusEnum.OPEN.getCode());
 
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
         final Owner owner = new EasyRandom().nextObject(Owner.class);
@@ -127,7 +136,11 @@ class AlertMapperTest {
         associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
         when(associatedOwnerMapper.mapAssociatedOwner(any())).thenReturn(associatedOwner);
 
-        final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
+        final List<AlertChunkPojo> chunks = new EasyRandom().objects(AlertChunkPojo.class, 10)
+            .peek(a -> a.setAlertId(alertPojo.getId()))
+            .toList();
+
+        final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, chunks, dataEntityPojo, updatedByOwner));
         final long pageTotal = 2L;
         final Page<AlertDto> alertDtoPage = new Page<>(alertDtos, pageTotal, false);
 
@@ -137,21 +150,30 @@ class AlertMapperTest {
         //then
         assertThat(alertList).isNotNull();
         final Alert actual = alertList.getItems().get(0);
-        assertActualAlertList(actual, alertPojo);
+        assertActualAlertList(actual, alertPojo, chunks);
         assertThat(actual.getStatusUpdatedBy().getOwner().getName()).isEqualTo(owner.getName());
         assertThat(alertList.getPageInfo()).isNotNull();
         assertThat(alertList.getPageInfo().getHasNext()).isFalse();
         assertThat(alertList.getPageInfo().getTotal()).isEqualTo(pageTotal);
     }
 
-    private void assertActualAlertList(final Alert alert, final AlertPojo alertPojo) {
+    private void assertActualAlertList(final Alert alert,
+                                       final AlertPojo alertPojo,
+                                       final List<AlertChunkPojo> chunks) {
+        final AlertType expectedAlertType = AlertTypeEnum.fromCode(alertPojo.getType())
+            .map(AlertTypeEnum::name)
+            .map(AlertType::fromValue)
+            .orElseThrow(() -> new IllegalStateException("Unknown type code %d".formatted(alertPojo.getType())));
+
         assertThat(alert).isNotNull();
         assertThat(alert.getId()).isEqualTo(alertPojo.getId());
-        assertThat(alert.getType().getValue()).isEqualTo(alertPojo.getType());
-        assertThat(alert.getDescription()).isEqualTo(alertPojo.getDescription());
+        assertThat(alert.getType()).isEqualTo(expectedAlertType);
         assertThat(alert.getStatusUpdatedAt())
             .hasToString(alertPojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC).toString());
-        assertThat(alert.getCreatedAt()).hasToString(alertPojo.getCreatedAt().atOffset(ZoneOffset.UTC).toString());
         assertThat(alert.getStatusUpdatedBy().getIdentity().getUsername()).isEqualTo(alertPojo.getStatusUpdatedBy());
+
+        assertThat(alert.getAlertChunkList())
+            .extracting(AlertChunk::getDescription)
+            .hasSameElementsAs(chunks.stream().map(AlertChunkPojo::getDescription).toList());
     }
 }

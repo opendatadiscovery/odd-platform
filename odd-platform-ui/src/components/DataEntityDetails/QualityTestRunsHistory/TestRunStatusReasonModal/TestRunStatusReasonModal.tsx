@@ -85,7 +85,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
       }
       title={modalTitle}
       renderContent={modalContent}
-      maxWidth='sm'
+      maxWidth='md'
     />
   );
 };

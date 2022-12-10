@@ -6,6 +6,7 @@ import com.slack.api.model.block.SectionBlock;
 import com.slack.api.model.block.composition.BlockCompositions;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 
 import static com.slack.api.model.block.Blocks.context;
@@ -71,19 +73,16 @@ public class SlackMessageGenerator {
             : header(c -> c.text(plainText(":exclamation: Alert: " + message.getAlertType().getDescription()))));
 
         blocks.add(divider());
-        blocks.add(section(c -> c.text(
-            markdownText(buildDataEntityLink(dataEntity) + "\n" + message.getAlertDescription()))));
+        blocks.add(section(c -> c.text(markdownText(
+            buildDataEntityLink(dataEntity) + "\n" + buildDescriptionsFromChunks(message.getAlertChunks())))));
 
-        if (message.getUpdatedBy() != null) {
-            final String updatedByText = switch (message.getEventType()) {
-                case REOPENED -> "Reopened by";
-                case RESOLVED -> "Resolved by";
-                default -> throw new IllegalArgumentException(
-                    "Not supported type for updated_by text building: %s".formatted(message.getEventType()));
-            };
-
+        if (message.getUpdatedBy() != null && AlertEventType.RESOLVED.equals(message.getEventType())) {
             blocks.add(section(c -> c.text(markdownText(
-                String.format("%s @%s", updatedByText, message.getUpdatedBy())))));
+                String.format("Resolved by @%s", message.getUpdatedBy())))));
+        }
+
+        if (AlertEventType.RESOLVED_AUTOMATICALLY.equals(message.getEventType())) {
+            blocks.add(section(c -> c.text(markdownText("Resolved automatically"))));
         }
 
         resolveInformationalContextSection(dataEntity).ifPresent(blocks::add);
@@ -91,6 +90,14 @@ public class SlackMessageGenerator {
         resolveDownstreamSections(message.getDownstream()).ifPresent(blocks::addAll);
 
         return blocks;
+    }
+
+    private String buildDescriptionsFromChunks(final List<AlertChunkPojo> alertChunks) {
+        return alertChunks.stream()
+            .sorted(Comparator.comparing(AlertChunkPojo::getCreatedAt).reversed())
+            .map(AlertChunkPojo::getDescription)
+            .limit(3)
+            .collect(Collectors.joining("\n"));
     }
 
     private Optional<LayoutBlock> resolveInformationalContextSection(final AlertedDataEntity dataEntity) {

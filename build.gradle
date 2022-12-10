@@ -10,6 +10,7 @@ ext {
     env = findProperty('env') ?: 'prod'
     armBuild = resolveBooleanProperty("containerBuildArm")
     amdBuild = resolveBooleanProperty("containerBuildAmd", !armBuild)
+    bundleUI = resolveBooleanProperty("bundleUI", true)
 }
 
 boolean resolveBooleanProperty(String propertyName, boolean defaultValue = false) {

@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import java.util.List;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
+import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertBISCandidate;
 import reactor.core.publisher.Flux;
 
 public interface AlertLocator {
-    Flux<AlertPojo> locateAlerts(final IngestionRequest request);
+    Flux<AlertBISCandidate> getAlertBISCandidates(final List<DataEntitySpecificAttributesDelta> deltas,
+                                                  final List<Long> changedDatasetIds);
 }

@@ -74,15 +74,9 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
       <rect
         width={nodeSize.content.loadMore.button.width}
         height={nodeSize.content.loadMore.button.height}
-        transform={
-          reverse
-            ? `translate(${-nodeSize.content.loadMore.button.width / 2}, ${
-                -nodeSize.content.loadMore.button.height / 1.5
-              })`
-            : `translate(${-nodeSize.content.loadMore.button.width / 2}, ${
-                -nodeSize.content.loadMore.button.height / 1.5
-              })`
-        }
+        transform={`translate(${-nodeSize.content.loadMore.button.width / 2}, ${
+          -nodeSize.content.loadMore.button.height / 1.5
+        })`}
         rx={16}
       />
       {isStreamFetching ? (

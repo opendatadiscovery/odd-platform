@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -38,6 +39,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.service.AlertHaltConfigService;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
@@ -64,6 +66,7 @@ public class DataEntityController
     private final LineageService lineageService;
     private final ActivityService activityService;
     private final MessageService messageService;
+    private final AlertHaltConfigService alertHaltConfigService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
@@ -71,7 +74,8 @@ public class DataEntityController
                                 final TermService termService,
                                 final LineageService lineageService,
                                 final ActivityService activityService,
-                                final MessageService messageService) {
+                                final MessageService messageService,
+                                final AlertHaltConfigService alertHaltConfigService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
@@ -79,6 +83,7 @@ public class DataEntityController
         this.lineageService = lineageService;
         this.activityService = activityService;
         this.messageService = messageService;
+        this.alertHaltConfigService = alertHaltConfigService;
     }
 
     @Override
@@ -386,6 +391,25 @@ public class DataEntityController
                                                          final ServerWebExchange exchange) {
         return messageService
             .getChildrenMessages(messageId, lastMessageId, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityAlertConfig>> getAlertConfig(final Long dataEntityId,
+                                                                      final ServerWebExchange exchange) {
+        return alertHaltConfigService
+            .getAlertHaltConfig(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityAlertConfig>> updateAlertConfig(
+        final Long dataEntityId,
+        final Mono<DataEntityAlertConfig> dataEntityAlertConfig,
+        final ServerWebExchange exchange
+    ) {
+        return dataEntityAlertConfig
+            .flatMap(cfg -> alertHaltConfigService.saveAlertHaltConfig(dataEntityId, cfg))
             .map(ResponseEntity::ok);
     }
 }

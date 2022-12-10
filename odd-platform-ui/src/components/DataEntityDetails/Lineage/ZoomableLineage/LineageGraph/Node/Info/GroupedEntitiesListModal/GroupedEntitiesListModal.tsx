@@ -132,7 +132,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
       }
       title={modalTitle}
       renderContent={modalContent}
-      maxWidth='md'
+      maxWidth='lg'
       handleCloseSubmittedForm={isLoadMoreClicked}
     />
   );

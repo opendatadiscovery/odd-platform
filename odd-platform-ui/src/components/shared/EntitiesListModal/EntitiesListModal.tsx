@@ -63,7 +63,7 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
       }
       title={modalTitle}
       renderContent={modalContent}
-      maxWidth='md'
+      maxWidth='lg'
     />
   );
 };

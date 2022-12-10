@@ -12,6 +12,7 @@ import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,7 @@ import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 @Getter
 @ToString
 public class AlertNotificationMessage extends NotificationMessage {
-    private String alertDescription;
+    private List<AlertChunkPojo> alertChunks;
     private AlertTypeEnum alertType;
     private AlertEventType eventType;
     private LocalDateTime eventAt;
@@ -38,6 +39,7 @@ public class AlertNotificationMessage extends NotificationMessage {
     public enum AlertEventType {
         CREATED,
         RESOLVED,
+        RESOLVED_AUTOMATICALLY,
         REOPENED
     }
 }
