@@ -52,17 +52,18 @@ test.describe('Tags', () => {
   /**
    * /project/1/test-cases/6
    */
-  test(`Add several unimportant tags`, async ({ steps: { pages } }) => {
+  test(`Add several unimportant tags`, async ({ workerId, steps: { pages } }) => {
+    const tagNamePrefix = `tag${workerId}`;
     await test.step(`I add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
     });
     await test.step(`I fill inputs and click 'create' button`, async () => {
-      await pages.modals.addTag.fillAllTagName('tag');
+      await pages.modals.addTag.fillAllTagName(tagNamePrefix);
       await pages.modals.addTag.addNewTag.click();
     });
     await test.step(`I check new tags`, async () => {
-      expect(await pages.tags.tagsList.isListItemVisible('tag_0')).toBeTruthy();
-      expect(await pages.tags.tagsList.isListItemVisible('tag_1')).toBeTruthy();
+      expect(await pages.tags.tagsList.isListItemVisible(`${tagNamePrefix}_0`)).toBeTruthy();
+      expect(await pages.tags.tagsList.isListItemVisible(`${tagNamePrefix}_1`)).toBeTruthy();
     });
   });
 
