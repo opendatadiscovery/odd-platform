@@ -92,7 +92,6 @@ public class IngestionTaskRunAlertState {
         return actions;
     }
 
-
     private void reportSuccess() {
         if (lastAlertIdActive) {
             actions.add(new AlertAction.ResolveAutomaticallyAlertAction(lastAlertId));
