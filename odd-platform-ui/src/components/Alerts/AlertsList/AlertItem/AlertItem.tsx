@@ -1,8 +1,7 @@
 import React from 'react';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
-import { isResourcePermissionsAlreadyFetched } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
@@ -35,13 +34,6 @@ const AlertItem: React.FC<AlertItemProps> = ({
   const [disableResolve, setDisableResolve] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
 
-  const isPermFetched = useAppSelector(
-    isResourcePermissionsAlreadyFetched(
-      PermissionResourceType.DATA_ENTITY,
-      dataEntity?.id
-    )
-  );
-
   const dispatchUpdateAlertStatus = () => {
     const status =
       alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
@@ -51,7 +43,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
   };
 
   const handleResolve = () => {
-    if (dataEntity?.id && !isPermFetched) {
+    if (dataEntity?.id) {
       const params = {
         resourceId: dataEntity.id,
         permissionResourceType: PermissionResourceType.DATA_ENTITY,
@@ -67,9 +59,6 @@ const AlertItem: React.FC<AlertItemProps> = ({
             setDisableResolve(true);
           }
         });
-    } else {
-      setIsUpdating(true);
-      dispatchUpdateAlertStatus();
     }
   };
 
@@ -162,7 +151,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
           <AlertStatusItem status={alertStatus} />
           <Grid display='flex' flexDirection='column' alignItems='center' sx={{ ml: 2 }}>
             <AppButton
-              key={id}
+              sx={{ minWidth: '66px !important', minHeight: '24px' }}
               size='medium'
               color='primaryLight'
               onClick={handleResolve}

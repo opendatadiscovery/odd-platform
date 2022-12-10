@@ -48,11 +48,15 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     if (alertStatus === 'RESOLVED') {
       return (
         <S.Wrapper container sx={{ mr: 1 }}>
-          <UserIcon stroke='black' />
-          <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
-            {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity?.username}
-            {', '}
-          </Typography>
+          {statusUpdatedBy && (
+            <>
+              <UserIcon stroke='black' />
+              <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
+                {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity?.username}
+                {', '}
+              </Typography>
+            </>
+          )}
           {updatedAt}
         </S.Wrapper>
       );
@@ -79,7 +83,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
         <Grid container flexWrap='nowrap' lg={8}>
           <Grid container flexDirection='column'>
             <Typography variant='h4'>{alertTitlesMap.get(type)}</Typography>
-            <Grid container flexWrap='nowrap' sx={{ mt: 0.5 }}>
+            <Grid container flexWrap='nowrap' alignItems='center' sx={{ mt: 0.5 }}>
               {lastCreatedAt && (
                 <Typography variant='subtitle1'>
                   {alertFormattedDateTime(lastCreatedAt)}
