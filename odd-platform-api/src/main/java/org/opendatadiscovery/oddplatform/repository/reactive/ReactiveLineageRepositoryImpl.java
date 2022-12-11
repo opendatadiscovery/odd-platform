@@ -10,7 +10,6 @@ import org.jooq.InsertValuesStep3;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record2;
-import org.jooq.SelectJoinStep;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
@@ -99,13 +98,11 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
                                                  final LineageDepth depth,
                                                  final LineageStreamKind streamKind) {
         final var cte = lineageCte(rootOddrns, depth, streamKind);
-        return jooqReactiveOperations.flux(collectLineage(cte)).map(r -> r.into(LineagePojo.class));
-    }
-
-    private SelectJoinStep<Record2<String, String>> collectLineage(final CommonTableExpression<Record> cte) {
-        return DSL.withRecursive(cte)
+        final var query = DSL.withRecursive(cte)
             .selectDistinct(cte.field(LINEAGE.PARENT_ODDRN), cte.field(LINEAGE.CHILD_ODDRN))
             .from(cte.getName());
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(LineagePojo.class));
     }
 
     private CommonTableExpression<Record> lineageCte(final Collection<String> oddrns,

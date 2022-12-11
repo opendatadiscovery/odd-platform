@@ -27,9 +27,6 @@ public class DataQualityController implements DataQualityApi {
                                                                          final ServerWebExchange exchange) {
         return dataQualityService
             .getDatasetTests(dataEntityId)
-            // TODO: remove subscribeOn after
-            //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -60,9 +57,6 @@ public class DataQualityController implements DataQualityApi {
         return dataQualityTestSeverityForm
             .map(DataQualityTestSeverityForm::getSeverity)
             .flatMap(severity -> dataQualityService.setDataQualityTestSeverity(dataqaTestId, dataEntityId, severity))
-            // TODO: remove subscribeOn after
-            //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 

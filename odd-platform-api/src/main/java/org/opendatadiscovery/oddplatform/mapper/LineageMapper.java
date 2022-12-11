@@ -32,7 +32,6 @@ import static java.util.Collections.emptyList;
 public abstract class LineageMapper {
 
     private DataEntityMapper dataEntityMapper;
-
     private DataSourceMapper dataSourceMapper;
 
     @Autowired

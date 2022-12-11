@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ import org.opendatadiscovery.oddplatform.mapper.TitleMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.TokenMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepository;
 import reactor.core.publisher.Flux;
@@ -59,7 +58,7 @@ class LineageServiceTest {
     @Mock
     private ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
     @Mock
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     @BeforeEach
     void setUp() {
@@ -122,14 +121,14 @@ class LineageServiceTest {
         final var dto = DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(rootEntity).build();
 
-        when(dataEntityRepository.get(eq(1L))).thenReturn(Optional.of(dto));
+        when(dataEntityRepository.getDataEntityWithDataSource(eq(1L))).thenReturn(Mono.just(dto));
         when(lineageRepository.getLineageRelations(any(), any(), any()))
             .thenReturn(Flux.fromStream(Stream.of(rootToFirstEntityLineage, rootToSecondEntityLineage)));
         when(groupEntityRelationRepository.fetchGroupRelations(any()))
             .thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getChildrenCount(any())).thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getParentCount(any())).thenReturn(Mono.just(new HashMap<>()));
-        when(dataEntityRepository.listDimensionsByOddrns(any())).thenReturn(List.of(
+        when(dataEntityRepository.getDataEntitiesWithDataSource(any())).thenReturn(Flux.just(
             dto,
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(firstChildEntity).build(),
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(secondChildEntity).build()

@@ -30,8 +30,8 @@ services:
       - sh
       - ./injector/start.sh
     environment:
-      - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
+      - PLATFORM_HOST_URL=http://host.docker.internal:8080
       - PYTHONUNBUFFERED=1
-    depends_on:
-      - odd-platform
+#    depends_on:
+#      - odd-platform
 

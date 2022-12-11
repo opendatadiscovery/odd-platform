@@ -1,21 +1,22 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
@@ -33,43 +34,47 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
+import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
-import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.LineageRepository;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
-import org.opendatadiscovery.oddrn.Generator;
-import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
@@ -77,6 +82,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.CUSTOM_GROUP;
@@ -84,203 +90,127 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERN
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_METADATA;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_NAME;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_TAGS;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.MANUALLY_CREATED;
 import static org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin.INTERNAL;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated.DATA_ENTITY_ID;
 import static reactor.function.TupleUtils.function;
 
 @Service
 @Slf4j
-public class DataEntityServiceImpl
-    extends AbstractReadOnlyCRUDService<DataEntity, DataEntityList,
-    DataEntityDimensionsDto, DataEntityMapper, DataEntityRepository>
-    implements DataEntityService {
-    private final Generator oddrnGenerator = new Generator();
-
+@RequiredArgsConstructor
+public class DataEntityServiceImpl implements DataEntityService {
     private final AuthIdentityProvider authIdentityProvider;
-    private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
-    private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final TagService tagService;
-    private final LineageRepository lineageRepository;
-    private final NamespaceService namespaceService;
-    private final ActivityService activityService;
-
-    private final MetadataFieldMapper metadataFieldMapper;
-    private final MetadataFieldValueMapper metadataFieldValueMapper;
-    private final TagMapper tagMapper;
-    private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
-    private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    private final ReactiveTermRepository reactiveTermRepository;
-    private final ReactiveOwnershipRepository ownershipRepository;
-    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
     private final DataEntityFilledService dataEntityFilledService;
     private final MetadataFieldService metadataFieldService;
 
-    public DataEntityServiceImpl(final DataEntityMapper entityMapper,
-                                 final DataEntityRepository entityRepository,
-                                 final AuthIdentityProvider authIdentityProvider,
-                                 final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository,
-                                 final TagService tagService,
-                                 final LineageRepository lineageRepository,
-                                 final MetadataFieldMapper metadataFieldMapper,
-                                 final MetadataFieldValueMapper metadataFieldValueMapper,
-                                 final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository,
-                                 final TagMapper tagMapper,
-                                 final NamespaceService namespaceService,
-                                 final ActivityService activityService,
-                                 final ReactiveDataEntityRepository reactiveDataEntityRepository,
-                                 final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository,
-                                 final ReactiveTermRepository reactiveTermRepository,
-                                 final ReactiveOwnershipRepository ownershipRepository,
-                                 final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository,
-                                 final DataEntityFilledService dataEntityFilledService,
-                                 final MetadataFieldService metadataFieldService) {
-        super(entityMapper, entityRepository);
+    private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
+    private final ReactiveMetadataFieldRepository reactiveMetadataFieldRepository;
+    private final ReactiveDataEntityRepository reactiveDataEntityRepository;
+    private final ReactiveLineageRepository reactiveLineageRepository;
+    private final ReactiveDataEntityTaskRunRepository reactiveDataEntityTaskRunRepository;
+    private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
+    private final ReactiveTermRepository reactiveTermRepository;
+    private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
+    private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
+    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
 
-        this.authIdentityProvider = authIdentityProvider;
-        this.reactiveMetadataFieldValueRepository = reactiveMetadataFieldValueRepository;
-        this.tagService = tagService;
-        this.lineageRepository = lineageRepository;
-        this.metadataFieldMapper = metadataFieldMapper;
-        this.metadataFieldValueMapper = metadataFieldValueMapper;
-        this.reactiveSearchEntrypointRepository = reactiveSearchEntrypointRepository;
-        this.tagMapper = tagMapper;
-        this.namespaceService = namespaceService;
-        this.activityService = activityService;
-        this.reactiveDataEntityRepository = reactiveDataEntityRepository;
-        this.reactiveTermRepository = reactiveTermRepository;
-        this.ownershipRepository = ownershipRepository;
-        this.reactiveGroupEntityRelationRepository = reactiveGroupEntityRelationRepository;
-        this.dataEntityStatisticsRepository = dataEntityStatisticsRepository;
-        this.dataEntityFilledService = dataEntityFilledService;
-        this.metadataFieldService = metadataFieldService;
-    }
-
-    @Override
-    @ReactiveTransactional
-    public Mono<DataEntityRef> createDataEntityGroup(final DataEntityGroupFormData formData) {
-        if (StringUtils.isNotEmpty(formData.getNamespaceName())) {
-            return namespaceService.getOrCreate(formData.getNamespaceName())
-                .flatMap(namespacePojo -> createDEG(formData, namespacePojo));
-        } else {
-            return createDEG(formData, null);
-        }
-    }
-
-    @Override
-    @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_UPDATED)
-    public Mono<DataEntityRef> updateDataEntityGroup(
-        @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
-        final DataEntityGroupFormData formData) {
-        return reactiveDataEntityRepository.get(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
-            .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't update ingested data entity")))
-            .flatMap(pojo -> {
-                if (StringUtils.isNotEmpty(formData.getNamespaceName())) {
-                    return namespaceService.getOrCreate(formData.getNamespaceName())
-                        .flatMap(namespacePojo -> updateDEG(pojo, formData, namespacePojo));
-                } else {
-                    return updateDEG(pojo, formData, null);
-                }
-            });
-    }
-
-    @Override
-    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
-    @ReactiveTransactional
-    public Mono<DataEntityPojo> deleteDataEntityGroup(
-        @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
-        return reactiveGroupEntityRelationRepository.degHasEntities(id)
-            .filter(hasEntities -> !hasEntities)
-            .switchIfEmpty(Mono.error(new CascadeDeleteException("Can't delete data entity group with entities")))
-            .then(reactiveDataEntityRepository.get(id))
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
-            .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't delete ingested data entity")))
-            .flatMap(this::deleteDEG);
-    }
+    private final DataEntityMapper dataEntityMapper;
+    private final MetadataFieldMapper metadataFieldMapper;
+    private final MetadataFieldValueMapper metadataFieldValueMapper;
+    private final TagMapper tagMapper;
 
     @Override
     public Mono<DataEntityClassAndTypeDictionary> getDataEntityClassesAndTypes() {
-        return Mono.just(entityMapper.getTypeDict());
+        return Mono.just(dataEntityMapper.getTypeDict());
     }
 
     @Override
-    @BlockingTransactional
+    public Mono<DataEntityDimensionsDto> getDimensions(final long dataEntityId) {
+        return reactiveDataEntityRepository.getDimensions(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity", dataEntityId)))
+            .flatMap(dto -> enrichEntityClassDetails(List.of(dto)))
+            .flatMap(this::enrichParentGroups)
+            .map(list -> list.get(0));
+    }
+
+    @Override
+    public Mono<List<DataEntityDimensionsDto>> getDimensions(final Collection<String> oddrns) {
+        return reactiveDataEntityRepository.getDimensions(oddrns)
+            .flatMap(this::enrichEntityClassDetails)
+            .flatMap(this::enrichParentGroups);
+    }
+
+    @Override
+    public Mono<DataEntityList> findByState(final FacetStateDto state,
+                                            final int page,
+                                            final int size,
+                                            final OwnerPojo owner) {
+        final Mono<List<DataEntityDimensionsDto>> enrichedDimensions = reactiveDataEntityRepository
+            .findByState(state, page, size, owner)
+            .flatMap(this::enrichEntityClassDetails)
+            .flatMap(this::enrichParentGroups);
+        final Mono<Long> count = reactiveDataEntityRepository.countByState(state, owner);
+        return Mono.zip(enrichedDimensions, count)
+            .map(function((dtos, total) -> new Page<>(dtos, total, true)))
+            .map(dataEntityMapper::mapPojos);
+    }
+
+    @Override
+    @ReactiveTransactional
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
-        return Mono
-            .fromCallable(() -> entityRepository.getDetails(dataEntityId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException("Data entity", dataEntityId))
-                : Mono.just(optional.get()))
-            .map(this::incrementViewCount)
-            .map(dto -> {
-                if (ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET)) {
-                    final Long targetCount = lineageRepository.getTargetsCount(dataEntityId).orElse(0L);
-
-                    final DataSetDetailsDto oldDetails = dto.getDataSetDetailsDto();
-                    dto.setDataSetDetailsDto(
-                        new DataSetDetailsDto(oldDetails.rowsCount(), oldDetails.fieldsCount(), targetCount));
-                }
-
-                return dto;
+        return reactiveDataEntityRepository.getDetails(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity", dataEntityId)))
+            .flatMap(dto -> enrichEntityClassDetails(List.of(dto)))
+            .flatMap(this::enrichParentGroups)
+            .flatMap(dtos -> {
+                final DataEntityDetailsDto details = (DataEntityDetailsDto) dtos.get(0);
+                return enrichDataEntityDetails(details);
             })
-            .map(entityMapper::mapDtoDetails);
-    }
-
-    private DataEntityDetailsDto incrementViewCount(final DataEntityDetailsDto dto) {
-        final DataEntityPojo dataEntity = dto.getDataEntity();
-        final Optional<Long> viewCount = entityRepository.incrementViewCount(dataEntity.getId());
-        viewCount.ifPresent(dataEntity::setViewCount);
-        return dto;
-    }
-
-    @Override
-    public Mono<DataEntityList> list(final Integer page,
-                                     final Integer size,
-                                     final int entityClassId,
-                                     final Integer entityTypeId) {
-        return Mono
-            .fromCallable(() -> entityRepository.listByEntityClass(page, size, entityClassId, entityTypeId))
-            .map(entityMapper::mapPojos);
+            .flatMap(this::incrementViewCount)
+            .flatMap(this::enrichDatasetTargetCount)
+            .map(dataEntityMapper::mapDtoDetails);
     }
 
     @Override
     public Flux<DataEntityRef> listAssociated(final int page, final int size) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId()))
-            .map(entityMapper::mapRef);
+            .flatMapMany(o -> reactiveDataEntityRepository.listByOwner(o.getId(), page, size))
+            .map(dataEntityMapper::mapRef);
     }
 
     @Override
     public Flux<DataEntityRef> listAssociated(final int page,
                                               final int size,
                                               final LineageStreamKind streamKind) {
+        return this.getDependentDataEntityOddrns(streamKind)
+            .flatMapMany(oddrns -> reactiveDataEntityRepository.listAllByOddrns(oddrns, page, size))
+            .map(dataEntityMapper::mapRef);
+    }
+
+    @Override
+    public Mono<List<String>> getDependentDataEntityOddrns(final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapIterable(o -> {
-                    final List<String> oddrns = entityRepository
-                        .listOddrnsByOwner(o.getId(), streamKind);
-                    return entityRepository.listAllByOddrns(oddrns, page, size, true);
-                }
-            )
-            .map(entityMapper::mapRef);
+            .flatMapMany(o -> reactiveDataEntityRepository.listByOwner(o.getId()))
+            .map(de -> de.getDataEntity().getOddrn())
+            .collect(Collectors.toSet())
+            .flatMap(oddrns -> getDependentOddrns(oddrns, streamKind));
     }
 
     @Override
     public Flux<DataEntityRef> listPopular(final int page, final int size) {
-        return Flux
-            .fromIterable(entityRepository.listPopular(page, size))
-            .map(entityMapper::mapRef);
+        return reactiveDataEntityRepository.listPopular(page, size)
+            .map(dataEntityMapper::mapRef);
     }
 
     @Override
-    public Mono<DataEntityList> listByTerm(final long termId, final String query, final Integer entityClassId,
-                                           final int page, final int size) {
-        return Mono
-            .fromCallable(() -> entityRepository.listByTerm(termId, query, entityClassId, page, size))
-            .map(entityMapper::mapPojos);
+    public Mono<DataEntityList> listByTerm(final long termId,
+                                           final String query,
+                                           final Integer entityClassId,
+                                           final int page,
+                                           final int size) {
+        return reactiveDataEntityRepository.listByTerm(termId, query, entityClassId, page, size)
+            .collectList()
+            .map(dataEntityMapper::mapPojos);
     }
 
     @Override
@@ -429,9 +359,9 @@ public class DataEntityServiceImpl
     public Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                             final Integer page,
                                                             final Integer size) {
-        return Mono.fromCallable(() -> entityRepository
-                .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
-            .map(entityMapper::mapPojos);
+        return reactiveDataEntityRepository.getDEGExperimentRuns(dataEntityGroupId, page, size)
+            .flatMap(this::enrichEntityClassDetails)
+            .map(dataEntityMapper::mapPojos);
     }
 
     @Override
@@ -454,7 +384,7 @@ public class DataEntityServiceImpl
                     .thenReturn(groupPojo)))
             .flatMap(
                 groupPojo -> dataEntityFilledService.markEntityFilled(dataEntityId, CUSTOM_GROUP).thenReturn(groupPojo))
-            .map(entityMapper::mapRef);
+            .map(dataEntityMapper::mapRef);
     }
 
     @Override
@@ -491,114 +421,204 @@ public class DataEntityServiceImpl
     public Mono<DataEntityUsageInfo> getDataEntityUsageInfo() {
         return Mono.zip(dataEntityStatisticsRepository.getStatistics(),
                 dataEntityFilledService.getFilledDataEntitiesCount())
-            .map(function(entityMapper::mapUsageInfo));
-    }
-
-    @Override
-    public Mono<CompactDataEntityList> listEntitiesWithinDEG(final String degOddrn) {
-        return reactiveDataEntityRepository.getDEGEntities(degOddrn)
-            .map(entityList -> entityList
-                .stream()
-                .map(de -> {
-                    final DataEntityTypeDto type = DataEntityTypeDto
-                        .findById(de.getTypeId())
-                        .orElseThrow(() -> new IllegalStateException(
-                            "Incorrect type id %d in the database".formatted(de.getTypeId())));
-
-                    return new CompactDataEntity()
-                        .oddrn(de.getOddrn())
-                        .type(DataEntityType.fromValue(type.toString()));
-                })
-                .toList())
-            .map(entityList -> new CompactDataEntityList().items(entityList));
-    }
-
-    private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
-                                          final NamespacePojo namespace) {
-        return Mono.just(formData)
-            .map(fd -> entityMapper.mapToPojo(fd, DATA_ENTITY_GROUP, namespace))
-            .flatMap(reactiveDataEntityRepository::create)
-            .map(pojo -> {
-                final String oddrn = generateOddrn(pojo);
-                pojo.setOddrn(oddrn);
-                return pojo;
-            })
-            .flatMap(reactiveDataEntityRepository::update)
-            .flatMap(pojo -> {
-                final List<String> entityOddrns =
-                    formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
-                return reactiveGroupEntityRelationRepository.createRelationsReturning(pojo.getOddrn(), entityOddrns)
-                    .ignoreElements().thenReturn(pojo);
-            })
-            .flatMap(this::updateSearchVectors)
-            .map(entityMapper::mapRef)
-            .flatMap(ref -> logDEGCreatedActivityEvent(ref).thenReturn(ref))
-            .flatMap(ref -> dataEntityFilledService.markEntityFilled(ref.getId(), MANUALLY_CREATED).thenReturn(ref))
-            .flatMap(ref -> dataEntityStatisticsRepository.updateCounts(1L, Map.of(DATA_ENTITY_GROUP, 1L))
-                .thenReturn(ref));
-    }
-
-    private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
-                                          final DataEntityGroupFormData formData,
-                                          final NamespacePojo namespace) {
-        final List<String> entityOddrns =
-            formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
-        return Mono.just(formData)
-            .map(fd -> entityMapper.applyToPojo(fd, namespace, pojo))
-            .flatMap(reactiveDataEntityRepository::update)
-            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
-                .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
-            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
-                .createRelationsReturning(degPojo.getOddrn(), entityOddrns)
-                .ignoreElements().thenReturn(degPojo))
-            .flatMap(this::updateSearchVectors)
-            .map(entityMapper::mapRef);
-    }
-
-    private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
-        return Flux.zip(
-            dataEntityStatisticsRepository.updateCounts(-1L, Map.of(DATA_ENTITY_GROUP, -1L)),
-            reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
-            reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
-            tagService.deleteRelationsForDataEntity(pojo.getId()),
-            ownershipRepository.deleteByDataEntityId(pojo.getId()),
-            dataEntityFilledService.markEntityUnfilled(pojo.getId(), MANUALLY_CREATED)
-        ).then(reactiveDataEntityRepository.delete(pojo.getId()));
-    }
-
-    private String generateOddrn(final DataEntityPojo pojo) {
-        try {
-            return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
-                .id(pojo.getId())
-                .build(), "id");
-        } catch (final Exception e) {
-            log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Mono<DataEntityPojo> updateSearchVectors(final DataEntityPojo pojo) {
-        return Mono.zip(
-            reactiveSearchEntrypointRepository.updateDataEntityVectors(pojo.getId()),
-            reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(pojo.getId())
-        ).thenReturn(pojo);
-    }
-
-    private Mono<Void> logDEGCreatedActivityEvent(final DataEntityRef ref) {
-        return Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED),
-                activityService.getUpdatedInfo(Map.of(), ref.getId(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED))
-            .map(function((ci, newState) -> ActivityCreateEvent.builder()
-                .dataEntityId(ref.getId())
-                .oldState(ci.getOldState())
-                .newState(newState)
-                .eventType(ActivityEventTypeDto.CUSTOM_GROUP_CREATED)
-                .systemEvent(false)
-                .build()
-            )).flatMap(activityService::createActivityEvent);
+            .map(function(dataEntityMapper::mapUsageInfo));
     }
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
         return pojo.getManuallyCreated()
             && ArrayUtils.contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
+    }
+
+    private Mono<DataEntityDetailsDto> incrementViewCount(final DataEntityDetailsDto dto) {
+        return reactiveDataEntityRepository.incrementViewCount(dto.getDataEntity().getId())
+            .map(count -> {
+                dto.getDataEntity().setViewCount(count);
+                return dto;
+            })
+            .switchIfEmpty(Mono.just(dto));
+    }
+
+    private Mono<Map<String, DataEntityTaskRunPojo>> getLastRunsForQualityTests(
+        final List<DataEntityDimensionsDto> dataEntities) {
+        final Set<String> qualityTests = entityClassOddrns(dataEntities, DataEntityClassDto.DATA_QUALITY_TEST);
+        return reactiveDataEntityTaskRunRepository.getLatestRunsMap(qualityTests);
+    }
+
+    private Mono<List<String>> getDependentOddrns(final Set<String> oddrns, final LineageStreamKind streamKind) {
+        return reactiveLineageRepository.getLineageRelations(oddrns, LineageDepth.empty(), streamKind)
+            .flatMap(lp -> Flux.just(lp.getParentOddrn(), lp.getChildOddrn()))
+            .distinct()
+            .filter(Predicate.not(oddrns::contains))
+            .collectList();
+    }
+
+    private Set<String> getSpecificAttributesDependentOddrns(final List<DataEntityDimensionsDto> entities) {
+        return entities.stream()
+            .map(DataEntityDimensionsDto::getSpecificAttributes)
+            .map(Map::values)
+            .flatMap(Collection::stream)
+            .map(DataEntityAttributes::getDependentOddrns)
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+    }
+
+    private Mono<List<DataEntityDimensionsDto>> enrichEntityClassDetails(
+        final List<DataEntityDimensionsDto> dtos) {
+        final Set<String> dependentOddrns = getSpecificAttributesDependentOddrns(dtos);
+
+        final Mono<Map<String, DataEntityPojo>> dependencies = reactiveDataEntityRepository
+            .listAllByOddrns(dependentOddrns)
+            .collectMap(DataEntityPojo::getOddrn, identity());
+        final Mono<Map<String, DataEntityTaskRunPojo>> lastTaskRuns = getLastRunsForQualityTests(dtos);
+        final Mono<Map<String, Set<DataEntityPojo>>> children = getDEGEntities(dtos);
+        final Mono<Map<String, Long>> degChildrenCount = getDEGChildrenCount(dtos);
+
+        return Mono.zip(dependencies, lastTaskRuns, children, degChildrenCount)
+            .map(function((dependenciesMap, lastTaskRunsMap, childrenMap, degChildrenCountMap) -> {
+                dtos.forEach(
+                    dto -> enrichEntityClassDetails(dto, dependenciesMap, lastTaskRunsMap, childrenMap,
+                        degChildrenCountMap));
+                return dtos;
+            }));
+    }
+
+    private void enrichEntityClassDetails(final DataEntityDimensionsDto dto,
+                                          final Map<String, DataEntityPojo> depsRepository,
+                                          final Map<String, DataEntityTaskRunPojo> lastRuns,
+                                          final Map<String, Set<DataEntityPojo>> childrenMap,
+                                          final Map<String, Long> degChildrenCount) {
+        final Function<Collection<String>, Collection<DataEntityPojo>> fetcher = oddrns -> oddrns.stream()
+            .map(depsRepository::get)
+            .filter(Objects::nonNull)
+            .collect(toList());
+        final String oddrn = dto.getDataEntity().getOddrn();
+
+        dto.getSpecificAttributes().forEach((t, attrs) -> {
+            switch (t) {
+                case DATA_SET -> {
+                    final DataSetAttributes dsa = (DataSetAttributes) attrs;
+                    dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
+                        dsa.getRowsCount(),
+                        dsa.getFieldsCount(),
+                        dsa.getConsumersCount()
+                    ));
+                }
+                case DATA_TRANSFORMER -> {
+                    final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
+                    final var dataTransformerDetailsDto = new DataEntityDimensionsDto.DataTransformerDetailsDto(
+                        fetcher.apply(dta.getSourceOddrnList()),
+                        fetcher.apply(dta.getTargetOddrnList()),
+                        dta.getSourceCodeUrl());
+                    dto.setDataTransformerDetailsDto(dataTransformerDetailsDto);
+                }
+                case DATA_QUALITY_TEST -> {
+                    final DataQualityTestAttributes dqta = (DataQualityTestAttributes) attrs;
+                    final DataEntityTaskRunPojo latestTaskRun = lastRuns.get(oddrn);
+                    final var dataQualityTestDetailsDto = new DataEntityDimensionsDto.DataQualityTestDetailsDto(
+                        dqta.getSuiteName(),
+                        dqta.getSuiteUrl(),
+                        fetcher.apply(dqta.getDatasetOddrnList()),
+                        dqta.getLinkedUrlList(),
+                        dqta.getExpectation().getType(),
+                        latestTaskRun,
+                        dqta.getExpectation().getAdditionalProperties());
+                    dto.setDataQualityTestDetailsDto(dataQualityTestDetailsDto);
+                }
+                case DATA_CONSUMER -> {
+                    final DataConsumerAttributes dca = (DataConsumerAttributes) attrs;
+                    dto.setDataConsumerDetailsDto(
+                        new DataEntityDimensionsDto.DataConsumerDetailsDto(fetcher.apply(dca.getInputListOddrn())));
+                }
+                case DATA_INPUT -> {
+                    final DataInputAttributes dia = (DataInputAttributes) attrs;
+                    dto.setDataInputDetailsDto(
+                        new DataEntityDimensionsDto.DataInputDetailsDto(fetcher.apply(dia.getOutputListOddrn())));
+                }
+                default -> {
+                }
+            }
+        });
+
+        if (ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DATA_ENTITY_GROUP.getId())) {
+            final Set<DataEntityPojo> entityList = childrenMap.getOrDefault(oddrn, Set.of());
+            final Long childrenCount = degChildrenCount.getOrDefault(oddrn, 0L);
+            dto.setGroupsDto(new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
+                entityList,
+                entityList.size() + childrenCount.intValue(),
+                childrenCount != 0L
+            ));
+        }
+    }
+
+    private Mono<List<DataEntityDimensionsDto>> enrichParentGroups(
+        final List<DataEntityDimensionsDto> dtos) {
+        final Set<String> oddrns = dtos.stream()
+            .map(d -> d.getDataEntity().getOddrn())
+            .collect(Collectors.toSet());
+        return reactiveDataEntityRepository.getParentDEGs(oddrns)
+            .map(parents -> {
+                dtos.forEach(dto -> dto.setParentGroups(parents.get(dto.getDataEntity().getOddrn())));
+                return dtos;
+            });
+    }
+
+    private Mono<DataEntityDetailsDto> enrichDataEntityDetails(final DataEntityDetailsDto dto) {
+        final Mono<List<MetadataDto>> metadataDto =
+            reactiveMetadataFieldRepository.getDtosByDataEntityId(dto.getDataEntity().getId());
+        final Mono<List<DatasetVersionPojo>> datasetVersions = getDatasetVersions(dto);
+        final Mono<List<TermRefDto>> terms =
+            reactiveTermRepository.getDataEntityTerms(dto.getDataEntity().getId()).collectList();
+        return Mono.zip(metadataDto, datasetVersions, terms)
+            .map(function((metadata, versions, termsList) -> {
+                dto.setMetadata(metadata);
+                dto.setDatasetVersions(versions);
+                dto.setTerms(termsList);
+                return dto;
+            }));
+    }
+
+    private Mono<List<DatasetVersionPojo>> getDatasetVersions(final DataEntityDetailsDto dto) {
+        if (!ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET.getId())) {
+            return Mono.just(List.of());
+        }
+        return reactiveDatasetVersionRepository.getVersions(dto.getDataEntity().getOddrn());
+    }
+
+    private Mono<DataEntityDetailsDto> enrichDatasetTargetCount(final DataEntityDetailsDto detailsDto) {
+        if (ArrayUtils.contains(detailsDto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET)) {
+            return reactiveLineageRepository.getTargetsCount(detailsDto.getDataEntity().getId())
+                .switchIfEmpty(Mono.just(0L))
+                .map(count -> {
+                    final DataSetDetailsDto oldDetails = detailsDto.getDataSetDetailsDto();
+                    detailsDto.setDataSetDetailsDto(
+                        new DataSetDetailsDto(oldDetails.rowsCount(), oldDetails.fieldsCount(), count));
+                    return detailsDto;
+                });
+        }
+        return Mono.just(detailsDto);
+    }
+
+    private Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<DataEntityDimensionsDto> dtos) {
+        final Set<String> degOddrns = entityClassOddrns(dtos, DATA_ENTITY_GROUP);
+        if (degOddrns.isEmpty()) {
+            return Mono.just(Map.of());
+        }
+        return reactiveDataEntityRepository.getDEGEntities(degOddrns);
+    }
+
+    private Mono<Map<String, Long>> getDEGChildrenCount(final Collection<DataEntityDimensionsDto> dtos) {
+        final Set<String> degOddrns = entityClassOddrns(dtos, DATA_ENTITY_GROUP);
+        if (degOddrns.isEmpty()) {
+            return Mono.just(Map.of());
+        }
+        return reactiveDataEntityRepository.getChildrenCount(degOddrns);
+    }
+
+    private Set<String> entityClassOddrns(final Collection<DataEntityDimensionsDto> dimensions,
+                                          final DataEntityClassDto entityClassDto) {
+        return dimensions.stream()
+            .filter(dto -> ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), entityClassDto.getId()))
+            .map(dto -> dto.getDataEntity().getOddrn())
+            .collect(Collectors.toSet());
     }
 }

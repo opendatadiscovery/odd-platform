@@ -14,7 +14,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -31,22 +30,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
-                                final Collection<TagDto> tags,
-                                final Collection<MetadataDto> metadata,
-                                final Collection<DatasetVersionPojo> datasetVersions,
-                                final DataEntityGroupDimensionsDto dataEntityGroupDimensionsDto,
-                                final DataSetDetailsDto dataSetDetailsDto,
-                                final DataTransformerDetailsDto dataTransformerDetailsDto,
-                                final DataConsumerDetailsDto dataConsumerDetailsDto,
-                                final DataQualityTestDetailsDto dataQualityTestDetailsDto,
-                                final DataInputDetailsDto dataInputDetailsDto,
-                                final Collection<TermRefDto> terms) {
-        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership,
-            dataSource, tags, dataEntityGroupDimensionsDto, dataSetDetailsDto, dataTransformerDetailsDto,
-            dataConsumerDetailsDto, dataQualityTestDetailsDto, dataInputDetailsDto);
-
-        this.metadata = metadata;
-        this.datasetVersions = datasetVersions;
-        this.terms = terms;
+                                final Collection<TagDto> tags) {
+        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership, dataSource, tags);
     }
 }

@@ -19,12 +19,13 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 @NoArgsConstructor
 @Data
 public class DataEntityDimensionsDto extends DataEntityDto {
+    protected Map<DataEntityClassDto, DataEntityAttributes> specificAttributes;
     protected NamespacePojo namespace;
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
     protected Collection<TagDto> tags;
-    protected Collection<DataEntityPojo> parentGroups;
 
+    protected Collection<DataEntityPojo> parentGroups;
     protected DataEntityGroupDimensionsDto groupsDto;
     protected DataSetDetailsDto dataSetDetailsDto;
     protected DataTransformerDetailsDto dataTransformerDetailsDto;
@@ -39,25 +40,13 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
-                                   final Collection<TagDto> tags,
-                                   final DataEntityGroupDimensionsDto groupsDto,
-                                   final DataSetDetailsDto dataSetDetailsDto,
-                                   final DataTransformerDetailsDto dataTransformerDetailsDto,
-                                   final DataConsumerDetailsDto dataConsumerDetailsDto,
-                                   final DataQualityTestDetailsDto dataQualityTestDetailsDto,
-                                   final DataInputDetailsDto dataInputDetailsDto) {
-        super(dataEntity, hasAlerts, specificAttributes);
+                                   final Collection<TagDto> tags) {
+        super(dataEntity, hasAlerts);
+        this.specificAttributes = specificAttributes;
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
         this.tags = tags;
-
-        this.groupsDto = groupsDto;
-        this.dataSetDetailsDto = dataSetDetailsDto;
-        this.dataTransformerDetailsDto = dataTransformerDetailsDto;
-        this.dataConsumerDetailsDto = dataConsumerDetailsDto;
-        this.dataQualityTestDetailsDto = dataQualityTestDetailsDto;
-        this.dataInputDetailsDto = dataInputDetailsDto;
     }
 
     public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities,
@@ -70,23 +59,23 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                     Long consumersCount) {
     }
 
-    public record DataTransformerDetailsDto(Collection<? extends DataEntityDto> sourceList,
-                                            Collection<? extends DataEntityDto> targetList,
+    public record DataTransformerDetailsDto(Collection<DataEntityPojo> sourceList,
+                                            Collection<DataEntityPojo> targetList,
                                             String sourceCodeUrl) {
     }
 
     public record DataQualityTestDetailsDto(String suiteName,
                                             String suiteUrl,
-                                            Collection<? extends DataEntityDto> datasetList,
+                                            Collection<DataEntityPojo> datasetList,
                                             List<String> linkedUrlList,
                                             String expectationType,
                                             DataEntityTaskRunPojo latestTaskRun,
                                             Map<String, String> expectationParameters) {
     }
 
-    public record DataConsumerDetailsDto(Collection<? extends DataEntityDto> inputList) {
+    public record DataConsumerDetailsDto(Collection<DataEntityPojo> inputList) {
     }
 
-    public record DataInputDetailsDto(Collection<? extends DataEntityDto> outputList) {
+    public record DataInputDetailsDto(Collection<DataEntityPojo> outputList) {
     }
 }

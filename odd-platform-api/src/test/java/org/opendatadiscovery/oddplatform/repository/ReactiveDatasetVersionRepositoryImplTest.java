@@ -21,6 +21,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.DatasetStructureService;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
@@ -36,7 +37,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @Autowired
     ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
     @Autowired
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
     @Autowired
     private DatasetStructureService datasetStructureService;
     private static final EasyRandom EASY_RANDOM;
@@ -51,8 +52,10 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get DatasetVersion from database")
     void testGetDatasetVersion() {
         final DataEntityPojo entityPojo = new DataEntityPojo().setOddrn(UUID.randomUUID().toString());
-        final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(entityPojo)).get(0);
+        final DataEntityPojo dataEntityPojo = dataEntityRepository.bulkCreate(List.of(entityPojo))
+            .collectList()
+            .block()
+            .get(0);
 
         final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
         datasetVersionPojo.setDatasetOddrn(dataEntityPojo.getOddrn());
@@ -83,7 +86,10 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get List of DatasetVersion by oddrn from database")
     void testGetVersions() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<DatasetVersionPojo> expectedDatasetVersionPojoList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
@@ -107,7 +113,10 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get latest DatasetVersion by datasetId from database")
     void testGetLatestDatasetVersion() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<DatasetVersionPojo> expectedDatasetVersionPojoList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
@@ -130,7 +139,10 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get latest versions by list of datasetId from database")
     void testGetLatestVersions() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<DatasetVersionPojo> expectedDatasetVersionPojoList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
@@ -166,7 +178,10 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get penaltimate of DatasetVersions list from database")
     void testGetPenaltimate() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<DatasetVersionPojo> expectedDatasetVersionPojoList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
@@ -192,7 +207,10 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get version id of DatasetVersions list from database")
     void testGetVidToFields() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
 
         final DatasetFieldDto datasetFieldDto = createDatasetFieldDto();
         final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.getDatasetFieldPojo());

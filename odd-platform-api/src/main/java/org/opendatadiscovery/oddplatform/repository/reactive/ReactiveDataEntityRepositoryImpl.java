@@ -2,52 +2,73 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.repository.mapper.DataEntityDtoMapper;
+import org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.DATA_ENTITY_CTE_NAME;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.HAS_ALERTS_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNERSHIP_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNER_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_RELATION_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TITLE_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.DATA_ENTITY_CTE_NAME;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.HAS_ALERTS_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
@@ -57,16 +78,19 @@ public class ReactiveDataEntityRepositoryImpl
     implements ReactiveDataEntityRepository {
     private static final int SUGGESTION_LIMIT = 5;
     private final JooqFTSHelper jooqFTSHelper;
+    private final JooqRecordHelper jooqRecordHelper;
     private final DataEntityDtoMapper dataEntityDtoMapper;
 
     public ReactiveDataEntityRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                             final JooqQueryHelper jooqQueryHelper,
+                                            final JooqRecordHelper jooqRecordHelper,
                                             final JooqFTSHelper jooqFTSHelper,
                                             final DataEntityDtoMapper dataEntityDtoMapper) {
         super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY, DataEntityPojo.class,
             DATA_ENTITY.EXTERNAL_NAME, DATA_ENTITY.ID, DATA_ENTITY.CREATED_AT, DATA_ENTITY.UPDATED_AT,
             DATA_ENTITY.IS_DELETED, DATA_ENTITY.DELETED_AT);
         this.jooqFTSHelper = jooqFTSHelper;
+        this.jooqRecordHelper = jooqRecordHelper;
         this.dataEntityDtoMapper = dataEntityDtoMapper;
     }
 
@@ -100,14 +124,57 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns) {
+    public Mono<Long> incrementViewCount(final long id) {
+        final var query = DSL.update(DATA_ENTITY)
+            .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
+            .where(DATA_ENTITY.ID.eq(id))
+            .returningResult(DATA_ENTITY.VIEW_COUNT);
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
+    @Override
+    public Mono<DataEntityDimensionsDto> getDimensions(final long id) {
+        final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
+            .conditions(List.of(DATA_ENTITY.ID.eq(id)))
+            .build();
+        final var query = baseDimensionsSelect(cteConfig);
+        return jooqReactiveOperations.mono(query)
+            .map(dataEntityDtoMapper::mapDimensionRecord);
+    }
+
+    @Override
+    public Mono<List<DataEntityDimensionsDto>> getDimensions(final Collection<String> oddrns) {
+        final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
+            .conditions(List.of(DATA_ENTITY.ODDRN.in(oddrns)))
+            .build();
+        final var query = baseDimensionsSelect(cteConfig);
+        return jooqReactiveOperations.flux(query)
+            .map(dataEntityDtoMapper::mapDimensionRecord)
+            .collectList();
+    }
+
+    @Override
+    public Mono<DataEntityDetailsDto> getDetails(final long id) {
+        final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
+            .conditions(List.of(DATA_ENTITY.ID.eq(id)))
+            .build();
+        final var query = baseDimensionsSelect(cteConfig);
+        return jooqReactiveOperations.mono(query)
+            .map(dataEntityDtoMapper::mapDetailsRecord);
+    }
+
+    @Override
+    public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
+                                                final Integer page,
+                                                final Integer size) {
         if (CollectionUtils.isEmpty(oddrns)) {
             return Flux.just();
         }
 
-        final SelectConditionStep<DataEntityRecord> query = DSL
-            .selectFrom(DATA_ENTITY)
-            .where(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+        final var query = DSL.selectFrom(DATA_ENTITY)
+            .where(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)))
+            .limit(size != null ? DSL.val(size) : DSL.noField(Integer.class))
+            .offset(page != null && size != null ? DSL.val((page - 1) * size) : DSL.noField(Integer.class));
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(DataEntityPojo.class));
     }
@@ -128,6 +195,32 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<DataEntityDimensionsDto> getDataEntityWithDataSource(final long dataEntityId) {
+        final SelectConditionStep<Record> query = DSL.select()
+            .from(DATA_ENTITY)
+            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId)));
+        return jooqReactiveOperations.mono(query)
+            .map(r -> DataEntityDimensionsDto.dimensionsBuilder()
+                .dataEntity(r.into(DATA_ENTITY).into(DataEntityPojo.class))
+                .dataSource(r.into(DATA_SOURCE).into(DataSourcePojo.class))
+                .build());
+    }
+
+    @Override
+    public Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSource(final Collection<String> oddrns) {
+        final SelectConditionStep<Record> query = DSL.select()
+            .from(DATA_ENTITY)
+            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .where(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> DataEntityDimensionsDto.dimensionsBuilder()
+                .dataEntity(r.into(DATA_ENTITY).into(DataEntityPojo.class))
+                .dataSource(r.into(DATA_SOURCE).into(DataSourcePojo.class))
+                .build());
+    }
+
+    @Override
     public Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn) {
         final SelectConditionStep<Record> query = DSL.select(DATA_ENTITY.fields())
             .from(GROUP_ENTITY_RELATIONS)
@@ -136,6 +229,91 @@ public class ReactiveDataEntityRepositoryImpl
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(DataEntityPojo.class))
             .collectList();
+    }
+
+    @Override
+    public Mono<List<DataEntityDimensionsDto>> getDEGExperimentRuns(final Long dataEntityGroupId,
+                                                                    final Integer page,
+                                                                    final Integer size) {
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder().build();
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final List<Field<?>> aggregatedFields = List.of(
+            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
+            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
+            jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
+            jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
+            jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
+            hasAlerts(deCte));
+
+        final Table<?> fromTable = DSL.table(deCteName)
+            .leftJoin(DATA_SOURCE)
+            .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TAG_TO_DATA_ENTITY)
+            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .leftJoin(GROUP_PARENT_GROUP_RELATIONS)
+            .on(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)));
+
+        final var dataEntityGroupOddrn = DSL.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.eq(dataEntityGroupId));
+        final List<Condition> conditions = List.of(
+            GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.eq(dataEntityGroupOddrn));
+
+        final var query = DSL.with(deCteName)
+            .asMaterialized(dataEntitySelect)
+            .select(groupByFields)
+            .select(aggregatedFields)
+            .from(fromTable)
+            .where(conditions)
+            .groupBy(groupByFields)
+            .orderBy(getOrderFields(cteConfig, deCte))
+            .limit(size)
+            .offset((page - 1) * size);;
+        return jooqReactiveOperations.flux(query)
+            .map(dataEntityDtoMapper::mapDimensionRecord)
+            .collectList();
+    }
+
+    @Override
+    public Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<String> groupOddrns) {
+        final String dataEntityFields = "data_entity_agg";
+        final var query = DSL.select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
+            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(dataEntityFields))
+            .from(GROUP_ENTITY_RELATIONS)
+            .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns))
+            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
+        return jooqReactiveOperations.flux(query).collectMap(
+            r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
+            r -> jooqRecordHelper.extractAggRelation(r, dataEntityFields, DataEntityPojo.class)
+        );
+    }
+
+    @Override
+    public Mono<Map<String, Long>> getChildrenCount(final Collection<String> groupOddrns) {
+        final Field<Long> childrenCountField = field("children_count", Long.class);
+        final var query = DSL.select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
+            .select(count(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN).cast(Long.class).as(childrenCountField))
+            .from(GROUP_PARENT_GROUP_RELATIONS)
+            .where(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.in(groupOddrns))
+            .groupBy(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN);
+        return jooqReactiveOperations.flux(query).collectMap(
+            r -> r.get(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN),
+            r -> r.get(childrenCountField)
+        );
     }
 
     @Override
@@ -168,11 +346,6 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<Long> countByState(final FacetStateDto state) {
-        return countByState(state, null);
-    }
-
-    @Override
     public Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner) {
         final List<Condition> conditions = new ArrayList<>(jooqFTSHelper
             .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES)));
@@ -192,6 +365,8 @@ public class ReactiveDataEntityRepositoryImpl
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
             .leftJoin(GROUP_ENTITY_RELATIONS).on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID));
@@ -201,7 +376,8 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Flux<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
+    public Flux<DataEntityDto> getQuerySuggestions(final String query,
+                                                   final Integer entityClassId,
                                                    final Boolean manuallyCreated) {
         if (StringUtils.isEmpty(query)) {
             return Flux.empty();
@@ -241,7 +417,213 @@ public class ReactiveDataEntityRepositoryImpl
             .orderBy(jooqQueryHelper.getField(deCte, RANK_FIELD_ALIAS).desc());
 
         return jooqReactiveOperations.flux(select)
-            .map(dataEntityDtoMapper::mapDtoRecord);
+            .map(dataEntityDtoMapper::mapDtoRecordFromCTE);
+    }
+
+    @Override
+    public Flux<DataEntityDto> listByOwner(final long ownerId, final Integer page, final Integer size) {
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(DataEntityCTEQueryConfig.builder().build());
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final var select = DSL.with(deCteName)
+            .as(dataEntitySelect)
+            .select(deCte.fields())
+            .select(hasAlerts(deCte))
+            .from(deCteName)
+            .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)))
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+            .orderBy(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID).desc())
+            .limit(size != null ? DSL.val(size) : DSL.noField(Integer.class))
+            .offset(page != null && size != null ? DSL.val((page - 1) * size) : DSL.noField(Integer.class));
+
+        return jooqReactiveOperations.flux(select)
+            .map(dataEntityDtoMapper::mapDtoRecordFromCTE);
+    }
+
+    @Override
+    public Flux<DataEntityDimensionsDto> listByTerm(final long termId,
+                                                    final String queryString,
+                                                    final Integer entityClassId,
+                                                    final int page,
+                                                    final int size) {
+        final List<Condition> cteConditions = new ArrayList<>();
+        if (entityClassId != null) {
+            cteConditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {entityClassId}));
+        }
+        final var builder = DataEntityCTEQueryConfig.builder()
+            .conditions(cteConditions);
+
+        if (StringUtils.isNotEmpty(queryString)) {
+            builder.fts(new DataEntityCTEQueryConfig.Fts(queryString));
+        }
+
+        final DataEntityCTEQueryConfig cteConfig = builder.build();
+
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final List<Field<?>> aggregatedFields = List.of(
+            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
+            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
+            jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
+            jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
+            jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
+            hasAlerts(deCte));
+
+        final Table<?> fromTable = DSL.table(deCteName)
+            .leftJoin(DATA_SOURCE)
+            .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TAG_TO_DATA_ENTITY)
+            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .leftJoin(DATA_ENTITY_TO_TERM)
+            .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull());
+
+        final var query = DSL.with(deCteName)
+            .asMaterialized(dataEntitySelect)
+            .select(groupByFields)
+            .select(aggregatedFields)
+            .from(fromTable)
+            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
+            .groupBy(groupByFields)
+            .orderBy(getOrderFields(cteConfig, deCte))
+            .limit(size)
+            .offset((page - 1) * size);
+        return jooqReactiveOperations.flux(query)
+            .map(dataEntityDtoMapper::mapDimensionRecord);
+    }
+
+    @Override
+    public Flux<DataEntityDto> listPopular(final int page, final int size) {
+        final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
+            .limitOffset(new DataEntityCTEQueryConfig.LimitOffset(size, (page - 1) * size))
+            .orderBy(DATA_ENTITY.VIEW_COUNT.sort(SortOrder.DESC))
+            .build();
+
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final var select = DSL.with(deCteName)
+            .as(dataEntitySelect)
+            .select(deCte.fields())
+            .select(hasAlerts(deCte))
+            .from(deCteName)
+            .orderBy(getOrderFields(cteConfig, deCte));
+
+        return jooqReactiveOperations.flux(select)
+            .map(dataEntityDtoMapper::mapDtoRecordFromCTE);
+    }
+
+    @Override
+    public Mono<List<DataEntityDimensionsDto>> findByState(final FacetStateDto state,
+                                                           final int page,
+                                                           final int size,
+                                                           final OwnerPojo owner) {
+        final Pair<List<Condition>, List<Condition>> conditionsPair = jooqFTSHelper.resultFacetStateConditions(state);
+        final var builder = DataEntityCTEQueryConfig.builder()
+            .conditions(conditionsPair.getLeft());
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            builder.fts(new DataEntityCTEQueryConfig.Fts(state.getQuery()));
+        }
+        final DataEntityCTEQueryConfig cteConfig = builder.build();
+
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final List<Condition> conditions = new ArrayList<>(conditionsPair.getRight());
+        if (owner != null) {
+            conditions.add(OWNER.ID.eq(owner.getId()));
+        }
+
+        final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final List<Field<?>> aggregatedFields = List.of(
+            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
+            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
+            jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
+            jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
+            jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
+            hasAlerts(deCte));
+
+        final Table<?> fromTable = DSL.table(deCteName)
+            .leftJoin(DATA_SOURCE)
+            .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TAG_TO_DATA_ENTITY)
+            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .leftJoin(DATA_ENTITY_TO_TERM)
+            .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
+            .leftJoin(GROUP_ENTITY_RELATIONS)
+            .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)));
+
+        final var query = DSL.with(deCteName)
+            .asMaterialized(dataEntitySelect)
+            .select(groupByFields)
+            .select(aggregatedFields)
+            .from(fromTable)
+            .where(conditions)
+            .groupBy(groupByFields)
+            .orderBy(getOrderFields(cteConfig, deCte))
+            .limit(DSL.val(size))
+            .offset(DSL.val((page - 1) * size));
+
+        return jooqReactiveOperations.flux(query)
+            .map(dataEntityDtoMapper::mapDimensionRecord)
+            .collectList();
+    }
+
+    @Override
+    public Mono<Map<String, Set<DataEntityPojo>>> getParentDEGs(final Collection<String> oddrns) {
+        final Field<String> degOddrnField = field("deg_oddrn", String.class);
+        final String cteName = "cte";
+        final String dataEntityFields = "data_entity_agg";
+
+        final var cteSelect = DSL.select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+            .select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.as(degOddrnField))
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns))
+            .union(DSL.select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
+                .select(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.as(degOddrnField))
+                .from(GROUP_PARENT_GROUP_RELATIONS)
+                .where(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.in(oddrns)));
+
+        final Table<Record> selectTable = cteSelect.asTable(cteName);
+        final Field<String> deOddrnField =
+            jooqQueryHelper.getField(selectTable, GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN);
+
+        final var query = DSL.with(cteName)
+            .as(cteSelect)
+            .select(deOddrnField)
+            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(dataEntityFields))
+            .from(cteName)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(jooqQueryHelper.getField(selectTable, degOddrnField)))
+            .groupBy(deOddrnField);
+        return jooqReactiveOperations.flux(query).collectMap(
+            r -> r.get(deOddrnField),
+            r -> jooqRecordHelper.extractAggRelation(r, dataEntityFields, DataEntityPojo.class)
+        );
     }
 
     @Override
@@ -267,5 +649,99 @@ public class ReactiveDataEntityRepositoryImpl
         return field(DSL.exists(DSL.selectOne().from(ALERT)
             .where(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))).as(HAS_ALERTS_FIELD);
+    }
+
+    private Select<Record> baseDimensionsSelect(final DataEntityCTEQueryConfig cteConfig) {
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final List<Field<?>> aggregatedFields = List.of(
+            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
+            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
+            jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
+            jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
+            jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
+            hasAlerts(deCte));
+
+        final Table<?> fromTable = DSL.table(deCteName)
+            .leftJoin(DATA_SOURCE)
+            .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TAG_TO_DATA_ENTITY)
+            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID));
+
+        return DSL.with(deCteName)
+            .asMaterialized(dataEntitySelect)
+            .select(groupByFields)
+            .select(aggregatedFields)
+            .from(fromTable)
+            .groupBy(groupByFields)
+            .orderBy(getOrderFields(cteConfig, deCte));
+    }
+
+    private Select<Record> cteDataEntitySelect(final DataEntityCTEQueryConfig cteConfig) {
+        final List<Field<?>> selectFields = new ArrayList<>(Arrays.stream(DATA_ENTITY.fields()).toList());
+        final Table<?> fromTable;
+        final List<Condition> conditions = addSoftDeleteFilter(ListUtils.emptyIfNull(cteConfig.getConditions()));
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        if (cteConfig.getFts() != null) {
+            final Field<?> rankField = jooqFTSHelper
+                .ftsRankField(SEARCH_ENTRYPOINT.SEARCH_VECTOR, cteConfig.getFts().query());
+            selectFields.add(rankField.as(cteConfig.getFts().rankFieldAlias()));
+
+            fromTable = SEARCH_ENTRYPOINT
+                .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID));
+            conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, cteConfig.getFts().query()));
+        } else {
+            fromTable = DATA_ENTITY;
+        }
+        return DSL
+            .select(selectFields)
+            .from(fromTable)
+            .where(conditions)
+            .orderBy(getOrderFields(cteConfig))
+            .limit(cteConfig.getLimitOffset() != null ? DSL.val(cteConfig.getLimitOffset().limit()) :
+                DSL.noField(Integer.class))
+            .offset(cteConfig.getLimitOffset() != null ? DSL.val(cteConfig.getLimitOffset().offset()) :
+                DSL.noField(Integer.class));
+    }
+
+    private List<OrderField<?>> getOrderFields(final DataEntityCTEQueryConfig cteConfig) {
+        return getOrderFields(cteConfig, null);
+    }
+
+    private List<OrderField<?>> getOrderFields(final DataEntityCTEQueryConfig cteConfig,
+                                               final Table<? extends Record> deCte) {
+        List<OrderField<?>> orderFields = new ArrayList<>();
+        if (cteConfig.getOrderBy() != null) {
+            if (deCte != null) {
+                orderFields.add(deCte.field(cteConfig.getOrderBy().getName()).sort(cteConfig.getOrderBy().getOrder()));
+            } else {
+                orderFields.add(field(cteConfig.getOrderBy().getName()).sort(cteConfig.getOrderBy().getOrder()));
+            }
+        }
+        if (cteConfig.getFts() != null) {
+            if (deCte != null) {
+                orderFields.add(deCte.field(cteConfig.getFts().rankFieldAlias()).desc());
+            } else {
+                orderFields.add(field(cteConfig.getFts().rankFieldAlias()).desc());
+            }
+        }
+        if (deCte != null) {
+            orderFields.add(deCte.field(DATA_ENTITY.ID).desc());
+        } else {
+            orderFields.add(field(DATA_ENTITY.ID).desc());
+        }
+        return orderFields;
     }
 }

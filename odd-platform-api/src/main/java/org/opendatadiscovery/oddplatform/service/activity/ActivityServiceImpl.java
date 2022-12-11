@@ -21,13 +21,12 @@ import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.mapper.ActivityMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveActivityRepository;
+import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.activity.handler.ActivityHandler;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import static reactor.function.TupleUtils.function;
 
@@ -36,7 +35,7 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 public class ActivityServiceImpl implements ActivityService {
     private final ReactiveActivityRepository activityRepository;
-    private final DataEntityRepository dataEntityRepository;
+    private final DataEntityService dataEntityService;
     private final AuthIdentityProvider authIdentityProvider;
     private final ActivityMapper activityMapper;
     private final List<ActivityHandler> handlers;
@@ -210,13 +209,11 @@ public class ActivityServiceImpl implements ActivityService {
                                                     final Long lastEventId,
                                                     final OffsetDateTime lastEventDateTime,
                                                     final LineageStreamKind lineageStreamKind) {
-        return authIdentityProvider.fetchAssociatedOwner()
-            .map(owner -> dataEntityRepository.listOddrnsByOwner(owner.getId(), lineageStreamKind))
+        return dataEntityService.getDependentDataEntityOddrns(lineageStreamKind)
             .flatMapMany(oddrns -> activityRepository.findDependentActivities(beginDate, endDate, size, datasourceId,
                 namespaceId, tagIds, userIds, eventType, oddrns, lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
-            .switchIfEmpty(Flux.empty())
-            .subscribeOn(Schedulers.boundedElastic());
+            .switchIfEmpty(Flux.empty());
     }
 
     private Mono<Long> getTotalCount(final LocalDate beginDate,
@@ -254,12 +251,10 @@ public class ActivityServiceImpl implements ActivityService {
                                                    final List<Long> userIds,
                                                    final ActivityEventTypeDto eventType,
                                                    final LineageStreamKind lineageStreamKind) {
-        return authIdentityProvider.fetchAssociatedOwner()
-            .map(owner -> dataEntityRepository.listOddrnsByOwner(owner.getId(), lineageStreamKind))
+        return dataEntityService.getDependentDataEntityOddrns(lineageStreamKind)
             .flatMap(oddrns -> activityRepository.getDependentActivitiesCount(beginDate, endDate, datasourceId,
                 namespaceId, tagIds, userIds, eventType, oddrns))
-            .defaultIfEmpty(0L)
-            .subscribeOn(Schedulers.boundedElastic());
+            .defaultIfEmpty(0L);
     }
 
     private ActivityHandler getActivityHandler(final ActivityEventTypeDto eventType) {

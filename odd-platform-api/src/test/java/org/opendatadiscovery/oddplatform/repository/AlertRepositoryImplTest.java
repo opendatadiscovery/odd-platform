@@ -18,6 +18,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.service.LineageService;
@@ -34,7 +35,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveAlertRepository alertRepository;
 
     @Autowired
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     @Autowired
     private ReactiveOwnershipRepository ownershipRepository;
@@ -43,16 +44,16 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveOwnerRepository ownerRepository;
 
     @Autowired
-    private LineageRepository lineageRepository;
-
-    @Autowired
     private LineageService lineageService;
 
     @Test
     @DisplayName("Test creates alerts, expecting alerts in the database")
     void createAlertsTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
 
         final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert));
@@ -78,7 +79,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test updates alert, expecting alert is updated successfully")
     void updateAlertStatusTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
         final AlertPojo alertPojo = alertRepository.createAlerts(List.of(firstAlert)).block().get(0);
         final String updatingUser = "user";
@@ -102,7 +106,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void listAllWithStatusOpenTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 7);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
@@ -136,7 +143,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get alerts, expecting all alerts with status open for certain owner")
     void listByOwnerTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
             .orElseThrow();
@@ -174,7 +184,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test get alerts, expecting all alerts for certain data entity id")
     void getDataEntityAlertsTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
@@ -204,7 +217,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
-            ));
+            )).collectList().block();
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
             .orElseThrow();
@@ -252,7 +265,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
-            ));
+            )).collectList().block();
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
             .orElseThrow();
@@ -304,7 +317,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void countAlertsWithStatusOpenTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 7);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
@@ -325,7 +341,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Test count alerts, expecting certain amount of alerts with status open for certain owner")
     void countAlertsWithStatusOpenByOwnerTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
+            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
+            .get(0);
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
             .orElseThrow();
@@ -356,7 +375,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
-            ));
+            )).collectList().block();
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
             .orElseThrow();

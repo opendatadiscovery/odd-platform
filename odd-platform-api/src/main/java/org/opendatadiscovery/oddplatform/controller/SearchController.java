@@ -51,7 +51,6 @@ public class SearchController implements SearchApi {
                                                                  final ServerWebExchange exchange) {
         return searchService
             .getSearchResults(searchId, page, size)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 

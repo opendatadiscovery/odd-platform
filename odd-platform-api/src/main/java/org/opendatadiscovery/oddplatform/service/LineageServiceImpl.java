@@ -25,13 +25,15 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepository;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
@@ -43,9 +45,8 @@ import static reactor.function.TupleUtils.function;
 @Service
 @RequiredArgsConstructor
 public class LineageServiceImpl implements LineageService {
-
     private final ReactiveLineageRepository lineageRepository;
-    private final DataEntityRepository dataEntityRepository;
+    private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
     private final LineageMapper lineageMapper;
 
@@ -55,56 +56,50 @@ public class LineageServiceImpl implements LineageService {
             .switchIfEmpty(Flux.error(new NotFoundException("Data entity group", dataEntityGroupId)))
             .collectList()
             .flatMap(entitiesOddrns -> {
-                final Map<String, DataEntityDimensionsDto> dtoDict = getDataEntityDimensionsDtoMap(entitiesOddrns);
-                final Flux<LineagePojo> relations = lineageRepository.getLineageRelations(entitiesOddrns);
-
-                return relations
-                    .collectList()
-                    .map(lineageRelations -> {
-                        final List<Set<String>> oddrnRelations = lineageRelations.stream()
-                            .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
-                            .toList();
-                        final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
-                        final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
-                            .map(combinedOddrns -> getLineageStream(combinedOddrns, dtoDict, lineageRelations))
-                            .toList();
-                        return new DataEntityGroupLineageDto(items);
-                    });
+                final Mono<Map<String, DataEntityDimensionsDto>> dict = getDataEntityWithDatasourceMap(entitiesOddrns);
+                final Mono<List<LineagePojo>> relations = lineageRepository.getLineageRelations(entitiesOddrns)
+                    .collectList();
+                return Mono.zip(dict, relations);
             })
+            .map(function((dict, relations) -> {
+                final List<Set<String>> oddrnRelations = relations.stream()
+                    .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
+                    .toList();
+                final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
+                final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
+                    .map(combinedOddrns -> getLineageStream(combinedOddrns, dict, relations))
+                    .toList();
+                return new DataEntityGroupLineageDto(items);
+            }))
             .map(lineageMapper::mapGroupLineageDto);
     }
 
     @Override
     public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth,
                                               final LineageStreamKind lineageStreamKind) {
-        return Mono.fromCallable(() -> dataEntityRepository.get(dataEntityId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException("DataEntity", dataEntityId)) : Mono.just(optional.get()))
+        return reactiveDataEntityRepository.getDataEntityWithDataSource(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("DataEntity", dataEntityId)))
             .flatMap(dto -> lineageRepository
-                .getLineageRelations(Set.of(dto.getDataEntity().getOddrn()),
-                    LineageDepth.of(lineageDepth), lineageStreamKind)
+                .getLineageRelations(Set.of(dto.getDataEntity().getOddrn()), LineageDepth.of(lineageDepth),
+                    lineageStreamKind)
                 .collectList()
-                .flatMap(relations -> {
-                    final Set<String> oddrnsToFetch = relations.stream()
-                        .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
-                        .collect(Collectors.toSet());
+                .map(relations -> Tuples.of(dto, relations)))
+            .flatMap(function((dto, relations) -> {
+                final Set<String> oddrnsToFetch = relations.stream()
+                    .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
+                    .collect(Collectors.toSet());
 
-                    return Mono
-                        .zip(groupEntityRelationRepository.fetchGroupRelations(oddrnsToFetch),
-                            lineageRepository.getChildrenCount(oddrnsToFetch),
-                            lineageRepository.getParentCount(oddrnsToFetch))
-                        .map(function((groupRelations, childrenCountMap, parentsCountMap) -> {
-                            final Map<String, DataEntityDimensionsDto> dtoRepository =
-                                getDataEntityDimensionsDtoMap(SetUtils.union(oddrnsToFetch, groupRelations.keySet()));
-                            final Map<DataEntityDimensionsDto, List<String>> groupRepository =
-                                getGroupRepository(groupRelations, dtoRepository);
-                            final DataEntityLineageStreamDto lineageStream =
-                                getLineageStream(dtoRepository,
-                                    groupRepository, relations, childrenCountMap, parentsCountMap);
+                final var repositoryMapsMono = groupEntityRelationRepository.fetchGroupRelations(oddrnsToFetch)
+                    .flatMap(groupRelations -> getGroupsAndEntitiesMaps(oddrnsToFetch, groupRelations));
 
-                            return buildDataEntityLineage(dto, lineageStreamKind, lineageStream);
-                        }));
-                }))
+                return Mono.zip(repositoryMapsMono, lineageRepository.getChildrenCount(oddrnsToFetch),
+                        lineageRepository.getParentCount(oddrnsToFetch))
+                    .map(function((repositoryMaps, childrenCountMap, parentsCountMap) -> {
+                        final DataEntityLineageStreamDto lineageStream = getLineageStream(repositoryMaps.getT1(),
+                            repositoryMaps.getT2(), relations, childrenCountMap, parentsCountMap);
+                        return buildDataEntityLineage(dto, lineageStreamKind, lineageStream);
+                    }));
+            }))
             .map(lineageMapper::mapLineageDto);
     }
 
@@ -204,9 +199,8 @@ public class LineageServiceImpl implements LineageService {
         }
     }
 
-    private Map<String, DataEntityDimensionsDto> getDataEntityDimensionsDtoMap(final Collection<String> oddrns) {
-        return dataEntityRepository.listDimensionsByOddrns(oddrns)
-            .stream()
+    private Mono<Map<String, DataEntityDimensionsDto>> getDataEntityWithDatasourceMap(final Collection<String> oddrns) {
+        return reactiveDataEntityRepository.getDataEntitiesWithDataSource(oddrns)
             .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
     }
 
@@ -223,6 +217,16 @@ public class LineageServiceImpl implements LineageService {
             return builder.upstream(lineageStream)
                 .build();
         }
+    }
+
+    private Mono<Tuple2<Map<String, DataEntityDimensionsDto>, Map<DataEntityDimensionsDto, List<String>>>>
+        getGroupsAndEntitiesMaps(final Set<String> oddrnsToFetch, final Map<String, List<String>> groupRelations) {
+        return getDataEntityWithDatasourceMap(SetUtils.union(oddrnsToFetch, groupRelations.keySet()))
+            .map(dtoDict -> {
+                final Map<DataEntityDimensionsDto, List<String>> groupRepository =
+                    getGroupRepository(groupRelations, dtoDict);
+                return Tuples.of(dtoDict, groupRepository);
+            });
     }
 
     private Map<DataEntityDimensionsDto, List<String>> getGroupRepository(

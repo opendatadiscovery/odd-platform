@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.Ingestio
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityTestRelationRepository;
@@ -48,16 +49,20 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveDataQualityTestRelationRepository dataQualityTestRelationRepository;
 
     @Autowired
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     @Test
     public void testGetDataQualityTestOddrnsForHollowDataset() {
         final DataEntityPojo hollowDataEntity = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setHollow(true).setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         final DataEntityPojo dqTest = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         dataQualityTestRelationRepository.createRelations(List.of(
@@ -79,10 +84,14 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
 
         final DataEntityPojo dataEntity = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         final List<DataEntityPojo> dqTests = dataEntityRepository
-            .bulkCreate(dqOddrns.stream().map(oddrn -> new DataEntityPojo().setOddrn(oddrn)).toList());
+            .bulkCreate(dqOddrns.stream().map(oddrn -> new DataEntityPojo().setOddrn(oddrn)).toList())
+            .collectList()
+            .block();
 
         dataQualityTestRelationRepository.createRelations(
             dqTests.stream()
@@ -103,6 +112,8 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
     public void testGetDatasetTestReportWithoutTests() {
         final DataEntityPojo dataEntity = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         dataQualityRepository.getDatasetTestReport(dataEntity.getId())
@@ -123,10 +134,14 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
     public void testGetDatasetTestReportWithoutFinishedTests() {
         final DataEntityPojo dataEntity = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         final DataEntityPojo dqTest = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         dataEntityTaskRunRepository
@@ -160,6 +175,8 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
 
         final DataEntityPojo dataEntity = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         final List<String> dqOddrns = Stream.generate(() -> UUID.randomUUID().toString())
@@ -167,7 +184,9 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             .toList();
 
         final List<DataEntityPojo> dqTests = dataEntityRepository
-            .bulkCreate(dqOddrns.stream().map(oddrn -> new DataEntityPojo().setOddrn(oddrn)).toList());
+            .bulkCreate(dqOddrns.stream().map(oddrn -> new DataEntityPojo().setOddrn(oddrn)).toList())
+            .collectList()
+            .block();
 
         final Map<String, List<DataEntityTaskRunPojo>> taskRuns = dqTests.stream()
             .flatMap(dqTest ->
