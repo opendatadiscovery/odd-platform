@@ -26,8 +26,6 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -90,8 +88,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(ingestionMapper::mapTaskRun)
             .toList();
 
-        return dataEntityRepository
-            .listAllByOddrns(ingestionDtoMap.keySet())
+        return dataEntityRepository.listAllByOddrns(ingestionDtoMap.keySet(), true)
             .collect(Collectors.toMap(DataEntityPojo::getOddrn, identity()))
             .flatMap(existingPojoDict -> {
                 final Map<Boolean, List<DataEntityIngestionDto>> ingestionDtoPartitions = ingestionDtoMap.values()

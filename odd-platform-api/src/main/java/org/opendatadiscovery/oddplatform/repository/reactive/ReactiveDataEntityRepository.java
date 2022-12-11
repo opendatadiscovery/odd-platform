@@ -30,25 +30,25 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataEntityDetailsDto> getDetails(final long id);
 
-    default Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns) {
-        return listAllByOddrns(oddrns, null, null);
+    default Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns, boolean includeHollow) {
+        return listAllByOddrns(oddrns, includeHollow, null, null);
     }
 
-    Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns, final Integer page, final Integer size);
+    Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
+                                         boolean includeHollow,
+                                         final Integer page, final Integer size);
 
-    Mono<DataEntityDimensionsDto> getDataEntityWithNamespace(final long dataEntityId);
+    Mono<DataEntityDimensionsDto> getDataEntityWithDataSourceAndNamespace(final long dataEntityId);
 
-    Mono<DataEntityDimensionsDto> getDataEntityWithDataSource(final long dataEntityId);
-
-    Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSource(final Collection<String> oddrns);
+    Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSourceAndNamespace(final Collection<String> oddrns);
 
     Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn);
 
-    Mono<List<DataEntityDimensionsDto>> getDEGExperimentRuns(final Long dataEntityGroupId,
-                                                       final Integer page,
-                                                       final Integer size);
-
     Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<String> groupOddrns);
+
+    Mono<List<DataEntityDimensionsDto>> getDEGExperimentRuns(final Long dataEntityGroupId,
+                                                             final Integer page,
+                                                             final Integer size);
 
     Mono<Map<String, Long>> getChildrenCount(final Collection<String> groupOddrns);
 

@@ -183,7 +183,7 @@ public class DataEntityServiceImpl implements DataEntityService {
                                               final int size,
                                               final LineageStreamKind streamKind) {
         return this.getDependentDataEntityOddrns(streamKind)
-            .flatMapMany(oddrns -> reactiveDataEntityRepository.listAllByOddrns(oddrns, page, size))
+            .flatMapMany(oddrns -> reactiveDataEntityRepository.listAllByOddrns(oddrns, false, page, size))
             .map(dataEntityMapper::mapRef);
     }
 
@@ -467,7 +467,7 @@ public class DataEntityServiceImpl implements DataEntityService {
         final Set<String> dependentOddrns = getSpecificAttributesDependentOddrns(dtos);
 
         final Mono<Map<String, DataEntityPojo>> dependencies = reactiveDataEntityRepository
-            .listAllByOddrns(dependentOddrns)
+            .listAllByOddrns(dependentOddrns, false)
             .collectMap(DataEntityPojo::getOddrn, identity());
         final Mono<Map<String, DataEntityTaskRunPojo>> lastTaskRuns = getLastRunsForQualityTests(dtos);
         final Mono<Map<String, Set<DataEntityPojo>>> children = getDEGEntities(dtos);

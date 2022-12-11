@@ -180,7 +180,7 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
             .oddrn(ingestedEntity.getOddrn())
             .externalName(ingestedEntity.getName())
             .url("")
-            .hasAlerts(false)
+            .hasAlerts(null)
             .manuallyCreated(false);
     }
 

@@ -77,7 +77,7 @@ public class LineageServiceImpl implements LineageService {
     @Override
     public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth,
                                               final LineageStreamKind lineageStreamKind) {
-        return reactiveDataEntityRepository.getDataEntityWithDataSource(dataEntityId)
+        return reactiveDataEntityRepository.getDataEntityWithDataSourceAndNamespace(dataEntityId)
             .switchIfEmpty(Mono.error(new NotFoundException("DataEntity", dataEntityId)))
             .flatMap(dto -> lineageRepository
                 .getLineageRelations(Set.of(dto.getDataEntity().getOddrn()), LineageDepth.of(lineageDepth),
@@ -200,7 +200,7 @@ public class LineageServiceImpl implements LineageService {
     }
 
     private Mono<Map<String, DataEntityDimensionsDto>> getDataEntityWithDatasourceMap(final Collection<String> oddrns) {
-        return reactiveDataEntityRepository.getDataEntitiesWithDataSource(oddrns)
+        return reactiveDataEntityRepository.getDataEntitiesWithDataSourceAndNamespace(oddrns)
             .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
     }
 

@@ -165,14 +165,19 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
+                                                boolean includeHollow,
                                                 final Integer page,
                                                 final Integer size) {
         if (CollectionUtils.isEmpty(oddrns)) {
             return Flux.just();
         }
+        final List<Condition> conditions = new ArrayList<>(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+        if (!includeHollow) {
+            conditions.add(DATA_ENTITY.HOLLOW.eq(false));
+        }
 
         final var query = DSL.selectFrom(DATA_ENTITY)
-            .where(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)))
+            .where(conditions)
             .limit(size != null ? DSL.val(size) : DSL.noField(Integer.class))
             .offset(page != null && size != null ? DSL.val((page - 1) * size) : DSL.noField(Integer.class));
 
@@ -180,43 +185,26 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<DataEntityDimensionsDto> getDataEntityWithNamespace(final long dataEntityId) {
-        final SelectConditionStep<Record> query = DSL.select()
-            .from(DATA_ENTITY)
-            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
-            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId)));
+    public Mono<DataEntityDimensionsDto> getDataEntityWithDataSourceAndNamespace(final long dataEntityId) {
+        final List<Condition> conditions = addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId));
+        final Select<Record> query = baseDataEntityWithDatasourceAndNamespaceSelect(conditions);
         return jooqReactiveOperations.mono(query)
             .map(r -> DataEntityDimensionsDto.dimensionsBuilder()
                 .dataEntity(r.into(DATA_ENTITY).into(DataEntityPojo.class))
+                .dataSource(r.into(DATA_SOURCE).into(DataSourcePojo.class))
                 .namespace(r.into(NAMESPACE).into(NamespacePojo.class))
                 .build());
     }
 
     @Override
-    public Mono<DataEntityDimensionsDto> getDataEntityWithDataSource(final long dataEntityId) {
-        final SelectConditionStep<Record> query = DSL.select()
-            .from(DATA_ENTITY)
-            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-            .where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId)));
-        return jooqReactiveOperations.mono(query)
-            .map(r -> DataEntityDimensionsDto.dimensionsBuilder()
-                .dataEntity(r.into(DATA_ENTITY).into(DataEntityPojo.class))
-                .dataSource(r.into(DATA_SOURCE).into(DataSourcePojo.class))
-                .build());
-    }
-
-    @Override
-    public Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSource(final Collection<String> oddrns) {
-        final SelectConditionStep<Record> query = DSL.select()
-            .from(DATA_ENTITY)
-            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-            .where(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+    public Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSourceAndNamespace(final Collection<String> oddrns) {
+        final List<Condition> conditions = addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns));
+        final Select<Record> query = baseDataEntityWithDatasourceAndNamespaceSelect(conditions);
         return jooqReactiveOperations.flux(query)
             .map(r -> DataEntityDimensionsDto.dimensionsBuilder()
                 .dataEntity(r.into(DATA_ENTITY).into(DataEntityPojo.class))
                 .dataSource(r.into(DATA_SOURCE).into(DataSourcePojo.class))
+                .namespace(r.into(NAMESPACE).into(NamespacePojo.class))
                 .build());
     }
 
@@ -229,6 +217,21 @@ public class ReactiveDataEntityRepositoryImpl
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(DataEntityPojo.class))
             .collectList();
+    }
+
+    @Override
+    public Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<String> groupOddrns) {
+        final String dataEntityFields = "data_entity_agg";
+        final var query = DSL.select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
+            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(dataEntityFields))
+            .from(GROUP_ENTITY_RELATIONS)
+            .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns))
+            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
+        return jooqReactiveOperations.flux(query).collectMap(
+            r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
+            r -> jooqRecordHelper.extractAggRelation(r, dataEntityFields, DataEntityPojo.class)
+        );
     }
 
     @Override
@@ -281,25 +284,11 @@ public class ReactiveDataEntityRepositoryImpl
             .groupBy(groupByFields)
             .orderBy(getOrderFields(cteConfig, deCte))
             .limit(size)
-            .offset((page - 1) * size);;
+            .offset((page - 1) * size);
+        ;
         return jooqReactiveOperations.flux(query)
             .map(dataEntityDtoMapper::mapDimensionRecord)
             .collectList();
-    }
-
-    @Override
-    public Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<String> groupOddrns) {
-        final String dataEntityFields = "data_entity_agg";
-        final var query = DSL.select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
-            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(dataEntityFields))
-            .from(GROUP_ENTITY_RELATIONS)
-            .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
-            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns))
-            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
-        return jooqReactiveOperations.flux(query).collectMap(
-            r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
-            r -> jooqRecordHelper.extractAggRelation(r, dataEntityFields, DataEntityPojo.class)
-        );
     }
 
     @Override
@@ -461,7 +450,7 @@ public class ReactiveDataEntityRepositoryImpl
         final DataEntityCTEQueryConfig cteConfig = builder.build();
 
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
-        Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
 
         final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
@@ -541,7 +530,7 @@ public class ReactiveDataEntityRepositoryImpl
         final DataEntityCTEQueryConfig cteConfig = builder.build();
 
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
-        Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
 
         final List<Condition> conditions = new ArrayList<>(conditionsPair.getRight());
@@ -641,6 +630,15 @@ public class ReactiveDataEntityRepositoryImpl
             .toList();
     }
 
+    private Select<Record> baseDataEntityWithDatasourceAndNamespaceSelect(final List<Condition> conditions) {
+        return DSL.select()
+            .from(DATA_ENTITY)
+            .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .where(conditions);
+    }
+
     private DataEntityRecord buildHollowRecord(final String oddrn) {
         return new DataEntityRecord().setOddrn(oddrn).setHollow(true).setExcludeFromSearch(true);
     }
@@ -722,7 +720,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     private List<OrderField<?>> getOrderFields(final DataEntityCTEQueryConfig cteConfig,
                                                final Table<? extends Record> deCte) {
-        List<OrderField<?>> orderFields = new ArrayList<>();
+        final List<OrderField<?>> orderFields = new ArrayList<>();
         if (cteConfig.getOrderBy() != null) {
             if (deCte != null) {
                 orderFields.add(deCte.field(cteConfig.getOrderBy().getName()).sort(cteConfig.getOrderBy().getOrder()));

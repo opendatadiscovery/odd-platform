@@ -16,7 +16,7 @@ public abstract class AbstractCustomGroupActivityHandler {
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
 
     protected Mono<String> getCurrentState(final Long dataEntityId) {
-        return reactiveDataEntityRepository.getDataEntityWithNamespace(dataEntityId)
+        return reactiveDataEntityRepository.getDataEntityWithDataSourceAndNamespace(dataEntityId)
             .flatMap(dto -> reactiveDataEntityRepository.getDEGEntities(dto.getDataEntity().getOddrn())
                 .map(entities -> getState(dto, entities)));
     }

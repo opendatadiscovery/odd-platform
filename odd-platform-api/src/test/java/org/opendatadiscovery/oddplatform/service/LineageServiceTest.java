@@ -121,14 +121,14 @@ class LineageServiceTest {
         final var dto = DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(rootEntity).build();
 
-        when(dataEntityRepository.getDataEntityWithDataSource(eq(1L))).thenReturn(Mono.just(dto));
+        when(dataEntityRepository.getDataEntityWithDataSourceAndNamespace(eq(1L))).thenReturn(Mono.just(dto));
         when(lineageRepository.getLineageRelations(any(), any(), any()))
             .thenReturn(Flux.fromStream(Stream.of(rootToFirstEntityLineage, rootToSecondEntityLineage)));
         when(groupEntityRelationRepository.fetchGroupRelations(any()))
             .thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getChildrenCount(any())).thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getParentCount(any())).thenReturn(Mono.just(new HashMap<>()));
-        when(dataEntityRepository.getDataEntitiesWithDataSource(any())).thenReturn(Flux.just(
+        when(dataEntityRepository.getDataEntitiesWithDataSourceAndNamespace(any())).thenReturn(Flux.just(
             dto,
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(firstChildEntity).build(),
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(secondChildEntity).build()
