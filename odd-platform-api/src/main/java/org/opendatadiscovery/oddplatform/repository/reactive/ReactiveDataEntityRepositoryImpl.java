@@ -165,7 +165,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
-                                                boolean includeHollow,
+                                                final boolean includeHollow,
                                                 final Integer page,
                                                 final Integer size) {
         if (CollectionUtils.isEmpty(oddrns)) {
