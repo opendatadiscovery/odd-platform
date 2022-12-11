@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 services:
   database:
     image: postgres:13.2-alpine
@@ -30,8 +30,7 @@ services:
       - sh
       - ./injector/start.sh
     environment:
-      - PLATFORM_HOST_URL=http://host.docker.internal:8080
+      - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
       - PYTHONUNBUFFERED=1
-#    depends_on:
-#      - odd-platform
-
+    depends_on:
+      - odd-platform

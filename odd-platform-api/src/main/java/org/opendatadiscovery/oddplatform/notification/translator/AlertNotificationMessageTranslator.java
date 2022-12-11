@@ -15,7 +15,9 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage.AlertEventType;
@@ -33,6 +35,7 @@ import static org.jooq.impl.DSL.jsonObject;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
+import static org.opendatadiscovery.oddplatform.model.Tables.ALERT_CHUNK;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
@@ -54,32 +57,34 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
 
     @Override
     public AlertNotificationMessage translate(final DecodedWALMessage message) {
-        final String alertDescription = message.getColumnValue(ALERT.DESCRIPTION.getName());
+        final long alertId = Long.parseLong(message.getColumnValue(ALERT.ID.getName()));
+        final List<AlertChunkPojo> alertChunks = fetchAlertChunks(alertId);
+
         final String dataEntityOddrn = message.getColumnValue(ALERT.DATA_ENTITY_ODDRN.getName());
         final String status = message.getColumnValue(ALERT.STATUS.getName());
         final String updatedBy = message.getColumnValue(ALERT.STATUS_UPDATED_BY.getName());
-        final AlertEventType eventType = resolveAlertEventType(message.operation(), status);
+        final AlertEventType eventType = resolveAlertEventType(message.operation(), Short.parseShort(status));
 
         final String eventAtString = AlertEventType.CREATED.equals(eventType)
-            ? message.getColumnValue(ALERT.CREATED_AT.getName())
+            ? message.getColumnValue(ALERT.LAST_CREATED_AT.getName())
             : message.getColumnValue(ALERT.STATUS_UPDATED_AT.getName());
 
-        final String alertTypeString = message.getColumnValue(ALERT.TYPE.getName());
+        final short alertType = Short.parseShort(message.getColumnValue(ALERT.TYPE.getName()));
 
         return AlertNotificationMessage.builder()
-            .alertDescription(alertDescription)
+            .alertChunks(alertChunks)
             .eventAt(Timestamp.valueOf(eventAtString).toLocalDateTime())
-            .alertType(resolveAlertType(alertTypeString))
-            .eventType(resolveAlertEventType(message.operation(), status))
+            .alertType(resolveAlertType(alertType))
+            .eventType(eventType)
             .updatedBy(updatedBy)
             .dataEntity(fetchAlertedDataEntity(dataEntityOddrn))
             .downstream(fetchDownstream(dataEntityOddrn))
             .build();
     }
 
-    private AlertTypeEnum resolveAlertType(final String alertTypeName) {
-        return AlertTypeEnum.getByName(alertTypeName)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid alert type: %s".formatted(alertTypeName)));
+    private AlertTypeEnum resolveAlertType(final short alertTypeCode) {
+        return AlertTypeEnum.fromCode(alertTypeCode)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid alert type code: %s".formatted(alertTypeCode)));
     }
 
     private AlertedDataEntity fetchAlertedDataEntity(final String dataEntityOddrn) {
@@ -99,6 +104,12 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         return entities.get(0);
     }
 
+    private List<AlertChunkPojo> fetchAlertChunks(final long alertId) {
+        return dslContext.selectFrom(ALERT_CHUNK)
+            .where(ALERT_CHUNK.ALERT_ID.eq(alertId))
+            .fetchInto(AlertChunkPojo.class);
+    }
+
     private List<AlertedDataEntity> fetchAlertedDataEntities(final Collection<String> oddrns) {
         final List<Field<?>> fields = List.of(
             DATA_ENTITY.ID, DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME, DATA_ENTITY.TYPE_ID,
@@ -107,7 +118,7 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         );
 
         // @formatter:off
-        final List<Record> records = dslContext
+        return dslContext
             .select(fields)
             .select(jsonArrayAgg(jsonObject(
                 jsonEntry("owner_name", OWNER.NAME),
@@ -124,11 +135,8 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .where(DATA_ENTITY.ODDRN.in(oddrns))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .groupBy(fields)
-            .fetchStream()
-            .toList();
+            .fetch(this::mapAlertedEntityRecord);
         // @formatter:on
-
-        return records.stream().map(this::mapAlertedEntityRecord).toList();
     }
 
     private List<AlertedDataEntity> fetchDownstream(final String rootDataEntityOddrn) {
@@ -171,10 +179,18 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         return fetchAlertedDataEntities(downstreamEntitiesOddrns);
     }
 
-    private AlertEventType resolveAlertEventType(final Operation operation, final String status) {
+    private AlertEventType resolveAlertEventType(final Operation operation, final short status) {
+        final AlertStatusEnum statusEnum = AlertStatusEnum
+            .fromCode(status)
+            .orElseThrow(() -> new IllegalStateException("Unknown status code: %d".formatted(status)));
+
         return switch (operation) {
             case INSERT -> AlertEventType.CREATED;
-            case UPDATE -> "OPEN".equals(status) ? AlertEventType.REOPENED : AlertEventType.RESOLVED;
+            case UPDATE -> switch (statusEnum) {
+                case OPEN -> AlertEventType.REOPENED;
+                case RESOLVED -> AlertEventType.RESOLVED;
+                case RESOLVED_AUTOMATICALLY -> AlertEventType.RESOLVED_AUTOMATICALLY;
+            };
         };
     }
 

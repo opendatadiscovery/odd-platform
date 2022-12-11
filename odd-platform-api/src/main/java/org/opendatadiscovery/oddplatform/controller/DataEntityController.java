@@ -11,6 +11,8 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -38,6 +40,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.service.AlertHaltConfigService;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
@@ -64,6 +67,7 @@ public class DataEntityController implements DataEntityApi {
     private final LineageService lineageService;
     private final ActivityService activityService;
     private final MessageService messageService;
+    private final AlertHaltConfigService alertHaltConfigService;
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
@@ -358,6 +362,25 @@ public class DataEntityController implements DataEntityApi {
                                                          final ServerWebExchange exchange) {
         return messageService
             .getChildrenMessages(messageId, lastMessageId, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityAlertConfig>> getAlertConfig(final Long dataEntityId,
+                                                                      final ServerWebExchange exchange) {
+        return alertHaltConfigService
+            .getAlertHaltConfig(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityAlertConfig>> updateAlertConfig(
+        final Long dataEntityId,
+        final Mono<DataEntityAlertConfig> dataEntityAlertConfig,
+        final ServerWebExchange exchange
+    ) {
+        return dataEntityAlertConfig
+            .flatMap(cfg -> alertHaltConfigService.saveAlertHaltConfig(dataEntityId, cfg))
             .map(ResponseEntity::ok);
     }
 }

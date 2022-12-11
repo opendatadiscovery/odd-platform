@@ -37,16 +37,9 @@ export const stringFormatted = (
 
 export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
 
-export const toDateWithoutOffset = (dateToCast: number): Date => {
-  const date = new Date(dateToCast);
-  const userTimezoneOffset = date.getTimezoneOffset();
-  return new Date(date.getTime() - userTimezoneOffset);
-};
+export const toDate = (dateToCast: number): Date => new Date(dateToCast);
 
-export const toTimestampWithoutOffset = (dateToCast: Date): number => {
-  const userTimezoneOffset = dateToCast.getTimezoneOffset();
-  return dateToCast.getTime() + userTimezoneOffset;
-};
+export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
 
 export const setActivityBackgroundColor = (
   theme: Theme,
@@ -91,3 +84,31 @@ export const createUrl = (endpoint: string | undefined) =>
   endpoint
     ? `${window.location.protocol}//${window.location.host}${endpoint}`
     : `${window.location.protocol}//${window.location.host}`;
+
+export const getEllipsisTextByWidth = (
+  el: SVGTextElement | SVGTSpanElement | null,
+  text: string | undefined,
+  width: number
+) => {
+  if (!el || !text) return;
+  if (!document.body.contains(el)) return;
+
+  if (typeof el.getSubStringLength !== 'undefined') {
+    el.textContent = text;
+    let len = text.length;
+    // eslint-disable-next-line no-plusplus
+    while (el.getSubStringLength(0, len--) > width) {
+      el.textContent = `${text.slice(0, len)}...`;
+    }
+  } else if (typeof el.getComputedTextLength !== 'undefined') {
+    while (el.getComputedTextLength() > width) {
+      text = text.slice(0, -1);
+      el.textContent = `${text}...`;
+    }
+  } else {
+    while (el.getBBox().width > width) {
+      text = text.slice(0, -1);
+      el.textContent = `${text}...`;
+    }
+  }
+};

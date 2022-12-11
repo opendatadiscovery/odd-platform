@@ -94,6 +94,7 @@ public abstract class LineageMapper {
 
     @Mapping(target = "groupIdList", source = "groupIds")
     @Mapping(target = "id", source = "dto.entity.dataEntity.id")
+    @Mapping(target = "oddrn", source = "dto.entity.dataEntity.oddrn")
     @Mapping(target = "externalName", source = "dto.entity.dataEntity.externalName")
     @Mapping(target = "internalName", source = "dto.entity.dataEntity.internalName")
     @Mapping(target = "entityClasses", source = "dto", qualifiedByName = "entityClassesNamed")

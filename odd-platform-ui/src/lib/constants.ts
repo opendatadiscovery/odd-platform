@@ -1,4 +1,8 @@
-import { type ConfigurationParameters, DataQualityTestSeverity } from 'generated-sources';
+import {
+  AlertType,
+  type ConfigurationParameters,
+  DataQualityTestSeverity,
+} from 'generated-sources';
 
 export const BASE_PARAMS: ConfigurationParameters = {
   basePath: import.meta.env.VITE_API_URL || '',
@@ -11,6 +15,13 @@ export const ORDERED_SEVERITY = [
   DataQualityTestSeverity.MAJOR,
   DataQualityTestSeverity.MINOR,
 ];
+
+export const alertTitlesMap = new Map<AlertType, string>([
+  [AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA, 'Backwards incompatible schema'],
+  [AlertType.FAILED_JOB, 'Failed job'],
+  [AlertType.FAILED_DQ_TEST, 'Failed DQ test'],
+  [AlertType.DISTRIBUTION_ANOMALY, 'Distribution anomaly'],
+]);
 
 // content width constants
 export const toolbarHeight = 49;

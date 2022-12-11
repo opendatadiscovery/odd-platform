@@ -8,3 +8,9 @@ export interface PageInfo {
   hasNext: boolean;
   lastId?: string;
 }
+
+export type SerializeDateToNumber<Data> = {
+  [Key in keyof Data]: Data[Key] extends Date | undefined
+    ? number
+    : SerializeDateToNumber<Data[Key]>;
+};

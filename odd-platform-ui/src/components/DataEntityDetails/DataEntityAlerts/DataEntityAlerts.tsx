@@ -1,72 +1,62 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
-import { Alert, AlertStatus } from 'generated-sources';
-import { updateAlertStatus } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { Grid } from '@mui/material';
+import { Permission } from 'generated-sources';
+import { useAppSelector } from 'redux/lib/hooks';
 import {
-  getDataEntityAlertListFetchingStatus,
   getAlertList,
+  getDataEntityAlertListFetchingStatus,
+  getDataEntityAlertsFetchingError,
 } from 'redux/selectors/alert.selectors';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { WithPermissions } from 'components/shared/contexts';
+import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
+import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
-import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
-import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
+import * as S from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { isLoading: isAlertsFetching } = useAppSelector(
-    getDataEntityAlertListFetchingStatus
-  );
+  const {
+    isLoading: isAlertsFetching,
+    isNotLoaded: isAlertsNotFetched,
+    isLoaded: isAlertsFetched,
+  } = useAppSelector(getDataEntityAlertListFetchingStatus);
+  const alertsListError = useAppSelector(getDataEntityAlertsFetchingError);
   const alertsList = useAppSelector(getAlertList);
 
-  const alertStatusHandler = React.useCallback(
-    (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
-      const status =
-        alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
-
-      dispatch(updateAlertStatus({ alertId, alertStatusFormData: { status } }));
-    },
-    [updateAlertStatus]
-  );
-
   return (
-    <Grid container sx={{ mt: 2 }}>
-      <AlertsTableHeader container>
-        <ColContainer item $colType='date'>
-          <Typography variant='caption'>Date</Typography>
-        </ColContainer>
-        <ColContainer item $colType='type'>
-          <Typography variant='caption'>Alert type</Typography>
-        </ColContainer>
-        <ColContainer item $colType='description'>
-          <Typography variant='caption'>Description</Typography>
-        </ColContainer>
-        <ColContainer item $colType='status'>
-          <Typography variant='caption'>Status</Typography>
-        </ColContainer>
-        <ColContainer item $colType='updatedBy'>
-          <Typography variant='caption'>Status updated by</Typography>
-        </ColContainer>
-        <ColContainer item $colType='updatedTime'>
-          <Typography variant='caption'>Status updated time</Typography>
-        </ColContainer>
-        <ColContainer item $colType='actionBtn' />
-      </AlertsTableHeader>
-      {isAlertsFetching ? (
-        <DataEntityAlertsSkeleton length={5} />
-      ) : (
-        <Grid container>
-          {alertsList.map(alert => (
-            <DataEntityAlertItem
-              key={alert.id}
-              alertStatusHandler={alertStatusHandler(alert.id, alert.status)}
-              alert={alert}
-            />
-          ))}
+    <S.Container container>
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
+        <Grid container justifyContent='flex-end' sx={{ py: 0.75 }}>
+          <NotificationSettings
+            btnCreateEl={
+              <AppButton size='medium' color='tertiary'>
+                Notification settings
+              </AppButton>
+            }
+          />
         </Grid>
+      </WithPermissions>
+
+      {isAlertsFetching && (
+        <S.AlertsContainer container rowGap={1}>
+          <DataEntityAlertsSkeleton length={5} />
+        </S.AlertsContainer>
       )}
-      {!isAlertsFetching && !alertsList.length ? <EmptyContentPlaceholder /> : null}
-    </Grid>
+
+      {isAlertsFetched && alertsList.length > 0 && (
+        <S.AlertsContainer container rowGap={1}>
+          {alertsList.map(alert => (
+            <DataEntityAlertItem key={alert.id} alert={alert} />
+          ))}
+        </S.AlertsContainer>
+      )}
+
+      <EmptyContentPlaceholder
+        isContentLoaded={isAlertsFetched}
+        isContentEmpty={!alertsList.length}
+      />
+      <AppErrorPage isNotContentLoaded={isAlertsNotFetched} error={alertsListError} />
+    </S.Container>
   );
 };
 export default DataEntityAlerts;

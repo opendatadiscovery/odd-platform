@@ -646,7 +646,7 @@ public class ReactiveDataEntityRepositoryImpl
     private Field<Boolean> hasAlerts(final Table<Record> deCte) {
         return field(DSL.exists(DSL.selectOne().from(ALERT)
             .where(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
-            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))).as(HAS_ALERTS_FIELD);
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())))).as(HAS_ALERTS_FIELD);
     }
 
     private Select<Record> baseDimensionsSelect(final DataEntityCTEQueryConfig cteConfig) {

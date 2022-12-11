@@ -1,9 +1,8 @@
+import React from 'react';
 import { Typography } from '@mui/material';
-import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  AlertsResponse,
   fetchAlertsTotals,
   fetchAllAlertList,
   fetchMyAlertList,
@@ -11,15 +10,16 @@ import {
 } from 'redux/thunks';
 import { getAlertTotals } from 'redux/selectors';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { AlertViewType } from 'lib/interfaces';
+import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import type { AlertViewType } from 'lib/interfaces';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import {
+import type {
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
 } from 'generated-sources';
-import { AsyncThunk } from '@reduxjs/toolkit';
+import { type AsyncThunk } from '@reduxjs/toolkit';
+import type { AlertsResponse } from 'redux/interfaces';
 import * as S from './AlertsStyles';
 import AlertsList from './AlertsList/AlertsList';
 
@@ -58,7 +58,7 @@ const Alerts: React.FC = () => {
     viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
   );
 
-  const alertsFilterUpdateAction = useCallback(() => {
+  const alertsFilterUpdateAction = React.useCallback(() => {
     dispatch(changeAlertsFilterAction());
   }, [changeAlertsFilterAction]);
 

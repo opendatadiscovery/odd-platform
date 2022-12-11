@@ -18,6 +18,18 @@ const SELECTORS = {
   listItem: `a`,
 };
 export default class CatalogPage extends BasePage {
+  get searchBar() {
+    return new InputField(this.page, SELECTORS.searchBar);
+  }
+
+  get alertNoMatchesFound() {
+    return new TextBox(this.page, SELECTORS.noMatchesFound);
+  }
+
+  get resultsList() {
+    return new List(this.page, SELECTORS.resultList, SELECTORS.listItem);
+  }
+
   async openFilterWithSelect(filterName: string) {
     await this.page.locator(SELECTORS.filterWithSelect(filterName)).click();
   }
@@ -50,17 +62,9 @@ export default class CatalogPage extends BasePage {
     return this.page.locator(SELECTORS.tab(name)).click();
   }
 
-  get searchBar() {
-    return new InputField(this.page, SELECTORS.searchBar);
-  }
-
   async searchBy(text: string) {
     await this.searchBar.fill(text);
     await this.page.locator(SELECTORS.searchBar).press('Enter');
-  }
-
-  get alertNoMatchesFound() {
-    return new TextBox(this.page, SELECTORS.noMatchesFound);
   }
 
   async isAlertVisible(): Promise<boolean> {
@@ -69,10 +73,6 @@ export default class CatalogPage extends BasePage {
 
   async isAlertHidden(): Promise<boolean> {
     return this.alertNoMatchesFound.isHidden();
-  }
-
-  get resultsList() {
-    return new List(this.page, SELECTORS.resultList, SELECTORS.listItem);
   }
 
   async countListItems(): Promise<number> {

@@ -15,7 +15,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
-import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
@@ -31,10 +30,6 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import static org.jooq.impl.DSL.count;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.rowNumber;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -303,34 +298,6 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
                                                 final List<OrderByField> orderByFields,
                                                 final int offset,
                                                 final int limit) {
-        jooqQueryHelper.homogeneityCheck(baseSelect.getSelect());
-
-        final Table<?> u = baseSelect.asTable("u");
-
-        final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
-        final Field<Integer> rowNumber = rowNumber().over()
-            .orderBy(getOrderFields(orderByFields, u)).as(PAGE_METADATA_ROW_NUMBER);
-
-        final Table<Record> t = DSL
-            .select(u.fields())
-            .select(totalRows, rowNumber)
-            .from(u)
-            .orderBy(getOrderFields(orderByFields, u))
-            .limit(limit)
-            .offset(offset)
-            .asTable("t");
-
-        return DSL
-            .select(t.fields())
-            .select(field(t.field(rowNumber).ne(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD))
-            .from(t)
-            .orderBy(getOrderFields(orderByFields, t));
-    }
-
-    private List<OrderField<?>> getOrderFields(final List<OrderByField> orderByFields,
-                                               final Table<?> table) {
-        return orderByFields.stream()
-            .map(f -> table.field(f.orderField()).sort(f.sortOrder()))
-            .collect(Collectors.toList());
+        return jooqQueryHelper.paginate(baseSelect, orderByFields, offset, limit);
     }
 }

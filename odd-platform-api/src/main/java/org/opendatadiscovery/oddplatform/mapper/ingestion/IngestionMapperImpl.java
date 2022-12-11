@@ -113,7 +113,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         }
 
         if (entityClasses.contains(DATA_QUALITY_TEST)) {
-            builder = builder.datasetQualityTest(createDataQualityTestIngestionDto(dataEntity.getDataQualityTest()));
+            builder = builder.dataQualityTest(createDataQualityTestIngestionDto(dataEntity.getDataQualityTest()));
         }
 
         if (entityClasses.contains(DATA_ENTITY_GROUP)) {

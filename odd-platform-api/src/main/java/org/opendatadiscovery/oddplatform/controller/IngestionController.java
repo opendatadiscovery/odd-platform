@@ -4,7 +4,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.auth.session.SessionConstants;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
@@ -35,6 +37,8 @@ public class IngestionController implements IngestionApi {
         final ServerWebExchange exchange
     ) {
         return dataEntityList
+            .filter(del -> CollectionUtils.isNotEmpty(del.getItems()))
+            .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Ingestion payload is empty")))
             .flatMap(ingestionService::ingest)
             .thenReturn(ResponseEntity.ok().build());
     }

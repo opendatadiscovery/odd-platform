@@ -138,6 +138,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
 
         final DataEntityLineageNode root = buildExpectedLineageNode(
             ingestedEntities.get(dataTransformer1.getOddrn()),
+            dataTransformer1.getOddrn(),
             dataTransformer1.getName(),
             createdDataSource
         );
@@ -149,6 +150,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                     .nodes(List.of(
                         buildExpectedLineageNode(
                             ingestedEntities.get(dataTransformer1.getOddrn()),
+                            dataTransformer1.getOddrn(),
                             dataTransformer1.getName(),
                             createdDataSource,
                             3,
@@ -156,6 +158,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                         ),
                         buildExpectedLineageNode(
                             ingestedEntities.get(middlewareDataset.getOddrn()),
+                            middlewareDataset.getOddrn(),
                             middlewareDataset.getName(),
                             createdDataSource,
                             1,
@@ -163,6 +166,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                         ),
                         buildExpectedLineageNode(
                             ingestedEntities.get(dataTransformer2.getOddrn()),
+                            dataTransformer2.getOddrn(),
                             dataTransformer2.getName(),
                             createdDataSource,
                             1,
@@ -170,6 +174,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                         ),
                         buildExpectedLineageNode(
                             ingestedEntities.get(outputDataset1.getOddrn()),
+                            outputDataset1.getOddrn(),
                             outputDataset1.getName(),
                             createdDataSource,
                             1,
@@ -177,6 +182,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                         ),
                         buildExpectedLineageNode(
                             ingestedEntities.get(outputDataset2.getOddrn()),
+                            outputDataset2.getOddrn(),
                             outputDataset2.getName(),
                             createdDataSource,
                             1,
@@ -198,6 +204,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                     .nodes(List.of(
                         buildExpectedLineageNode(
                             ingestedEntities.get(inputDataset1.getOddrn()),
+                            inputDataset1.getOddrn(),
                             inputDataset1.getName(),
                             createdDataSource,
                             0,
@@ -205,6 +212,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                         ),
                         buildExpectedLineageNode(
                             ingestedEntities.get(inputDataset2.getOddrn()),
+                            inputDataset2.getOddrn(),
                             inputDataset2.getName(),
                             createdDataSource,
                             0,
@@ -212,6 +220,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
                         ),
                         buildExpectedLineageNode(
                             ingestedEntities.get(dataTransformer1.getOddrn()),
+                            dataTransformer1.getOddrn(),
                             dataTransformer1.getName(),
                             createdDataSource,
                             3,
@@ -286,18 +295,21 @@ public class LineageIngestionTest extends BaseIngestionTest {
     }
 
     private DataEntityLineageNode buildExpectedLineageNode(final long id,
+                                                           final String oddrn,
                                                            final String name,
                                                            final DataSource dataSource) {
-        return buildExpectedLineageNode(id, name, dataSource, null, null);
+        return buildExpectedLineageNode(id, oddrn, name, dataSource, null, null);
     }
 
     private DataEntityLineageNode buildExpectedLineageNode(final long id,
+                                                           final String oddrn,
                                                            final String name,
                                                            final DataSource dataSource,
                                                            final Integer parentsCount,
                                                            final Integer childrenCount) {
         return new DataEntityLineageNode()
             .id(id)
+            .oddrn(oddrn)
             .externalName(name)
             .dataSource(dataSource)
             .parentsCount(parentsCount)

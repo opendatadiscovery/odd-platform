@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
@@ -60,5 +61,19 @@ public class IngestionRequest {
 
     private List<Long> extractIds(final List<EnrichedDataEntityIngestionDto> entities) {
         return entities.stream().map(EnrichedDataEntityIngestionDto::getId).collect(Collectors.toList());
+    }
+
+    public List<String> getChangedDatasetOddrns() {
+        return getExistingEntities().stream()
+            .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+            .map(EnrichedDataEntityIngestionDto::getOddrn)
+            .toList();
+    }
+
+    public List<Long> getChangedDatasetIds() {
+        return getExistingEntities().stream()
+            .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+            .map(EnrichedDataEntityIngestionDto::getId)
+            .toList();
     }
 }

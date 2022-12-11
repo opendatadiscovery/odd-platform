@@ -118,7 +118,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }
-      maxWidth='sm'
+      maxWidth='md'
       title={termFormTitle}
       renderContent={termFormContent}
       renderActions={termFormActionButtons}

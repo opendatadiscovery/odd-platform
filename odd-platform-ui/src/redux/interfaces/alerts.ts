@@ -1,6 +1,18 @@
-import type { Alert as GeneratedAlert } from 'generated-sources';
+import type {
+  Alert as GeneratedAlert,
+  DataEntityAlertConfig as GeneratedDataEntityAlertConfig,
+} from 'generated-sources';
+import type { SerializeDateToNumber, CurrentPageInfo } from 'redux/interfaces/common';
 
-export interface Alert extends Omit<GeneratedAlert, 'createdAt' | 'statusUpdatedAt'> {
-  createdAt: number;
-  statusUpdatedAt: number;
+export type Alert = SerializeDateToNumber<GeneratedAlert>;
+export type DataEntityAlertConfig = SerializeDateToNumber<GeneratedDataEntityAlertConfig>;
+
+export interface AlertsResponse {
+  items: Alert[];
+  pageInfo: CurrentPageInfo;
+}
+
+export interface AlertsConfig {
+  dataEntityId: number;
+  config: DataEntityAlertConfig;
 }

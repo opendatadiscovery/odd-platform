@@ -58,7 +58,7 @@ export default class List extends CustomElement {
    * @param exact
    * @returns
    */
-  private getListElement(identifier: string | number, exact = false) {
+  public getListElement(identifier: string | number, exact = false) {
     if (typeof identifier === 'number') {
       return this.customElement.locator(this.listItem).nth(identifier);
     }

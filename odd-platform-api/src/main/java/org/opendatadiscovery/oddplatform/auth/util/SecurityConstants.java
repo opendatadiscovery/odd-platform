@@ -20,6 +20,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_TEST_RUN_SET_SEVERITY;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TO_GROUP;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_CONFIG_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_RESOLVE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_DELETE;
@@ -218,6 +219,10 @@ public final class SecurityConstants {
             DATASET_FIELD_ENUMS_UPDATE),
         new SecurityRule(ALERT, new PathPatternParserServerWebExchangeMatcher("/api/alerts/{alert_id}/status", PUT),
             DATA_ENTITY_ALERT_RESOLVE),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/alert_config", PUT),
+            DATA_ENTITY_ALERT_CONFIG_UPDATE),
         new SecurityRule(
             AuthorizationManagerType.DEG,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", PUT),

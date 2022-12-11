@@ -62,10 +62,9 @@ public class IngestionServiceImpl implements IngestionService {
     @Override
     @ReactiveTransactional
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
-        return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
+        return dataSourceRepository.getIdByOddrnForUpdate(dataEntityList.getDataSourceOddrn())
             .switchIfEmpty(Mono.error(() -> new NotFoundException("dataSource", dataEntityList.getDataSourceOddrn())))
-            .filter(ds -> CollectionUtils.isNotEmpty(dataEntityList.getItems()))
-            .flatMap(ds -> persistDataEntities(ds.dataSource().getId(), dataEntityList.getItems()))
+            .flatMap(dataSourceId -> persistDataEntities(dataSourceId, dataEntityList.getItems()))
             .flatMap(ingestionProcessorChain::processIngestionRequest)
             .flatMap(metricService::exportMetrics)
             .then();
@@ -204,7 +203,7 @@ public class IngestionServiceImpl implements IngestionService {
             return emptyList();
         }
 
-        return dto.getDatasetQualityTest().datasetList()
+        return dto.getDataQualityTest().datasetList()
             .stream()
             .map(dsOddrn -> new DataQualityTestRelationsPojo(dsOddrn, dto.getOddrn()))
             .collect(Collectors.toList());
