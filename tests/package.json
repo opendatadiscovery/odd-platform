@@ -20,6 +20,7 @@
     "lint": "eslint .",
     "lint:ci": "npx eslint --quiet .",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint:fix": "eslint --fix . && npm run format",
     "prepare": "cd ../ && husky install ./tests/.husky"
   },

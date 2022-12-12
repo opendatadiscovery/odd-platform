@@ -22,6 +22,25 @@ jobs:
           cd tests
           npm run lint:ci
 
+  format-check:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: Install dependencies
+        run: |
+          cd tests
+          npm ci
+      - name: Check formatting
+        run: |
+          cd tests
+          npm run format:check
+
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
