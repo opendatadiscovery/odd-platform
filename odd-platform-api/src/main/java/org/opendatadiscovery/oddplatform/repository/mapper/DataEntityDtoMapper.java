@@ -58,7 +58,6 @@ public class DataEntityDtoMapper {
         return DataEntityDto.builder()
             .dataEntity(dataEntity)
             .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
-            //.specificAttributes(extractSpecificAttributes(dataEntity))
             .build();
     }
 
