@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test';
 
+import ActivityPage from './activity/activity.page';
 import CatalogPage from './catalog/catalog.page';
 import DataEntityPage from './data_entity/data_entity.page';
 import OverviewPage from './data_entity/overview.page';
@@ -11,7 +12,6 @@ import OwnersPage from './management/owners-page';
 import TagsPage from './management/tags-page';
 import { Modals } from './modals';
 import TopPanel from './shared/top-panel';
-import ActivityPage from "./activity/activity.page";
 
 export class Pages {
   readonly topPanel: TopPanel;
@@ -26,7 +26,7 @@ export class Pages {
 
   readonly catalog: CatalogPage;
 
-  readonly activity: ActivityPage
+  readonly activity: ActivityPage;
 
   readonly dataEntity: DataEntityPage;
 
