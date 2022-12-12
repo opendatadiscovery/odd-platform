@@ -77,9 +77,9 @@ export default class List extends CustomElement {
    */
   private async getListItem(identifier: number | string, exact?: boolean): Promise<Locator> {
     await this.customElement.waitFor({ state: 'attached' });
-    const item: Locator = this.getListElement(identifier, exact);
-
-    return item;
+    const listItem: Locator = this.getListElement(identifier, exact);
+    await listItem.waitFor();
+    return listItem;
   }
 
   /**
