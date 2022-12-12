@@ -111,7 +111,7 @@ test.describe('Check filters', () => {
       steps: { pages },
     }) => {
       const ownerName2 = `ownerName2${workerId}`;
-      const ownerTitle2 = `ownerName2${workerId}`;
+      const ownerTitle2 = `ownerTitle2${workerId}`;
       await test.step('Apply filter Namespace', async () => {
         await pages.catalog.openFilterWithSelect(namespaceFilter);
         await pages.catalog.chooseOption(namespaceOption);
