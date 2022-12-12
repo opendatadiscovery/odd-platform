@@ -10,7 +10,7 @@ const SELECTORS = {
   tagLineItem: 'p[title]',
   tagLineItemName: '.MuiTypography-body1.MuiTypography-noWrap',
   tagString: tagName => `div .infinite-scroll-component > div:has-text("${tagName}")`,
-  tagImportantMark: 'p.MuiTypography-root.MuiTypography-body1.css-1q3quq',
+  tagImportantMark: 'p:text-is("important")',
 };
 export default class TagsPage extends ManagementPage {
   deleteTagModal = new DeleteTagModal(this.pages);
@@ -28,7 +28,7 @@ export default class TagsPage extends ManagementPage {
   }
 
   public importantTag(tagName: string): Locator {
-    return this.normalTag(tagName).locator(SELECTORS.tagImportantMark, { hasText: 'important' });
+    return this.normalTag(tagName).locator(SELECTORS.tagImportantMark);
   }
 
   async getAllTags() {

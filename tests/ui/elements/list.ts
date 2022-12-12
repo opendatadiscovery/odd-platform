@@ -124,7 +124,6 @@ export default class List extends CustomElement {
    */
   async isListItemVisible(identifier: string | number): Promise<boolean> {
     const listItem: Locator = await this.getListItem(identifier);
-    await listItem.waitFor();
     return listItem.isVisible();
   }
 
