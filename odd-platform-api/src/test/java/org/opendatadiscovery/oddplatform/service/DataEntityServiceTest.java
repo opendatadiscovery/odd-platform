@@ -24,16 +24,16 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -48,15 +48,13 @@ public class DataEntityServiceTest {
 
     private DataEntityService dataEntityService;
     @Mock
-    private DataEntityRepository dataEntityRepository;
-    @Mock
     private AuthIdentityProvider authIdentityProvider;
     @Mock
     private ReactiveMetadataFieldValueRepository metadataFieldValueRepository;
     @Mock
-    private TagService tagService;
+    private ReactiveMetadataFieldRepository metadataFieldRepository;
     @Mock
-    private LineageRepository lineageRepository;
+    private TagService tagService;
     @Mock
     private DataEntityMapper dataEntityMapper;
     @Mock
@@ -68,17 +66,17 @@ public class DataEntityServiceTest {
     @Mock
     private ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     @Mock
-    private NamespaceService namespaceService;
-    @Mock
-    private ActivityService activityService;
-    @Mock
     private ReactiveDataEntityRepository reactiveDataEntityRepository;
     @Mock
+    private ReactiveLineageRepository reactiveLineageRepository;
+    @Mock
+    private ReactiveDataEntityTaskRunRepository reactiveDataEntityTaskRunRepository;
+    @Mock
+    private ReactiveDatasetVersionRepository datasetVersionRepository;
+    @Mock
+    private ReactiveTermRepository reactiveTermRepository;
+    @Mock
     private ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    @Mock
-    private ReactiveTermRepository termRepository;
-    @Mock
-    private ReactiveOwnershipRepository ownershipRepository;
     @Mock
     private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
     @Mock
@@ -89,25 +87,24 @@ public class DataEntityServiceTest {
     @BeforeEach
     public void beforeAll() {
         dataEntityService = new DataEntityServiceImpl(
-            dataEntityMapper,
-            dataEntityRepository,
             authIdentityProvider,
-            metadataFieldValueRepository,
             tagService,
-            lineageRepository,
+            dataEntityFilledService,
+            metadataFieldService,
+            metadataFieldValueRepository,
+            metadataFieldRepository,
+            reactiveDataEntityRepository,
+            reactiveLineageRepository,
+            reactiveDataEntityTaskRunRepository,
+            datasetVersionRepository,
+            reactiveTermRepository,
+            reactiveSearchEntrypointRepository,
+            reactiveGroupEntityRelationRepository,
+            dataEntityStatisticsRepository,
+            dataEntityMapper,
             metadataFieldMapper,
             metadataFieldValueMapper,
-            reactiveSearchEntrypointRepository,
-            tagMapper,
-            namespaceService,
-            activityService,
-            reactiveDataEntityRepository,
-            reactiveGroupEntityRelationRepository,
-            termRepository,
-            ownershipRepository,
-            dataEntityStatisticsRepository,
-            dataEntityFilledService,
-            metadataFieldService);
+            tagMapper);
     }
 
     @Test

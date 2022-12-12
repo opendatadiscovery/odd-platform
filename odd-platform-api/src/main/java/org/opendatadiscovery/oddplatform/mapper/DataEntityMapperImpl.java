@@ -2,6 +2,8 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -290,12 +293,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
-        return mapDataQualityTest(dto, null);
-    }
-
-    @Override
-    public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto,
+    public DataEntity mapDataQualityTest(final DataEntityDimensionsDto dto,
                                          final String severity) {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
@@ -318,13 +316,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos) {
-        return new DataEntityList()
-            .items(dtos.stream().map(this::mapDataQualityTest).collect(Collectors.toList()));
-    }
-
-    @Override
-    public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos,
+    public DataEntityList mapDataQualityTests(final Collection<DataEntityDimensionsDto> dtos,
                                               final Collection<DataQualityTestSeverityPojo> severities) {
         final Map<Long, DataQualityTestSeverityPojo> severityMap = severities
             .stream()
@@ -456,5 +448,20 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .map(this::mapType)
             .orElseThrow(() -> new IllegalArgumentException(
                 String.format("No type with id %d for entity %s was found", typeId, pojo.getOddrn())));
+    }
+
+    private OffsetDateTime addUTC(final LocalDateTime time) {
+        if (null == time) {
+            return null;
+        }
+        return time.atOffset(ZoneOffset.UTC);
+    }
+
+    private PageInfo pageInfo(final long total) {
+        return new PageInfo().total(total).hasNext(false);
+    }
+
+    private PageInfo pageInfo(final Page<?> page) {
+        return new PageInfo().total(page.getTotal()).hasNext(page.isHasNext());
     }
 }

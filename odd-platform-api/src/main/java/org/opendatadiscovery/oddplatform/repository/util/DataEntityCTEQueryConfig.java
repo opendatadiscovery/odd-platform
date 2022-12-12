@@ -11,7 +11,7 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RAN
 
 @Builder
 @Data
-public class DataEntityQueryConfig {
+public class DataEntityCTEQueryConfig {
     public static final String DATA_ENTITY_CTE_NAME = "dataEntityCTE";
     public static final String AGG_TAGS_RELATION_FIELD = "tags_relation";
     public static final String AGG_TAGS_FIELD = "tag";
@@ -21,16 +21,10 @@ public class DataEntityQueryConfig {
     public static final String HAS_ALERTS_FIELD = "has_alerts";
     public static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
 
-    private List<Condition> cteSelectConditions;
-    private DataEntityQueryConfig.LimitOffset cteLimitOffset;
-    private List<Condition> selectConditions;
-    private boolean includeHollow;
-
-    @Builder.Default
-    private boolean dimensions = true;
-
+    private List<Condition> conditions;
+    private LimitOffset limitOffset;
     private SortField<?> orderBy;
-    private DataEntityQueryConfig.Fts fts;
+    private Fts fts;
 
     public record LimitOffset(int limit, int offset) {
     }

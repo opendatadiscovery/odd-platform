@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.repository;
+package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.UUID;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageChannelDto;
@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface MessageRepository {
+public interface ReactiveMessageRepository {
     Mono<Boolean> exists(final UUID messageId);
 
     Mono<MessageProviderIdentity> getMessageProviderIdentity(final UUID messageId);

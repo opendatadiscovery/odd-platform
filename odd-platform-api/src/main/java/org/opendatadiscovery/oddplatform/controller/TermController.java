@@ -83,7 +83,6 @@ public class TermController implements TermApi {
                                                                    final ServerWebExchange exchange) {
         return dataEntityService
             .listByTerm(termId, query, entityClassId, page, size)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 

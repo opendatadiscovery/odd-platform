@@ -24,7 +24,6 @@ import reactor.core.publisher.Mono;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 
 @Repository
@@ -141,10 +140,11 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
             )
             .from(GROUP_ENTITY_RELATIONS)
             .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns));
-        return jooqReactiveOperations.flux(query).collect(Collectors.groupingBy(
-            r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
-            Collectors.mapping(r -> r.get(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), Collectors.toList())
-        ));
+        return jooqReactiveOperations.flux(query)
+            .collect(Collectors.groupingBy(
+                r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
+                Collectors.mapping(r -> r.get(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), Collectors.toList())
+            ));
     }
 
     @Override

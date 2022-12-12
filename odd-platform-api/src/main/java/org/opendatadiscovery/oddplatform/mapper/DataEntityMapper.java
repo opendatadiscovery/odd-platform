@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.Collection;
+import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
@@ -19,9 +20,15 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.utils.Page;
 
-public interface DataEntityMapper
-    extends ReadOnlyCRUDMapperWithList<DataEntity, DataEntityList, DataEntityDimensionsDto> {
+public interface DataEntityMapper {
+    DataEntity mapPojo(final DataEntityDimensionsDto dto);
+
+    DataEntityList mapPojos(final List<DataEntityDimensionsDto> dataEntityDto);
+
+    DataEntityList mapPojos(final Page<DataEntityDimensionsDto> dataEntityDto);
+
     DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
                              final DataEntityClassDto classDto,
                              final NamespacePojo namespacePojo);
@@ -32,13 +39,9 @@ public interface DataEntityMapper
 
     DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dataEntityDetailsDto);
 
-    DataEntity mapDataQualityTest(final DataEntityDetailsDto dto);
+    DataEntity mapDataQualityTest(final DataEntityDimensionsDto dto, final String severity);
 
-    DataEntity mapDataQualityTest(final DataEntityDetailsDto dto, final String severity);
-
-    DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos);
-
-    DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos,
+    DataEntityList mapDataQualityTests(final Collection<DataEntityDimensionsDto> dtos,
                                        final Collection<DataQualityTestSeverityPojo> severities);
 
     DataEntityType mapType(final DataEntityTypeDto type);

@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.repository;
+package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE_PROVIDER_EV
 
 @Repository
 @RequiredArgsConstructor
-public class MessageRepositoryImpl implements MessageRepository {
+public class ReactiveMessageRepositoryImpl implements ReactiveMessageRepository {
     private static final String CHILDREN_MESSAGES_COUNT = "counts";
     private static final String MESSAGE_CTE_NAME = "message_cte";
 

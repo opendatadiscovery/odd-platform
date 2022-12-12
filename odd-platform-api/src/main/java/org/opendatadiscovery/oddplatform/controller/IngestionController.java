@@ -12,7 +12,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEnt
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
-import org.opendatadiscovery.oddplatform.service.DataEntityService;
+import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.IngestionService;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 public class IngestionController implements IngestionApi {
     private final IngestionService ingestionService;
-    private final DataEntityService dataEntityService;
+    private final DataEntityGroupService dataEntityGroupService;
     private final DataSourceIngestionService dataSourceIngestionService;
 
     @Override
@@ -66,7 +66,7 @@ public class IngestionController implements IngestionApi {
     @Override
     public Mono<ResponseEntity<CompactDataEntityList>> getDataEntitiesByDEGOddrn(@NotNull @Valid final String degOddrn,
                                                                                  final ServerWebExchange exchange) {
-        return dataEntityService.listEntitiesWithinDEG(degOddrn).map(ResponseEntity::ok);
+        return dataEntityGroupService.listEntitiesWithinDEG(degOddrn).map(ResponseEntity::ok);
     }
 
     @Override

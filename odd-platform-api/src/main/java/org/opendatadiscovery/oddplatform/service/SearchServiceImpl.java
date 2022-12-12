@@ -16,7 +16,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -26,28 +25,23 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.mapper.SearchMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchFacetRepository;
-import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static java.util.Collections.emptyList;
 import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SearchServiceImpl implements SearchService {
-    private static final Page<DataEntityDimensionsDto> EMPTY_SEARCH_RESPONSE = new Page<>(emptyList(), 0, false);
-
     private final SearchMapper searchMapper;
     private final FacetStateMapper facetStateMapper;
     private final DataEntityMapper dataEntityMapper;
     private final ReactiveSearchFacetRepository searchFacetRepository;
-    private final DataEntityRepository dataEntityRepository;
+    private final DataEntityService dataEntityService;
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final AuthIdentityProvider authIdentityProvider;
 
@@ -108,13 +102,10 @@ public class SearchServiceImpl implements SearchService {
                 final FacetStateDto state = facetStateMapper.pojoToState(pojo);
                 if (state.isMyObjects()) {
                     return authIdentityProvider.fetchAssociatedOwner()
-                        .map(owner -> dataEntityRepository.findByState(state, page, size, owner))
-                        .switchIfEmpty(Mono.defer(() -> Mono.just(EMPTY_SEARCH_RESPONSE)));
+                        .flatMap(owner -> dataEntityService.findByState(state, page, size, owner));
                 }
-
-                return Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size));
-            })
-            .map(dataEntityMapper::mapPojos);
+                return dataEntityService.findByState(state, page, size);
+            });
     }
 
     @Override

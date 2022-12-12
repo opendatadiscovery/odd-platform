@@ -87,8 +87,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(ingestionMapper::mapTaskRun)
             .toList();
 
-        return dataEntityRepository
-            .listAllByOddrns(ingestionDtoMap.keySet())
+        return dataEntityRepository.listAllByOddrns(ingestionDtoMap.keySet(), true)
             .collect(Collectors.toMap(DataEntityPojo::getOddrn, identity()))
             .flatMap(existingPojoDict -> {
                 final Map<Boolean, List<DataEntityIngestionDto>> ingestionDtoPartitions = ingestionDtoMap.values()

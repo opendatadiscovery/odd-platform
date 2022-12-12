@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -22,7 +23,7 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
     @Autowired
     private ReactiveTagRepository reactiveTagRepository;
     @Autowired
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     @Test
     @DisplayName("Creates tag pojo, expecting tag pojo in db")
@@ -102,7 +103,9 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()))
+            .collectList()
+            .block();
         final Long dataEntityId = testDataEntityList.get(0).getId();
         final List<TagToDataEntityPojo> pojos = savedTagsList.stream()
             .map(tag -> new TagToDataEntityPojo().setTagId(tag.getId()).setDataEntityId(dataEntityId))
@@ -128,7 +131,9 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()))
+            .collectList()
+            .block();
         final List<TagToDataEntityPojo> pojos =
             savedTagsList.subList(numberOfTestTags - tagsNotInDE, savedTagsList.size()).stream()
                 .map(tag -> new TagToDataEntityPojo()
@@ -145,7 +150,9 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Creates tags relations where list of tags is empty, expecting no relations are created")
     void testCreateRelationsIsEmpty() {
-        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()))
+            .collectList()
+            .block();
 
         reactiveTagRepository.createDataEntityRelations(List.of())
             .as(StepVerifier::create)
@@ -161,7 +168,9 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()))
+            .collectList()
+            .block();
         final List<TagToDataEntityPojo> savedTagsPojos = savedTagsList.stream()
             .map(tag -> new TagToDataEntityPojo()
                 .setTagId(tag.getId())
@@ -189,7 +198,9 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()))
+            .collectList()
+            .block();
         final List<TagToDataEntityPojo> savedTagsPojos = savedTagsList.stream()
             .map(tag -> new TagToDataEntityPojo()
                 .setTagId(tag.getId())

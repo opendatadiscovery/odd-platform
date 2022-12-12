@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.utils.DataEntityTaskRunPojoEndTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveDataEntityTaskRunRepository dataEntityRunRepository;
 
     @Autowired
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     @Autowired
     private ReactiveDataEntityTaskRunRepository reactiveDataEntityTaskRunRepository;
@@ -34,6 +35,8 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
     public void testGetDataQualityRuns() {
         final DataEntityPojo de = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+            .collectList()
+            .block()
             .get(0);
 
         final List<DataEntityTaskRunPojo> taskRuns = List.of(

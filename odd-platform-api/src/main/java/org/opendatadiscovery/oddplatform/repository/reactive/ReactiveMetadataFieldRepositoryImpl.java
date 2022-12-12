@@ -8,11 +8,14 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
 import org.opendatadiscovery.oddplatform.model.Indexes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MetadataFieldRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -23,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 
 @Repository
 public class ReactiveMetadataFieldRepositoryImpl
@@ -104,5 +108,24 @@ public class ReactiveMetadataFieldRepositoryImpl
                 return jooqReactiveOperations.flux(query);
             })
             .map(this::recordToPojo);
+    }
+
+    @Override
+    public Mono<List<MetadataDto>> getDtosByDataEntityId(final long dataEntityId) {
+        final var query = DSL.select(METADATA_FIELD.fields())
+            .select(METADATA_FIELD_VALUE.fields())
+            .from(METADATA_FIELD_VALUE)
+            .join(METADATA_FIELD).on(METADATA_FIELD.ID.eq(METADATA_FIELD_VALUE.METADATA_FIELD_ID))
+            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId));
+        return jooqReactiveOperations.flux(query)
+            .map(this::metadataDto)
+            .collectList();
+    }
+
+    private MetadataDto metadataDto(final Record r) {
+        return new MetadataDto(
+            r.into(METADATA_FIELD).into(MetadataFieldPojo.class),
+            r.into(METADATA_FIELD_VALUE).into(MetadataFieldValuePojo.class)
+        );
     }
 }
