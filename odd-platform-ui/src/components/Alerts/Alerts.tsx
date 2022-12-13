@@ -60,9 +60,11 @@ const Alerts: React.FC = () => {
     ]);
   }, [totals, showMyAndDepends]);
 
-  const [selectedTab] = React.useState(() =>
-    viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
-  );
+  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+
+  React.useEffect(() => {
+    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
+  }, [tabs, viewType]);
 
   const alertsFilterUpdateAction = React.useCallback(() => {
     dispatch(changeAlertsFilterAction());
