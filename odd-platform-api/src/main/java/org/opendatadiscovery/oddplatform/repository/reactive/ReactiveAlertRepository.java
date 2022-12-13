@@ -38,13 +38,9 @@ public interface ReactiveAlertRepository {
      */
     Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId);
 
-    /**
-     * Retrieves all alerts with status AlertStatusEnum.OPEN for certain DataEntity.
-     *
-     * @param dataEntityId - data entity id
-     * @return - List of {@link AlertDto}
-     */
-    Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId);
+    Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, final int page, final int size);
+
+    Mono<Long> getAlertsCountsByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus);
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN which are depended on the provided list of oddrns.
@@ -114,4 +110,5 @@ public interface ReactiveAlertRepository {
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
 
     Mono<Boolean> existsOpen(long alertId);
+
 }

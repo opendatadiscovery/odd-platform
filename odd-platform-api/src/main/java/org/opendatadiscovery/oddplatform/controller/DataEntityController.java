@@ -11,7 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
@@ -39,6 +39,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertHaltConfigService;
 import org.opendatadiscovery.oddplatform.service.AlertService;
@@ -288,8 +289,18 @@ public class DataEntityController implements DataEntityApi {
 
     @Override
     public Mono<ResponseEntity<AlertList>> getDataEntityAlerts(final Long dataEntityId,
+                                                               final Integer page,
+                                                               final Integer size,
                                                                final ServerWebExchange exchange) {
-        return alertService.getDataEntityAlerts(dataEntityId)
+        return alertService.getDataEntityAlerts(dataEntityId, page, size).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Long>> getDataEntityAlertsCounts(final Long dataEntityId,
+                                                                final AlertStatus status,
+                                                                final ServerWebExchange exchange) {
+        return alertService
+            .getDataEntityAlertsCounts(dataEntityId, AlertStatusEnum.valueOf(status.name()))
             .map(ResponseEntity::ok);
     }
 

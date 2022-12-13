@@ -23,7 +23,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
-import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
@@ -34,6 +33,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.AlertUniqueConstraint;
 import org.springframework.stereotype.Service;
@@ -53,6 +53,7 @@ public class AlertServiceImpl implements AlertService {
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final ReactiveAlertRepository alertRepository;
+    private final ReactiveDataEntityRepository dataEntityRepository;
     private final AlertMapper alertMapper;
     private final AuthIdentityProvider authIdentityProvider;
 
@@ -118,9 +119,16 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<AlertList> getDataEntityAlerts(final long dataEntityId) {
-        return alertRepository.getAlertsByDataEntityId(dataEntityId)
+    public Mono<AlertList> getDataEntityAlerts(final long dataEntityId, final int page, final int size) {
+        return checkDataEntityExistence(dataEntityId)
+            .flatMap(id -> alertRepository.getAlertsByDataEntityId(id, page, size))
             .map(alertMapper::mapAlerts);
+    }
+
+    @Override
+    public Mono<Long> getDataEntityAlertsCounts(final long dataEntityId, final AlertStatusEnum alertStatus) {
+        return checkDataEntityExistence(dataEntityId)
+            .flatMap(id -> alertRepository.getAlertsCountsByDataEntityId(id, alertStatus));
     }
 
     @Override
@@ -251,6 +259,16 @@ public class AlertServiceImpl implements AlertService {
                 ))
             ))
             .flatMap(alertRepository::setLastCreatedAt);
+    }
+
+    private Mono<Long> checkDataEntityExistence(final long dataEntityId) {
+        return dataEntityRepository.exists(dataEntityId).handle((exists, sink) -> {
+            if (!exists) {
+                sink.error(new NotFoundException("Data Entity", dataEntityId));
+                return;
+            }
+            sink.next(dataEntityId);
+        });
     }
 
     private Flux<AlertChunkPojo> prepareChunksForInsert(final long createdAlertId,
