@@ -77,15 +77,16 @@ const DataEntityDetails: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [
-    fetchDataEntityDetails,
     dataEntityId,
     isDataEntityGroupUpdated,
     isDataEntityAddedToGroup,
     isDataEntityDeletedFromGroup,
   ]);
 
+  const [page, size] = [1, 30];
+
   React.useEffect(() => {
-    dispatch(fetchDataEntityAlerts({ dataEntityId }));
+    dispatch(fetchDataEntityAlerts({ dataEntityId, page, size }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
     dispatch(

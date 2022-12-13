@@ -45,8 +45,8 @@ export const alertsSlice = createSlice({
     });
     builder.addCase(thunks.fetchDataEntityAlerts.fulfilled, (state, { payload }) => {
       const { items, pageInfo } = payload;
-      alertsAdapter.setAll(state, items);
-      state.pageInfo = { ...pageInfo, page: 1 };
+      alertsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
     });
     builder.addCase(thunks.updateAlertStatus.fulfilled, (state, { payload }) => {
       alertsAdapter.setOne(state, payload);

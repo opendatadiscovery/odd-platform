@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import type { AlertsState, RootState } from 'redux/interfaces';
+import type { AlertsState, CurrentPageInfo, RootState } from 'redux/interfaces';
 import { alertsAdapter, alertsConfigAdapter } from 'redux/slices/alerts.slice';
 import {
   createErrorSelector,
@@ -60,7 +60,7 @@ export const getAlertTotals = createSelector(
 
 export const getAlertListPageInfo = createSelector(
   getAlertsState,
-  alertsState => alertsState.pageInfo
+  (alertsState): CurrentPageInfo => alertsState.pageInfo
 );
 
 export const getDataEntityOpenAlertsCount = createSelector(

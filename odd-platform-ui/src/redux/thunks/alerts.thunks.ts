@@ -6,12 +6,11 @@ import {
   type AlertApiGetDependentEntitiesAlertsRequest,
   type AlertTotals,
   Configuration,
-  DataEntityAlertConfig,
+  type DataEntityAlertConfig,
   DataEntityApi,
-  DataEntityApiGetAlertConfigRequest,
+  type DataEntityApiGetAlertConfigRequest,
   type DataEntityApiGetDataEntityAlertsRequest,
-  DataEntityApiUpdateAlertConfigRequest,
-  type PageInfo,
+  type DataEntityApiUpdateAlertConfigRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -43,10 +42,7 @@ export const fetchAllAlertList = handleResponseAsyncThunk<
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
 
-    return {
-      items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
-    };
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   {}
 );
@@ -58,10 +54,8 @@ export const fetchMyAlertList = handleResponseAsyncThunk<
   actions.fetchMyAlertListActionType,
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
-    return {
-      items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
-    };
+
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   {}
 );
@@ -73,10 +67,8 @@ export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
   actions.fetchMyDependentsAlertListActionType,
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
-    return {
-      items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
-    };
+
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   {}
 );
@@ -100,14 +92,15 @@ export const updateAlertStatus = handleResponseAsyncThunk<
 );
 
 export const fetchDataEntityAlerts = handleResponseAsyncThunk<
-  { items: Alert[]; pageInfo: PageInfo },
+  AlertsResponse,
   DataEntityApiGetDataEntityAlertsRequest
 >(
   actions.fetchDataEntityAlertsActionType,
-  async ({ dataEntityId }) => {
-    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({ dataEntityId });
+  async params => {
+    const { page } = params;
+    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts(params);
 
-    return { items: castDatesToTimestamp(items), pageInfo };
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   { switchOffErrorMessage: true }
 );
