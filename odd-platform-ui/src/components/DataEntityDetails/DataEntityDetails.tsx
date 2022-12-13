@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams } from 'lib/hooks';
 import {
-  fetchDataEntityAlerts,
+  fetchDataEntityAlertsCounts,
   fetchDataEntityDetails,
   fetchDataSetQualitySLAReport,
   fetchDataSetQualityTestReport,
@@ -19,7 +19,7 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getResourcePermissions,
 } from 'redux/selectors';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import DataEntityDetailsHeader from './DataEntityDetailsHeader/DataEntityDetailsHeader';
@@ -83,10 +83,8 @@ const DataEntityDetails: React.FC = () => {
     isDataEntityDeletedFromGroup,
   ]);
 
-  const [page, size] = [1, 30];
-
   React.useEffect(() => {
-    dispatch(fetchDataEntityAlerts({ dataEntityId, page, size }));
+    dispatch(fetchDataEntityAlertsCounts({ dataEntityId, status: AlertStatus.OPEN }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
     dispatch(

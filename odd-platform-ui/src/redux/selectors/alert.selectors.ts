@@ -1,21 +1,12 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { AlertsState, CurrentPageInfo, RootState } from 'redux/interfaces';
-import { alertsAdapter, alertsConfigAdapter } from 'redux/slices/alerts.slice';
+import { alertsConfigAdapter } from 'redux/slices/alerts.slice';
 import {
   createErrorSelector,
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { AlertStatus } from 'generated-sources';
-
-const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
-
-export const { selectAll: getAlertList } = alertsAdapter.getSelectors<RootState>(
-  state => state.alerts
-);
-
-export const { selectById: getDataEntityAlertConfig } =
-  alertsConfigAdapter.getSelectors<RootState>(state => state.alerts.configs);
+import { emptyArr, emptyObj } from 'lib/constants';
 
 export const getAlertListFetchingStatus = createStatusesSelector(
   actions.fetchAlertListActionType
@@ -53,17 +44,39 @@ export const getDataEntityAlertsConfigUpdatingError = createErrorSelector(
   actions.updateDataEntityAlertsConfig
 );
 
-export const getAlertTotals = createSelector(
+const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
+
+export const { selectById: getDataEntityAlertConfig } =
+  alertsConfigAdapter.getSelectors<RootState>(state => state.alerts.configs);
+
+export const getAlertsTotals = createSelector(
   getAlertsState,
-  alertsState => alertsState.totals
+  alertsState => alertsState.alerts.totals
 );
 
-export const getAlertListPageInfo = createSelector(
+export const getAlerts = createSelector(
   getAlertsState,
-  (alertsState): CurrentPageInfo => alertsState.pageInfo
+  alertsState => alertsState.alerts.items || emptyArr
+);
+export const getAlertsPageInfo = createSelector(
+  getAlertsState,
+  (alertsState): CurrentPageInfo => alertsState.alerts.pageInfo
 );
 
-export const getDataEntityOpenAlertsCount = createSelector(
-  getAlertList,
-  alertList => alertList.filter(alert => alert.status === AlertStatus.OPEN).length
-);
+export const getDataEntityAlerts = (dataEntityId: number) =>
+  createSelector(
+    getAlertsState,
+    alertsState => alertsState.dataEntityAlerts[dataEntityId]?.items || emptyArr
+  );
+export const getDataEntityAlertsPageInfo = (dataEntityId: number) =>
+  createSelector(
+    getAlertsState,
+    (alertsState): CurrentPageInfo =>
+      alertsState.dataEntityAlerts[dataEntityId]?.pageInfo || emptyObj
+  );
+
+export const getDataEntityAlertsCount = (dataEntityId: number) =>
+  createSelector(
+    getAlertsState,
+    alertList => alertList.dataEntityAlerts[dataEntityId]?.alertCount
+  );

@@ -3,10 +3,10 @@ import { Grid } from '@mui/material';
 import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  getAlertList,
-  getAlertListPageInfo,
   getDataEntityAlertListFetchingStatus,
+  getDataEntityAlerts,
   getDataEntityAlertsFetchingError,
+  getDataEntityAlertsPageInfo,
 } from 'redux/selectors/alert.selectors';
 import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
@@ -22,16 +22,20 @@ const DataEntityAlerts: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
+  const size = 30;
+
+  React.useEffect(() => {
+    dispatch(fetchDataEntityAlerts({ dataEntityId, page: 1, size }));
+  }, [dataEntityId]);
+
   const {
     isLoading: isAlertsFetching,
     isNotLoaded: isAlertsNotFetched,
     isLoaded: isAlertsFetched,
   } = useAppSelector(getDataEntityAlertListFetchingStatus);
   const alertsListError = useAppSelector(getDataEntityAlertsFetchingError);
-  const alertsList = useAppSelector(getAlertList);
-  const { hasNext, page } = useAppSelector(getAlertListPageInfo);
-
-  const size = 30;
+  const alertsList = useAppSelector(getDataEntityAlerts(dataEntityId));
+  const { hasNext, page } = useAppSelector(getDataEntityAlertsPageInfo(dataEntityId));
 
   const fetchNextPage = () => {
     if (!hasNext) return;

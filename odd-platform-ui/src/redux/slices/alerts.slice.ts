@@ -1,56 +1,107 @@
-import type { AlertsState, Alert, AlertsConfig } from 'redux/interfaces';
+import type {
+  AlertsState,
+  Alert,
+  AlertsConfig,
+  PaginatedResponse,
+} from 'redux/interfaces';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { alertsActionPrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
-
-export const alertsAdapter = createEntityAdapter<Alert>({
-  selectId: alert => alert.id,
-});
 
 export const alertsConfigAdapter = createEntityAdapter<AlertsConfig>({
   selectId: config => config.dataEntityId,
 });
 
 export const initialState: AlertsState = {
-  totals: {},
-  pageInfo: { total: 0, page: 0, hasNext: true },
+  alerts: {
+    items: [],
+    pageInfo: { total: 0, page: 0, hasNext: true },
+    totals: {},
+  },
+  dataEntityAlerts: {},
   configs: { ...alertsConfigAdapter.getInitialState() },
-  ...alertsAdapter.getInitialState(),
+};
+
+const updateAlerts = (
+  state: AlertsState,
+  { payload }: { payload: PaginatedResponse<Alert[]> }
+) => {
+  const { items, pageInfo } = payload;
+  state.alerts.items = pageInfo.page > 1 ? [...state.alerts.items, ...items] : items;
+  state.alerts.pageInfo = pageInfo;
 };
 
 export const alertsSlice = createSlice({
   name: alertsActionPrefix,
   initialState,
   reducers: {
-    changeAlertsFilterAction: alertsAdapter.removeAll,
+    changeAlertsFilterAction: state => {
+      state.alerts.items = [];
+    },
   },
   extraReducers: builder => {
     builder.addCase(thunks.fetchAlertsTotals.fulfilled, (state, { payload }) => {
-      state.totals = payload;
+      state.alerts.totals = payload;
     });
-    builder.addCase(thunks.fetchAllAlertList.fulfilled, (state, { payload }) => {
-      const { items, pageInfo } = payload;
-      alertsAdapter.setMany(state, items);
-      state.pageInfo = pageInfo;
-    });
-    builder.addCase(thunks.fetchMyAlertList.fulfilled, (state, { payload }) => {
-      const { items, pageInfo } = payload;
-      alertsAdapter.setMany(state, items);
-      state.pageInfo = pageInfo;
-    });
-    builder.addCase(thunks.fetchMyDependentsAlertList.fulfilled, (state, { payload }) => {
-      const { items, pageInfo } = payload;
-      alertsAdapter.setMany(state, items);
-      state.pageInfo = pageInfo;
-    });
+
+    builder.addCase(thunks.fetchAllAlertList.fulfilled, updateAlerts);
+    builder.addCase(thunks.fetchMyAlertList.fulfilled, updateAlerts);
+    builder.addCase(thunks.fetchMyDependentsAlertList.fulfilled, updateAlerts);
+
     builder.addCase(thunks.fetchDataEntityAlerts.fulfilled, (state, { payload }) => {
-      const { items, pageInfo } = payload;
-      alertsAdapter.setMany(state, items);
-      state.pageInfo = pageInfo;
+      const { items, pageInfo, dataEntityId } = payload;
+
+      const dataEntityAlerts = items.reduce<AlertsState['dataEntityAlerts']>(
+        memo => ({
+          ...memo,
+          [dataEntityId]: {
+            ...memo[dataEntityId],
+            items:
+              pageInfo.page > 1
+                ? [...(state.dataEntityAlerts[dataEntityId]?.items || []), ...items]
+                : items,
+            pageInfo,
+          },
+        }),
+        { ...state.dataEntityAlerts }
+      );
+
+      return { ...state, dataEntityAlerts };
     });
     builder.addCase(thunks.updateAlertStatus.fulfilled, (state, { payload }) => {
-      alertsAdapter.setOne(state, payload);
+      const { alert, dataEntityId } = payload;
+
+      if (dataEntityId) {
+        const idx = state.dataEntityAlerts[dataEntityId].items.findIndex(
+          el => el.id === alert.id
+        );
+        if (idx > 0) state.dataEntityAlerts[dataEntityId].items[idx] = alert;
+
+        return state;
+      }
+
+      const idx = state.alerts.items.findIndex(el => el.id === alert.id);
+      if (idx > 0) state.alerts.items[idx] = alert;
+
+      return state;
     });
+    builder.addCase(
+      thunks.fetchDataEntityAlertsCounts.fulfilled,
+      (state, { payload }) => {
+        const { dataEntityId, count } = payload;
+
+        return {
+          ...state,
+          dataEntityAlerts: {
+            ...state.dataEntityAlerts,
+            [dataEntityId]: {
+              ...state.dataEntityAlerts[dataEntityId],
+              alertCount: count,
+            },
+          },
+        };
+      }
+    );
     builder.addCase(
       thunks.fetchDataEntityAlertsConfig.fulfilled,
       (state, { payload }) => {

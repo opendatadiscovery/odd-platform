@@ -80,7 +80,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   return (
     <S.Container container>
       <Grid container flexWrap='nowrap'>
-        <Grid container flexWrap='nowrap' lg={8}>
+        <Grid container flexWrap='nowrap' item lg={8}>
           <Grid container flexDirection='column'>
             <Typography variant='h4'>{alertTitlesMap.get(type)}</Typography>
             <Grid container flexWrap='nowrap' alignItems='center' sx={{ mt: 0.5 }}>
@@ -102,7 +102,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        <S.Wrapper container lg={4}>
+        <S.Wrapper container item lg={4}>
           {resolvedInfo}
           <AlertStatusItem status={alertStatus} />
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
@@ -122,7 +122,12 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       <Collapse in={showHistory} timeout={0} unmountOnExit>
         <Grid container flexDirection='column' flexWrap='nowrap' sx={{ mt: 2 }}>
           {alertChunkList?.map(alertChunk => (
-            <Grid container flexWrap='nowrap' sx={{ py: 0.75 }}>
+            <Grid
+              key={`${alertChunk.createdAt}`}
+              container
+              flexWrap='nowrap'
+              sx={{ py: 0.75 }}
+            >
               {alertChunk.createdAt && (
                 <Typography whiteSpace='nowrap' variant='subtitle1'>
                   {alertFormattedDateTime(alertChunk.createdAt)}

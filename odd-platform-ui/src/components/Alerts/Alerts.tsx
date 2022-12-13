@@ -8,10 +8,9 @@ import {
   fetchMyAlertList,
   fetchMyDependentsAlertList,
 } from 'redux/thunks';
-import { getAlertTotals } from 'redux/selectors';
+import { getAlertsTotals, getOwnership } from 'redux/selectors';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import type { AlertViewType } from 'lib/interfaces';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import type {
   AlertApiGetAllAlertsRequest,
@@ -28,31 +27,38 @@ const Alerts: React.FC = () => {
   const { viewType } = useAppParams();
   const { alertsPath } = useAppPaths();
 
-  const totals = useAppSelector(getAlertTotals);
+  const totals = useAppSelector(getAlertsTotals);
+  const showMyAndDepends = useAppSelector(getOwnership);
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());
   }, [fetchAlertsTotals]);
 
-  const tabs: AppTabItem<AlertViewType>[] = [
-    {
-      name: 'All',
-      hint: totals?.total || 0,
-      value: 'all',
-      link: alertsPath('all'),
-    },
-    {
-      name: 'My Objects',
-      hint: totals?.myTotal || 0,
-      value: 'my',
-      link: alertsPath('my'),
-    },
-    {
-      name: 'Dependents',
-      hint: totals?.dependentTotal || 0,
-      value: 'dependents',
-      link: alertsPath('dependents'),
-    },
-  ];
+  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
+
+  React.useEffect(() => {
+    setTabs([
+      {
+        name: 'All',
+        hint: totals?.total || 0,
+        value: 'all',
+        link: alertsPath('all'),
+      },
+      {
+        name: 'My Objects',
+        hint: totals?.myTotal || 0,
+        value: 'my',
+        link: alertsPath('my'),
+        hidden: !showMyAndDepends,
+      },
+      {
+        name: 'Dependents',
+        hint: totals?.dependentTotal || 0,
+        value: 'dependents',
+        link: alertsPath('dependents'),
+        hidden: !showMyAndDepends,
+      },
+    ]);
+  }, [totals, showMyAndDepends]);
 
   const [selectedTab] = React.useState(() =>
     viewType ? tabs.findIndex(tab => tab.value === viewType) : 0

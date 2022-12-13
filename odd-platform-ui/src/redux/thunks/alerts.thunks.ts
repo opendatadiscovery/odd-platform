@@ -9,6 +9,7 @@ import {
   type DataEntityAlertConfig,
   DataEntityApi,
   type DataEntityApiGetAlertConfigRequest,
+  DataEntityApiGetDataEntityAlertsCountsRequest,
   type DataEntityApiGetDataEntityAlertsRequest,
   type DataEntityApiUpdateAlertConfigRequest,
 } from 'generated-sources';
@@ -17,7 +18,9 @@ import { BASE_PARAMS } from 'lib/constants';
 import type {
   Alert,
   AlertsConfig,
-  AlertsResponse,
+  DataEntityId,
+  PaginatedResponse,
+  RelatedToEntityId,
   SerializeDateToNumber,
 } from 'redux/interfaces';
 import { castDatesToTimestamp } from 'redux/lib/helpers';
@@ -35,7 +38,7 @@ export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
 );
 
 export const fetchAllAlertList = handleResponseAsyncThunk<
-  AlertsResponse,
+  PaginatedResponse<Alert[]>,
   AlertApiGetAllAlertsRequest
 >(
   actions.fetchAlertListActionType,
@@ -48,7 +51,7 @@ export const fetchAllAlertList = handleResponseAsyncThunk<
 );
 
 export const fetchMyAlertList = handleResponseAsyncThunk<
-  AlertsResponse,
+  PaginatedResponse<Alert[]>,
   AlertApiGetAssociatedUserAlertsRequest
 >(
   actions.fetchMyAlertListActionType,
@@ -61,7 +64,7 @@ export const fetchMyAlertList = handleResponseAsyncThunk<
 );
 
 export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
-  AlertsResponse,
+  PaginatedResponse<Alert[]>,
   AlertApiGetDependentEntitiesAlertsRequest
 >(
   actions.fetchMyDependentsAlertListActionType,
@@ -74,14 +77,14 @@ export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
 );
 
 export const updateAlertStatus = handleResponseAsyncThunk<
-  Alert,
-  AlertApiChangeAlertStatusRequest
+  { alert: Alert } & Partial<DataEntityId>,
+  AlertApiChangeAlertStatusRequest & Partial<DataEntityId>
 >(
   actions.updateAlertStatusActionType,
   async params => {
     const alert = await alertApi.changeAlertStatus(params);
 
-    return castDatesToTimestamp(alert);
+    return { alert: castDatesToTimestamp(alert), dataEntityId: params.dataEntityId };
   },
   {
     setSuccessOptions: ({ alertStatusFormData, alertId }) => ({
@@ -92,17 +95,35 @@ export const updateAlertStatus = handleResponseAsyncThunk<
 );
 
 export const fetchDataEntityAlerts = handleResponseAsyncThunk<
-  AlertsResponse,
+  RelatedToEntityId<PaginatedResponse<Alert[]>>,
   DataEntityApiGetDataEntityAlertsRequest
 >(
   actions.fetchDataEntityAlertsActionType,
   async params => {
-    const { page } = params;
+    const { page, dataEntityId } = params;
     const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts(params);
 
-    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
+    return {
+      items: castDatesToTimestamp(items),
+      pageInfo: { ...pageInfo, page },
+      dataEntityId,
+    };
   },
   { switchOffErrorMessage: true }
+);
+
+export const fetchDataEntityAlertsCounts = handleResponseAsyncThunk<
+  RelatedToEntityId<{ count: number }>,
+  DataEntityApiGetDataEntityAlertsCountsRequest
+>(
+  actions.fetchDataEntityAlertsCountActionType,
+  async params => {
+    const { dataEntityId } = params;
+    const count = await dataEntityApi.getDataEntityAlertsCounts(params);
+
+    return { count, dataEntityId };
+  },
+  {}
 );
 
 export const fetchDataEntityAlertsConfig = handleResponseAsyncThunk<
