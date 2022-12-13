@@ -22,7 +22,7 @@ public interface AlertService {
 
     Mono<Alert> updateStatus(final long alertId, final AlertStatus alertStatus);
 
-    Mono<AlertList> getDataEntityAlerts(final long dataEntityId);
+    Mono<AlertList> getDataEntityAlerts(final long dataEntityId, final int page, final int size);
 
     Mono<Void> handleExternalAlerts(final List<ExternalAlert> externalAlerts);
 

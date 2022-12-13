@@ -25,7 +25,6 @@ import org.jooq.SelectHavingStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
-import org.jooq.WithStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
@@ -150,26 +149,23 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    public Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId) {
-        final List<Field<?>> groupByFields = Stream.of(ALERT.fields(), DATA_ENTITY.fields(), OWNER.fields())
-            .flatMap(Arrays::stream)
-            .toList();
-
-        final SelectHavingStep<Record> query = DSL
-            .select(groupByFields)
-            .select(jsonArrayAgg(field(ALERT_CHUNK.asterisk().toString())).as(ALERT_CHUNK_FIELD))
+    public Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, int page, int size) {
+        final SelectConditionStep<Record> baseQuery = DSL
+            .select(ALERT.fields())
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
-            .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(ALERT.ID))
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .groupBy(groupByFields);
+            .where(DATA_ENTITY.ID.eq(dataEntityId));
+
+        final Pair<Select<?>, String> query = createAlertJoinQuery(baseQuery, (page - 1) * size, size);
 
         return jooqReactiveOperations
-            .flux(query)
-            .map(this::mapRecordToDto)
-            .collectList();
+            .flux(query.getLeft())
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                r -> mapRecordToDto(r, query.getRight()),
+                countAlertsWithStatusOpen())
+            );
     }
 
     @Override

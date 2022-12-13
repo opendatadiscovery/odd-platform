@@ -288,9 +288,10 @@ public class DataEntityController implements DataEntityApi {
 
     @Override
     public Mono<ResponseEntity<AlertList>> getDataEntityAlerts(final Long dataEntityId,
+                                                               final Integer page,
+                                                               final Integer size,
                                                                final ServerWebExchange exchange) {
-        return alertService.getDataEntityAlerts(dataEntityId)
-            .map(ResponseEntity::ok);
+        return alertService.getDataEntityAlerts(dataEntityId, page, size).map(ResponseEntity::ok);
     }
 
     @Override

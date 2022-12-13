@@ -23,7 +23,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
-import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
@@ -118,8 +117,8 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<AlertList> getDataEntityAlerts(final long dataEntityId) {
-        return alertRepository.getAlertsByDataEntityId(dataEntityId)
+    public Mono<AlertList> getDataEntityAlerts(final long dataEntityId, int page, int size) {
+        return alertRepository.getAlertsByDataEntityId(dataEntityId, page, size)
             .map(alertMapper::mapAlerts);
     }
 
