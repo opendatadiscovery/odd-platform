@@ -120,16 +120,15 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Mono<AlertList> getDataEntityAlerts(final long dataEntityId, final int page, final int size) {
-        return dataEntityRepository.exists(dataEntityId)
-            .<Long>handle((exists, sink) -> {
-                if (!exists) {
-                    sink.error(new NotFoundException("Data Entity", dataEntityId));
-                    return;
-                }
-                sink.next(dataEntityId);
-            })
+        return checkDataEntityExistence(dataEntityId)
             .flatMap(id -> alertRepository.getAlertsByDataEntityId(id, page, size))
             .map(alertMapper::mapAlerts);
+    }
+
+    @Override
+    public Mono<Long> getDataEntityAlertsCounts(final long dataEntityId, final AlertStatusEnum alertStatus) {
+        return checkDataEntityExistence(dataEntityId)
+            .flatMap(id -> alertRepository.getAlertsCountsByDataEntityId(id, alertStatus));
     }
 
     @Override
@@ -260,6 +259,16 @@ public class AlertServiceImpl implements AlertService {
                 ))
             ))
             .flatMap(alertRepository::setLastCreatedAt);
+    }
+
+    private Mono<Long> checkDataEntityExistence(final long dataEntityId) {
+        return dataEntityRepository.exists(dataEntityId).handle((exists, sink) -> {
+            if (!exists) {
+                sink.error(new NotFoundException("Data Entity", dataEntityId));
+                return;
+            }
+            sink.next(dataEntityId);
+        });
     }
 
     private Flux<AlertChunkPojo> prepareChunksForInsert(final long createdAlertId,

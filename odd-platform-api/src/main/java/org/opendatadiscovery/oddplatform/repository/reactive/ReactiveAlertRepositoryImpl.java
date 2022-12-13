@@ -169,6 +169,17 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
+    public Mono<Long> getAlertsCountsByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus) {
+        final SelectConditionStep<Record1<Integer>> query = DSL.selectCount()
+            .from(ALERT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .where(ALERT.STATUS.eq(alertStatus.getCode()))
+            .and(DATA_ENTITY.ID.eq(dataEntityId));
+
+        return jooqReactiveOperations.mono(query).map(r -> r.component1().longValue());
+    }
+
+    @Override
     public Mono<Page<AlertDto>> listDependentObjectsAlerts(final int page,
                                                            final int size,
                                                            final List<String> ownOddrns) {
