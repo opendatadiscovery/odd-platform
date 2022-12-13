@@ -33,6 +33,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.AlertUniqueConstraint;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class AlertServiceImpl implements AlertService {
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final ReactiveAlertRepository alertRepository;
+    private final ReactiveDataEntityRepository dataEntityRepository;
     private final AlertMapper alertMapper;
     private final AuthIdentityProvider authIdentityProvider;
 
@@ -118,7 +120,15 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Mono<AlertList> getDataEntityAlerts(final long dataEntityId, int page, int size) {
-        return alertRepository.getAlertsByDataEntityId(dataEntityId, page, size)
+        return dataEntityRepository.exists(dataEntityId)
+            .<Long>handle((exists, sink) -> {
+                if (!exists) {
+                    sink.error(new NotFoundException("Data Entity", dataEntityId));
+                    return;
+                }
+                sink.next(dataEntityId);
+            })
+            .flatMap(id -> alertRepository.getAlertsByDataEntityId(id, page, size))
             .map(alertMapper::mapAlerts);
     }
 
