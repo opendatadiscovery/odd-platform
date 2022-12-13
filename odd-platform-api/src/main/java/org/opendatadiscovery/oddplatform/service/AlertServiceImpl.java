@@ -119,7 +119,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<AlertList> getDataEntityAlerts(final long dataEntityId, int page, int size) {
+    public Mono<AlertList> getDataEntityAlerts(final long dataEntityId, final int page, final int size) {
         return dataEntityRepository.exists(dataEntityId)
             .<Long>handle((exists, sink) -> {
                 if (!exists) {

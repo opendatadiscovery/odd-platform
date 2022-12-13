@@ -149,7 +149,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    public Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, int page, int size) {
+    public Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, final int page, final int size) {
         final SelectConditionStep<Record> baseQuery = DSL
             .select(ALERT.fields())
             .from(ALERT)
