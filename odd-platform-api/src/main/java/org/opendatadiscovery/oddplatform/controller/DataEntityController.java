@@ -231,18 +231,20 @@ public class DataEntityController implements DataEntityApi {
     @Override
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityDownstreamLineage(final Long dataEntityId,
                                                                                   final Integer lineageDepth,
+                                                                                  final List<Long> expand,
                                                                                   final ServerWebExchange exchange) {
         return lineageService
-            .getLineage(dataEntityId, lineageDepth, LineageStreamKind.DOWNSTREAM)
+            .getLineage(dataEntityId, lineageDepth, expand, LineageStreamKind.DOWNSTREAM)
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityUpstreamLineage(final Long dataEntityId,
                                                                                 final Integer lineageDepth,
+                                                                                final List<Long> expand,
                                                                                 final ServerWebExchange exchange) {
         return lineageService
-            .getLineage(dataEntityId, lineageDepth, LineageStreamKind.UPSTREAM)
+            .getLineage(dataEntityId, lineageDepth, expand, LineageStreamKind.UPSTREAM)
             .map(ResponseEntity::ok);
     }
 

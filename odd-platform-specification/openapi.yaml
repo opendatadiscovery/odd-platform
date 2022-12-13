@@ -1200,6 +1200,14 @@ paths:
             type: integer
             format: int32
             minimum: 1
+        - name: expand
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
       responses:
         '200':
           description: OK
@@ -1224,6 +1232,16 @@ paths:
             type: integer
             format: int32
             minimum: 1
+        - name: expand
+          in: query
+          required: false
+          explode: false
+          description: 'List of DataEntity ids which were expanded in the lineage graph'
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
       responses:
         '200':
           description: OK
