@@ -21,25 +21,25 @@ test.describe('Check filters', () => {
       { testName: 'Datasource', filterName: 'Datasource', inputValue: 'Book_ETL_aqa' },
       { testName: 'Namespace', filterName: 'Namespace', inputValue: 'ETL' },
     ];
-    for (const parameter of parameters) {
+    parameters.forEach(parameter => {
       test(`Display an expected item with filter ${parameter.testName}`, async ({
         steps: { pages },
       }) => {
         await test.step(`When apply filter ${parameter.testName}`, async () => {
-          await pages.activity.openFilterWithSelect(`${parameter.filterName}`);
-          await pages.activity.chooseOption(`${parameter.inputValue}`);
+          await pages.activity.openFilterWithSelect(parameter.filterName);
+          await pages.activity.chooseOption(parameter.inputValue);
           expect(
             await pages.activity.countListItems(entityNameWithAlphabeticChars),
           ).toBeGreaterThanOrEqual(1);
         });
       });
-    }
+    });
     /**
      * /project/1/test-cases/143
      */
     test(`Display an expected item with filter Tag`, async ({ steps: { pages } }) => {
       await test.step(`When apply filter Tag`, async () => {
-        await pages.activity.searchByTextInFilter(`Tag`, 'aqa');
+        await pages.activity.tagFilter.set('aqa');
         expect(
           await pages.activity.countListItems(entityNameWithAlphabeticChars),
         ).toBeGreaterThanOrEqual(1);
@@ -49,15 +49,15 @@ test.describe('Check filters', () => {
      * /project/1/test-cases/144
      */
     test(`Display an expected item with filter Owner`, async ({ workerId, steps: { pages } }) => {
-      const ownerName7 = `ownerName7 + ${workerId}`;
-      const ownerTitle7 = `ownerTitle7 + ${workerId}`;
+      const ownerName7 = `ownerName7${workerId}`;
+      const ownerTitle7 = `ownerTitle7${workerId}`;
       await test.step(`When apply filter Owner`, async () => {
         await pages.topPanel.clickTab('Catalog');
         await pages.catalog.searchBy(entityNameWithAlphabeticChars);
         await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
         await pages.overview.createOwner(ownerName7, ownerTitle7);
         await pages.topPanel.clickTab('Activity');
-        await pages.activity.searchByTextInFilter(`Owner`, ownerName7);
+        await pages.activity.ownerFilter.set(ownerName7);
         expect(
           await pages.activity.countListItems(entityNameWithAlphabeticChars),
         ).toBeGreaterThanOrEqual(1);
@@ -69,9 +69,7 @@ test.describe('Check filters', () => {
     test(`Display an expected item with filter Period`, async ({ steps: { pages } }) => {
       await test.step(`When apply filter Period`, async () => {
         await pages.activity.choose3days(`Period`);
-        expect(
-          await pages.activity.countListItems(entityNameWithAlphabeticChars),
-        ).toBeGreaterThanOrEqual(1);
+        expect(await pages.activity.isAlertVisible()).toBeTruthy();
       });
     });
   });

@@ -1,12 +1,15 @@
 import Button from '../../elements/button';
+import Dropdown from '../../elements/dropdown';
 import List from '../../elements/list';
+import TextBox from '../../elements/text-box';
 import BasePage from '../base-page';
 
 const SELECTORS = {
   datasourceFilter: '[data-qa="datasource_filter"] >> ..',
   namespaceFilter: '[data-qa="namespace_filter"] >> ..',
   eventTypeSelect: '[data-qa="event_type_filter"] >> ..',
-  filterWithInput: filterName => `label:has-text("${filterName}") >> ..`,
+  filterTag: `label:has-text('Tag')>> ..`,
+  filterOwner: `label:has-text('Owner')>> ..`,
   resultList: `[data-qa="activity_results_list"]`,
   resultItem: `[data-qa="activity_list_item"]`,
   filterWithInputOption: `[role="presentation"]`,
@@ -15,6 +18,7 @@ const SELECTORS = {
   calendar3dayButton: `[type="button"]:has-text('3 Day')`,
   calendarDoneButton: `[type="button"]:has-text('Done')`,
   calendar: `.rmdp-container`,
+  noMatchesFound: `text=No matches found`,
 };
 export default class ActivityPage extends BasePage {
   get datasourceSelect() {
@@ -41,6 +45,28 @@ export default class ActivityPage extends BasePage {
     return new List(this.page, SELECTORS.resultList, SELECTORS.resultItem);
   }
 
+  get alertNoMatchesFound() {
+    return new TextBox(this.page, SELECTORS.noMatchesFound);
+  }
+
+  get tagFilter() {
+    return new Dropdown(
+      this.page,
+      SELECTORS.filterTag,
+      SELECTORS.filterDropdown,
+      SELECTORS.filterOption,
+    );
+  }
+
+  get ownerFilter() {
+    return new Dropdown(
+      this.page,
+      SELECTORS.filterOwner,
+      SELECTORS.filterDropdown,
+      SELECTORS.filterOption,
+    );
+  }
+
   async openFilterWithSelect(filterName: string) {
     if (filterName === 'Datasource') {
       await this.datasourceSelect.click();
@@ -57,31 +83,21 @@ export default class ActivityPage extends BasePage {
     );
   }
 
-  async isListItemVisible(name: string): Promise<boolean> {
-    await this.page
-      .locator(`${SELECTORS.resultItem}:has-text('${name}')`)
-      .waitFor({ state: 'visible' });
-    return this.page.locator(`${SELECTORS.resultItem}:has-text('${name}')`).isVisible();
-  }
-
-  async searchByTextInFilter(filter: string, text: string) {
-    await this.page.locator(`${SELECTORS.filterWithInput(filter)} >> input`).fill(text);
-    await this.page.locator(`${SELECTORS.filterWithInputOption}:has-text('${text}')`).click();
-  }
-
-  async openFilterWithDate(name: string) {
+  async openFilterWithDate() {
     await this.page.locator(SELECTORS.calendar).click();
   }
 
   async choose3days(name: string) {
-    await this.openFilterWithDate(name);
+    await this.openFilterWithDate();
     await this.day3Button.click();
     await this.doneButton.click();
   }
 
   async countListItems(name: string): Promise<number> {
-    await this.page.locator(`${SELECTORS.resultItem}:has-text('${name}')`).allTextContents();
-
     return this.resultsList.count();
+  }
+
+  async isAlertVisible(): Promise<boolean> {
+    return this.alertNoMatchesFound.isVisible();
   }
 }
