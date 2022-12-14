@@ -69,7 +69,7 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: 'Alerts',
         link: dataEntityAlertsPath(dataEntityId),
         value: 'alerts',
-        hint: openAlertsCount,
+        hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
       },
       {

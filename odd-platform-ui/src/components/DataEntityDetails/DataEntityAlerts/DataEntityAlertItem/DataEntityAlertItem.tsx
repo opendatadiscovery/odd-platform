@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission } from 'generated-sources';
-import { useAppDateTime } from 'lib/hooks';
+import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
@@ -27,6 +27,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   },
 }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
   const { alertFormattedDateTime } = useAppDateTime();
 
   const [showHistory, setShowHistory] = React.useState(false);
@@ -35,7 +36,9 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     const status =
       alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
 
-    dispatch(updateAlertStatus({ alertId, alertStatusFormData: { status } }));
+    dispatch(
+      updateAlertStatus({ alertId, alertStatusFormData: { status }, dataEntityId })
+    );
   };
 
   const resolvedInfo = React.useMemo(() => {

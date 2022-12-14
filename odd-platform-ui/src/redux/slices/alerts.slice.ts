@@ -72,16 +72,16 @@ export const alertsSlice = createSlice({
       const { alert, dataEntityId } = payload;
 
       if (dataEntityId) {
-        const idx = state.dataEntityAlerts[dataEntityId].items.findIndex(
-          el => el.id === alert.id
+        const dataEntityAlerts = state.dataEntityAlerts[dataEntityId].items;
+        state.dataEntityAlerts[dataEntityId].items = dataEntityAlerts.map(el =>
+          el.id === alert.id ? alert : el
         );
-        if (idx > 0) state.dataEntityAlerts[dataEntityId].items[idx] = alert;
-
         return state;
       }
 
-      const idx = state.alerts.items.findIndex(el => el.id === alert.id);
-      if (idx > 0) state.alerts.items[idx] = alert;
+      state.alerts.items = state.alerts.items.map(el =>
+        el.id === alert.id ? alert : el
+      );
 
       return state;
     });
