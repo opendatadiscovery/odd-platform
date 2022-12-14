@@ -1203,6 +1203,8 @@ paths:
         - name: expand
           in: query
           required: false
+          explode: false
+          description: 'List of DataEntity ids which were expanded in the lineage graph'
           schema:
             type: array
             items:
