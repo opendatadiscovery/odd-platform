@@ -1,5 +1,8 @@
 import { Locator, Page } from '@playwright/test';
 
+const SELECTORS = {
+  loadingSpinner: "[role='progressbar'] svg circle",
+};
 export default class CustomElement {
   private customElementContext: Locator;
 
@@ -147,5 +150,31 @@ export default class CustomElement {
     });
 
     if (retries) await this.waitUntilLoaded(retries - 1);
+  }
+
+  /**
+   * Wait for a loading spinner (i.e. loader) to appear and then disappear from the page
+   *
+   * Usage example:
+   * ```js
+   * await button.waitForSpinnerToDisappear(
+   *   () => await this.page.locator.click();
+   * );
+   * ```
+   *
+   * @param func The function that causes the loading spinner to appear
+   * @param spinner Custom selector for the loading spinner
+   */
+  async waitForSpinnerToDisappear(
+    func: () => Promise<unknown>,
+    spinner = SELECTORS.loadingSpinner,
+  ) {
+    await Promise.all([
+      this.context.waitForSelector(spinner),
+      func(), // Pass function which caused spinner
+    ]);
+    await this.context.waitForSelector(spinner, {
+      state: 'detached',
+    });
   }
 }
