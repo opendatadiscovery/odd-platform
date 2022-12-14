@@ -1,38 +1,44 @@
 import React from 'react';
-import { parse, type ParsedQuery, stringify, type StringifyOptions } from 'query-string';
-import { useHistory } from 'react-router-dom';
+import { parse, stringify, type StringifyOptions } from 'query-string';
+import { useHistory, useLocation } from 'react-router-dom';
 
-type QueryParams = ParsedQuery<string | boolean | number>;
-type SetURLQueryParams = (
-  value: QueryParams | ((prev: QueryParams) => QueryParams)
+type QueryParams<Params extends Record<string, unknown>> = {
+  [Key in keyof Params]: Params[Key] | null;
+};
+
+type SetURLQueryParams<Params extends Record<string, unknown>> = (
+  value: QueryParams<Params> | ((prev: QueryParams<Params>) => QueryParams<Params>)
 ) => void;
 
-interface UseQueryParamsReturn {
-  queryParams: QueryParams;
-  setQueryParams: SetURLQueryParams;
+interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
+  queryParams: QueryParams<Params>;
+  setQueryParams: SetURLQueryParams<Params>;
 }
 
-const useQueryParams = (): UseQueryParamsReturn => {
+const useQueryParams = <
+  Params extends Record<string, unknown>
+>(): UseQueryParamsReturn<Params> => {
   const history = useHistory();
+  const location = useLocation();
 
   const queryStringOptions: StringifyOptions = { arrayFormat: 'comma' };
-  const createQueryString = (params: QueryParams) =>
+  const createQueryString = (params: QueryParams<Params>) =>
     stringify(params, queryStringOptions);
   const createQueryParams = (queryStr: string) =>
     parse(queryStr, { ...queryStringOptions, parseNumbers: true, parseBooleans: true });
 
   const queryParams = React.useMemo(
-    () => createQueryParams(history.location.search),
-    [history.location.search]
+    () => createQueryParams(location.search) as QueryParams<Params>,
+    [location.search]
   );
 
-  const setQueryParams = React.useCallback<SetURLQueryParams>(
+  const setQueryParams = React.useCallback<SetURLQueryParams<Params>>(
     value => {
       const newParams = typeof value === 'function' ? value(queryParams) : value;
       const newQueryStr = createQueryString(newParams);
-      history.replace(`${history.location.pathname}?${newQueryStr}`);
+      history.replace(`${location.pathname}?${newQueryStr}`);
     },
-    [history, queryParams]
+    [history, location.search]
   );
 
   return { queryParams, setQueryParams };
