@@ -40,7 +40,11 @@ public interface ReactiveAlertRepository {
 
     Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, final int page, final int size);
 
-    Mono<Long> getAlertsCountsByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus);
+    Mono<Long> getAlertsCountByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus);
+
+    default Mono<Long> getAlertsCountByDataEntityId(final long dataEntityId) {
+        return getAlertsCountByDataEntityId(dataEntityId, null);
+    }
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN which are depended on the provided list of oddrns.

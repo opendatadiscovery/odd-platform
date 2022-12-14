@@ -128,7 +128,7 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<Long> getDataEntityAlertsCounts(final long dataEntityId, final AlertStatusEnum alertStatus) {
         return checkDataEntityExistence(dataEntityId)
-            .flatMap(id -> alertRepository.getAlertsCountsByDataEntityId(id, alertStatus));
+            .flatMap(id -> alertRepository.getAlertsCountByDataEntityId(id, alertStatus));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.SetValuedMap;
 import org.jooq.CommonTableExpression;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Name;
@@ -164,17 +166,22 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
                 r -> mapRecordToDto(r, query.getRight()),
-                countAlertsWithStatusOpen())
+                getAlertsCountByDataEntityId(dataEntityId))
             );
     }
 
     @Override
-    public Mono<Long> getAlertsCountsByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus) {
+    public Mono<Long> getAlertsCountByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus) {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.ID.eq(dataEntityId));
+        if (alertStatus != null) {
+            conditions.add(ALERT.STATUS.eq(alertStatus.getCode()));
+        }
+
         final SelectConditionStep<Record1<Integer>> query = DSL.selectCount()
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .where(ALERT.STATUS.eq(alertStatus.getCode()))
-            .and(DATA_ENTITY.ID.eq(dataEntityId));
+            .where(conditions);
 
         return jooqReactiveOperations.mono(query).map(r -> r.component1().longValue());
     }
