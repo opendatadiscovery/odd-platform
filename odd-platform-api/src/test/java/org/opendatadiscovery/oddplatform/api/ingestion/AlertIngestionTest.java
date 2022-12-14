@@ -426,7 +426,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
         final long datasetId = extractIngestedEntitiesAndAssert(createdDataSource, 2).get(dataset.getOddrn());
 
         webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}/alerts", datasetId)
+            .uri("/api/dataentities/{data_entity_id}/alerts?page=1&size=1000", datasetId)
             .exchange()
             .expectStatus().isOk()
             .expectBody(AlertList.class)
@@ -530,7 +530,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
         ingestAndAssert(dataEntityList);
 
         webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}/alerts", viewId)
+            .uri("/api/dataentities/{data_entity_id}/alerts?page=1&size=1000", viewId)
             .exchange()
             .expectStatus().isOk()
             .expectBody(AlertList.class)
@@ -564,7 +564,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
 
     private void assertNoAlerts(final long dataEntityId) {
         webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}/alerts", dataEntityId)
+            .uri("/api/dataentities/{data_entity_id}/alerts?page=1&size=1000", dataEntityId)
             .exchange()
             .expectStatus().isOk()
             .expectBody(AlertList.class)
@@ -584,7 +584,7 @@ public class AlertIngestionTest extends BaseIngestionTest {
                               final AlertType expectedAlertType,
                               final AlertStatus expectedAlertStatus) {
         webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}/alerts", dataEntityId)
+            .uri("/api/dataentities/{data_entity_id}/alerts?page=1&size=1000", dataEntityId)
             .exchange()
             .expectStatus().isOk()
             .expectBody(AlertList.class)
