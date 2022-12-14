@@ -64,7 +64,7 @@ export default class CatalogPage extends BasePage {
   async searchBy(text: string) {
     await this.searchBar.fill(text);
     await this.page.locator(SELECTORS.searchBar).press('Enter');
-    await this.page.waitForLoadState('networkidle');
+    await this.resultsList.waitForSpinnerToDisappear();
   }
 
   async isAlertVisible(): Promise<boolean> {

@@ -182,7 +182,6 @@ export default class List extends CustomElement {
    * Check if list is empty
    */
   async isListEmpty(): Promise<boolean> {
-    await this.listItems.first().waitFor({ state: 'hidden' });
     return this.listItems.isHidden();
   }
 }

@@ -148,4 +148,14 @@ export default class CustomElement {
 
     if (retries) await this.waitUntilLoaded(retries - 1);
   }
+
+  /**
+   * wait for a loading spinner to disappear from the page
+   *
+   * @param spinner
+   */
+  async waitForSpinnerToDisappear(spinner = "[role='progressbar'] svg") {
+    await this.context.waitForSelector(spinner);
+    await this.context.waitForSelector(spinner, { state: 'detached' });
+  }
 }
