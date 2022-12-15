@@ -1,3 +1,4 @@
+import Button from '../../elements/button';
 import InputField from '../../elements/input-field';
 import List from '../../elements/list';
 import TextBox from '../../elements/text-box';
@@ -7,6 +8,7 @@ const SELECTORS = {
   filterWithSelect: filterName => `#select-label-id:has-text('${filterName}') >> ..`,
   filterWithInput: filterName => `label:text-is("${filterName}") >> ..`,
   searchBar: `[placeholder="Search"]`,
+  cleanSearchBarButton: `[placeholder="Search"] >> .. >> [title="Clear"]`,
   filterList: `[role="listbox"]`,
   filterOption: `[role="option"]`,
   filterWithInputOption: `[role="presentation"]`,
@@ -28,6 +30,10 @@ export default class CatalogPage extends BasePage {
 
   get resultsList() {
     return new List(this.page, SELECTORS.resultList, SELECTORS.listItem);
+  }
+
+  get cleanSearchBar() {
+    return new Button(this.page, SELECTORS.cleanSearchBarButton);
   }
 
   async openFilterWithSelect(filterName: string) {

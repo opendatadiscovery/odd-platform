@@ -125,4 +125,59 @@ test.describe('Tags', () => {
       expect(await pages.tags.isTagImportant(`new_test_1`)).toBeTruthy();
     });
   });
+  /**
+   * /project/1/test-cases/8
+   */
+  test(`Cleanup input in popup window Tags`, async ({ steps: { pages } }) => {
+    await test.step(`I fill the input`, async () => {
+      await pages.modals.addTag.fillAllTagName('tag');
+    });
+    await test.step(`I cleanup the input`, async () => {
+      await pages.modals.addTag.tagNameCleanButton.click();
+      expect(await pages.modals.addTag.tagNameField.innerText()).toEqual('');
+      expect(await pages.modals.addTag.addNewTag.isDisabled()).toBeTruthy();
+    });
+  });
+  /**
+   * /project/1/test-cases/11
+   */
+  test(`Close the popup window Create tag`, async ({ steps: { pages } }) => {
+    await test.step(`I close the popup`, async () => {
+      await pages.modals.addTag.closeDialog.click();
+      expect(await pages.modals.addTag.dialogTitle.isHidden()).toBeTruthy();
+    });
+  });
+  /**
+   * /project/1/test-cases/9
+   */
+  test(`Delete tag in popup window`, async ({ steps: { pages } }) => {
+    await test.step(`I add one more tag`, async () => {
+      await pages.modals.addTag.addOneMoreTag.click();
+      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
+      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
+    });
+    await test.step(`I delete one tag`, async () => {
+      await pages.modals.addTag.deleteTag(1);
+      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
+      expect(pages.modals.addTag.isTagNameInputHidden(1)).toBeTruthy();
+    });
+  });
+  /**
+   * /project/1/test-cases/10
+   */
+  test(`Delete important tag in popup window`, async ({ steps: { pages } }) => {
+    await test.step(`Add one more tag`, async () => {
+      await pages.modals.addTag.addOneMoreTag.click();
+      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
+      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
+    });
+    await test.step(`Click 'important'`, async () => {
+      await pages.modals.addTag.checkImportant(1);
+    });
+    await test.step(`Delete important tag`, async () => {
+      await pages.modals.addTag.deleteTag(1);
+      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
+      expect(pages.modals.addTag.isTagNameInputHidden(1)).toBeTruthy();
+    });
+  });
 });
