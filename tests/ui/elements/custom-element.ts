@@ -1,5 +1,8 @@
 import { Locator, Page } from '@playwright/test';
 
+const SELECTORS = {
+  loadingSpinner: "[role='progressbar'] svg circle",
+};
 export default class CustomElement {
   private customElementContext: Locator;
 
@@ -141,21 +144,12 @@ export default class CustomElement {
    *
    * @param retries
    */
-  async waitUntilLoaded(retries = 15) {
-    await this.context.waitForSelector('svg[class="ui/loading-spinner"]', {
+  async waitUntilSpinnerToDisappear() {
+    // const startTime = performance.now();
+    await this.context.waitForSelector(SELECTORS.loadingSpinner, {
       state: 'detached',
     });
-
-    if (retries) await this.waitUntilLoaded(retries - 1);
-  }
-
-  /**
-   * wait for a loading spinner to disappear from the page
-   *
-   * @param spinner
-   */
-  async waitForSpinnerToDisappear(spinner = "[role='progressbar'] svg") {
-    await this.context.waitForSelector(spinner);
-    await this.context.waitForSelector(spinner, { state: 'detached' });
+    // const endTime = performance.now();
+    // console.log(`>> Call to waitForSelector() took ${endTime - startTime} milliseconds`);
   }
 }
