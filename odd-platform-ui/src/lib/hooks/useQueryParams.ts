@@ -3,7 +3,7 @@ import { parse, stringify, type StringifyOptions } from 'query-string';
 import { useHistory, useLocation } from 'react-router-dom';
 
 type QueryParams<Params extends Record<string, unknown>> = {
-  [Key in keyof Params]: Params[Key] | null;
+  [Key in keyof Params]: Params[Key];
 };
 
 type SetURLQueryParams<Params extends Record<string, unknown>> = (
@@ -16,7 +16,7 @@ interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
 }
 
 const useQueryParams = <Params extends Record<string, unknown>>(
-  defaultVal?: Params
+  defaultVal: Params
 ): UseQueryParamsReturn<Params> => {
   const history = useHistory();
   const location = useLocation();
@@ -27,12 +27,13 @@ const useQueryParams = <Params extends Record<string, unknown>>(
   const createQueryParams = (queryStr: string) =>
     parse(queryStr, { ...queryStringOptions, parseNumbers: true, parseBooleans: true });
 
-  const queryParams = React.useMemo(() => {
-    if (location.search) return createQueryParams(location.search) as QueryParams<Params>;
-    if (defaultVal) return defaultVal;
-
-    return {} as QueryParams<Params>;
-  }, [location.search]);
+  const queryParams = React.useMemo(
+    () =>
+      location.search
+        ? (createQueryParams(location.search) as QueryParams<Params>)
+        : defaultVal,
+    [location.search, defaultVal]
+  );
 
   const setQueryParams = React.useCallback<SetURLQueryParams<Params>>(
     value => {

@@ -74,4 +74,5 @@ export interface LineageParsedData {
 
 export type LineageQueryParams = {
   full: boolean; // full or compact view
+  fn: boolean; // full names
 };

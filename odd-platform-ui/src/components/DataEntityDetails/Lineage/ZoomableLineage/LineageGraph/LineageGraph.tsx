@@ -1,9 +1,11 @@
 import React from 'react';
 import { type DataEntityLineageById } from 'redux/interfaces';
-import { setHighlightedLinksFirst } from 'components/DataEntityDetails/Lineage/lineageLib/helpers';
-import CrossLink from 'components/DataEntityDetails/Lineage/ZoomableLineage/LineageGraph/CrossLink/CrossLink';
+import { useQueryParams } from 'lib/hooks';
+import { setHighlightedLinksFirst } from '../../lineageLib/helpers';
+import CrossLink from './CrossLink/CrossLink';
+import type { LineageQueryParams } from '../../lineageLib/interfaces';
 import Link from './Link/Link';
-import { defaultGraphState } from '../../lineageLib/constants';
+import { defaultGraphState, defaultLineageQuery } from '../../lineageLib/constants';
 import { generateTree, parseData } from '../../lineageLib/generateGraph';
 import LineageContext from '../../lineageLib/LineageContext/LineageContext';
 import Node from './Node/Node';
@@ -16,8 +18,12 @@ interface LineageGraphProps {
 
 const LineageGraph = React.memo<LineageGraphProps>(
   ({ data, dataEntityId, handleDepthChange }) => {
-    const { nodeSize, setRenderedNodes, setRenderedLinks, fullTitles, highLightedLinks } =
+    const { nodeSize, setRenderedNodes, setRenderedLinks, highLightedLinks } =
       React.useContext(LineageContext);
+
+    const {
+      queryParams: { fn },
+    } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
     const separation = { siblings: 1, nonSiblings: 1 };
 
@@ -29,7 +35,7 @@ const LineageGraph = React.memo<LineageGraphProps>(
 
     React.useEffect(() => {
       setRenderedNodes([...nodesUp, ...nodesDown]);
-    }, [fullTitles, data]);
+    }, [fn, data]);
 
     React.useEffect(() => {
       setRenderedLinks([...linksDown, ...crossLinksDown, ...linksUp, ...crossLinksUp]);

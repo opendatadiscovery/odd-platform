@@ -4,8 +4,9 @@ import { useHistory } from 'react-router-dom';
 import type { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
-import { useAppPaths } from 'lib/hooks';
+import { useAppPaths, useAppQuery } from 'lib/hooks';
 import { Group } from '@visx/group';
+import { defaultLineageQuery } from '../../../lineageLib/constants';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
 import LineageContext from '../../../lineageLib/LineageContext/LineageContext';
 import NodeTitle from './NodeTitle/NodeTitle';
@@ -40,13 +41,15 @@ const Node: React.FC<NodeProps> = ({
 }) => {
   const history = useHistory();
   const { dataEntityLineagePath } = useAppPaths();
+  const { query: lineageQueryParams } = useAppQuery(defaultLineageQuery);
   const { nodeSize, renderedLinks, setHighLightedLinks } =
     React.useContext(LineageContext);
 
   const lineageLink =
     parent && node.data.externalName
       ? dataEntityLineagePath(
-          node.data.originalGroupId ? node.data.originalGroupId : node.data.id
+          node.data.originalGroupId ? node.data.originalGroupId : node.data.id,
+          lineageQueryParams
         )
       : '#';
 

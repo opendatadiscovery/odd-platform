@@ -15,17 +15,19 @@ interface LineageControlsProps {
 }
 const LineageControls = React.memo<LineageControlsProps>(
   ({ handleCenterRoot, lineageDepth, handleDepthChange }) => {
-    const { fullTitles, setFullTitlesView, expandGroups, setExpandGroups } =
-      React.useContext(LineageContext);
+    const { expandGroups, setExpandGroups } = React.useContext(LineageContext);
 
     const {
-      queryParams: { full },
+      queryParams: { full, fn },
       setQueryParams,
     } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
-    const handleFullTitlesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFullTitlesView(event.target.checked);
-    };
+    const handleFullNamesChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        setQueryParams(prev => ({ ...prev, fn: event.target.checked }));
+      },
+      [setQueryParams]
+    );
 
     const handleExpandGroupsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setExpandGroups(event.target.checked);
@@ -51,8 +53,9 @@ const LineageControls = React.memo<LineageControlsProps>(
         </Grid>
         <Grid display='flex' flexWrap='nowrap'>
           <AppCheckbox
-            value={fullTitles}
-            onChange={handleFullTitlesChange}
+            value={fn}
+            checked={fn}
+            onChange={handleFullNamesChange}
             sx={{ mr: 1 }}
           />
           <Typography variant='body1' color='texts.info'>

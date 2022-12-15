@@ -6,8 +6,6 @@ import { type NodeSize } from '../interfaces';
 
 export interface LineageContextProps {
   nodeSize: NodeSize;
-  fullTitles: boolean;
-  setFullTitlesView: (isTitlesFull: boolean) => void;
   setRenderedNodes: (nodes: HierarchyPointNode<TreeNodeDatum>[]) => void;
   highLightedLinks: HierarchyPointLink<TreeNodeDatum>[];
   setHighLightedLinks: (links: HierarchyPointLink<TreeNodeDatum>[]) => void;
@@ -19,8 +17,6 @@ export interface LineageContextProps {
 
 const defaultBehaviour: LineageContextProps = {
   nodeSize: nodeSizeInitial,
-  fullTitles: false,
-  setFullTitlesView: () => {},
   setRenderedNodes: () => {},
   renderedLinks: [],
   setRenderedLinks: () => {},

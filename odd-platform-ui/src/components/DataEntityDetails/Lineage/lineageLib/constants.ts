@@ -71,4 +71,5 @@ export const nodeSizeInitial: NodeSize = {
 
 export const defaultLineageQuery: LineageQueryParams = {
   full: true,
+  fn: false,
 };

@@ -28,13 +28,7 @@ const Lineage: React.FC = () => {
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
   const [lineageDepth, setLineageDepth] = React.useState(defaultDepth);
 
-  const [fullTitles, setFullTitles] = React.useState(false);
   const [expandGroups, setExpandGroups] = React.useState(false);
-
-  const setFullTitlesView = React.useCallback(
-    (isFullTitle: boolean) => setFullTitles(isFullTitle),
-    []
-  );
 
   const handleDepthChange = React.useCallback(
     (depth: SelectChangeEvent<unknown> | number) => {
@@ -100,12 +94,7 @@ const Lineage: React.FC = () => {
       ) : null}
 
       {!isLineageFetching && !isLineageNotFetched && (
-        <LineageProvider
-          fullTitles={fullTitles}
-          setFullTitlesView={setFullTitlesView}
-          expandGroups={expandGroups}
-          setExpandGroups={setExpandGroups}
-        >
+        <LineageProvider expandGroups={expandGroups} setExpandGroups={setExpandGroups}>
           <Zoom<SVGSVGElement>
             width={width}
             height={height}

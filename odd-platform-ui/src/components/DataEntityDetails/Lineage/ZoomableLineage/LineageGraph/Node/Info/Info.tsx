@@ -36,9 +36,9 @@ const Info: React.FC<InfoProps> = ({
   externalName,
   oddrn,
 }) => {
-  const { nodeSize, fullTitles } = React.useContext(LineageContext);
+  const { nodeSize } = React.useContext(LineageContext);
   const {
-    queryParams: { full },
+    queryParams: { full, fn },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   if (!full && !externalName) {
@@ -53,7 +53,7 @@ const Info: React.FC<InfoProps> = ({
     );
   }
 
-  const verticalODDRNOffset = fullTitles
+  const verticalODDRNOffset = fn
     ? -nodeSize.content.title.height / 2
     : -NODE_MIN_TITLE_HEIGHT / 2;
   const verticalInfoOffset =

@@ -21,13 +21,11 @@ type LineageProviderProps = Omit<
 
 const LineageProvider: React.FC<LineageProviderProps> = ({
   children,
-  setFullTitlesView,
-  fullTitles,
   expandGroups,
   setExpandGroups,
 }) => {
   const {
-    queryParams: { full },
+    queryParams: { full, fn },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [renderedNodes, setRenderedNodes] = React.useState<
@@ -41,8 +39,8 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
   >([]);
 
   const titleHeight = React.useMemo(
-    () => getMaxTitleHeight(renderedNodes, fullTitles),
-    [fullTitles]
+    () => getMaxTitleHeight(renderedNodes, fn),
+    [fn, renderedNodes]
   );
 
   const oddrnHeight = React.useMemo(
@@ -51,15 +49,13 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
   );
 
   const nodeSize = React.useMemo(
-    () => generateNodeSize({ full: !!full, titleHeight, oddrnHeight }),
+    () => generateNodeSize({ full, titleHeight, oddrnHeight }),
     [full, titleHeight, oddrnHeight]
   );
 
   const providerValue = React.useMemo<LineageContextProps>(
     () => ({
       nodeSize,
-      fullTitles,
-      setFullTitlesView,
       setRenderedNodes,
       renderedLinks,
       setRenderedLinks,
@@ -68,7 +64,7 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
       expandGroups,
       setExpandGroups,
     }),
-    [full, fullTitles, setFullTitlesView, renderedLinks, highLightedLinks, expandGroups]
+    [full, fn, renderedLinks, highLightedLinks, expandGroups]
   );
 
   return (
