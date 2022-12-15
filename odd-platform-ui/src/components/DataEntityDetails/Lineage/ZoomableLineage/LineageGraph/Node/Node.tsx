@@ -20,7 +20,6 @@ interface NodeProps {
   streamType: StreamType;
   rootNodeId: number;
   node: HierarchyPointNode<TreeNodeDatum>;
-  position: Point;
   parent: HierarchyPointNode<TreeNodeDatum> | null;
   reverse?: boolean;
   hasChildren: boolean;
@@ -30,7 +29,6 @@ const Node: React.FC<NodeProps> = ({
   streamType,
   rootNodeId,
   node,
-  position,
   parent,
   reverse,
   hasChildren,
@@ -82,8 +80,8 @@ const Node: React.FC<NodeProps> = ({
 
   return (
     <Group
-      top={position.x}
-      left={position.y}
+      top={node.x}
+      left={node.y}
       id={node.data.d3attrs.id}
       style={{ cursor: 'initial' }}
       onMouseEnter={handleMouseEnter}
