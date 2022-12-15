@@ -19,11 +19,7 @@ type LineageProviderProps = Omit<
   | 'renderedLinks'
 >;
 
-const LineageProvider: React.FC<LineageProviderProps> = ({
-  children,
-  expandGroups,
-  setExpandGroups,
-}) => {
+const LineageProvider: React.FC<LineageProviderProps> = ({ children }) => {
   const {
     queryParams: { full, fn },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
@@ -61,10 +57,8 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
       setRenderedLinks,
       highLightedLinks,
       setHighLightedLinks,
-      expandGroups,
-      setExpandGroups,
     }),
-    [full, fn, renderedLinks, highLightedLinks, expandGroups]
+    [full, fn, renderedLinks, highLightedLinks]
   );
 
   return (

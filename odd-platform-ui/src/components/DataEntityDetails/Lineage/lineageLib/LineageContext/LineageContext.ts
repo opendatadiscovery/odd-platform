@@ -11,8 +11,6 @@ export interface LineageContextProps {
   setHighLightedLinks: (links: HierarchyPointLink<TreeNodeDatum>[]) => void;
   renderedLinks: HierarchyPointLink<TreeNodeDatum>[];
   setRenderedLinks: (links: HierarchyPointLink<TreeNodeDatum>[]) => void;
-  expandGroups: boolean;
-  setExpandGroups: (isExpanded: boolean) => void;
 }
 
 const defaultBehaviour: LineageContextProps = {
@@ -22,8 +20,6 @@ const defaultBehaviour: LineageContextProps = {
   setRenderedLinks: () => {},
   highLightedLinks: [],
   setHighLightedLinks: () => {},
-  expandGroups: false,
-  setExpandGroups: () => {},
 };
 
 const LineageContext = React.createContext<LineageContextProps>(defaultBehaviour);

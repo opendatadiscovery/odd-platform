@@ -38,7 +38,10 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
 
     return (
       <Grid container position='relative'>
-        <LineageControls handleCenterRoot={handleCenterRoot} />
+        <LineageControls
+          rootNodeId={data?.rootNode.id}
+          handleCenterRoot={handleCenterRoot}
+        />
         <S.Container
           $isDragging={zoom.isDragging}
           ref={zoom.containerRef}

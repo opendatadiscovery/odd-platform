@@ -27,29 +27,25 @@ const Lineage: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const {
-    queryParams: { d, t },
+    queryParams: { d, t, eag },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
-
-  const [expandGroups, setExpandGroups] = React.useState(false);
 
   React.useEffect(() => {
     const params = {
       dataEntityId,
       lineageDepth: d,
       rootNodeId: dataEntityId,
-      expandGroups,
+      expandGroups: eag,
     };
 
-    if (!expandGroups) {
-      dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-        dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
-          setIsLineageFetching(false)
-        )
-      );
-    }
-  }, [d, dataEntityId, expandGroups]);
+    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+      dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+        setIsLineageFetching(false)
+      )
+    );
+  }, [d, dataEntityId]);
 
   const data = useAppSelector(getDataEntityLineage(dataEntityId));
   const { isNotLoaded: isUpstreamNotFetched } = useAppSelector(
@@ -65,12 +61,6 @@ const Lineage: React.FC = () => {
     () => isUpstreamNotFetched || isDownstreamNotFetched,
     [isUpstreamNotFetched, isDownstreamNotFetched]
   );
-
-  React.useEffect(() => {
-    const rootNodeId = data?.rootNode.id;
-
-    dispatch(expandAllGroups({ rootNodeId, isExpanded: expandGroups }));
-  }, [expandGroups]);
 
   const height = 780;
   const width = 1408;
@@ -98,7 +88,7 @@ const Lineage: React.FC = () => {
       ) : null}
 
       {!isLineageFetching && !isLineageNotFetched && (
-        <LineageProvider expandGroups={expandGroups} setExpandGroups={setExpandGroups}>
+        <LineageProvider>
           <Zoom<SVGSVGElement>
             width={width}
             height={height}

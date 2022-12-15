@@ -10,8 +10,11 @@ import {
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
 import { Group } from '@visx/group';
+import { useQueryParams } from 'lib/hooks';
 import LineageContext from '../../../../lineageLib/LineageContext/LineageContext';
 import * as S from './LoadMoreButtonStyles';
+import type { LineageQueryParams } from '../../../../lineageLib/interfaces';
+import { defaultLineageQuery } from '../../../../lineageLib/constants';
 
 interface LoadMoreButtonProps {
   rootNodeId: number;
@@ -30,8 +33,11 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   loadMoreCount,
   hideLoadMore,
 }) => {
-  const { nodeSize, expandGroups } = React.useContext(LineageContext);
   const dispatch = useAppDispatch();
+  const { nodeSize } = React.useContext(LineageContext);
+  const {
+    queryParams: { eag },
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const { isLoading: isUpstreamFetching } = useAppSelector(
     getUpstreamLineageFetchingStatuses
@@ -46,7 +52,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   );
 
   const loadMoreButtonHandler = () => {
-    const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups };
+    const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups: eag };
     if (streamType === 'downstream') {
       dispatch(fetchDataEntityDownstreamLineage(params)).then(() => hideLoadMore());
     }

@@ -77,4 +77,5 @@ export type LineageQueryParams = {
   fn: boolean; // full names
   d: number; // depth
   t: string; // transform
+  eag: boolean; // expand all groups
 };
