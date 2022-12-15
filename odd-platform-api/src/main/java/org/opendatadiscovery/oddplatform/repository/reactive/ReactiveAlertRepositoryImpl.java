@@ -23,8 +23,8 @@ import org.jooq.Record1;
 import org.jooq.Row3;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
-import org.jooq.SelectHavingStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSeekStepN;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -433,13 +433,14 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
         final Select<? extends Record> alertSelect = jooqQueryHelper.paginate(baseQuery, orderByFields, offset, limit);
         final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-        final var query = createAlertOuterSelect(alertSelect, alertCte);
+        final var query = createAlertOuterSelect(alertSelect, alertCte, orderByFields);
 
         return Pair.of(query, alertCte.getName());
     }
 
-    private SelectHavingStep<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
-                                                            final Table<? extends Record> alertCte) {
+    private SelectSeekStepN<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
+                                                           final Table<? extends Record> alertCte,
+                                                           final List<OrderByField> orderByFields) {
         final List<Field<?>> groupByFields = Stream.of(alertCte.fields(), DATA_ENTITY.fields(), OWNER.fields())
             .flatMap(Arrays::stream)
             .toList();
@@ -455,7 +456,8 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
                 .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
             .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(alertCte.field(ALERT.ID)))
-            .groupBy(groupByFields);
+            .groupBy(groupByFields)
+            .orderBy(orderByFields.stream().map(f -> alertCte.field(f.orderField()).sort(f.sortOrder())).toList());
         // @formatter:on
     }
 

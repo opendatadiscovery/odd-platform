@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.MultiMapUtils;
-import org.apache.commons.collections4.SetValuedMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
@@ -560,6 +558,83 @@ public class AlertIngestionTest extends BaseIngestionTest {
                 assertThat(dqAlerts.get(1).getStatus()).isEqualTo(AlertStatus.RESOLVED_AUTOMATICALLY);
                 assertThat(dqAlerts.get(1).getAlertChunkList()).hasSize(1);
             });
+    }
+
+    @Test
+    @DisplayName("Create new Failed DQ Test alert with existing open alerts")
+    public void createNewFailedDQTestAlert() {
+        final DataSource createdDataSource = createDataSource();
+
+        final DataEntity dataset = IngestionModelGenerator
+            .generateSimpleDataEntity(DataEntityType.VIEW)
+            .dataset(new DataSet().rowsNumber(1_000L).fieldList(IngestionModelGenerator.generateDatasetFields(5)));
+
+        final OffsetDateTime jobStartTime = OffsetDateTime
+            .of(LocalDateTime.now(), ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.MILLIS);
+
+        final DataEntity dataQualityTest1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataQualityTest(new DataQualityTest()
+                .datasetList(List.of(dataset.getOddrn()))
+                .suiteName(UUID.randomUUID().toString())
+                .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
+            );
+
+        final DataEntity dataQualityTestRun1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest1.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final DataEntity dataQualityTest2 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataQualityTest(new DataQualityTest()
+                .datasetList(List.of(dataset.getOddrn()))
+                .suiteName(UUID.randomUUID().toString())
+                .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
+            );
+
+        final DataEntity dataQualityTestRun2 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest2.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final var dataEntityList = new DataEntityList()
+            .dataSourceOddrn(createdDataSource.getOddrn())
+            .items(List.of(dataset, dataQualityTest1, dataQualityTestRun1, dataQualityTest2, dataQualityTestRun2));
+
+        ingestAndAssert(dataEntityList);
+
+        final long datasetId = extractIngestedEntitiesAndAssert(createdDataSource, 3).get(dataset.getOddrn());
+
+        assertAlerts(datasetId, 2, 1, AlertType.FAILED_DQ_TEST);
+
+        final DataEntity dataQualityTest3 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataQualityTest(new DataQualityTest()
+                .datasetList(List.of(dataset.getOddrn()))
+                .suiteName(UUID.randomUUID().toString())
+                .expectation(new DataQualityTestExpectation().type(UUID.randomUUID().toString()))
+            );
+
+        final DataEntity dataQualityTestRun3 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB_RUN)
+            .dataQualityTestRun(new DataQualityTestRun()
+                .dataQualityTestOddrn(dataQualityTest3.getOddrn())
+                .startTime(jobStartTime)
+                .endTime(jobStartTime.plusMinutes(1))
+                .status(QualityRunStatus.FAILED)
+            );
+
+        final var secondDataEntityList = new DataEntityList()
+            .dataSourceOddrn(createdDataSource.getOddrn())
+            .items(List.of(dataQualityTest3, dataQualityTestRun3));
+
+        ingestAndAssert(secondDataEntityList);
+
+        assertAlerts(datasetId, 3, 1, AlertType.FAILED_DQ_TEST);
     }
 
     private void assertNoAlerts(final long dataEntityId) {
