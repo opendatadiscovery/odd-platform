@@ -6,8 +6,6 @@ import { type NodeSize } from '../interfaces';
 
 export interface LineageContextProps {
   nodeSize: NodeSize;
-  compact: boolean;
-  setCompactView: (isCompact: boolean) => void;
   fullTitles: boolean;
   setFullTitlesView: (isTitlesFull: boolean) => void;
   setRenderedNodes: (nodes: HierarchyPointNode<TreeNodeDatum>[]) => void;
@@ -21,8 +19,6 @@ export interface LineageContextProps {
 
 const defaultBehaviour: LineageContextProps = {
   nodeSize: nodeSizeInitial,
-  compact: false,
-  setCompactView: () => {},
   fullTitles: false,
   setFullTitlesView: () => {},
   setRenderedNodes: () => {},

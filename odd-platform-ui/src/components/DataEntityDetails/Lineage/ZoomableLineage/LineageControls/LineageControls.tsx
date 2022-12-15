@@ -2,6 +2,8 @@ import React from 'react';
 import { AppButton, AppSelect, AppTabs, AppCheckbox } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
 import { Grid, type SelectChangeEvent, Typography } from '@mui/material';
+import { useQueryParams } from 'lib/hooks';
+import type { CurrentLineageState } from '../../lineageLib/interfaces';
 import * as S from './LineageControlsStyles';
 import LineageContext from '../../lineageLib/LineageContext/LineageContext';
 
@@ -12,14 +14,13 @@ interface LineageControlsProps {
 }
 const LineageControls = React.memo<LineageControlsProps>(
   ({ handleCenterRoot, lineageDepth, handleDepthChange }) => {
+    const { fullTitles, setFullTitlesView, expandGroups, setExpandGroups } =
+      React.useContext(LineageContext);
+
     const {
-      compact,
-      setCompactView,
-      fullTitles,
-      setFullTitlesView,
-      expandGroups,
-      setExpandGroups,
-    } = React.useContext(LineageContext);
+      queryParams: { full },
+      setQueryParams,
+    } = useQueryParams<CurrentLineageState>();
 
     const handleFullTitlesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setFullTitlesView(event.target.checked);
@@ -28,6 +29,12 @@ const LineageControls = React.memo<LineageControlsProps>(
     const handleExpandGroupsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setExpandGroups(event.target.checked);
     };
+
+    const handleViewChange = React.useCallback(
+      (newViewIndex: number) =>
+        setQueryParams(prev => ({ ...prev, full: !(newViewIndex > 0) })),
+      [setQueryParams]
+    );
 
     return (
       <S.ControlsContainer>
@@ -64,8 +71,8 @@ const LineageControls = React.memo<LineageControlsProps>(
           type='secondarySmall'
           orientation='horizontal'
           items={[{ name: 'Full' }, { name: 'Compact' }]}
-          selectedTab={compact ? 1 : 0}
-          handleTabChange={(newViewIndex: number) => setCompactView(newViewIndex > 0)}
+          selectedTab={full ? 0 : 1}
+          handleTabChange={handleViewChange}
         />
         <Typography variant='subtitle2'>Depth:</Typography>
         <AppSelect

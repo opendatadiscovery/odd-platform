@@ -1,6 +1,8 @@
 import React from 'react';
 import { type TreeNodeDatum } from 'redux/interfaces';
 import { HierarchyPointLink, type HierarchyPointNode } from 'd3-hierarchy';
+import { useQueryParams } from 'lib/hooks';
+import type { CurrentLineageState } from '../interfaces';
 import { getMaxODDRNHeight, getMaxTitleHeight } from '../helpers';
 import { generateNodeSize } from '../generateNodeSize';
 import LineageContext, { type LineageContextProps } from './LineageContext';
@@ -17,14 +19,16 @@ type LineageProviderProps = Omit<
 >;
 
 const LineageProvider: React.FC<LineageProviderProps> = ({
-  compact,
   children,
-  setCompactView,
   setFullTitlesView,
   fullTitles,
   expandGroups,
   setExpandGroups,
 }) => {
+  const {
+    queryParams: { full },
+  } = useQueryParams<CurrentLineageState>();
+
   const [renderedNodes, setRenderedNodes] = React.useState<
     HierarchyPointNode<TreeNodeDatum>[]
   >([]);
@@ -46,15 +50,13 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
   );
 
   const nodeSize = React.useMemo(
-    () => generateNodeSize({ compact, titleHeight, oddrnHeight }),
-    [compact, titleHeight, oddrnHeight]
+    () => generateNodeSize({ full: !!full, titleHeight, oddrnHeight }),
+    [full, titleHeight, oddrnHeight]
   );
 
   const providerValue = React.useMemo<LineageContextProps>(
     () => ({
-      compact,
       nodeSize,
-      setCompactView,
       fullTitles,
       setFullTitlesView,
       setRenderedNodes,
@@ -65,15 +67,7 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
       expandGroups,
       setExpandGroups,
     }),
-    [
-      compact,
-      setCompactView,
-      fullTitles,
-      setFullTitlesView,
-      renderedLinks,
-      highLightedLinks,
-      expandGroups,
-    ]
+    [full, fullTitles, setFullTitlesView, renderedLinks, highLightedLinks, expandGroups]
   );
 
   return (

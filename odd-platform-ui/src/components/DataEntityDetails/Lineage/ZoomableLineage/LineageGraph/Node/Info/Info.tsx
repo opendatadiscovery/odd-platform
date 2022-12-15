@@ -3,6 +3,8 @@ import { Group } from '@visx/group';
 import type { DataEntityLineageNode, DataSource } from 'generated-sources';
 import { TruncatedSVGText } from 'components/shared';
 import type { StreamType } from 'redux/interfaces';
+import { useQueryParams } from 'lib/hooks';
+import type { CurrentLineageState } from '../../../../lineageLib/interfaces';
 import {
   INFO_MIN_ODDRN_HEIGHT,
   NODE_MIN_TITLE_HEIGHT,
@@ -33,9 +35,12 @@ const Info: React.FC<InfoProps> = ({
   externalName,
   oddrn,
 }) => {
-  const { nodeSize, compact, fullTitles } = React.useContext(LineageContext);
+  const { nodeSize, fullTitles } = React.useContext(LineageContext);
+  const {
+    queryParams: { full },
+  } = useQueryParams<CurrentLineageState>();
 
-  if (compact && !externalName) {
+  if (!full && !externalName) {
     return (
       <Group top={nodeSize.content.info.y} left={nodeSize.content.info.x}>
         <S.Attribute>
@@ -53,7 +58,7 @@ const Info: React.FC<InfoProps> = ({
   const verticalInfoOffset =
     nodeSize.content.info.oddrnHeight > INFO_MIN_ODDRN_HEIGHT ? 10 : 0;
 
-  if (!compact && externalName) {
+  if (full && externalName) {
     return (
       <Group
         top={nodeSize.content.info.y + verticalInfoOffset}
@@ -136,7 +141,7 @@ const Info: React.FC<InfoProps> = ({
     );
   }
 
-  return !compact ? (
+  return full ? (
     <Group
       top={nodeSize.content.info.y + verticalODDRNOffset}
       left={nodeSize.content.info.x}

@@ -71,3 +71,7 @@ export interface LineageParsedData {
     crossEdges: DataEntityLineageEdge[];
   };
 }
+
+export type CurrentLineageState = {
+  full: boolean; // full or compact view
+};
