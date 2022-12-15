@@ -1,27 +1,46 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { Permission } from 'generated-sources';
-import { useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  getAlertList,
   getDataEntityAlertListFetchingStatus,
+  getDataEntityAlerts,
   getDataEntityAlertsFetchingError,
+  getDataEntityAlertsPageInfo,
 } from 'redux/selectors/alert.selectors';
 import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
+import { fetchDataEntityAlerts } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
 import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
 import * as S from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const size = 30;
+
+  React.useEffect(() => {
+    dispatch(fetchDataEntityAlerts({ dataEntityId, page: 1, size }));
+  }, [dataEntityId]);
+
   const {
     isLoading: isAlertsFetching,
     isNotLoaded: isAlertsNotFetched,
     isLoaded: isAlertsFetched,
   } = useAppSelector(getDataEntityAlertListFetchingStatus);
   const alertsListError = useAppSelector(getDataEntityAlertsFetchingError);
-  const alertsList = useAppSelector(getAlertList);
+  const alertsList = useAppSelector(getDataEntityAlerts(dataEntityId));
+  const { hasNext, page } = useAppSelector(getDataEntityAlertsPageInfo(dataEntityId));
+
+  const fetchNextPage = () => {
+    if (!hasNext) return;
+    dispatch(fetchDataEntityAlerts({ dataEntityId, page: page + 1, size }));
+  };
 
   return (
     <S.Container container>
@@ -37,19 +56,26 @@ const DataEntityAlerts: React.FC = () => {
         </Grid>
       </WithPermissions>
 
-      {isAlertsFetching && (
-        <S.AlertsContainer container rowGap={1}>
-          <DataEntityAlertsSkeleton length={5} />
-        </S.AlertsContainer>
-      )}
-
-      {isAlertsFetched && alertsList.length > 0 && (
-        <S.AlertsContainer container rowGap={1}>
+      <S.AlertsContainer
+        $disableHeight={!!alertsList.length}
+        container
+        id='de-alerts-list'
+        rowGap={1}
+      >
+        <InfiniteScroll
+          style={{ rowGap: '8px', display: 'flex', flexDirection: 'column' }}
+          dataLength={alertsList?.length}
+          next={fetchNextPage}
+          hasMore={hasNext}
+          scrollThreshold='200px'
+          loader={isAlertsFetching && <DataEntityAlertsSkeleton length={5} />}
+          scrollableTarget='de-alerts-list'
+        >
           {alertsList.map(alert => (
             <DataEntityAlertItem key={alert.id} alert={alert} />
           ))}
-        </S.AlertsContainer>
-      )}
+        </InfiniteScroll>
+      </S.AlertsContainer>
 
       <EmptyContentPlaceholder
         isContentLoaded={isAlertsFetched}

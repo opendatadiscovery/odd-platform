@@ -111,7 +111,7 @@ public class AlertActionResolverImpl implements AlertActionResolver {
                 .flatMap(e -> {
                     final AlertPojo lastAlert = lastAlertsByMessenger.get(e.getKey());
                     if (lastAlert == null) {
-                        throw new IllegalStateException("Internal inconsistent data of messengers oddrns to task runs");
+                        return streamActions(e.getValue(), dataEntityOddrn, alertType);
                     }
 
                     return streamActions(e.getValue(), dataEntityOddrn, alertType, lastAlert.getId());

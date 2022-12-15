@@ -6,14 +6,14 @@ import {
   type AlertApiGetDependentEntitiesAlertsRequest,
 } from 'generated-sources';
 import {
-  getAlertList,
   getAlertListFetchingError,
   getAlertListFetchingStatus,
-  getAlertListPageInfo,
+  getAlertsPageInfo,
   getMyAlertListFetchingError,
   getMyAlertListFetchingStatus,
   getMyDependentsAlertListFetchingError,
   getMyDependentsAlertListFetchingStatus,
+  getAlerts,
 } from 'redux/selectors';
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { Grid } from '@mui/material';
@@ -37,8 +37,8 @@ interface AlertsListProps {
 const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
   const dispatch = useAppDispatch();
 
-  const pageInfo = useAppSelector(getAlertListPageInfo);
-  const alerts = useAppSelector(getAlertList);
+  const pageInfo = useAppSelector(getAlertsPageInfo);
+  const alerts = useAppSelector(getAlerts);
 
   const {
     isLoaded: isAlertListFetched,
@@ -98,11 +98,11 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
         </InfiniteScroll>
       </S.AlertsContainer>
 
+      <AppErrorPage isNotContentLoaded={isAlertsNotLoaded} error={alertsError} />
       <EmptyContentPlaceholder
-        isContentLoaded={isAlertsFetched && !isAlertsFetching}
+        isContentLoaded={isAlertsFetched && !isAlertsFetching && !isAlertsNotLoaded}
         isContentEmpty={!alerts.length}
       />
-      <AppErrorPage isNotContentLoaded={isAlertsNotLoaded} error={alertsError} />
     </Grid>
   );
 };

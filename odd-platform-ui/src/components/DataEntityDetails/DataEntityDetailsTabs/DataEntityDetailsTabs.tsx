@@ -3,7 +3,7 @@ import { AppTabItem, AppTabs } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,
-  getDataEntityOpenAlertsCount,
+  getDataEntityAlertsCount,
   getDatasetTestReportTotal,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
@@ -23,7 +23,7 @@ const DataEntityDetailsTabs: React.FC = () => {
     dataEntityCollaborationPath,
   } = useAppPaths();
 
-  const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
+  const openAlertsCount = useAppSelector(getDataEntityAlertsCount(dataEntityId));
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
   const datasetQualityTestReportTotal = useAppSelector(
     getDatasetTestReportTotal(dataEntityId)
@@ -69,7 +69,7 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: 'Alerts',
         link: dataEntityAlertsPath(dataEntityId),
         value: 'alerts',
-        hint: openAlertsCount,
+        hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
       },
       {

@@ -1,13 +1,14 @@
 import React from 'react';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { GearIcon, UserIcon } from 'components/shared/Icons';
 import { AlertStatusItem, AppButton, EntityClassItem } from 'components/shared';
 import { alertTitlesMap } from 'lib/constants';
+import { getGlobalPermissions } from 'redux/selectors';
 import * as S from './AlertItemStyles';
 
 interface AlertItemProps {
@@ -34,6 +35,8 @@ const AlertItem: React.FC<AlertItemProps> = ({
   const [disableResolve, setDisableResolve] = React.useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
 
+  const globalPermissions = useAppSelector(getGlobalPermissions);
+
   const dispatchUpdateAlertStatus = () => {
     const status =
       alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
@@ -52,7 +55,11 @@ const AlertItem: React.FC<AlertItemProps> = ({
       dispatch(fetchResourcePermissions(params))
         .unwrap()
         .then(({ permissions }) => {
-          if (permissions.includes(Permission.DATA_ENTITY_ALERT_RESOLVE)) {
+          if (
+            [...globalPermissions, ...permissions].includes(
+              Permission.DATA_ENTITY_ALERT_RESOLVE
+            )
+          ) {
             dispatchUpdateAlertStatus();
           } else {
             setIsUpdating(false);
@@ -72,13 +79,15 @@ const AlertItem: React.FC<AlertItemProps> = ({
     if (alertStatus === 'RESOLVED') {
       return (
         <S.Wrapper container sx={{ mr: 1 }} alignItems='baseline'>
-          <Grid>
-            <UserIcon stroke='black' />
-          </Grid>
-          <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
-            {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity?.username}
-            {', '}
-          </Typography>
+          {statusUpdatedBy && (
+            <>
+              <UserIcon stroke='black' />
+              <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
+                {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity?.username}
+                {', '}
+              </Typography>
+            </>
+          )}
           {updatedAt}
         </S.Wrapper>
       );

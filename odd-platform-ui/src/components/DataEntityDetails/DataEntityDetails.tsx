@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams } from 'lib/hooks';
 import {
-  fetchDataEntityAlerts,
+  fetchDataEntityAlertsCounts,
   fetchDataEntityDetails,
   fetchDataSetQualitySLAReport,
   fetchDataSetQualityTestReport,
@@ -19,7 +19,7 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getResourcePermissions,
 } from 'redux/selectors';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import DataEntityDetailsHeader from './DataEntityDetailsHeader/DataEntityDetailsHeader';
@@ -77,7 +77,6 @@ const DataEntityDetails: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [
-    fetchDataEntityDetails,
     dataEntityId,
     isDataEntityGroupUpdated,
     isDataEntityAddedToGroup,
@@ -85,7 +84,7 @@ const DataEntityDetails: React.FC = () => {
   ]);
 
   React.useEffect(() => {
-    dispatch(fetchDataEntityAlerts({ dataEntityId }));
+    dispatch(fetchDataEntityAlertsCounts({ dataEntityId, status: AlertStatus.OPEN }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
     dispatch(
