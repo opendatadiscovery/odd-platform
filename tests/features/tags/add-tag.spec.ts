@@ -33,8 +33,8 @@ test.describe('Tags', () => {
   /**
    * /project/1/test-cases/5
    */
-  test(`Add new important tag`, async ({ steps: { pages } }) => {
-    tagName = 'Test_importantTagName';
+  test(`Add new important tag`, async ({ workerId, steps: { pages } }) => {
+    tagName = `Test_importantTagName${workerId}`;
     await test.step(`I fill tag name ${tagName}`, async () => {
       await pages.modals.addTag.tagNameField.fill(`${tagName}`);
     });
@@ -43,9 +43,101 @@ test.describe('Tags', () => {
     });
     await test.step(`I click 'create' button`, async () => {
       await pages.modals.addTag.addNewTag.click();
-      await pages.tags.waitUntilTagVisible(tagName);
-      expect(await pages.tags.isTagVisible(`${tagName}`)).toBeTruthy();
+
+      const startTime = performance.now();
       await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime = performance.now();
+      console.log(`>> Call 1 took ${endTime - startTime} milliseconds`);
+
+      const startTime2 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime2 = performance.now();
+      console.log(`>> Call 2 took ${endTime2 - startTime2} milliseconds`);
+
+      const startTime3 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime3 = performance.now();
+      console.log(`>> Call 3 took ${endTime3 - startTime3} milliseconds`);
+
+      const startTime4 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime4 = performance.now();
+      console.log(`>> Call 4 took ${endTime4 - startTime4} milliseconds`);
+      console.log('');
+    });
+  });
+
+  /**
+   * /project/1/test-cases/5
+   */
+  test(`Add new important tag - clone 1`, async ({ workerId, steps: { pages } }) => {
+    tagName = `Test_importantTagName_2${workerId}`;
+    await test.step(`I fill tag name ${tagName}`, async () => {
+      await pages.modals.addTag.tagNameField.fill(`${tagName}`);
+    });
+    await test.step(`I mark checkbox 'important'`, async () => {
+      await pages.modals.addTag.checkImportant(0);
+    });
+    await test.step(`I click 'create' button`, async () => {
+      await pages.modals.addTag.addNewTag.click();
+
+      const startTime = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime = performance.now();
+      console.log(`>> Call 1 took ${endTime - startTime} milliseconds`);
+
+      const startTime2 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime2 = performance.now();
+      console.log(`>> Call 2 took ${endTime2 - startTime2} milliseconds`);
+
+      const startTime3 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime3 = performance.now();
+      console.log(`>> Call 3 took ${endTime3 - startTime3} milliseconds`);
+
+      const startTime4 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime4 = performance.now();
+      console.log(`>> Call 4 took ${endTime4 - startTime4} milliseconds`);
+      console.log('');
+    });
+  });
+
+  /**
+   * /project/1/test-cases/5
+   */
+  test(`Add new important tag - clone 2`, async ({ workerId, steps: { pages } }) => {
+    tagName = `Test_importantTagName_3${workerId}`;
+    await test.step(`I fill tag name ${tagName}`, async () => {
+      await pages.modals.addTag.tagNameField.fill(`${tagName}`);
+    });
+    await test.step(`I mark checkbox 'important'`, async () => {
+      await pages.modals.addTag.checkImportant(0);
+    });
+    await test.step(`I click 'create' button`, async () => {
+      await pages.modals.addTag.addNewTag.click();
+
+      const startTime = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime = performance.now();
+      console.log(`>> Call 1 took ${endTime - startTime} milliseconds`);
+
+      const startTime2 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime2 = performance.now();
+      console.log(`>> Call 2 took ${endTime2 - startTime2} milliseconds`);
+
+      const startTime3 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime3 = performance.now();
+      console.log(`>> Call 3 took ${endTime3 - startTime3} milliseconds`);
+
+      const startTime4 = performance.now();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
+      const endTime4 = performance.now();
+      console.log(`>> Call 4 took ${endTime4 - startTime4} milliseconds`);
+      console.log('');
     });
   });
 
