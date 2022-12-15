@@ -8,8 +8,8 @@ const SELECTORS = {
   datasourceFilter: '[data-qa="datasource_filter"] >> ..',
   namespaceFilter: '[data-qa="namespace_filter"] >> ..',
   eventTypeSelect: '[data-qa="event_type_filter"] >> ..',
-  filterTag: `label:has-text('Tag')>> ..`,
-  filterOwner: `label:has-text('Owner')>> ..`,
+  tagFilter: `label:has-text('Tag')>> ..`,
+  ownerFilter: `label:has-text('Owner')>> ..`,
   resultList: `[data-qa="activity_results_list"]`,
   resultItem: `[data-qa="activity_list_item"]`,
   filterWithInputOption: `[role="presentation"]`,
@@ -52,7 +52,7 @@ export default class ActivityPage extends BasePage {
   get tagFilter() {
     return new Dropdown(
       this.page,
-      SELECTORS.filterTag,
+      SELECTORS.tagFilter,
       SELECTORS.filterDropdown,
       SELECTORS.filterOption,
     );
@@ -61,7 +61,7 @@ export default class ActivityPage extends BasePage {
   get ownerFilter() {
     return new Dropdown(
       this.page,
-      SELECTORS.filterOwner,
+      SELECTORS.ownerFilter,
       SELECTORS.filterDropdown,
       SELECTORS.filterOption,
     );
