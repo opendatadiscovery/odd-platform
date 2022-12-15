@@ -77,7 +77,7 @@ public class LineageServiceImpl implements LineageService {
     @Override
     public Mono<DataEntityLineage> getLineage(final long dataEntityId,
                                               final int lineageDepth,
-                                              final List<Long> expand,
+                                              final List<Long> expandedEntityIds,
                                               final LineageStreamKind lineageStreamKind) {
         return reactiveDataEntityRepository.getDataEntityWithDataSourceAndNamespace(dataEntityId)
             .switchIfEmpty(Mono.error(new NotFoundException("DataEntity", dataEntityId)))
@@ -86,8 +86,9 @@ public class LineageServiceImpl implements LineageService {
                     .getLineageRelations(Set.of(root.getDataEntity().getOddrn()), LineageDepth.of(lineageDepth),
                         lineageStreamKind);
                 final Flux<LineagePojo> expandedRelations = lineageRepository
-                    .getLineageRelationsForDepthOne(expand, lineageStreamKind);
-                return lineageRelations.concatWith(expandedRelations)
+                    .getLineageRelationsForDepthOne(expandedEntityIds, lineageStreamKind);
+                return lineageRelations.mergeWith(expandedRelations)
+                    .distinct()
                     .collectList()
                     .map(relations -> Tuples.of(root, relations));
             })

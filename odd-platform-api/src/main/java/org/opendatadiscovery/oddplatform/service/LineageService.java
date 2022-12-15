@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 public interface LineageService {
     Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth,
-                                       final List<Long> expand,
+                                       final List<Long> expandedEntityIds,
                                        final LineageStreamKind lineageStreamKind);
 
     Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId);

@@ -1200,7 +1200,7 @@ paths:
             type: integer
             format: int32
             minimum: 1
-        - name: expand
+        - name: expanded_entity_ids
           in: query
           required: false
           explode: false
@@ -1234,7 +1234,7 @@ paths:
             type: integer
             format: int32
             minimum: 1
-        - name: expand
+        - name: expanded_entity_ids
           in: query
           required: false
           explode: false
