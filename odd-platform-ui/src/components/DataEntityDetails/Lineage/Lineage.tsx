@@ -7,17 +7,17 @@ import {
   getUpstreamLineageFetchingError,
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
-import { AppErrorPage, AppCircularProgress } from 'components/shared';
+import { useAppParams, useQueryParams } from 'lib/hooks';
+import { AppCircularProgress, AppErrorPage } from 'components/shared';
 import { Zoom } from '@visx/zoom';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
-import { type SelectChangeEvent } from '@mui/material';
 import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
-import { defaultDepth } from './lineageLib/constants';
+import { defaultLineageQuery } from './lineageLib/constants';
 import LineageProvider from './lineageLib/LineageContext/LineageProvider';
 import * as S from './LineageStyles';
 
@@ -25,24 +25,21 @@ const Lineage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
+  const {
+    queryParams: { d },
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
+
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
-  const [lineageDepth, setLineageDepth] = React.useState(defaultDepth);
 
   const [expandGroups, setExpandGroups] = React.useState(false);
 
-  const handleDepthChange = React.useCallback(
-    (depth: SelectChangeEvent<unknown> | number) => {
-      if (typeof depth === 'number') {
-        return setLineageDepth(depth);
-      }
-
-      return setLineageDepth(depth.target.value as number);
-    },
-    []
-  );
-
   React.useEffect(() => {
-    const params = { dataEntityId, lineageDepth, rootNodeId: dataEntityId, expandGroups };
+    const params = {
+      dataEntityId,
+      lineageDepth: d,
+      rootNodeId: dataEntityId,
+      expandGroups,
+    };
 
     if (!expandGroups) {
       dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
@@ -51,7 +48,7 @@ const Lineage: React.FC = () => {
         )
       );
     }
-  }, [lineageDepth, dataEntityId, expandGroups]);
+  }, [d, dataEntityId, expandGroups]);
 
   const data = useAppSelector(getDataEntityLineage(dataEntityId));
   const { isNotLoaded: isUpstreamNotFetched } = useAppSelector(
@@ -111,8 +108,6 @@ const Lineage: React.FC = () => {
                 height={height}
                 zoom={zoom}
                 dataEntityId={dataEntityId}
-                handleDepthChange={handleDepthChange}
-                lineageDepth={lineageDepth}
               />
             )}
           </Zoom>

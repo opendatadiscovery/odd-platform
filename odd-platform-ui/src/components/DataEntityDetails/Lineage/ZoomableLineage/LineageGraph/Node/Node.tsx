@@ -24,8 +24,6 @@ interface NodeProps {
   parent: HierarchyPointNode<TreeNodeDatum> | null;
   reverse?: boolean;
   hasChildren: boolean;
-  nodeDepth: number;
-  setInitialDepth: (depth: number) => void;
 }
 
 const Node: React.FC<NodeProps> = ({
@@ -36,12 +34,13 @@ const Node: React.FC<NodeProps> = ({
   parent,
   reverse,
   hasChildren,
-  nodeDepth,
-  setInitialDepth,
 }) => {
   const history = useHistory();
   const { dataEntityLineagePath } = useAppPaths();
-  const { query: lineageQueryParams } = useAppQuery(defaultLineageQuery);
+  const { query: lineageQueryParams } = useAppQuery({
+    ...defaultLineageQuery,
+    d: node.depth,
+  });
   const { nodeSize, renderedLinks, setHighLightedLinks } =
     React.useContext(LineageContext);
 
@@ -54,9 +53,8 @@ const Node: React.FC<NodeProps> = ({
       : '#';
 
   const handleTitleClick = React.useCallback(() => {
-    setInitialDepth(nodeDepth);
     history.push(lineageLink);
-  }, [lineageLink, nodeDepth]);
+  }, [lineageLink]);
 
   const [showLoadMore, setShowLoadMore] = React.useState(false);
   const [hideLoadMore] = React.useState(false);

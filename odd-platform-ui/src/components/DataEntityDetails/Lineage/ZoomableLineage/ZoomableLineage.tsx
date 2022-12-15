@@ -1,6 +1,6 @@
 import React from 'react';
 import { Group } from '@visx/group';
-import { Grid, type SelectChangeEvent } from '@mui/material';
+import { Grid } from '@mui/material';
 import { type DataEntityLineageById } from 'redux/interfaces';
 import { localPoint } from '@visx/event';
 import { type Zoom } from '../lineageLib/interfaces';
@@ -14,11 +14,9 @@ interface ZoomableLineageProps {
   width: number;
   height: number;
   dataEntityId: number;
-  lineageDepth: number;
-  handleDepthChange: (e: SelectChangeEvent<unknown> | number) => void;
 }
 const ZoomableLineage = React.memo<ZoomableLineageProps>(
-  ({ data, zoom, width, height, lineageDepth, dataEntityId, handleDepthChange }) => {
+  ({ data, zoom, width, height, dataEntityId }) => {
     const handleCenterRoot = React.useCallback(() => {
       zoom.center();
       zoom.reset();
@@ -26,11 +24,7 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
 
     return (
       <Grid container position='relative'>
-        <LineageControls
-          handleCenterRoot={handleCenterRoot}
-          lineageDepth={lineageDepth}
-          handleDepthChange={handleDepthChange}
-        />
+        <LineageControls handleCenterRoot={handleCenterRoot} />
         <S.Container
           $isDragging={zoom.isDragging}
           ref={zoom.containerRef}
@@ -49,11 +43,7 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
         >
           <rect width={width} height={height} fill='#F4F5F7' />
           <Group transform={zoom.toString()}>
-            <LineageGraph
-              data={data}
-              dataEntityId={dataEntityId}
-              handleDepthChange={handleDepthChange}
-            />
+            <LineageGraph data={data} dataEntityId={dataEntityId} />
           </Group>
         </S.Container>
       </Grid>

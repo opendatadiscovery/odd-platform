@@ -13,94 +13,87 @@ import Node from './Node/Node';
 interface LineageGraphProps {
   dataEntityId: number;
   data: DataEntityLineageById;
-  handleDepthChange: (depth: number) => void;
 }
 
-const LineageGraph = React.memo<LineageGraphProps>(
-  ({ data, dataEntityId, handleDepthChange }) => {
-    const { nodeSize, setRenderedNodes, setRenderedLinks, highLightedLinks } =
-      React.useContext(LineageContext);
+const LineageGraph = React.memo<LineageGraphProps>(({ data, dataEntityId }) => {
+  const { nodeSize, setRenderedNodes, setRenderedLinks, highLightedLinks } =
+    React.useContext(LineageContext);
 
-    const {
-      queryParams: { fn },
-    } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
+  const {
+    queryParams: { fn },
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
-    const separation = { siblings: 1, nonSiblings: 1 };
+  const separation = { siblings: 1, nonSiblings: 1 };
 
-    const { linksUp, crossLinksUp, nodesDown, linksDown, crossLinksDown, nodesUp } =
-      React.useMemo(() => {
-        const parsedData = parseData(data);
-        return generateTree({ parsedData, defaultGraphState, separation, nodeSize });
-      }, [data, nodeSize]);
+  const { linksUp, crossLinksUp, nodesDown, linksDown, crossLinksDown, nodesUp } =
+    React.useMemo(() => {
+      const parsedData = parseData(data);
+      return generateTree({ parsedData, defaultGraphState, separation, nodeSize });
+    }, [data, nodeSize]);
 
-    React.useEffect(() => {
-      setRenderedNodes([...nodesUp, ...nodesDown]);
-    }, [fn, data]);
+  React.useEffect(() => {
+    setRenderedNodes([...nodesUp, ...nodesDown]);
+  }, [fn, data]);
 
-    React.useEffect(() => {
-      setRenderedLinks([...linksDown, ...crossLinksDown, ...linksUp, ...crossLinksUp]);
-    }, [data]);
+  React.useEffect(() => {
+    setRenderedLinks([...linksDown, ...crossLinksDown, ...linksUp, ...crossLinksUp]);
+  }, [data]);
 
-    return (
-      <>
-        {setHighlightedLinksFirst(linksUp, highLightedLinks, true).map(linkData => (
-          <Link
-            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
-            reverse
-            linkData={linkData}
-          />
-        ))}
-        {setHighlightedLinksFirst(linksDown, highLightedLinks, false).map(linkData => (
-          <Link
-            key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
-            linkData={linkData}
-          />
-        ))}
-        {setHighlightedLinksFirst(crossLinksDown, highLightedLinks, false)?.map(
-          linkData => (
-            <CrossLink
-              key={`link-${linkData.source.data.d3attrs.id}-${linkData.target.data.d3attrs.id}`}
-              linkData={linkData}
-            />
-          )
-        )}
-        {setHighlightedLinksFirst(crossLinksUp, highLightedLinks, true)?.map(linkData => (
+  return (
+    <>
+      {setHighlightedLinksFirst(linksUp, highLightedLinks, true).map(linkData => (
+        <Link
+          key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
+          reverse
+          linkData={linkData}
+        />
+      ))}
+      {setHighlightedLinksFirst(linksDown, highLightedLinks, false).map(linkData => (
+        <Link
+          key={`link-${linkData.target.data.d3attrs.id}-${linkData.source.data.d3attrs.id}`}
+          linkData={linkData}
+        />
+      ))}
+      {setHighlightedLinksFirst(crossLinksDown, highLightedLinks, false)?.map(
+        linkData => (
           <CrossLink
             key={`link-${linkData.source.data.d3attrs.id}-${linkData.target.data.d3attrs.id}`}
-            reverse
             linkData={linkData}
           />
-        ))}
-        {nodesUp?.map(node => (
-          <Node
-            streamType='upstream'
-            rootNodeId={dataEntityId}
-            key={`node-${node.x}${node.y}`}
-            reverse
-            node={node}
-            position={{ x: node.x, y: node.y }}
-            parent={node.parent}
-            hasChildren={!!node.children?.length}
-            nodeDepth={node.depth || 1}
-            setInitialDepth={handleDepthChange}
-          />
-        ))}
-        {nodesDown?.map(node => (
-          <Node
-            streamType='downstream'
-            rootNodeId={dataEntityId}
-            key={`node-${node.x}${node.y}`}
-            node={node}
-            position={{ x: node.x, y: node.y }}
-            parent={node.parent}
-            hasChildren={!!node.children?.length}
-            nodeDepth={node.depth || 1}
-            setInitialDepth={handleDepthChange}
-          />
-        ))}
-      </>
-    );
-  }
-);
+        )
+      )}
+      {setHighlightedLinksFirst(crossLinksUp, highLightedLinks, true)?.map(linkData => (
+        <CrossLink
+          key={`link-${linkData.source.data.d3attrs.id}-${linkData.target.data.d3attrs.id}`}
+          reverse
+          linkData={linkData}
+        />
+      ))}
+      {nodesUp?.map(node => (
+        <Node
+          streamType='upstream'
+          rootNodeId={dataEntityId}
+          key={`node-${node.x}${node.y}`}
+          reverse
+          node={node}
+          position={{ x: node.x, y: node.y }}
+          parent={node.parent}
+          hasChildren={!!node.children?.length}
+        />
+      ))}
+      {nodesDown?.map(node => (
+        <Node
+          streamType='downstream'
+          rootNodeId={dataEntityId}
+          key={`node-${node.x}${node.y}`}
+          node={node}
+          position={{ x: node.x, y: node.y }}
+          parent={node.parent}
+          hasChildren={!!node.children?.length}
+        />
+      ))}
+    </>
+  );
+});
 
 export default LineageGraph;
