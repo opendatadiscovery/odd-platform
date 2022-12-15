@@ -171,7 +171,7 @@ logging:
     io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
-    org.opendatadiscovery.oddplatform.housekeeping: info
-    org.opendatadiscovery.oddplatform.partition: info
+    org.opendatadiscovery.oddplatform.housekeeping: debug
+    org.opendatadiscovery.oddplatform.partition: debug
     org.opendatadiscovery.oddplatform.datacollaboration: info
     org.opendatadiscovery.oddplatform.service.ingestion: info
