@@ -4,8 +4,9 @@ import type { DataEntityLineageNode, DataSource } from 'generated-sources';
 import { TruncatedSVGText } from 'components/shared';
 import type { StreamType } from 'redux/interfaces';
 import { useQueryParams } from 'lib/hooks';
-import type { CurrentLineageState } from '../../../../lineageLib/interfaces';
+import type { LineageQueryParams } from '../../../../lineageLib/interfaces';
 import {
+  defaultLineageQuery,
   INFO_MIN_ODDRN_HEIGHT,
   NODE_MIN_TITLE_HEIGHT,
 } from '../../../../lineageLib/constants';
@@ -38,7 +39,7 @@ const Info: React.FC<InfoProps> = ({
   const { nodeSize, fullTitles } = React.useContext(LineageContext);
   const {
     queryParams: { full },
-  } = useQueryParams<CurrentLineageState>();
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   if (!full && !externalName) {
     return (

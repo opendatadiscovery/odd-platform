@@ -3,9 +3,10 @@ import { AppButton, AppSelect, AppTabs, AppCheckbox } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
 import { Grid, type SelectChangeEvent, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
-import type { CurrentLineageState } from '../../lineageLib/interfaces';
+import type { LineageQueryParams } from '../../lineageLib/interfaces';
 import * as S from './LineageControlsStyles';
 import LineageContext from '../../lineageLib/LineageContext/LineageContext';
+import { defaultLineageQuery } from '../../lineageLib/constants';
 
 interface LineageControlsProps {
   handleCenterRoot: () => void;
@@ -20,7 +21,7 @@ const LineageControls = React.memo<LineageControlsProps>(
     const {
       queryParams: { full },
       setQueryParams,
-    } = useQueryParams<CurrentLineageState>();
+    } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
     const handleFullTitlesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setFullTitlesView(event.target.checked);

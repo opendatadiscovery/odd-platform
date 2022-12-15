@@ -2,10 +2,11 @@ import React from 'react';
 import { type TreeNodeDatum } from 'redux/interfaces';
 import { HierarchyPointLink, type HierarchyPointNode } from 'd3-hierarchy';
 import { useQueryParams } from 'lib/hooks';
-import type { CurrentLineageState } from '../interfaces';
+import type { LineageQueryParams } from '../interfaces';
 import { getMaxODDRNHeight, getMaxTitleHeight } from '../helpers';
 import { generateNodeSize } from '../generateNodeSize';
 import LineageContext, { type LineageContextProps } from './LineageContext';
+import { defaultLineageQuery } from '../constants';
 
 type LineageProviderProps = Omit<
   LineageContextProps,
@@ -27,7 +28,7 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
 }) => {
   const {
     queryParams: { full },
-  } = useQueryParams<CurrentLineageState>();
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [renderedNodes, setRenderedNodes] = React.useState<
     HierarchyPointNode<TreeNodeDatum>[]

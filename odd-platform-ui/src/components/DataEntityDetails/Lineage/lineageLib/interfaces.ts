@@ -72,6 +72,6 @@ export interface LineageParsedData {
   };
 }
 
-export type CurrentLineageState = {
+export type LineageQueryParams = {
   full: boolean; // full or compact view
 };

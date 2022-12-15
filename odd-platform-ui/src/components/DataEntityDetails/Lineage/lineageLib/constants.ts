@@ -1,4 +1,4 @@
-import type { LineageGraphState, NodeSize } from './interfaces';
+import type { LineageGraphState, NodeSize, LineageQueryParams } from './interfaces';
 
 export const defaultGraphState: LineageGraphState = {
   nodesUp: [],
@@ -67,4 +67,8 @@ export const nodeSizeInitial: NodeSize = {
       },
     },
   },
+};
+
+export const defaultLineageQuery: LineageQueryParams = {
+  full: true,
 };

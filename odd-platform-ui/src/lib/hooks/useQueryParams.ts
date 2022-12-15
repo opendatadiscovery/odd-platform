@@ -15,9 +15,9 @@ interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
   setQueryParams: SetURLQueryParams<Params>;
 }
 
-const useQueryParams = <
-  Params extends Record<string, unknown>
->(): UseQueryParamsReturn<Params> => {
+const useQueryParams = <Params extends Record<string, unknown>>(
+  defaultVal?: Params
+): UseQueryParamsReturn<Params> => {
   const history = useHistory();
   const location = useLocation();
 
@@ -27,10 +27,12 @@ const useQueryParams = <
   const createQueryParams = (queryStr: string) =>
     parse(queryStr, { ...queryStringOptions, parseNumbers: true, parseBooleans: true });
 
-  const queryParams = React.useMemo(
-    () => createQueryParams(location.search) as QueryParams<Params>,
-    [location.search]
-  );
+  const queryParams = React.useMemo(() => {
+    if (location.search) return createQueryParams(location.search) as QueryParams<Params>;
+    if (defaultVal) return defaultVal;
+
+    return {} as QueryParams<Params>;
+  }, [location.search]);
 
   const setQueryParams = React.useCallback<SetURLQueryParams<Params>>(
     value => {
