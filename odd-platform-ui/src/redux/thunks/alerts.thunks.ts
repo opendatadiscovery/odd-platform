@@ -6,19 +6,21 @@ import {
   type AlertApiGetDependentEntitiesAlertsRequest,
   type AlertTotals,
   Configuration,
-  DataEntityAlertConfig,
+  type DataEntityAlertConfig,
   DataEntityApi,
-  DataEntityApiGetAlertConfigRequest,
+  type DataEntityApiGetAlertConfigRequest,
+  DataEntityApiGetDataEntityAlertsCountsRequest,
   type DataEntityApiGetDataEntityAlertsRequest,
-  DataEntityApiUpdateAlertConfigRequest,
-  type PageInfo,
+  type DataEntityApiUpdateAlertConfigRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import type {
   Alert,
   AlertsConfig,
-  AlertsResponse,
+  DataEntityId,
+  PaginatedResponse,
+  RelatedToEntityId,
   SerializeDateToNumber,
 } from 'redux/interfaces';
 import { castDatesToTimestamp } from 'redux/lib/helpers';
@@ -36,60 +38,53 @@ export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
 );
 
 export const fetchAllAlertList = handleResponseAsyncThunk<
-  AlertsResponse,
+  PaginatedResponse<Alert[]>,
   AlertApiGetAllAlertsRequest
 >(
   actions.fetchAlertListActionType,
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getAllAlerts({ page, size });
 
-    return {
-      items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
-    };
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   {}
 );
 
 export const fetchMyAlertList = handleResponseAsyncThunk<
-  AlertsResponse,
+  PaginatedResponse<Alert[]>,
   AlertApiGetAssociatedUserAlertsRequest
 >(
   actions.fetchMyAlertListActionType,
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({ page, size });
-    return {
-      items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
-    };
+
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   {}
 );
 
 export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
-  AlertsResponse,
+  PaginatedResponse<Alert[]>,
   AlertApiGetDependentEntitiesAlertsRequest
 >(
   actions.fetchMyDependentsAlertListActionType,
   async ({ page, size }) => {
     const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({ page, size });
-    return {
-      items: castDatesToTimestamp(items),
-      pageInfo: { ...pageInfo, page },
-    };
+
+    return { items: castDatesToTimestamp(items), pageInfo: { ...pageInfo, page } };
   },
   {}
 );
 
 export const updateAlertStatus = handleResponseAsyncThunk<
-  Alert,
-  AlertApiChangeAlertStatusRequest
+  { alert: Alert } & Partial<DataEntityId>,
+  AlertApiChangeAlertStatusRequest & Partial<DataEntityId>
 >(
   actions.updateAlertStatusActionType,
   async params => {
     const alert = await alertApi.changeAlertStatus(params);
 
-    return castDatesToTimestamp(alert);
+    return { alert: castDatesToTimestamp(alert), dataEntityId: params.dataEntityId };
   },
   {
     setSuccessOptions: ({ alertStatusFormData, alertId }) => ({
@@ -100,16 +95,35 @@ export const updateAlertStatus = handleResponseAsyncThunk<
 );
 
 export const fetchDataEntityAlerts = handleResponseAsyncThunk<
-  { items: Alert[]; pageInfo: PageInfo },
+  RelatedToEntityId<PaginatedResponse<Alert[]>>,
   DataEntityApiGetDataEntityAlertsRequest
 >(
   actions.fetchDataEntityAlertsActionType,
-  async ({ dataEntityId }) => {
-    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({ dataEntityId });
+  async params => {
+    const { page, dataEntityId } = params;
+    const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts(params);
 
-    return { items: castDatesToTimestamp(items), pageInfo };
+    return {
+      items: castDatesToTimestamp(items),
+      pageInfo: { ...pageInfo, page },
+      dataEntityId,
+    };
   },
   { switchOffErrorMessage: true }
+);
+
+export const fetchDataEntityAlertsCounts = handleResponseAsyncThunk<
+  RelatedToEntityId<{ count: number }>,
+  DataEntityApiGetDataEntityAlertsCountsRequest
+>(
+  actions.fetchDataEntityAlertsCountActionType,
+  async params => {
+    const { dataEntityId } = params;
+    const count = await dataEntityApi.getDataEntityAlertsCounts(params);
+
+    return { count, dataEntityId };
+  },
+  {}
 );
 
 export const fetchDataEntityAlertsConfig = handleResponseAsyncThunk<

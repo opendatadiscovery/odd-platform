@@ -1241,6 +1241,8 @@ paths:
       operationId: getDataEntityAlerts
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
@@ -1248,6 +1250,29 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/alerts/counts:
+    get:
+      summary: Get DataEntity's alerts counts
+      description: Gets DataEntity's alerts counts
+      operationId: getDataEntityAlertsCounts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: status
+          in: query
+          required: true
+          schema:
+            $ref: './components.yaml/#/components/schemas/AlertStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
       tags:
         - dataEntity
 

@@ -41,8 +41,8 @@ export const primaryTabsHeight = 32;
 export const tabsContainerMargin = 16;
 
 // time formats
-export const mainEUDateTimeFormat = 'd MMM yyyy, HH:mm';
-export const mainUSDateTimeFormat = 'MMM d yyyy, h:mm a';
+export const mainEUDateTimeFormat = 'dd MMM yyyy, HH:mm';
+export const mainUSDateTimeFormat = 'MMM dd yyyy, h:mm a';
 export const mainEUDateFormat = 'd MMM yyyy';
 export const mainUSDateFormat = 'MMM d yyyy';
 export const datedListFormat = 'MMMM dd, yyyy';
