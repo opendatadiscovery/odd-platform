@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 
 const SELECTORS = {
-  loadingSpinner: "[role='progressbar'] svg circle",
+  loadingSpinner: "[role='progressbar'] svg circle circle circle circle circle circle circle",
 };
 export default class CustomElement {
   private customElementContext: Locator;
