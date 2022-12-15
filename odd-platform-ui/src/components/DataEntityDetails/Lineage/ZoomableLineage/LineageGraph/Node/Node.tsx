@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import type { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
-import { useAppPaths, useAppQuery } from 'lib/hooks';
+import { useAppPaths, useQueryParams } from 'lib/hooks';
 import { Group } from '@visx/group';
 import { defaultLineageQuery } from '../../../lineageLib/constants';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
@@ -37,9 +37,9 @@ const Node: React.FC<NodeProps> = ({
 }) => {
   const history = useHistory();
   const { dataEntityLineagePath } = useAppPaths();
-  const { query: lineageQueryParams } = useAppQuery({
+  const { defaultQueryString: lineageQueryString, setQueryParams } = useQueryParams({
     ...defaultLineageQuery,
-    d: node.depth,
+    d: node.depth || 1,
   });
   const { nodeSize, renderedLinks, setHighLightedLinks } =
     React.useContext(LineageContext);
@@ -48,13 +48,13 @@ const Node: React.FC<NodeProps> = ({
     parent && node.data.externalName
       ? dataEntityLineagePath(
           node.data.originalGroupId ? node.data.originalGroupId : node.data.id,
-          lineageQueryParams
+          lineageQueryString
         )
       : '#';
 
   const handleTitleClick = React.useCallback(() => {
     history.push(lineageLink);
-  }, [lineageLink]);
+  }, [lineageLink, setQueryParams, node.depth]);
 
   const [showLoadMore, setShowLoadMore] = React.useState(false);
   const [hideLoadMore] = React.useState(false);

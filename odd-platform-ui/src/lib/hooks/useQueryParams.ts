@@ -12,6 +12,8 @@ type SetURLQueryParams<Params extends Record<string, unknown>> = (
 
 interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
   queryParams: QueryParams<Params>;
+  queryString: string;
+  defaultQueryString: string;
   setQueryParams: SetURLQueryParams<Params>;
 }
 
@@ -21,7 +23,10 @@ const useQueryParams = <Params extends Record<string, unknown>>(
   const history = useHistory();
   const location = useLocation();
 
-  const queryStringOptions: StringifyOptions = { arrayFormat: 'comma' };
+  const queryStringOptions: StringifyOptions = {
+    arrayFormat: 'comma',
+    skipEmptyString: true,
+  };
   const createQueryString = (params: QueryParams<Params>) =>
     stringify(params, queryStringOptions);
   const createQueryParams = (queryStr: string) =>
@@ -35,16 +40,22 @@ const useQueryParams = <Params extends Record<string, unknown>>(
     [location.search, defaultVal]
   );
 
+  const queryString = React.useMemo(() => createQueryString(queryParams), [queryParams]);
+  const defaultQueryString = React.useMemo(
+    () => createQueryString(defaultVal),
+    [defaultVal]
+  );
+
   const setQueryParams = React.useCallback<SetURLQueryParams<Params>>(
     value => {
       const newParams = typeof value === 'function' ? value(queryParams) : value;
       const newQueryStr = createQueryString(newParams);
       history.replace(`${location.pathname}?${newQueryStr}`);
     },
-    [history, location.search]
+    [history, queryParams, location.pathname]
   );
 
-  return { queryParams, setQueryParams };
+  return { queryParams, queryString, defaultQueryString, setQueryParams };
 };
 
 export default useQueryParams;

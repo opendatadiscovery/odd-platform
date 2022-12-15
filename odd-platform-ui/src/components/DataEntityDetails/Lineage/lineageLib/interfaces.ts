@@ -76,4 +76,5 @@ export type LineageQueryParams = {
   full: boolean; // full or compact view
   fn: boolean; // full names
   d: number; // depth
+  t: string; // transform
 };

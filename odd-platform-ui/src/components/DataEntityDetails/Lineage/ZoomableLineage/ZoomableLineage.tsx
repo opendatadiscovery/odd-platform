@@ -3,7 +3,9 @@ import { Group } from '@visx/group';
 import { Grid } from '@mui/material';
 import { type DataEntityLineageById } from 'redux/interfaces';
 import { localPoint } from '@visx/event';
-import { type Zoom } from '../lineageLib/interfaces';
+import { useQueryParams } from 'lib/hooks';
+import { defaultLineageQuery } from '../lineageLib/constants';
+import type { LineageQueryParams, Zoom } from '../lineageLib/interfaces';
 import * as S from './ZoomableLineageStyles';
 import LineageControls from './LineageControls/LineageControls';
 import LineageGraph from './LineageGraph/LineageGraph';
@@ -22,6 +24,18 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
       zoom.reset();
     }, []);
 
+    const { setQueryParams } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
+
+    const handleOnMouseLeave = () => {
+      if (zoom.isDragging) zoom.dragEnd();
+      setQueryParams(prev => ({ ...prev, t: JSON.stringify(zoom.transformMatrix) }));
+    };
+
+    const handleOnDoubleClick = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+      const point = localPoint(e) || { x: 0, y: 0 };
+      zoom.scale({ scaleX: 2, scaleY: 2, point });
+    };
+
     return (
       <Grid container position='relative'>
         <LineageControls handleCenterRoot={handleCenterRoot} />
@@ -33,13 +47,8 @@ const ZoomableLineage = React.memo<ZoomableLineageProps>(
           onMouseDown={zoom.dragStart}
           onMouseMove={zoom.dragMove}
           onMouseUp={zoom.dragEnd}
-          onMouseLeave={() => {
-            if (zoom.isDragging) zoom.dragEnd();
-          }}
-          onDoubleClick={event => {
-            const point = localPoint(event) || { x: 0, y: 0 };
-            zoom.scale({ scaleX: 2, scaleY: 2, point });
-          }}
+          onMouseLeave={handleOnMouseLeave}
+          onDoubleClick={handleOnDoubleClick}
         >
           <rect width={width} height={height} fill='#F4F5F7' />
           <Group transform={zoom.toString()}>

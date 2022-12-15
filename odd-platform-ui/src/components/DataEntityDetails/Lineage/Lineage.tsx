@@ -15,6 +15,7 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import type { TransformMatrix } from '@visx/zoom/lib/types';
 import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
 import { defaultLineageQuery } from './lineageLib/constants';
@@ -26,7 +27,7 @@ const Lineage: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const {
-    queryParams: { d },
+    queryParams: { d, t },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
@@ -82,6 +83,12 @@ const Lineage: React.FC = () => {
     skewY: 0,
   };
 
+  const setInitialTransform = React.useMemo<TransformMatrix>(() => {
+    if (t) return JSON.parse(t) as TransformMatrix;
+
+    return initialTransformMatrix;
+  }, [t, initialTransformMatrix]);
+
   return (
     <S.Container>
       {isLineageFetching ? (
@@ -99,7 +106,7 @@ const Lineage: React.FC = () => {
             scaleXMax={2}
             scaleYMin={0.2}
             scaleYMax={2}
-            initialTransformMatrix={initialTransformMatrix}
+            initialTransformMatrix={setInitialTransform}
           >
             {zoom => (
               <ZoomableLineage

@@ -10,8 +10,6 @@ export const defaultGraphState: LineageGraphState = {
   depth: { upstream: 0, downstream: 0 },
 };
 
-export const defaultDepth = 1;
-
 export const NODE_WIDTH = 300;
 export const NODE_HEIGHT_WITHOUT_TITLE = 125;
 export const NODE_COMPACT_HEIGHT_WITHOUT_TITLE = 70;
@@ -73,4 +71,5 @@ export const defaultLineageQuery: LineageQueryParams = {
   full: true,
   fn: false,
   d: 1,
+  t: '',
 };
