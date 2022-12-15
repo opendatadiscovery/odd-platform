@@ -40,9 +40,9 @@ test.describe('Owners', () => {
       expect(await pages.modals.addOwner.addNewOwner.isDisabled()).toBeTruthy();
     });
   });
-    /**
-     * /project/1/test-cases/3
-     */
+  /**
+   * /project/1/test-cases/3
+   */
   test(`Close the popup window Add owner`, async ({ steps: { pages } }) => {
     await test.step(`I close the popup`, async () => {
       await pages.modals.addOwner.closeDialog.click();
