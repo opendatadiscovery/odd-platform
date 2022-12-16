@@ -49,16 +49,8 @@ export default class AddTagModal extends BaseModal {
     await this.page.locator(SELECTORS.importantTag).nth(indexOfCheckbox).click();
   }
 
-  async isCheckboxMarked(indexOfCheckbox: number) {
-    await this.page.locator(SELECTORS.importantTag).nth(indexOfCheckbox).inputValue();
-  }
-
   get addOneMoreTag() {
     return new Button(this.page, SELECTORS.addOneMoreTag);
-  }
-
-  async isTagNameInputVisible(numberOfInput: number) {
-    await this.page.locator(SELECTORS.tagName).nth(numberOfInput).isVisible();
   }
 
   async isTagNameInputHidden(numberOfInput: number) {
