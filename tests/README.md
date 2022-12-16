@@ -13,10 +13,10 @@
 1. Clone the repo and go to its directory
 
 1. Build ODD Platform's docker image locally:
-   
+
        ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build
    or use the following command if your environment is ARM based
- 
+
        ./gradlew jibDockerBuild -x test --image odd-platform:e2e-latest-build -PcontainerBuildArm=true
 
 1. Go to `tests` directory
@@ -69,3 +69,8 @@
     - [Prettier plugin for WebStorm](https://www.jetbrains.com/help/webstorm/prettier.html)
 
 1. Open a project from the "tests" directory, so that the ESLint and Prettier plugins work correctly in the text editor
+
+## Notes
+
+1. Do the following if you want to run tests in CI to check your changes in your feature branch without creating a pull request:
+    - create a feature branch with a name that starts or ends with "debug" (for instance: `debug_my_wonderful_tests`, or `my_wonderful_tests_debug`)

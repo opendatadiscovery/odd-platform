@@ -3,6 +3,10 @@ on:
   workflow_dispatch:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
+  push:
+    branches:
+      - 'debug**'
+      - '**debug'
 
 permissions:
   checks: write
