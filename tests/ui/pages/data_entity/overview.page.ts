@@ -2,6 +2,7 @@ import Button from '../../elements/button';
 import Dropdown from '../../elements/dropdown';
 import InputField from '../../elements/input-field';
 import Radio from '../../elements/radio';
+import TextBox from '../../elements/text-box';
 import DataEntityPage from './data_entity.page';
 
 const SELECTORS = {
@@ -23,6 +24,7 @@ const SELECTORS = {
   addCustomName: `[data-qa="add_business_name"]`,
   customNameInput: `[name="internalName"]`,
   createNewEntityLink: `[role="presentation"]:has-text('Create new')`,
+  successMessage: `p:has-text('successfully created')`,
 };
 type InputName = 'Name' | 'Tag' | 'Title' | 'Metadata';
 
@@ -80,6 +82,10 @@ export default class OverviewPage extends DataEntityPage {
     );
   }
 
+  public get successMessage() {
+    return new TextBox(this.page, SELECTORS.successMessage);
+  }
+
   private get customNameButton() {
     return new Button(this.page, SELECTORS.addCustomName);
   }
@@ -99,6 +105,7 @@ export default class OverviewPage extends DataEntityPage {
     await this.inputTitle.fill(title);
     await this.createNewEntityLink.click();
     await this.saveButton.click();
+    await this.successMessage.waitForElementToBeVisible();
   }
 
   async fillCustomDescriptionInput(text: string) {

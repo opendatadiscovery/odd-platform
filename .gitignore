@@ -18,7 +18,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 node_modules/
-/test-results/
+/tests/test-results/
 /tests/playwright-report/
 /tests/dist/
 /playwright/.cache/

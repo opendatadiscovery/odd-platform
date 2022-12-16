@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
 test.describe('Tags', () => {
-  let tagName;
+  let tagName: string;
 
   test.beforeEach(async ({ steps: { pages }, page }) => {
     await test.step(`I open Tags page`, async () => {
@@ -40,89 +40,71 @@ test.describe('Tags', () => {
     });
     await test.step(`I mark checkbox 'important'`, async () => {
       await pages.modals.addTag.checkImportant(0);
-      expect(pages.modals.addTag.isCheckboxMarked(0)).toBeTruthy();
     });
     await test.step(`I click 'create' button`, async () => {
       await pages.modals.addTag.addNewTag.click();
       await pages.tags.waitUntilTagVisible(tagName);
       expect(await pages.tags.isTagVisible(`${tagName}`)).toBeTruthy();
-      expect(await pages.tags.isTagImportant(`${tagName}`)).toBeTruthy();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
     });
   });
 
   /**
    * /project/1/test-cases/6
    */
-  test(`Add several unimportant tags`, async ({ steps: { pages } }) => {
-    let tags;
-    let tagsAll;
+  test(`Add several unimportant tags`, async ({ workerId, steps: { pages } }) => {
+    const tagNamePrefix = `tag${workerId}`;
     await test.step(`I add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
     });
     await test.step(`I fill inputs and click 'create' button`, async () => {
-      tags = await pages.modals.addTag.fillAllTagName('tag');
+      await pages.modals.addTag.fillAllTagName(tagNamePrefix);
       await pages.modals.addTag.addNewTag.click();
-      tagsAll = await pages.tags.getAllTags();
-      await pages.tags.waitUntilTagVisible(tags);
     });
     await test.step(`I check new tags`, async () => {
-      expect(await pages.tags.tagsList.isVisible()).toBeTruthy();
-      expect(tagsAll).toEqual(expect.arrayContaining(tags));
+      expect(await pages.tags.tagsList.isListItemVisible(`${tagNamePrefix}_0`)).toBeTruthy();
+      expect(await pages.tags.tagsList.isListItemVisible(`${tagNamePrefix}_1`)).toBeTruthy();
     });
   });
 
   /**
    * /project/1/test-cases/7
    */
-  test(`Add several tags, one important`, async ({ steps: { pages } }) => {
-    let tags;
-    let tagsAll;
+  test(`Add several tags, one important`, async ({ workerId, steps: { pages } }) => {
+    const tagNamePrefix = `tag_test${workerId}`;
+
     await test.step(`I add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
     });
     await test.step(`I fill inputs, check 'important' and click 'create' button`, async () => {
-      tags = await pages.modals.addTag.fillAllTagName('tag_test');
+      await pages.modals.addTag.fillAllTagName(`tag_test${workerId}`);
       await pages.modals.addTag.checkImportant(1);
-      expect(pages.modals.addTag.isCheckboxMarked(1)).toBeTruthy();
       await pages.modals.addTag.addNewTag.click();
-      await pages.tags.waitUntilTagVisible(tags);
-      tagsAll = await pages.tags.getAllTags();
     });
     await test.step(`I check new tags`, async () => {
-      expect(await pages.tags.tagsList.isVisible()).toBeTruthy();
-      expect(tagsAll).toEqual(expect.arrayContaining(tags));
-      expect(await pages.tags.isTagImportant(`tag_test_1`)).toBeTruthy();
+      await expect(pages.tags.normalTag(`${tagNamePrefix}_0`)).toBeVisible();
+      await expect(pages.tags.importantTag(`${tagNamePrefix}_1`)).toBeVisible();
     });
   });
 
   /**
    * /project/1/test-cases/29
    */
-  test(`Add several important tags`, async ({ steps: { pages } }) => {
-    let tags;
-    let tagsAll;
+  test(`Add several important tags`, async ({ workerId, steps: { pages } }) => {
+    const tagNamePrefix = `new_test${workerId}`;
+
     await test.step(`I add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
     });
     await test.step(`I fill inputs, check 'important' and click 'create' button`, async () => {
-      tags = await pages.modals.addTag.fillAllTagName('new_test');
+      await pages.modals.addTag.fillAllTagName(tagNamePrefix);
       await pages.modals.addTag.checkImportant(0);
       await pages.modals.addTag.checkImportant(1);
       await pages.modals.addTag.addNewTag.click();
-      await pages.tags.waitUntilTagVisible(tags);
-      tagsAll = await pages.tags.getAllTags();
     });
     await test.step(`I check new tags`, async () => {
-      expect(await pages.tags.tagsList.isVisible()).toBeTruthy();
-      expect(tagsAll).toEqual(expect.arrayContaining(tags));
-      expect(await pages.tags.isTagImportant(`new_test_0`)).toBeTruthy();
-      expect(await pages.tags.isTagImportant(`new_test_1`)).toBeTruthy();
+      await expect(pages.tags.importantTag(`${tagNamePrefix}_0`)).toBeVisible();
+      await expect(pages.tags.importantTag(`${tagNamePrefix}_1`)).toBeVisible();
     });
   });
 });

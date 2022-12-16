@@ -1,6 +1,5 @@
 import { Locator, Page } from '@playwright/test';
 
-import Button from './button';
 import CustomElement from './custom-element';
 
 const SELECTORS = {
@@ -78,45 +77,9 @@ export default class List extends CustomElement {
    */
   private async getListItem(identifier: number | string, exact?: boolean): Promise<Locator> {
     await this.customElement.waitFor({ state: 'attached' });
-
-    const item: Locator = this.getListElement(identifier, exact);
-    let isVisible = false;
-    let nextButton: Button;
-
-    if (await item.count()) {
-      return item;
-    }
-
-    const firstPaginationItem = new Button(
-      this.context,
-      this.paginationRoot.locator('li[class*="paginationPage"] a').nth(0),
-    );
-
-    if (await firstPaginationItem.isVisible()) {
-      await firstPaginationItem.click();
-
-      nextButton = new Button(
-        this.context,
-        this.paginationRoot.locator('li[class*="next"] a[class*="paginationButtonsLinks"]'),
-      );
-
-      while (!isVisible && (await nextButton.getAttribute('aria-disabled')) === 'false') {
-        await nextButton.click();
-        await this.customElement.waitFor();
-
-        try {
-          await item.waitFor({ timeout: 5000 });
-
-          isVisible = true;
-        } catch {
-          isVisible = false;
-        }
-      }
-
-      return item;
-    }
-
-    return item;
+    const listItem: Locator = this.getListElement(identifier, exact);
+    await listItem.waitFor();
+    return listItem;
   }
 
   /**
@@ -160,9 +123,8 @@ export default class List extends CustomElement {
    * @returns
    */
   async isListItemVisible(identifier: string | number): Promise<boolean> {
-    this.customElement = await this.getListItem(identifier);
-
-    return this.isVisible();
+    const listItem: Locator = await this.getListItem(identifier);
+    return listItem.isVisible();
   }
 
   /**
@@ -217,10 +179,11 @@ export default class List extends CustomElement {
   }
 
   /**
-   * Check if at least one item is presented in the list
+   * Check if list is empty
    */
-  async isListNotEmpty(): Promise<boolean> {
-    return this.listItems.isVisible();
+  async isListEmpty(): Promise<boolean> {
+    await this.listItems.first().waitFor({ state: 'hidden' });
+    return this.listItems.isHidden();
   }
 }
 
