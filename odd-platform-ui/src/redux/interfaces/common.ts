@@ -14,3 +14,11 @@ export type SerializeDateToNumber<Data> = {
     ? number
     : SerializeDateToNumber<Data[Key]>;
 };
+
+export interface PaginatedResponse<Data> {
+  items: Data;
+  pageInfo: CurrentPageInfo;
+}
+
+export type DataEntityId = { dataEntityId: number };
+export type RelatedToEntityId<Data> = Data & DataEntityId;

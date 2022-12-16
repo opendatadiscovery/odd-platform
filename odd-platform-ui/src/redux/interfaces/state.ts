@@ -39,7 +39,7 @@ import type {
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
-import type { CurrentPageInfo, PageInfo } from './common';
+import type { CurrentPageInfo, PageInfo, PaginatedResponse } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
 import type { DataEntityDetailsState } from './dataentities';
@@ -171,9 +171,11 @@ export interface DataEntitySearchState {
   facetState: SearchFacetsByName;
 }
 
-export interface AlertsState extends EntityState<Alert> {
-  totals: AlertTotals;
-  pageInfo: CurrentPageInfo;
+export interface AlertsState {
+  alerts: PaginatedResponse<Alert[]> & { totals: AlertTotals };
+  dataEntityAlerts: {
+    [dataEntityId: number]: PaginatedResponse<Alert[]> & { alertCount: number };
+  };
   configs: EntityState<AlertsConfig>;
 }
 
