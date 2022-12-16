@@ -58,7 +58,6 @@ export default class AddTagModal extends BaseModal {
   }
 
   async isTagNameInputVisible(numberOfInput: number) {
-    await this.page.locator(SELECTORS.tagName).nth(numberOfInput).waitFor({ state: 'visible' });
     await this.page.locator(SELECTORS.tagName).nth(numberOfInput).isVisible();
   }
 
