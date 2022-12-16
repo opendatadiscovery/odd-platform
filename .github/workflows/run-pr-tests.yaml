@@ -2,7 +2,7 @@ name: Run tests
 on:
   workflow_dispatch:
   pull_request:
-    types: ['opened', 'edited', 'reopened', 'synchronize']
+    types: ['opened', 'reopened', 'synchronize']
   push:
     branches:
       - 'debug**'
