@@ -135,13 +135,11 @@ test.describe('Tags', () => {
   test(`Delete tag in popup window`, async ({ steps: { pages } }) => {
     await test.step(`I add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
+      await expect(pages.modals.addTag.tagNameField.locator).toHaveCount(2);
     });
     await test.step(`I delete one tag`, async () => {
       await pages.modals.addTag.deleteTag(1);
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputHidden(1)).toBeTruthy();
+      await expect(pages.modals.addTag.tagNameField.locator).toHaveCount(1);
     });
   });
   /**
@@ -150,16 +148,14 @@ test.describe('Tags', () => {
   test(`Delete important tag in popup window`, async ({ steps: { pages } }) => {
     await test.step(`Add one more tag`, async () => {
       await pages.modals.addTag.addOneMoreTag.click();
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputVisible(1)).toBeTruthy();
+      await expect(pages.modals.addTag.tagNameField.locator).toHaveCount(2);
     });
     await test.step(`Click 'important'`, async () => {
       await pages.modals.addTag.checkImportant(1);
     });
     await test.step(`Delete important tag`, async () => {
       await pages.modals.addTag.deleteTag(1);
-      expect(pages.modals.addTag.isTagNameInputVisible(0)).toBeTruthy();
-      expect(pages.modals.addTag.isTagNameInputHidden(1)).toBeTruthy();
+      await expect(pages.modals.addTag.tagNameField.locator).toHaveCount(1);
     });
   });
 });

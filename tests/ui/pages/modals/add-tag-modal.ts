@@ -53,12 +53,8 @@ export default class AddTagModal extends BaseModal {
     return new Button(this.page, SELECTORS.addOneMoreTag);
   }
 
-  async isTagNameInputHidden(numberOfInput: number) {
-    await this.page.locator(SELECTORS.tagName).nth(numberOfInput).isHidden();
-  }
-
   async deleteTag(numberOfButton: number) {
-    await this.page.locator(SELECTORS.deleteTagButton).nth(numberOfButton).click();
+    await this.modal.locator(SELECTORS.deleteTagButton).nth(numberOfButton).click();
   }
 
   async fillAllTagName(name: string) {
