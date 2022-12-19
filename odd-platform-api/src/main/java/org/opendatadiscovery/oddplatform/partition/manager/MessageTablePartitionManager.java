@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.Getter;
 import org.opendatadiscovery.oddplatform.datacollaboration.config.ConditionalOnDataCollaboration;
 import org.opendatadiscovery.oddplatform.model.Tables;
+import org.opendatadiscovery.oddplatform.partition.service.PartitionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,10 @@ public class MessageTablePartitionManager extends AbstractPartitionManager imple
 
     @Getter
     private final List<String> tableNameExclusions = singletonList(Tables.MESSAGE_PROVIDER_EVENT.getName());
+
+    public MessageTablePartitionManager(final PartitionService partitionService) {
+        super(partitionService);
+    }
 
     @Override
     public void runAdditionalQueriesForPartition(
