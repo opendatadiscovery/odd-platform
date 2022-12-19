@@ -51,10 +51,6 @@ public class DataCollaborationMessageSenderJob extends Thread {
 
                         final String messageTs;
                         try {
-                            if (true) {
-                                throw new RuntimeException();
-                            }
-
                             messageTs = messageProviderClient.postMessage(messageCtx).block();
                         } catch (final Exception e) {
                             log.error("Couldn't send a message to {}: {}", message.getProvider(), e.getMessage());
