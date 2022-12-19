@@ -9,15 +9,7 @@ import java.util.Optional;
 public interface PartitionService {
     Optional<String> getLastPartitionTableName(final Connection connection,
                                                final String tableName,
-                                               final String schemaName,
                                                final List<String> tableNameExclusions) throws SQLException;
-
-    // TODO: get ridda
-    default Optional<String> getLastPartitionTableName(final Connection connection,
-                                                       final String tableName,
-                                                       final List<String> tableNameExclusions) throws SQLException {
-        return getLastPartitionTableName(connection, tableName, null, tableNameExclusions);
-    }
 
     String createPartition(final Connection connection,
                            final String tableName,
@@ -25,4 +17,10 @@ public interface PartitionService {
                            final LocalDate endDate) throws SQLException;
 
     LocalDate getLastPartitionDate(final String tableName);
+
+    List<String> getEmptyPastPartitions(final Connection connection,
+                                        final String tableName,
+                                        final List<String> tableNameExclusions) throws SQLException;
+
+    void dropPartition(final Connection connection, final String partitionName) throws SQLException;
 }

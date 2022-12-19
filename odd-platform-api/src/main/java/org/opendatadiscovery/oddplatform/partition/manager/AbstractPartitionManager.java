@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.partition.service.PartitionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,12 +20,14 @@ public abstract class AbstractPartitionManager implements PartitionManager {
         final int partitionDaysPeriod = getPartitionDaysPeriod();
 
         try {
+            final LocalDate baseline = DateTimeUtil.generateNow().toLocalDate();
+
             LocalDate lastPartitionDate = partitionService
                 .getLastPartitionTableName(connection, tableName, getTableNameExclusions())
                 .map(partitionService::getLastPartitionDate)
-                .orElse(LocalDate.now());
+                .orElse(baseline);
 
-            final LocalDate bufferDate = LocalDate.now().plusDays(partitionDaysPeriod);
+            final LocalDate bufferDate = baseline.plusDays(partitionDaysPeriod);
 
             final List<TablePartition> newPartitions = new ArrayList<>();
             while (lastPartitionDate.isBefore(bufferDate)) {
