@@ -14,7 +14,10 @@ import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
-import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import {
+  expandEntitiesFromDownstreamGroup,
+  expandEntitiesFromUpstreamGroup,
+} from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
 import type { TransformMatrix } from '@visx/zoom/lib/types';
 import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
@@ -27,7 +30,7 @@ const Lineage: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const {
-    queryParams: { d, t, eag },
+    queryParams: { d, t, eag, exdg, exug },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
@@ -41,9 +44,17 @@ const Lineage: React.FC = () => {
     };
 
     dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-      dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
-        setIsLineageFetching(false)
-      )
+      dispatch(fetchDataEntityUpstreamLineage(params)).then(() => {
+        if (exdg?.length > 0) {
+          const expandGroupParams = { rootNodeId: dataEntityId, idsToExclude: exdg };
+          dispatch(expandEntitiesFromDownstreamGroup(expandGroupParams));
+        }
+        if (exug?.length > 0) {
+          const expandGroupParams = { rootNodeId: dataEntityId, idsToExclude: exug };
+          dispatch(expandEntitiesFromUpstreamGroup(expandGroupParams));
+        }
+        setIsLineageFetching(false);
+      })
     );
   }, [d, dataEntityId]);
 
@@ -92,10 +103,10 @@ const Lineage: React.FC = () => {
           <Zoom<SVGSVGElement>
             width={width}
             height={height}
-            scaleXMin={0.2}
-            scaleXMax={2}
-            scaleYMin={0.2}
-            scaleYMax={2}
+            scaleXMin={0.05}
+            scaleXMax={3}
+            scaleYMin={0.05}
+            scaleYMax={3}
             initialTransformMatrix={setInitialTransform}
           >
             {zoom => (

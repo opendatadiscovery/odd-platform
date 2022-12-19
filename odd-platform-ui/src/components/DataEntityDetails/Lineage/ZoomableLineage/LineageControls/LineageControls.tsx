@@ -22,7 +22,7 @@ const LineageControls = React.memo<LineageControlsProps>(
     } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
     React.useEffect(() => {
-      dispatch(expandAllGroups({ rootNodeId, isExpanded: eag }));
+      if (eag) dispatch(expandAllGroups({ rootNodeId, isExpanded: eag }));
     }, []);
 
     const handleFullNamesChange = React.useCallback(

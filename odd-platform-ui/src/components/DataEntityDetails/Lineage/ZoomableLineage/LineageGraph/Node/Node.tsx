@@ -55,9 +55,10 @@ const Node: React.FC<NodeProps> = ({
   }, [lineageLink, setQueryParams, node.depth]);
 
   const [showLoadMore, setShowLoadMore] = React.useState(false);
-  const [hideLoadMore] = React.useState(false);
+  const [hideLoadMore, setHideLoadMore] = React.useState(false);
   const hideLoadMoreHandler = React.useCallback(() => {
     setHighLightedLinks([]);
+    setHideLoadMore(true);
   }, []);
 
   const handleMouseEnter = () => {

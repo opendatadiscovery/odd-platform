@@ -37,6 +37,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   const { dataEntityDetailsPath } = useAppPaths();
   const {
     queryParams: { eag },
+    setQueryParams,
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLoadMoreClicked, setIsLoadMoreClicked] = React.useState(false);
@@ -63,8 +64,16 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
     e.preventDefault();
     if (streamType === 'downstream') {
       dispatch(expandEntitiesFromDownstreamGroup({ rootNodeId, idsToExclude }));
+      setQueryParams(prev => ({
+        ...prev,
+        exdg: [...(prev.exdg || []), ...idsToExclude],
+      }));
     } else {
       dispatch(expandEntitiesFromUpstreamGroup({ rootNodeId, idsToExclude }));
+      setQueryParams(prev => ({
+        ...prev,
+        exug: [...(prev.exug || []), ...idsToExclude],
+      }));
     }
 
     setIsLoadMoreClicked(true);
