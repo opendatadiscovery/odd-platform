@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.config;
 
+import javax.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -8,5 +9,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DataCollaborationProperties {
     private int senderMessageAdvisoryLockId;
     private int receiveEventAdvisoryLockId;
-    private String platformBaseUrl;
+    private int sendingMessagesRetryCount;
+
+    @PostConstruct
+    public void validate() {
+        if (sendingMessagesRetryCount < 0) {
+            throw new IllegalStateException(
+                "datacollaboration.sending-messages-retry-count property cannot be below zero");
+        }
+    }
 }
