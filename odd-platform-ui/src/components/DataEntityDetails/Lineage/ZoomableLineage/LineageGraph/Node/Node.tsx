@@ -4,8 +4,9 @@ import { useHistory } from 'react-router-dom';
 import type { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
-import { useAppPaths } from 'lib/hooks';
+import { useAppPaths, useQueryParams } from 'lib/hooks';
 import { Group } from '@visx/group';
+import { defaultLineageQuery } from '../../../lineageLib/constants';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
 import LineageContext from '../../../lineageLib/LineageContext/LineageContext';
 import NodeTitle from './NodeTitle/NodeTitle';
@@ -19,46 +20,45 @@ interface NodeProps {
   streamType: StreamType;
   rootNodeId: number;
   node: HierarchyPointNode<TreeNodeDatum>;
-  position: Point;
   parent: HierarchyPointNode<TreeNodeDatum> | null;
   reverse?: boolean;
   hasChildren: boolean;
-  nodeDepth: number;
-  setInitialDepth: (depth: number) => void;
 }
 
 const Node: React.FC<NodeProps> = ({
   streamType,
   rootNodeId,
   node,
-  position,
   parent,
   reverse,
   hasChildren,
-  nodeDepth,
-  setInitialDepth,
 }) => {
   const history = useHistory();
   const { dataEntityLineagePath } = useAppPaths();
+  const { defaultQueryString: lineageQueryString, setQueryParams } = useQueryParams({
+    ...defaultLineageQuery,
+    d: node.depth || 1,
+  });
   const { nodeSize, renderedLinks, setHighLightedLinks } =
     React.useContext(LineageContext);
 
   const lineageLink =
     parent && node.data.externalName
       ? dataEntityLineagePath(
-          node.data.originalGroupId ? node.data.originalGroupId : node.data.id
+          node.data.originalGroupId ? node.data.originalGroupId : node.data.id,
+          lineageQueryString
         )
       : '#';
 
   const handleTitleClick = React.useCallback(() => {
-    setInitialDepth(nodeDepth);
     history.push(lineageLink);
-  }, [lineageLink, nodeDepth]);
+  }, [lineageLink, setQueryParams, node.depth]);
 
   const [showLoadMore, setShowLoadMore] = React.useState(false);
-  const [hideLoadMore] = React.useState(false);
+  const [hideLoadMore, setHideLoadMore] = React.useState(false);
   const hideLoadMoreHandler = React.useCallback(() => {
     setHighLightedLinks([]);
+    setHideLoadMore(true);
   }, []);
 
   const handleMouseEnter = () => {
@@ -81,8 +81,8 @@ const Node: React.FC<NodeProps> = ({
 
   return (
     <Group
-      top={position.x}
-      left={position.y}
+      top={node.x}
+      left={node.y}
       id={node.data.d3attrs.id}
       style={{ cursor: 'initial' }}
       onMouseEnter={handleMouseEnter}

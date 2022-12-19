@@ -71,3 +71,15 @@ export interface LineageParsedData {
     crossEdges: DataEntityLineageEdge[];
   };
 }
+
+export type LineageQueryParams = {
+  full: boolean; // full or compact view
+  fn: boolean; // full names
+  d: number; // depth
+  t: string; // transform
+  eag: boolean; // expand all groups
+  exdg: number[]; // downstream's ids to expand from group
+  exug: number[]; // upstream's ids to expand from group
+  exu: number[]; // upstream's ids to load more
+  exd: number[]; // downstream's ids to load more
+};
