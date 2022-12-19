@@ -44,12 +44,27 @@ public class DataCollaborationMessageSenderJob extends Thread {
                         final MessageProviderClient messageProviderClient = messageProviderClientFactory
                             .getOrFail(MessageProviderDto.valueOf(message.getProvider()));
 
+                        if (message.getTrySendCount() != null) {
+                            log.debug("Trying resending the message {} after {} unsuccessful tries",
+                                message.getUuid(), message.getTrySendCount());
+                        }
+
                         final String messageTs;
                         try {
+                            if (true) {
+                                throw new RuntimeException();
+                            }
+
                             messageTs = messageProviderClient.postMessage(messageCtx).block();
                         } catch (final Exception e) {
                             log.error("Couldn't send a message to {}: {}", message.getProvider(), e.getMessage());
-                            dataCollaborationRepository.markMessageAsFailed(message.getUuid(), e.getMessage());
+
+                            if (shouldRetry(message.getTrySendCount())) {
+                                dataCollaborationRepository.incrementMessageTryCount(message.getUuid());
+                                TimeUnit.SECONDS.sleep(1);
+                            } else {
+                                dataCollaborationRepository.markMessageAsFailed(message.getUuid(), e.getMessage());
+                            }
                             continue;
                         }
 
@@ -73,6 +88,10 @@ public class DataCollaborationMessageSenderJob extends Thread {
                 throw new DataCollaborationMessageSenderException(e);
             }
         }
+    }
+
+    private boolean shouldRetry(final Short trySendCount) {
+        return trySendCount == null || trySendCount < dataCollaborationProperties.getSendingMessagesRetryCount();
     }
 
     private Connection acquireLeaderElectionConnection() throws SQLException {
