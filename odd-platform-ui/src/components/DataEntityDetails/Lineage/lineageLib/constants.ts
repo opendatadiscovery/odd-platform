@@ -75,4 +75,6 @@ export const defaultLineageQuery: LineageQueryParams = {
   eag: false,
   exdg: [],
   exug: [],
+  exu: [],
+  exd: [],
 };

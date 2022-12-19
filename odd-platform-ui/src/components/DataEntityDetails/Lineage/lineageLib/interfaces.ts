@@ -78,6 +78,8 @@ export type LineageQueryParams = {
   d: number; // depth
   t: string; // transform
   eag: boolean; // expand all groups
-  exdg: number[];
-  exug: number[];
+  exdg: number[]; // downstream's ids to expand from group
+  exug: number[]; // upstream's ids to expand from group
+  exu: number[]; // upstream's ids to load more
+  exd: number[]; // downstream's ids to load more
 };

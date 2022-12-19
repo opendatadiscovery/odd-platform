@@ -30,7 +30,7 @@ const Lineage: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const {
-    queryParams: { d, t, eag, exdg, exug },
+    queryParams: { d, t, eag, exdg, exug, exd, exu },
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
@@ -43,8 +43,8 @@ const Lineage: React.FC = () => {
       expandGroups: eag,
     };
 
-    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-      dispatch(fetchDataEntityUpstreamLineage(params)).then(() => {
+    dispatch(fetchDataEntityDownstreamLineage({ ...params, expand: exd })).then(() =>
+      dispatch(fetchDataEntityUpstreamLineage({ ...params, expand: exu })).then(() => {
         if (exdg?.length > 0) {
           const expandGroupParams = { rootNodeId: dataEntityId, idsToExclude: exdg };
           dispatch(expandEntitiesFromDownstreamGroup(expandGroupParams));
@@ -104,9 +104,9 @@ const Lineage: React.FC = () => {
             width={width}
             height={height}
             scaleXMin={0.05}
-            scaleXMax={3}
+            scaleXMax={2}
             scaleYMin={0.05}
-            scaleYMax={3}
+            scaleYMax={2}
             initialTransformMatrix={setInitialTransform}
           >
             {zoom => (

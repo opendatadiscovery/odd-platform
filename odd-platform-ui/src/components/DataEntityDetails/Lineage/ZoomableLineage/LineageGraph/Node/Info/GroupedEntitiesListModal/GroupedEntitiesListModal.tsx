@@ -49,10 +49,20 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
       const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups: eag };
       if (streamType === 'downstream') {
         dispatch(fetchDataEntityDownstreamLineage(params));
+        setQueryParams(prev => ({
+          ...prev,
+          exdg: [...prev.exdg, dataEntityId],
+          exd: [...prev.exd, dataEntityId],
+        }));
       }
 
       if (streamType === 'upstream') {
         dispatch(fetchDataEntityUpstreamLineage(params));
+        setQueryParams(prev => ({
+          ...prev,
+          exug: [...prev.exug, dataEntityId],
+          exu: [...prev.exu, dataEntityId],
+        }));
       }
 
       setIsLoadMoreClicked(true);
@@ -64,16 +74,10 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
     e.preventDefault();
     if (streamType === 'downstream') {
       dispatch(expandEntitiesFromDownstreamGroup({ rootNodeId, idsToExclude }));
-      setQueryParams(prev => ({
-        ...prev,
-        exdg: [...(prev.exdg || []), ...idsToExclude],
-      }));
+      setQueryParams(prev => ({ ...prev, exdg: [...prev.exdg, ...idsToExclude] }));
     } else {
       dispatch(expandEntitiesFromUpstreamGroup({ rootNodeId, idsToExclude }));
-      setQueryParams(prev => ({
-        ...prev,
-        exug: [...(prev.exug || []), ...idsToExclude],
-      }));
+      setQueryParams(prev => ({ ...prev, exug: [...prev.exug, ...idsToExclude] }));
     }
 
     setIsLoadMoreClicked(true);

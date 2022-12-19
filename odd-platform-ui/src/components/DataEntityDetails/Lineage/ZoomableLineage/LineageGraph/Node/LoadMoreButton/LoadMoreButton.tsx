@@ -37,6 +37,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   const { nodeSize } = React.useContext(LineageContext);
   const {
     queryParams: { eag },
+    setQueryParams,
   } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const { isLoading: isUpstreamFetching } = useAppSelector(
@@ -55,10 +56,12 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
     const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups: eag };
     if (streamType === 'downstream') {
       dispatch(fetchDataEntityDownstreamLineage(params)).then(() => hideLoadMore());
+      setQueryParams(prev => ({ ...prev, exd: [...prev.exd, dataEntityId] }));
     }
 
     if (streamType === 'upstream') {
       dispatch(fetchDataEntityUpstreamLineage(params)).then(() => hideLoadMore());
+      setQueryParams(prev => ({ ...prev, exu: [...prev.exu, dataEntityId] }));
     }
   };
 
