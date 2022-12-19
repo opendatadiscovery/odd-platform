@@ -50,7 +50,7 @@ test.describe(() => {
       await pages.modals.editTag.saveTag.click();
       await pages.tags.waitUntilTagVisible(tagName);
       expect(await pages.tags.isTagVisible(`${tagName}`)).toBeTruthy();
-      expect(await pages.tags.isTagImportant(`${tagName}`)).toBeTruthy();
+      await expect(pages.tags.importantTag(tagName)).toBeVisible();
     });
   });
 
@@ -71,7 +71,7 @@ test.describe(() => {
       await pages.modals.editTag.saveTag.click();
       await pages.tags.waitUntilTagVisible(tagName);
       expect(await pages.tags.isTagVisible(`${tagName}`)).toBeTruthy();
-      expect(await pages.tags.isTagImportant(`${tagName}`)).toBeFalsy();
+      await expect(pages.tags.importantTag(tagName)).toBeHidden();
     });
   });
 });
