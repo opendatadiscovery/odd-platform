@@ -1,7 +1,7 @@
 import React from 'react';
 import { type HierarchyPointNode } from 'd3-hierarchy';
 import { useHistory } from 'react-router-dom';
-import type { Point, TreeNodeDatum } from 'redux/interfaces/graph';
+import type { TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
 import { useAppPaths, useQueryParams } from 'lib/hooks';

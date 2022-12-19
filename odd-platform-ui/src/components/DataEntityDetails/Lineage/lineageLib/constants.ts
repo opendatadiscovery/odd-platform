@@ -78,3 +78,14 @@ export const defaultLineageQuery: LineageQueryParams = {
   exu: [],
   exd: [],
 };
+
+export const layerHeight = 780;
+export const layerWidth = 1408;
+export const initialTransformMatrix = {
+  scaleX: 0.75,
+  scaleY: 0.75,
+  translateX: layerWidth / 2.3,
+  translateY: layerHeight / 2.5,
+  skewX: 0,
+  skewY: 0,
+};

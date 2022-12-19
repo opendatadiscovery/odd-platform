@@ -21,7 +21,12 @@ import {
 import type { TransformMatrix } from '@visx/zoom/lib/types';
 import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
-import { defaultLineageQuery } from './lineageLib/constants';
+import {
+  defaultLineageQuery,
+  initialTransformMatrix,
+  layerWidth,
+  layerHeight,
+} from './lineageLib/constants';
 import LineageProvider from './lineageLib/LineageContext/LineageProvider';
 import * as S from './LineageStyles';
 
@@ -75,17 +80,6 @@ const Lineage: React.FC = () => {
     [isUpstreamNotFetched, isDownstreamNotFetched]
   );
 
-  const height = 780;
-  const width = 1408;
-  const initialTransformMatrix = {
-    scaleX: 0.75,
-    scaleY: 0.75,
-    translateX: width / 2.3,
-    translateY: height / 2.5,
-    skewX: 0,
-    skewY: 0,
-  };
-
   const setInitialTransform = React.useMemo<TransformMatrix>(() => {
     if (t) return JSON.parse(t) as TransformMatrix;
 
@@ -103,8 +97,8 @@ const Lineage: React.FC = () => {
       {!isLineageFetching && !isLineageNotFetched && (
         <LineageProvider>
           <Zoom<SVGSVGElement>
-            width={width}
-            height={height}
+            width={layerWidth}
+            height={layerHeight}
             scaleXMin={0.05}
             scaleXMax={2}
             scaleYMin={0.05}
@@ -114,8 +108,8 @@ const Lineage: React.FC = () => {
             {zoom => (
               <ZoomableLineage
                 data={data}
-                width={width}
-                height={height}
+                width={layerWidth}
+                height={layerHeight}
                 zoom={zoom}
                 dataEntityId={dataEntityId}
               />

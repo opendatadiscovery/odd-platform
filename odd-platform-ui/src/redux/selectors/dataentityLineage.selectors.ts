@@ -6,8 +6,6 @@ import {
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 
-const getDataEntityId = (_: RootState, dataEntityId: number | string) => dataEntityId;
-
 const dataEntitiesState = ({ dataEntityLineage }: RootState): DataEntityLineageState =>
   dataEntityLineage;
 

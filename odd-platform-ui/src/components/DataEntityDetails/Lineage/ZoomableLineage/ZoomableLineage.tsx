@@ -4,7 +4,7 @@ import { Grid } from '@mui/material';
 import { type DataEntityLineageById } from 'redux/interfaces';
 import { localPoint } from '@visx/event';
 import { useQueryParams } from 'lib/hooks';
-import { defaultLineageQuery } from '../lineageLib/constants';
+import { defaultLineageQuery, initialTransformMatrix } from '../lineageLib/constants';
 import type { LineageQueryParams, Zoom } from '../lineageLib/interfaces';
 import * as S from './ZoomableLineageStyles';
 import LineageControls from './LineageControls/LineageControls';
@@ -20,9 +20,8 @@ interface ZoomableLineageProps {
 const ZoomableLineage = React.memo<ZoomableLineageProps>(
   ({ data, zoom, width, height, dataEntityId }) => {
     const handleCenterRoot = React.useCallback(() => {
-      zoom.center();
-      zoom.reset();
-    }, []);
+      zoom.setTransformMatrix(initialTransformMatrix);
+    }, [width, height]);
 
     const { setQueryParams } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
