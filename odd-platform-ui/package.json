@@ -69,7 +69,7 @@
     "react-markdown": "^8.0.3",
     "react-multi-date-picker": "^3.3.4",
     "react-redux": "^8.0.1",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.5.0",
     "react-truncate-markup": "^5.1.2",
     "react-virtualized": "^9.22.3",
     "remark-gfm": "^3.0.0",
