@@ -36,15 +36,17 @@ const Lineage: React.FC = () => {
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
 
   React.useEffect(() => {
-    const params = {
+    const baseParams = {
       dataEntityId,
       lineageDepth: d,
       rootNodeId: dataEntityId,
       expandGroups: eag,
     };
+    const downstreamParams = { ...baseParams, expandedEntityIds: exd };
+    const upstreamParams = { ...baseParams, expandedEntityIds: exu };
 
-    dispatch(fetchDataEntityDownstreamLineage({ ...params, expand: exd })).then(() =>
-      dispatch(fetchDataEntityUpstreamLineage({ ...params, expand: exu })).then(() => {
+    dispatch(fetchDataEntityDownstreamLineage(downstreamParams)).then(() =>
+      dispatch(fetchDataEntityUpstreamLineage(upstreamParams)).then(() => {
         if (exdg?.length > 0) {
           const expandGroupParams = { rootNodeId: dataEntityId, idsToExclude: exdg };
           dispatch(expandEntitiesFromDownstreamGroup(expandGroupParams));
