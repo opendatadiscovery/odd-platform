@@ -56,7 +56,15 @@ const useQueryParams = <Params extends Record<string, unknown>>(
     [history, queryParams, location.pathname]
   );
 
-  return { queryParams, queryString, defaultQueryString, setQueryParams };
+  return React.useMemo(
+    () => ({
+      queryParams,
+      queryString,
+      defaultQueryString,
+      setQueryParams,
+    }),
+    [queryParams, queryString, defaultQueryString, setQueryParams]
+  );
 };
 
 export default useQueryParams;

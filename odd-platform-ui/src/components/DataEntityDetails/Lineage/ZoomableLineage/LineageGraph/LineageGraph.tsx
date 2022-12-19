@@ -16,8 +16,14 @@ interface LineageGraphProps {
 }
 
 const LineageGraph = React.memo<LineageGraphProps>(({ data, dataEntityId }) => {
-  const { nodeSize, setRenderedNodes, setRenderedLinks, highLightedLinks } =
-    React.useContext(LineageContext);
+  const {
+    nodeSize,
+    setRenderedNodes,
+    setRenderedLinks,
+    highLightedLinks,
+    renderedLinks,
+    setHighLightedLinks,
+  } = React.useContext(LineageContext);
 
   const {
     queryParams: { fn },
@@ -71,6 +77,9 @@ const LineageGraph = React.memo<LineageGraphProps>(({ data, dataEntityId }) => {
       ))}
       {nodesUp?.map(node => (
         <Node
+          nodeSize={nodeSize}
+          renderedLinks={renderedLinks}
+          setHighLightedLinks={setHighLightedLinks}
           streamType='upstream'
           rootNodeId={dataEntityId}
           key={`node-${node.x}${node.y}`}
@@ -82,6 +91,9 @@ const LineageGraph = React.memo<LineageGraphProps>(({ data, dataEntityId }) => {
       ))}
       {nodesDown?.map(node => (
         <Node
+          nodeSize={nodeSize}
+          renderedLinks={renderedLinks}
+          setHighLightedLinks={setHighLightedLinks}
           streamType='downstream'
           rootNodeId={dataEntityId}
           key={`node-${node.x}${node.y}`}
