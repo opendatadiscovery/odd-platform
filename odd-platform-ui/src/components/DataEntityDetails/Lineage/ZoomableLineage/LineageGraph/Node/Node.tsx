@@ -35,24 +35,27 @@ const Node: React.FC<NodeProps> = ({
 }) => {
   const history = useHistory();
   const { dataEntityLineagePath } = useAppPaths();
-  const { defaultQueryString: lineageQueryString, setQueryParams } = useQueryParams({
+  const { defaultQueryString: lineageQueryString } = useQueryParams({
     ...defaultLineageQuery,
     d: node.depth || 1,
   });
   const { nodeSize, renderedLinks, setHighLightedLinks } =
     React.useContext(LineageContext);
 
-  const lineageLink =
-    parent && node.data.externalName
-      ? dataEntityLineagePath(
-          node.data.originalGroupId ? node.data.originalGroupId : node.data.id,
-          lineageQueryString
-        )
-      : '#';
+  const lineageLink = React.useMemo(
+    () =>
+      parent && node.data.externalName
+        ? dataEntityLineagePath(
+            node.data.originalGroupId ? node.data.originalGroupId : node.data.id,
+            lineageQueryString
+          )
+        : '#',
+    [parent, node, lineageQueryString, dataEntityLineagePath]
+  );
 
   const handleTitleClick = React.useCallback(() => {
     history.push(lineageLink);
-  }, [lineageLink, setQueryParams, node.depth]);
+  }, [lineageLink, history]);
 
   const [showLoadMore, setShowLoadMore] = React.useState(false);
   const [hideLoadMore, setHideLoadMore] = React.useState(false);
