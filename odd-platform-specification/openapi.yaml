@@ -1200,9 +1200,11 @@ paths:
             type: integer
             format: int32
             minimum: 1
-        - name: expand
+        - name: expanded_entity_ids
           in: query
           required: false
+          explode: false
+          description: 'List of DataEntity ids which were expanded in the lineage graph'
           schema:
             type: array
             items:
@@ -1232,7 +1234,7 @@ paths:
             type: integer
             format: int32
             minimum: 1
-        - name: expand
+        - name: expanded_entity_ids
           in: query
           required: false
           explode: false
