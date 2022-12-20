@@ -8,7 +8,7 @@ export default class CustomElement {
   /**
    * @returns Returns locator of the matching element
    */
-  public get locator(): Locator {
+  get locator(): Locator {
     return this.customElementContext;
   }
 
