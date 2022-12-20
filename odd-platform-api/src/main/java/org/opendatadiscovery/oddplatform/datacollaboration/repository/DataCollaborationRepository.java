@@ -25,4 +25,6 @@ public interface DataCollaborationRepository {
     void markEventAsFailed(final long eventId, final String errorMessage);
 
     void deleteEvent(final long eventId);
+
+    void incrementMessageTryCount(final UUID messageUUID);
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppTabItem, AppTabs } from 'components/shared';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityAlertsCount,
@@ -8,9 +8,11 @@ import {
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
+import { defaultLineageQuery } from '../Lineage/lineageLib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { dataEntityId, viewType } = useAppParams();
+  const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
   const {
     dataEntityOverviewPath,
     datasetStructurePath,
@@ -49,7 +51,7 @@ const DataEntityDetailsTabs: React.FC = () => {
       },
       {
         name: 'Lineage',
-        link: dataEntityLineagePath(dataEntityId),
+        link: dataEntityLineagePath(dataEntityId, lineageQueryString),
         hidden: isQualityTest,
         value: 'lineage',
       },

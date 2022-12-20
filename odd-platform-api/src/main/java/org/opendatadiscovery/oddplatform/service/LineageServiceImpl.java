@@ -75,15 +75,23 @@ public class LineageServiceImpl implements LineageService {
     }
 
     @Override
-    public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth,
+    public Mono<DataEntityLineage> getLineage(final long dataEntityId,
+                                              final int lineageDepth,
+                                              final List<Long> expandedEntityIds,
                                               final LineageStreamKind lineageStreamKind) {
         return reactiveDataEntityRepository.getDataEntityWithDataSourceAndNamespace(dataEntityId)
             .switchIfEmpty(Mono.error(new NotFoundException("DataEntity", dataEntityId)))
-            .flatMap(dto -> lineageRepository
-                .getLineageRelations(Set.of(dto.getDataEntity().getOddrn()), LineageDepth.of(lineageDepth),
-                    lineageStreamKind)
-                .collectList()
-                .map(relations -> Tuples.of(dto, relations)))
+            .flatMap(root -> {
+                final Flux<LineagePojo> lineageRelations = lineageRepository
+                    .getLineageRelations(Set.of(root.getDataEntity().getOddrn()), LineageDepth.of(lineageDepth),
+                        lineageStreamKind);
+                final Flux<LineagePojo> expandedRelations = lineageRepository
+                    .getLineageRelationsForDepthOne(expandedEntityIds, lineageStreamKind);
+                return lineageRelations.mergeWith(expandedRelations)
+                    .distinct()
+                    .collectList()
+                    .map(relations -> Tuples.of(root, relations));
+            })
             .flatMap(function((dto, relations) -> {
                 final Set<String> oddrnsToFetch = relations.stream()
                     .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
