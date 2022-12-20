@@ -2112,6 +2112,14 @@ components:
           $ref: '#/components/schemas/DatasetFieldInformationActivityState'
         custom_group:
           $ref: '#/components/schemas/CustomGroupActivityState'
+        alert_halt_config:
+          $ref: '#/components/schemas/AlertHaltConfigActivityState'
+        alert_status_updated:
+          $ref: '#/components/schemas/AlertStatusUpdatedActivityState'
+        open_alert_received:
+          $ref: '#/components/schemas/AlertReceivedActivityState'
+        resolved_alert_received:
+          $ref: '#/components/schemas/AlertReceivedActivityState'
 
     OwnershipActivityState:
       type: object
@@ -2273,6 +2281,49 @@ components:
           items:
             $ref: '#/components/schemas/DataEntityClass'
 
+    AlertHaltConfigActivityState:
+      type: object
+      properties:
+        failed_job_halt_until:
+          type: string
+          format: date-time
+        failed_dq_test_halt_until:
+          type: string
+          format: date-time
+        incompatible_schema_halt_until:
+          type: string
+          format: date-time
+        distribution_anomaly_halt_until:
+          type: string
+          format: date-time
+
+    AlertStatusUpdatedActivityState:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AlertType'
+        status:
+          $ref: '#/components/schemas/AlertStatus'
+
+    AlertReceivedActivityState:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AlertType'
+        chunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AlertChunkInfoActivityState'
+
+    AlertChunkInfoActivityState:
+      type: object
+      properties:
+        triggered_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+
     ActivityType:
       type: string
       enum:
@@ -2306,6 +2357,10 @@ components:
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED
+        - ALERT_HALT_CONFIG_UPDATED
+        - ALERT_STATUS_UPDATED
+        - OPEN_ALERT_RECEIVED
+        - RESOLVED_ALERT_RECEIVED
 
     OwnerAssociationRequestList:
       type: object

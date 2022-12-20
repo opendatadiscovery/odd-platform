@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.jooq.JSONB;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,6 +13,9 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValueCheckStrategy;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertHaltConfigActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertReceivedActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatusUpdatedActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.BusinessNameActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.CustomGroupActivityState;
@@ -32,6 +36,9 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.activity.AlertHaltConfigActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.AlertReceivedActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.AlertStatusUpdatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
@@ -109,6 +116,10 @@ public abstract class ActivityMapper {
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 mapDatasetFieldInformationState(jsonb);
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> mapCustomGroupState(jsonb);
+            case ALERT_HALT_CONFIG_UPDATED -> mapAlertHaltConfigState(jsonb);
+            case ALERT_STATUS_UPDATED -> mapAlertUpdatedStatus(jsonb);
+            case OPEN_ALERT_RECEIVED -> mapOpenAlertReceived(jsonb);
+            case RESOLVED_ALERT_RECEIVED -> mapResolvedAlertReceived(jsonb);
             default -> new ActivityState();
         };
     }
@@ -205,6 +216,40 @@ public abstract class ActivityMapper {
     @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType",
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     abstract CustomGroupActivityState mapCustomGroupActivityState(final CustomGroupActivityStateDto dto);
+
+    ActivityState mapAlertHaltConfigState(final JSONB jsonb) {
+        final AlertHaltConfigActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), AlertHaltConfigActivityStateDto.class);
+        return new ActivityState().alertHaltConfig(mapAlertHaltConfigActivityState(stateDto));
+    }
+
+    @Mapping(source = "failedJob", target = "failedJobHaltUntil")
+    @Mapping(source = "dqTest", target = "failedDqTestHaltUntil")
+    @Mapping(source = "incSchema", target = "incompatibleSchemaHaltUntil")
+    @Mapping(source = "anomaly", target = "distributionAnomalyHaltUntil")
+    abstract AlertHaltConfigActivityState mapAlertHaltConfigActivityState(final AlertHaltConfigActivityStateDto dto);
+
+    ActivityState mapAlertUpdatedStatus(final JSONB jsonb) {
+        final AlertStatusUpdatedActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), AlertStatusUpdatedActivityStateDto.class);
+        return new ActivityState().alertStatusUpdated(mapAlertStatusUpdatedState(stateDto));
+    }
+
+    abstract AlertStatusUpdatedActivityState mapAlertStatusUpdatedState(final AlertStatusUpdatedActivityStateDto dto);
+
+    ActivityState mapOpenAlertReceived(final JSONB jsonb) {
+        final AlertReceivedActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), AlertReceivedActivityStateDto.class);
+        return new ActivityState().openAlertReceived(mapAlertReceivedState(stateDto));
+    }
+
+    ActivityState mapResolvedAlertReceived(final JSONB jsonb) {
+        final AlertReceivedActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), AlertReceivedActivityStateDto.class);
+        return new ActivityState().resolvedAlertReceived(mapAlertReceivedState(stateDto));
+    }
+
+    abstract AlertReceivedActivityState mapAlertReceivedState(final AlertReceivedActivityStateDto dto);
 
     List<DataEntityClass> mapDataEntityClasses(final List<Integer> entityClassIds) {
         if (CollectionUtils.isEmpty(entityClassIds)) {
