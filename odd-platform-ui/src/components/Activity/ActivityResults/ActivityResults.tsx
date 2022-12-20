@@ -182,7 +182,7 @@ const ActivityResults: React.FC = () => {
               Hide all details
             </AppButton>
           </Grid>
-          <S.ListContainer id='activities-list'>
+          <S.ListContainer id='activities-list' data-qa='activity_results_list'>
             <InfiniteScroll
               dataLength={activityCount}
               next={fetchNextPage}
@@ -202,6 +202,7 @@ const ActivityResults: React.FC = () => {
                       key={activity.id}
                       activity={activity}
                       hideAllDetails={hideAllDetails}
+                      dataQA='activity_list_item'
                     />
                   ))}
                 </Grid>

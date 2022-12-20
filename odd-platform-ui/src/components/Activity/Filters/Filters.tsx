@@ -54,22 +54,30 @@ const Filters: React.FC = () => {
           name='Datasource'
           filterName='datasourceId'
           filterOptions={datasources}
+          dataQA='datasource_filter'
         />
         <SingleFilter
           key='ns'
           filterName='namespaceId'
           name='Namespace'
           filterOptions={namespaces}
+          dataQA='namespace_filter'
         />
         <SingleFilter
           key='at'
           filterName='eventType'
           name='Event type'
           filterOptions={activityEventTypes}
+          dataQA='event_type_filter'
         />
-        <MultipleFilter key='tg' filterName='tagIds' name='Tag' />
-        <MultipleFilter key='ow' filterName='ownerIds' name='Owner' />
-        <MultipleFilter key='us' filterName='userIds' name='User' />
+        <MultipleFilter key='tg' filterName='tagIds' name='Tag' dataQA='tag_filter' />
+        <MultipleFilter
+          key='ow'
+          filterName='ownerIds'
+          name='Owner'
+          dataQA='owner_filter'
+        />
+        <MultipleFilter key='us' filterName='userIds' name='User' dataQA='user_filter' />
       </S.ListContainer>
     </S.Container>
   );
