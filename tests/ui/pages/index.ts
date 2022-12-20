@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 
-import CatalogPage from './catalog/catalog-page';
+import ActivityPage from './activity/activity.page';
+import CatalogPage from './catalog/catalog.page';
 import DataEntityPage from './data_entity/data_entity.page';
 import OverviewPage from './data_entity/overview.page';
 import StructurePage from './data_entity/structure';
@@ -25,6 +26,8 @@ export class Pages {
 
   readonly catalog: CatalogPage;
 
+  readonly activity: ActivityPage;
+
   readonly dataEntity: DataEntityPage;
 
   readonly overview: OverviewPage;
@@ -45,6 +48,7 @@ export class Pages {
     this.structure = new StructurePage(this);
     this.main = new MainPage(this);
     this.catalog = new CatalogPage(this);
+    this.activity = new ActivityPage(this);
     this.owners = new OwnersPage(this);
     this.tags = new TagsPage(this);
   }
