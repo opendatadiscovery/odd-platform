@@ -5,8 +5,7 @@ on:
     types: ['opened', 'reopened', 'synchronize']
   push:
     branches:
-      - 'debug**'
-      - '**debug'
+      - 'debug/**'
 
 permissions:
   checks: write

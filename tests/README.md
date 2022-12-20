@@ -72,5 +72,5 @@
 
 ## Notes
 
-1. Do the following if you want to run tests in CI to check your changes in your feature branch without creating a pull request:
-    - create a feature branch with a name that starts or ends with "debug" (for instance: `debug_my_wonderful_tests`, or `my_wonderful_tests_debug`)
+1. Do the following if you want to run tests in CI to check your changes in your feature branch **without creating a pull request**:
+    - create a feature branch with a name that starts with "debug/" (for instance: `debug/my_wonderful_tests`)
