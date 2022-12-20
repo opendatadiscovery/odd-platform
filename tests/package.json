@@ -17,9 +17,11 @@
     "odd-down": "docker-compose -f ./docker/docker-compose.yaml down --volume",
     "test": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed",
     "test:ci": "npm run clean-build; ENVIRONMENT=main_test playwright test",
+    "test:debug": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed --debug",
     "lint": "eslint .",
     "lint:ci": "npx eslint --quiet .",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint:fix": "eslint --fix . && npm run format",
     "prepare": "cd ../ && husky install ./tests/.husky"
   },

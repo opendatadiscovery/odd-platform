@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ import org.opendatadiscovery.oddplatform.mapper.TitleMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.TokenMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepository;
 import reactor.core.publisher.Flux;
@@ -59,7 +58,7 @@ class LineageServiceTest {
     @Mock
     private ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
     @Mock
-    private DataEntityRepository dataEntityRepository;
+    private ReactiveDataEntityRepository dataEntityRepository;
 
     @BeforeEach
     void setUp() {
@@ -122,21 +121,23 @@ class LineageServiceTest {
         final var dto = DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(rootEntity).build();
 
-        when(dataEntityRepository.get(eq(1L))).thenReturn(Optional.of(dto));
+        when(dataEntityRepository.getDataEntityWithDataSourceAndNamespace(eq(1L))).thenReturn(Mono.just(dto));
         when(lineageRepository.getLineageRelations(any(), any(), any()))
             .thenReturn(Flux.fromStream(Stream.of(rootToFirstEntityLineage, rootToSecondEntityLineage)));
+        when(lineageRepository.getLineageRelationsForDepthOne(any(), any()))
+            .thenReturn(Flux.empty());
         when(groupEntityRelationRepository.fetchGroupRelations(any()))
             .thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getChildrenCount(any())).thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getParentCount(any())).thenReturn(Mono.just(new HashMap<>()));
-        when(dataEntityRepository.listDimensionsByOddrns(any())).thenReturn(List.of(
+        when(dataEntityRepository.getDataEntitiesWithDataSourceAndNamespace(any())).thenReturn(Flux.just(
             dto,
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(firstChildEntity).build(),
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(secondChildEntity).build()
         ));
 
         lineageService
-            .getLineage(1L, 1, LineageStreamKind.DOWNSTREAM)
+            .getLineage(1L, 1, List.of(), LineageStreamKind.DOWNSTREAM)
             .as(StepVerifier::create)
             .assertNext(r -> {
                     assertThat(r.getDownstream().getNodes().size()).isEqualTo(3);

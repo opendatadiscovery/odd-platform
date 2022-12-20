@@ -5,12 +5,14 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -37,8 +39,11 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.service.AlertHaltConfigService;
 import org.opendatadiscovery.oddplatform.service.AlertService;
+import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.MessageService;
@@ -50,49 +55,33 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @Slf4j
-public class DataEntityController
-    extends AbstractReadOnlyController<DataEntity, DataEntityList, DataEntityService>
-    implements DataEntityApi {
-
+@RequiredArgsConstructor
+public class DataEntityController implements DataEntityApi {
+    private final DataEntityService dataEntityService;
+    private final DataEntityGroupService dataEntityGroupService;
     private final OwnershipService ownershipService;
     private final AlertService alertService;
     private final TermService termService;
     private final LineageService lineageService;
     private final ActivityService activityService;
     private final MessageService messageService;
-
-    public DataEntityController(final DataEntityService entityService,
-                                final OwnershipService ownershipService,
-                                final AlertService alertService,
-                                final TermService termService,
-                                final LineageService lineageService,
-                                final ActivityService activityService,
-                                final MessageService messageService) {
-        super(entityService);
-        this.ownershipService = ownershipService;
-        this.alertService = alertService;
-        this.termService = termService;
-        this.lineageService = lineageService;
-        this.activityService = activityService;
-        this.messageService = messageService;
-    }
+    private final AlertHaltConfigService alertHaltConfigService;
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
                                                                      final ServerWebExchange exchange) {
         return formData
-            .flatMap(entityService::createDataEntityGroup)
+            .flatMap(dataEntityGroupService::createDataEntityGroup)
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Void>> deleteDataEntityGroup(final Long dataEntityGroupId,
                                                             final ServerWebExchange exchange) {
-        return entityService.deleteDataEntityGroup(dataEntityGroupId)
+        return dataEntityGroupService.deleteDataEntityGroup(dataEntityGroupId)
             .thenReturn(ResponseEntity.noContent().build());
     }
 
@@ -101,7 +90,7 @@ public class DataEntityController
                                                                      final Mono<DataEntityGroupFormData> formData,
                                                                      final ServerWebExchange exchange) {
         return formData
-            .flatMap(fd -> entityService.updateDataEntityGroup(dataEntityGroupId, fd))
+            .flatMap(fd -> dataEntityGroupService.updateDataEntityGroup(dataEntityGroupId, fd))
             .map(ResponseEntity::ok);
     }
 
@@ -109,8 +98,7 @@ public class DataEntityController
     public Mono<ResponseEntity<DataEntityList>> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                                             final Integer page, final Integer size,
                                                                             final ServerWebExchange exchange) {
-        return entityService.getDataEntityGroupsChildren(dataEntityGroupId, page, size)
-            .subscribeOn(Schedulers.boundedElastic())
+        return dataEntityService.getDataEntityGroupsChildren(dataEntityGroupId, page, size)
             .map(ResponseEntity::ok);
     }
 
@@ -121,7 +109,7 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return metadataObject.collectList()
-            .flatMap(moList -> entityService.createMetadata(dataEntityId, moList))
+            .flatMap(moList -> dataEntityService.createMetadata(dataEntityId, moList))
             .map(ResponseEntity::ok);
     }
 
@@ -131,7 +119,7 @@ public class DataEntityController
         final Long metadataFieldId,
         final ServerWebExchange exchange
     ) {
-        return entityService.deleteMetadata(dataEntityId, metadataFieldId)
+        return dataEntityService.deleteMetadata(dataEntityId, metadataFieldId)
             .map(m -> ResponseEntity.noContent().build());
     }
 
@@ -140,9 +128,8 @@ public class DataEntityController
         final Long dataEntityId,
         final ServerWebExchange exchange
     ) {
-        return entityService
+        return dataEntityService
             .getDetails(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -196,7 +183,7 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return internalDescriptionFormData
-            .flatMap(form -> entityService.upsertDescription(dataEntityId, form))
+            .flatMap(form -> dataEntityService.upsertDescription(dataEntityId, form))
             .map(ResponseEntity::ok);
     }
 
@@ -208,14 +195,14 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return metadataFieldValueUpdateFormData
-            .flatMap(form -> entityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form))
+            .flatMap(form -> dataEntityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form))
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataEntityClassAndTypeDictionary>> getDataEntityClasses(
         final ServerWebExchange exchange) {
-        return entityService.getDataEntityClassesAndTypes()
+        return dataEntityService.getDataEntityClassesAndTypes()
             .map(ResponseEntity::ok);
     }
 
@@ -226,7 +213,7 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return internalNameFormData
-            .flatMap(name -> entityService.upsertBusinessName(dataEntityId, name))
+            .flatMap(name -> dataEntityService.upsertBusinessName(dataEntityId, name))
             .map(ResponseEntity::ok);
     }
 
@@ -237,7 +224,7 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         final Flux<Tag> tags = tagsFormData
-            .flatMapMany(form -> entityService.upsertTags(dataEntityId, form));
+            .flatMapMany(form -> dataEntityService.upsertTags(dataEntityId, form));
 
         return Mono.just(ResponseEntity.ok(tags));
     }
@@ -245,20 +232,20 @@ public class DataEntityController
     @Override
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityDownstreamLineage(final Long dataEntityId,
                                                                                   final Integer lineageDepth,
+                                                                                  final List<Long> expandedEntityIds,
                                                                                   final ServerWebExchange exchange) {
         return lineageService
-            .getLineage(dataEntityId, lineageDepth, LineageStreamKind.DOWNSTREAM)
-            .subscribeOn(Schedulers.boundedElastic())
+            .getLineage(dataEntityId, lineageDepth, expandedEntityIds, LineageStreamKind.DOWNSTREAM)
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityUpstreamLineage(final Long dataEntityId,
                                                                                 final Integer lineageDepth,
+                                                                                final List<Long> expandedEntityIds,
                                                                                 final ServerWebExchange exchange) {
         return lineageService
-            .getLineage(dataEntityId, lineageDepth, LineageStreamKind.UPSTREAM)
-            .subscribeOn(Schedulers.boundedElastic())
+            .getLineage(dataEntityId, lineageDepth, expandedEntityIds, LineageStreamKind.UPSTREAM)
             .map(ResponseEntity::ok);
     }
 
@@ -267,7 +254,6 @@ public class DataEntityController
                                                                                        final ServerWebExchange exch) {
         return lineageService
             .getDataEntityGroupLineage(dataEntityGroupId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -275,9 +261,7 @@ public class DataEntityController
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getMyObjects(final Integer page,
                                                                   final Integer size,
                                                                   final ServerWebExchange exchange) {
-        return Mono.just(entityService
-                .listAssociated(page, size)
-                .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(dataEntityService.listAssociated(page, size))
             .map(ResponseEntity::ok);
     }
 
@@ -285,9 +269,7 @@ public class DataEntityController
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getMyObjectsWithDownstream(final Integer page,
                                                                                 final Integer size,
                                                                                 final ServerWebExchange exchange) {
-        return Mono.just(entityService
-                .listAssociated(page, size, LineageStreamKind.DOWNSTREAM)
-                .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(dataEntityService.listAssociated(page, size, LineageStreamKind.DOWNSTREAM))
             .map(ResponseEntity::ok);
     }
 
@@ -295,9 +277,7 @@ public class DataEntityController
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getMyObjectsWithUpstream(final Integer page,
                                                                               final Integer size,
                                                                               final ServerWebExchange exchange) {
-        return Mono.just(entityService
-                .listAssociated(page, size, LineageStreamKind.UPSTREAM)
-                .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(dataEntityService.listAssociated(page, size, LineageStreamKind.UPSTREAM))
             .map(ResponseEntity::ok);
     }
 
@@ -305,15 +285,24 @@ public class DataEntityController
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getPopular(final Integer page,
                                                                 final Integer size,
                                                                 final ServerWebExchange exchange) {
-        return Mono.just(entityService.listPopular(page, size)
-                .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(dataEntityService.listPopular(page, size))
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<AlertList>> getDataEntityAlerts(final Long dataEntityId,
+                                                               final Integer page,
+                                                               final Integer size,
                                                                final ServerWebExchange exchange) {
-        return alertService.getDataEntityAlerts(dataEntityId)
+        return alertService.getDataEntityAlerts(dataEntityId, page, size).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Long>> getDataEntityAlertsCounts(final Long dataEntityId,
+                                                                final AlertStatus status,
+                                                                final ServerWebExchange exchange) {
+        return alertService
+            .getDataEntityAlertsCounts(dataEntityId, AlertStatusEnum.valueOf(status.name()))
             .map(ResponseEntity::ok);
     }
 
@@ -323,7 +312,7 @@ public class DataEntityController
         final Mono<DataEntityDataEntityGroupFormData> dataEntityDataEntityGroupFormData,
         final ServerWebExchange exchange) {
         return dataEntityDataEntityGroupFormData
-            .flatMap(fd -> entityService.addDataEntityToDEG(dataEntityId, fd))
+            .flatMap(fd -> dataEntityService.addDataEntityToDEG(dataEntityId, fd))
             .map(ResponseEntity::ok);
     }
 
@@ -331,7 +320,7 @@ public class DataEntityController
     public Mono<ResponseEntity<Void>> deleteDataEntityFromDataEntityGroup(final Long dataEntityId,
                                                                           final Long dataEntityGroupId,
                                                                           final ServerWebExchange exchange) {
-        return entityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
+        return dataEntityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
             .ignoreElements()
             .thenReturn(ResponseEntity.noContent().build());
     }
@@ -354,7 +343,7 @@ public class DataEntityController
 
     @Override
     public Mono<ResponseEntity<DataEntityUsageInfo>> getDataEntitiesUsage(final ServerWebExchange exchange) {
-        return entityService.getDataEntityUsageInfo()
+        return dataEntityService.getDataEntityUsageInfo()
             .map(ResponseEntity::ok);
     }
 
@@ -386,6 +375,25 @@ public class DataEntityController
                                                          final ServerWebExchange exchange) {
         return messageService
             .getChildrenMessages(messageId, lastMessageId, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityAlertConfig>> getAlertConfig(final Long dataEntityId,
+                                                                      final ServerWebExchange exchange) {
+        return alertHaltConfigService
+            .getAlertHaltConfig(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityAlertConfig>> updateAlertConfig(
+        final Long dataEntityId,
+        final Mono<DataEntityAlertConfig> dataEntityAlertConfig,
+        final ServerWebExchange exchange
+    ) {
+        return dataEntityAlertConfig
+            .flatMap(cfg -> alertHaltConfigService.saveAlertHaltConfig(dataEntityId, cfg))
             .map(ResponseEntity::ok);
     }
 }

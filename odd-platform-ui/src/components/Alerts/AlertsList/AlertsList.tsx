@@ -1,25 +1,26 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  Alert,
-  AlertApiGetAllAlertsRequest,
-  AlertApiGetAssociatedUserAlertsRequest,
-  AlertApiGetDependentEntitiesAlertsRequest,
-  AlertStatus,
+  type AlertApiGetAllAlertsRequest,
+  type AlertApiGetAssociatedUserAlertsRequest,
+  type AlertApiGetDependentEntitiesAlertsRequest,
 } from 'generated-sources';
 import {
-  getAlertList,
+  getAlertListFetchingError,
   getAlertListFetchingStatus,
-  getAlertListPageInfo,
+  getAlertsPageInfo,
+  getMyAlertListFetchingError,
   getMyAlertListFetchingStatus,
+  getMyDependentsAlertListFetchingError,
   getMyDependentsAlertListFetchingStatus,
+  getAlerts,
 } from 'redux/selectors';
-import { AlertsResponse, updateAlertStatus } from 'redux/thunks';
-import { EmptyContentPlaceholder } from 'components/shared';
-import { Box, Grid, Typography } from '@mui/material';
-import { AsyncThunk } from '@reduxjs/toolkit';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { Grid } from '@mui/material';
+import { type AsyncThunk } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import AlertListSkeleton from './AlertSkeletonItem/AlertSkeletonItem';
+import type { AlertsResponse } from 'redux/interfaces';
+import DataEntityAlertsSkeleton from '../../DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertsSkeleton';
 import * as S from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';
 
@@ -36,83 +37,73 @@ interface AlertsListProps {
 const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
   const dispatch = useAppDispatch();
 
-  const pageInfo = useAppSelector(getAlertListPageInfo);
-  const alerts = useAppSelector(getAlertList);
+  const pageInfo = useAppSelector(getAlertsPageInfo);
+  const alerts = useAppSelector(getAlerts);
 
-  const { isLoading: isAlertListFetching } = useAppSelector(getAlertListFetchingStatus);
-  const { isLoading: isMyAlertListFetching } = useAppSelector(
-    getMyAlertListFetchingStatus
-  );
-  const { isLoading: isMyDependentsAlertListFetching } = useAppSelector(
-    getMyDependentsAlertListFetchingStatus
+  const {
+    isLoaded: isAlertListFetched,
+    isLoading: isAlertListFetching,
+    isNotLoaded: isAlertListNotLoaded,
+  } = useAppSelector(getAlertListFetchingStatus);
+  const {
+    isLoaded: isMyAlertListFetched,
+    isLoading: isMyAlertListFetching,
+    isNotLoaded: isMyAlertListNotLoaded,
+  } = useAppSelector(getMyAlertListFetchingStatus);
+  const {
+    isLoaded: isMyDependentsAlertListFetched,
+    isLoading: isMyDependentsAlertListFetching,
+    isNotLoaded: isMyDependentsAlertListNotLoaded,
+  } = useAppSelector(getMyDependentsAlertListFetchingStatus);
+  const alertListError = useAppSelector(getAlertListFetchingError);
+  const myAlertListError = useAppSelector(getMyAlertListFetchingError);
+  const myDependentsAlertListError = useAppSelector(
+    getMyDependentsAlertListFetchingError
   );
 
+  const alertsError = alertListError || myAlertListError || myDependentsAlertListError;
+  const isAlertsFetched =
+    isAlertListFetched || isMyAlertListFetched || isMyDependentsAlertListFetched;
   const isAlertsFetching =
     isAlertListFetching || isMyAlertListFetching || isMyDependentsAlertListFetching;
-  const isAlertsNotFetching =
-    !isAlertListFetching || !isMyAlertListFetching || !isMyDependentsAlertListFetching;
+  const isAlertsNotLoaded =
+    isAlertListNotLoaded || isMyAlertListNotLoaded || isMyDependentsAlertListNotLoaded;
+
+  const size = 30;
 
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
-    dispatch(fetchAlerts({ page: pageInfo.page + 1, size: 30 }));
+    dispatch(fetchAlerts({ page: pageInfo.page + 1, size }));
   };
 
   React.useEffect(() => {
-    dispatch(fetchAlerts({ page: 1, size: 30 }));
+    dispatch(fetchAlerts({ page: 1, size }));
   }, [fetchAlerts]);
 
-  const alertStatusHandler = React.useCallback(
-    (alertId: Alert['id'], alertStatus: AlertStatus) => {
-      const status =
-        alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
-      dispatch(updateAlertStatus({ alertId, alertStatusFormData: { status } }));
-    },
-    [updateAlertStatus]
-  );
-
   return (
-    <Box sx={{ mt: 2 }}>
-      <S.AlertsTableHeader container>
-        <S.ColContainer item $colType='name' onClick={() => fetchNextPage()}>
-          <Typography variant='caption'>Name</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='description'>
-          <Typography variant='caption'>Description</Typography>
-        </S.ColContainer>
+    <Grid container sx={{ mt: 2 }}>
+      <S.AlertsContainer $disableHeight={!!alerts.length} container id='alerts-list'>
+        <InfiniteScroll
+          style={{ rowGap: '8px', display: 'flex', flexDirection: 'column' }}
+          dataLength={alerts?.length}
+          next={fetchNextPage}
+          hasMore={!!pageInfo?.hasNext}
+          scrollThreshold='200px'
+          loader={isAlertsFetching && <DataEntityAlertsSkeleton length={5} />}
+          scrollableTarget='alerts-list'
+        >
+          {alerts?.map(alert => (
+            <AlertItem key={alert.id} alert={alert} />
+          ))}
+        </InfiniteScroll>
+      </S.AlertsContainer>
 
-        <S.ColContainer item container $colType='status' justifyContent='center'>
-          <Typography variant='caption'>Status</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='createdTime'>
-          <Typography variant='caption'>Created at</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='updatedBy' />
-        <S.ColContainer item $colType='updatedAt'>
-          <Typography variant='caption'>Status updated at</Typography>
-        </S.ColContainer>
-        <S.ColContainer item $colType='actionBtn' />
-      </S.AlertsTableHeader>
-      <Grid container>
-        <div style={{ width: '100%' }}>
-          <InfiniteScroll
-            dataLength={alerts?.length}
-            next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            scrollThreshold='200px'
-            loader={isAlertsFetching && <AlertListSkeleton length={5} />}
-          >
-            {alerts?.map(alert => (
-              <AlertItem
-                key={alert.id}
-                alertStatusHandler={alertStatusHandler}
-                alert={alert}
-              />
-            ))}
-          </InfiniteScroll>
-        </div>
-      </Grid>
-      {isAlertsNotFetching && !alerts?.length ? <EmptyContentPlaceholder /> : null}
-    </Box>
+      <AppErrorPage isNotContentLoaded={isAlertsNotLoaded} error={alertsError} />
+      <EmptyContentPlaceholder
+        isContentLoaded={isAlertsFetched && !isAlertsFetching && !isAlertsNotLoaded}
+        isContentEmpty={!alerts.length}
+      />
+    </Grid>
   );
 };
 

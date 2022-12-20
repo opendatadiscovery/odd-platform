@@ -1,3 +1,4 @@
+import { Locator } from '@playwright/test';
 import Button from '../../elements/button';
 import List from '../../elements/list';
 import DeleteTagModal from '../modals/delete-tag-modal';
@@ -9,7 +10,7 @@ const SELECTORS = {
   tagLineItem: 'p[title]',
   tagLineItemName: '.MuiTypography-body1.MuiTypography-noWrap',
   tagString: tagName => `div .infinite-scroll-component > div:has-text("${tagName}")`,
-  tagImportantMark: 'p.MuiTypography-root.MuiTypography-body1.css-1q3quq',
+  tagImportantMark: 'p:text-is("important")',
 };
 export default class TagsPage extends ManagementPage {
   deleteTagModal = new DeleteTagModal(this.pages);
@@ -20,6 +21,14 @@ export default class TagsPage extends ManagementPage {
 
   get tagsList() {
     return new List(this.page, SELECTORS.tagLineRoot, SELECTORS.tagLineItem);
+  }
+
+  public normalTag(tagName: string): Locator {
+    return this.page.locator(SELECTORS.tagString(tagName));
+  }
+
+  public importantTag(tagName: string): Locator {
+    return this.normalTag(tagName).locator(SELECTORS.tagImportantMark);
   }
 
   async getAllTags() {
@@ -66,13 +75,6 @@ export default class TagsPage extends ManagementPage {
       .locator(SELECTORS.tagString(name))
       .locator('button', { hasText: 'Delete' })
       .click();
-  }
-
-  async isTagImportant(name: string) {
-    return this.page
-      .locator(SELECTORS.tagString(name))
-      .locator(SELECTORS.tagImportantMark, { hasText: 'important' })
-      .isVisible();
   }
 
   async waitUntilTagInvisible(tagName: string | Array<string>) {

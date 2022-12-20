@@ -102,8 +102,8 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
-    const ownerName4 = `ownerName4 + ${workerId}`;
-    const ownerTitle4 = `ownerTitle4 + ${workerId}`;
+    const ownerName4 = `ownerName4${workerId}`;
+    const ownerTitle4 = `ownerTitle4${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy(entityNameWithAlphabeticChars);
       await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
@@ -120,8 +120,8 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
-    const ownerName6 = `ownerName6 + ${workerId}`;
-    const ownerTitle6 = `ownerTitle6 + ${workerId}`;
+    const ownerName6 = `ownerName6${workerId}`;
+    const ownerTitle6 = `ownerTitle6${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy(entityNameWithAlphabeticChars);
       await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
@@ -138,8 +138,8 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
-    const ownerName7 = `ownerName7 + ${workerId}`;
-    const ownerTitle7 = `ownerTitle7 + ${workerId}`;
+    const ownerName7 = `ownerName7${workerId}`;
+    const ownerTitle7 = `ownerTitle7${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy(entityNameWithAlphabeticChars);
       await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
@@ -180,8 +180,8 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
-    const ownerName5 = `ownerName5 + ${workerId}`;
-    const ownerTitle5 = `ownerTitle5 + ${workerId}`;
+    const ownerName5 = `ownerName5${workerId}`;
+    const ownerTitle5 = `ownerTitle5${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy(entityNameWithAlphabeticChars);
       await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
@@ -239,9 +239,8 @@ test.describe('Search by data in data-entity in the main page', () => {
   }) => {
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.main.search('pilots');
-      expect(await pages.main.isListItemVisible('embraer')).toBeTruthy();
-      expect(await pages.catalog.isListItemVisible('airbus')).toBeTruthy();
-      expect(await pages.catalog.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
+      expect(await pages.main.isListItemVisible(entityNameWithNumbers)).toBeTruthy();
+      expect(await pages.main.resultList.count()).toBeGreaterThanOrEqual(3);
     });
   });
 });

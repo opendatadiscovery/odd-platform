@@ -24,7 +24,7 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   errorText?: string;
   dialogContentId?: string;
   clearState?: () => void;
-  maxWidth?: 'xs' | 'sm' | 'md' | 'xl';
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   formSubmitHandler?: () => Promise<unknown>;
 }
 

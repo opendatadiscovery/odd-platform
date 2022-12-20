@@ -191,6 +191,18 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
             ));
     }
 
+    @Override
+    public Mono<Map<String, DataEntityTaskRunPojo>> getLatestRunsMap(final Collection<String> dataQualityTestOddrns) {
+        final var lastTaskRuns = DSL.select(DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN)
+            .from(DATA_ENTITY_TASK_LAST_RUN)
+            .where(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.in(dataQualityTestOddrns));
+        final var query = DSL.selectFrom(DATA_ENTITY_TASK_RUN)
+            .where(DATA_ENTITY_TASK_RUN.ODDRN.in(lastTaskRuns));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(DataEntityTaskRunPojo.class))
+            .collectMap(DataEntityTaskRunPojo::getTaskOddrn, identity());
+    }
+
     private Mono<Long> fetchCount(final Select<Record> query) {
         return jooqReactiveOperations.mono(DSL.selectCount().from(query))
             .map(Record1::value1)

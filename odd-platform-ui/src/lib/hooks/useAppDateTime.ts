@@ -1,5 +1,11 @@
 import { formatInTimeZone } from 'date-fns-tz';
-import { formatDistanceToNowStrict, formatDistanceStrict } from 'date-fns';
+import {
+  formatDistanceToNowStrict,
+  formatDistanceStrict,
+  formatDuration,
+  intervalToDuration,
+  minutesToMilliseconds,
+} from 'date-fns';
 import {
   datedListFormat,
   mainEUDateFormat,
@@ -23,15 +29,20 @@ type DateTimePatternNames =
   | 'datedList';
 type TimeZones = 'us' | 'eu';
 type DateTimePatterns = Record<DateTimePatternNames, { [key in TimeZones]: string }>;
-type UseAppDateTimeReturn = Record<
-  `${DateTimePatternNames}FormattedDateTime`,
-  (date: number) => string
-> & {
+type Helpers = {
   formatDistanceStrict: (...args: Parameters<typeof formatDistanceStrict>) => string;
   formatDistanceToNowStrict: (
     ...args: Parameters<typeof formatDistanceToNowStrict>
   ) => string;
+  formatDuration: (...args: Parameters<typeof formatDuration>) => string;
+  intervalToDuration: (...args: Parameters<typeof intervalToDuration>) => Duration;
+  minutesToMilliseconds: (...args: Parameters<typeof minutesToMilliseconds>) => number;
 };
+type UseAppDateTimeReturn = Record<
+  `${DateTimePatternNames}FormattedDateTime`,
+  (date: number) => string
+> &
+  Helpers;
 
 const useAppDateTime = (): UseAppDateTimeReturn => {
   const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -65,6 +76,9 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
   return {
     formatDistanceToNowStrict,
     formatDistanceStrict,
+    formatDuration,
+    intervalToDuration,
+    minutesToMilliseconds,
     datasetStructureVersionFormattedDateTime: formatDate('datasetStructureVersion'),
     alertFormattedDateTime: formatDate('alert'),
     associationRequestFormattedDateTime: formatDate('associationRequest'),

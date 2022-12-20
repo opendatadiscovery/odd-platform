@@ -1,72 +1,88 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
-import { Alert, AlertStatus } from 'generated-sources';
-import { updateAlertStatus } from 'redux/thunks';
+import { Grid } from '@mui/material';
+import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityAlertListFetchingStatus,
-  getAlertList,
+  getDataEntityAlerts,
+  getDataEntityAlertsFetchingError,
+  getDataEntityAlertsPageInfo,
 } from 'redux/selectors/alert.selectors';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { WithPermissions } from 'components/shared/contexts';
+import { fetchDataEntityAlerts } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
+import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
-import DataEntityAlertsSkeleton from './DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
-import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
+import * as S from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading: isAlertsFetching } = useAppSelector(
-    getDataEntityAlertListFetchingStatus
-  );
-  const alertsList = useAppSelector(getAlertList);
+  const { dataEntityId } = useAppParams();
 
-  const alertStatusHandler = React.useCallback(
-    (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
-      const status =
-        alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
+  const size = 30;
 
-      dispatch(updateAlertStatus({ alertId, alertStatusFormData: { status } }));
-    },
-    [updateAlertStatus]
-  );
+  React.useEffect(() => {
+    dispatch(fetchDataEntityAlerts({ dataEntityId, page: 1, size }));
+  }, [dataEntityId]);
+
+  const {
+    isLoading: isAlertsFetching,
+    isNotLoaded: isAlertsNotFetched,
+    isLoaded: isAlertsFetched,
+  } = useAppSelector(getDataEntityAlertListFetchingStatus);
+  const alertsListError = useAppSelector(getDataEntityAlertsFetchingError);
+  const alertsList = useAppSelector(getDataEntityAlerts(dataEntityId));
+  const { hasNext, page } = useAppSelector(getDataEntityAlertsPageInfo(dataEntityId));
+
+  const fetchNextPage = () => {
+    if (!hasNext) return;
+    dispatch(fetchDataEntityAlerts({ dataEntityId, page: page + 1, size }));
+  };
 
   return (
-    <Grid container sx={{ mt: 2 }}>
-      <AlertsTableHeader container>
-        <ColContainer item $colType='date'>
-          <Typography variant='caption'>Date</Typography>
-        </ColContainer>
-        <ColContainer item $colType='type'>
-          <Typography variant='caption'>Alert type</Typography>
-        </ColContainer>
-        <ColContainer item $colType='description'>
-          <Typography variant='caption'>Description</Typography>
-        </ColContainer>
-        <ColContainer item $colType='status'>
-          <Typography variant='caption'>Status</Typography>
-        </ColContainer>
-        <ColContainer item $colType='updatedBy'>
-          <Typography variant='caption'>Status updated by</Typography>
-        </ColContainer>
-        <ColContainer item $colType='updatedTime'>
-          <Typography variant='caption'>Status updated time</Typography>
-        </ColContainer>
-        <ColContainer item $colType='actionBtn' />
-      </AlertsTableHeader>
-      {isAlertsFetching ? (
-        <DataEntityAlertsSkeleton length={5} />
-      ) : (
-        <Grid container>
-          {alertsList.map(alert => (
-            <DataEntityAlertItem
-              key={alert.id}
-              alertStatusHandler={alertStatusHandler(alert.id, alert.status)}
-              alert={alert}
-            />
-          ))}
+    <S.Container container>
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
+        <Grid container justifyContent='flex-end' sx={{ py: 0.75 }}>
+          <NotificationSettings
+            btnCreateEl={
+              <AppButton size='medium' color='tertiary'>
+                Notification settings
+              </AppButton>
+            }
+          />
         </Grid>
-      )}
-      {!isAlertsFetching && !alertsList.length ? <EmptyContentPlaceholder /> : null}
-    </Grid>
+      </WithPermissions>
+
+      <S.AlertsContainer
+        $disableHeight={!!alertsList.length}
+        container
+        id='de-alerts-list'
+        rowGap={1}
+      >
+        <InfiniteScroll
+          style={{ rowGap: '8px', display: 'flex', flexDirection: 'column' }}
+          dataLength={alertsList?.length}
+          next={fetchNextPage}
+          hasMore={hasNext}
+          scrollThreshold='200px'
+          loader={isAlertsFetching && <DataEntityAlertsSkeleton length={5} />}
+          scrollableTarget='de-alerts-list'
+        >
+          {alertsList.map(alert => (
+            <DataEntityAlertItem key={alert.id} alert={alert} />
+          ))}
+        </InfiniteScroll>
+      </S.AlertsContainer>
+
+      <EmptyContentPlaceholder
+        isContentLoaded={isAlertsFetched}
+        isContentEmpty={!alertsList.length}
+      />
+      <AppErrorPage isNotContentLoaded={isAlertsNotFetched} error={alertsListError} />
+    </S.Container>
   );
 };
 export default DataEntityAlerts;

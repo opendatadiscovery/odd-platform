@@ -19,6 +19,7 @@ interface AppButtonStyleProps {
 }
 
 const isTertiary = (color: string) => color === 'tertiary';
+const isPrimaryLight = (color: string) => color === 'primaryLight';
 
 export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
   ({ theme, $color, $isOverflowed }) => ({
@@ -50,7 +51,7 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       height: '32px',
       padding: theme.spacing(0.75, 1),
       borderRadius: '4px',
-      fontWeight: theme.typography.h1.fontWeight,
+      fontWeight: theme.typography[isPrimaryLight($color) ? 'body1' : 'h1'].fontWeight,
       fontSize: theme.typography.body1.fontSize,
       lineHeight: theme.typography.body1.lineHeight,
       ...breakpointDownLgBody2,

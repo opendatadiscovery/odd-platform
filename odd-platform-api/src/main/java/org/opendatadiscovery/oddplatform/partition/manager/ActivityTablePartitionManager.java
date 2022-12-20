@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.partition.manager;
 
 import lombok.Getter;
 import org.opendatadiscovery.oddplatform.model.Tables;
+import org.opendatadiscovery.oddplatform.partition.service.PartitionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,4 +14,8 @@ public class ActivityTablePartitionManager extends AbstractPartitionManager impl
 
     @Getter
     private final String tableName = Tables.ACTIVITY.getName();
+
+    public ActivityTablePartitionManager(final PartitionService partitionService) {
+        super(partitionService);
+    }
 }

@@ -1,25 +1,24 @@
+import React from 'react';
 import { Typography } from '@mui/material';
-import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  AlertsResponse,
   fetchAlertsTotals,
   fetchAllAlertList,
   fetchMyAlertList,
   fetchMyDependentsAlertList,
 } from 'redux/thunks';
-import { getAlertTotals } from 'redux/selectors';
+import { getAlertsTotals, getOwnership } from 'redux/selectors';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { AlertViewType } from 'lib/interfaces';
+import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import {
+import type {
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
 } from 'generated-sources';
-import { AsyncThunk } from '@reduxjs/toolkit';
+import { type AsyncThunk } from '@reduxjs/toolkit';
+import type { AlertsResponse } from 'redux/interfaces';
 import * as S from './AlertsStyles';
 import AlertsList from './AlertsList/AlertsList';
 
@@ -28,37 +27,46 @@ const Alerts: React.FC = () => {
   const { viewType } = useAppParams();
   const { alertsPath } = useAppPaths();
 
-  const totals = useAppSelector(getAlertTotals);
+  const totals = useAppSelector(getAlertsTotals);
+  const showMyAndDepends = useAppSelector(getOwnership);
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());
   }, [fetchAlertsTotals]);
 
-  const tabs: AppTabItem<AlertViewType>[] = [
-    {
-      name: 'All',
-      hint: totals?.total || 0,
-      value: 'all',
-      link: alertsPath('all'),
-    },
-    {
-      name: 'My Objects',
-      hint: totals?.myTotal || 0,
-      value: 'my',
-      link: alertsPath('my'),
-    },
-    {
-      name: 'Dependents',
-      hint: totals?.dependentTotal || 0,
-      value: 'dependents',
-      link: alertsPath('dependents'),
-    },
-  ];
+  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
-  const [selectedTab] = React.useState(() =>
-    viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
-  );
+  React.useEffect(() => {
+    setTabs([
+      {
+        name: 'All',
+        hint: totals?.total || 0,
+        value: 'all',
+        link: alertsPath('all'),
+      },
+      {
+        name: 'My Objects',
+        hint: totals?.myTotal || 0,
+        value: 'my',
+        link: alertsPath('my'),
+        hidden: !showMyAndDepends,
+      },
+      {
+        name: 'Dependents',
+        hint: totals?.dependentTotal || 0,
+        value: 'dependents',
+        link: alertsPath('dependents'),
+        hidden: !showMyAndDepends,
+      },
+    ]);
+  }, [totals, showMyAndDepends]);
 
-  const alertsFilterUpdateAction = useCallback(() => {
+  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+
+  React.useEffect(() => {
+    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
+  }, [tabs, viewType]);
+
+  const alertsFilterUpdateAction = React.useCallback(() => {
     dispatch(changeAlertsFilterAction());
   }, [changeAlertsFilterAction]);
 

@@ -7,17 +7,26 @@ import {
   getUpstreamLineageFetchingError,
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
-import { AppErrorPage, AppCircularProgress } from 'components/shared';
+import { useAppParams, useQueryParams } from 'lib/hooks';
+import { AppCircularProgress, AppErrorPage } from 'components/shared';
 import { Zoom } from '@visx/zoom';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
-import { type SelectChangeEvent } from '@mui/material';
-import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import {
+  expandEntitiesFromDownstreamGroup,
+  expandEntitiesFromUpstreamGroup,
+} from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import type { TransformMatrix } from '@visx/zoom/lib/types';
+import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
-import { defaultDepth } from './lineageLib/constants';
+import {
+  defaultLineageQuery,
+  initialTransformMatrix,
+  layerWidth,
+  layerHeight,
+} from './lineageLib/constants';
 import LineageProvider from './lineageLib/LineageContext/LineageProvider';
 import * as S from './LineageStyles';
 
@@ -25,43 +34,36 @@ const Lineage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
+  const {
+    queryParams: { d, t, eag, exdg, exug, exd, exu },
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
+
   const [isLineageFetching, setIsLineageFetching] = React.useState(true);
-  const [lineageDepth, setLineageDepth] = React.useState(defaultDepth);
-  const [compact, setCompact] = React.useState(false);
-  const [fullTitles, setFullTitles] = React.useState(false);
-  const [expandGroups, setExpandGroups] = React.useState(false);
-
-  const setCompactView = React.useCallback(
-    (isCompact: boolean) => setCompact(isCompact),
-    []
-  );
-  const setFullTitlesView = React.useCallback(
-    (isFullTitle: boolean) => setFullTitles(isFullTitle),
-    []
-  );
-
-  const handleDepthChange = React.useCallback(
-    (depth: SelectChangeEvent<unknown> | number) => {
-      if (typeof depth === 'number') {
-        return setLineageDepth(depth);
-      }
-
-      return setLineageDepth(depth.target.value as number);
-    },
-    []
-  );
 
   React.useEffect(() => {
-    const params = { dataEntityId, lineageDepth, rootNodeId: dataEntityId, expandGroups };
+    const baseParams = {
+      dataEntityId,
+      lineageDepth: d,
+      rootNodeId: dataEntityId,
+      expandGroups: eag,
+    };
+    const downstreamParams = { ...baseParams, expandedEntityIds: exd };
+    const upstreamParams = { ...baseParams, expandedEntityIds: exu };
 
-    if (!expandGroups) {
-      dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
-        dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
-          setIsLineageFetching(false)
-        )
-      );
-    }
-  }, [lineageDepth, dataEntityId, expandGroups]);
+    dispatch(fetchDataEntityDownstreamLineage(downstreamParams)).then(() =>
+      dispatch(fetchDataEntityUpstreamLineage(upstreamParams)).then(() => {
+        if (exdg?.length > 0) {
+          const expandGroupParams = { rootNodeId: dataEntityId, idsToExclude: exdg };
+          dispatch(expandEntitiesFromDownstreamGroup(expandGroupParams));
+        }
+        if (exug?.length > 0) {
+          const expandGroupParams = { rootNodeId: dataEntityId, idsToExclude: exug };
+          dispatch(expandEntitiesFromUpstreamGroup(expandGroupParams));
+        }
+        setIsLineageFetching(false);
+      })
+    );
+  }, [d, dataEntityId]);
 
   const data = useAppSelector(getDataEntityLineage(dataEntityId));
   const { isNotLoaded: isUpstreamNotFetched } = useAppSelector(
@@ -78,22 +80,11 @@ const Lineage: React.FC = () => {
     [isUpstreamNotFetched, isDownstreamNotFetched]
   );
 
-  React.useEffect(() => {
-    const rootNodeId = data?.rootNode.id;
+  const setInitialTransform = React.useMemo<TransformMatrix>(() => {
+    if (t) return JSON.parse(t) as TransformMatrix;
 
-    dispatch(expandAllGroups({ rootNodeId, isExpanded: expandGroups }));
-  }, [expandGroups]);
-
-  const height = 780;
-  const width = 1408;
-  const initialTransformMatrix = {
-    scaleX: 0.75,
-    scaleY: 0.75,
-    translateX: width / 2.3,
-    translateY: height / 2.5,
-    skewX: 0,
-    skewY: 0,
-  };
+    return initialTransformMatrix;
+  }, [t, initialTransformMatrix]);
 
   return (
     <S.Container>
@@ -104,32 +95,23 @@ const Lineage: React.FC = () => {
       ) : null}
 
       {!isLineageFetching && !isLineageNotFetched && (
-        <LineageProvider
-          compact={compact}
-          setCompactView={setCompactView}
-          fullTitles={fullTitles}
-          setFullTitlesView={setFullTitlesView}
-          expandGroups={expandGroups}
-          setExpandGroups={setExpandGroups}
-        >
+        <LineageProvider>
           <Zoom<SVGSVGElement>
-            width={width}
-            height={height}
-            scaleXMin={0.2}
+            width={layerWidth}
+            height={layerHeight}
+            scaleXMin={0.05}
             scaleXMax={2}
-            scaleYMin={0.2}
+            scaleYMin={0.05}
             scaleYMax={2}
-            initialTransformMatrix={initialTransformMatrix}
+            initialTransformMatrix={setInitialTransform}
           >
             {zoom => (
               <ZoomableLineage
                 data={data}
-                width={width}
-                height={height}
+                width={layerWidth}
+                height={layerHeight}
                 zoom={zoom}
                 dataEntityId={dataEntityId}
-                handleDepthChange={handleDepthChange}
-                lineageDepth={lineageDepth}
               />
             )}
           </Zoom>

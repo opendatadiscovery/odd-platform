@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
@@ -23,6 +24,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.DATA_ENTITY_CTE_NAME;
 
 public class FTSConstants {
     public static final Field<Object> RANK_FIELD_ALIAS = field("rank", Object.class);
@@ -61,7 +63,7 @@ public class FTSConstants {
             FacetType.ENTITY_CLASSES, filters -> DATA_ENTITY.ENTITY_CLASS_IDS
                 .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
             FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
-            FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
+            FacetType.NAMESPACES, filters -> NAMESPACE.ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
             FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
             FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters)),
@@ -79,7 +81,7 @@ public class FTSConstants {
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
 
-    public static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
+    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
             .map(SearchFilterDto::getEntityId)
             .collect(Collectors.toList());

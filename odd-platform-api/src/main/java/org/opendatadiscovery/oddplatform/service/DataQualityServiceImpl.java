@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
@@ -9,26 +8,30 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetSLAReport;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataQualityMapper;
-import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRepository;
 import org.opendatadiscovery.oddplatform.service.sla.SLACalculator;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.function.TupleUtils;
 
 import static reactor.function.TupleUtils.consumer;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
 public class DataQualityServiceImpl implements DataQualityService {
     private final ReactiveDataQualityRepository dataQualityRepository;
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
-    private final DataEntityRepository dataEntityRepository;
+    private final DataEntityService dataEntityService;
     private final DataQualityMapper dataQualityMapper;
     private final DataEntityMapper dataEntityMapper;
     private final SLACalculator slaCalculator;
@@ -39,12 +42,14 @@ public class DataQualityServiceImpl implements DataQualityService {
             .switchIfEmpty(Mono.error(
                 new NotFoundException("Data quality tests for dataset with id %d not found".formatted(datasetId))))
             .collectList()
-            .flatMap(oddrns -> dataQualityRepository.getSeverities(oddrns, datasetId)
-                .collectList()
-                .map(severities -> dataEntityMapper.mapDataQualityTests(
-                    dataEntityRepository.listDetailsByOddrns(oddrns),
-                    severities
-                )));
+            .flatMap(oddrns -> {
+                final Mono<List<DataQualityTestSeverityPojo>> severities = dataQualityRepository
+                    .getSeverities(oddrns, datasetId)
+                    .collectList();
+                final Mono<List<DataEntityDimensionsDto>> dimensions = dataEntityService.getDimensions(oddrns);
+                return Mono.zip(severities, dimensions);
+            })
+            .map(function((severities, dimensions) -> dataEntityMapper.mapDataQualityTests(dimensions, severities)));
     }
 
     @Override
@@ -73,12 +78,7 @@ public class DataQualityServiceImpl implements DataQualityService {
                 }
             }))
             .then(dataQualityRepository.setDataQualityTestSeverity(dataQualityTest, datasetId, severity))
-            .thenReturn(dataEntityRepository.getDetails(dataQualityTest))
-            .filter(Optional::isPresent)
-            .switchIfEmpty(Mono.error(new RuntimeException(
-                "Fetch of data quality test details by id %d returned an empty object even though it shouldn't"
-                    .formatted(dataQualityTest))))
-            .map(Optional::get)
+            .then(dataEntityService.getDimensions(dataQualityTest))
             .map(de -> dataEntityMapper.mapDataQualityTest(de, severity.toString()));
     }
 

@@ -8,14 +8,15 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useAppPaths } from 'lib/hooks';
+import { useAppPaths, useQueryParams } from 'lib/hooks';
 import type { StreamType } from 'redux/interfaces';
 import {
   expandEntitiesFromDownstreamGroup,
   expandEntitiesFromUpstreamGroup,
 } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
-import LineageContext from '../../../../../lineageLib/LineageContext/LineageContext';
 import * as S from './GroupedEntitiesListModalStyles';
+import type { LineageQueryParams } from '../../../../../lineageLib/interfaces';
+import { defaultLineageQuery } from '../../../../../lineageLib/constants';
 
 interface GroupedEntitiesListModalProps {
   dataEntityName: string | undefined;
@@ -34,7 +35,10 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
-  const { expandGroups } = React.useContext(LineageContext);
+  const {
+    queryParams: { eag },
+    setQueryParams,
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
 
   const [isLoadMoreClicked, setIsLoadMoreClicked] = React.useState(false);
 
@@ -42,13 +46,23 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
     (dataEntityId: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
 
-      const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups };
+      const params = { dataEntityId, lineageDepth: 1, rootNodeId, expandGroups: eag };
       if (streamType === 'downstream') {
         dispatch(fetchDataEntityDownstreamLineage(params));
+        setQueryParams(prev => ({
+          ...prev,
+          exdg: [...prev.exdg, dataEntityId],
+          exd: [...prev.exd, dataEntityId],
+        }));
       }
 
       if (streamType === 'upstream') {
         dispatch(fetchDataEntityUpstreamLineage(params));
+        setQueryParams(prev => ({
+          ...prev,
+          exug: [...prev.exug, dataEntityId],
+          exu: [...prev.exu, dataEntityId],
+        }));
       }
 
       setIsLoadMoreClicked(true);
@@ -60,8 +74,10 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
     e.preventDefault();
     if (streamType === 'downstream') {
       dispatch(expandEntitiesFromDownstreamGroup({ rootNodeId, idsToExclude }));
+      setQueryParams(prev => ({ ...prev, exdg: [...prev.exdg, ...idsToExclude] }));
     } else {
       dispatch(expandEntitiesFromUpstreamGroup({ rootNodeId, idsToExclude }));
+      setQueryParams(prev => ({ ...prev, exug: [...prev.exug, ...idsToExclude] }));
     }
 
     setIsLoadMoreClicked(true);
@@ -132,7 +148,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
       }
       title={modalTitle}
       renderContent={modalContent}
-      maxWidth='md'
+      maxWidth='lg'
       handleCloseSubmittedForm={isLoadMoreClicked}
     />
   );

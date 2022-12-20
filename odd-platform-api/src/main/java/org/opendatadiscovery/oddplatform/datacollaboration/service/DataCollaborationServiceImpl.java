@@ -16,8 +16,8 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageStateDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.MessageMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
-import org.opendatadiscovery.oddplatform.repository.MessageRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMessageRepository;
 import org.opendatadiscovery.oddplatform.utils.UUIDHelper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -29,7 +29,7 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 @RequiredArgsConstructor
 public class DataCollaborationServiceImpl implements DataCollaborationService {
-    private final MessageRepository messageRepository;
+    private final ReactiveMessageRepository reactiveMessageRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final MessageMapper messageMapper;
     private final AuthIdentityProvider authIdentityProvider;
@@ -57,7 +57,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
             .flatMap(function((dataEntityId, channel) -> authIdentityProvider.fetchAssociatedOwner()
                 .map(owner -> createMessagePojo(messageRequest, messageProvider, channel, owner.getId()))
                 .switchIfEmpty(Mono.defer(() -> Mono.just(createMessagePojo(messageRequest, messageProvider, channel))))
-                .flatMap(messageRepository::create)
+                .flatMap(reactiveMessageRepository::create)
                 .map(messageMapper::mapPojo)));
     }
 
@@ -70,7 +70,7 @@ public class DataCollaborationServiceImpl implements DataCollaborationService {
 
     @Override
     public Mono<String> resolveMessageUrl(final UUID messageId) {
-        return messageRepository.getMessageProviderIdentity(messageId)
+        return reactiveMessageRepository.getMessageProviderIdentity(messageId)
             .flatMap(messageIdentity -> messageProviderClientFactory
                 .getOrFail(messageIdentity.messageProvider())
                 .resolveMessageUrl(messageIdentity.providerMessageChannel(), messageIdentity.providerMessageId()));

@@ -1,60 +1,148 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import lowerCase from 'lodash/lowerCase';
-import { AlertStatusItem, AppButton, AppTooltip } from 'components/shared';
 import type { Alert } from 'redux/interfaces';
+import { AlertStatus, Permission } from 'generated-sources';
+import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { updateAlertStatus } from 'redux/thunks';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { Collapse, Grid, Typography } from '@mui/material';
+import { AlertStatusItem, AppButton } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
-import { Permission } from 'generated-sources';
-import { useAppDateTime } from 'lib/hooks';
-import { ColContainer } from '../DataEntityAlertsStyles';
+import { GearIcon, UserIcon } from 'components/shared/Icons';
+import { alertTitlesMap } from 'lib/constants';
 import * as S from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps {
   alert: Alert;
-  alertStatusHandler: () => void;
 }
 
 const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
-  alert: { createdAt, type, description, statusUpdatedAt, statusUpdatedBy, status },
-  alertStatusHandler,
+  alert: {
+    id: alertId,
+    type,
+    statusUpdatedAt,
+    statusUpdatedBy,
+    status: alertStatus,
+    lastCreatedAt,
+    alertChunkList,
+  },
 }) => {
+  const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
   const { alertFormattedDateTime } = useAppDateTime();
+
+  const [showHistory, setShowHistory] = React.useState(false);
+
+  const alertStatusHandler = () => {
+    const status =
+      alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
+
+    dispatch(
+      updateAlertStatus({ alertId, alertStatusFormData: { status }, dataEntityId })
+    );
+  };
+
+  const resolvedInfo = React.useMemo(() => {
+    const updatedAt = statusUpdatedAt && (
+      <Typography variant='body1' color='texts.hint'>
+        {alertFormattedDateTime(statusUpdatedAt)}
+      </Typography>
+    );
+
+    if (alertStatus === 'RESOLVED') {
+      return (
+        <S.Wrapper container sx={{ mr: 1 }}>
+          {statusUpdatedBy && (
+            <>
+              <UserIcon stroke='black' />
+              <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
+                {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity?.username}
+                {', '}
+              </Typography>
+            </>
+          )}
+          {updatedAt}
+        </S.Wrapper>
+      );
+    }
+
+    if (alertStatus === 'RESOLVED_AUTOMATICALLY') {
+      return (
+        <S.Wrapper container sx={{ mr: 1 }}>
+          <GearIcon stroke='black' />
+          <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
+            Automatically
+          </Typography>
+          {updatedAt}
+        </S.Wrapper>
+      );
+    }
+
+    return null;
+  }, [alertStatus, statusUpdatedAt, statusUpdatedBy]);
 
   return (
     <S.Container container>
-      <ColContainer item $colType='date'>
-        <Typography variant='body1'>{alertFormattedDateTime(createdAt)}</Typography>
-      </ColContainer>
-      <ColContainer item $colType='type'>
-        <AppTooltip title={() => lowerCase(type)}>
-          <Typography variant='body1' title={type} noWrap>
-            {lowerCase(type)}
-          </Typography>
-        </AppTooltip>
-      </ColContainer>
-      <ColContainer item $colType='description'>
-        <Typography variant='body1' title={description} noWrap>
-          {description}
-        </Typography>
-      </ColContainer>
-      <ColContainer item $colType='status'>
-        <AlertStatusItem typeName={status} />
-      </ColContainer>
-      <ColContainer item $colType='updatedBy'>
-        <Typography variant='body1'>
-          {statusUpdatedBy?.owner?.name || statusUpdatedBy?.identity.username}
-        </Typography>
-      </ColContainer>
-      <ColContainer item $colType='updatedTime'>
-        <Typography variant='body1'>{alertFormattedDateTime(statusUpdatedAt)}</Typography>
-      </ColContainer>
-      <S.ActionButtonsContainer item $colType='actionBtn'>
-        <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
-          <AppButton size='medium' color='primaryLight' onClick={alertStatusHandler}>
-            {status === 'OPEN' ? 'Resolve' : 'Reopen'}
-          </AppButton>
-        </WithPermissions>
-      </S.ActionButtonsContainer>
+      <Grid container flexWrap='nowrap'>
+        <Grid container flexWrap='nowrap' item lg={8}>
+          <Grid container flexDirection='column'>
+            <Typography variant='h4'>{alertTitlesMap.get(type)}</Typography>
+            <Grid container flexWrap='nowrap' alignItems='center' sx={{ mt: 0.5 }}>
+              {lastCreatedAt && (
+                <Typography variant='subtitle1'>
+                  {alertFormattedDateTime(lastCreatedAt)}
+                </Typography>
+              )}
+              {alertChunkList && alertChunkList?.length > 0 && (
+                <AppButton
+                  sx={{ ml: 1 }}
+                  size='medium'
+                  color='tertiary'
+                  onClick={() => setShowHistory(prev => !prev)}
+                >
+                  {`${showHistory ? 'Hide' : 'Show'} history`}
+                </AppButton>
+              )}
+            </Grid>
+          </Grid>
+        </Grid>
+        <S.Wrapper container item lg={4}>
+          {resolvedInfo}
+          <AlertStatusItem status={alertStatus} />
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
+            <Grid>
+              <AppButton
+                sx={{ ml: 2 }}
+                size='medium'
+                color='primaryLight'
+                onClick={alertStatusHandler}
+              >
+                {alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
+              </AppButton>
+            </Grid>
+          </WithPermissions>
+        </S.Wrapper>
+      </Grid>
+      <Collapse in={showHistory} timeout={0} unmountOnExit>
+        <Grid container flexDirection='column' flexWrap='nowrap' sx={{ mt: 2 }}>
+          {alertChunkList?.map(alertChunk => (
+            <Grid
+              key={`${alertChunk.createdAt}`}
+              container
+              flexWrap='nowrap'
+              sx={{ py: 0.75 }}
+            >
+              {alertChunk.createdAt && (
+                <Typography whiteSpace='nowrap' variant='subtitle1'>
+                  {alertFormattedDateTime(alertChunk.createdAt)}
+                </Typography>
+              )}
+              <Typography sx={{ ml: 1.25 }} variant='subtitle1'>
+                {alertChunk.description}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      </Collapse>
     </S.Container>
   );
 };

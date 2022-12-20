@@ -1,15 +1,23 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import org.apache.commons.collections4.SetValuedMap;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ReactiveAlertRepository extends ReactiveCRUDRepository<AlertPojo> {
+public interface ReactiveAlertRepository {
+    Mono<AlertDto> get(final long id);
+
+    Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(
+        final Collection<String> dataEntityOddrns);
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN.
@@ -30,13 +38,13 @@ public interface ReactiveAlertRepository extends ReactiveCRUDRepository<AlertPoj
      */
     Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId);
 
-    /**
-     * Retrieves all alerts with status AlertStatusEnum.OPEN for certain DataEntity.
-     *
-     * @param dataEntityId - data entity id
-     * @return - List of {@link AlertDto}
-     */
-    Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId);
+    Mono<Page<AlertDto>> getAlertsByDataEntityId(final long dataEntityId, final int page, final int size);
+
+    Mono<Long> getAlertsCountByDataEntityId(final long dataEntityId, final AlertStatusEnum alertStatus);
+
+    default Mono<Long> getAlertsCountByDataEntityId(final long dataEntityId) {
+        return getAlertsCountByDataEntityId(dataEntityId, null);
+    }
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN which are depended on the provided list of oddrns.
@@ -89,21 +97,21 @@ public interface ReactiveAlertRepository extends ReactiveCRUDRepository<AlertPoj
      */
     Mono<AlertPojo> updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
 
+    Mono<Void> resolveAutomatically(final List<Long> alertIds);
+
     /**
      * Creates new alerts.
      *
      * @param alerts - List of new alerts
-     * @return - List of {@link AlertPojo}
+     * @return - Flux of {@link AlertPojo}
      */
-    Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alerts);
+    Flux<AlertPojo> createAlerts(final Collection<AlertPojo> alerts);
 
-    /**
-     * Retrieves existing messengers by provided list of alerts.
-     *
-     * @param alerts - List of alerts
-     * @return - List of existing messengers
-     */
-    Mono<Set<String>> getExistingMessengers(final Collection<AlertPojo> alerts);
+    Mono<Void> createChunks(final List<AlertChunkPojo> chunks);
+
+    Mono<Void> setLastCreatedAt(final Map<Long, LocalDateTime> alertIdToLastCreatedAt);
 
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
+
+    Mono<Boolean> existsOpen(long alertId);
 }

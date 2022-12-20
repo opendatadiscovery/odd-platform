@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.DataEntityMessageContext;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventDto;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventStateDto;
@@ -89,7 +90,8 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
             .where(MESSAGE.STATE.eq(MessageStateDto.PENDING_SEND.getCode()))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .groupBy(fields)
-            .orderBy(MESSAGE.CREATED_AT).limit(1)
+            .orderBy(MESSAGE.CREATED_AT)
+            .limit(1)
             .fetchOptional();
         // @formatter:on
 
@@ -178,6 +180,15 @@ public class DataCollaborationRepositoryImpl implements DataCollaborationReposit
     public void deleteEvent(final long eventId) {
         dslContext.deleteFrom(MESSAGE_PROVIDER_EVENT)
             .where(MESSAGE_PROVIDER_EVENT.ID.eq(eventId))
+            .execute();
+    }
+
+    @Override
+    public void incrementMessageTryCount(final UUID messageUUID) {
+        dslContext.update(MESSAGE)
+            .set(MESSAGE.TRY_SEND_COUNT, DSL.coalesce(MESSAGE.TRY_SEND_COUNT, DSL.inline(0)).plus(1))
+            .where(MESSAGE.UUID.eq(messageUUID))
+            .and(MESSAGE.CREATED_AT.eq(UUIDHelper.extractDateTimeFromUUID(messageUUID)))
             .execute();
     }
 

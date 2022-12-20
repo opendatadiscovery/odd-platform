@@ -51,6 +51,10 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getId, identity()));
 
+        if (datasetDict.isEmpty()) {
+            return Mono.empty();
+        }
+
         final List<DatasetVersionPojo> versions = datasetDict.values().stream()
             .map(this::mapNewDatasetVersion)
             .collect(Collectors.toList());

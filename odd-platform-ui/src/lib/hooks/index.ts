@@ -5,3 +5,4 @@ export { default as useSetActivityHeaderIcon } from './useSetActivityHeaderIcon'
 export { default as useAppParams } from './useAppParams';
 export { default as useAppPaths } from './useAppPaths';
 export { default as useAppDateTime } from './useAppDateTime';
+export { default as useQueryParams } from './useQueryParams';

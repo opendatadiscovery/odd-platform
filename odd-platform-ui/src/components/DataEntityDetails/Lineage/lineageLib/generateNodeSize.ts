@@ -16,13 +16,13 @@ import {
 } from './constants';
 
 interface GenerateNodeSizeProps {
-  compact: boolean;
+  full: boolean;
   titleHeight: number;
   oddrnHeight?: number;
 }
 
 export const generateNodeSize = ({
-  compact,
+  full,
   titleHeight,
   oddrnHeight = INFO_MIN_ODDRN_HEIGHT,
 }: GenerateNodeSizeProps): NodeSize => {
@@ -30,9 +30,9 @@ export const generateNodeSize = ({
 
   const size: NodeSize['size'] = {
     width: NODE_WIDTH,
-    height: compact
-      ? NODE_COMPACT_HEIGHT_WITHOUT_TITLE + titleHeight
-      : NODE_HEIGHT_WITHOUT_TITLE + titleHeight + oddrnHeight / 2,
+    height: full
+      ? NODE_HEIGHT_WITHOUT_TITLE + titleHeight + oddrnHeight / 2
+      : NODE_COMPACT_HEIGHT_WITHOUT_TITLE + titleHeight,
     mx: 150,
     my: 24,
     contentWidth: NODE_WIDTH - NODE_INDENT_LEFT * 3,
@@ -61,7 +61,7 @@ export const generateNodeSize = ({
 
   const classes: Content['classes'] = {
     x: NODE_INDENT_LEFT,
-    y: compact ? info.y - NODE_LINE_MX : info.y + info.lineHeight * 3.5,
+    y: full ? info.y + info.lineHeight * 3.5 : info.y - NODE_LINE_MX,
     width: 24,
     height: 16,
     mx: 2,

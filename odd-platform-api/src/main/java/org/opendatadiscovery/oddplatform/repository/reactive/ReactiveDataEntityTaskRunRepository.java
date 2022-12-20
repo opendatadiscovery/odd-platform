@@ -21,4 +21,6 @@ public interface ReactiveDataEntityTaskRunRepository {
                                                         final DataEntityRunStatus status,
                                                         final int page,
                                                         final int size);
+
+    Mono<Map<String, DataEntityTaskRunPojo>> getLatestRunsMap(final Collection<String> dataQualityTestOddrns);
 }

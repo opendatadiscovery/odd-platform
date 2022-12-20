@@ -1200,6 +1200,16 @@ paths:
             type: integer
             format: int32
             minimum: 1
+        - name: expanded_entity_ids
+          in: query
+          required: false
+          explode: false
+          description: 'List of DataEntity ids which were expanded in the lineage graph'
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
       responses:
         '200':
           description: OK
@@ -1224,6 +1234,16 @@ paths:
             type: integer
             format: int32
             minimum: 1
+        - name: expanded_entity_ids
+          in: query
+          required: false
+          explode: false
+          description: 'List of DataEntity ids which were expanded in the lineage graph'
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
       responses:
         '200':
           description: OK
@@ -1241,6 +1261,8 @@ paths:
       operationId: getDataEntityAlerts
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
@@ -1248,6 +1270,29 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/alerts/counts:
+    get:
+      summary: Get DataEntity's alerts counts
+      description: Gets DataEntity's alerts counts
+      operationId: getDataEntityAlertsCounts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: status
+          in: query
+          required: true
+          schema:
+            $ref: './components.yaml/#/components/schemas/AlertStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
       tags:
         - dataEntity
 
@@ -1399,6 +1444,42 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/MessageChannelList'
+      tags:
+        - dataEntity
+
+  /api/dataentities/{data_entity_id}/alert_config:
+    get:
+      summary: Get alert config for data entity
+      operationId: getAlertConfig
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityAlertConfig'
+      tags:
+        - dataEntity
+    put:
+      summary: Updates data entity alert config
+      operationId: updateAlertConfig
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityAlertConfig'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityAlertConfig'
       tags:
         - dataEntity
 
@@ -1808,7 +1889,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/AlertStatus'
+                $ref: './components.yaml/#/components/schemas/Alert'
       tags:
         - alert
 

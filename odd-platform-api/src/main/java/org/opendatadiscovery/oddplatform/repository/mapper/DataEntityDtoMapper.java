@@ -34,13 +34,13 @@ import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.AGG_OWNERSHIP_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.AGG_OWNER_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.AGG_TAGS_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.AGG_TAGS_RELATION_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.AGG_TITLE_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.DATA_ENTITY_CTE_NAME;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig.HAS_ALERTS_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNERSHIP_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNER_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_RELATION_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TITLE_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.DATA_ENTITY_CTE_NAME;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.HAS_ALERTS_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +50,7 @@ public class DataEntityDtoMapper {
 
     private final JooqRecordHelper jooqRecordHelper;
 
-    public DataEntityDto mapDtoRecord(final Record r) {
+    public DataEntityDto mapDtoRecordFromCTE(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
 
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
@@ -58,7 +58,6 @@ public class DataEntityDtoMapper {
         return DataEntityDto.builder()
             .dataEntity(dataEntity)
             .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
-            .specificAttributes(extractSpecificAttributes(dataEntity))
             .build();
     }
 
@@ -135,8 +134,7 @@ public class DataEntityDtoMapper {
             .collect(toList());
     }
 
-    private Map<DataEntityClassDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity
-    ) {
+    private Map<DataEntityClassDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity) {
         if (dataEntity.getHollow() || dataEntity.getSpecificAttributes() == null) {
             return emptyMap();
         }

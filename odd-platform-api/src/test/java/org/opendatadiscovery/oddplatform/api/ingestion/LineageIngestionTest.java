@@ -70,12 +70,10 @@ public class LineageIngestionTest extends BaseIngestionTest {
                 .outputs(List.of(outputDataset1.getOddrn(), outputDataset2.getOddrn()))
             );
 
-        final Map<String, DataEntity> itemsMap = Stream
-            .of(
+        final Map<String, DataEntity> itemsMap = Stream.of(
                 inputDataset1, inputDataset2, middlewareDataset,
                 dataTransformer1, dataTransformer2, outputDataset1, outputDataset2
-            )
-            .collect(Collectors.toMap(DataEntity::getOddrn, identity()));
+            ).collect(Collectors.toMap(DataEntity::getOddrn, identity()));
 
         final var dataEntityList = new DataEntityList()
             .dataSourceOddrn(createdDataSource.getOddrn())

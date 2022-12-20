@@ -16,8 +16,11 @@ group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
 dependencies {
+    if (bundleUI == true) {
+        implementation project(':odd-platform-ui')
+    }
+
     implementation project(':odd-platform-api-contract')
-    implementation project(':odd-platform-ui')
 
     implementation libs.bundles.spring
     implementation libs.bundles.spring.redis.session

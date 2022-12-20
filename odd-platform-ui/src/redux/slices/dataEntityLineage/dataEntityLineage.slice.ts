@@ -3,6 +3,7 @@ import * as thunks from 'redux/thunks';
 import type {
   DataEntityLineageState,
   DataEntityLineageStreamById,
+  ExpandAllGroupsParams,
   ExpandEntitiesFromGroupParams,
   LocalLineageState,
 } from 'redux/interfaces';
@@ -54,13 +55,7 @@ export const dataEntityLineageSlice = createSlice({
   reducers: {
     expandAllGroups: (
       state,
-      {
-        payload,
-      }: {
-        payload: Omit<ExpandEntitiesFromGroupParams['payload'], 'idsToExclude'> & {
-          isExpanded: boolean;
-        };
-      }
+      { payload }: ExpandAllGroupsParams
     ): DataEntityLineageState => {
       const { rootNodeId, isExpanded } = payload;
 

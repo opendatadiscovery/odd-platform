@@ -1,11 +1,10 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.Collection;
 import java.util.List;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
@@ -19,32 +18,33 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUp
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
-import org.opendatadiscovery.oddplatform.mapper.OffsetDateTimeMapper;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataEntityList> {
-    Mono<DataEntityRef> createDataEntityGroup(final DataEntityGroupFormData formData);
-
-    Mono<DataEntityRef> updateDataEntityGroup(final Long id, final DataEntityGroupFormData formData);
-
-    Mono<DataEntityPojo> deleteDataEntityGroup(final Long id);
-
+public interface DataEntityService {
     Mono<DataEntityClassAndTypeDictionary> getDataEntityClassesAndTypes();
+
+    Mono<DataEntityDimensionsDto> getDimensions(final long dataEntityId);
+
+    Mono<List<DataEntityDimensionsDto>> getDimensions(final Collection<String> oddrns);
+
+    default Mono<DataEntityList> findByState(final FacetStateDto state, final int page, final int size) {
+        return findByState(state, page, size, null);
+    }
+
+    Mono<DataEntityList> findByState(final FacetStateDto state,
+                                     final int page,
+                                     final int size,
+                                     final OwnerPojo owner);
 
     Mono<DataEntityDetails> getDetails(final long dataEntityId);
 
-    Mono<DataEntityList> list(final Integer page,
-                              final Integer size,
-                              final int entityClassId,
-                              final Integer entityTypeId);
+    Mono<List<String>> getDependentDataEntityOddrns(final LineageStreamKind streamKind);
 
     Flux<DataEntityRef> listAssociated(final int page, final int size);
 
@@ -78,6 +78,4 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
     Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId, final Long dataEntityGroupId);
 
     Mono<DataEntityUsageInfo> getDataEntityUsageInfo();
-
-    Mono<CompactDataEntityList> listEntitiesWithinDEG(final String degOddrn);
 }

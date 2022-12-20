@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.rowNumber;
@@ -36,45 +38,53 @@ public class JooqQueryHelper {
     }
 
     public Select<? extends Record> paginate(final Select<?> baseSelect,
-                                             final int page,
-                                             final int size) {
-        return paginate(baseSelect, baseSelect.field("id"), SortOrder.ASC, page, size);
+                                             final int offset,
+                                             final int limit) {
+        return paginate(baseSelect, baseSelect.field("id"), SortOrder.ASC, offset, limit);
     }
 
     public Select<? extends Record> paginate(final Select<?> baseSelect,
                                              final Field<?> orderField,
-                                             final int page,
-                                             final int size) {
-        return paginate(baseSelect, orderField, SortOrder.ASC, page, size);
+                                             final int offset,
+                                             final int limit) {
+        return paginate(baseSelect, orderField, SortOrder.ASC, offset, limit);
     }
 
     public Select<? extends Record> paginate(final Select<?> baseSelect,
                                              final Field<?> orderField,
                                              final SortOrder sortOrder,
-                                             final int page,
-                                             final int size) {
+                                             final int offset,
+                                             final int limit) {
+        return paginate(baseSelect, singletonList(new OrderByField(orderField, sortOrder)), offset, limit);
+    }
+
+    public Select<? extends Record> paginate(final Select<?> baseSelect,
+                                             final List<OrderByField> orderByFields,
+                                             final int offset,
+                                             final int limit) {
         homogeneityCheck(baseSelect.getSelect());
 
         final Table<?> u = baseSelect.asTable("u");
 
+        final List<? extends OrderField<?>> orderFields = getOrderFields(orderByFields, u);
+
         final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
-        final Field<Integer> rowNumber = rowNumber().over()
-            .orderBy(u.field(orderField).sort(sortOrder)).as(PAGE_METADATA_ROW_NUMBER);
+        final Field<Integer> rowNumber = rowNumber().over().orderBy(orderFields).as(PAGE_METADATA_ROW_NUMBER);
 
         final Table<?> t = dslContext
             .select(u.fields())
             .select(totalRows, rowNumber)
             .from(u)
-            .orderBy(u.field(orderField).sort(sortOrder))
-            .limit(size)
-            .offset(page)
+            .orderBy(orderFields)
+            .limit(limit)
+            .offset(offset)
             .asTable("t");
 
         return dslContext
             .select(t.fields())
             .select(field(t.field(rowNumber).ne(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD))
             .from(t)
-            .orderBy(t.field(orderField).sort(sortOrder));
+            .orderBy(getOrderFields(orderByFields, t));
     }
 
     public <T, R extends Record> Page<T> pageifyResult(final List<R> records,
@@ -146,5 +156,12 @@ public class JooqQueryHelper {
                 throw new IllegalArgumentException("The list of passed query's fields is heterogeneous");
             }
         }
+    }
+
+    private List<? extends OrderField<?>> getOrderFields(final List<OrderByField> orderByFields,
+                                                         final Table<?> table) {
+        return orderByFields.stream()
+            .map(f -> table.field(f.orderField()).sort(f.sortOrder()))
+            .toList();
     }
 }

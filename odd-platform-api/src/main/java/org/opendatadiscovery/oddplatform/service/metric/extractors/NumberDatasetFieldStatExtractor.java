@@ -15,7 +15,6 @@ public class NumberDatasetFieldStatExtractor extends DatasetFieldStatExtractor<N
     @Override
     protected Stream<Pair<MetricDataTriplet, ? extends PointData>> extract(final Attributes attributes,
                                                                            final NumberFieldStat stats) {
-        // TODO: add BigDecimal metrics
         return Stream.of(
             Pair.of(MetricDataTriplet.DF_NULLS_COUNT, longPointData(stats.getNullsCount(), attributes)),
             Pair.of(MetricDataTriplet.DF_UNIQUE_COUNT, longPointData(stats.getUniqueCount(), attributes))

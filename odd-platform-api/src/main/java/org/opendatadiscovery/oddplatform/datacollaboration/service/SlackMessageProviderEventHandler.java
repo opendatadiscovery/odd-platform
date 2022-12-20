@@ -9,7 +9,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventPaylo
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageEventRequest;
 import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageProviderDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessageProviderEventPojo;
-import org.opendatadiscovery.oddplatform.repository.MessageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMessageRepository;
 import org.opendatadiscovery.oddplatform.utils.GsonHelper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class SlackMessageProviderEventHandler implements MessageProviderEventHandler {
-    private final MessageRepository messageRepository;
+    private final ReactiveMessageRepository reactiveMessageRepository;
 
     @Override
     public Mono<Void> enqueueEvent(final MessageEventRequest messageEvent) {
@@ -28,12 +28,12 @@ public class SlackMessageProviderEventHandler implements MessageProviderEventHan
             case UPDATE -> ((MessageChangedEvent) messageEvent.event()).getMessage().getThreadTs();
         };
 
-        return messageRepository.getUUIDByProviderInfo(parentMessageProviderId, messageEvent.provider())
+        return reactiveMessageRepository.getUUIDByProviderInfo(parentMessageProviderId, messageEvent.provider())
             .switchIfEmpty(Mono.defer(() -> {
                 log.debug("Message is not a reply thread for tracked messages: {}", messageEvent.event());
                 return Mono.empty();
             }))
-            .flatMap(uuid -> messageRepository.createMessageEvent(
+            .flatMap(uuid -> reactiveMessageRepository.createMessageEvent(
                 GsonHelper.toJson(messageEvent.event()),
                 messageEvent.action(),
                 messageEvent.provider(),

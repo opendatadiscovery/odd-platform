@@ -125,8 +125,7 @@ public class JooqFTSHelper {
             .collect(Collectors.toList());
     }
 
-    public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
-                                                                             final boolean skipEntityClassCondition) {
+    public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state) {
         final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> cteFilters =
             e -> e.getKey().equals(FacetType.DATA_SOURCES)
                 || e.getKey().equals(FacetType.ENTITY_CLASSES)
@@ -141,7 +140,7 @@ public class JooqFTSHelper {
         final List<Condition> cteConditions = state.getState().entrySet().stream()
             .filter(cteFilters)
             .filter(e -> {
-                if (skipEntityClassCondition) {
+                if (state.isMyObjects()) {
                     return !e.getKey().equals(FacetType.ENTITY_CLASSES);
                 }
                 return true;

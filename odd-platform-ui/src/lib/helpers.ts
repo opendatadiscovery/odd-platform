@@ -37,16 +37,9 @@ export const stringFormatted = (
 
 export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
 
-export const toDateWithoutOffset = (dateToCast: number): Date => {
-  const date = new Date(dateToCast);
-  const userTimezoneOffset = date.getTimezoneOffset();
-  return new Date(date.getTime() - userTimezoneOffset);
-};
+export const toDate = (dateToCast: number): Date => new Date(dateToCast);
 
-export const toTimestampWithoutOffset = (dateToCast: Date): number => {
-  const userTimezoneOffset = dateToCast.getTimezoneOffset();
-  return dateToCast.getTime() + userTimezoneOffset;
-};
+export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
 
 export const setActivityBackgroundColor = (
   theme: Theme,
