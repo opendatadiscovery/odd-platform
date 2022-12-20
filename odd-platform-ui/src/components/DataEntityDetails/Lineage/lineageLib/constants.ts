@@ -1,4 +1,4 @@
-import type { LineageGraphState, NodeSize } from './interfaces';
+import type { LineageGraphState, NodeSize, LineageQueryParams } from './interfaces';
 
 export const defaultGraphState: LineageGraphState = {
   nodesUp: [],
@@ -9,8 +9,6 @@ export const defaultGraphState: LineageGraphState = {
   crossLinksDown: [],
   depth: { upstream: 0, downstream: 0 },
 };
-
-export const defaultDepth = 1;
 
 export const NODE_WIDTH = 300;
 export const NODE_HEIGHT_WITHOUT_TITLE = 125;
@@ -67,4 +65,27 @@ export const nodeSizeInitial: NodeSize = {
       },
     },
   },
+};
+
+export const defaultLineageQuery: LineageQueryParams = {
+  full: true,
+  fn: false,
+  d: 1,
+  t: '',
+  eag: false,
+  exdg: [],
+  exug: [],
+  exu: [],
+  exd: [],
+};
+
+export const layerHeight = 780;
+export const layerWidth = 1408;
+export const initialTransformMatrix = {
+  scaleX: 0.75,
+  scaleY: 0.75,
+  translateX: layerWidth / 2.3,
+  translateY: layerHeight / 2.5,
+  skewX: 0,
+  skewY: 0,
 };

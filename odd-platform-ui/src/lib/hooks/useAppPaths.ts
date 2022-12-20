@@ -32,8 +32,8 @@ const useAppPaths = () => {
   const dataEntityOverviewPath = (entityId: number) =>
     `${dataEntityDetailsPath(entityId)}/overview`;
 
-  const dataEntityLineagePath = (entityId: number) =>
-    `${dataEntityDetailsPath(entityId)}/lineage`;
+  const dataEntityLineagePath = (entityId: number, query: string) =>
+    `${dataEntityDetailsPath(entityId)}/lineage?${query}`;
 
   const dataEntityTestReportPath = (entityId: number) =>
     `${dataEntityDetailsPath(entityId)}/test-reports`;

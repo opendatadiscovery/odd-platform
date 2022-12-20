@@ -20,10 +20,11 @@ export const fetchDataEntityDownstreamLineage = handleResponseAsyncThunk<
   DataEntityApiGetDataEntityDownstreamLineageRequest & DataEntityLineageRequestParams
 >(
   actions.fetchDataEntityDownstreamLineageActionType,
-  async ({ dataEntityId, lineageDepth, rootNodeId, expandGroups }) => {
+  async ({ dataEntityId, lineageDepth, rootNodeId, expandGroups, expandedEntityIds }) => {
     const dataEntityLineage = await dataEntityApi.getDataEntityDownstreamLineage({
       dataEntityId,
       lineageDepth,
+      expandedEntityIds,
     });
 
     return { rootNodeId, dataEntityId, dataEntityLineage, expandGroups };
@@ -36,10 +37,11 @@ export const fetchDataEntityUpstreamLineage = handleResponseAsyncThunk<
   DataEntityApiGetDataEntityUpstreamLineageRequest & DataEntityLineageRequestParams
 >(
   actions.fetchDataEntityUpstreamLineageActionType,
-  async ({ dataEntityId, lineageDepth, rootNodeId, expandGroups }) => {
+  async ({ dataEntityId, lineageDepth, rootNodeId, expandGroups, expandedEntityIds }) => {
     const dataEntityLineage = await dataEntityApi.getDataEntityUpstreamLineage({
       dataEntityId,
       lineageDepth,
+      expandedEntityIds,
     });
     return { rootNodeId, dataEntityId, dataEntityLineage, expandGroups };
   },

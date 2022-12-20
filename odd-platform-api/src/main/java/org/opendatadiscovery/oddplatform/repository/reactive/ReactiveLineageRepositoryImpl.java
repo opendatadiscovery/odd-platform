@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertValuesStep3;
 import org.jooq.Name;
@@ -105,6 +107,23 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
             .map(r -> r.into(LineagePojo.class));
     }
 
+    @Override
+    public Flux<LineagePojo> getLineageRelationsForDepthOne(final List<Long> rootIds,
+                                                            final LineageStreamKind streamKind) {
+        if (CollectionUtils.isEmpty(rootIds)) {
+            return Flux.empty();
+        }
+        final Condition joinCondition = streamKind == LineageStreamKind.DOWNSTREAM
+            ? DATA_ENTITY.ODDRN.eq(LINEAGE.PARENT_ODDRN)
+            : DATA_ENTITY.ODDRN.eq(LINEAGE.CHILD_ODDRN);
+        final var query = DSL.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
+            .from(LINEAGE)
+            .join(DATA_ENTITY).on(joinCondition)
+            .where(DATA_ENTITY.ID.in(rootIds));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(LineagePojo.class));
+    }
+
     private CommonTableExpression<Record> lineageCte(final Collection<String> oddrns,
                                                      final LineageDepth lineageDepth,
                                                      final LineageStreamKind streamKind) {
@@ -115,8 +134,7 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
         final Field<String> tParentOddrn = field("t.parent_oddrn", String.class);
 
         final Pair<TableField<LineageRecord, String>, Field<String>> conditions =
-            streamKind.equals(LineageStreamKind.DOWNSTREAM)
-                ? Pair.of(LINEAGE.PARENT_ODDRN, tChildOddrn)
+            streamKind == LineageStreamKind.DOWNSTREAM ? Pair.of(LINEAGE.PARENT_ODDRN, tChildOddrn)
                 : Pair.of(LINEAGE.CHILD_ODDRN, tParentOddrn);
 
         return cteName.as(DSL

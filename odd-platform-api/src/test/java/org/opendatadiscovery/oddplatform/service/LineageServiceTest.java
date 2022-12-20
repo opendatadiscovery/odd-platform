@@ -124,6 +124,8 @@ class LineageServiceTest {
         when(dataEntityRepository.getDataEntityWithDataSourceAndNamespace(eq(1L))).thenReturn(Mono.just(dto));
         when(lineageRepository.getLineageRelations(any(), any(), any()))
             .thenReturn(Flux.fromStream(Stream.of(rootToFirstEntityLineage, rootToSecondEntityLineage)));
+        when(lineageRepository.getLineageRelationsForDepthOne(any(), any()))
+            .thenReturn(Flux.empty());
         when(groupEntityRelationRepository.fetchGroupRelations(any()))
             .thenReturn(Mono.just(new HashMap<>()));
         when(lineageRepository.getChildrenCount(any())).thenReturn(Mono.just(new HashMap<>()));
@@ -135,7 +137,7 @@ class LineageServiceTest {
         ));
 
         lineageService
-            .getLineage(1L, 1, LineageStreamKind.DOWNSTREAM)
+            .getLineage(1L, 1, List.of(), LineageStreamKind.DOWNSTREAM)
             .as(StepVerifier::create)
             .assertNext(r -> {
                     assertThat(r.getDownstream().getNodes().size()).isEqualTo(3);

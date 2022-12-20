@@ -1,9 +1,12 @@
 import React from 'react';
 import { type TreeNodeDatum } from 'redux/interfaces';
 import { HierarchyPointLink, type HierarchyPointNode } from 'd3-hierarchy';
+import { useQueryParams } from 'lib/hooks';
+import type { LineageQueryParams } from '../interfaces';
 import { getMaxODDRNHeight, getMaxTitleHeight } from '../helpers';
 import { generateNodeSize } from '../generateNodeSize';
 import LineageContext, { type LineageContextProps } from './LineageContext';
+import { defaultLineageQuery } from '../constants';
 
 type LineageProviderProps = Omit<
   LineageContextProps,
@@ -16,15 +19,11 @@ type LineageProviderProps = Omit<
   | 'renderedLinks'
 >;
 
-const LineageProvider: React.FC<LineageProviderProps> = ({
-  compact,
-  children,
-  setCompactView,
-  setFullTitlesView,
-  fullTitles,
-  expandGroups,
-  setExpandGroups,
-}) => {
+const LineageProvider: React.FC<LineageProviderProps> = ({ children }) => {
+  const {
+    queryParams: { full, fn },
+  } = useQueryParams<LineageQueryParams>(defaultLineageQuery);
+
   const [renderedNodes, setRenderedNodes] = React.useState<
     HierarchyPointNode<TreeNodeDatum>[]
   >([]);
@@ -36,8 +35,8 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
   >([]);
 
   const titleHeight = React.useMemo(
-    () => getMaxTitleHeight(renderedNodes, fullTitles),
-    [fullTitles]
+    () => getMaxTitleHeight(renderedNodes, fn),
+    [fn, renderedNodes]
   );
 
   const oddrnHeight = React.useMemo(
@@ -46,34 +45,20 @@ const LineageProvider: React.FC<LineageProviderProps> = ({
   );
 
   const nodeSize = React.useMemo(
-    () => generateNodeSize({ compact, titleHeight, oddrnHeight }),
-    [compact, titleHeight, oddrnHeight]
+    () => generateNodeSize({ full, titleHeight, oddrnHeight }),
+    [full, titleHeight, oddrnHeight]
   );
 
   const providerValue = React.useMemo<LineageContextProps>(
     () => ({
-      compact,
       nodeSize,
-      setCompactView,
-      fullTitles,
-      setFullTitlesView,
       setRenderedNodes,
       renderedLinks,
       setRenderedLinks,
       highLightedLinks,
       setHighLightedLinks,
-      expandGroups,
-      setExpandGroups,
     }),
-    [
-      compact,
-      setCompactView,
-      fullTitles,
-      setFullTitlesView,
-      renderedLinks,
-      highLightedLinks,
-      expandGroups,
-    ]
+    [full, fn, renderedLinks, highLightedLinks]
   );
 
   return (

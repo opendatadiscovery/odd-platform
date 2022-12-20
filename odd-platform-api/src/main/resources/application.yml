@@ -135,6 +135,7 @@ datacollaboration:
   receive-event-advisory-lock-id: 110
   sender-message-advisory-lock-id: 120
   message-partition-period: 30
+  sending-messages-retry-count: 3
   enabled: false
 #  slack-oauth-token:
 

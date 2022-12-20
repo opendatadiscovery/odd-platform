@@ -24,6 +24,9 @@ public interface ReactiveLineageRepository extends ReactiveCRUDRepository<Lineag
                                           final LineageDepth depth,
                                           final LineageStreamKind streamKind);
 
+    Flux<LineagePojo> getLineageRelationsForDepthOne(final List<Long> rootIds,
+                                                     final LineageStreamKind streamKind);
+
     Mono<Map<String, Integer>> getChildrenCount(final Set<String> oddrns);
 
     Mono<Map<String, Integer>> getParentCount(final Set<String> oddrns);

@@ -1,23 +1,19 @@
 import React from 'react';
 import { Group } from '@visx/group';
 import truncate from 'lodash/truncate';
+import type { NodeSize } from '../../../../lineageLib/interfaces';
 import * as S from './NodeTitleStyles';
-import LineageContext from '../../../../lineageLib/LineageContext/LineageContext';
 
 interface NodeTitleProps {
   externalName: string | undefined;
   internalName: string | undefined;
   handleTitleClick: () => void;
+  nodeSize: NodeSize;
+  fullNames: boolean;
 }
 
-const NodeTitle: React.FC<NodeTitleProps> = ({
-  externalName,
-  internalName,
-  handleTitleClick,
-}) => {
-  const { nodeSize, fullTitles } = React.useContext(LineageContext);
-
-  return (
+const NodeTitle = React.memo<NodeTitleProps>(
+  ({ externalName, internalName, handleTitleClick, fullNames, nodeSize }) => (
     <Group top={nodeSize.content.title.y} left={nodeSize.content.title.x}>
       {externalName ? (
         <>
@@ -28,7 +24,7 @@ const NodeTitle: React.FC<NodeTitleProps> = ({
             height={nodeSize.content.title.height}
           >
             <S.TitleWrapper>
-              {fullTitles
+              {fullNames
                 ? internalName || externalName
                 : truncate(internalName || externalName, { length: 40 })}
             </S.TitleWrapper>
@@ -45,7 +41,7 @@ const NodeTitle: React.FC<NodeTitleProps> = ({
         </Group>
       )}
     </Group>
-  );
-};
+  )
+);
 
 export default NodeTitle;

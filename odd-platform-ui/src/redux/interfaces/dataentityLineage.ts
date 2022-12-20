@@ -101,3 +101,7 @@ export interface ParseLineageParams {
 export interface ExpandEntitiesFromGroupParams {
   payload: { rootNodeId: number; idsToExclude: number[] };
 }
+
+export interface ExpandAllGroupsParams {
+  payload: { rootNodeId: number; isExpanded: boolean };
+}
