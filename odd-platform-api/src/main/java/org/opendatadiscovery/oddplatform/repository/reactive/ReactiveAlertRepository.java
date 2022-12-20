@@ -116,6 +116,4 @@ public interface ReactiveAlertRepository {
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
 
     Mono<Boolean> openAlertWithTheSameTypeExistsForDataEntity(final long alertId);
-
-    Mono<AlertPojo> getOpenAlertIfExists(long alertId);
 }

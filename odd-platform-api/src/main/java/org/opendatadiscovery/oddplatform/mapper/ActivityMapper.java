@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.jooq.JSONB;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -107,7 +106,7 @@ public abstract class ActivityMapper {
     ActivityState mapState(final JSONB jsonb, final ActivityEventTypeDto eventTypeDto) {
         return switch (eventTypeDto) {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> mapOwnershipsState(jsonb);
-            case TAGS_ASSOCIATION_UPDATED -> mapTagsState(jsonb);
+            case TAG_ASSIGNMENT_UPDATED -> mapTagsState(jsonb);
             case DATA_ENTITY_CREATED -> mapDataEntityCreatedState(jsonb);
             case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> mapTermsState(jsonb);
             case DESCRIPTION_UPDATED -> mapDescriptionState(jsonb);

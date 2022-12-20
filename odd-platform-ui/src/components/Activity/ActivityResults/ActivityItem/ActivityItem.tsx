@@ -119,7 +119,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           hideAllDetails={hideAllDetails}
         />
       )}
-      {activity.eventType === ActivityEventType.TAGS_ASSOCIATION_UPDATED && (
+      {activity.eventType === ActivityEventType.TAG_ASSIGNMENT_UPDATED && (
         <ArrayActivityField
           activityName='Tags'
           oldState={activity.oldState.tags}

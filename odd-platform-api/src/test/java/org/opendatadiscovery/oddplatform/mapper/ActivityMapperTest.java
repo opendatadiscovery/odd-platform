@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
@@ -206,7 +205,7 @@ public class ActivityMapperTest {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> generateOwnershipState();
             case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> generateTermsState();
             case DATA_ENTITY_CREATED -> generateDataEntityCreatedState();
-            case TAGS_ASSOCIATION_UPDATED -> generateTagsState();
+            case TAG_ASSIGNMENT_UPDATED -> generateTagsState();
             case DESCRIPTION_UPDATED -> generateDescriptionState();
             case BUSINESS_NAME_UPDATED -> generateBusinessNameState();
             case DATASET_FIELD_VALUES_UPDATED -> generateDatasetFieldValuesState();
