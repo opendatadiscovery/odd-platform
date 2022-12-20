@@ -429,6 +429,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private DataSetStats mapStats(final DataEntityDetailsDto.DataSetDetailsDto dataSetDetailsDto) {
+        if (dataSetDetailsDto == null) {
+            return new DataSetStats();
+        }
+
         return new DataSetStats()
             .consumersCount(dataSetDetailsDto.consumersCount())
             .fieldsCount(dataSetDetailsDto.fieldsCount())
