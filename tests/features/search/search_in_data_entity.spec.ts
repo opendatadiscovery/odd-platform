@@ -97,6 +97,7 @@ test.describe('Search by data in data-entity in the Catalog', () => {
   });
   /**
    * /project/1/test-cases/118
+   * #concurrentModificationIssue
    */
   test(`Display an expected item with expression in owner's name`, async ({
     workerId,
@@ -105,16 +106,17 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     const ownerName4 = `ownerName4${workerId}`;
     const ownerTitle4 = `ownerTitle4${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
-      await pages.catalog.searchBy(entityNameWithAlphabeticChars);
-      await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
+      await pages.catalog.searchBy(entityWithStructure);
+      await pages.catalog.clickOnListItem(entityWithStructure);
       await pages.overview.createOwner(ownerName4, ownerTitle4);
       await pages.topPanel.clickTab('Catalog');
       await pages.catalog.searchBy(ownerName4);
-      expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
+      expect(await pages.catalog.isListItemVisible(entityWithStructure)).toBeTruthy();
     });
   });
   /**
    * /project/1/test-cases/119
+   * #concurrentModificationIssue
    */
   test(`Display an expected item with expression in name and owner`, async ({
     workerId,
@@ -133,6 +135,7 @@ test.describe('Search by data in data-entity in the Catalog', () => {
   });
   /**
    * /project/1/test-cases/120
+   * #concurrentModificationIssue
    */
   test(`Display an expected item with expression in "about" field and owner`, async ({
     workerId,
@@ -175,6 +178,7 @@ test.describe('Search by data in data-entity in the Catalog', () => {
   });
   /**
    * /project/1/test-cases/125
+   * #concurrentModificationIssue
    */
   test(`Display an expected item with expression in owner's title`, async ({
     workerId,
