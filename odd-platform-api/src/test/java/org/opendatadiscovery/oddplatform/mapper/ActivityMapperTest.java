@@ -181,7 +181,6 @@ public class ActivityMapperTest {
         return new DataEntityPojo()
             .setId(id)
             .setManuallyCreated(false)
-            .setIsDeleted(false)
             .setEntityClassIds(new Integer[] {1, 2, 3})
             .setTypeId(1)
             .setExternalName(UUID.randomUUID().toString())

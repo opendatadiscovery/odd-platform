@@ -47,18 +47,15 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
         final var softDeletedPojo = new EnumValuePojo()
             .setName("deletedPojo")
             .setDatasetFieldId(mainDatasetFieldId)
-            .setIsDeleted(true)
             .setDeletedAt(LocalDateTime.now());
 
         final var otherDatasetPojo = new EnumValuePojo()
             .setName("otherDatasetPojo")
-            .setDatasetFieldId(otherDatasetFieldId)
-            .setIsDeleted(false);
+            .setDatasetFieldId(otherDatasetFieldId);
 
         final var returnablePojo = new EnumValuePojo()
             .setName("returnablePojo")
-            .setDatasetFieldId(mainDatasetFieldId)
-            .setIsDeleted(false);
+            .setDatasetFieldId(mainDatasetFieldId);
 
         enumValueRepository.bulkCreate(List.of(softDeletedPojo, otherDatasetPojo, returnablePojo)).blockLast();
 
@@ -80,14 +77,12 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
         final var pojoToSoftDelete = new EnumValuePojo()
             .setId(4L)
             .setName("pojoToSoftDelete")
-            .setDatasetFieldId(datasetFieldId)
-            .setIsDeleted(false);
+            .setDatasetFieldId(datasetFieldId);
 
         final var pojoToKeep = new EnumValuePojo()
             .setId(5L)
             .setName("pojoToKeep")
-            .setDatasetFieldId(datasetFieldId)
-            .setIsDeleted(false);
+            .setDatasetFieldId(datasetFieldId);
 
         reactiveDatasetFieldRepository.bulkCreate(List.of(new DatasetFieldPojo().setId(datasetFieldId)))
             .collectList().block();
@@ -99,7 +94,6 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
             .assertNext(r -> {
                 assertThat(r.getId()).isEqualTo(pojoToSoftDelete.getId());
                 assertThat(r.getName()).isEqualTo(pojoToSoftDelete.getName());
-                assertThat(r.getIsDeleted()).isTrue();
                 assertThat(r.getDeletedAt()).isNotNull();
             })
             .verifyComplete();

@@ -20,10 +20,7 @@ import reactor.core.publisher.Mono;
 public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record, P>
     extends ReactiveAbstractCRUDRepository<R, P> {
 
-    private static final String DEFAULT_DELETED_FIELD = "is_deleted";
     private static final String DEFAULT_DELETED_AT_FIELD = "deleted_at";
-
-    protected final Field<Boolean> deletedField;
     protected final Field<LocalDateTime> deletedAtField;
 
     public ReactiveAbstractSoftDeleteCRUDRepository(final JooqReactiveOperations jooqReactiveOperations,
@@ -31,8 +28,6 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
                                                     final Table<R> recordTable,
                                                     final Class<P> pojoClass) {
         super(jooqReactiveOperations, jooqQueryHelper, recordTable, pojoClass);
-
-        this.deletedField = recordTable.field(DEFAULT_DELETED_FIELD, Boolean.class);
         this.deletedAtField = recordTable.field(DEFAULT_DELETED_AT_FIELD, LocalDateTime.class);
     }
 
@@ -44,12 +39,9 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
                                                     final Field<Long> idField,
                                                     final Field<LocalDateTime> createdAtField,
                                                     final Field<LocalDateTime> updatedAtField,
-                                                    final Field<Boolean> deletedField,
                                                     final Field<LocalDateTime> deletedAtField) {
         super(jooqReactiveOperations, jooqQueryHelper, recordTable, pojoClass, nameField, idField,
             createdAtField, updatedAtField);
-
-        this.deletedField = deletedField;
         this.deletedAtField = deletedAtField;
     }
 
@@ -101,13 +93,12 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
 
     protected List<Condition> addSoftDeleteFilter(final List<Condition> conditions) {
         final List<Condition> conditionsList = new ArrayList<>(conditions);
-        conditionsList.add(deletedField.isFalse());
+        conditionsList.add(deletedAtField.isNull());
         return conditionsList;
     }
 
     protected Map<Field<?>, Object> getDeleteChangedFields() {
         final Map<Field<?>, Object> updatedFieldsMap = new HashMap<>();
-        updatedFieldsMap.put(deletedField, true);
         if (deletedAtField != null) {
             updatedFieldsMap.put(deletedAtField, LocalDateTime.now());
         }
@@ -117,9 +108,6 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
     @Override
     protected List<Field<?>> getNonUpdatableFields() {
         final List<Field<?>> fields = new ArrayList<>(super.getNonUpdatableFields());
-        if (deletedField != null) {
-            fields.add(deletedField);
-        }
         if (deletedAtField != null) {
             fields.add(deletedAtField);
         }

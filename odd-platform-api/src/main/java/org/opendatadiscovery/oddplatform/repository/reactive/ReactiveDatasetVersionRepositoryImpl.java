@@ -81,9 +81,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.IS_DELETED.isFalse())
+            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
             .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
-                .and(ENUM_VALUE.IS_DELETED.isFalse()))
+                .and(ENUM_VALUE.DELETED_AT.isNull()))
             .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields);
 
@@ -127,9 +127,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.IS_DELETED.isFalse())
+            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
             .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
-                .and(ENUM_VALUE.IS_DELETED.isFalse()))
+                .and(ENUM_VALUE.DELETED_AT.isNull()))
             .groupBy(selectFields);
 
         return jooqReactiveOperations

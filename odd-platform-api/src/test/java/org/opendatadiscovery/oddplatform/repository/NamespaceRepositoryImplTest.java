@@ -93,7 +93,6 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
             .zipWhen(deletedNamespaceId -> namespaceRepository.create(pojo))
             .as(StepVerifier::create)
             .assertNext(t -> {
-                assertThat(t.getT1().getIsDeleted()).isTrue();
                 assertThat(t.getT1().getDeletedAt()).isNotNull();
                 assertThat(t.getT1().getId()).isNotEqualTo(t.getT2().getId());
             })

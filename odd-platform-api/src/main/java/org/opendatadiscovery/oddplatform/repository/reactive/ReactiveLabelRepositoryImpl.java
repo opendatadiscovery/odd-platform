@@ -123,7 +123,7 @@ public class ReactiveLabelRepositoryImpl
         var query = DSL.select(LABEL_TO_DATASET_FIELD.fields())
             .from(LABEL_TO_DATASET_FIELD)
             .join(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
-            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds).and(LABEL.IS_DELETED.isFalse()));
+            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds).and(LABEL.DELETED_AT.isNull()));
 
         if (origin != null && !origin.equals(LabelOrigin.ALL)) {
             query = query.and(LABEL_TO_DATASET_FIELD.ORIGIN.eq(origin.toString()));

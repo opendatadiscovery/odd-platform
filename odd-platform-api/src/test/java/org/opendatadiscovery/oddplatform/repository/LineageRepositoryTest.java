@@ -79,7 +79,7 @@ class LineageRepositoryTest extends BaseIntegrationTest {
     void getTargetsCountTest() {
         final var parentId = EASY_RANDOM.nextLong();
         final var parentOddrn = RandomStringUtils.randomAlphabetic(5);
-        final var pojo = new DataEntityPojo().setId(parentId).setOddrn(parentOddrn).setIsDeleted(false);
+        final var pojo = new DataEntityPojo().setId(parentId).setOddrn(parentOddrn);
         final var entity = new DataEntityDimensionsDto();
         entity.setDataEntity(pojo);
         final var firstLineagePojo = new LineagePojo()

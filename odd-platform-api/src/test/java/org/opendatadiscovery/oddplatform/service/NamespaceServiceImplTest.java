@@ -81,7 +81,6 @@ class NamespaceServiceImplTest {
             .setName(namespaceName)
             .setCreatedAt(LocalDateTime.now())
             .setUpdatedAt(LocalDateTime.now())
-            .setIsDeleted(false)
             .setDeletedAt(null);
 
         final Namespace expected = new Namespace()
@@ -125,7 +124,6 @@ class NamespaceServiceImplTest {
         final NamespacePojo createdPojo = new NamespacePojo()
             .setId(namespaceId)
             .setName(form.getName())
-            .setIsDeleted(false)
             .setCreatedAt(LocalDateTime.now());
 
         final Namespace expected = new Namespace()
@@ -158,7 +156,6 @@ class NamespaceServiceImplTest {
             .setId(namespaceId)
             .setName(UUID.randomUUID().toString())
             .setCreatedAt(LocalDateTime.now())
-            .setIsDeleted(false)
             .setUpdatedAt(LocalDateTime.now());
 
         final NamespacePojo appliedFormPojo = new NamespacePojo()
@@ -217,8 +214,7 @@ class NamespaceServiceImplTest {
 
         final NamespacePojo namespace = new NamespacePojo()
             .setId(namespaceId)
-            .setDeletedAt(LocalDateTime.now())
-            .setIsDeleted(true);
+            .setDeletedAt(LocalDateTime.now());
 
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));

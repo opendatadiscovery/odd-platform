@@ -86,9 +86,8 @@ public class ReactiveDataEntityRepositoryImpl
                                             final JooqRecordHelper jooqRecordHelper,
                                             final JooqFTSHelper jooqFTSHelper,
                                             final DataEntityDtoMapper dataEntityDtoMapper) {
-        super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY, DataEntityPojo.class,
-            DATA_ENTITY.EXTERNAL_NAME, DATA_ENTITY.ID, DATA_ENTITY.CREATED_AT, DATA_ENTITY.UPDATED_AT,
-            DATA_ENTITY.IS_DELETED, DATA_ENTITY.DELETED_AT);
+        super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY, DataEntityPojo.class, DATA_ENTITY.EXTERNAL_NAME,
+            DATA_ENTITY.ID, DATA_ENTITY.CREATED_AT, DATA_ENTITY.UPDATED_AT, DATA_ENTITY.DELETED_AT);
         this.jooqFTSHelper = jooqFTSHelper;
         this.jooqRecordHelper = jooqRecordHelper;
         this.dataEntityDtoMapper = dataEntityDtoMapper;
