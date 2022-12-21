@@ -18,6 +18,7 @@ import type {
   DataSetVersion,
   DataSource,
   EnumValue,
+  Feature,
   Label,
   MetadataField,
   MetadataFieldValue,
@@ -25,6 +26,8 @@ import type {
   Owner,
   OwnerAssociationRequest,
   Ownership,
+  Permission,
+  PermissionResourceType,
   Policy,
   PolicyDetails,
   Role,
@@ -32,9 +35,6 @@ import type {
   Term,
   TermDetails,
   TermRef,
-  Permission,
-  PermissionResourceType,
-  Feature,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
@@ -44,14 +44,14 @@ import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
 import type { DataEntityDetailsState } from './dataentities';
 import type { Alert, AlertsConfig } from './alerts';
-import type { Activity, ActivityPageInfo, ActivityQueryParams } from './activities';
+import type { Activity } from './activities';
 import type {
   FacetOptionsByName,
-  SearchTotalsByName,
   SearchFacetsByName,
+  SearchTotalsByName,
 } from './dataEntitySearch';
 import type { TermSearchFacetOptionsByName, TermSearchFacetsByName } from './termSearch';
-import type { MessagesByDate, Message } from './dataCollaboration';
+import type { Message, MessagesByDate } from './dataCollaboration';
 
 export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo: CurrentPageInfo;
@@ -141,8 +141,8 @@ export interface OwnersState {
 }
 
 export interface DataCollaborationState {
-  messages: { messagesByDate: MessagesByDate; pageInfo: PageInfo };
-  relatedMessages: { messages: Message[]; pageInfo: PageInfo };
+  messages: { messagesByDate: MessagesByDate; pageInfo: PageInfo<string> };
+  relatedMessages: { messages: Message[]; pageInfo: PageInfo<string> };
 }
 
 export interface DataEntitiesState {
@@ -218,10 +218,17 @@ export interface TermLinkedListState {
 }
 
 export interface ActivitiesState {
-  activitiesByDate: { [date: string]: Activity[] };
-  pageInfo: ActivityPageInfo;
-  counts: ActivityCountInfo;
-  queryParams: ActivityQueryParams;
+  activities: {
+    itemsByDate: { [date: string]: Activity[] };
+    pageInfo: PageInfo<number>;
+    counts: ActivityCountInfo;
+  };
+  dataEntityActivities: {
+    [dataEntityId: number]: {
+      itemsByDate: { [date: string]: Activity[] };
+      pageInfo: PageInfo<number>;
+    };
+  };
 }
 
 export interface RolesState extends EntityState<Role> {

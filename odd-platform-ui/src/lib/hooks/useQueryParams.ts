@@ -27,6 +27,7 @@ const useQueryParams = <Params extends Record<string, unknown>>(
     arrayFormat: 'bracket-separator',
     arrayFormatSeparator: ',',
     skipEmptyString: true,
+    skipNull: true,
   };
   const createQueryString = (params: QueryParams<Params>) =>
     stringify(params, queryStringOptions);

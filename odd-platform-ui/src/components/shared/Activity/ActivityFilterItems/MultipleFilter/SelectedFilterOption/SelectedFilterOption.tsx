@@ -1,31 +1,33 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import { ClearIcon } from 'components/shared/Icons';
-import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
-import { deleteActivityQueryParam } from 'redux/slices/activity.slice';
+import {
+  type ActivityFilterOption,
+  type ActivityMultipleFilterNames,
+  type ActivityQuery,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
+import { useQueryParams } from 'lib/hooks';
 import AppIconButton from '../../../../AppIconButton/AppIconButton';
 import TextFormatted from '../../../../TextFormatted/TextFormatted';
 import { Container } from './SelectedFilterOptionStyles';
 
 interface SelectedFilterOptionProps {
   selectedOption: ActivityFilterOption;
-  filterName: ActivityQueryName;
+  filterName: ActivityMultipleFilterNames;
 }
 
 const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
   selectedOption,
   filterName,
 }) => {
-  const dispatch = useDispatch();
+  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const onRemoveClick = () => {
-    dispatch(
-      deleteActivityQueryParam({
-        queryName: filterName,
-        queryData: selectedOption.id,
-      })
-    );
+    setQueryParams(prev => ({
+      ...prev,
+      [filterName]: prev[filterName]?.filter(id => id !== selectedOption.id),
+    }));
   };
 
   return (

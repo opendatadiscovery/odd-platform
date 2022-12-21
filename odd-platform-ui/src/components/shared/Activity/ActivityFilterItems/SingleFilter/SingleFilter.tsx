@@ -1,18 +1,21 @@
-import React, { PropsWithChildren } from 'react';
+import React, { type PropsWithChildren } from 'react';
 import { Grid } from '@mui/material';
 import { ActivityEventType, type DataSource, type Namespace } from 'generated-sources';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { stringFormatted } from 'lib/helpers';
-import type { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
-import { setActivityQueryParam } from 'redux/slices/activity.slice';
-import { getActivitiesQueryParamsByName } from 'redux/selectors';
+import { useQueryParams } from 'lib/hooks';
+import {
+  type ActivityQuery,
+  type ActivitySingleFilterNames,
+  type ActivityFilterOption,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
 import AppSelect from '../../../AppSelect/AppSelect';
 import AppMenuItem from '../../../AppMenuItem/AppMenuItem';
 
 interface SingleFilterProps<OptionType> {
   name: string;
   filterOptions: Array<OptionType>;
-  filterName: ActivityQueryName;
+  filterName: ActivitySingleFilterNames;
 }
 
 const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventType>({
@@ -20,97 +23,62 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
   filterOptions,
   filterName,
 }: PropsWithChildren<SingleFilterProps<OptionType>>) => {
-  const dispatch = useAppDispatch();
-  const dispatchQueryParam = (queryData: null | number | ActivityEventType) =>
-    dispatch(
-      setActivityQueryParam({
-        queryName: filterName,
-        queryData,
-      })
-    );
+  const defaultOption = 'All';
+  const { setQueryParams, queryParams } =
+    useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const selectedParam = useAppSelector(getActivitiesQueryParamsByName(filterName));
-
-  const [selectedOption, setSelectedOption] = React.useState('All');
-
-  React.useEffect(() => {
-    const option = filterOptions.find(el => {
-      if (typeof el === 'string') {
-        return el === selectedParam;
+  const handleFilterSelect = React.useCallback(
+    (option: ActivityFilterOption | string) => (_: React.MouseEvent<HTMLLIElement>) => {
+      if (option === defaultOption) {
+        setQueryParams(prev => ({ ...prev, [filterName]: null }));
+        return;
       }
-      return el.id === selectedParam;
-    });
 
-    if (option) {
       if (typeof option === 'string') {
-        setSelectedOption(option);
+        setQueryParams(prev => ({ ...prev, [filterName]: option }));
       } else {
-        setSelectedOption(option.name);
+        setQueryParams(prev => ({ ...prev, [filterName]: option.id }));
       }
-    } else {
-      setSelectedOption('All');
-    }
-  }, [filterOptions, selectedParam]);
-
-  const handleFilterSelect = (option: ActivityFilterOption | string) => {
-    if (option === 'All') {
-      dispatchQueryParam(null);
-      return;
-    }
-
-    if (typeof option === 'string') {
-      dispatchQueryParam(option as ActivityEventType);
-    } else {
-      dispatchQueryParam(option.id);
-    }
-  };
-
-  const optionsList = React.useMemo(
-    () =>
-      filterOptions?.map(option => {
-        if (typeof option === 'string') {
-          return (
-            <AppMenuItem
-              key={option}
-              value={option}
-              onClick={() => handleFilterSelect(option)}
-            >
-              {stringFormatted(option, '_', 'firstLetterOfEveryWord')}
-            </AppMenuItem>
-          );
-        }
-
-        return (
-          <AppMenuItem
-            key={option.id}
-            value={option.name}
-            onClick={() => handleFilterSelect(option)}
-          >
-            {option.name}
-          </AppMenuItem>
-        );
-      }),
-    [filterOptions]
+    },
+    [setQueryParams, filterName]
   );
 
-  return filterOptions.length ? (
+  return (
     <Grid container>
       <Grid container item xs={12}>
         <AppSelect
-          defaultValue='All'
+          defaultValue={defaultOption}
           sx={{ mt: 2 }}
           label={name}
           id={`filter-${filterName}`}
-          value={selectedOption}
+          value={queryParams[filterName] || defaultOption}
         >
-          <AppMenuItem value='All' onClick={() => handleFilterSelect('All')}>
+          <AppMenuItem value='All' onClick={handleFilterSelect(defaultOption)}>
             All
           </AppMenuItem>
-          {optionsList}
+          {filterOptions.map(option =>
+            typeof option === 'object' ? (
+              <AppMenuItem
+                key={option.id}
+                value={option.id}
+                onClick={handleFilterSelect(option)}
+              >
+                {option.name}
+              </AppMenuItem>
+            ) : (
+              <AppMenuItem
+                key={option}
+                value={option}
+                onClick={handleFilterSelect(option)}
+              >
+                {stringFormatted(option, '_', 'firstLetterOfEveryWord')}
+              </AppMenuItem>
+            )
+          )}
         </AppSelect>
       </Grid>
     </Grid>
-  ) : null;
+  );
 };
 
 export default SingleFilter;

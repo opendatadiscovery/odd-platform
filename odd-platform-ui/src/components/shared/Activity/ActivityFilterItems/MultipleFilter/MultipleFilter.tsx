@@ -1,62 +1,48 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { ActivityQueryName } from 'redux/interfaces';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { getActivitiesQueryParamsByName } from 'redux/selectors';
+import { useAppDispatch } from 'redux/lib/hooks';
 import type { Owner, Tag } from 'generated-sources';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
+import { useQueryParams } from 'lib/hooks';
+import {
+  type ActivityMultipleFilterNames,
+  type ActivityQuery,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
 import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 
 interface MultipleFilterProps {
   name: string;
-  filterName: ActivityQueryName;
+  filterName: ActivityMultipleFilterNames;
 }
 
 const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName }) => {
   const dispatch = useAppDispatch();
+  const { queryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const [selectedOptions, setSelectedOptions] = React.useState<
-    Array<Tag | Owner> | undefined
-  >(undefined);
-
-  const selectedOptionIds = useAppSelector(
-    getActivitiesQueryParamsByName(filterName)
-  ) as Array<number>;
+  const [selectedOptions, setSelectedOptions] = React.useState<Array<Tag | Owner>>([]);
 
   React.useEffect(() => {
-    if (selectedOptionIds?.length > 0) {
+    const selectedOptionIds = queryParams[filterName] ?? [];
+    const params = { page: 1, size: 100, ids: selectedOptionIds };
+
+    if (selectedOptionIds.length > 0) {
       (filterName === 'tagIds'
-        ? dispatch(
-            fetchTagsList({
-              page: 1,
-              size: 100,
-              ids: selectedOptionIds,
-            })
-          )
-        : dispatch(
-            fetchOwnersList({
-              page: 1,
-              size: 100,
-              ids: selectedOptionIds,
-            })
-          )
+        ? dispatch(fetchTagsList(params))
+        : dispatch(fetchOwnersList(params))
       )
         .unwrap()
         .then(({ items }) => setSelectedOptions(items));
     } else {
       setSelectedOptions([]);
     }
-  }, [filterName, selectedOptionIds]);
+  }, [filterName, queryParams]);
 
   return (
     <Grid container>
       <Grid item xs={12}>
-        <MultipleFilterAutocomplete
-          name={name}
-          filterName={filterName}
-          selectedOptionIds={selectedOptionIds}
-        />
+        <MultipleFilterAutocomplete name={name} filterName={filterName} />
       </Grid>
       <Grid display='inline-flex' item xs={12} sx={{ my: 0.25, mx: -0.25 }} container>
         {selectedOptions &&

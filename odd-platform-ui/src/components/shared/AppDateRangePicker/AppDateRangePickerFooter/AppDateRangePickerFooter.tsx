@@ -1,19 +1,21 @@
 import React from 'react';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AppButton } from 'components/shared';
 import { Grid } from '@mui/material';
 
 interface AppDateRangePickerFooterProps {
+  // eslint-disable-next-line react/no-unused-prop-types
   position: string;
   onClickDoneBtn: () => void;
   ranges: Array<{ label: string; value: Date[] }>;
   setRange: ([beginDate, endDate]: Date[]) => void;
+  isRangeCorrect: boolean;
 }
 
 const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
-  position,
   onClickDoneBtn,
   ranges,
   setRange,
+  isRangeCorrect,
 }) => (
   <Grid
     sx={{ p: 2, pt: 1 }}
@@ -35,7 +37,12 @@ const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
         </AppButton>
       ))}
     </Grid>
-    <AppButton color='primary' size='large' onClick={onClickDoneBtn}>
+    <AppButton
+      color='primary'
+      size='large'
+      onClick={onClickDoneBtn}
+      disabled={!isRangeCorrect}
+    >
       Done
     </AppButton>
   </Grid>

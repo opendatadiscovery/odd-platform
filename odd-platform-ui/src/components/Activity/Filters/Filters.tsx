@@ -1,22 +1,26 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AppButton } from 'components/shared';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
-import { clearActivityFilters } from 'redux/slices/activity.slice';
 import { ActivityEventType } from 'generated-sources';
-import SingleFilter from 'components/shared/Activity/ActivityFilterItems/SingleFilter/SingleFilter';
-import CalendarFilter from 'components/shared/Activity/ActivityFilterItems/CalendarFilter/CalendarFilter';
-import MultipleFilter from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilter';
+import { useQueryParams } from 'lib/hooks';
+import { SingleFilter, MultipleFilter, CalendarFilter } from 'components/shared/Activity';
+import {
+  type ActivityQuery,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   React.useEffect(() => {
-    dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
-    dispatch(fetchNamespaceList({ page: 1, size: 100 }));
+    const params = { page: 1, size: 100 };
+    dispatch(fetchDataSourcesList(params));
+    dispatch(fetchNamespaceList(params));
   }, []);
 
   const datasources = useAppSelector(getDataSourcesList);
@@ -33,17 +37,17 @@ const Filters: React.FC = () => {
   const activityEventTypes = Object.values(ActivityEventType).filter(
     type => !excludedTypes.some(discardedType => discardedType === type)
   );
+
+  const handleClearAll = React.useCallback(
+    () => setQueryParams(defaultActivityQuery),
+    [setQueryParams, defaultActivityQuery]
+  );
+
   return (
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h4'>Filters</Typography>
-        <AppButton
-          color='tertiary'
-          size='medium'
-          onClick={() => {
-            dispatch(clearActivityFilters());
-          }}
-        >
+        <AppButton color='tertiary' size='medium' onClick={handleClearAll}>
           Clear All
         </AppButton>
       </Grid>
