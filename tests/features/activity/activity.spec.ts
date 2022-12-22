@@ -47,6 +47,7 @@ test.describe('Check filters', () => {
     });
     /**
      * /project/1/test-cases/144
+     * #concurrentModificationIssue (See more info below)
      */
     test(`Display an expected item with filter Owner`, async ({ workerId, steps: { pages } }) => {
       const ownerName7 = `ownerName7${workerId}`;
@@ -55,6 +56,16 @@ test.describe('Check filters', () => {
         await pages.topPanel.clickTab('Catalog');
         await pages.catalog.searchBy(entityNameWithAlphabeticChars);
         await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
+        /**
+         * 'Book_ETL_aqa' replaced with other data entity name because of concurrent modification error.
+         *
+         * This error happens in ODD platform when we are trying to create owner for the same data entity at the same time.
+         * One way to get rid of this problem: do not create different owners for the same data entity at the same time.
+         * Note that there are other tests that create owners for this entity. All of these tests are located
+         * inside the following test file "search_in_data_entity.spec.ts"
+         * (You can find these tests by the keyword "#concurrentModificationIssue").
+         * These tests run sequentially with respect to each other in a parallel test run, so we can use the same data entity for them.
+         */
         await pages.overview.createOwner(ownerName7, ownerTitle7);
         await pages.topPanel.clickTab('Activity');
         await pages.activity.ownerFilter.set(ownerName7);
