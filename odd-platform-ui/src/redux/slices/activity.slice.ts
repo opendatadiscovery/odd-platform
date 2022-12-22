@@ -8,11 +8,16 @@ import {
 } from 'redux/thunks/activity.thunks';
 import { formatDate } from 'lib/helpers';
 import { datedListFormat } from 'lib/constants';
+import uniqBy from 'lodash/uniqBy';
 
 export const initialState: ActivitiesState = {
   activities: {
-    pageInfo: { hasNext: true },
-    itemsByDate: {},
+    activitiesByType: {
+      ALL: { pageInfo: { hasNext: true }, itemsByDate: {} },
+      UPSTREAM: { pageInfo: { hasNext: true }, itemsByDate: {} },
+      MY_OBJECTS: { pageInfo: { hasNext: true }, itemsByDate: {} },
+      DOWNSTREAM: { pageInfo: { hasNext: true }, itemsByDate: {} },
+    },
     counts: { totalCount: 0, upstreamCount: 0, myObjectsCount: 0, downstreamCount: 0 },
   },
   dataEntityActivities: {},
@@ -27,18 +32,23 @@ export const activitiesSlice = createSlice({
       state.activities.counts = payload;
     });
     builder.addCase(fetchActivityList.fulfilled, (state, { payload }) => {
-      const { items, pageInfo } = payload;
+      const { items, pageInfo, activityType, isQueryUpdated } = payload;
 
-      state.activities.pageInfo = pageInfo;
-      state.activities.itemsByDate = items.reduce(
-        (memo: ActivitiesState['activities']['itemsByDate'], activity: Activity) => ({
+      state.activities.activitiesByType[activityType].pageInfo = pageInfo;
+      state.activities.activitiesByType[activityType].itemsByDate = items.reduce(
+        (
+          memo: ActivitiesState['activities']['activitiesByType']['ALL']['itemsByDate'],
+          activity: Activity
+        ) => ({
           ...memo,
-          [formatDate(activity.createdAt, datedListFormat)]: [
-            ...(memo[formatDate(activity.createdAt, datedListFormat)] || []),
-            activity,
-          ],
+          [formatDate(activity.createdAt, datedListFormat)]: uniqBy(
+            [...(memo[formatDate(activity.createdAt, datedListFormat)] || []), activity],
+            'id'
+          ),
         }),
-        {}
+        isQueryUpdated
+          ? {}
+          : { ...state.activities.activitiesByType[activityType].itemsByDate }
       );
     });
     builder.addCase(fetchDataEntityActivityList.fulfilled, (state, { payload }) => {

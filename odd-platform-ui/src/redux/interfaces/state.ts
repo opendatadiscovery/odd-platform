@@ -38,6 +38,7 @@ import type {
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
+import { ActivityType } from 'generated-sources';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, PageInfo, PaginatedResponse } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
@@ -219,8 +220,12 @@ export interface TermLinkedListState {
 
 export interface ActivitiesState {
   activities: {
-    itemsByDate: { [date: string]: Activity[] };
-    pageInfo: PageInfo<number>;
+    activitiesByType: {
+      [key in ActivityType]: {
+        itemsByDate: { [date: string]: Activity[] };
+        pageInfo: PageInfo<number>;
+      };
+    };
     counts: ActivityCountInfo;
   };
   dataEntityActivities: {

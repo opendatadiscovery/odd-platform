@@ -1,9 +1,17 @@
-import type { SerializeDateToNumber } from 'redux/interfaces';
+import type { SerializeDateToNumber, RequiredField } from 'redux/interfaces';
 import type { ActivityApiGetActivityRequest } from 'generated-sources';
 import { addDays, endOfDay } from 'date-fns';
 import { activityListSize } from 'redux/thunks';
+import { ActivityType } from 'generated-sources';
 
-export type ActivityQuery = SerializeDateToNumber<ActivityApiGetActivityRequest>;
+export type ActivityQuery = RequiredField<
+  SerializeDateToNumber<ActivityApiGetActivityRequest>,
+  'type'
+>;
+
+export type DataEntityActivityQuery =
+  SerializeDateToNumber<ActivityApiGetActivityRequest>;
+
 export type ActivitySingleFilterNames = keyof Pick<
   ActivityQuery,
   'datasourceId' | 'namespaceId' | 'eventType'
@@ -26,5 +34,5 @@ export const defaultActivityQuery: ActivityQuery = {
   beginDate,
   endDate,
   size: activityListSize,
-  datasourceId: undefined,
+  type: ActivityType.ALL,
 };

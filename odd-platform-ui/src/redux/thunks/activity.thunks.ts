@@ -3,6 +3,7 @@ import {
   type ActivityApiGetActivityCountsRequest,
   type ActivityApiGetActivityRequest,
   type ActivityCountInfo,
+  ActivityType,
   Configuration,
   DataEntityApi,
   type DataEntityApiGetDataEntityActivityRequest,
@@ -23,14 +24,17 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const activityApi = new ActivityApi(apiClientConf);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 
-export const activityListSize = 20;
+export const activityListSize = 30;
 
 export const fetchActivityList = handleResponseAsyncThunk<
-  KeySetPaginatedResponse<Activity[], number>,
-  SerializeDateToNumber<ActivityApiGetActivityRequest>
+  KeySetPaginatedResponse<Activity[], number> & {
+    activityType: ActivityType;
+    isQueryUpdated: boolean;
+  },
+  SerializeDateToNumber<ActivityApiGetActivityRequest> & { isQueryUpdated: boolean }
 >(
   actions.fetchActivityListActionType,
-  async ({ beginDate, endDate, lastEventDateTime, ...params }) => {
+  async ({ beginDate, endDate, lastEventDateTime, isQueryUpdated, ...params }) => {
     const castedBeginDate = toDate(beginDate);
     const castedEndDate = toDate(endDate);
     const castedLastEventDateTime = lastEventDateTime
@@ -46,10 +50,11 @@ export const fetchActivityList = handleResponseAsyncThunk<
 
     const items = castDatesToTimestamp(activities);
     const pageInfo = setPageInfo<Activity>(items, activityListSize);
+    const activityType = params.type ?? ActivityType.ALL;
 
-    return { items, pageInfo };
+    return { items, pageInfo, activityType, isQueryUpdated };
   },
-  {}
+  { switchOffErrorMessage: true }
 );
 
 export const fetchDataEntityActivityList = handleResponseAsyncThunk<

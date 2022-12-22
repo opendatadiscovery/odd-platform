@@ -10,3 +10,11 @@ export const ListContainer = styled(Grid)(({ theme }) => ({
   flexDirection: 'column',
   flexWrap: 'nowrap',
 }));
+
+export const Header = styled(Grid)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  padding: theme.spacing(0.25, 2.5),
+  justifyContent: 'flex-end',
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.border.primary,
+}));
