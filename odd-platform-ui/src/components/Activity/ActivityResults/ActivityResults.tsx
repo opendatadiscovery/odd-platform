@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getActivitiesByDateByType,
@@ -10,29 +10,19 @@ import {
   getActivityCountsFetchingStatuses,
   getActivityPageInfoByType,
 } from 'redux/selectors';
-import {
-  SkeletonWrapper,
-  AppButton,
-  AppErrorPage,
-  EmptyContentPlaceholder,
-} from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { fetchActivityCounts, fetchActivityList } from 'redux/thunks';
 import { useQueryParams } from 'lib/hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { ActivityResultsItemSkeleton } from 'components/shared/Activity';
 import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/Activity/common';
-import ActivityItem from './ActivityItem/ActivityItem';
+import ActivityResultsList from './ActivityResultsList/ActivityResultsList';
 import ActivityTabs from './ActivityTabs/ActivityTabs';
-import * as S from './ActivityResultsStyles';
 
 const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
   const { queryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
-
-  const [hideAllDetails, setHideAllDetails] = React.useState(false);
 
   const activityCounts = useAppSelector(getActivityCounts);
   const activitiesByDate = useAppSelector(getActivitiesByDateByType(queryParams.type));
@@ -55,6 +45,7 @@ const ActivityResults: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchActivityCounts(queryParams));
+    dispatch(fetchActivityList({ ...queryParams, isQueryUpdated: true }));
   }, [queryParams]);
 
   const fetchNextPage = React.useCallback(() => {
@@ -70,65 +61,21 @@ const ActivityResults: React.FC = () => {
     );
   }, [queryParams, lastId, lastDateTime, hasNext]);
 
-  React.useEffect(() => {
-    dispatch(fetchActivityList({ ...queryParams, isQueryUpdated: true }));
-  }, [queryParams]);
-
-  const activityItemSkeleton = React.useMemo(
-    () => (
-      <SkeletonWrapper
-        length={10}
-        renderContent={({ key }) => (
-          <ActivityResultsItemSkeleton width='100%' key={key} />
-        )}
-      />
-    ),
-    []
-  );
-
   return (
     <Grid sx={{ mt: 2 }}>
       <ActivityTabs counts={activityCounts} isCountsFetching={isActivityCountsFetching} />
-      {!!activitiesLength && (
-        <>
-          <S.Header container>
-            <AppButton
-              size='small'
-              color='tertiary'
-              onClick={() => setHideAllDetails(!hideAllDetails)}
-            >
-              Hide all details
-            </AppButton>
-          </S.Header>
-          <S.ListContainer id='activities-list'>
-            <InfiniteScroll
-              dataLength={activitiesLength}
-              next={fetchNextPage}
-              hasMore={hasNext}
-              loader={isActivitiesFetching && activityItemSkeleton}
-              scrollThreshold='200px'
-              scrollableTarget='activities-list'
-            >
-              {Object.entries(activitiesByDate).map(([activityDate, activities], idx) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <Grid key={`${activityDate}-${idx}`} container>
-                  <Typography variant='subtitle2' sx={{ py: 1 }}>
-                    {activityDate}
-                  </Typography>
-                  {activities.map(activity => (
-                    <ActivityItem
-                      key={activity.id}
-                      activity={activity}
-                      hideAllDetails={hideAllDetails}
-                    />
-                  ))}
-                </Grid>
-              ))}
-            </InfiniteScroll>
-          </S.ListContainer>
-        </>
-      )}
-      <AppErrorPage isNotContentLoaded={isActivitiesNotFetched} error={activitiesError} />
+      <ActivityResultsList
+        activitiesLength={activitiesLength}
+        fetchNextPage={fetchNextPage}
+        hasNext={hasNext}
+        isActivitiesFetching={isActivitiesFetching}
+        activitiesByDate={activitiesByDate}
+      />
+      <AppErrorPage
+        isNotContentLoaded={isActivitiesNotFetched}
+        offsetTop={65}
+        error={activitiesError}
+      />
       <EmptyContentPlaceholder
         isContentLoaded={
           isActivitiesFetched && !isActivitiesFetching && !isActivitiesNotFetched

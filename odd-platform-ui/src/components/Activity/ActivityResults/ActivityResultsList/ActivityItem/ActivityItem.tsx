@@ -15,7 +15,7 @@ import LabelItem from 'components/shared/LabelItem/LabelItem';
 import TermActivityField from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityField';
 import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
 import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
-import * as S from 'components/Activity/ActivityResults/ActivityItem/ActivityItemStyles';
+import * as S from 'components/Activity/ActivityResults/ActivityResultsList/ActivityItem/ActivityItemStyles';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 
 interface ActivityItemProps {

@@ -80,6 +80,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
       <DatePicker
         format='D MMM'
         range
+        portal
         arrow={false}
         showOtherDays
         multiple
