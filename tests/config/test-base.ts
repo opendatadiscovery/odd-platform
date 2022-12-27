@@ -2,6 +2,7 @@ import { test as base, TestInfo } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
+import crypto = require('crypto');
 import AppService from '../api/app-service';
 import { MyProfile } from '../api/interfaces/my-profile';
 import LoginService from '../api/login-service';

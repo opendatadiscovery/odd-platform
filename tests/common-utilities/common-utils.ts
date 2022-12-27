@@ -6,6 +6,7 @@ import waitUntil, {
 } from 'async-wait-until';
 import faker from 'faker';
 import path from 'path';
+import crypto = require('crypto');
 
 import { configuration } from '../config/configuration';
 
