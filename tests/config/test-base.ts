@@ -50,7 +50,7 @@ export const test = base.extend<
     async ({ browser }, use) => {
       const workerId = `-auto-${crypto.randomUUID().substring(0, 13)}`;
       saveWorkerId(workerId);
-      // Use workerId value.
+
       await use(workerId);
     },
     { scope: 'worker' },
