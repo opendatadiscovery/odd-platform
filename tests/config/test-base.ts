@@ -1,7 +1,6 @@
 import { test as base, TestInfo } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import crypto = require('crypto');
 import AppService from '../api/app-service';
 import { MyProfile } from '../api/interfaces/my-profile';
 import LoginService from '../api/login-service';
@@ -10,6 +9,7 @@ import { Steps } from '../ui/steps';
 import { goToPage } from '../ui/steps/login';
 import { configuration, UserType } from './configuration';
 import { odd } from './environments.json';
+import crypto = require('crypto');
 
 const workersFolder = `./dist/workers`;
 const saveWorkerId = (workerId: string) => {
