@@ -6,7 +6,6 @@ import waitUntil, {
 } from 'async-wait-until';
 import faker from 'faker';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 
 import { configuration } from '../config/configuration';
 
@@ -15,7 +14,7 @@ export default class CommonUtils {
    *
    */
   static uniqueIdentifier() {
-    return uuidv4().substring(0, 6);
+    return crypto.randomUUID().substring(0, 6);
   }
 
   /**
