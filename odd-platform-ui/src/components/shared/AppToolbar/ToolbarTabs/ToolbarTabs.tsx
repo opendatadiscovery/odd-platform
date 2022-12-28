@@ -5,9 +5,9 @@ import {
   defaultActivityQuery,
 } from 'components/shared/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { AppTabs, type AppTabItem } from 'components/shared/index';
 import { createDataEntitiesSearch, createTermSearch } from 'redux/thunks';
 import { useHistory, useLocation } from 'react-router-dom';
+import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
 
 const ToolbarTabs: React.FC = () => {
   const dispatch = useAppDispatch();

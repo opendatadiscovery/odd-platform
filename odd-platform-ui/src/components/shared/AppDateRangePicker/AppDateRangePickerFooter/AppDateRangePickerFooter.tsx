@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppButton } from 'components/shared';
 import { Grid } from '@mui/material';
+import AppButton from 'components/shared/AppButton/AppButton';
 
 interface AppDateRangePickerFooterProps {
   // eslint-disable-next-line react/no-unused-prop-types
