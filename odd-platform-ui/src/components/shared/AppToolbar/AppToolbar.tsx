@@ -1,31 +1,16 @@
-import React, { MouseEvent } from 'react';
+import React, { type MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
 import { getIdentity, getOwnership } from 'redux/selectors';
-import {
-  createDataEntitiesSearch,
-  createTermSearch,
-  fetchActiveFeatures,
-  fetchAppInfo,
-  fetchIdentity,
-} from 'redux/thunks';
+import { fetchActiveFeatures, fetchAppInfo, fetchIdentity } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
-import { clearActivityFilters } from 'redux/slices/activity.slice';
-import { useAppPaths } from 'lib/hooks';
+import { AppIconButton, AppMenu, AppMenuItem } from 'components/shared';
+import ToolbarTabs from './ToolbarTabs/ToolbarTabs';
 import * as S from './AppToolbarStyles';
 import AppInfoMenu from './AppInfoMenu/AppInfoMenu';
-import AppIconButton from '../AppIconButton/AppIconButton';
-import AppMenu from '../AppMenu/AppMenu';
-import AppMenuItem from '../AppMenuItem/AppMenuItem';
-import type { AppTabItem } from '../AppTabs/AppTabs';
-import AppTabs from '../AppTabs/AppTabs';
 
 const AppToolbar: React.FC = () => {
-  const location = useLocation();
-  const history = useHistory();
   const dispatch = useAppDispatch();
-  const { searchPath, termSearchPath } = useAppPaths();
 
   const identity = useAppSelector(getIdentity);
   const owner = useAppSelector(getOwnership);
@@ -46,7 +31,7 @@ const AppToolbar: React.FC = () => {
     window.location.href = '/logout';
   };
 
-  const [elevation, setElevation] = React.useState<number>(0);
+  const [elevation, setElevation] = React.useState(0);
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 10,
@@ -60,72 +45,6 @@ const AppToolbar: React.FC = () => {
     dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
   }, []);
-
-  const [tabs] = React.useState<AppTabItem[]>([
-    { name: 'Catalog', link: '/search' },
-    { name: 'Management', link: '/management' },
-    { name: 'Dictionary', link: '/termsearch' },
-    { name: 'Alerts', link: '/alerts' },
-    { name: 'Activity', link: '/activity' },
-  ]);
-
-  const [selectedTab, setSelectedTab] = React.useState<number | boolean>(false);
-
-  React.useEffect(() => {
-    const newTabIndex = tabs.findIndex(tab => {
-      if (tab.link === '/activity' || tab.link === '/alerts') {
-        return (
-          location.pathname.includes(tab.link) &&
-          !location.pathname.includes('dataentities')
-        );
-      }
-
-      return tab.link && location.pathname.includes(tab.link);
-    });
-
-    if (newTabIndex >= 0) {
-      setSelectedTab(newTabIndex);
-    } else {
-      setSelectedTab(false);
-    }
-  }, [setSelectedTab, location.pathname]);
-
-  const [searchLoading, setSearchLoading] = React.useState(false);
-  const [termSearchLoading, setTermSearchLoading] = React.useState(false);
-
-  const handleTabClick = (idx: number) => {
-    if (tabs[idx].name === 'Dictionary') {
-      if (termSearchLoading) return;
-      setTermSearchLoading(true);
-      const termSearchQuery = {
-        query: '',
-        pageSize: 30,
-        filters: {},
-      };
-
-      dispatch(createTermSearch({ termSearchFormData: termSearchQuery }))
-        .unwrap()
-        .then(termSearch => {
-          const termSearchLink = termSearchPath(termSearch.searchId);
-          history.replace(termSearchLink);
-          setTermSearchLoading(false);
-        });
-    } else if (tabs[idx].name === 'Catalog') {
-      if (searchLoading) return;
-      setSearchLoading(true);
-      const searchFormData = { query: '', pageSize: 30, filters: {} };
-
-      dispatch(createDataEntitiesSearch({ searchFormData }))
-        .unwrap()
-        .then(({ searchId }) => {
-          const searchLink = searchPath(searchId);
-          history.replace(searchLink);
-          setSearchLoading(false);
-        });
-    } else if (tabs[idx].name === 'Activity') {
-      dispatch(clearActivityFilters());
-    }
-  };
 
   return (
     <S.Bar position='fixed' elevation={elevation}>
@@ -141,14 +60,7 @@ const AppToolbar: React.FC = () => {
           </S.LogoContainer>
           <S.ActionsContainer item xs={9}>
             <Grid item sx={{ pl: 1 }}>
-              {tabs.length ? (
-                <AppTabs
-                  type='menu'
-                  items={tabs}
-                  selectedTab={selectedTab}
-                  handleTabChange={handleTabClick}
-                />
-              ) : null}
+              <ToolbarTabs />
             </Grid>
             <S.SectionDesktop item>
               <AppInfoMenu />
