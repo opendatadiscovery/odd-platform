@@ -17,7 +17,8 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/Activity/common';
-import ActivityResultsList from './ActivityResultsList/ActivityResultsList';
+import { ActivityResultsList } from 'components/shared/Activity';
+import ActivityItem from './ActivityItem/ActivityItem';
 import ActivityTabs from './ActivityTabs/ActivityTabs';
 
 const ActivityResults: React.FC = () => {
@@ -70,6 +71,7 @@ const ActivityResults: React.FC = () => {
         hasNext={hasNext}
         isActivitiesFetching={isActivitiesFetching}
         activitiesByDate={activitiesByDate}
+        activityItem={ActivityItem}
       />
       <AppErrorPage
         isNotContentLoaded={isActivitiesNotFetched}

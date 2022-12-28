@@ -6,6 +6,7 @@ import {
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { type ActivityCountInfo, ActivityType } from 'generated-sources';
+import { emptyObj } from 'lib/constants';
 
 const activitiesState = ({ activities }: RootState): ActivitiesState => activities;
 
@@ -16,6 +17,9 @@ export const getActivitiesFetchingError = createErrorSelector(
   actions.fetchActivityListActionType
 );
 export const getDataEntityActivitiesFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntityActivityListActionType
+);
+export const getDataEntityActivitiesFetchingError = createErrorSelector(
   actions.fetchDataEntityActivityListActionType
 );
 export const getActivityCountsFetchingStatuses = createStatusesSelector(
@@ -50,10 +54,18 @@ export const getActivitiesByDateByType = (type: ActivityType) =>
 export const getDataEntityActivitiesByDate = (dataEntityId: number) =>
   createSelector(
     activitiesState,
-    activities => activities.dataEntityActivities[dataEntityId].itemsByDate
+    activities => activities.dataEntityActivities[dataEntityId]?.itemsByDate
   );
 export const getDataEntityActivitiesPageInfo = (dataEntityId: number) =>
   createSelector(
     activitiesState,
-    activities => activities.dataEntityActivities[dataEntityId].pageInfo
+    (activities): PageInfo<number> =>
+      activities.dataEntityActivities[dataEntityId]?.pageInfo || { hasNext: true }
+  );
+
+export const getDataEntityActivitiesLengthByEntityId = (dataEntityId: number) =>
+  createSelector(activitiesState, activities =>
+    Object.entries(activities.dataEntityActivities[dataEntityId]?.itemsByDate || emptyObj)
+      .map(([_, activityList]) => activityList.length)
+      .reduce((acc, val) => acc + val, 0)
   );

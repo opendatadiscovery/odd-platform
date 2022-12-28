@@ -58,11 +58,22 @@ export const fetchActivityList = handleResponseAsyncThunk<
 );
 
 export const fetchDataEntityActivityList = handleResponseAsyncThunk<
-  RelatedToEntityId<KeySetPaginatedResponse<Activity[], number>>,
-  SerializeDateToNumber<DataEntityApiGetDataEntityActivityRequest>
+  RelatedToEntityId<KeySetPaginatedResponse<Activity[], number>> & {
+    isQueryUpdated: boolean;
+  },
+  SerializeDateToNumber<DataEntityApiGetDataEntityActivityRequest> & {
+    isQueryUpdated: boolean;
+  }
 >(
   actions.fetchDataEntityActivityListActionType,
-  async ({ dataEntityId, lastEventDateTime, endDate, beginDate, ...params }) => {
+  async ({
+    dataEntityId,
+    lastEventDateTime,
+    endDate,
+    beginDate,
+    isQueryUpdated,
+    ...params
+  }) => {
     const castedBeginDate = toDate(beginDate);
     const castedEndDate = toDate(endDate);
     const castedLastEventDateTime = lastEventDateTime
@@ -80,7 +91,7 @@ export const fetchDataEntityActivityList = handleResponseAsyncThunk<
     const items = castDatesToTimestamp(activities);
     const pageInfo = setPageInfo<Activity>(items, activityListSize);
 
-    return { items, pageInfo, dataEntityId };
+    return { items, pageInfo, dataEntityId, isQueryUpdated };
   },
   {}
 );

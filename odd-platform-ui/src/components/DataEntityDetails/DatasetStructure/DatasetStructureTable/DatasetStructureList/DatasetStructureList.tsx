@@ -75,7 +75,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   );
 
   return (
-    <div style={{ height: 'calc(100vh - 245px)', width: '100vw' }}>
+    <div style={{ height: 'calc(100vh - 266px)', width: '100vw' }}>
       <AutoSizer>
         {({ height, width }) => (
           <List

@@ -4,7 +4,7 @@ import ActivityResults from './ActivityResults/ActivityResults';
 import Filters from './Filters/Filters';
 
 const DataEntityActivity: React.FC = () => (
-  <Grid container sx={{ mt: 3 }} flexWrap='nowrap'>
+  <Grid container sx={{ mt: 2 }} flexWrap='nowrap'>
     <Filters />
     <ActivityResults />
   </Grid>

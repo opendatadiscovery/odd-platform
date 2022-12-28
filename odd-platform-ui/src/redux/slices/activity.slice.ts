@@ -52,21 +52,30 @@ export const activitiesSlice = createSlice({
       );
     });
     builder.addCase(fetchDataEntityActivityList.fulfilled, (state, { payload }) => {
-      const { items, pageInfo, dataEntityId } = payload;
+      const { items, pageInfo, dataEntityId, isQueryUpdated } = payload;
 
-      if (dataEntityId) {
-        state.dataEntityActivities[dataEntityId].pageInfo = pageInfo;
-        state.dataEntityActivities[dataEntityId].itemsByDate = items.reduce(
-          (memo: { [date: string]: Activity[] }, activity: Activity) => ({
-            ...memo,
-            [formatDate(activity.createdAt, datedListFormat)]: [
-              ...(memo[formatDate(activity.createdAt, datedListFormat)] || []),
-              activity,
-            ],
-          }),
-          {}
-        );
-      }
+      const itemsByDate = items.reduce(
+        (memo: { [date: string]: Activity[] }, activity: Activity) => ({
+          ...memo,
+          [formatDate(activity.createdAt, datedListFormat)]: [
+            ...(memo[formatDate(activity.createdAt, datedListFormat)] || []),
+            activity,
+          ],
+        }),
+        isQueryUpdated ? {} : { ...state.dataEntityActivities[dataEntityId]?.itemsByDate }
+      );
+
+      return {
+        ...state,
+        dataEntityActivities: {
+          ...state.dataEntityActivities,
+          [dataEntityId]: {
+            ...state.dataEntityActivities[dataEntityId],
+            pageInfo,
+            itemsByDate,
+          },
+        },
+      };
     });
   },
 });

@@ -12,4 +12,4 @@ export { default as CalendarFilter } from './ActivityFilterItems/CalendarFilter/
 export { default as MultipleFilter } from './ActivityFilterItems/MultipleFilter/MultipleFilter';
 export { default as MultipleFilterAutocomplete } from './ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 export { default as SelectedFilterOption } from './ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOption';
-export { default as ActivityResultsItemSkeleton } from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
+export { default as ActivityResultsList } from './ActivityResultsList/ActivityResultsList';

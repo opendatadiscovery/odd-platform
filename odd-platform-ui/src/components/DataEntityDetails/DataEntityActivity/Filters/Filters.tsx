@@ -1,24 +1,17 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { clearActivityFilters } from 'redux/slices/activity.slice';
+import { AppButton } from 'components/shared';
 import { ActivityEventType } from 'generated-sources';
-import MultipleFilter from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilter';
-import CalendarFilter from 'components/shared/Activity/ActivityFilterItems/CalendarFilter/CalendarFilter';
-import SingleFilter from 'components/shared/Activity/ActivityFilterItems/SingleFilter/SingleFilter';
-import { fetchDataEntityActivityList } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
-import { getActivitiesQueryParams } from 'redux/selectors';
+import { MultipleFilter, CalendarFilter, SingleFilter } from 'components/shared/Activity';
+import { useQueryParams } from 'lib/hooks';
+import {
+  type ActivityQuery,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {
-  const { dataEntityId } = useAppParams();
-  const dispatch = useAppDispatch();
-
-  const queryParams = useAppSelector(getActivitiesQueryParams);
-
-  const asyncClearFilters = async () => dispatch(clearActivityFilters());
+  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const excludedTypes = [
     'DATA_ENTITY_OVERVIEW_UPDATED',
@@ -29,28 +22,24 @@ const Filters: React.FC = () => {
     'CUSTOM_METADATA_UPDATED',
     'CUSTOM_METADATA_DELETED',
   ];
-  const activityEventTypes = Object.values(ActivityEventType).filter(
-    type => !excludedTypes.some(discardedType => discardedType === type)
+  const activityEventTypes = React.useMemo(
+    () =>
+      Object.values(ActivityEventType).filter(
+        type => !excludedTypes.some(excludedType => excludedType === type)
+      ),
+    excludedTypes
+  );
+
+  const handleClearAll = React.useCallback(
+    () => setQueryParams(defaultActivityQuery),
+    [setQueryParams, defaultActivityQuery]
   );
 
   return (
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h4'>Filters</Typography>
-        <AppButton
-          color='tertiary'
-          size='medium'
-          onClick={() =>
-            asyncClearFilters().then(() =>
-              dispatch(
-                fetchDataEntityActivityList({
-                  ...queryParams,
-                  dataEntityId,
-                })
-              )
-            )
-          }
-        >
+        <AppButton color='tertiary' size='medium' onClick={handleClearAll}>
           Clear All
         </AppButton>
       </Grid>

@@ -1,27 +1,21 @@
 import React from 'react';
-import { Activity } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import GearIcon from 'components/shared/Icons/GearIcon';
-import UserIcon from 'components/shared/Icons/UserIcon';
+import { EntityClassItem, LabelItem, TagItem } from 'components/shared';
+import { GearIcon, UserIcon } from 'components/shared/Icons';
 import { Link } from 'react-router-dom';
 import { ActivityEventType } from 'generated-sources';
-import OwnerActivityField from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerActivityField';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import StringActivityField from 'components/shared/Activity/ActivityFields/StringActivityField/StringActivityField';
-import ArrayActivityField from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityField';
-import TagItem from 'components/shared/TagItem/TagItem';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
-import TermActivityField from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityField';
-import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
-import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
-import * as S from 'components/Activity/ActivityResults/ActivityResultsList/ActivityItem/ActivityItemStyles';
+import {
+  ActivityFieldHeader,
+  ArrayActivityField,
+  CustomGroupActivityField,
+  EnumsActivityField,
+  OwnerActivityField,
+  StringActivityField,
+  TermActivityField,
+} from 'components/shared/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-
-interface ActivityItemProps {
-  activity: Activity;
-  hideAllDetails: boolean;
-}
+import { type ActivityItemProps } from 'components/shared/Activity/common';
+import * as S from './ActivityItemStyles';
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
   const { dataEntityDetailsPath } = useAppPaths();
@@ -38,6 +32,9 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
     (name: string) => <LabelItem labelName={name} />,
     []
   );
+
+  const isTypeRelatedTo = (types: ActivityEventType[]) =>
+    types.includes(activity.eventType);
 
   return (
     <S.Container container>
@@ -78,9 +75,11 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           </Typography>
         </Grid>
       </Grid>
-      {(activity.eventType === ActivityEventType.OWNERSHIP_CREATED ||
-        activity.eventType === ActivityEventType.OWNERSHIP_UPDATED ||
-        activity.eventType === ActivityEventType.OWNERSHIP_DELETED) && (
+      {isTypeRelatedTo([
+        ActivityEventType.OWNERSHIP_CREATED,
+        ActivityEventType.OWNERSHIP_UPDATED,
+        ActivityEventType.OWNERSHIP_DELETED,
+      ]) && (
         <OwnerActivityField
           oldState={activity.oldState.ownerships}
           newState={activity.newState.ownerships}
@@ -88,14 +87,14 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           hideAllDetails={hideAllDetails}
         />
       )}
-      {activity.eventType === ActivityEventType.DATA_ENTITY_CREATED && (
+      {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_CREATED]) && (
         <ActivityFieldHeader
           eventType='created'
           startText='Data entity with'
           activityName={`ODDRN ${activity.newState.dataEntity?.oddrn}`}
         />
       )}
-      {activity.eventType === ActivityEventType.DESCRIPTION_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.DESCRIPTION_UPDATED]) && (
         <StringActivityField
           activityName='Description'
           oldState={activity.oldState.description?.description}
@@ -103,7 +102,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           hideAllDetails={hideAllDetails}
         />
       )}
-      {activity.eventType === ActivityEventType.BUSINESS_NAME_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.BUSINESS_NAME_UPDATED]) && (
         <StringActivityField
           activityName='Business name'
           oldState={activity.oldState.businessName?.internalName}
@@ -111,7 +110,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           hideAllDetails={hideAllDetails}
         />
       )}
-      {activity.eventType === ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED]) && (
         <StringActivityField
           activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`}
           oldState={activity.oldState.datasetFieldInformation?.description}
@@ -119,7 +118,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           hideAllDetails={hideAllDetails}
         />
       )}
-      {activity.eventType === ActivityEventType.TAGS_ASSOCIATION_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.TAGS_ASSOCIATION_UPDATED]) && (
         <ArrayActivityField
           activityName='Tags'
           oldState={activity.oldState.tags}
@@ -129,7 +128,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           plural
         />
       )}
-      {activity.eventType === ActivityEventType.DATASET_FIELD_LABELS_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_LABELS_UPDATED]) && (
         <ArrayActivityField
           activityName={`Labels in ${activity.oldState.datasetFieldInformation?.name} column`}
           oldState={activity.oldState.datasetFieldInformation?.labels}
@@ -139,16 +138,16 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           plural
         />
       )}
-      {activity.eventType === ActivityEventType.TERM_ASSIGNED && (
+      {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && (
         <TermActivityField
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
           hideAllDetails={hideAllDetails}
-          eventType='added'
+          eventType='assigned'
           stateDirection='column'
         />
       )}
-      {activity.eventType === ActivityEventType.TERM_ASSIGNMENT_DELETED && (
+      {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && (
         <TermActivityField
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
@@ -157,28 +156,28 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           stateDirection='column'
         />
       )}
-      {activity.eventType === ActivityEventType.DATASET_FIELD_VALUES_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_VALUES_UPDATED]) && (
         <EnumsActivityField
           oldState={activity.oldState.datasetFieldValues}
           newState={activity.newState.datasetFieldValues}
           hideAllDetails={hideAllDetails}
         />
       )}
-      {activity.eventType === ActivityEventType.CUSTOM_GROUP_CREATED && (
+      {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
         <ActivityFieldHeader
           eventType='created'
           startText='Custom group'
           activityName={`${activity.dataEntity.internalName}`}
         />
       )}
-      {activity.eventType === ActivityEventType.CUSTOM_GROUP_DELETED && (
+      {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
         <ActivityFieldHeader
           eventType='deleted'
           startText='Custom group'
           activityName={`${activity.dataEntity.internalName}`}
         />
       )}
-      {activity.eventType === ActivityEventType.CUSTOM_GROUP_UPDATED && (
+      {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_UPDATED]) && (
         <CustomGroupActivityField
           oldState={activity.oldState.customGroup}
           newState={activity.newState.customGroup}
@@ -188,4 +187,5 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
     </S.Container>
   );
 };
+
 export default ActivityItem;

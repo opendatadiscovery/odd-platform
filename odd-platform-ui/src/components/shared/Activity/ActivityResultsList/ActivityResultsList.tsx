@@ -2,9 +2,9 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid, List, ListSubheader, Typography } from '@mui/material';
 import { AppButton, SkeletonWrapper } from 'components/shared';
-import { ActivityResultsItemSkeleton } from 'components/shared/Activity';
 import type { ActivitiesState } from 'redux/interfaces';
-import ActivityItem from './ActivityItem/ActivityItem';
+import { type ActivityItemProps } from 'components/shared/Activity/common';
+import ActivityResultsItemSkeleton from '../ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsListStyles';
 
 interface ActivityResultsListProps {
@@ -13,6 +13,8 @@ interface ActivityResultsListProps {
   hasNext: boolean;
   isActivitiesFetching: boolean;
   activitiesByDate: ActivitiesState['activities']['activitiesByType']['ALL']['itemsByDate'];
+  heightOffset?: number;
+  activityItem: React.ComponentType<ActivityItemProps>;
 }
 
 const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
@@ -21,6 +23,8 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
   isActivitiesFetching,
   hasNext,
   activitiesByDate,
+  heightOffset,
+  activityItem: ActivityItem,
 }) => {
   const [hideAllDetails, setHideAllDetails] = React.useState(false);
 
@@ -37,7 +41,7 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
   );
 
   return activitiesLength ? (
-    <S.ListContainer id='activities-list'>
+    <S.ListContainer $heightOffset={heightOffset} id='activities-list'>
       <InfiniteScroll
         style={{ overflow: 'initial' }}
         dataLength={activitiesLength}

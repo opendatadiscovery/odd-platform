@@ -1,8 +1,8 @@
-import type { SerializeDateToNumber, RequiredField } from 'redux/interfaces';
+import type { RequiredField, SerializeDateToNumber, Activity } from 'redux/interfaces';
 import type { ActivityApiGetActivityRequest } from 'generated-sources';
+import { ActivityType } from 'generated-sources';
 import { addDays, endOfDay } from 'date-fns';
 import { activityListSize } from 'redux/thunks';
-import { ActivityType } from 'generated-sources';
 
 export type ActivityQuery = RequiredField<
   SerializeDateToNumber<ActivityApiGetActivityRequest>,
@@ -25,6 +25,11 @@ export interface ActivityFilterOption {
   id: number;
   name: string;
   important?: boolean;
+}
+
+export interface ActivityItemProps {
+  activity: Activity;
+  hideAllDetails: boolean;
 }
 
 const beginDate = endOfDay(addDays(new Date(), -5)).getTime();

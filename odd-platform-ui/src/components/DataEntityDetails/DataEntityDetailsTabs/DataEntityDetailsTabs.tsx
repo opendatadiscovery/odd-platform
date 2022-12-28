@@ -8,11 +8,17 @@ import {
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
+import {
+  type ActivityQuery,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
 import { defaultLineageQuery } from '../Lineage/lineageLib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { dataEntityId, viewType } = useAppParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
+  const { defaultQueryString: activityQueryString } =
+    useQueryParams<ActivityQuery>(defaultActivityQuery);
   const {
     dataEntityOverviewPath,
     datasetStructurePath,
@@ -82,7 +88,7 @@ const DataEntityDetailsTabs: React.FC = () => {
       },
       {
         name: 'Activity',
-        link: dataEntityActivityPath(dataEntityId),
+        link: dataEntityActivityPath(dataEntityId, activityQueryString),
         value: 'activity',
       },
       {
@@ -98,6 +104,8 @@ const DataEntityDetailsTabs: React.FC = () => {
     dataEntityDetails,
     openAlertsCount,
     datasetQualityTestReportTotal,
+    lineageQueryString,
+    activityQueryString,
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
