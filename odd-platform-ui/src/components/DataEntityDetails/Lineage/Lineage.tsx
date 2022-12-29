@@ -88,7 +88,7 @@ const Lineage: React.FC = () => {
 
   const handleWheelDelta = React.useCallback(
     (e: React.WheelEvent | WheelEvent) =>
-      -e.deltaY > 0 ? { scaleX: 0.95, scaleY: 0.95 } : { scaleX: 1.05, scaleY: 1.05 },
+      -e.deltaY > 0 ? { scaleX: 0.99, scaleY: 0.99 } : { scaleX: 1.01, scaleY: 1.01 },
     []
   );
 
