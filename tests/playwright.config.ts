@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 4 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: process.env.CI ? [['github'], ['html']] : 'html',
   outputDir: './test-results',
   // reporter: [['list', { printSteps: false }], ['./tests/config/allure-reporter.ts']],
   // repeatEach: 8, // <-- use this to check stability
