@@ -1,7 +1,5 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,10 +30,8 @@ public class IngestionController implements IngestionApi {
     private final DataSourceIngestionService dataSourceIngestionService;
 
     @Override
-    public Mono<ResponseEntity<Void>> postDataEntityList(
-        @Valid final Mono<DataEntityList> dataEntityList,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<Void>> postDataEntityList(final Mono<DataEntityList> dataEntityList,
+                                                         final ServerWebExchange exchange) {
         return dataEntityList
             .filter(del -> CollectionUtils.isNotEmpty(del.getItems()))
             .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Ingestion payload is empty")))
@@ -44,7 +40,7 @@ public class IngestionController implements IngestionApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> createDataSource(@Valid final Mono<DataSourceList> dataSourceList,
+    public Mono<ResponseEntity<Void>> createDataSource(final Mono<DataSourceList> dataSourceList,
                                                        final ServerWebExchange exchange) {
         final Mono<Long> collectorIdMono = exchange.getSession()
             .map(ws -> {
@@ -64,16 +60,14 @@ public class IngestionController implements IngestionApi {
     }
 
     @Override
-    public Mono<ResponseEntity<CompactDataEntityList>> getDataEntitiesByDEGOddrn(@NotNull @Valid final String degOddrn,
+    public Mono<ResponseEntity<CompactDataEntityList>> getDataEntitiesByDEGOddrn(final String degOddrn,
                                                                                  final ServerWebExchange exchange) {
         return dataEntityGroupService.listEntitiesWithinDEG(degOddrn).map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> postDataSetStatsList(
-        @Valid final Mono<DatasetStatisticsList> datasetStatisticsList,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<Void>> postDataSetStatsList(final Mono<DatasetStatisticsList> datasetStatisticsList,
+                                                           final ServerWebExchange exchange) {
         return datasetStatisticsList
             .flatMap(ingestionService::ingestStats)
             .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
