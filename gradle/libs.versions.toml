@@ -111,6 +111,7 @@ spring = [
     'spring-r2dbc',
     'reactor-extra',
     'spring-aop',
+    'spring-validator',
 ]
 spring-redis-session = [
     'spring-data-session-redis',
