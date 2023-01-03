@@ -21,9 +21,14 @@ import { useAppDateTime, useAppPaths } from 'lib/hooks';
 interface ActivityItemProps {
   activity: Activity;
   hideAllDetails: boolean;
+  dataQA?: string;
 }
 
-const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
+const ActivityItem: React.FC<ActivityItemProps> = ({
+  activity,
+  hideAllDetails,
+  dataQA,
+}) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const { activityFormattedDateTime } = useAppDateTime();
 
@@ -40,7 +45,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
   );
 
   return (
-    <S.Container container>
+    <S.Container container data-qa={dataQA}>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
         <Grid item display='flex' flexWrap='nowrap' alignItems='center'>
           <Link to={dataEntityDetailsPath(activity.dataEntity.id)}>

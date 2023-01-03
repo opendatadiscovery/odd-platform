@@ -127,7 +127,7 @@ public class ReactiveDatasetFieldRepositoryImpl
             .from(df)
             .leftJoin(df2).on(df.PARENT_FIELD_ODDRN.eq(df2.ODDRN))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(df.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.IS_DELETED.isFalse())
+            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
             .where(df.ID.eq(datasetFieldId))
             .groupBy(selectFields);
 

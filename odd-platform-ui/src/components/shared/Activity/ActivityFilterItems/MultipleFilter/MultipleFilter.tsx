@@ -11,9 +11,10 @@ import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFil
 interface MultipleFilterProps {
   name: string;
   filterName: ActivityQueryName;
+  dataQA?: string;
 }
 
-const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName }) => {
+const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName, dataQA }) => {
   const dispatch = useAppDispatch();
 
   const [selectedOptions, setSelectedOptions] = React.useState<
@@ -50,7 +51,7 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName }) => 
   }, [filterName, selectedOptionIds]);
 
   return (
-    <Grid container>
+    <Grid container data-qa={dataQA}>
       <Grid item xs={12}>
         <MultipleFilterAutocomplete
           name={name}

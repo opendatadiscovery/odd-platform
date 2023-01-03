@@ -39,10 +39,6 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     private static final String DEFAULT_UPDATED_AT_FIELD = "updated_at";
     private static final String DEFAULT_CREATED_AT_FIELD = "created_at";
 
-    private static final String PAGE_METADATA_TOTAL_FIELD = "_total";
-    private static final String PAGE_METADATA_NEXT_FIELD = "_next";
-    private static final String PAGE_METADATA_ROW_NUMBER = "_row";
-
     protected final JooqReactiveOperations jooqReactiveOperations;
     protected final JooqQueryHelper jooqQueryHelper;
 

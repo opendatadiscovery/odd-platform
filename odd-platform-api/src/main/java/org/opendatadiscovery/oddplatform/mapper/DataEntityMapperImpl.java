@@ -174,8 +174,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .setUpdatedAt(now)
             .setManuallyCreated(true)
             .setHollow(false)
-            .setExcludeFromSearch(false)
-            .setIsDeleted(false);
+            .setExcludeFromSearch(false);
     }
 
     @Override
@@ -429,6 +428,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private DataSetStats mapStats(final DataEntityDetailsDto.DataSetDetailsDto dataSetDetailsDto) {
+        if (dataSetDetailsDto == null) {
+            return new DataSetStats();
+        }
+
         return new DataSetStats()
             .consumersCount(dataSetDetailsDto.consumersCount())
             .fieldsCount(dataSetDetailsDto.fieldsCount())

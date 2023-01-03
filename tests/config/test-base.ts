@@ -1,8 +1,7 @@
 import { test as base, TestInfo } from '@playwright/test';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-
 import AppService from '../api/app-service';
 import { MyProfile } from '../api/interfaces/my-profile';
 import LoginService from '../api/login-service';
@@ -49,9 +48,9 @@ export const test = base.extend<
 >({
   workerId: [
     async ({ browser }, use) => {
-      const workerId = `-auto-${uuidv4().substring(0, 13)}`;
+      const workerId = `-auto-${crypto.randomUUID().substring(0, 13)}`;
       saveWorkerId(workerId);
-      // Use workerId value.
+
       await use(workerId);
     },
     { scope: 'worker' },

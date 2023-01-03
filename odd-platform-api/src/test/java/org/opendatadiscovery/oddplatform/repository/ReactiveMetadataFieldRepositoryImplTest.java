@@ -42,7 +42,7 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
         StepVerifier.create(listMono)
             .assertNext(list -> assertThat(list)
                 .hasSize(3)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "isDeleted")
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .hasSameElementsAs(List.of(first, second, third)))
             .verifyComplete();
 
@@ -62,7 +62,7 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
         StepVerifier.create(filtered)
             .assertNext(list -> assertThat(list)
                 .hasSize(1)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "isDeleted")
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .hasSameElementsAs(List.of(first)))
             .verifyComplete();
     }
@@ -114,7 +114,7 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
         StepVerifier.create(excludingDeletedMetadata)
             .assertNext(list -> assertThat(list)
                 .hasSize(2)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "isDeleted")
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                 .hasSameElementsAs(List.of(second, third)))
             .verifyComplete();
     }

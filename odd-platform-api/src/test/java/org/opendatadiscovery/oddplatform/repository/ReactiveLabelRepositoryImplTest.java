@@ -83,7 +83,6 @@ class ReactiveLabelRepositoryImplTest extends BaseIntegrationTest {
             .map(r -> r.into(LabelPojo.class))
             .as(StepVerifier::create)
             .assertNext(l -> {
-                assertThat(l.getIsDeleted()).isTrue();
                 assertThat(l.getDeletedAt()).isNotNull();
             })
             .verifyComplete();
