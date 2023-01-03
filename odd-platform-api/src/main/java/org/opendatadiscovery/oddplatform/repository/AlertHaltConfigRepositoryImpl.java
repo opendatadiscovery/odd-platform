@@ -37,7 +37,7 @@ public class AlertHaltConfigRepositoryImpl implements AlertHaltConfigRepository 
             .select(ALERT_HALT_CONFIG.fields())
             .from(ALERT_HALT_CONFIG)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT_HALT_CONFIG.DATA_ENTITY_ID))
-            .where(DATA_ENTITY.IS_DELETED.isFalse())
+            .where(DATA_ENTITY.DELETED_AT.isNull())
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.ODDRN.in(dataEntityOddrns));
 

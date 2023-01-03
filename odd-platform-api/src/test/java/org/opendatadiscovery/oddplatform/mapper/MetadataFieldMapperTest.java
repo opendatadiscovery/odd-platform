@@ -23,7 +23,6 @@ public class MetadataFieldMapperTest {
         final MetadataFieldPojo pojo = new MetadataFieldPojo()
             .setId(1L)
             .setName(UUID.randomUUID().toString())
-            .setIsDeleted(false)
             .setOrigin(MetadataOrigin.INTERNAL.name())
             .setType(MetadataTypeEnum.JSON.name());
         final MetadataField metadataField = mapper.mapPojo(pojo);
@@ -38,13 +37,11 @@ public class MetadataFieldMapperTest {
         final MetadataFieldPojo firstPojo = new MetadataFieldPojo()
             .setId(1L)
             .setName(UUID.randomUUID().toString())
-            .setIsDeleted(false)
             .setOrigin(MetadataOrigin.INTERNAL.name())
             .setType(MetadataTypeEnum.JSON.name());
         final MetadataFieldPojo secondPojo = new MetadataFieldPojo()
             .setId(2L)
             .setName(UUID.randomUUID().toString())
-            .setIsDeleted(false)
             .setOrigin(MetadataOrigin.INTERNAL.name())
             .setType(MetadataTypeEnum.DATETIME.name());
         final MetadataFieldList metadataFieldList = mapper.mapPojos(List.of(firstPojo, secondPojo));

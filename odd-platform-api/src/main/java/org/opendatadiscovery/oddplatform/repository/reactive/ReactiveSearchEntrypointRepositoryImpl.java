@@ -116,7 +116,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
             .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
+            .and(DATA_SOURCE.DELETED_AT.isNull());
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -147,7 +147,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
             .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(NAMESPACE.IS_DELETED.isFalse());
+            .and(NAMESPACE.DELETED_AT.isNull());
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -175,7 +175,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.DELETED_AT.isNull())
             .where(NAMESPACE.ID.eq(namespaceId))
-            .and(NAMESPACE.IS_DELETED.isFalse());
+            .and(NAMESPACE.DELETED_AT.isNull());
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -237,7 +237,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .from(DATA_SOURCE)
             .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
             .where(DATA_SOURCE.ID.eq(dataSourceId))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
+            .and(DATA_SOURCE.DELETED_AT.isNull());
 
         final Insert<? extends Record> dataSourceQuery = jooqFTSHelper.buildVectorUpsert(
             dsSelect,
@@ -267,7 +267,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .and(TAG.IS_DELETED.isFalse());
+            .and(TAG.DELETED_AT.isNull());
 
         final Insert<? extends Record> tagQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -294,7 +294,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(TAG.IS_DELETED.isFalse());
+            .and(TAG.DELETED_AT.isNull());
 
         final Insert<? extends Record> tagQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -452,7 +452,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
             .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
-            .where(LABEL.IS_DELETED.isFalse());
+            .where(LABEL.DELETED_AT.isNull());
 
         final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -511,7 +511,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.DELETED_AT.isNull());
 
         final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -549,7 +549,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
             .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(METADATA_FIELD.IS_DELETED.isFalse());
+            .and(METADATA_FIELD.DELETED_AT.isNull());
 
         final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(
             select,
@@ -597,7 +597,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.DELETED_AT.isNull());
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,

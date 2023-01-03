@@ -149,8 +149,7 @@ public class IngestionMapperImpl implements IngestionMapper {
             .setHollow(false)
             .setSpecificAttributes(JSONB.jsonb(dto.getSpecificAttributesJson()))
             .setExcludeFromSearch(isExcludedFromSearch(dto))
-            .setManuallyCreated(false)
-            .setIsDeleted(false);
+            .setManuallyCreated(false);
 
         if (dto instanceof EnrichedDataEntityIngestionDto entityIngestionDto) {
             pojo.setId(entityIngestionDto.getId());

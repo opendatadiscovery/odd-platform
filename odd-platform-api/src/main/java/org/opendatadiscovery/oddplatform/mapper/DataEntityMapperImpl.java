@@ -174,8 +174,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .setUpdatedAt(now)
             .setManuallyCreated(true)
             .setHollow(false)
-            .setExcludeFromSearch(false)
-            .setIsDeleted(false);
+            .setExcludeFromSearch(false);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class ReactiveDataSourceRepositoryImpl
     public Mono<DataSourceDto> getDto(final long id) {
         final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ID.eq(id))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
+            .and(DATA_SOURCE.DELETED_AT.isNull());
 
         return jooqReactiveOperations.mono(query).map(this::mapRecordIntoDto);
     }
@@ -87,7 +87,7 @@ public class ReactiveDataSourceRepositoryImpl
     public Mono<DataSourceDto> getDtoByOddrn(final String oddrn) {
         final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ODDRN.eq(oddrn))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
+            .and(DATA_SOURCE.DELETED_AT.isNull());
 
         return jooqReactiveOperations.mono(query).map(this::mapRecordIntoDto);
     }
@@ -106,7 +106,7 @@ public class ReactiveDataSourceRepositoryImpl
     public Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns) {
         final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ODDRN.in(oddrns))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
+            .and(DATA_SOURCE.DELETED_AT.isNull());
 
         return jooqReactiveOperations.flux(query).map(this::mapRecordIntoDto);
     }
@@ -116,7 +116,7 @@ public class ReactiveDataSourceRepositoryImpl
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_SOURCE)
                 .where(DATA_SOURCE.NAMESPACE_ID.eq(namespaceId))
-                .and(DATA_SOURCE.IS_DELETED.isFalse())
+                .and(DATA_SOURCE.DELETED_AT.isNull())
         );
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
@@ -138,7 +138,7 @@ public class ReactiveDataSourceRepositoryImpl
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_SOURCE)
                 .where(DATA_SOURCE.COLLECTOR_ID.eq(collectorId))
-                .and(DATA_SOURCE.IS_DELETED.isFalse())
+                .and(DATA_SOURCE.DELETED_AT.isNull())
         );
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
@@ -157,7 +157,7 @@ public class ReactiveDataSourceRepositoryImpl
     private List<Condition> queryCondition(final String nameQuery) {
         final var conditionsList = new ArrayList<Condition>();
 
-        conditionsList.add(DATA_SOURCE.IS_DELETED.isFalse());
+        conditionsList.add(DATA_SOURCE.DELETED_AT.isNull());
         if (StringUtils.isNotEmpty(nameQuery)) {
             conditionsList.add(DATA_SOURCE.NAME.startsWithIgnoreCase(nameQuery));
         }

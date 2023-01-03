@@ -76,8 +76,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                                       final JooqRecordHelper jooqRecordHelper,
                                       final JooqQueryHelper jooqQueryHelper,
                                       final JooqFTSHelper jooqFTSHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, TERM, TermPojo.class, TERM.NAME, TERM.ID,
-            TERM.CREATED_AT, TERM.UPDATED_AT, TERM.IS_DELETED, TERM.DELETED_AT);
+        super(jooqReactiveOperations, jooqQueryHelper, TERM, TermPojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
         this.jooqFTSHelper = jooqFTSHelper;
     }
@@ -114,7 +113,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             DSL.select()
                 .from(TERM)
                 .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-                .where(TERM.IS_DELETED.isFalse())
+                .where(TERM.DELETED_AT.isNull())
                 .and(NAMESPACE.ID.eq(namespaceId))
         );
         return jooqReactiveOperations.mono(query).map(Record1::component1);
@@ -126,7 +125,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             DSL.select()
                 .from(TERM)
                 .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-                .where(TERM.NAME.eq(name).and(TERM.IS_DELETED.isFalse())
+                .where(TERM.NAME.eq(name).and(TERM.DELETED_AT.isNull())
                     .and(NAMESPACE.NAME.eq(namespaceName)))
         );
         return jooqReactiveOperations.mono(query).map(Record1::component1);
@@ -139,7 +138,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(NAMESPACE.fields())
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-            .where(TERM.ID.eq(id).and(TERM.IS_DELETED.isFalse()));
+            .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()));
         return jooqReactiveOperations.mono(query)
             .map(this::mapRecordToRefDto);
     }
@@ -166,7 +165,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID)
                 .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
-            .where(TERM.ID.eq(id).and(TERM.IS_DELETED.isFalse()))
+            .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
         return jooqReactiveOperations.mono(query)
             .map(this::mapRecordToDetailsDto);
@@ -231,7 +230,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .join(TERM).on(TERM.ID.eq(TERM_SEARCH_ENTRYPOINT.TERM_ID))
             .join(NAMESPACE).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID))
             .where(jooqFTSHelper.ftsCondition(TERM_SEARCH_ENTRYPOINT.SEARCH_VECTOR, query))
-            .and(TERM.IS_DELETED.isFalse())
+            .and(TERM.DELETED_AT.isNull())
             .orderBy(rankFieldAlias.desc())
             .limit(SUGGESTION_LIMIT);
 
@@ -253,7 +252,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
         final List<Condition> conditions = new ArrayList<>();
         conditions.addAll(jooqFTSHelper.facetStateConditions(state, TERM_CONDITIONS));
-        conditions.add(TERM.IS_DELETED.isFalse());
+        conditions.add(TERM.DELETED_AT.isNull());
 
         final List<OrderByField> orderFields = new ArrayList<>();
         if (StringUtils.isNotEmpty(state.getQuery())) {
@@ -335,7 +334,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
             .leftJoin(OWNER).on(TERM_OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .where(jooqFTSHelper.facetStateConditions(state, TERM_CONDITIONS))
-            .and(TERM.IS_DELETED.isFalse());
+            .and(TERM.DELETED_AT.isNull());
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
             query = query.and(jooqFTSHelper.ftsCondition(TERM_SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
@@ -355,7 +354,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .join(DATA_ENTITY_TO_TERM)
             .on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID).and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
                 .and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)))
-            .where(TERM.IS_DELETED.isFalse());
+            .where(TERM.DELETED_AT.isNull());
         return jooqReactiveOperations.flux(query)
             .map(this::mapRecordToRefDto);
     }
