@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.ODDOAuth2Properties;
 import org.opendatadiscovery.oddplatform.auth.Provider;
+import org.opendatadiscovery.oddplatform.auth.condition.ODDIAMCondition;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
+@Conditional(ODDIAMCondition.class)
 @RequiredArgsConstructor
 public class ODDIAMUserHandler implements OAuthUserHandler<OAuth2User, OAuth2UserRequest> {
     private static final String DEFAULT_IS_ADMIN_ATTRIBUTE = "is_admin";
@@ -41,3 +44,4 @@ public class ODDIAMUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
             provider.getUserNameAttribute()));
     }
 }
+
