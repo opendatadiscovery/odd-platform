@@ -43,6 +43,7 @@ public class ODDOAuth2Properties {
         private String logoutUri;
         private String userNameAttribute;
         private String adminAttribute;
+        private String adminUserInfoFlag;
         private Set<String> adminGroups;
         private Set<String> adminPrincipals;
         private String organizationName;
