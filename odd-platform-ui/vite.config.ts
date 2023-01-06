@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, UserConfigExport } from 'vite';
+import { defineConfig, loadEnv, type UserConfigExport } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
