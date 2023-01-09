@@ -41,7 +41,11 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
   );
 
   return activitiesLength ? (
-    <S.ListContainer $heightOffset={heightOffset} id='activities-list'>
+    <S.ListContainer
+      $heightOffset={heightOffset}
+      id='activities-list'
+      data-qa='activity_results_list'
+    >
       <InfiniteScroll
         style={{ overflow: 'initial' }}
         dataLength={activitiesLength}
