@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren } from 'react';
 import { Grid } from '@mui/material';
-import { ActivityEventType, type DataSource, type Namespace } from 'generated-sources';
+import type { ActivityEventType, DataSource, Namespace } from 'generated-sources';
 import { stringFormatted } from 'lib/helpers';
 import { useQueryParams } from 'lib/hooks';
 import {
@@ -16,12 +16,14 @@ interface SingleFilterProps<OptionType> {
   name: string;
   filterOptions: Array<OptionType>;
   filterName: ActivitySingleFilterNames;
+  dataQA?: string;
 }
 
 const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventType>({
   name,
   filterOptions,
   filterName,
+  dataQA,
 }: PropsWithChildren<SingleFilterProps<OptionType>>) => {
   const defaultOption = 'All';
   const { setQueryParams, queryParams } =
@@ -52,6 +54,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
           label={name}
           id={`filter-${filterName}`}
           value={queryParams[filterName] || defaultOption}
+          dataQAId={dataQA}
         >
           <AppMenuItem value='All' onClick={handleFilterSelect(defaultOption)}>
             All

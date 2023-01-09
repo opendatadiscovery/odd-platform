@@ -51,7 +51,7 @@ public class ReactiveCollectorRepositoryImpl
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(COLLECTOR.NAMESPACE_ID))
             .leftJoin(TOKEN).on(TOKEN.ID.eq(COLLECTOR.TOKEN_ID))
             .where(COLLECTOR.ID.eq(id))
-            .and(COLLECTOR.IS_DELETED.isFalse());
+            .and(COLLECTOR.DELETED_AT.isNull());
 
         return jooqReactiveOperations.mono(query).map(this::mapRecordToDto);
     }

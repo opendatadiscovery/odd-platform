@@ -15,10 +15,20 @@ import {
   TermActivityField,
 } from 'components/shared/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-import { type ActivityItemProps } from 'components/shared/Activity/common';
+import type { Activity } from 'redux/interfaces';
 import * as S from './ActivityItemStyles';
 
-const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
+interface ActivityItemProps {
+  activity: Activity;
+  hideAllDetails: boolean;
+  dataQA?: string;
+}
+
+const ActivityItem: React.FC<ActivityItemProps> = ({
+  activity,
+  hideAllDetails,
+  dataQA,
+}) => {
   const { dataEntityDetailsPath } = useAppPaths();
   const { activityFormattedDateTime } = useAppDateTime();
 
@@ -38,7 +48,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
     types.includes(activity.eventType);
 
   return (
-    <S.Container container>
+    <S.Container container data-qa={dataQA}>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
         <Grid item display='flex' flexWrap='nowrap' alignItems='center'>
           <Link to={dataEntityDetailsPath(activity.dataEntity.id)}>
@@ -119,7 +129,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           hideAllDetails={hideAllDetails}
         />
       )}
-      {isTypeRelatedTo([ActivityEventType.TAGS_ASSOCIATION_UPDATED]) && (
+      {isTypeRelatedTo([ActivityEventType.TAG_ASSIGNMENT_UPDATED]) && (
         <ArrayActivityField
           activityName='Tags'
           oldState={activity.oldState.tags}

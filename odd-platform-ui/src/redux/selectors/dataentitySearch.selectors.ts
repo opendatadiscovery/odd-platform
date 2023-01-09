@@ -13,7 +13,7 @@ import type {
   SearchFacetStateById,
   SearchFilterStateSynced,
 } from 'redux/interfaces';
-import { DataEntityClassNameEnum } from 'generated-sources';
+import type { DataEntityClassNameEnum } from 'generated-sources';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import compact from 'lodash/compact';

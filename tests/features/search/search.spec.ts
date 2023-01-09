@@ -125,5 +125,17 @@ test.describe('Search by name of data-entity', () => {
         expect(await pages.catalog.isAlertVisible()).toBeTruthy();
       });
     });
+    /**
+     * /project/1/test-cases/22
+     */
+    test(`Cleanup the search bar`, async ({ steps: { pages } }) => {
+      await test.step(`When fill an expression`, async () => {
+        await pages.catalog.searchBy('ticket');
+      });
+      await test.step(`When clean the input`, async () => {
+        await pages.catalog.cleanSearchBar.click();
+        expect(await pages.catalog.searchBar.innerText()).toEqual('');
+      });
+    });
   });
 });

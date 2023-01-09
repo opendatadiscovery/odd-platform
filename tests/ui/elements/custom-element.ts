@@ -1,6 +1,17 @@
 import { Locator, Page } from '@playwright/test';
 
 export default class CustomElement {
+  constructor(protected readonly context: Page, customElement: string | Locator) {
+    this.customElementContext = this.getLocator(customElement);
+  }
+
+  /**
+   * @returns Returns locator of the matching element
+   */
+  get locator(): Locator {
+    return this.customElementContext;
+  }
+
   private customElementContext: Locator;
 
   /**
@@ -25,10 +36,6 @@ export default class CustomElement {
    */
   protected set customElement(customElement: Locator) {
     this.customElementContext = customElement;
-  }
-
-  constructor(protected readonly context: Page, customElement: string | Locator) {
-    this.customElementContext = this.getLocator(customElement);
   }
 
   /**

@@ -113,7 +113,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .on(TERM_SEARCH_ENTRYPOINT.TERM_ID.eq(TERM.ID))
             .and(TERM.DELETED_AT.isNull())
             .where(TAG.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
-            .and(TAG.IS_DELETED.isFalse())
+            .and(TAG.DELETED_AT.isNull())
             .groupBy(TAG.ID, TAG.NAME)
             .orderBy(countDistinct(TERM_SEARCH_ENTRYPOINT.TERM_ID).desc())
             .limit(size)
@@ -141,7 +141,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .on(TERM_SEARCH_ENTRYPOINT.TERM_ID.eq(TERM.ID))
             .and(TERM.DELETED_AT.isNull())
             .where(OWNER.NAME.containsIgnoreCase((StringUtils.isNotEmpty(facetQuery) ? facetQuery : "")))
-            .and(OWNER.IS_DELETED.isFalse())
+            .and(OWNER.DELETED_AT.isNull())
             .groupBy(OWNER.ID, OWNER.NAME)
             .orderBy(countDistinct(TERM_SEARCH_ENTRYPOINT.TERM_ID).desc())
             .limit(size)
@@ -340,7 +340,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         if (StringUtils.isNotEmpty(facetQuery)) {
             conditions.add(OWNER.NAME.containsIgnoreCase(facetQuery));
         }
-        conditions.add(OWNER.IS_DELETED.isFalse());
+        conditions.add(OWNER.DELETED_AT.isNull());
 
         select
             .where(conditions)
@@ -375,7 +375,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         if (StringUtils.isNotEmpty(facetQuery)) {
             conditions.add(TAG.NAME.containsIgnoreCase(facetQuery));
         }
-        conditions.add(TAG.IS_DELETED.isFalse());
+        conditions.add(TAG.DELETED_AT.isNull());
 
         select
             .where(conditions)

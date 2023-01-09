@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DataCollaborationState, Message, RootState } from 'redux/interfaces';
+import type { DataCollaborationState, Message, RootState } from 'redux/interfaces';
 import {
   createErrorSelector,
   createStatusesSelector,

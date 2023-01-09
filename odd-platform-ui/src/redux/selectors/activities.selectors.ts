@@ -5,7 +5,7 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import { type ActivityCountInfo, ActivityType } from 'generated-sources';
+import { type ActivityCountInfo, type ActivityType } from 'generated-sources';
 import { emptyObj } from 'lib/constants';
 
 const activitiesState = ({ activities }: RootState): ActivitiesState => activities;

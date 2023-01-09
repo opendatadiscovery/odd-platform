@@ -19,7 +19,7 @@ public class TagActivityHandlerImpl implements ActivityHandler {
 
     @Override
     public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
-        return activityEventTypeDto == ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED;
+        return activityEventTypeDto == ActivityEventTypeDto.TAG_ASSIGNMENT_UPDATED;
     }
 
     @Override

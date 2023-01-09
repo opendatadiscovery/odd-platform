@@ -2,16 +2,16 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { GearIcon, UserIcon } from 'components/shared/Icons';
 import { ActivityEventType } from 'generated-sources';
-import { TagItem, LabelItem } from 'components/shared';
+import { LabelItem, TagItem } from 'components/shared';
 import {
+  ActivityFieldHeader,
+  AlertActivityField,
+  ArrayActivityField,
   CustomGroupActivityField,
   EnumsActivityField,
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
-  ActivityFieldHeader,
-  ArrayActivityField,
-  AlertActivityField,
 } from 'components/shared/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/Activity/common';
@@ -38,6 +38,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
   return (
     <S.Container container>
       <Grid
+        width='200%'
         container
         justifyContent='space-between'
         alignItems='baseline'
@@ -86,7 +87,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.TAGS_ASSOCIATION_UPDATED]) && (
+        {isTypeRelatedTo([ActivityEventType.TAG_ASSIGNMENT_UPDATED]) && (
           <ArrayActivityField
             activityName='Tags'
             oldState={activity.oldState.tags}

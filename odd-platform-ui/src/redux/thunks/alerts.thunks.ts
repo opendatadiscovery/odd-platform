@@ -9,7 +9,7 @@ import {
   type DataEntityAlertConfig,
   DataEntityApi,
   type DataEntityApiGetAlertConfigRequest,
-  DataEntityApiGetDataEntityAlertsCountsRequest,
+  type DataEntityApiGetDataEntityAlertsCountsRequest,
   type DataEntityApiGetDataEntityAlertsRequest,
   type DataEntityApiUpdateAlertConfigRequest,
 } from 'generated-sources';

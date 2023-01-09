@@ -42,8 +42,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
     public ReactiveTagRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                      final JooqQueryHelper jooqQueryHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, TAG, TagPojo.class, TAG.NAME, TAG.ID, TAG.CREATED_AT,
-            TAG.UPDATED_AT, TAG.IS_DELETED, null);
+        super(jooqReactiveOperations, jooqQueryHelper, TAG, TagPojo.class);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .from(TAG_TO_TERM)
             .join(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID))
             .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.DELETED_AT.isNull())
-                .and(TAG.IS_DELETED.isFalse()));
+                .and(TAG.DELETED_AT.isNull()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagPojo.class));
     }
@@ -133,7 +132,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var query = DSL.select(TAG_TO_DATA_ENTITY.fields())
             .from(TAG_TO_DATA_ENTITY)
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
-            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.in(dataEntityIds).and(TAG.IS_DELETED.isFalse()));
+            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.in(dataEntityIds).and(TAG.DELETED_AT.isNull()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagToDataEntityPojo.class));
     }
@@ -166,7 +165,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
                 final InsertResultStep<TagRecord> query = insertStep
                     .set(rs.get(rs.size() - 1))
                     .onConflict(conflictFields)
-                    .where(TAG.IS_DELETED.isFalse())
+                    .where(TAG.DELETED_AT.isNull())
                     .doUpdate()
                     .set(TAG.NAME, jooqQueryHelper.excludedField(TAG.NAME, TAG.NAME.getType()))
                     .returning();

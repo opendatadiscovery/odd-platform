@@ -61,8 +61,7 @@ public class EnumValueMapperTest {
             .setId(1L)
             .setName("name")
             .setDatasetFieldId(DATASET_FIELD_ID)
-            .setDescription("description")
-            .setIsDeleted(false);
+            .setDescription("description");
 
         final var enumValue = new EnumValue()
             .id(1L)

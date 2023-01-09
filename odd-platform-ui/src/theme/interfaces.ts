@@ -1,5 +1,5 @@
-import { TypeBackground } from '@mui/material/styles/createPalette';
-import {
+import type { TypeBackground } from '@mui/material/styles/createPalette';
+import type {
   AlertStatus,
   DataEntityClassNameEnum,
   DataEntityRunStatus,
@@ -8,9 +8,9 @@ import {
   SLAColour,
   OwnerAssociationRequestStatus,
 } from 'generated-sources';
-import { TypographyStyle } from '@mui/material';
-import { TypographyStyleOptions } from '@mui/material/styles/createTypography';
-import { ToastType } from 'react-hot-toast';
+import type { TypographyStyle } from '@mui/material';
+import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
+import type { ToastType } from 'react-hot-toast';
 
 // helpers interfaces
 export type CSSObject = Partial<CSSStyleDeclaration>;

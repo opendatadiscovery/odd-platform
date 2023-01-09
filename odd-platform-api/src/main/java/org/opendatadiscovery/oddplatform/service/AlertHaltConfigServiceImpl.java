@@ -41,5 +41,3 @@ public class AlertHaltConfigServiceImpl implements AlertHaltConfigService {
             .map(alertHaltConfigMapper::mapPojo);
     }
 }
-// создание алерта, его стак, изменение его статуса.
-

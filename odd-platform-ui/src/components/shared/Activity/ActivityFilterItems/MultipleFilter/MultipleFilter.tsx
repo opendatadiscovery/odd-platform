@@ -14,10 +14,11 @@ import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFil
 
 interface MultipleFilterProps {
   name: string;
+  dataQA?: string;
   filterName: ActivityMultipleFilterNames;
 }
 
-const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName }) => {
+const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName, dataQA }) => {
   const dispatch = useAppDispatch();
   const { queryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
@@ -40,7 +41,7 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({ name, filterName }) => 
   }, [filterName, queryParams]);
 
   return (
-    <Grid container>
+    <Grid container data-qa={dataQA}>
       <Grid item xs={12}>
         <MultipleFilterAutocomplete name={name} filterName={filterName} />
       </Grid>
