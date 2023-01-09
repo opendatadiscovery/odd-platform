@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import {
+import type {
   ActivityEventType,
-  type ActivityState,
-  type OwnershipActivityState,
+  ActivityState,
+  OwnershipActivityState,
 } from 'generated-sources';
 import { type CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';

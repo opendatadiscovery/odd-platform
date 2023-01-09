@@ -75,7 +75,6 @@
     "import/no-cycle": "error",
     "import/no-unresolved": "error",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { ActivityEventType } from 'generated-sources';
 import {
   ActivityFieldHeader,
+  AlertActivityField,
   ArrayActivityField,
   CustomGroupActivityField,
   EnumsActivityField,
@@ -182,6 +183,18 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           oldState={activity.oldState.customGroup}
           newState={activity.newState.customGroup}
           hideAllDetails={hideAllDetails}
+        />
+      )}
+      {isTypeRelatedTo([
+        ActivityEventType.ALERT_HALT_CONFIG_UPDATED,
+        ActivityEventType.ALERT_STATUS_UPDATED,
+        ActivityEventType.OPEN_ALERT_RECEIVED,
+        ActivityEventType.RESOLVED_ALERT_RECEIVED,
+      ]) && (
+        <AlertActivityField
+          eventType={activity.eventType}
+          oldState={activity.oldState}
+          newState={activity.newState}
         />
       )}
     </S.Container>

@@ -11,6 +11,7 @@ import {
   TermActivityField,
   ActivityFieldHeader,
   ArrayActivityField,
+  AlertActivityField,
 } from 'components/shared/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/Activity/common';
@@ -41,7 +42,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         justifyContent='space-between'
         alignItems='baseline'
         flexWrap='nowrap'
-        position='relative'
       >
         {isTypeRelatedTo([
           ActivityEventType.OWNERSHIP_CREATED,
@@ -152,14 +152,19 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        <Grid
-          item
-          container
-          flexWrap='nowrap'
-          justifyContent='flex-end'
-          alignItems='center'
-          sx={{ position: 'absolute', top: '8px', right: 0, zIndex: -1 }}
-        >
+        {isTypeRelatedTo([
+          ActivityEventType.ALERT_HALT_CONFIG_UPDATED,
+          ActivityEventType.ALERT_STATUS_UPDATED,
+          ActivityEventType.OPEN_ALERT_RECEIVED,
+          ActivityEventType.RESOLVED_ALERT_RECEIVED,
+        ]) && (
+          <AlertActivityField
+            eventType={activity.eventType}
+            oldState={activity.oldState}
+            newState={activity.newState}
+          />
+        )}
+        <Grid container flexWrap='nowrap' justifyContent='flex-end' alignItems='center'>
           {activity.systemEvent ? (
             <GearIcon />
           ) : (

@@ -1,3 +1,4 @@
+import type { AlertHaltConfigActivityState } from 'generated-sources';
 import {
   AlertType,
   type ConfigurationParameters,
@@ -16,11 +17,18 @@ export const ORDERED_SEVERITY = [
   DataQualityTestSeverity.MINOR,
 ];
 
-export const alertTitlesMap = new Map<AlertType, string>([
+export const alertTitlesMap = new Map<
+  AlertType | keyof AlertHaltConfigActivityState,
+  string
+>([
   [AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA, 'Backwards incompatible schema'],
+  ['incompatibleSchemaHaltUntil', 'Backwards incompatible schema'],
   [AlertType.FAILED_JOB, 'Failed job'],
+  ['failedJobHaltUntil', 'Failed job'],
   [AlertType.FAILED_DQ_TEST, 'Failed DQ test'],
+  ['failedDqTestHaltUntil', 'Failed DQ test'],
   [AlertType.DISTRIBUTION_ANOMALY, 'Distribution anomaly'],
+  ['distributionAnomalyHaltUntil', 'Distribution anomaly'],
 ]);
 
 // content width constants

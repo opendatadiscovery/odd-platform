@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Grid } from '@mui/material';
-import { CRUDType } from 'lib/interfaces';
+import type { CRUDType } from 'lib/interfaces';
 import { setActivityBackgroundColor } from 'lib/helpers';
 
 export const ArrayItemWrapper = styled(Grid)<{

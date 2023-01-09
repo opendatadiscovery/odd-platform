@@ -1,11 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { DataEntitiesState, RootState } from 'redux/interfaces';
-import {
+import type {
   DataEntityClass,
-  DataEntityClassNameEnum,
   DataEntityClassUsageInfo,
   DataEntityType,
 } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {
   createErrorSelector,

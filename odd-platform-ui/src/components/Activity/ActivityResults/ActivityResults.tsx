@@ -63,7 +63,7 @@ const ActivityResults: React.FC = () => {
   }, [queryParams, lastId, lastDateTime, hasNext]);
 
   return (
-    <Grid sx={{ mt: 2 }}>
+    <Grid sx={{ mt: 1 }}>
       <ActivityTabs counts={activityCounts} isCountsFetching={isActivityCountsFetching} />
       <ActivityResultsList
         activitiesLength={activitiesLength}

@@ -6,6 +6,7 @@ import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
 import { type CRUDType } from 'lib/interfaces';
 import { format } from 'date-fns';
+import lowerCase from 'lodash/lowerCase';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
   [
@@ -17,13 +18,19 @@ export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
 export const stringFormatted = (
   value: string,
   splitter: '_' | '.',
-  capitalizing: 'all' | 'firstLetterOfString' | 'firstLetterOfEveryWord' | 'disabled',
+  capitalizing:
+    | 'all'
+    | 'firstLetterOfString'
+    | 'firstLetterOfEveryWord'
+    | 'disabled'
+    | 'uncapitalizing',
   removePrefix?: boolean
 ) => {
   const capitalizeBy = (str: string, idx: number) => {
     if (capitalizing === 'all') return str.toUpperCase();
     if (capitalizing === 'firstLetterOfEveryWord') return capitalize(str);
     if (capitalizing === 'firstLetterOfString' && idx === 0) return capitalize(str);
+    if (capitalizing === 'uncapitalizing') return lowerCase(str);
 
     return str;
   };

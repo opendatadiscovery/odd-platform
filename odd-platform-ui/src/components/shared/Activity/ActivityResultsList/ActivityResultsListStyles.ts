@@ -7,8 +7,7 @@ export const ListContainer = styled('div')<{ $heightOffset?: number }>(
       $heightOffset || 8
     )})`,
     overflow: 'auto',
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
     width: '100%',
+    marginTop: theme.spacing(2),
   })
 );

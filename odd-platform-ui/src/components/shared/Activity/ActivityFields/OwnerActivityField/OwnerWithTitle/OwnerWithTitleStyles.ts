@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { CRUDType } from 'lib/interfaces';
+import type { CRUDType } from 'lib/interfaces';
 import { setActivityBackgroundColor } from 'lib/helpers';
 
 export const Container = styled(Grid)<{
