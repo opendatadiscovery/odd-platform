@@ -30,6 +30,7 @@ export interface ActivityFilterOption {
 export interface ActivityItemProps {
   activity: Activity;
   hideAllDetails: boolean;
+  dataQA?: string;
 }
 
 const beginDate = endOfDay(addDays(new Date(), -5)).getTime();

@@ -80,6 +80,7 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
                       key={activity.id}
                       activity={activity}
                       hideAllDetails={hideAllDetails}
+                      dataQA='activity_list_item'
                     />
                   ))}
                 </Grid>
