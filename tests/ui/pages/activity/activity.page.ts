@@ -1,24 +1,24 @@
-import Button from "../../elements/button";
-import Dropdown from "../../elements/dropdown";
-import List from "../../elements/list";
-import TextBox from "../../elements/text-box";
-import BasePage from "../base-page";
+import Button from '../../elements/button';
+import Dropdown from '../../elements/dropdown';
+import List from '../../elements/list';
+import TextBox from '../../elements/text-box';
+import BasePage from '../base-page';
 
 const SELECTORS = {
-  datasourceFilter: "[data-qa=\"datasource_filter\"] >> ..",
-  namespaceFilter: "[data-qa=\"namespace_filter\"] >> ..",
-  eventTypeSelect: "[data-qa=\"event_type_filter\"] >> ..",
+  datasourceFilter: '[data-qa="datasource_filter"] >> ..',
+  namespaceFilter: '[data-qa="namespace_filter"] >> ..',
+  eventTypeSelect: '[data-qa="event_type_filter"] >> ..',
   tagFilter: `label:has-text('Tag')>> ..`,
   ownerFilter: `label:has-text('Owner')>> ..`,
   resultList: `[data-qa="activity_results_list"]`,
   resultItem: `[data-qa="activity_list_item"]`,
   filterWithInputOption: `[role="presentation"]`,
-  filterDropdown: "[role=\"listbox\"]",
-  filterOption: "[role=\"option\"]",
+  filterDropdown: '[role="listbox"]',
+  filterOption: '[role="option"]',
   calendar3dayButton: `[type="button"]:has-text('3 Day')`,
   calendarDoneButton: `[type="button"]:has-text('Done')`,
   calendar: `.rmdp-container`,
-  noContent: `text=No content`
+  noContent: `text=No content`,
 };
 export default class ActivityPage extends BasePage {
   get datasourceSelect() {
@@ -54,7 +54,7 @@ export default class ActivityPage extends BasePage {
       this.page,
       SELECTORS.tagFilter,
       SELECTORS.filterDropdown,
-      SELECTORS.filterOption
+      SELECTORS.filterOption,
     );
   }
 
@@ -63,14 +63,14 @@ export default class ActivityPage extends BasePage {
       this.page,
       SELECTORS.ownerFilter,
       SELECTORS.filterDropdown,
-      SELECTORS.filterOption
+      SELECTORS.filterOption,
     );
   }
 
   async openFilterWithSelect(filterName: string) {
-    if (filterName === "Datasource") {
+    if (filterName === 'Datasource') {
       await this.datasourceSelect.click();
-    } else if (filterName === "Namespace") {
+    } else if (filterName === 'Namespace') {
       await this.namespaceSelect.click();
     } else {
       await this.eventTypeSelect.click();
@@ -79,7 +79,7 @@ export default class ActivityPage extends BasePage {
 
   async chooseOption(option: string) {
     await this.page.click(
-      `${SELECTORS.filterDropdown} >> ${SELECTORS.filterOption}:has-text('${option}')`
+      `${SELECTORS.filterDropdown} >> ${SELECTORS.filterOption}:has-text('${option}')`,
     );
   }
 
