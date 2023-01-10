@@ -37,13 +37,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
 
   return (
     <S.Container container>
-      <Grid
-        width='200%'
-        container
-        justifyContent='space-between'
-        alignItems='baseline'
-        flexWrap='nowrap'
-      >
+      <S.ContentContainer container>
         {isTypeRelatedTo([
           ActivityEventType.OWNERSHIP_CREATED,
           ActivityEventType.OWNERSHIP_UPDATED,
@@ -57,10 +51,12 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           />
         )}
         {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_CREATED]) && (
-          <ActivityFieldHeader
-            eventType='created'
+          <StringActivityField
             startText='Data entity with'
-            activityName={`ODDRN ${activity.newState.dataEntity?.oddrn}`}
+            activityName='ODDRN'
+            oldState={activity.oldState.dataEntity?.oddrn}
+            newState={activity.newState.dataEntity?.oddrn}
+            hideAllDetails={hideAllDetails}
           />
         )}
         {isTypeRelatedTo([ActivityEventType.DESCRIPTION_UPDATED]) && (
@@ -165,7 +161,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             newState={activity.newState}
           />
         )}
-        <Grid container flexWrap='nowrap' justifyContent='flex-end' alignItems='center'>
+        <S.InfoContainer>
           {activity.systemEvent ? (
             <GearIcon />
           ) : (
@@ -179,8 +175,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
             at {activityFormattedDateTime(activity.createdAt)}
           </Typography>
-        </Grid>
-      </Grid>
+        </S.InfoContainer>
+      </S.ContentContainer>
     </S.Container>
   );
 };
