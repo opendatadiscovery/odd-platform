@@ -234,7 +234,7 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 | German Osin      | [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)       | [germanosin](https://github.com/germanosin)         |
 | Nikita Dementev  | [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)           | [DementevNikita](https://github.com/DementevNikita) |
 | Damir Abdullin   | [LinkedIn](https://www.linkedin.com/in/dabdullin/)                 | [damirabdul](https://github.com/damirabdul)         |
-| Alexey Kozyurov  | [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/) | [Leshe4ka](https://github.com/Leshe4ka)             |
+| Alexey Kozyurov  | [LinkedIn](https://www.linkedin.com/in/aleksei-koziurov/)          | [Leshe4ka](https://github.com/Leshe4ka)             |
 | Pavel Makarichev | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/) | [vixtir](https://github.com/vixtir)                 |
 | Roman Zabaluev   | [LinkedIn](https://www.linkedin.com/in/haarolean/)                 | [Haarolean](https://github.com/haarolean)           |
 ## License
