@@ -1,22 +1,34 @@
 
-<p> 
+<div align="center">
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
+</div>
+
+<h1 align="center" style="border-bottom: none">
+    Next-Gen Data Discovery and Data Observability Platform <br>
+</h1>
+
+<div align="center">
+    <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge" alt="Apache2"></a>
+    <img src="https://img.shields.io/maintenance/yes/2023?style=for-the-badge" alt="Maintenance">
+    <a href="https://github.com/opendatadiscovery/odd-platform/graphs/contributors"><img src="https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge" alt="GitHub contributors"></a>
+    <a href="https://github.com/opendatadiscovery/odd-platform/contribute"><img src="https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge" alt="GitHub issues by-label"></a>        
+</div>
+
+<p align="center">
+    <a href="https://opendatadiscovery.org/"><b>Website</b></a> •
+    <a href="https://www.linkedin.com/company/opendatadiscovery/"><b>LinkedIn</b></a> •
+    <a href="https://go.opendatadiscovery.org/slack"><b>Slack</b></a> •
+    <a href="https://docs.opendatadiscovery.org/"><b>Documentation</b></a> •
+    <a href="https://blog.opendatadiscovery.org/"><b>Blog</b></a> •
+    <a href="https://demo.oddp.io/"><b>Demo</b></a>
 </p>
 
-<br>
+<p align="center"><img src="https://opendatadiscovery.org/overview.gif" alt="Next-Gen Data Discovery and Data Observability Platfor" /></p>
 
 
-[![Apache2](https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Maintenance](https://img.shields.io/maintenance/yes/2023?style=for-the-badge)]()
-[![GitHub contributors](https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/graphs/contributors)
-[![Slack](https://img.shields.io/badge/chat-on_slack-purple.svg?style=for-the-badge&logo=slack)](https://go.opendatadiscovery.org/slack)
-[![GitHub issues by-label](https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/contribute)
+## Demo
 
-<br>
-
-# Open Data Discovery Platform: Next-Gen Data Discovery and Observability 
-
-
+Play with our [demo app](https://demo.oddp.io)!
 
 ## Introduction
 
@@ -95,181 +107,92 @@ Please before contributing check out our [Contributing Guide](./CONTRIBUTING.md)
 <br>
 
 ## Integrations
-ODD Platform works with many of the tools you're already using: 
+OpenDataDiscovery Platform offers comprehensive data source support to meet your needs.
 
 <table>
     <thead>
         <tr>
-            <th colspan="2">Existing integrations</th>
+            <th colspan="3">Existing integrations</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td><img height="40" src="./images/apache-airflow-logo.jpg" />
+            <td>
+            <a href="https://github.com/opendatadiscovery/odd-airflow-adapter">Airflow</a>
             </td>
-            <td><a href="https://github.com/opendatadiscovery/odd-airflow-adapter">Airflow</a>
+            <td>
+<a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>            
             </td>
-        </tr>
+            <td>
+            <a href="https://github.com/opendatadiscovery/odd-collector#cassandra">Cassandra</a>  
+            </td>
         <tr>
-            <td><img src="./images/amazon-athena-logo.png" height="60" />
-            </td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>
-            </td>
-        </tr>
-        <tr>
-            <td><img src="./images/cassandra.png" height="40" /> </td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#cassandra">Cassandra</a> </td>
-        </tr>
-        <tr>
-            <td><img src="./images/clickhouse-logo.png" height="40" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#clickhouse">Clickhouse</a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/dbt-logo.jpg" height="30" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#dbt">DBT</a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/dynamodb-logo.png" height="60" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#dynamodb">DynamoDB
-                </a></td>
+                </a></td>            
         </tr>
         <tr>
-            <td><img src="./images/elasticsearch.png" height="40" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#elasticsearch">Elasticsearch </a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#feast">Feast </a></td>            
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#glue">Glue</a></td>            
         </tr>
         <tr>
-            <td><img src="./images/feast.png" height="40" /></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#feast">Feast </a></td>
-        </tr>
-        <tr>
-            <td><img height="40" src="./images/amazon-glue-logo.jpg" />
-            </td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#glue">Glue</a>
-            </td>
-        </tr>
-        <tr>
-            <td><img src="./images/hive.png" height="40" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#hive">Hive </td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#kafka">Kafka</a></td>            
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#kinesis">Kinesis</a></td>            
         </tr>
         <tr>
-            <td><img height="40" src="./images/apache-kafka-logo.jpg" />
-            </td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#kafka">Kafka</a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/kinesis.png" height="40" /></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#kinesis">Kinesis
-                </a></td>
-        </tr>
-        <tr>
-            <td><img height="40" src="./images/kubeflow-logo.jpg" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow
                 </a> </td>
-        </tr>
-        <tr>
-            <td><img src="./images/odbc.png" height="70" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#odbc">Microsoft ODBC</a>
             </td>
-        </tr>
-        <tr>
-            <td><img src="./images/mongodb.png" height="40" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mongodb">MongoDB </a>
             </td>
         </tr>
         <tr>
-            <td><img src="./images/mssql.png" height="40" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mssql">MSSQL</a></td>
-        </tr>
-        <tr>
-            <td><img height="40" src="./images/mysql-logo.jpg" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mysql">MySQL</a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/neo4j.png" height="30" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#neo4j">Neo4j </a></td>
         </tr>
         <tr>
-            <td><img height="40" src="./images/postgresql-logo.jpg" />
-            </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#postgresql">PostgreSQL</a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/quicksight.png" height="40" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#quicksight">Quicksight </a></td>
-        </tr>
-        <tr>
-            <td><img height="40" src="./images/amazon-redshift-logo.jpg" />
-            </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#redshift">Redshift</a>
             </td>
         </tr>
         <tr>
-            <td><img src="./images/s3.png" height="60" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3">S3 </a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/sagemaker.png" height="40" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker">SageMaker</a> </td>
-        </tr>
-        <tr>
-            <td><img src="./images/sagemaker-featurestore.png" height="40" />
             </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker-featurestore">SageMaker
                     Featurestore </a></td>
         </tr>
         <tr>
-            <td><img height="40" src="./images/snowflake-logo.jpg" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#snowflake">Snowflake</a></td>
-        </tr>
-        <tr>
-            <td><img src="./images/apache-spark-logo.png" height="40" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-spark-adapter">Spark </td>
-        </tr>
-        <tr>
-            <td><img src="./images/sqs.png" height="60" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sqs">SQS </a></td>
         </tr>
         <tr>
-            <td><img height="30" src="./images/tableau-logo.png" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#tableau">Tableau </a>
             </td>
-        </tr>
-        <tr>
-            <td><img height="40" img src="./images/tarantool.png" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#tarantool">Tarantool</a> </td>
-        </tr>
-        <tr>
-            <td><img height="40" img src="./images/bigquery-logo.png" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-gcp#biquery">BigQuery</a>
             </td>
         </tr>
         <tr>
-            <td><img height="40" img src="./images/cube-logo.svg" /> </td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#cubejs">Cube</a>
             </td>
-        </tr>
-        <tr>
-            <td><img height="40" img src="./images/vertica-logo.svg" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#vertica">Vertica</a>
             </td>
-        </tr>
-        <tr>
-            <td><img height="40" img src="./images/trino-og.png" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#trino">Trino</a>
             </td>
         </tr>
         <tr>
-            <td><img height="40" img src="./images/presto-logo.svg" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#presto">Presto</a>
             </td>
-        </tr>
-        <tr>
-            <td><img height="40" img src="./images/mariadb.svg" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#mariadb">MariaDB</a>
             </td>
-        </tr>
-        <tr>
-            <td><img height="40" img src="./images/superset.svg" /></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#superset">SuperSet</a>
             </td>
         </tr>
@@ -291,6 +214,15 @@ ODD operates the following high-level types of entities:
 </ol>
 
 For more information, please check **[specification.md](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md)**.
+
+
+## Community Support
+
+Join our community if you need help, want to chat or have any other questions for us:
+
+- [GitHub](https://github.com/opendatadiscovery/odd-platform/discussions) - Discussion forums and issues
+- [Slack](https://go.opendatadiscovery.org/slack) - Join the conversation! Get all the latest updates and chat to the devs
+
 
 ## Contacts
 
