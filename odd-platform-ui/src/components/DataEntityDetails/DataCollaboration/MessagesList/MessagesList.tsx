@@ -41,7 +41,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
 
   return (
     <S.Container container>
-      <S.MessagesContainer container id='messages-list'>
+      <S.MessagesContainer $disableHeight={!messagesLength} id='messages-list'>
         <InfiniteScroll
           dataLength={messagesLength}
           next={fetchNextMessages}

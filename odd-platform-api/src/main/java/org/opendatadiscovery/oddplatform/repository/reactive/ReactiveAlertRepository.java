@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 public interface ReactiveAlertRepository {
     Mono<AlertDto> get(final long id);
 
+    Mono<List<AlertDto>> get(final List<Long> ids);
+
     Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(
         final Collection<String> dataEntityOddrns);
 
@@ -113,5 +115,5 @@ public interface ReactiveAlertRepository {
 
     Mono<Long> getDataEntityIdByAlertId(final long alertId);
 
-    Mono<Boolean> existsOpen(long alertId);
+    Mono<Boolean> openAlertWithTheSameTypeExistsForDataEntity(final long alertId);
 }

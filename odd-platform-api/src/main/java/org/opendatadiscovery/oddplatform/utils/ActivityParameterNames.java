@@ -49,4 +49,12 @@ public final class ActivityParameterNames {
     public static final class CustomGroupDeleted {
         public static final String DATA_ENTITY_ID = "dataEntityId";
     }
+
+    public static final class AlertHaltConfigUpdated {
+        public static final String DATA_ENTITY_ID = "dataEntityId";
+    }
+
+    public static final class AlertStatusUpdated {
+        public static final String ALERT_ID = "alertId";
+    }
 }

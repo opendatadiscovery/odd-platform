@@ -1,18 +1,18 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import {
+import type {
   ActivityEventType,
-  type ActivityState,
-  type OwnershipActivityState,
+  ActivityState,
+  OwnershipActivityState,
 } from 'generated-sources';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import OwnerWithTitle from './OwnerWithTitle/OwnerWithTitle';
 import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 
 type OwnerItem = OwnershipActivityState & {
-  typeOfChange?: CRUDType;
+  typeOfChange?: EventType;
 };
 
 interface ActivityItemProps {
@@ -77,7 +77,7 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
   const [oldValues, setOldValues] = React.useState<OwnerItem[]>([]);
   const [newValues, setNewValues] = React.useState<OwnerItem[]>([]);
   const [changedOwner, setChangedOwner] = React.useState<OwnerItem>({});
-  const [activityEvent, setActivityEvent] = React.useState<CRUDType>('created');
+  const [activityEvent, setActivityEvent] = React.useState<EventType>('created');
 
   React.useEffect(() => {
     setOldValues(getEnrichedOldState());

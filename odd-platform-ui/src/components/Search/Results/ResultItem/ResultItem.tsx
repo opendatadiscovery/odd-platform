@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
+import type { DataEntity } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
   EntityClassItem,
@@ -11,7 +12,7 @@ import { ColumnsIcon, InformationIcon } from 'components/shared/Icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import * as S from 'components/Search/Results/ResultsStyles';
 import RowsIcon from 'components/shared/Icons/RowsIcon';
-import { GridSizesByBreakpoints, NameContainer, SearchCol } from '../ResultsStyles';
+import { type GridSizesByBreakpoints, NameContainer, SearchCol } from '../ResultsStyles';
 import ResultItemPreview from './ResultItemPreview/ResultItemPreview';
 import { Container, ItemLink, RCContainer } from './ResultItemStyles';
 

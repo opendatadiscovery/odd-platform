@@ -6,7 +6,8 @@ import {
   LabeledInfoItem,
   NumberFormatted,
 } from 'components/shared';
-import { MetadataFieldType, MetadataFieldValue } from 'generated-sources';
+import type { MetadataFieldValue } from 'generated-sources';
+import { MetadataFieldType } from 'generated-sources';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -18,6 +19,7 @@ import {
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors';
 import { useAppDateTime } from 'lib/hooks';
+import isEmpty from 'lodash/isEmpty';
 import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
@@ -44,9 +46,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   );
 
   React.useEffect(() => {
-    if (fetchData && !dataEntityDetails)
+    if (fetchData && isEmpty(dataEntityDetails))
       dispatch(fetchDataEntityDetails({ dataEntityId }));
-  }, [fetchData, dataEntityDetails, dataEntityId, fetchDataEntityDetails]);
+  }, [fetchData, dataEntityDetails, dataEntityId, dispatch]);
 
   const getMetadataValue = (metadataItem: MetadataFieldValue) => {
     let metadataVal;

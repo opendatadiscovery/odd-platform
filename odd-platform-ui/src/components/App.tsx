@@ -26,7 +26,7 @@ const App: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
-  }, []);
+  }, [dispatch]);
 
   const { isPathEmbedded } = useAppPaths();
 

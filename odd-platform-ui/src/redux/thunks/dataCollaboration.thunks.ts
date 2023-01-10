@@ -64,7 +64,7 @@ export const fetchDataEntityChannels = handleResponseAsyncThunk<
 );
 
 export const fetchDataEntityMessages = handleResponseAsyncThunk<
-  { messages: Message[]; pageInfo: PageInfo },
+  { messages: Message[]; pageInfo: PageInfo<string> },
   DataEntityApiGetDataEntityMessagesRequest
 >(
   actions.fetchDataEntityMessagesActionType,
@@ -80,7 +80,7 @@ export const fetchDataEntityMessages = handleResponseAsyncThunk<
 );
 
 export const fetchRelatedMessages = handleResponseAsyncThunk<
-  { messages: Message[]; pageInfo: PageInfo },
+  { messages: Message[]; pageInfo: PageInfo<string> },
   DataEntityApiGetMessagesRequest
 >(
   actions.fetchMessagesRelatedToMessageActionType,

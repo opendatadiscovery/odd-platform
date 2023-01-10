@@ -8,7 +8,7 @@ import type {
 import * as actions from 'redux/actions';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { emptyArr } from 'lib/constants';
-import { DataEntity } from 'generated-sources';
+import type { DataEntity } from 'generated-sources';
 
 const termLinkedListState = ({ termLinkedList }: RootState): TermLinkedListState =>
   termLinkedList;

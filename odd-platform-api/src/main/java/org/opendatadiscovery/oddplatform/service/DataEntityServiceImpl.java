@@ -334,7 +334,7 @@ public class DataEntityServiceImpl implements DataEntityService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED)
+    @ActivityLog(event = ActivityEventTypeDto.TAG_ASSIGNMENT_UPDATED)
     public Flux<Tag> upsertTags(
         @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final TagsFormData formData) {

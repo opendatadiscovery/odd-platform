@@ -1,4 +1,4 @@
-import { maxContentWidthWithoutSidebar, toolbarHeight } from 'lib/constants';
+import { maxContentWidthWithoutSidebar } from 'lib/constants';
 import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
@@ -7,7 +7,6 @@ export const Container = styled('div')(({ theme }) => ({
   width: `${maxContentWidthWithoutSidebar}px`,
   display: 'flex',
   flexDirection: 'column',
-  minHeight: `calc(100vh - ${toolbarHeight}px - 4px)`,
   [theme.breakpoints.up(maxContentWidthWithoutSidebar)]: {
     width: '100%',
     maxWidth: `${maxContentWidthWithoutSidebar}px`,

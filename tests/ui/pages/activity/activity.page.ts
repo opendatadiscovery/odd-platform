@@ -18,7 +18,7 @@ const SELECTORS = {
   calendar3dayButton: `[type="button"]:has-text('3 Day')`,
   calendarDoneButton: `[type="button"]:has-text('Done')`,
   calendar: `.rmdp-container`,
-  noMatchesFound: `text=No matches found`,
+  noContent: `text=No content`,
 };
 export default class ActivityPage extends BasePage {
   get datasourceSelect() {
@@ -45,8 +45,8 @@ export default class ActivityPage extends BasePage {
     return new List(this.page, SELECTORS.resultList, SELECTORS.resultItem);
   }
 
-  get alertNoMatchesFound() {
-    return new TextBox(this.page, SELECTORS.noMatchesFound);
+  get alertNoContent() {
+    return new TextBox(this.page, SELECTORS.noContent);
   }
 
   get tagFilter() {
@@ -98,6 +98,6 @@ export default class ActivityPage extends BasePage {
   }
 
   async isAlertVisible(): Promise<boolean> {
-    return this.alertNoMatchesFound.isVisible();
+    return this.alertNoContent.isVisible();
   }
 }
