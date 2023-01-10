@@ -5,11 +5,9 @@
 
 <br>
 
-[![Product Hunt](https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=364376&theme=light)](https://www.producthunt.com/posts/opendatadiscovery)
-
 
 [![Apache2](https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Maintenance](https://img.shields.io/maintenance/yes/2022?style=for-the-badge)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2023?style=for-the-badge)]()
 [![GitHub contributors](https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/graphs/contributors)
 [![Slack](https://img.shields.io/badge/chat-on_slack-purple.svg?style=for-the-badge&logo=slack)](https://go.opendatadiscovery.org/slack)
 [![GitHub issues by-label](https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/contribute)
