@@ -99,10 +99,12 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         />
       )}
       {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_CREATED]) && (
-        <ActivityFieldHeader
-          eventType='created'
+        <StringActivityField
           startText='Data entity with'
-          activityName={`ODDRN ${activity.newState.dataEntity?.oddrn}`}
+          activityName='ODDRN'
+          oldState={activity.oldState.dataEntity?.oddrn}
+          newState={activity.newState.dataEntity?.oddrn}
+          hideAllDetails={hideAllDetails}
         />
       )}
       {isTypeRelatedTo([ActivityEventType.DESCRIPTION_UPDATED]) && (

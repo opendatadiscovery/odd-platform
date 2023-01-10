@@ -15,4 +15,4 @@ export type ManagementViewType =
 
 export type OwnerAssociationRequestsViewType = 'New' | 'Resolved';
 
-export type CRUDType = 'created' | 'updated' | 'deleted';
+export type EventType = 'created' | 'added' | 'assigned' | 'updated' | 'deleted';

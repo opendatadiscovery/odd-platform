@@ -1,6 +1,6 @@
 import React, { type CSSProperties } from 'react';
 import { Grid } from '@mui/material';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
@@ -10,7 +10,7 @@ interface ActivityData {
   id?: number;
   name?: string;
   important?: boolean;
-  typeOfChange?: CRUDType;
+  typeOfChange?: EventType;
 }
 
 interface ArrayActivityFieldProps {
@@ -19,7 +19,7 @@ interface ArrayActivityFieldProps {
   hideAllDetails: boolean;
   startText?: string;
   activityName?: string;
-  eventType?: string;
+  eventType?: EventType;
   stateItem: (name: string, important?: boolean) => JSX.Element;
   stateDirection?: CSSProperties['flexDirection'];
   plural?: boolean;
@@ -68,7 +68,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);
-  const [activityEvent, setActivityEvent] = React.useState<CRUDType>('created');
+  const [activityEvent, setActivityEvent] = React.useState<EventType>('created');
 
   React.useEffect(() => {
     setOldValues(setOldState());

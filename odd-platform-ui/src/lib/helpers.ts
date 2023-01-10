@@ -4,7 +4,7 @@ import {
 } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 
@@ -50,7 +50,7 @@ export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
 
 export const setActivityBackgroundColor = (
   theme: Theme,
-  eventType?: CRUDType
+  eventType?: EventType
 ): string => {
   switch (eventType) {
     case 'created':
