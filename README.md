@@ -1,7 +1,7 @@
 
-<p> 
+<div align="center">
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
-</p>
+</div>
 
 <h1 align="center" style="border-bottom: none">
     Next-Gen Data Discovery and Data Observability Platform <br>
@@ -23,7 +23,7 @@
     <a href="https://demo.oddp.io/"><b>Demo</b></a>
 </p>
 
-<p align="center"><img src="https://opendatadiscovery.org/overview.gif" alt="Next-Gen Data Discovery and Data Observability Platfor" width="840px" /></p>
+<p align="center"><img src="https://opendatadiscovery.org/overview.gif" alt="Next-Gen Data Discovery and Data Observability Platfor" /></p>
 
 
 ## Demo
