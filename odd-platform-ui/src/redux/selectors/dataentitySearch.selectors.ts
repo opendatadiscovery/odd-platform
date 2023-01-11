@@ -42,6 +42,10 @@ export const getSearchSuggestionsFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntitySearchSuggestionsActionType
 );
 
+export const getDataEntitySearchHighlightsFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntitySearchHighlightsActionType
+);
+
 export const getSearchFacetsSynced = createSelector(
   searchState,
   search => search.isFacetsStateSynced
@@ -137,3 +141,9 @@ export const getSearchSuggestions = createSelector(
   searchState,
   search => search.suggestions || emptyArr
 );
+
+export const getDataEntitySearchHighlights = (dataEntityId: number) =>
+  createSelector(
+    searchState,
+    search => search.dataEntitySearchHighlightById[dataEntityId] || undefined
+  );

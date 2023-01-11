@@ -31,3 +31,8 @@ export const fetchDataEntitySearchSuggestionsActionType = createActionType(
   dataEntitiesSearchActionTypePrefix,
   'fetchDataEntitySearchSuggestions'
 );
+
+export const fetchDataEntitySearchHighlightsActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'fetchDataEntitySearchHighlights'
+);

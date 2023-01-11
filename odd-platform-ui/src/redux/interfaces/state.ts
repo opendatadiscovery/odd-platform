@@ -9,6 +9,7 @@ import type {
   DataEntityClass,
   DataEntityRef,
   DataEntityRun,
+  DataEntitySearchHighlight,
   DataEntityType,
   DataEntityUsageInfo,
   DataQualityTest,
@@ -35,10 +36,10 @@ import type {
   Term,
   TermDetails,
   TermRef,
+  ActivityType,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
-import { ActivityType } from 'generated-sources';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, PageInfo, PaginatedResponse } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
@@ -170,6 +171,7 @@ export interface DataEntitySearchState {
   results: { items: DataEntity[]; pageInfo: CurrentPageInfo };
   suggestions: DataEntityRef[];
   facetState: SearchFacetsByName;
+  dataEntitySearchHighlightById: { [dataEntityId: number]: DataEntitySearchHighlight };
 }
 
 export interface AlertsState {

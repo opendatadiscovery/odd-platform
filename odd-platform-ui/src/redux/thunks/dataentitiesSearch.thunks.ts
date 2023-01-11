@@ -1,3 +1,7 @@
+import type {
+  DataEntitySearchHighlight,
+  SearchApiHighlightDataEntityRequest,
+} from 'generated-sources';
 import {
   Configuration,
   type DataEntity,
@@ -14,7 +18,7 @@ import {
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import type { CurrentPageInfo, FacetOptions } from 'redux/interfaces';
+import type { CurrentPageInfo, FacetOptions, RelatedToEntityId } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -92,5 +96,19 @@ export const fetchSearchSuggestions = handleResponseAsyncThunk<
 >(
   actions.fetchDataEntitySearchSuggestionsActionType,
   async params => await searchApi.getSearchSuggestions(params),
+  {}
+);
+
+export const fetchDataEntitySearchHighlights = handleResponseAsyncThunk<
+  RelatedToEntityId<{ highlights: DataEntitySearchHighlight }> & { searchId: string },
+  SearchApiHighlightDataEntityRequest
+>(
+  actions.fetchDataEntitySearchHighlightsActionType,
+  async params => {
+    const { searchId, dataEntityId } = params;
+    const highlights = await searchApi.highlightDataEntity(params);
+
+    return { highlights, searchId, dataEntityId };
+  },
   {}
 );
