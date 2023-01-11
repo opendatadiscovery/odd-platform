@@ -1,7 +1,7 @@
 import React from 'react';
 import { type Variant } from '@mui/material/styles/createTypography';
 import { Typography } from '@mui/material';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import LabelItem from '../../../../LabelItem/LabelItem';
 import * as S from './OwnerWithTitleStyles';
 
@@ -9,7 +9,7 @@ export interface OwnerWithRoleProps {
   ownerName?: string;
   roleName?: string;
   ownerTypographyVariant?: Variant;
-  typeOfChange?: CRUDType;
+  typeOfChange?: EventType;
 }
 
 const OwnerWithTitle: React.FC<OwnerWithRoleProps> = ({

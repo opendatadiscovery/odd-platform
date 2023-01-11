@@ -1,25 +1,21 @@
 import React from 'react';
-import { Activity } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import GearIcon from 'components/shared/Icons/GearIcon';
-import UserIcon from 'components/shared/Icons/UserIcon';
+import { GearIcon, UserIcon } from 'components/shared/Icons';
 import { ActivityEventType } from 'generated-sources';
-import OwnerActivityField from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerActivityField';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import StringActivityField from 'components/shared/Activity/ActivityFields/StringActivityField/StringActivityField';
-import ArrayActivityField from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityField';
-import TagItem from 'components/shared/TagItem/TagItem';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
-import TermActivityField from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityField';
-import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
-import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
-import * as S from 'components/DataEntityDetails/DataEntityActivity/ActivityResults/ActivityItem/ActivityItemStyles';
+import { LabelItem, TagItem } from 'components/shared';
+import {
+  ActivityFieldHeader,
+  AlertActivityField,
+  ArrayActivityField,
+  CustomGroupActivityField,
+  EnumsActivityField,
+  OwnerActivityField,
+  StringActivityField,
+  TermActivityField,
+} from 'components/shared/Activity';
 import { useAppDateTime } from 'lib/hooks';
-
-interface ActivityItemProps {
-  activity: Activity;
-  hideAllDetails: boolean;
-}
+import { type ActivityItemProps } from 'components/shared/Activity/common';
+import * as S from './ActivityItemStyles';
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
   const { activityFormattedDateTime } = useAppDateTime();
@@ -36,18 +32,17 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
     []
   );
 
+  const isTypeRelatedTo = (types: ActivityEventType[]) =>
+    types.includes(activity.eventType);
+
   return (
     <S.Container container>
-      <Grid
-        container
-        justifyContent='space-between'
-        alignItems='baseline'
-        flexWrap='nowrap'
-        position='relative'
-      >
-        {(activity.eventType === ActivityEventType.OWNERSHIP_CREATED ||
-          activity.eventType === ActivityEventType.OWNERSHIP_UPDATED ||
-          activity.eventType === ActivityEventType.OWNERSHIP_DELETED) && (
+      <S.ContentContainer container>
+        {isTypeRelatedTo([
+          ActivityEventType.OWNERSHIP_CREATED,
+          ActivityEventType.OWNERSHIP_UPDATED,
+          ActivityEventType.OWNERSHIP_DELETED,
+        ]) && (
           <OwnerActivityField
             oldState={activity.oldState.ownerships}
             newState={activity.newState.ownerships}
@@ -55,14 +50,16 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.DATA_ENTITY_CREATED && (
-          <ActivityFieldHeader
-            eventType='created'
+        {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_CREATED]) && (
+          <StringActivityField
             startText='Data entity with'
-            activityName={`ODDRN ${activity.newState.dataEntity?.oddrn}`}
+            activityName='ODDRN'
+            oldState={activity.oldState.dataEntity?.oddrn}
+            newState={activity.newState.dataEntity?.oddrn}
+            hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.DESCRIPTION_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.DESCRIPTION_UPDATED]) && (
           <StringActivityField
             activityName='Description'
             oldState={activity.oldState.description?.description}
@@ -70,7 +67,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.BUSINESS_NAME_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.BUSINESS_NAME_UPDATED]) && (
           <StringActivityField
             activityName='Business name'
             oldState={activity.oldState.businessName?.internalName}
@@ -78,7 +75,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED]) && (
           <StringActivityField
             activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`}
             oldState={activity.oldState.datasetFieldInformation?.description}
@@ -86,7 +83,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.TAGS_ASSOCIATION_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.TAG_ASSIGNMENT_UPDATED]) && (
           <ArrayActivityField
             activityName='Tags'
             oldState={activity.oldState.tags}
@@ -96,7 +93,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {activity.eventType === ActivityEventType.DATASET_FIELD_LABELS_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_LABELS_UPDATED]) && (
           <ArrayActivityField
             activityName={`Labels in ${activity.oldState.datasetFieldInformation?.name} column`}
             oldState={activity.oldState.datasetFieldInformation?.labels}
@@ -106,16 +103,16 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {activity.eventType === ActivityEventType.TERM_ASSIGNED && (
+        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && (
           <TermActivityField
             oldState={activity.oldState.terms}
             newState={activity.newState.terms}
             hideAllDetails={hideAllDetails}
-            eventType='added'
+            eventType='assigned'
             stateDirection='column'
           />
         )}
-        {activity.eventType === ActivityEventType.TERM_ASSIGNMENT_DELETED && (
+        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && (
           <TermActivityField
             oldState={activity.oldState.terms}
             newState={activity.newState.terms}
@@ -124,42 +121,47 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             stateDirection='column'
           />
         )}
-        {activity.eventType === ActivityEventType.DATASET_FIELD_VALUES_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_VALUES_UPDATED]) && (
           <EnumsActivityField
             oldState={activity.oldState.datasetFieldValues}
             newState={activity.newState.datasetFieldValues}
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.CUSTOM_GROUP_CREATED && (
+        {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
           <ActivityFieldHeader
             eventType='created'
             startText='Custom group'
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}
-        {activity.eventType === ActivityEventType.CUSTOM_GROUP_DELETED && (
+        {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
           <ActivityFieldHeader
             eventType='deleted'
             startText='Custom group'
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}
-        {activity.eventType === ActivityEventType.CUSTOM_GROUP_UPDATED && (
+        {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_UPDATED]) && (
           <CustomGroupActivityField
             oldState={activity.oldState.customGroup}
             newState={activity.newState.customGroup}
             hideAllDetails={hideAllDetails}
           />
         )}
-        <Grid
-          item
-          container
-          flexWrap='nowrap'
-          justifyContent='flex-end'
-          alignItems='center'
-          sx={{ position: 'absolute', top: '8px', right: 0, zIndex: -1 }}
-        >
+        {isTypeRelatedTo([
+          ActivityEventType.ALERT_HALT_CONFIG_UPDATED,
+          ActivityEventType.ALERT_STATUS_UPDATED,
+          ActivityEventType.OPEN_ALERT_RECEIVED,
+          ActivityEventType.RESOLVED_ALERT_RECEIVED,
+        ]) && (
+          <AlertActivityField
+            eventType={activity.eventType}
+            oldState={activity.oldState}
+            newState={activity.newState}
+          />
+        )}
+        <S.InfoContainer>
           {activity.systemEvent ? (
             <GearIcon />
           ) : (
@@ -173,8 +175,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
             at {activityFormattedDateTime(activity.createdAt)}
           </Typography>
-        </Grid>
-      </Grid>
+        </S.InfoContainer>
+      </S.ContentContainer>
     </S.Container>
   );
 };

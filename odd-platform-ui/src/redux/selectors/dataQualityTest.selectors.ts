@@ -3,6 +3,7 @@ import type {
   DataEntitiesState,
   DataQualityTestState,
   RootState,
+  DatasetQualityTestList,
 } from 'redux/interfaces';
 import {
   createErrorSelector,
@@ -10,7 +11,6 @@ import {
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import isEmpty from 'lodash/isEmpty';
-import { DatasetQualityTestList } from 'redux/interfaces';
 
 const getDataQualityTestState = ({ dataQualityTest }: RootState): DataQualityTestState =>
   dataQualityTest;

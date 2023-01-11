@@ -1,4 +1,4 @@
-import { Shadows } from '@mui/material/styles/shadows';
+import type { Shadows } from '@mui/material/styles/shadows';
 
 export const shadows: Shadows = new Array(25).fill('none') as Shadows;
 shadows[1] = '0 2px 6px 0 rgba(70, 73, 77, 0.2)';

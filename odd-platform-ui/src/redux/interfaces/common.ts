@@ -4,9 +4,10 @@ export interface CurrentPageInfo extends GeneratedPageInfo {
   page: number;
 }
 
-export interface PageInfo {
+export interface PageInfo<LastId extends string | number> {
   hasNext: boolean;
-  lastId?: string;
+  lastId?: LastId;
+  lastDateTime?: number;
 }
 
 export type SerializeDateToNumber<Data> = {
@@ -20,5 +21,11 @@ export interface PaginatedResponse<Data> {
   pageInfo: CurrentPageInfo;
 }
 
+export interface KeySetPaginatedResponse<Data, LastId extends number> {
+  items: Data;
+  pageInfo: PageInfo<LastId>;
+}
+
 export type DataEntityId = { dataEntityId: number };
 export type RelatedToEntityId<Data> = Data & DataEntityId;
+export type RequiredField<I, K extends keyof I> = I & Required<Pick<I, K>>;

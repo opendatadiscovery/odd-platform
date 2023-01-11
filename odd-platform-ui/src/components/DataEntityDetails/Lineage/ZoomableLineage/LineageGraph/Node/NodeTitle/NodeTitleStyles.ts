@@ -8,13 +8,16 @@ export const Title = styled('foreignObject')(({ theme }) => ({
   cursor: 'pointer',
 }));
 
-export const TitleWrapper = styled('div')(
-  () =>
+export const TitleWrapper = styled('div')<{ $fullNames: boolean }>(
+  ({ $fullNames }) =>
     ({
-      wordBreak: 'break-all',
-      display: 'flex',
+      wordBreak: $fullNames ? 'break-all' : 'initial',
+      display: $fullNames ? 'flex' : 'block',
       alignItems: 'center',
       height: '100%',
+      overflow: $fullNames ? 'initial' : 'hidden',
+      textOverflow: $fullNames ? 'initial' : 'ellipsis',
+      whiteSpace: $fullNames ? 'initial' : 'nowrap',
     } as CSSObject)
 );
 

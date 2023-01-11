@@ -1,14 +1,13 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 
 interface ActivityFieldData {
   oldValue: string;
   newValue: string;
-  activityEvent: CRUDType;
-  showDetails: boolean;
+  activityEvent: EventType;
 }
 
 interface StringActivityFieldProps {
@@ -16,6 +15,7 @@ interface StringActivityFieldProps {
   newState: string | undefined;
   hideAllDetails: boolean;
   activityName: string;
+  startText?: string;
 }
 
 const StringActivityField: React.FC<StringActivityFieldProps> = ({
@@ -23,55 +23,33 @@ const StringActivityField: React.FC<StringActivityFieldProps> = ({
   newState,
   hideAllDetails,
   activityName,
+  startText = '',
 }) => {
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
-  const [{ oldValue, newValue, showDetails, activityEvent }, setFieldData] =
-    React.useState<ActivityFieldData>({
-      oldValue: '',
-      newValue: '',
-      activityEvent: 'created',
-      showDetails: false,
-    });
+  const { oldValue, newValue, activityEvent } = React.useMemo<ActivityFieldData>(() => {
+    if (newState && !oldState)
+      return { oldValue: '', newValue: newState, activityEvent: 'created' };
 
-  React.useEffect(() => {
-    if (newState && (oldState === undefined || oldState.length === 0)) {
-      setFieldData({
-        oldValue: '',
-        newValue: newState,
-        activityEvent: 'created',
-        showDetails: true,
-      });
-    }
+    if (!newState && oldState)
+      return { oldValue: oldState, newValue: '', activityEvent: 'deleted' };
 
-    if (newState && oldState) {
-      setFieldData({
-        oldValue: oldState,
-        newValue: newState,
-        activityEvent: 'updated',
-        showDetails: true,
-      });
-    }
-
-    if (!newState && oldState) {
-      setFieldData({
-        oldValue: oldState,
-        newValue: '',
-        activityEvent: 'deleted',
-        showDetails: true,
-      });
-    }
+    return {
+      oldValue: oldState || '',
+      newValue: newState || '',
+      activityEvent: 'updated',
+    };
   }, [oldState, newState]);
 
   return (
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText=''
+        startText={startText}
         activityName={activityName}
         eventType={activityEvent}
-        showDetailsBtn={showDetails}
+        showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
       />

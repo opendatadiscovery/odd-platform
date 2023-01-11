@@ -23,10 +23,8 @@ const NodeTitle = React.memo<NodeTitleProps>(
             width={nodeSize.content.title.width}
             height={nodeSize.content.title.height}
           >
-            <S.TitleWrapper>
-              {fullNames
-                ? internalName || externalName
-                : truncate(internalName || externalName, { length: 40 })}
+            <S.TitleWrapper $fullNames={fullNames}>
+              {internalName || externalName}
             </S.TitleWrapper>
           </S.Title>
         </>
