@@ -33,6 +33,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepo
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -80,6 +81,8 @@ public class DataEntityServiceTest {
     @Mock
     private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
     @Mock
+    private ReactiveTagRepository tagRepository;
+    @Mock
     private DataEntityFilledService dataEntityFilledService;
     @Mock
     private MetadataFieldService metadataFieldService;
@@ -101,6 +104,7 @@ public class DataEntityServiceTest {
             reactiveSearchEntrypointRepository,
             reactiveGroupEntityRelationRepository,
             dataEntityStatisticsRepository,
+            tagRepository,
             dataEntityMapper,
             metadataFieldMapper,
             metadataFieldValueMapper,

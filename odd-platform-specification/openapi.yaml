@@ -925,6 +925,23 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/highlight:
+    get:
+      summary: 'Highlight data entity fields'
+      description: 'Returns fields which were used in search query'
+      operationId: highlightDataEntity
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntitySearchHighlight'
+      tags:
+        - dataEntity
+
   /api/dataentities/{data_entity_id}/description:
     put:
       summary: Upsert DataEntity's internal description

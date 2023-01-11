@@ -23,7 +23,6 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     protected NamespacePojo namespace;
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
-    protected Collection<TagDto> tags;
 
     protected Collection<DataEntityPojo> parentGroups;
     protected DataEntityGroupDimensionsDto groupsDto;
@@ -39,14 +38,12 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final Map<DataEntityClassDto, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
-                                   final DataSourcePojo dataSource,
-                                   final Collection<TagDto> tags) {
+                                   final DataSourcePojo dataSource) {
         super(dataEntity, hasAlerts);
         this.specificAttributes = specificAttributes;
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
-        this.tags = tags;
     }
 
     public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities,

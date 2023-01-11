@@ -59,13 +59,10 @@ import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNERSHIP_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNER_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_FIELD;
-import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_RELATION_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TITLE_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.DATA_ENTITY_CTE_NAME;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.HAS_ALERTS_FIELD;
@@ -247,8 +244,6 @@ public class ReactiveDataEntityRepositoryImpl
             .toList();
 
         final List<Field<?>> aggregatedFields = List.of(
-            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
-            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
             jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
             jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
             jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
@@ -259,9 +254,6 @@ public class ReactiveDataEntityRepositoryImpl
             .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TAG_TO_DATA_ENTITY)
-            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
@@ -284,7 +276,7 @@ public class ReactiveDataEntityRepositoryImpl
             .orderBy(getOrderFields(cteConfig, deCte))
             .limit(size)
             .offset((page - 1) * size);
-        ;
+
         return jooqReactiveOperations.flux(query)
             .map(dataEntityDtoMapper::mapDimensionRecord)
             .collectList();
@@ -351,7 +343,6 @@ public class ReactiveDataEntityRepositoryImpl
             .from(DATA_ENTITY)
             .join(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
@@ -457,8 +448,6 @@ public class ReactiveDataEntityRepositoryImpl
             .toList();
 
         final List<Field<?>> aggregatedFields = List.of(
-            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
-            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
             jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
             jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
             jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
@@ -469,9 +458,6 @@ public class ReactiveDataEntityRepositoryImpl
             .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TAG_TO_DATA_ENTITY)
-            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
@@ -542,8 +528,6 @@ public class ReactiveDataEntityRepositoryImpl
             .toList();
 
         final List<Field<?>> aggregatedFields = List.of(
-            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
-            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
             jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
             jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
             jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
@@ -556,7 +540,6 @@ public class ReactiveDataEntityRepositoryImpl
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
             .leftJoin(TAG_TO_DATA_ENTITY)
             .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
@@ -658,8 +641,6 @@ public class ReactiveDataEntityRepositoryImpl
             .toList();
 
         final List<Field<?>> aggregatedFields = List.of(
-            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
-            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
             jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
             jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
             jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
@@ -670,9 +651,6 @@ public class ReactiveDataEntityRepositoryImpl
             .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TAG_TO_DATA_ENTITY)
-            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID));

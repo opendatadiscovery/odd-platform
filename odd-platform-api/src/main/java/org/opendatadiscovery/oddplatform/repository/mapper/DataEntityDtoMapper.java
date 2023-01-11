@@ -72,7 +72,6 @@ public class DataEntityDtoMapper {
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .tags(extractTags(r))
             .build();
     }
 
@@ -87,18 +86,7 @@ public class DataEntityDtoMapper {
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .tags(extractTags(r))
             .build();
-    }
-
-    private List<TagDto> extractTags(final Record r) {
-        final Set<TagPojo> tagPojos = jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class);
-        final Map<Long, TagToDataEntityPojo> tagRelations = jooqRecordHelper.extractAggRelation(r,
-                AGG_TAGS_RELATION_FIELD, TagToDataEntityPojo.class).stream()
-            .collect(Collectors.toMap(TagToDataEntityPojo::getTagId, identity()));
-        return tagPojos.stream()
-            .map(pojo -> new TagDto(pojo, null, tagRelations.get(pojo.getId()).getExternal()))
-            .toList();
     }
 
     private List<OwnershipDto> extractOwnershipRelation(final Record r) {

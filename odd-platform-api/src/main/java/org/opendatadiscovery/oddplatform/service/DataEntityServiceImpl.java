@@ -70,6 +70,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLineageRepo
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
@@ -113,6 +114,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
     private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
+    private final ReactiveTagRepository tagRepository;
 
     private final DataEntityMapper dataEntityMapper;
     private final MetadataFieldMapper metadataFieldMapper;
@@ -568,11 +570,13 @@ public class DataEntityServiceImpl implements DataEntityService {
         final Mono<List<DatasetVersionPojo>> datasetVersions = getDatasetVersions(dto);
         final Mono<List<TermRefDto>> terms =
             reactiveTermRepository.getDataEntityTerms(dto.getDataEntity().getId()).collectList();
-        return Mono.zip(metadataDto, datasetVersions, terms)
-            .map(function((metadata, versions, termsList) -> {
+        final Mono<List<TagDto>> tags = tagRepository.listDataEntityDtos(dto.getDataEntity().getId());
+        return Mono.zip(metadataDto, datasetVersions, terms, tags)
+            .map(function((metadata, versions, termsList, tagList) -> {
                 dto.setMetadata(metadata);
                 dto.setDatasetVersions(versions);
                 dto.setTerms(termsList);
+                dto.setTags(tagList);
                 return dto;
             }));
     }

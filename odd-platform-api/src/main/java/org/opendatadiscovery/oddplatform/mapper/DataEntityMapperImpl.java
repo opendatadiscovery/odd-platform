@@ -74,9 +74,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .type(type)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
-            .tags(dto.getTags() != null
-                ? dto.getTags().stream().map(tagMapper::mapToTag).collect(Collectors.toList())
-                : null)
             .dataEntityGroups(groups);
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
