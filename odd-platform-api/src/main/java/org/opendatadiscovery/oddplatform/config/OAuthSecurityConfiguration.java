@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +70,7 @@ import static org.springframework.security.web.server.util.matcher.ServerWebExch
 @EnableReactiveMethodSecurity
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class OAuthSecurityConfiguration {
     private final ODDOAuth2Properties properties;
     private final List<OAuthUserHandler<OAuth2User, OAuth2UserRequest>> oauthUserHandlers;

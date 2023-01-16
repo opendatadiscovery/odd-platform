@@ -26,6 +26,39 @@ auth:
   ingestion:
     filter:
       enabled: false
+
+#  oauth2:
+#    client:
+#      azure:
+#        provider: 'azure'
+#        client-id:
+#        azure-tenant-id:
+#        client-secret:
+#        client-name: azure
+#        redirect-uri: http://localhost:8080/login/oauth2/code/azure
+#        scope:
+#          - openid
+#          - offline_access
+#          - https://graph.microsoft.com/user.read
+#        #Multi-tenant application
+#        issuer-uri: https://login.microsoftonline.com/${auth.oauth2.client.azure.azure-tenant-id}/v2.0
+#        #Single-tenant application
+##        authorization-uri: https://login.microsoftonline.com/${auth.oauth2.client.azure.azure-tenant-id}/oauth2/v2.0/authorize
+#        #Multi-tenant application
+#        authorization-uri: https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize
+#        #Single-tenant application
+##        token-uri: https://login.microsoftonline.com/${auth.oauth2.client.azure.azure-tenant-id}/oauth2/v2.0/token
+#        token-uri: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
+#        user-info-uri: https://graph.microsoft.com/oidc/userinfo
+#        user-name-attribute: email
+#        admin-attribute: email
+#        admin-principals:
+#          - user@example.com
+#          - user2@example.com
+#        azure-admin-roles:
+#          - Admins
+#          - Managers
+
 #  ldap:
 #    url:
 #    username:
