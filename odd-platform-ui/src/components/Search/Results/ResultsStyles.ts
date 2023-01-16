@@ -1,23 +1,8 @@
-import { Grid, GridProps, GridSize } from '@mui/material';
+import type { GridSize } from '@mui/material';
+import { Grid } from '@mui/material';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
-import { DataEntityClassNameEnum } from 'generated-sources';
-
-export type ColType = 'col' | 'colxs' | 'colsm' | 'colmd' | 'collg';
-export const colWidthStyles = {
-  colxs: { flex: '2 0 6%' },
-  colsm: { flex: '2 0 7%' },
-  colmd: { flex: '3 0 9%' },
-  collg: { flex: '4 0 12%' },
-  col: {
-    display: 'flex',
-    alignItems: 'center',
-    overflow: 'hidden',
-    paddingRight: '8px',
-    paddingLeft: '8px',
-    '&:last-of-type': { paddingRight: 0 },
-  },
-};
+import type { DataEntityClassNameEnum } from 'generated-sources';
 
 const searchHeight = 40;
 
@@ -25,17 +10,6 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
   '& > *': { padding: theme.spacing(0, 1) },
-}));
-
-export const ColContainer = styled(Grid)<{
-  $colType: ColType;
-}>(({ $colType }) => ({ ...colWidthStyles.col, ...colWidthStyles[$colType] }));
-
-export const NameContainer = styled(Grid)<GridProps>(() => ({
-  ...colWidthStyles.col,
-  padding: 0,
-  justifyContent: 'flex-start',
-  flexWrap: 'nowrap',
 }));
 
 export const ListContainer = styled(Grid)(({ theme }) => ({
@@ -62,11 +36,11 @@ export type SearchTabsNames =
     >
   | 'all'
   | 'my';
-
 export type ColGridSizes = Record<MainColNames, GridSize> &
   Partial<Record<AddColNames, GridSize>>;
 export type GridSizesByBreakpoints = { lg: ColGridSizes };
 export type GridSizes = Record<SearchTabsNames, GridSizesByBreakpoints>;
+
 export const gridSizes: GridSizes = {
   all: { lg: { nm: 2.88, nd: 2.28, ow: 2.28, gr: 2.48, cr: 1, up: 1 } },
   my: { lg: { nm: 2.88, nd: 2.08, ow: 2.08, gr: 2.88, cr: 1, up: 1 } },

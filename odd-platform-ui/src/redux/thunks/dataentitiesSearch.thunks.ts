@@ -4,7 +4,6 @@ import type {
 } from 'generated-sources';
 import {
   Configuration,
-  type DataEntity,
   type DataEntityRef,
   type MultipleFacetType,
   SearchApi,
@@ -18,8 +17,14 @@ import {
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import type { CurrentPageInfo, FacetOptions, RelatedToEntityId } from 'redux/interfaces';
+import type {
+  CurrentPageInfo,
+  DataEntity,
+  FacetOptions,
+  RelatedToEntityId,
+} from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
+import { castDatesToTimestamp } from 'redux/lib/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const searchApi = new SearchApi(apiClientConf);
@@ -61,12 +66,8 @@ export const fetchDataEntitySearchResults = handleResponseAsyncThunk<
     const { page, size } = params;
 
     return {
-      items,
-      pageInfo: {
-        ...pageInfo,
-        page,
-        hasNext: page * size < pageInfo.total,
-      },
+      items: castDatesToTimestamp(items),
+      pageInfo: { ...pageInfo, page, hasNext: page * size < pageInfo.total },
     };
   },
   {}

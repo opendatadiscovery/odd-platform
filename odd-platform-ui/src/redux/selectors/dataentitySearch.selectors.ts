@@ -6,6 +6,7 @@ import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import transform from 'lodash/transform';
 import type {
+  CurrentPageInfo,
   DataEntitySearchState,
   OptionalFacetNames,
   RootState,
@@ -14,7 +15,10 @@ import type {
   SearchFilterStateSynced,
 } from 'redux/interfaces';
 import type { DataEntityClassNameEnum } from 'generated-sources';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import compact from 'lodash/compact';
 import { emptyArr } from 'lib/constants';
@@ -44,6 +48,10 @@ export const getSearchSuggestionsFetchingStatuses = createStatusesSelector(
 
 export const getDataEntitySearchHighlightsFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntitySearchHighlightsActionType
+);
+
+export const getSearchResultsError = createErrorSelector(
+  actions.fetchDataEntitySearchResultsActionType
 );
 
 export const getSearchFacetsSynced = createSelector(
@@ -134,7 +142,7 @@ export const getSearchResults = createSelector(
 
 export const getSearchResultsPageInfo = createSelector(
   searchState,
-  search => search.results.pageInfo
+  (search): CurrentPageInfo => search.results.pageInfo
 );
 
 export const getSearchSuggestions = createSelector(
@@ -145,5 +153,5 @@ export const getSearchSuggestions = createSelector(
 export const getDataEntitySearchHighlights = (dataEntityId: number) =>
   createSelector(
     searchState,
-    search => search.dataEntitySearchHighlightById[dataEntityId] || undefined
+    search => search.dataEntitySearchHighlightById[dataEntityId]
   );

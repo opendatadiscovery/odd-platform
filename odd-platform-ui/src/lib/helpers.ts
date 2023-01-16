@@ -43,9 +43,7 @@ export const stringFormatted = (
 };
 
 export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
-
 export const toDate = (dateToCast: number): Date => new Date(dateToCast);
-
 export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
 
 export const setActivityBackgroundColor = (
@@ -119,3 +117,30 @@ export const getEllipsisTextByWidth = (
     }
   }
 };
+
+function sliceBothSidesOfBoldedWord(str: string, wordsToLeave: number) {
+  const reg = /<b>(.*?)<\/b>/g;
+
+  const boldedWord = str.match(reg)?.[0] || '';
+  const exactWord = boldedWord.slice(3, -4);
+  const splitted = str.split(boldedWord);
+
+  const wordsBeforeExactWord = splitted[0].trim().split(' ').slice(-wordsToLeave);
+  const wordsCountBeforeExactWord = splitted[0].trim().split(' ').length;
+  const stringBeforeExactWord = wordsBeforeExactWord.join(' ');
+  const wordsAfterExactWord = splitted[1].trim().split(' ').slice(0, wordsToLeave);
+  const wordsCountAfterExactWord = splitted[1].trim().split(' ').length;
+  const stringAfterExactWord = wordsAfterExactWord.join(' ');
+
+  let startEllipsis = '...';
+  let endEllipsis = '...';
+
+  if (wordsCountBeforeExactWord - wordsToLeave <= 0) startEllipsis = '';
+  if (wordsCountAfterExactWord - wordsToLeave <= 0) endEllipsis = '';
+
+  return {
+    before: `${startEllipsis}${stringBeforeExactWord}`,
+    exactWord,
+    after: `${stringAfterExactWord}${endEllipsis}`,
+  };
+}

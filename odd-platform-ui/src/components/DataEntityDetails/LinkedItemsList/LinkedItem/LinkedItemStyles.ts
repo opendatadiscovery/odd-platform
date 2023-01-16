@@ -1,6 +1,12 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import type { ColType } from '../LinkedItemsListStyles';
+import { colWidthStyles } from '../LinkedItemsListStyles';
+
+export const ColContainer = styled(Grid)<{
+  $colType: ColType;
+}>(({ $colType }) => ({ ...colWidthStyles.col, ...colWidthStyles[$colType] }));
 
 export const Container = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',

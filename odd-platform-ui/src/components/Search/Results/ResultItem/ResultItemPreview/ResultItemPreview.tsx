@@ -8,8 +8,6 @@ import {
 } from 'components/shared';
 import type { MetadataFieldValue } from 'generated-sources';
 import { MetadataFieldType } from 'generated-sources';
-import remarkGfm from 'remark-gfm';
-import ReactMarkdown from 'react-markdown';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {
@@ -20,6 +18,7 @@ import {
 } from 'redux/selectors';
 import { useAppDateTime } from 'lib/hooks';
 import isEmpty from 'lodash/isEmpty';
+import MDEditor from '@uiw/react-md-editor';
 import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
@@ -73,11 +72,7 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   };
 
   const getDescription = React.useCallback(
-    () => (
-      <ReactMarkdown className='markdown-body' remarkPlugins={[remarkGfm]}>
-        {dataEntityDetails?.internalDescription}
-      </ReactMarkdown>
-    ),
+    () => <MDEditor.Markdown source={dataEntityDetails?.internalDescription} />,
     [dataEntityDetails]
   );
 
@@ -145,7 +140,7 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
               </Typography>
             )}
           </Grid>
-          <S.AboutContainer container sx={{ mt: 2 }}>
+          <S.AboutContainer container sx={{ mt: 2 }} data-color-mode='light'>
             <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
               <Typography variant='h4' color='text.primary'>
                 About

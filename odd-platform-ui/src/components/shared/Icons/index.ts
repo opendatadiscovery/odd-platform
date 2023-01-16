@@ -40,3 +40,4 @@ export { default as AlertDQTestIcon } from './AlertDQTestIcon';
 export { default as AlertJobIcon } from './AlertJobIcon';
 export { default as UserIcon } from './UserIcon';
 export { default as GearIcon } from './GearIcon';
+export { default as RowsIcon } from './RowsIcon';

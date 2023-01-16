@@ -1,7 +1,8 @@
-import { Grid, GridProps } from '@mui/material';
+import type { GridProps } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
+import { colWidthStyles } from '../LinkedItemsListSkeleton/LinkedItemsListSkeletonStyles';
 
 export const Container = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',

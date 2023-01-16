@@ -1,4 +1,15 @@
+import type { DataEntity as GeneratedDataEntity } from 'generated-sources';
 import { type DataEntityDetails, DataEntityClassNameEnum } from 'generated-sources';
+import type { SerializeDateToNumber } from 'redux/interfaces/common';
+
+export type DataEntity = SerializeDateToNumber<GeneratedDataEntity>;
+
+export interface DataEntityDetailsState extends DataEntityDetails {
+  unknownSourcesCount: number;
+  unknownTargetsCount: number;
+  unknownInputsCount: number;
+  unknownOutputsCount: number;
+}
 
 export const DataEntityClassLabelMap: Map<
   DataEntityClassNameEnum,
@@ -42,10 +53,3 @@ export const DataEntityClassLabelMap: Map<
     },
   ],
 ]);
-
-export interface DataEntityDetailsState extends DataEntityDetails {
-  unknownSourcesCount: number;
-  unknownTargetsCount: number;
-  unknownInputsCount: number;
-  unknownOutputsCount: number;
-}

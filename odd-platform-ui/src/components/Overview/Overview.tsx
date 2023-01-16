@@ -59,13 +59,13 @@ const Overview: React.FC = () => {
             dataEntityUsageUnfilledCount={dataEntityUsageUnfilledCount}
             isUsageInfoNotFetched={isUsageInfoNotFetched}
           />
+          <WithPermissionsProvider
+            allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
+            resourcePermissions={[]}
+            Component={OwnerAssociation}
+          />
         </>
       )}
-      <WithPermissionsProvider
-        allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
-        resourcePermissions={[]}
-        Component={OwnerAssociation}
-      />
     </S.Container>
   );
 };

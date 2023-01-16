@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import type { DataEntity } from 'generated-sources';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
@@ -8,13 +7,12 @@ import {
   NumberFormatted,
   TruncatedCell,
 } from 'components/shared';
-import { ColumnsIcon, InformationIcon } from 'components/shared/Icons';
+import { ColumnsIcon, InformationIcon, RowsIcon } from 'components/shared/Icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-import * as S from 'components/Search/Results/ResultsStyles';
-import RowsIcon from 'components/shared/Icons/RowsIcon';
-import { type GridSizesByBreakpoints, NameContainer, SearchCol } from '../ResultsStyles';
+import type { DataEntity } from 'redux/interfaces';
+import { type GridSizesByBreakpoints, SearchCol } from '../ResultsStyles';
 import ResultItemPreview from './ResultItemPreview/ResultItemPreview';
-import { Container, ItemLink, RCContainer } from './ResultItemStyles';
+import * as S from './ResultItemStyles';
 
 interface ResultItemProps {
   searchResult: DataEntity;
@@ -38,17 +36,37 @@ const ResultItem: React.FC<ResultItemProps> = ({
     [searchResult.id]
   );
 
-  const updatedAt =
-    searchResult.updatedAt &&
-    formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true });
+  const updatedAt = React.useMemo(
+    () =>
+      searchResult?.updatedAt ? (
+        <Typography
+          variant='body1'
+          title={formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
+          noWrap
+        >
+          {formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
+        </Typography>
+      ) : null,
+    [searchResult]
+  );
 
-  const createdAt =
-    searchResult.createdAt &&
-    dataEntityFormattedDateTime(searchResult.createdAt.getTime());
+  const createdAt = React.useMemo(
+    () =>
+      searchResult?.createdAt ? (
+        <Typography
+          variant='body1'
+          title={dataEntityFormattedDateTime(searchResult.createdAt)}
+          noWrap
+        >
+          {dataEntityFormattedDateTime(searchResult.createdAt)}
+        </Typography>
+      ) : null,
+    [searchResult]
+  );
 
   return (
-    <ItemLink to={detailsLink}>
-      <Container container>
+    <S.ItemLink to={detailsLink}>
+      <S.Container container>
         <SearchCol
           lg={grid.lg.nm}
           item
@@ -56,7 +74,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           justifyContent='space-between'
           wrap='nowrap'
         >
-          <NameContainer container item>
+          <S.NameContainer container item>
             <Typography
               variant='body1'
               noWrap
@@ -67,7 +85,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <AppTooltip checkForOverflow={false} title={resultItemPreview}>
               <InformationIcon sx={{ ml: 1.25 }} />
             </AppTooltip>
-          </NameContainer>
+          </S.NameContainer>
           <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
             {showClassIcons &&
               searchResult.entityClasses?.map(entityClass => (
@@ -87,14 +105,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
               </Typography>
             </SearchCol>
             <SearchCol item lg={grid.lg.rc}>
-              <RCContainer variant='body1' noWrap mr={1}>
+              <S.RCContainer variant='body1' noWrap mr={1}>
                 <RowsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
                 <NumberFormatted value={searchResult.stats?.rowsCount} />
-              </RCContainer>
-              <RCContainer variant='body1' noWrap>
+              </S.RCContainer>
+              <S.RCContainer variant='body1' noWrap>
                 <ColumnsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
                 {searchResult.stats?.fieldsCount}
-              </RCContainer>
+              </S.RCContainer>
             </SearchCol>
           </>
         ) : null}
@@ -176,24 +194,20 @@ const ResultItem: React.FC<ResultItemProps> = ({
             ))}
           </Grid>
         </SearchCol>
-        <S.SearchCol item lg={grid.lg.gr}>
+        <SearchCol item lg={grid.lg.gr}>
           <TruncatedCell
             dataList={searchResult.dataEntityGroups}
             externalEntityId={searchResult.id}
           />
-        </S.SearchCol>
+        </SearchCol>
         <SearchCol item lg={grid.lg.cr}>
-          <Typography variant='body1' title={createdAt} noWrap>
-            {createdAt}
-          </Typography>
+          {createdAt}
         </SearchCol>
         <SearchCol item lg={grid.lg.up}>
-          <Typography variant='body1' title={updatedAt} noWrap>
-            {updatedAt}
-          </Typography>
+          {updatedAt}
         </SearchCol>
-      </Container>
-    </ItemLink>
+      </S.Container>
+    </S.ItemLink>
   );
 };
 

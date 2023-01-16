@@ -1,7 +1,7 @@
 import React from 'react';
-import { Theme, TooltipProps } from '@mui/material';
-import * as S from 'components/shared/AppTooltip/AppTooltipStyles';
-import { SxProps } from '@mui/system';
+import type { Theme, TooltipProps } from '@mui/material';
+import type { SxProps } from '@mui/system';
+import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps
   extends Pick<TooltipProps, 'placement' | 'followCursor' | 'componentsProps'> {

@@ -5,7 +5,7 @@ import type {
   AppInfo,
   AssociatedOwner,
   Collector,
-  DataEntity,
+  DataEntity as GeneratedDataEntity,
   DataEntityClass,
   DataEntityRef,
   DataEntityRun,
@@ -44,7 +44,7 @@ import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, PageInfo, PaginatedResponse } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
-import type { DataEntityDetailsState } from './dataentities';
+import type { DataEntity, DataEntityDetailsState } from './dataentities';
 import type { Alert, AlertsConfig } from './alerts';
 import type { Activity } from './activities';
 import type {
@@ -148,7 +148,7 @@ export interface DataCollaborationState {
 }
 
 export interface DataEntitiesState {
-  byId: { [dataEntityId: string]: DataEntity & DataEntityDetailsState };
+  byId: { [dataEntityId: string]: GeneratedDataEntity & DataEntityDetailsState };
   allIds: number[];
   my: DataEntityRef[];
   myUpstream: DataEntityRef[];

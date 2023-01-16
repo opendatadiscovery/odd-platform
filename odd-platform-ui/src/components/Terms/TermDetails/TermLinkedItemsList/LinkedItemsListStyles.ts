@@ -1,10 +1,8 @@
 import { Grid } from '@mui/material';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
-import {
-  TermSearchResultsColType,
-  termSearchResultsColWidthStyles,
-} from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
+import type { TermSearchResultsColType } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
+import { termSearchResultsColWidthStyles } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
 
 const itemHeight = 40;
 

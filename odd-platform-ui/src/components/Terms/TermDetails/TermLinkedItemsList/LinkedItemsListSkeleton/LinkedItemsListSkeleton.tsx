@@ -3,43 +3,42 @@ import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SkeletonWrapper } from 'components/shared';
-import { SearchCol, type GridSizesByBreakpoints } from '../ResultsStyles';
+import { ColContainer } from './LinkedItemsListSkeletonStyles';
 
-interface SearchResultsSkeletonProps {
-  grid: GridSizesByBreakpoints;
-}
-
-const SearchResultsSkeleton: React.FC<SearchResultsSkeletonProps> = ({ grid }) => (
+const LinkedItemsListSkeleton: React.FC = () => (
   <SkeletonWrapper
-    length={30}
+    length={10}
     renderContent={({ randWidth, key }) => (
       <Grid container sx={{ py: 1.25 }} key={key} wrap='nowrap'>
-        <SearchCol item lg={grid.lg.nm}>
+        <ColContainer item $colType='collg'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.nd}>
+        </ColContainer>
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.ow}>
+        </ColContainer>
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        </ColContainer>
+        <ColContainer item $colType='colxs'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.cr}>
+        </ColContainer>
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.up}>
+        </ColContainer>
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        </ColContainer>
+        <ColContainer item $colType='colmd'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        </ColContainer>
+        <ColContainer item $colType='colsm'>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
-        </SearchCol>
+        </ColContainer>
+        <ColContainer item $colType='colsm'>
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+        </ColContainer>
       </Grid>
     )}
   />
 );
-export default SearchResultsSkeleton;
+export default LinkedItemsListSkeleton;

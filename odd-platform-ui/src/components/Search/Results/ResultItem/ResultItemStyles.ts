@@ -20,6 +20,13 @@ export const ItemLink = styled(Link)(() => ({
   overflow: 'hidden',
 }));
 
+export const NameContainer = styled(Grid)(({ theme }) => ({
+  overflow: 'hidden',
+  flexWrap: 'nowrap',
+  paddingRight: theme.spacing(1),
+  justifyContent: 'flex-start',
+}));
+
 export const RCContainer = styled(Typography)(() => ({
   display: 'flex',
   alignItems: 'center',
