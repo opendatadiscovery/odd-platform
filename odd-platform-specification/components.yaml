@@ -439,6 +439,30 @@ components:
     DataEntitySearchHighlight:
       type: object
       properties:
+        data_entity:
+          $ref: '#/components/schemas/DataEntityHighlight'
+        data_source:
+          $ref: '#/components/schemas/DataSourceHighlight'
+        namespace:
+          $ref: '#/components/schemas/NamespaceHighlight'
+        tags:
+          $ref: '#/components/schemas/TagList'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipHighlight'
+        metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetadataFieldValue'
+        dataset_structure:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSetStructureHighlight'
+
+    DataEntityHighlight:
+      type: object
+      properties:
         external_name:
           type: string
         external_description:
@@ -447,25 +471,8 @@ components:
           type: string
         internal_description:
           type: string
-        data_source:
-          $ref: '#/components/schemas/DataSourceSearchHighlight'
-        namespace:
-          $ref: '#/components/schemas/NamespaceSearchHighlight'
-        tags:
-          type: array
-          items:
-            type: string
-        owners:
-          type: array
-          items:
-            $ref: '#/components/schemas/OwnershipHighlight'
-        #   todo add metadata
-        dataset_structure:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataSetStructureSearchHighlight'
 
-    DataSourceSearchHighlight:
+    DataSourceHighlight:
       type: object
       properties:
         name:
@@ -473,7 +480,7 @@ components:
         oddrn:
           type: string
 
-    NamespaceSearchHighlight:
+    NamespaceHighlight:
       type: object
       properties:
         name:
@@ -487,7 +494,7 @@ components:
         title:
           type: string
 
-    DataSetStructureSearchHighlight:
+    DataSetStructureHighlight:
       type: object
       properties:
         name:
@@ -497,9 +504,7 @@ components:
         external_description:
           type: string
         labels:
-          type: array
-          items:
-            type: string
+          $ref: '#/components/schemas/LabelList'
 
     DataEntityClass:
       type: object
