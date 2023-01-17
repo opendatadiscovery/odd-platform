@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +58,10 @@ public class AzureUserHandler implements OAuthUserHandler<OidcUser, OidcUserRequ
                 isAdmin = true;
             }
         }
-        if (CollectionUtils.isNotEmpty(provider.getAzureAdminRoles())) {
-            final List<String> roles = user.getAttribute(AZURE_ROLE_ATTRIBUTE);
-            final Set<String> adminRoles = provider.getAzureAdminRoles();
-            final boolean containsRoles = roles.stream().anyMatch(role -> adminRoles.contains(role));
+        final List<String> roles = user.getAttribute(AZURE_ROLE_ATTRIBUTE);
+        if (CollectionUtils.isNotEmpty(provider.getAdminGroups())) {
+            final Set<String> adminRoles = provider.getAdminGroups();
+            final boolean containsRoles = Objects.requireNonNull(roles).stream().anyMatch(adminRoles::contains);
             if (containsRoles) {
                 isAdmin = true;
             }

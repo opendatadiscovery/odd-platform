@@ -55,7 +55,7 @@ auth:
 #        admin-principals:
 #          - user@example.com
 #          - user2@example.com
-#        azure-admin-roles:
+#        admin-groups:
 #          - Admins
 #          - Managers
 

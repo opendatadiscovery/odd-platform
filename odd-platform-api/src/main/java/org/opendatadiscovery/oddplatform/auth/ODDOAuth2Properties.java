@@ -45,8 +45,6 @@ public class ODDOAuth2Properties {
         private String adminAttribute;
         private String groupsClaim;
         private String adminUserInfoFlag;
-        private String azureTenantId;
-        private Set<String> azureAdminRoles;
         private Set<String> adminGroups;
         private Set<String> adminPrincipals;
         private String organizationName;
