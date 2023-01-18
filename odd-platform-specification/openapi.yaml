@@ -41,7 +41,7 @@ tags:
   - name: links
 
 paths:
-  /api/links/:
+  /api/links:
     get:
       summary: Additional links
       description: Gets additional links to be displayed in the UI
