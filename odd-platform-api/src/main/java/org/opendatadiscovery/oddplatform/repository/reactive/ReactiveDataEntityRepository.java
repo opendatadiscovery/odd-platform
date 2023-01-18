@@ -84,4 +84,8 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
                                                     final OwnerPojo owner);
 
     Mono<Map<String, Set<DataEntityPojo>>> getParentDEGs(final Collection<String> oddrns);
+
+    Mono<DataEntityDetailsDto> getDataEntitySearchFields(final long dataEntityId);
+
+    Mono<String> getHighlightedResult(final String text, final String query);
 }

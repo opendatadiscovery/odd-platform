@@ -25,6 +25,12 @@ public interface TagMapper {
 
     Tag mapToTag(final TagPojo pojo);
 
+    default Tag mapToHighlightedTag(final TagDto dto, final String highlight) {
+        final Tag tag = mapToTag(dto);
+        tag.setName(highlight);
+        return tag;
+    }
+
     List<Tag> mapToTagList(final Collection<TagDto> dtos);
 
     default TagsResponse mapToTagsResponse(final Page<TagDto> page) {

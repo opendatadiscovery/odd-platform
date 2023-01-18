@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.service;
+package org.opendatadiscovery.oddplatform.service.search;
 
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +27,7 @@ import org.opendatadiscovery.oddplatform.mapper.SearchMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchFacetRepository;
+import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

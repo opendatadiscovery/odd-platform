@@ -55,14 +55,21 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_VALUE_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNERSHIP_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNER_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_RELATION_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TITLE_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.DATA_ENTITY_CTE_NAME;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.HAS_ALERTS_FIELD;
@@ -595,6 +602,51 @@ public class ReactiveDataEntityRepositoryImpl
             r -> r.get(deOddrnField),
             r -> jooqRecordHelper.extractAggRelation(r, dataEntityFields, DataEntityPojo.class)
         );
+    }
+
+    @Override
+    public Mono<DataEntityDetailsDto> getDataEntitySearchFields(final long dataEntityId) {
+        final List<Field<?>> groupByFields = Stream.of(DATA_ENTITY.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final List<Field<?>> aggregatedFields = List.of(
+            jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
+            jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
+            jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
+            jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD),
+            jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD),
+            jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(AGG_METADATA_FIELD),
+            jsonArrayAgg(field(METADATA_FIELD_VALUE.asterisk().toString())).as(AGG_METADATA_VALUE_FIELD)
+        );
+
+        final var query = DSL.select(groupByFields)
+            .select(aggregatedFields)
+            .from(DATA_ENTITY)
+            .leftJoin(DATA_SOURCE)
+            .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
+            .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .leftJoin(METADATA_FIELD_VALUE).on(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .leftJoin(METADATA_FIELD).on(METADATA_FIELD.ID.eq(METADATA_FIELD_VALUE.METADATA_FIELD_ID))
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .groupBy(groupByFields);
+        return jooqReactiveOperations.mono(query)
+            .map(dataEntityDtoMapper::mapDataEntitySearchFieldsRecord);
+    }
+
+    @Override
+    public Mono<String> getHighlightedResult(final String text, final String query) {
+        final String tsQuery = jooqFTSHelper.tsQuery(query);
+        final String sql = "ts_headline('english', '%s', to_tsquery('%s'), 'HighlightAll=true')".formatted(text, tsQuery);
+        final var select = DSL.select(field(sql, String.class));
+        return jooqReactiveOperations.mono(select)
+            .map(Record1::value1);
     }
 
     @Override
