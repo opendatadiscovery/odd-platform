@@ -43,15 +43,18 @@ auth:
 #      domain:
 #  oauth2:
 #    client:
-#      oddiam:
-#        provider: 'odd_iam'
-#        client-id: jpu4g8DbMJUzTw7UCaEj
-#        client-secret: jjhcGKc7NWklyearcE5AtmaivHyFnv5rB6LX8Uky
-#        client-name: REDIS
-#        redirect-uri: http://localhost:8080/login/oauth2/code/oddiam
-#        issuer-uri: http://auth-server:9090
-#        user-name-attribute: full_name
-#        admin-user-info-flag: is_admin
+#      okta:
+#        provider: 'okta'
+#        client-id:
+#        client-secret:
+#        client-name:
+#        redirect-uri: http://localhost:8080/login/oauth2/code/okta
+#        scope:
+#          - openid
+#        issuer-uri:
+#        user-name-attribute:
+#        admin-attribute:
+#        admin-principals:
 #      cognito:
 #        provider: 'cognito'
 #        client-id:
