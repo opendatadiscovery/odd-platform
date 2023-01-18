@@ -28,7 +28,7 @@ export default class CustomElement {
    * Gets the customElement as proxied class
    */
   protected get customElement(): Locator {
-    return this.asProxy();
+    return this.customElementContext;
   }
 
   /**
@@ -36,44 +36,6 @@ export default class CustomElement {
    */
   protected set customElement(customElement: Locator) {
     this.customElementContext = customElement;
-  }
-
-  /**
-   * Wraps the customElementContext in a Proxy class to dynamically deal with loading status before and after each PW command
-   */
-  private asProxy() {
-    const pageContext = this.context;
-
-    return new Proxy(this.customElementContext, {
-      get(target, propName) {
-        if (
-          (propName in target && propName === 'locator') ||
-          typeof target[propName] !== 'function'
-        ) {
-          return target[propName];
-        }
-        return async (...args) => {
-          let loaded = false;
-
-          while (!loaded) {
-            try {
-              await pageContext.waitForSelector('div[class="loadingContainer"]', {
-                state: 'attached',
-                timeout: 1000,
-              });
-
-              loaded = false;
-            } catch {
-              loaded = true;
-            }
-          }
-
-          const resolved = await target[propName](...args);
-
-          return resolved;
-        };
-      },
-    });
   }
 
   /**
