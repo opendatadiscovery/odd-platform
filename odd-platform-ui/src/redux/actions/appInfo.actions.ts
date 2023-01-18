@@ -11,3 +11,8 @@ export const fetchActiveFeaturesActionType = createActionType(
   appInfoActionPrefix,
   'fetchActiveFeatures'
 );
+
+export const fetchAppLinksActionType = createActionType(
+  appInfoActionPrefix,
+  'fetchAppLinks'
+);

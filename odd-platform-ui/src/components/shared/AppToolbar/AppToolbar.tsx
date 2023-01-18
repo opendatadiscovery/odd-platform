@@ -1,7 +1,12 @@
 import React, { type MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
 import { getIdentity, getOwnership } from 'redux/selectors';
-import { fetchActiveFeatures, fetchAppInfo, fetchIdentity } from 'redux/thunks';
+import {
+  fetchActiveFeatures,
+  fetchAppInfo,
+  fetchAppLinks,
+  fetchIdentity,
+} from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/Icons';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
@@ -46,6 +51,7 @@ const AppToolbar: React.FC = () => {
     dispatch(fetchIdentity());
     dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
+    dispatch(fetchAppLinks());
   }, []);
 
   return (
