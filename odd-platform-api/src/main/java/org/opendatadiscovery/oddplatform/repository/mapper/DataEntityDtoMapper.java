@@ -14,8 +14,11 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
@@ -34,6 +37,8 @@ import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_FIELD;
+import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_VALUE_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNERSHIP_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_OWNER_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_TAGS_FIELD;
@@ -52,7 +57,6 @@ public class DataEntityDtoMapper {
 
     public DataEntityDto mapDtoRecordFromCTE(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
-
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
 
         return DataEntityDto.builder()
@@ -87,6 +91,40 @@ public class DataEntityDtoMapper {
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
             .build();
+    }
+
+    public DataEntityDetailsDto mapDataEntitySearchFieldsRecord(final Record r) {
+        final DataEntityPojo pojo = jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class);
+        return DataEntityDetailsDto.detailsBuilder()
+            .dataEntity(pojo)
+            .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
+            .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
+            .ownership(extractOwnershipRelation(r))
+            .tags(extractTags(r))
+            .metadata(extractMetadata(r))
+            .build();
+    }
+
+    private List<TagDto> extractTags(final Record r) {
+        final Set<TagPojo> tagPojos = jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class);
+        final Map<Long, TagToDataEntityPojo> tagRelations = jooqRecordHelper.extractAggRelation(r,
+                AGG_TAGS_RELATION_FIELD, TagToDataEntityPojo.class).stream()
+            .collect(Collectors.toMap(TagToDataEntityPojo::getTagId, identity()));
+        return tagPojos.stream()
+            .map(pojo -> new TagDto(pojo, null, tagRelations.get(pojo.getId()).getExternal()))
+            .toList();
+    }
+
+    private List<MetadataDto> extractMetadata(final Record r) {
+        final Set<MetadataFieldPojo> metadata =
+            jooqRecordHelper.extractAggRelation(r, AGG_METADATA_FIELD, MetadataFieldPojo.class);
+        final Map<Long, MetadataFieldValuePojo> metadataValues =
+            jooqRecordHelper.extractAggRelation(r, AGG_METADATA_VALUE_FIELD, MetadataFieldValuePojo.class)
+                .stream()
+                .collect(Collectors.toMap(MetadataFieldValuePojo::getMetadataFieldId, identity()));
+        return metadata.stream()
+            .map(pojo -> new MetadataDto(pojo, metadataValues.get(pojo.getId())))
+            .toList();
     }
 
     private List<OwnershipDto> extractOwnershipRelation(final Record r) {

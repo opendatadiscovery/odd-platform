@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,17 @@ public class MetadataFieldValueMapperImpl implements MetadataFieldValueMapper {
         return new MetadataFieldValue()
             .field(mapper.mapPojo(dto.metadataField()))
             .value(dto.metadataFieldValue().getValue());
+    }
+
+    @Override
+    public MetadataFieldValue mapHighlightedDto(final MetadataDto dto,
+                                                final String highlightedName,
+                                                final String highlightedValue) {
+        final MetadataField metadataField = mapper.mapPojo(dto.metadataField());
+        metadataField.setName(highlightedName);
+        return new MetadataFieldValue()
+            .field(metadataField)
+            .value(highlightedValue);
     }
 
     @Override

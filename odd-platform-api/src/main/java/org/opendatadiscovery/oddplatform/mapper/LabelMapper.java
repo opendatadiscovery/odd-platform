@@ -19,6 +19,12 @@ public interface LabelMapper {
 
     Label mapToLabel(final LabelPojo pojo);
 
+    default Label mapToHighlightedLabel(final LabelDto dto, final String highlight) {
+        final Label label = mapToLabel(dto);
+        label.setName(highlight);
+        return label;
+    }
+
     LabelPojo mapToPojo(final String name);
 
     LabelPojo applyToPojo(@MappingTarget final LabelPojo pojo, final LabelFormData form);

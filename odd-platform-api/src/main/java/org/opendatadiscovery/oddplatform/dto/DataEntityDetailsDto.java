@@ -30,7 +30,11 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final Map<DataEntityClassDto, DataEntityAttributes> specificAttributes,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
-                                final DataSourcePojo dataSource) {
+                                final DataSourcePojo dataSource,
+                                final Collection<MetadataDto> metadata,
+                                final Collection<TagDto> tags) {
         super(dataEntity, hasAlerts, specificAttributes, namespace, ownership, dataSource);
+        this.metadata = metadata;
+        this.tags = tags;
     }
 }

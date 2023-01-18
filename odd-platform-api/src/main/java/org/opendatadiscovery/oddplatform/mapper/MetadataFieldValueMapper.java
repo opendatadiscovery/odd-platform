@@ -8,5 +8,9 @@ import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 public interface MetadataFieldValueMapper {
     MetadataFieldValue mapDto(final MetadataDto dto);
 
+    MetadataFieldValue mapHighlightedDto(final MetadataDto dto,
+                                         final String highlightedName,
+                                         final String highlightedValue);
+
     List<MetadataFieldValue> mapDtos(final Collection<MetadataDto> dto);
 }

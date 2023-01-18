@@ -8,21 +8,23 @@ import org.opendatadiscovery.oddplatform.api.contract.api.SearchApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntitySearchHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
-import org.opendatadiscovery.oddplatform.service.SearchService;
+import org.opendatadiscovery.oddplatform.service.search.DataEntityHighlightService;
+import org.opendatadiscovery.oddplatform.service.search.SearchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
 public class SearchController implements SearchApi {
     private final SearchService searchService;
+    private final DataEntityHighlightService dataEntityHighlightService;
 
     @Override
     public Mono<ResponseEntity<Flux<CountableSearchFilter>>> getFiltersForFacet(
@@ -77,6 +79,14 @@ public class SearchController implements SearchApi {
                                                                           final Boolean manuallyCreated,
                                                                           final ServerWebExchange exchange) {
         return Mono.just(searchService.getQuerySuggestions(query, entityClassId, manuallyCreated))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntitySearchHighlight>> highlightDataEntity(final UUID searchId,
+                                                                               final Long dataEntityId,
+                                                                               final ServerWebExchange exchange) {
+        return dataEntityHighlightService.highlightDataEntity(searchId, dataEntityId)
             .map(ResponseEntity::ok);
     }
 }
