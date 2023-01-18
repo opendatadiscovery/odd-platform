@@ -4,14 +4,14 @@ import type {
   DatasetFieldEnumValuesActivityState,
   DatasetFieldValuesActivityState,
 } from 'generated-sources';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 import * as S from './EnumsActivityFieldStyles';
 
 interface ActivityData extends DatasetFieldEnumValuesActivityState {
-  typeOfChange?: CRUDType;
+  typeOfChange?: EventType;
 }
 
 interface EnumsActivityFieldProps {
@@ -53,7 +53,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);
-  const [activityEvent, setActivityEvent] = React.useState<CRUDType>('created');
+  const [activityEvent, setActivityEvent] = React.useState<EventType>('created');
 
   React.useEffect(() => {
     setOldValues(setOldState());

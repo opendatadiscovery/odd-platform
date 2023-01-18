@@ -1,14 +1,14 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import type { CRUDType } from 'lib/interfaces';
-import { useSetActivityHeaderIcon } from 'lib/hooks';
+import type { EventType } from 'lib/interfaces';
+import { useActivityHeaderIcon } from 'lib/hooks';
 import AppButton from '../../../AppButton/AppButton';
 import * as S from './ActivityFieldHeaderStyles';
 
 interface ActivityFieldHeaderProps {
   startText: string;
   activityName: string | JSX.Element | undefined;
-  eventType: CRUDType | string;
+  eventType: EventType;
   showDetailsBtn?: boolean;
   detailsBtnOnClick?: () => void;
   isDetailsOpen?: boolean;
@@ -24,7 +24,7 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
   isDetailsOpen,
   plural,
 }) => {
-  const { icon } = useSetActivityHeaderIcon(eventType);
+  const icon = useActivityHeaderIcon(eventType);
 
   return (
     <S.FieldHeader container>
@@ -38,9 +38,7 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
       <Typography variant='subtitle1' color='texts.info'>
         {plural ? 'were' : 'was'}
       </Typography>
-      <Typography ml={0.5} variant='h4'>
-        {eventType}
-      </Typography>
+      <Typography variant='h4'>{eventType}</Typography>
       {showDetailsBtn && (
         <AppButton
           size='small'

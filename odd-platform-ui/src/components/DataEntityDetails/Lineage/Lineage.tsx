@@ -86,6 +86,12 @@ const Lineage: React.FC = () => {
     return initialTransformMatrix;
   }, [t, initialTransformMatrix]);
 
+  const handleWheelDelta = React.useCallback(
+    (e: React.WheelEvent | WheelEvent) =>
+      -e.deltaY > 0 ? { scaleX: 0.99, scaleY: 0.99 } : { scaleX: 1.01, scaleY: 1.01 },
+    []
+  );
+
   return (
     <S.Container>
       {isLineageFetching ? (
@@ -104,6 +110,7 @@ const Lineage: React.FC = () => {
             scaleYMin={0.05}
             scaleYMax={2}
             initialTransformMatrix={setInitialTransform}
+            wheelDelta={handleWheelDelta}
           >
             {zoom => (
               <ZoomableLineage

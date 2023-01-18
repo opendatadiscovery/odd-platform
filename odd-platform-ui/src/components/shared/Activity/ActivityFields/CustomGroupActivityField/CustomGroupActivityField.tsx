@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { type CustomGroupActivityState } from 'generated-sources';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
@@ -13,7 +13,7 @@ import * as S from '../ArrayActivityField/ArrayActivityFieldStyles';
 interface GroupFieldData {
   id?: number;
   name?: string;
-  typeOfChange?: CRUDType;
+  typeOfChange?: EventType;
 }
 
 interface CustomGroupData {

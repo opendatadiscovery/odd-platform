@@ -1,7 +1,7 @@
 import React from 'react';
-import { AppButton, AppSelect, AppTabs, AppCheckbox } from 'components/shared';
+import { AppButton, AppCheckbox, AppSelect, AppTabs } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
-import { Grid, type SelectChangeEvent, Typography } from '@mui/material';
+import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
 import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -52,28 +52,38 @@ const LineageControls = React.memo<LineageControlsProps>(
 
     return (
       <S.ControlsContainer>
-        <Grid display='flex' flexWrap='nowrap'>
-          <AppCheckbox
-            value={eag}
-            checked={eag}
-            onChange={handleExpandGroupsChange}
-            sx={{ mr: 1 }}
-          />
-          <Typography variant='body1' color='texts.info'>
-            Expand all nested items
-          </Typography>
-        </Grid>
-        <Grid display='flex' flexWrap='nowrap'>
-          <AppCheckbox
-            value={fn}
-            checked={fn}
-            onChange={handleFullNamesChange}
-            sx={{ mr: 1 }}
-          />
-          <Typography variant='body1' color='texts.info'>
-            Show full names
-          </Typography>
-        </Grid>
+        <FormControlLabel
+          sx={{ mr: 0 }}
+          control={
+            <AppCheckbox
+              value={eag}
+              checked={eag}
+              onChange={handleExpandGroupsChange}
+              sx={{ mr: 1 }}
+            />
+          }
+          label={
+            <Typography variant='body1' color='texts.info'>
+              Expand all nested items
+            </Typography>
+          }
+        />
+        <FormControlLabel
+          sx={{ mr: 0 }}
+          control={
+            <AppCheckbox
+              value={fn}
+              checked={fn}
+              onChange={handleFullNamesChange}
+              sx={{ mr: 1 }}
+            />
+          }
+          label={
+            <Typography variant='body1' color='texts.info'>
+              Show full names
+            </Typography>
+          }
+        />
         <AppButton
           color='primaryLight'
           size='medium'

@@ -1,21 +1,21 @@
 import React, { type CSSProperties } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { type TermActivityState } from 'generated-sources';
-import { type CRUDType } from 'lib/interfaces';
+import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from '../ActivityFieldHeader/ActivityFieldHeader';
 import * as S from './TermActivityFieldStyles';
 
 interface ActivityData extends TermActivityState {
-  typeOfChange?: CRUDType;
+  typeOfChange?: EventType;
 }
 
 interface TermActivityFieldProps {
   oldState: Array<ActivityData> | undefined;
   newState: Array<ActivityData> | undefined;
   hideAllDetails: boolean;
-  eventType: string;
+  eventType: EventType;
   stateDirection?: CSSProperties['flexDirection'];
 }
 

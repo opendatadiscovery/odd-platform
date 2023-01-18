@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
@@ -31,6 +30,9 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.activity.AlertHaltConfigActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.AlertReceivedActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.AlertStatusUpdatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
@@ -202,15 +204,33 @@ public class ActivityMapperTest {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> generateOwnershipState();
             case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> generateTermsState();
             case DATA_ENTITY_CREATED -> generateDataEntityCreatedState();
-            case TAGS_ASSOCIATION_UPDATED -> generateTagsState();
+            case TAG_ASSIGNMENT_UPDATED -> generateTagsState();
             case DESCRIPTION_UPDATED -> generateDescriptionState();
             case BUSINESS_NAME_UPDATED -> generateBusinessNameState();
             case DATASET_FIELD_VALUES_UPDATED -> generateDatasetFieldValuesState();
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 generateDatasetFieldInformationState();
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> generateCustomGroupState();
+            case ALERT_HALT_CONFIG_UPDATED -> generateAlertHaltConfigState();
+            case ALERT_STATUS_UPDATED -> generateAlertStatusState();
+            case OPEN_ALERT_RECEIVED, RESOLVED_ALERT_RECEIVED -> generateAlertReceivedState();
             default -> "";
         };
+    }
+
+    private String generateAlertReceivedState() {
+        final AlertReceivedActivityStateDto state = GENERATOR.nextObject(AlertReceivedActivityStateDto.class);
+        return JSONSerDeUtils.serializeJson(state);
+    }
+
+    private String generateAlertStatusState() {
+        final AlertStatusUpdatedActivityStateDto state = GENERATOR.nextObject(AlertStatusUpdatedActivityStateDto.class);
+        return JSONSerDeUtils.serializeJson(state);
+    }
+
+    private String generateAlertHaltConfigState() {
+        final AlertHaltConfigActivityStateDto state = GENERATOR.nextObject(AlertHaltConfigActivityStateDto.class);
+        return JSONSerDeUtils.serializeJson(state);
     }
 
     private String generateOwnershipState() {

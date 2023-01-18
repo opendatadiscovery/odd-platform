@@ -1,7 +1,7 @@
 import React from 'react';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
-import Filters from './Filters/Filters';
 import ActivityResults from './ActivityResults/ActivityResults';
+import Filters from './Filters/Filters';
 
 const Activity: React.FC = () => (
   <S.MainContainer>

@@ -89,6 +89,28 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
+    public Mono<List<AlertDto>> get(final List<Long> ids) {
+        final List<Field<?>> groupByFields = Stream.of(ALERT.fields(), DATA_ENTITY.fields(), OWNER.fields())
+            .flatMap(Arrays::stream)
+            .toList();
+
+        final var query = DSL
+            .select(groupByFields)
+            .select(jsonArrayAgg(field(ALERT_CHUNK.asterisk().toString())).as(ALERT_CHUNK_FIELD))
+            .from(ALERT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
+            .join(ALERT_CHUNK).on(ALERT_CHUNK.ALERT_ID.eq(ALERT.ID))
+            .where(ALERT.ID.in(ids))
+            .groupBy(groupByFields);
+
+        return jooqReactiveOperations.flux(query)
+            .map(this::mapRecordToDto)
+            .collectList();
+    }
+
+    @Override
     public Mono<Map<String, SetValuedMap<Short, AlertPojo>>> getOpenAlertsForEntities(
         final Collection<String> dataEntityOddrns
     ) {
@@ -366,14 +388,29 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
     }
 
     @Override
-    public Mono<Boolean> existsOpen(final long alertId) {
-        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.selectFrom(ALERT)
-                .where(ALERT.ID.eq(alertId))
-                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()))
-        );
+    public Mono<Boolean> openAlertWithTheSameTypeExistsForDataEntity(final long alertId) {
+        final var cteSelect = DSL.selectFrom(ALERT).where(ALERT.ID.eq(alertId));
+        final Name cteName = name("alert_cte");
+        final Table<AlertRecord> cte = cteSelect.asTable(cteName);
 
-        return jooqReactiveOperations.mono(query).map(Record1::component1);
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(ALERT.DATA_ENTITY_ODDRN.eq(cte.field(ALERT.DATA_ENTITY_ODDRN)));
+        conditions.add(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode()));
+        conditions.add(ALERT.TYPE.eq(cte.field(ALERT.TYPE)));
+        conditions.add(ALERT.ID.ne(cte.field(ALERT.ID)));
+        conditions.add(
+            DSL.when(cte.field(ALERT.MESSENGER_ENTITY_ODDRN).isNotNull(),
+                    ALERT.MESSENGER_ENTITY_ODDRN.eq(cte.field(ALERT.MESSENGER_ENTITY_ODDRN)))
+                .otherwise(true).equal(true)
+        );
+        final var existsQuery = DSL.selectOne()
+            .from(ALERT)
+            .where(conditions);
+        final var query = DSL.with(cteName).as(cteSelect)
+            .select(field(DSL.exists(existsQuery)))
+            .from(cteName);
+        return jooqReactiveOperations.mono(query)
+            .map(Record1::value1);
     }
 
     /**

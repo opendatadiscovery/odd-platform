@@ -1,54 +1,48 @@
-import React, { HTMLAttributes } from 'react';
-import { Autocomplete, AutocompleteRenderOptionState } from '@mui/material';
+import React, { type HTMLAttributes } from 'react';
+import { Autocomplete, type AutocompleteRenderOptionState } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
-import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
-import { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
-import { setActivityQueryParam } from 'redux/slices/activity.slice';
+import { type AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import AppInput from 'components/shared/AppInput/AppInput';
+import { useQueryParams } from 'lib/hooks';
+import {
+  type ActivityMultipleFilterNames,
+  type ActivityQuery,
+  type ActivityFilterOption,
+  defaultActivityQuery,
+} from 'components/shared/Activity/common';
 import * as S from './MultipleFilterAutocompleteStyles';
 
 interface MultipleFilterAutocompleteProps {
-  filterName: ActivityQueryName;
+  filterName: ActivityMultipleFilterNames;
   name: string;
-  selectedOptionIds: number[];
 }
 
 const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
   name,
   filterName,
-  selectedOptionIds,
 }) => {
   type FilterOption = ActivityFilterOption;
 
   const dispatch = useAppDispatch();
+  const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [searchText, setSearchText] = React.useState<string>('');
+  const [loading, setLoading] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
+      const params = { page: 1, size: 100, query: searchText };
+
       (filterName === 'tagIds'
-        ? dispatch(
-            fetchTagsList({
-              page: 1,
-              size: 30,
-              query: searchText,
-            })
-          )
-        : dispatch(
-            fetchOwnersList({
-              page: 1,
-              size: 30,
-              query: searchText,
-            })
-          )
+        ? dispatch(fetchTagsList(params))
+        : dispatch(fetchOwnersList(params))
       )
         .unwrap()
         .then(response => {
@@ -71,9 +65,7 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
 
   React.useEffect(() => {
     setLoading(autocompleteOpen);
-    if (autocompleteOpen) {
-      handleSearch();
-    }
+    if (autocompleteOpen) handleSearch();
   }, [autocompleteOpen, searchText]);
 
   const handleAutocompleteSelect = (
@@ -85,12 +77,10 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
     setSearchText(''); // Clear input on select
 
     if (value.id) {
-      dispatch(
-        setActivityQueryParam({
-          queryName: filterName,
-          queryData: uniq([...(selectedOptionIds || []), value.id]),
-        })
-      );
+      setQueryParams(prev => ({
+        ...prev,
+        [filterName]: uniq([...(prev[filterName] || []), value.id]),
+      }));
     }
   };
 

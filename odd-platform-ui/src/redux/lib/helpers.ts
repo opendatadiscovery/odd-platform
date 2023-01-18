@@ -49,20 +49,32 @@ export const castDatesToTimestampInItemsArray = <
     )
   );
 
-export const setPageInfo = <Item extends { id: string; createdAt: number }>(
+export function setPageInfo<Item extends { id: string; createdAt: number }>(
   items: Item[],
   maxItemsSize: number
-): PageInfo => {
+): PageInfo<string>;
+export function setPageInfo<Item extends { id: number; createdAt: number }>(
+  items: Item[],
+  maxItemsSize: number
+): PageInfo<number>;
+export function setPageInfo<Item extends { id: string | number; createdAt: number }>(
+  items: Item[],
+  maxItemsSize: number
+): PageInfo<string | number> {
   const lastItem = items.slice(-1);
-  let pageInfo: PageInfo;
+  let pageInfo: PageInfo<string | number>;
   if (items.length < maxItemsSize) {
     pageInfo = { hasNext: false };
     return pageInfo;
   }
 
-  pageInfo = { hasNext: true, lastId: lastItem[0].id };
+  pageInfo = {
+    hasNext: true,
+    lastId: lastItem[0].id,
+    lastDateTime: lastItem[0].createdAt,
+  };
   return pageInfo;
-};
+}
 
 export const notEmpty = <TValue>(value: TValue | null | undefined): value is TValue =>
   value !== null && value !== undefined;
