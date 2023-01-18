@@ -1,12 +1,16 @@
 import React from 'react';
-import { ButtonProps, Collapse, Grid, Typography } from '@mui/material';
-import { DataSetField, DataSetFieldTypeTypeEnum, DataSetStats } from 'generated-sources';
+import { type ButtonProps, Collapse, Grid, Typography } from '@mui/material';
+import {
+  type DataSetField,
+  DataSetFieldTypeTypeEnum,
+  type DataSetStats,
+} from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure, getIsUniqStatsExist } from 'redux/selectors';
 import {
   AppIconButton,
   AppTooltip,
-  ButtonColors,
+  type ButtonColors,
   TruncatedLabel,
 } from 'components/shared';
 import { GraphIcon, InformationIcon, MinusIcon, PlusIcon } from 'components/shared/Icons';
@@ -121,7 +125,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             <Grid container flexDirection='column' flexWrap='nowrap'>
               <S.RowInfoHeader item lg={12}>
                 <Grid container sx={{ mr: 0.5 }}>
-                  <AppTooltip title={() => datasetField.name}>
+                  <AppTooltip title={datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
@@ -148,7 +152,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     sx={{ mr: 1 }}
                   />
                   <AppTooltip
-                    title={() => `Logical type: ${datasetField.type.logicalType}`}
+                    title={`Logical type: ${datasetField.type.logicalType}`}
                     type='dark'
                     checkForOverflow={false}
                   >
@@ -179,7 +183,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               )}
               {datasetField.externalDescription && (
                 <Grid container sx={{ py: 0.25 }} item lg={12}>
-                  <AppTooltip title={() => datasetField.externalDescription}>
+                  <AppTooltip title={datasetField.externalDescription}>
                     <Typography variant='subtitle2' noWrap>
                       {datasetField.externalDescription}
                     </Typography>

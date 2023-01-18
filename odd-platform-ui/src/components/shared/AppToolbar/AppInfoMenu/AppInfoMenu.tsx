@@ -37,7 +37,7 @@ const AppInfoMenu: React.FC = () => {
       <Grid item>
         <AppIconButton
           sx={{ mr: 2 }}
-          icon={<InformationIcon variant='dark' width={20} height={20} />}
+          icon={<InformationIcon width={20} height={20} />}
           color='unfilled'
           edge='end'
           aria-label='app info menu'

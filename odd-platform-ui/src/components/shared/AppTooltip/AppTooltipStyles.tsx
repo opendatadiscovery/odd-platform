@@ -1,7 +1,7 @@
 import React from 'react';
-import { Theme } from '@mui/material/styles';
-import { Box, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
-import styled, { CSSObject } from 'styled-components';
+import type { Theme } from '@mui/material/styles';
+import { Box, Tooltip, tooltipClasses, type TooltipProps } from '@mui/material';
+import styled, { type CSSObject } from 'styled-components';
 
 export type TooltipColorTypes = 'light' | 'dark';
 
@@ -37,7 +37,9 @@ export const AppTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))<TooltipStyleProps>(({ theme, $type }) => ({
   [`&.${tooltipClasses.popper}`]: {
+    maxWidth: 'unset',
     [`& .${tooltipClasses.tooltip}`]: {
+      maxWidth: 'unset',
       fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,

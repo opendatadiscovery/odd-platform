@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
@@ -7,12 +7,20 @@ import {
   NumberFormatted,
   TruncatedCell,
 } from 'components/shared';
-import { ColumnsIcon, InformationIcon, RowsIcon } from 'components/shared/Icons';
+import {
+  ColumnsIcon,
+  InformationIcon,
+  QuestionIcon,
+  RowsIcon,
+} from 'components/shared/Icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getSearchQuery } from 'redux/selectors';
 import { type GridSizesByBreakpoints, SearchCol } from '../ResultsStyles';
 import ResultItemPreview from './ResultItemPreview/ResultItemPreview';
 import * as S from './ResultItemStyles';
+import SearchHighlights from './SearchHighlights/SearchHighlights';
 
 interface ResultItemProps {
   searchResult: DataEntity;
@@ -31,8 +39,15 @@ const ResultItem: React.FC<ResultItemProps> = ({
   const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
-  const resultItemPreview = React.useCallback(
-    ({ open }) => <ResultItemPreview dataEntityId={searchResult.id} fetchData={open} />,
+  const searchQuery = useAppSelector(getSearchQuery);
+
+  const resultItemPreview = React.useMemo(
+    () => <ResultItemPreview dataEntityId={searchResult.id} />,
+    [searchResult.id]
+  );
+
+  const searchHighlights = React.useMemo(
+    () => <SearchHighlights dataEntityId={searchResult.id} />,
     [searchResult.id]
   );
 
@@ -82,9 +97,16 @@ const ResultItem: React.FC<ResultItemProps> = ({
             >
               {searchResult.internalName || searchResult.externalName}
             </Typography>
-            <AppTooltip checkForOverflow={false} title={resultItemPreview}>
-              <InformationIcon sx={{ ml: 1.25 }} />
-            </AppTooltip>
+            <Box display='flex' flexWrap='nowrap' sx={{ ml: 1 }}>
+              {searchQuery && (
+                <AppTooltip checkForOverflow={false} title={searchHighlights}>
+                  <QuestionIcon sx={{ mr: 1 }} />
+                </AppTooltip>
+              )}
+              <AppTooltip checkForOverflow={false} title={resultItemPreview}>
+                <InformationIcon />
+              </AppTooltip>
+            </Box>
           </S.NameContainer>
           <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
             {showClassIcons &&

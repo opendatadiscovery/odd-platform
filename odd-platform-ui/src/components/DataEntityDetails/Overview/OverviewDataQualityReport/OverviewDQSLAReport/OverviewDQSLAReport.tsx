@@ -50,7 +50,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
       );
   }, [dqSLAReport?.severityWeights]);
 
-  const getSLAHint = () => {
+  const SLAHint = React.useMemo(() => {
     const orderedLiElement = (text: string, color: SLAColour) => {
       if (color === 'GREEN') {
         return (
@@ -122,7 +122,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
         </S.HintOList>
       </>
     );
-  };
+  }, []);
 
   return (
     <>
@@ -143,7 +143,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
                     SLA
                   </Typography>
                   <AppTooltip
-                    title={getSLAHint}
+                    title={SLAHint}
                     checkForOverflow={false}
                     placement='bottom-end'
                     componentsProps={{ tooltip: { sx: S.TooltipStyles } }}

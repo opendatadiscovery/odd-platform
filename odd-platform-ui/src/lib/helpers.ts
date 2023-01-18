@@ -118,29 +118,78 @@ export const getEllipsisTextByWidth = (
   }
 };
 
-function sliceBothSidesOfBoldedWord(str: string, wordsToLeave: number) {
-  const reg = /<b>(.*?)<\/b>/g;
+type CSSOptions = Pick<
+  CSSStyleDeclaration,
+  'fontFamily' | 'fontSize' | 'fontWeight' | 'lineHeight' | 'visibility' | 'display'
+>;
 
-  const boldedWord = str.match(reg)?.[0] || '';
-  const exactWord = boldedWord.slice(3, -4);
-  const splitted = str.split(boldedWord);
+function getCreatedElWidth(text: string, options?: CSSOptions) {
+  const el = document.createElement('div');
+  const textContent = document.createTextNode(text);
+  el.appendChild(textContent);
 
-  const wordsBeforeExactWord = splitted[0].trim().split(' ').slice(-wordsToLeave);
-  const wordsCountBeforeExactWord = splitted[0].trim().split(' ').length;
-  const stringBeforeExactWord = wordsBeforeExactWord.join(' ');
-  const wordsAfterExactWord = splitted[1].trim().split(' ').slice(0, wordsToLeave);
-  const wordsCountAfterExactWord = splitted[1].trim().split(' ').length;
-  const stringAfterExactWord = wordsAfterExactWord.join(' ');
+  el.style.fontFamily = options?.fontFamily || 'Roboto';
+  el.style.fontSize = options?.fontSize || '14px';
+  el.style.fontWeight = options?.fontWeight || '400';
+  el.style.lineHeight = options?.lineHeight || '20px';
+  el.style.visibility = options?.visibility || 'hidden';
+  el.style.display = options?.display || 'initial';
 
-  let startEllipsis = '...';
-  let endEllipsis = '...';
+  document.body.appendChild(el);
 
-  if (wordsCountBeforeExactWord - wordsToLeave <= 0) startEllipsis = '';
-  if (wordsCountAfterExactWord - wordsToLeave <= 0) endEllipsis = '';
+  const width = el.offsetWidth;
 
-  return {
-    before: `${startEllipsis}${stringBeforeExactWord}`,
-    exactWord,
-    after: `${stringAfterExactWord}${endEllipsis}`,
-  };
+  el?.parentNode?.removeChild(el);
+
+  return width;
+}
+
+export function sliceStringByWidth(
+  str: string,
+  width: number,
+  options?: CSSOptions
+): string {
+  if (!str) return '';
+
+  const ellipsis = '...';
+  const splitted = str.split(' ');
+  const fitWordStart = splitted.findIndex(el => el.includes('<b>'));
+  const firWordEnd = splitted.findIndex(el => el.includes('</b>'));
+
+  let resultString: string[] = [];
+  if (fitWordStart === firWordEnd) {
+    resultString.push(splitted[fitWordStart]);
+  } else {
+    resultString.push(splitted[fitWordStart], splitted[firWordEnd]);
+  }
+
+  let elWidth = 0;
+  let counter = 1;
+
+  while (elWidth <= width) {
+    resultString = [
+      splitted[fitWordStart - counter],
+      ...resultString,
+      splitted[firWordEnd + counter],
+    ];
+
+    if (
+      splitted[fitWordStart - counter] === undefined &&
+      splitted[firWordEnd + counter] === undefined
+    ) {
+      break;
+    }
+
+    counter += 1;
+    elWidth = getCreatedElWidth(resultString.join(' '), options);
+  }
+
+  if (splitted[fitWordStart - counter]) {
+    resultString = [ellipsis, ...resultString];
+  }
+  if (splitted[firWordEnd + counter]) {
+    resultString = [...resultString, ellipsis];
+  }
+
+  return resultString.join(' ');
 }

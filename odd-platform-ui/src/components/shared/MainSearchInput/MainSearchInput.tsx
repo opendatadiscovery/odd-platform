@@ -32,7 +32,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     };
 
     return clearSearchQuery();
-  }, [dispatch, updateSearchQuery]);
+  }, [mainSearch]);
 
   const createSearch = React.useCallback(
     (query: string) => {

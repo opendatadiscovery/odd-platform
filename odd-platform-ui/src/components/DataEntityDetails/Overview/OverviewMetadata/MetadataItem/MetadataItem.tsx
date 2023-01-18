@@ -96,7 +96,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
     <S.Container container wrap='nowrap'>
       <S.LabelContainer item sm={2}>
         <AppTooltip
-          title={() =>
+          title={
             isNestedField(metadataItem.field.name)
               ? metadataItem.field.name
               : stringFormatted(metadataItem.field.name, '_', 'firstLetterOfString')

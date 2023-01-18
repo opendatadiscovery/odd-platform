@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import {
   AppButton,
   AppCircularProgress,
-  AppTabItem,
+  type AppTabItem,
   AppTabs,
   AppTooltip,
 } from 'components/shared';
@@ -74,9 +74,7 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
     <Grid container sx={{ p: 2 }}>
       <Grid container alignItems='center' wrap='nowrap'>
         <Grid container>
-          <AppTooltip
-            title={() => qualityTest?.internalName || qualityTest?.externalName}
-          >
+          <AppTooltip title={qualityTest?.internalName || qualityTest?.externalName}>
             <Typography noWrap variant='h2'>
               {qualityTest?.internalName || qualityTest?.externalName}
             </Typography>

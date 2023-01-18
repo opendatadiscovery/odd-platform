@@ -23,13 +23,9 @@ import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
   dataEntityId: number;
-  fetchData?: boolean;
 }
 
-const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
-  dataEntityId,
-  fetchData,
-}) => {
+const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) => {
   const dispatch = useAppDispatch();
   const { metadataFormattedDateTime } = useAppDateTime();
 
@@ -45,9 +41,8 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   );
 
   React.useEffect(() => {
-    if (fetchData && isEmpty(dataEntityDetails))
-      dispatch(fetchDataEntityDetails({ dataEntityId }));
-  }, [fetchData, dataEntityDetails, dataEntityId, dispatch]);
+    if (isEmpty(dataEntityDetails)) dispatch(fetchDataEntityDetails({ dataEntityId }));
+  }, []);
 
   const getMetadataValue = (metadataItem: MetadataFieldValue) => {
     let metadataVal;
@@ -70,11 +65,6 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
     }
     return metadataVal;
   };
-
-  const getDescription = React.useCallback(
-    () => <MDEditor.Markdown source={dataEntityDetails?.internalDescription} />,
-    [dataEntityDetails]
-  );
 
   return (
     <S.Container container>
@@ -147,7 +137,11 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
               </Typography>
             </Grid>
             <S.AboutText variant='body1' color='texts.secondary'>
-              {dataEntityDetails?.internalDescription ? getDescription() : 'Not created'}
+              {dataEntityDetails?.internalDescription ? (
+                <MDEditor.Markdown source={dataEntityDetails?.internalDescription} />
+              ) : (
+                'Not created'
+              )}
             </S.AboutText>
           </S.AboutContainer>
         </>

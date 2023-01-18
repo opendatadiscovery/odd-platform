@@ -1,8 +1,11 @@
-import type { AlertHaltConfigActivityState } from 'generated-sources';
 import {
   AlertType,
   type ConfigurationParameters,
   DataQualityTestSeverity,
+  type DataSourceHighlight,
+  type AlertHaltConfigActivityState,
+  type DataEntitySearchHighlight,
+  type DataEntityHighlight,
 } from 'generated-sources';
 
 export const BASE_PARAMS: ConfigurationParameters = {
@@ -29,6 +32,26 @@ export const alertTitlesMap = new Map<
   ['failedDqTestHaltUntil', 'Failed DQ test'],
   [AlertType.DISTRIBUTION_ANOMALY, 'Distribution anomaly'],
   ['distributionAnomalyHaltUntil', 'Distribution anomaly'],
+]);
+
+export type SearchHighlightsTitlesKey =
+  | keyof DataEntitySearchHighlight
+  | keyof DataEntityHighlight
+  | keyof DataSourceHighlight;
+export const searchHighlightsTitlesMap = new Map<SearchHighlightsTitlesKey, string>([
+  ['dataEntity', 'Data entity'],
+  ['internalName', 'Business name'],
+  ['externalName', 'External name'],
+  ['internalDescription', 'Internal Description'],
+  ['externalDescription', 'External Description'],
+  ['dataSource', 'Data source'],
+  ['name', 'Name'],
+  ['oddrn', 'ODDRN'],
+  ['namespace', 'Namespace'],
+  ['tags', 'Tag'],
+  ['datasetStructure', 'Dataset structure'],
+  ['metadata', 'Metadata'],
+  ['owners', 'Owner'],
 ]);
 
 // content width constants

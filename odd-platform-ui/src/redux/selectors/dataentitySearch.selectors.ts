@@ -14,7 +14,10 @@ import type {
   SearchFacetStateById,
   SearchFilterStateSynced,
 } from 'redux/interfaces';
-import type { DataEntityClassNameEnum } from 'generated-sources';
+import type {
+  DataEntityClassNameEnum,
+  DataEntitySearchHighlight,
+} from 'generated-sources';
 import {
   createErrorSelector,
   createStatusesSelector,
@@ -153,5 +156,6 @@ export const getSearchSuggestions = createSelector(
 export const getDataEntitySearchHighlights = (dataEntityId: number) =>
   createSelector(
     searchState,
-    search => search.dataEntitySearchHighlightById[dataEntityId]
+    (search): DataEntitySearchHighlight | undefined =>
+      search.dataEntitySearchHighlightById[dataEntityId]
   );

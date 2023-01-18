@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
-import { DataSource, Permission } from 'generated-sources';
+import { type DataSource, Permission } from 'generated-sources';
 import { deleteDataSource } from 'redux/thunks';
 import {
   AppButton,
@@ -79,7 +79,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
             labelWidth={4}
             valueComponent='div'
           >
-            <AppTooltip title={() => dataSource.oddrn}>{dataSource.oddrn}</AppTooltip>
+            <AppTooltip title={dataSource.oddrn}>{dataSource.oddrn}</AppTooltip>
           </LabeledInfoItem>
           <LabeledInfoItem variant='body2' inline label='Description' labelWidth={4}>
             {dataSource.description}
