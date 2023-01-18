@@ -38,7 +38,24 @@ tags:
   - name: policy
   - name: role
   - name: permission
+  - name: links
+
 paths:
+  /api/links/:
+    get:
+      summary: Additional links
+      description: Gets additional links to be displayed in the UI
+      operationId: getLinks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LinkList'
+      tags:
+        - links
+
   /api/features/active:
     get:
       summary: Active features
