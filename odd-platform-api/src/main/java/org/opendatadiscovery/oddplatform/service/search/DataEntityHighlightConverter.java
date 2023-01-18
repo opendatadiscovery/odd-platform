@@ -194,7 +194,7 @@ public class DataEntityHighlightConverter {
             return null;
         }
         final DataEntityHighlight highlight = new DataEntityHighlight();
-        final String[] fields = dataEntityHighlight.split(RECORD_DELIMITER);
+        final String[] fields = dataEntityHighlight.split(RECORD_DELIMITER, -1);
         final String highlightedExternalName = fields[0];
         if (isHighlighted(highlightedExternalName)) {
             highlight.setExternalName(highlightedExternalName);
@@ -219,7 +219,7 @@ public class DataEntityHighlightConverter {
             return null;
         }
         final DataSourceHighlight highlight = new DataSourceHighlight();
-        final String[] fields = dataSourceHighlight.split(RECORD_DELIMITER);
+        final String[] fields = dataSourceHighlight.split(RECORD_DELIMITER, -1);
         final String highlightedName = fields[0];
         if (isHighlighted(highlightedName)) {
             highlight.setName(highlightedName);
