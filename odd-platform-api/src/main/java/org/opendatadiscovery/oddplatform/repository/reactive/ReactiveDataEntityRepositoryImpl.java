@@ -643,7 +643,8 @@ public class ReactiveDataEntityRepositoryImpl
     @Override
     public Mono<String> getHighlightedResult(final String text, final String query) {
         final String tsQuery = jooqFTSHelper.tsQuery(query);
-        final String sql = "ts_headline('english', '%s', to_tsquery('%s'), 'HighlightAll=true')".formatted(text, tsQuery);
+        final String sql = "ts_headline('english', '%s', to_tsquery('%s'), 'HighlightAll=true')"
+            .formatted(text, tsQuery);
         final var select = DSL.select(field(sql, String.class));
         return jooqReactiveOperations.mono(select)
             .map(Record1::value1);
