@@ -34,9 +34,8 @@ public abstract class AbstractOIDCUserHandler implements OAuthUserHandler<OidcUs
             final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute())
                 ? provider.getAdminAttribute() : userNameAttributeName;
             final String adminAttribute = oidcUser.getAttribute(adminPrincipalAttribute);
-            final boolean containsUsername;
             if (adminAttribute != null) {
-                containsUsername = containsIgnoreCase(provider.getAdminPrincipals(), adminAttribute);
+                final boolean containsUsername = containsIgnoreCase(provider.getAdminPrincipals(), adminAttribute);
                 if (containsUsername) {
                     isAdmin = true;
                 }
