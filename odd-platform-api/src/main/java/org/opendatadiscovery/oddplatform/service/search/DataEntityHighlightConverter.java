@@ -175,8 +175,7 @@ public class DataEntityHighlightConverter {
                 final String externalDescription =
                     StringUtils.defaultIfEmpty(f.getDatasetFieldPojo().getExternalDescription(), "");
                 final String labels = mapDatasetFieldLabels(f.getLabels());
-                return Stream.of(name, internalDescription, externalDescription, labels)
-                    .collect(Collectors.joining(RECORD_DELIMITER, "", RECORD_DELIMITER));
+                return String.join(RECORD_DELIMITER, name, internalDescription, externalDescription, labels);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
     }
@@ -314,7 +313,7 @@ public class DataEntityHighlightConverter {
         final String[] dataSetStructures = dataSetStructureHighlight.split(GROUP_DELIMITER);
         final List<DataSetStructureHighlight> dataSetStructureHighlights = new ArrayList<>();
         for (final String dataSetStructure : dataSetStructures) {
-            final String[] fields = dataSetStructure.split(RECORD_DELIMITER);
+            final String[] fields = dataSetStructure.split(RECORD_DELIMITER, -1);
             final String highlightedName = fields[0];
             final String highlightedIntDescription = fields[1];
             final String highlightedExtDescription = fields[2];
@@ -336,18 +335,7 @@ public class DataEntityHighlightConverter {
                         .filter(f -> f.getDatasetFieldPojo().getName().equals(datasetFieldName))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Dataset field not found"));
-                    final List<Label> labels = new ArrayList<>();
-                    final String[] rawLabels = highlightedLabels.split(DELIMITER);
-                    for (final String rawLabel : rawLabels) {
-                        if (isHighlighted(rawLabel)) {
-                            final String name = rawLabel.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
-                            final LabelDto labelDto = dataSetFieldDto.getLabels().stream()
-                                .filter(l -> l.pojo().getName().equals(name))
-                                .findFirst()
-                                .orElseThrow(() -> new IllegalArgumentException("Label not found"));
-                            labels.add(labelMapper.mapToHighlightedLabel(labelDto, rawLabel));
-                        }
-                    }
+                    final List<Label> labels = parseLabels(highlightedLabels, dataSetFieldDto);
                     dataSetStructureHighlightDto.setLabels(labels);
                 }
                 dataSetStructureHighlights.add(dataSetStructureHighlightDto);
@@ -356,7 +344,24 @@ public class DataEntityHighlightConverter {
         return dataSetStructureHighlights;
     }
 
+    private List<Label> parseLabels(final String highlightedLabels,
+                                    final DatasetFieldDto dataSetFieldDto) {
+        final List<Label> labels = new ArrayList<>();
+        final String[] rawLabels = highlightedLabels.split(DELIMITER);
+        for (final String rawLabel : rawLabels) {
+            if (isHighlighted(rawLabel)) {
+                final String name = rawLabel.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
+                final LabelDto labelDto = dataSetFieldDto.getLabels().stream()
+                    .filter(l -> l.pojo().getName().equals(name))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Label not found"));
+                labels.add(labelMapper.mapToHighlightedLabel(labelDto, rawLabel));
+            }
+        }
+        return labels;
+    }
+
     private boolean isHighlighted(final String field) {
-        return StringUtils.isNotEmpty(field) && field.contains(HIGHLIGHT_TAG);
+        return StringUtils.isNotEmpty(field) && field.contains(HIGHLIGHT_TAG) && field.contains(HIGHLIGHT_TAG_END);
     }
 }
