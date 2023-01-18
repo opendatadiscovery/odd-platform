@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { appInfoActionPrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 
-export const initialState: AppInfoState = { appInfo: {}, activeFeatures: [] };
+export const initialState: AppInfoState = { appInfo: {}, activeFeatures: [], links: [] };
 
 export const appInfoSlice = createSlice({
   name: appInfoActionPrefix,
@@ -16,6 +16,10 @@ export const appInfoSlice = createSlice({
 
     builder.addCase(thunks.fetchActiveFeatures.fulfilled, (state, { payload }) => {
       state.activeFeatures = payload;
+    });
+
+    builder.addCase(thunks.fetchAppLinks.fulfilled, (state, { payload }) => {
+      state.links = payload;
     });
   },
 });

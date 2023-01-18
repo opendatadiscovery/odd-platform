@@ -6,7 +6,7 @@ import {
   SlackIcon,
 } from 'components/shared/Icons';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getVersion } from 'redux/selectors';
+import { getAppLinks, getVersion } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AppMenu from '../../AppMenu/AppMenu';
@@ -15,6 +15,7 @@ import * as S from './AppInfoMenuStyles';
 
 const AppInfoMenu: React.FC = () => {
   const version = useAppSelector(getVersion);
+  const links = useAppSelector(getAppLinks);
 
   const gitbookLink = 'https://docs.opendatadiscovery.org/';
   const slackLink = 'https://go.opendatadiscovery.org/slack';
@@ -85,6 +86,17 @@ const AppInfoMenu: React.FC = () => {
               </Grid>
             </S.MenuItem>
           </Link>
+        )}
+        {links.length > 0 && (
+          <S.LinksContainer container>
+            {links.map(link => (
+              <Link to={{ pathname: link.url }} target='_blank'>
+                <S.MenuItem container onClick={handleAppMenuClose}>
+                  <Typography variant='h3'>{link.title}</Typography>
+                </S.MenuItem>
+              </Link>
+            ))}
+          </S.LinksContainer>
         )}
       </AppMenu>
     </Grid>

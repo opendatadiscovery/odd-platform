@@ -24,3 +24,10 @@ export const MenuItem = styled(Grid)(({ theme }) => ({
     [`${Icon}`]: { backgroundColor: theme.palette.backgrounds.primary },
   },
 }));
+
+export const LinksContainer = styled(Grid)(({ theme }) => ({
+  flexDirection: 'column',
+  paddingTop: theme.spacing(1),
+  borderTop: '1px solid',
+  borderTopColor: theme.palette.divider,
+}));

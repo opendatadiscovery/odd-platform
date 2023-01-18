@@ -6,6 +6,7 @@ import {
   createTermSearch,
   fetchActiveFeatures,
   fetchAppInfo,
+  fetchAppLinks,
   fetchIdentity,
 } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -59,6 +60,7 @@ const AppToolbar: React.FC = () => {
     dispatch(fetchIdentity());
     dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
+    dispatch(fetchAppLinks());
   }, []);
 
   const [tabs] = React.useState<AppTabItem[]>([
