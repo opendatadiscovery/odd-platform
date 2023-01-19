@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { getByText } from 'lib/testHelpers';
-import TextFormatted, { TextFormattedProps } from '../TextFormatted';
+import TextFormatted, { type TextFormattedProps } from '../TextFormatted';
 
 describe('TextFormatted', () => {
   const setupComponent = (props?: Partial<TextFormattedProps>) =>

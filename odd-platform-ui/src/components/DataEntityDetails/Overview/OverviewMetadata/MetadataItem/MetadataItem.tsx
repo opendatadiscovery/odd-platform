@@ -16,7 +16,7 @@ import {
   CopyButton,
   TextFormatted,
 } from 'components/shared';
-import { stringFormatted } from 'lib/helpers';
+import { getMetadataValue, stringFormatted } from 'lib/helpers';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
   deleteDataEntityCustomMetadata,
@@ -62,28 +62,11 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
       })
     );
 
-  let metadataVal;
-
-  try {
-    switch (metadataItem.field.type) {
-      case MetadataFieldType.BOOLEAN:
-        metadataVal = metadataItem.value === 'true' ? 'Yes' : 'No';
-        break;
-      case MetadataFieldType.DATETIME:
-        metadataVal = metadataFormattedDateTime(new Date(metadataItem.value).getTime());
-        break;
-      case MetadataFieldType.ARRAY:
-        metadataVal = JSON.parse(metadataItem.value).join(', ');
-        break;
-      case MetadataFieldType.JSON:
-        metadataVal = JSON.stringify(JSON.parse(metadataItem.value), null, 2);
-        break;
-      default:
-        metadataVal = metadataItem.value;
-    }
-  } catch {
-    metadataVal = metadataItem.value;
-  }
+  const metadataVal = getMetadataValue(
+    metadataItem.field,
+    metadataItem.value,
+    metadataFormattedDateTime
+  );
 
   const isJSON = metadataItem.field.type === MetadataFieldType.JSON;
   const isExpandable = isJSON ? true : metadataVal.length > 200;
@@ -96,7 +79,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
     <S.Container container wrap='nowrap'>
       <S.LabelContainer item sm={2}>
         <AppTooltip
-          title={() =>
+          title={
             isNestedField(metadataItem.field.name)
               ? metadataItem.field.name
               : stringFormatted(metadataItem.field.name, '_', 'firstLetterOfString')

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgIconProps } from '@mui/material/SvgIcon';
+import { type SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from './AppSvgIcon';
 
 const UserIcon: React.FC<SvgIconProps> = ({ sx, stroke = '#0066CC', ...props }) => (

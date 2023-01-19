@@ -5,10 +5,11 @@ import type {
   AppInfo,
   AssociatedOwner,
   Collector,
-  DataEntity,
+  DataEntity as GeneratedDataEntity,
   DataEntityClass,
   DataEntityRef,
   DataEntityRun,
+  DataEntitySearchHighlight,
   DataEntityType,
   DataEntityUsageInfo,
   DataQualityTest,
@@ -36,15 +37,15 @@ import type {
   TermDetails,
   TermRef,
   Link,
+  ActivityType,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
-import { ActivityType } from 'generated-sources';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
 import type { CurrentPageInfo, PageInfo, PaginatedResponse } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
-import type { DataEntityDetailsState } from './dataentities';
+import type { DataEntity, DataEntityDetailsState } from './dataentities';
 import type { Alert, AlertsConfig } from './alerts';
 import type { Activity } from './activities';
 import type {
@@ -148,7 +149,7 @@ export interface DataCollaborationState {
 }
 
 export interface DataEntitiesState {
-  byId: { [dataEntityId: string]: DataEntity & DataEntityDetailsState };
+  byId: { [dataEntityId: string]: GeneratedDataEntity & DataEntityDetailsState };
   allIds: number[];
   my: DataEntityRef[];
   myUpstream: DataEntityRef[];
@@ -171,6 +172,7 @@ export interface DataEntitySearchState {
   results: { items: DataEntity[]; pageInfo: CurrentPageInfo };
   suggestions: DataEntityRef[];
   facetState: SearchFacetsByName;
+  dataEntitySearchHighlightById: { [dataEntityId: number]: DataEntitySearchHighlight };
 }
 
 export interface AlertsState {

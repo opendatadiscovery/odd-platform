@@ -32,7 +32,10 @@ const initialState: DataEntitySearchState = {
   facets: {},
   facetState: {},
   isFacetsStateSynced: true,
+  dataEntitySearchHighlightById: {},
 };
+
+const isSearchIdsEquals = (oldId: string, newId: string) => oldId === newId;
 
 const updateSearchState = (
   state: DataEntitySearchState,
@@ -88,10 +91,9 @@ const updateSearchState = (
     query,
     myObjects: !!myObjects,
     totals,
-    facetState:
-      searchId !== state.searchId
-        ? newSearchFacetsById
-        : mapValues(state.facetState, assignFacetStateWithNewFacets),
+    facetState: !isSearchIdsEquals(state.searchId, searchId)
+      ? newSearchFacetsById
+      : mapValues(state.facetState, assignFacetStateWithNewFacets),
     isFacetsStateSynced: true,
     results: {
       items: [],
@@ -233,10 +235,7 @@ export const dataEntitiesSearchSlice = createSlice({
         return facetName
           ? {
               ...state,
-              facets: {
-                ...state.facets,
-                [facetName]: { items: facetOptions, page },
-              },
+              facets: { ...state.facets, [facetName]: { items: facetOptions, page } },
             }
           : state;
       }
@@ -245,6 +244,18 @@ export const dataEntitiesSearchSlice = createSlice({
     builder.addCase(thunks.fetchSearchSuggestions.fulfilled, (state, { payload }) => {
       state.suggestions = payload;
     });
+
+    builder.addCase(
+      thunks.fetchDataEntitySearchHighlights.fulfilled,
+      (state, { payload }) => {
+        const { highlights, dataEntityId } = payload;
+
+        state.dataEntitySearchHighlightById = {
+          ...state.dataEntitySearchHighlightById,
+          [dataEntityId]: highlights,
+        };
+      }
+    );
   },
 });
 

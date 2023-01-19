@@ -22,7 +22,6 @@ import {
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
-import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 import type { AppInputProps } from '../../AppInput/AppInput';
 import AppInput from '../../AppInput/AppInput';
 import AppButton from '../../AppButton/AppButton';
@@ -72,7 +71,6 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     reason: string
   ) => {
     setSearchText(inputVal);
-    dispatch(updateSearchQuery(inputVal));
     if (reason === 'clear') setSelectedOption(null);
   };
 

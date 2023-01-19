@@ -1,14 +1,16 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import { Controller, ControllerRenderProps, useForm } from 'react-hook-form';
+import type { ControllerRenderProps } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import { getIdentity, getOwnerAssociationRequestCreatingStatuses } from 'redux/selectors';
-import {
+import type {
   AutocompleteInputChangeReason,
-  createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { Owner, OwnerAssociationRequestStatus, OwnerFormData } from 'generated-sources';
+import { createFilterOptions } from '@mui/material/useAutocomplete';
+import type { Owner, OwnerFormData } from 'generated-sources';
+import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/Icons';
 import { AppButton, AppInput, AutocompleteSuggestion } from 'components/shared';
 import {
@@ -132,18 +134,16 @@ const OwnerAssociationForm: React.FC = () => {
 
   React.useEffect(() => {
     if (!identity?.username) return;
-    dispatch(
-      searchOwners({
-        page: 1,
-        size: 30,
-        query: identity?.username,
-        allowedForSync: true,
-      })
-    )
-      .unwrap()
-      .then(({ items }) => {
-        setPossibleOwners(items);
-      });
+
+    const params = { page: 1, size: 30, query: identity?.username, allowedForSync: true };
+    const ownersPromise = dispatch(searchOwners(params));
+
+    ownersPromise.unwrap().then(({ items }) => setPossibleOwners(items));
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      ownersPromise.abort();
+    };
   }, [identity?.username]);
 
   return (

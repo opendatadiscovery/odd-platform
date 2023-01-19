@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntity } from 'generated-sources';
+import type { DataEntity } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { TermLinkedItemsColContainer } from '../LinkedItemsListStyles';

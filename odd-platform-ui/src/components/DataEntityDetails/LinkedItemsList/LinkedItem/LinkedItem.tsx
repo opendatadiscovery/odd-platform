@@ -1,9 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntity } from 'generated-sources';
-import { ColContainer } from 'components/Search/Results/ResultsStyles';
+import type { DataEntity } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-import { Container, ItemLink } from './LinkedItemStyles';
+import { Container, ItemLink, ColContainer } from './LinkedItemStyles';
 
 interface LinkedItemProps {
   linkedItem: DataEntity;

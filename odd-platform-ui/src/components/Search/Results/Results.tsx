@@ -1,17 +1,11 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
-import { useScrollBarWidth } from 'lib/hooks';
-import {
-  CountableSearchFilter,
-  DataEntityClassNameEnum,
-  Permission,
-} from 'generated-sources';
+import { DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityClassesDict,
-  getDataEntityGroupDeletingStatuses,
   getSearchCreatingStatuses,
   getSearchEntityClass,
   getSearchFacetsSynced,
@@ -19,17 +13,21 @@ import {
   getSearchIsCreatingAndFetching,
   getSearchIsFetching,
   getSearchResults,
+  getSearchResultsError,
+  getSearchResultsFetchStatuses,
   getSearchResultsPageInfo,
   getSearchTotals,
   getSearchUpdateStatuses,
 } from 'redux/selectors';
 import { fetchDataEntitySearchResults } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
-import { SearchClass } from 'redux/interfaces';
-import { AppButton, EmptyContentPlaceholder } from 'components/shared';
+import type { SearchClass } from 'redux/interfaces';
+import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import findKey from 'lodash/findKey';
 import { WithPermissions } from 'components/shared/contexts';
+import omit from 'lodash/omit';
+import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import ResultItem from './ResultItem/ResultItem';
@@ -38,54 +36,43 @@ import * as S from './ResultsStyles';
 
 const Results: React.FC = () => {
   const dispatch = useAppDispatch();
-  const scrollbarWidth = useScrollBarWidth();
   const size = 30;
 
   const searchId = useAppSelector(getSearchId);
   const searchClass = useAppSelector(getSearchEntityClass);
   const dataEntityClassesDict = useAppSelector(getDataEntityClassesDict);
-  const totals = useAppSelector(getSearchTotals);
+  const searchTotals = useAppSelector(getSearchTotals);
   const searchResults = useAppSelector(getSearchResults);
+  const searchResultsError = useAppSelector(getSearchResultsError);
   const searchFiltersSynced = useAppSelector(getSearchFacetsSynced);
-  const pageInfo = useAppSelector(getSearchResultsPageInfo);
+  const { total, page, hasNext } = useAppSelector(getSearchResultsPageInfo);
 
   const isSearchFetching = useAppSelector(getSearchIsFetching);
   const isSearchCreatingAndFetching = useAppSelector(getSearchIsCreatingAndFetching);
   const { isLoading: isSearchUpdating } = useAppSelector(getSearchUpdateStatuses);
+  const { isNotLoaded: isSearchResultsNotLoaded } = useAppSelector(
+    getSearchResultsFetchStatuses
+  );
   const { isLoading: isSearchCreating } = useAppSelector(getSearchCreatingStatuses);
-  const { isLoaded: isDataEntityGroupDeleted } = useAppSelector(
-    getDataEntityGroupDeletingStatuses
+
+  const [showDEGBtn, setShowDEGBtn] = React.useState(false);
+
+  const isCurrentSearchClass = React.useCallback(
+    (totalName: DataEntityClassNameEnum) => searchClass === searchTotals[totalName]?.id,
+    [searchClass, searchTotals]
   );
 
-  const fetchNextPage = () => {
-    if (!pageInfo.hasNext) return;
-    dispatch(fetchDataEntitySearchResults({ searchId, page: pageInfo.page + 1, size }));
-  };
+  const fetchNextPage = React.useCallback(() => {
+    if (!hasNext) return;
+    dispatch(fetchDataEntitySearchResults({ searchId, page: page + 1, size }));
+  }, [hasNext, searchId, page, size]);
 
   React.useEffect(() => {
     if (searchFiltersSynced && searchId && !isSearchCreating && !isSearchUpdating) {
       fetchNextPage();
+      setShowDEGBtn(isCurrentSearchClass(DataEntityClassNameEnum.ENTITY_GROUP));
     }
   }, [searchFiltersSynced, searchId, isSearchCreating, isSearchUpdating]);
-
-  const fetchPageAfterDEGDeleting = () => {
-    if (pageInfo.page && isDataEntityGroupDeleted) {
-      dispatch(fetchDataEntitySearchResults({ searchId, page: pageInfo.page, size }));
-    }
-  };
-
-  React.useEffect(() => fetchPageAfterDEGDeleting(), [isDataEntityGroupDeleted]);
-
-  const [showDEGBtn, setShowDEGBtn] = React.useState(false);
-  const searchClassIdPredicate = React.useCallback(
-    (totalName: DataEntityClassNameEnum) => searchClass === totals[totalName]?.id,
-    [searchClass, totals]
-  );
-
-  React.useEffect(
-    () => setShowDEGBtn(searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP)),
-    [searchClass, totals]
-  );
 
   const onSearchClassChange = React.useCallback(
     (tabValue: SearchClass | undefined) => {
@@ -102,8 +89,6 @@ const Results: React.FC = () => {
           facetSingle: true,
         })
       );
-
-      setShowDEGBtn(newSearchClass?.name === DataEntityClassNameEnum.ENTITY_GROUP);
     },
     [dataEntityClassesDict]
   );
@@ -114,20 +99,20 @@ const Results: React.FC = () => {
     if (typeof searchClass === 'string') key = searchClass;
     if (typeof searchClass === 'number') {
       key = findKey(
-        totals,
-        total => (total as CountableSearchFilter)?.id === searchClass
+        omit(searchTotals, 'myObjectsTotal', 'all'),
+        searchTotal => searchTotal?.id === searchClass
       ) as S.SearchTabsNames;
     }
 
     return S.gridSizes[key];
-  }, [searchClass, totals]);
+  }, [searchClass, searchTotals]);
 
   return (
     <Grid sx={{ mt: 2 }}>
       <SearchResultsTabs
         showTabsSkeleton={isSearchCreatingAndFetching}
         isHintUpdating={isSearchUpdating}
-        totals={totals}
+        totals={searchTotals}
         searchClass={searchClass}
         onSearchClassChange={onSearchClassChange}
       />
@@ -147,76 +132,15 @@ const Results: React.FC = () => {
           />
         )}
       </WithPermissions>
-      <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
-        <S.SearchCol item lg={grid.lg.nm}>
-          <Typography variant='caption'>Name</Typography>
-        </S.SearchCol>
-        {searchClassIdPredicate(DataEntityClassNameEnum.SET) && (
-          <>
-            <S.SearchCol item lg={grid.lg.us}>
-              <Typography variant='caption'>Use</Typography>
-            </S.SearchCol>
-            <S.SearchCol item lg={grid.lg.rc}>
-              <Typography variant='caption'>Rows/Columns</Typography>
-            </S.SearchCol>
-          </>
-        )}
-        {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) && (
-          <>
-            <S.SearchCol item lg={grid.lg.sr}>
-              <Typography variant='caption'>Sources</Typography>
-            </S.SearchCol>
-            <S.SearchCol item lg={grid.lg.tr}>
-              <Typography variant='caption'>Targets</Typography>
-            </S.SearchCol>
-          </>
-        )}
-        {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) && (
-          <S.SearchCol item lg={grid.lg.sr}>
-            <Typography variant='caption'>Source</Typography>
-          </S.SearchCol>
-        )}
-        {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) && (
-          <>
-            <S.SearchCol item lg={grid.lg.en}>
-              <Typography variant='caption'>Entities</Typography>
-            </S.SearchCol>
-            <S.SearchCol item lg={grid.lg.su}>
-              <Typography variant='caption'>Suite URL</Typography>
-            </S.SearchCol>
-          </>
-        )}
-
-        {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) && (
-          <S.SearchCol item lg={grid.lg.ne}>
-            <Typography variant='caption'>Number of entities</Typography>
-          </S.SearchCol>
-        )}
-        <S.SearchCol item lg={grid.lg.nd}>
-          <Typography variant='caption'>Namespace, Datasource</Typography>
-        </S.SearchCol>
-        <S.SearchCol item lg={grid.lg.ow}>
-          <Typography variant='caption'>Owners</Typography>
-        </S.SearchCol>
-        <S.SearchCol item lg={grid.lg.gr}>
-          <Typography variant='caption'>Groups</Typography>
-        </S.SearchCol>
-        <S.SearchCol item lg={grid.lg.cr}>
-          <Typography variant='caption'>Created</Typography>
-        </S.SearchCol>
-        <S.SearchCol item lg={grid.lg.up}>
-          <Typography variant='caption'>Last Update</Typography>
-        </S.SearchCol>
-      </S.ResultsTableHeader>
-      {isSearchCreating ? (
-        <SearchResultsSkeleton />
-      ) : (
+      <TableHeader grid={grid} isCurrentSearchClass={isCurrentSearchClass} />
+      {isSearchCreating && <SearchResultsSkeleton grid={grid} />}
+      {!isSearchCreatingAndFetching && !isSearchResultsNotLoaded && (
         <S.ListContainer id='results-list'>
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
-            hasMore={pageInfo.hasNext}
-            loader={isSearchFetching && <SearchResultsSkeleton />}
+            hasMore={hasNext}
+            loader={isSearchFetching && <SearchResultsSkeleton grid={grid} />}
             scrollThreshold='200px'
             scrollableTarget='results-list'
           >
@@ -225,16 +149,23 @@ const Results: React.FC = () => {
                 key={searchResult.id}
                 searchResult={searchResult}
                 gridSizes={grid}
-                searchClassIdPredicate={searchClassIdPredicate}
+                searchClassIdPredicate={isCurrentSearchClass}
                 showClassIcons={!searchClass || typeof searchClass === 'string'}
               />
             ))}
           </InfiniteScroll>
-          {!isSearchFetching && !pageInfo.total ? (
-            <EmptyContentPlaceholder text='No matches found' />
-          ) : null}
+          <EmptyContentPlaceholder
+            isContentLoaded={!isSearchFetching}
+            isContentEmpty={!total}
+            text='No matches found'
+          />
         </S.ListContainer>
       )}
+      <AppErrorPage
+        isNotContentLoaded={isSearchResultsNotLoaded}
+        error={searchResultsError}
+        offsetTop={210}
+      />
     </Grid>
   );
 };

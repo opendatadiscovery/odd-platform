@@ -7,7 +7,6 @@ import {
   AppInput,
   AppMenuItem,
 } from 'components/shared';
-import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useDebouncedCallback } from 'use-debounce';
 import { stringFormatted } from 'lib/helpers';
@@ -26,6 +25,7 @@ import {
   TermLinkedItemsListContainer,
   TermLinkedItemsResultsTableHeader,
 } from './LinkedItemsListStyles';
+import LinkedItemsListSkeleton from './LinkedItemsListSkeleton/LinkedItemsListSkeleton';
 
 const LinkedItemsList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -128,7 +128,7 @@ const LinkedItemsList: React.FC = () => {
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching ? (
-        <SearchResultsSkeleton />
+        <LinkedItemsListSkeleton />
       ) : (
         <TermLinkedItemsListContainer id='term-linked-items-list'>
           {termLinkedList && (
@@ -136,7 +136,7 @@ const LinkedItemsList: React.FC = () => {
               dataLength={termLinkedList?.length}
               next={fetchNextPage}
               hasMore={hasNext}
-              loader={isLinkedListFetching && <SearchResultsSkeleton />}
+              loader={isLinkedListFetching && <LinkedItemsListSkeleton />}
               scrollThreshold='200px'
               scrollableTarget='term-linked-items-list'
             >

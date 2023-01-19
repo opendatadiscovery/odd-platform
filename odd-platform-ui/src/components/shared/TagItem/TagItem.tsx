@@ -1,13 +1,13 @@
 import React from 'react';
-import { Theme } from '@mui/material';
+import { type Theme } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SystemIcon from 'components/shared/Icons/SystemIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { SxProps } from '@mui/system';
+import { type SxProps } from '@mui/system';
 import * as S from './TagItemStyles';
 
 interface TagItemProps {
-  label: string;
+  label: string | React.ReactElement;
   important?: boolean;
   removable?: boolean;
   onRemoveClick?: () => void;

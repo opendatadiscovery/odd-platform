@@ -1,11 +1,11 @@
 import React from 'react';
-import { Theme, TooltipProps } from '@mui/material';
-import * as S from 'components/shared/AppTooltip/AppTooltipStyles';
-import { SxProps } from '@mui/system';
+import type { Theme, TooltipProps } from '@mui/material';
+import type { SxProps } from '@mui/system';
+import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps
   extends Pick<TooltipProps, 'placement' | 'followCursor' | 'componentsProps'> {
-  title: (props: { open?: boolean }) => React.ReactElement | string | undefined;
+  title: React.ReactElement | string | undefined;
   type?: S.TooltipColorTypes;
   checkForOverflow?: boolean;
   children?: React.ReactNode | React.ReactElement | string;
@@ -22,8 +22,6 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   childSx,
   componentsProps,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-
   const [isOverflowed, setIsOverflow] = React.useState(checkForOverflow);
   const childrenRef = React.useRef<HTMLDivElement>(null);
 
@@ -38,7 +36,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   return (
     <S.AppTooltip
       $type={type}
-      title={title({ open }) || ''}
+      title={title || ''}
       placement={placement}
       followCursor={followCursor}
       disableInteractive
@@ -46,10 +44,6 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       componentsProps={componentsProps}
     >
       <S.ChildrenContainer
-        onMouseEnter={() => {
-          if (checkForOverflow ? isOverflowed : true) setOpen(true);
-        }}
-        onMouseLeave={() => setOpen(false)}
         $isCursorPointer={checkForOverflow ? isOverflowed : true}
         $isOverflowed={isOverflowed}
         ref={childrenRef}

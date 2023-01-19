@@ -1,7 +1,7 @@
 import React from 'react';
-import { DataEntityRunStatus } from 'generated-sources';
-import { SxProps } from '@mui/system';
-import { Theme } from '@mui/material';
+import { type DataEntityRunStatus } from 'generated-sources';
+import { type SxProps } from '@mui/system';
+import { type Theme } from '@mui/material';
 import * as S from './TestRunStatusItemStyles';
 
 interface TestRunStatusItemProps {

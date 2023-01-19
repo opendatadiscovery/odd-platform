@@ -9,9 +9,6 @@ export type ActivityQuery = RequiredField<
   'type'
 >;
 
-export type DataEntityActivityQuery =
-  SerializeDateToNumber<ActivityApiGetActivityRequest>;
-
 export type ActivitySingleFilterNames = keyof Pick<
   ActivityQuery,
   'datasourceId' | 'namespaceId' | 'eventType'

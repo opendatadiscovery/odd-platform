@@ -4,7 +4,7 @@ import type {
   FacetState,
   SearchFilterState,
 } from 'generated-sources';
-import { CurrentPageInfo } from './common';
+import type { CurrentPageInfo } from './common';
 
 export type OptionalFacetMap = Omit<FacetState, 'entityClasses'>;
 export type OptionalFacetNames = keyof OptionalFacetMap;

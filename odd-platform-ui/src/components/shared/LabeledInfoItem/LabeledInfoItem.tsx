@@ -1,7 +1,7 @@
-import React, { ElementType } from 'react';
-import { GridSize, TypographyProps } from '@mui/material';
-import { DataEntityRunStatus } from 'generated-sources';
-import { SxProps } from '@mui/system';
+import React, { type ElementType } from 'react';
+import type { GridSize, TypographyProps } from '@mui/material';
+import type { DataEntityRunStatus } from 'generated-sources';
+import type { SxProps } from '@mui/system';
 import {
   Container,
   Label,
@@ -21,6 +21,7 @@ interface LabeledInfoItemProps {
   valueWrap?: boolean;
   valueComponent?: ElementType;
   valueSx?: SxProps;
+  sx?: SxProps;
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
@@ -35,6 +36,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueWrap = false,
   valueComponent = 'span',
   valueSx,
+  sx,
 }) => {
   const getXS = () => {
     if (labelWidth === 12) return 12;
@@ -43,7 +45,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   };
 
   return (
-    <Container container $inline={inline}>
+    <Container container sx={sx} $inline={inline}>
       <LabelContainer item xs={labelWidth || 'auto'}>
         <Label
           title={typeof label === 'string' ? label : ''}

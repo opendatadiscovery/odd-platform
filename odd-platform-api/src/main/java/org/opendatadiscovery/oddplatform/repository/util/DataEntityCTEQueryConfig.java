@@ -20,6 +20,8 @@ public class DataEntityCTEQueryConfig {
     public static final String AGG_TITLE_FIELD = "title";
     public static final String HAS_ALERTS_FIELD = "has_alerts";
     public static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
+    public static final String AGG_METADATA_FIELD = "metadata";
+    public static final String AGG_METADATA_VALUE_FIELD = "metadata_value";
 
     private List<Condition> conditions;
     private LimitOffset limitOffset;

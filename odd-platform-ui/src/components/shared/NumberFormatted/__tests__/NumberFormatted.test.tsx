@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { getByTestID } from 'lib/testHelpers';
-import NumberFormatted, { NumberFormattedProps } from '../NumberFormatted';
+import NumberFormatted, { type NumberFormattedProps } from '../NumberFormatted';
 
 describe('NumberFormatted', () => {
   const setupComponent = (props?: Partial<NumberFormattedProps>) =>

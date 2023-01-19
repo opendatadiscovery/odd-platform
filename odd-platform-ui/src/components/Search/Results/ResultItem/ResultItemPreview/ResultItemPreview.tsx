@@ -1,15 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  AppCircularProgress,
-  BooleanFormatted,
-  LabeledInfoItem,
-  NumberFormatted,
-} from 'components/shared';
-import type { MetadataFieldValue } from 'generated-sources';
-import { MetadataFieldType } from 'generated-sources';
-import remarkGfm from 'remark-gfm';
-import ReactMarkdown from 'react-markdown';
+import { AppCircularProgress, LabeledInfoItem, NumberFormatted } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {
@@ -20,17 +11,15 @@ import {
 } from 'redux/selectors';
 import { useAppDateTime } from 'lib/hooks';
 import isEmpty from 'lodash/isEmpty';
+import MDEditor from '@uiw/react-md-editor';
+import { getMetadataValue } from 'lib/helpers';
 import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
   dataEntityId: number;
-  fetchData?: boolean;
 }
 
-const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
-  dataEntityId,
-  fetchData,
-}) => {
+const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) => {
   const dispatch = useAppDispatch();
   const { metadataFormattedDateTime } = useAppDateTime();
 
@@ -46,40 +35,8 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   );
 
   React.useEffect(() => {
-    if (fetchData && isEmpty(dataEntityDetails))
-      dispatch(fetchDataEntityDetails({ dataEntityId }));
-  }, [fetchData, dataEntityDetails, dataEntityId, dispatch]);
-
-  const getMetadataValue = (metadataItem: MetadataFieldValue) => {
-    let metadataVal;
-    try {
-      switch (metadataItem.field.type) {
-        case MetadataFieldType.BOOLEAN:
-          metadataVal = <BooleanFormatted value={metadataItem.value} />;
-          break;
-        case MetadataFieldType.DATETIME:
-          metadataVal = metadataFormattedDateTime(new Date(metadataItem.value).getTime());
-          break;
-        case MetadataFieldType.ARRAY:
-          metadataVal = JSON.parse(metadataItem.value).join(', ');
-          break;
-        default:
-          metadataVal = metadataItem.value;
-      }
-    } catch {
-      metadataVal = metadataItem.value;
-    }
-    return metadataVal;
-  };
-
-  const getDescription = React.useCallback(
-    () => (
-      <ReactMarkdown className='markdown-body' remarkPlugins={[remarkGfm]}>
-        {dataEntityDetails?.internalDescription}
-      </ReactMarkdown>
-    ),
-    [dataEntityDetails]
-  );
+    if (isEmpty(dataEntityDetails)) dispatch(fetchDataEntityDetails({ dataEntityId }));
+  }, []);
 
   return (
     <S.Container container>
@@ -110,7 +67,11 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
                   label={metadata.field.name}
                   labelWidth={4}
                 >
-                  {getMetadataValue(metadata)}
+                  {getMetadataValue(
+                    metadata.field,
+                    metadata.value,
+                    metadataFormattedDateTime
+                  )}
                 </LabeledInfoItem>
               ))
             ) : (
@@ -136,7 +97,11 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
                   label={metadata.field.name}
                   labelWidth={4}
                 >
-                  {getMetadataValue(metadata)}
+                  {getMetadataValue(
+                    metadata.field,
+                    metadata.value,
+                    metadataFormattedDateTime
+                  )}
                 </LabeledInfoItem>
               ))
             ) : (
@@ -145,14 +110,18 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
               </Typography>
             )}
           </Grid>
-          <S.AboutContainer container sx={{ mt: 2 }}>
+          <S.AboutContainer container sx={{ mt: 2 }} data-color-mode='light'>
             <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
               <Typography variant='h4' color='text.primary'>
                 About
               </Typography>
             </Grid>
             <S.AboutText variant='body1' color='texts.secondary'>
-              {dataEntityDetails?.internalDescription ? getDescription() : 'Not created'}
+              {dataEntityDetails?.internalDescription ? (
+                <MDEditor.Markdown source={dataEntityDetails?.internalDescription} />
+              ) : (
+                'Not created'
+              )}
             </S.AboutText>
           </S.AboutContainer>
         </>

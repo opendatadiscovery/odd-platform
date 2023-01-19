@@ -1,6 +1,8 @@
+import type { MetadataField } from 'generated-sources';
 import {
   type DataQualityTestExpectation,
   DataSetFieldTypeTypeEnum,
+  MetadataFieldType,
 } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
@@ -43,9 +45,7 @@ export const stringFormatted = (
 };
 
 export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
-
 export const toDate = (dateToCast: number): Date => new Date(dateToCast);
-
 export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
 
 export const setActivityBackgroundColor = (
@@ -119,3 +119,110 @@ export const getEllipsisTextByWidth = (
     }
   }
 };
+
+type CSSOptions = Pick<
+  CSSStyleDeclaration,
+  'fontFamily' | 'fontSize' | 'fontWeight' | 'lineHeight' | 'visibility' | 'display'
+>;
+
+function getCreatedElWidth(text: string, options?: CSSOptions) {
+  const el = document.createElement('div');
+  const textContent = document.createTextNode(text);
+  el.appendChild(textContent);
+
+  el.style.fontFamily = options?.fontFamily || 'Roboto';
+  el.style.fontSize = options?.fontSize || '14px';
+  el.style.fontWeight = options?.fontWeight || '400';
+  el.style.lineHeight = options?.lineHeight || '20px';
+  el.style.visibility = options?.visibility || 'hidden';
+  el.style.display = options?.display || 'initial';
+
+  document.body.appendChild(el);
+
+  const width = el.offsetWidth;
+
+  el?.parentNode?.removeChild(el);
+
+  return width;
+}
+
+export function sliceStringByWidth(
+  str: string,
+  width: number,
+  options?: CSSOptions
+): string {
+  if (!str) return '';
+
+  const ellipsis = '...';
+  const splitted = str.split(' ');
+  const fitWordStart = splitted.findIndex(el => el.includes('<b>'));
+  const firWordEnd = splitted.findIndex(el => el.includes('</b>'));
+
+  let resultString: string[] = [];
+  if (fitWordStart === firWordEnd) {
+    resultString.push(splitted[fitWordStart]);
+  } else {
+    resultString.push(splitted[fitWordStart], splitted[firWordEnd]);
+  }
+
+  let elWidth = 0;
+  let counter = 1;
+
+  while (elWidth <= width) {
+    resultString = [
+      splitted[fitWordStart - counter],
+      ...resultString,
+      splitted[firWordEnd + counter],
+    ];
+
+    if (
+      splitted[fitWordStart - counter] === undefined &&
+      splitted[firWordEnd + counter] === undefined
+    ) {
+      break;
+    }
+
+    counter += 1;
+    elWidth = getCreatedElWidth(resultString.join(' '), options);
+  }
+
+  if (splitted[fitWordStart - counter]) {
+    resultString = [ellipsis, ...resultString];
+  }
+  if (splitted[firWordEnd + counter]) {
+    resultString = [...resultString, ellipsis];
+  }
+
+  return resultString.join(' ');
+}
+
+export function getMetadataValue(
+  field: MetadataField,
+  value: string,
+  formatMetadataTime: (date: number) => string
+): string {
+  let metadataVal;
+
+  try {
+    switch (field.type) {
+      case MetadataFieldType.BOOLEAN:
+        metadataVal = value === 'true' ? 'Yes' : 'No';
+        break;
+      case MetadataFieldType.DATETIME:
+        metadataVal = formatMetadataTime(new Date(value).getTime());
+        break;
+      case MetadataFieldType.ARRAY:
+        metadataVal = JSON.parse(value).join(', ');
+        break;
+      case MetadataFieldType.JSON:
+        metadataVal = JSON.stringify(JSON.parse(value), null, 2);
+        break;
+      default:
+        metadataVal = value;
+    }
+  } catch {
+    metadataVal = value;
+  }
+
+  return metadataVal;
+}

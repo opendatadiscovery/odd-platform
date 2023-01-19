@@ -391,8 +391,6 @@ components:
             $ref: '#/components/schemas/DataEntityClass'
         type:
           $ref: '#/components/schemas/DataEntityType'
-        tags:
-          $ref: '#/components/schemas/TagList'
         data_entity_groups:
           $ref: '#/components/schemas/DataEntityRefList'
         created_at:
@@ -431,6 +429,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TermRef'
+        tags:
+          $ref: '#/components/schemas/TagList'
       required:
         - metadata_field_values
         - external_description
@@ -456,6 +456,76 @@ components:
         - $ref: '#/components/schemas/DataInput'
         - $ref: '#/components/schemas/DataQualityTest'
         - $ref: '#/components/schemas/DataEntityGroup'
+
+    DataEntitySearchHighlight:
+      type: object
+      properties:
+        data_entity:
+          $ref: '#/components/schemas/DataEntityHighlight'
+        data_source:
+          $ref: '#/components/schemas/DataSourceHighlight'
+        namespace:
+          $ref: '#/components/schemas/NamespaceHighlight'
+        tags:
+          $ref: '#/components/schemas/TagList'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipHighlight'
+        metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetadataFieldValue'
+        dataset_structure:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSetStructureHighlight'
+
+    DataEntityHighlight:
+      type: object
+      properties:
+        external_name:
+          type: string
+        external_description:
+          type: string
+        internal_name:
+          type: string
+        internal_description:
+          type: string
+
+    DataSourceHighlight:
+      type: object
+      properties:
+        name:
+          type: string
+        oddrn:
+          type: string
+
+    NamespaceHighlight:
+      type: object
+      properties:
+        name:
+          type: string
+
+    OwnershipHighlight:
+      type: object
+      properties:
+        owner:
+          type: string
+        title:
+          type: string
+
+    DataSetStructureHighlight:
+      type: object
+      properties:
+        name:
+          type: string
+        internal_description:
+          type: string
+        external_description:
+          type: string
+        labels:
+          $ref: '#/components/schemas/LabelList'
 
     DataEntityClass:
       type: object

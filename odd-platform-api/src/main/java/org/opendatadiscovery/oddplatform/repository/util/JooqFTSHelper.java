@@ -99,12 +99,8 @@ public class JooqFTSHelper {
 
     public Condition ftsCondition(final Field<?> vectorField,
                                   final String plainQuery) {
-        final String query = Arrays.stream(plainQuery.split(" "))
-            .map(queryPart -> queryPart + ":*")
-            .collect(Collectors.joining("&"));
-
+        final String query = tsQuery(plainQuery);
         final Field<Object> conditionField = field("? @@ to_tsquery(?)", vectorField, query);
-
         return condition(conditionField.toString());
     }
 
@@ -156,16 +152,18 @@ public class JooqFTSHelper {
 
     public Field<?> ftsRankField(final Field<?> vectorField, final String plainQuery) {
         requireNonNull(vectorField);
-
-        final String query = Arrays.stream(plainQuery.split(" "))
-            .map(queryPart -> queryPart + ":*")
-            .collect(Collectors.joining("&"));
-
+        final String query = tsQuery(plainQuery);
         return field(
             "ts_rank(?, to_tsquery(?))",
             vectorField,
             query
         );
+    }
+
+    public String tsQuery(final String plainQuery) {
+        return Arrays.stream(plainQuery.split(" "))
+            .map(queryPart -> queryPart + ":*")
+            .collect(Collectors.joining("&"));
     }
 
     private Condition compileFacetCondition(final FacetType facetType,

@@ -20,6 +20,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 @Data
 public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private Collection<MetadataDto> metadata;
+    private Collection<TagDto> tags;
     private Collection<DatasetVersionPojo> datasetVersions;
     private Collection<TermRefDto> terms;
 
@@ -30,7 +31,10 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
+                                final Collection<MetadataDto> metadata,
                                 final Collection<TagDto> tags) {
-        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership, dataSource, tags);
+        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership, dataSource);
+        this.metadata = metadata;
+        this.tags = tags;
     }
 }

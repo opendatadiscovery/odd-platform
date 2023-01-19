@@ -2,11 +2,11 @@ import {
   Grid,
   LinearProgress,
   linearProgressClasses,
-  Theme,
+  type Theme,
   Typography,
 } from '@mui/material';
-import styled, { CSSObject } from 'styled-components';
-import { DataQualityTestSeverity, SLAColour } from 'generated-sources';
+import styled, { type CSSObject } from 'styled-components';
+import type { DataQualityTestSeverity, SLAColour } from 'generated-sources';
 
 export const Container = styled('div')(() => ({
   width: '100%',
@@ -18,7 +18,7 @@ export const Container = styled('div')(() => ({
 }));
 
 export const TooltipStyles = {
-  minWidth: '420px !important',
+  maxWidth: '420px !important',
   padding: '16px !important',
 };
 

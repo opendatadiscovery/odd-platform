@@ -1,6 +1,6 @@
 import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
 import type { DataEntityLineageState } from 'redux/interfaces';
-import { DataEntityLineage } from 'generated-sources';
+import { type DataEntityLineage } from 'generated-sources';
 
 export interface DataEntityLineageById<
   NodeT = GroupedDataEntityLineageNode,

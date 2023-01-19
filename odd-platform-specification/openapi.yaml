@@ -796,6 +796,29 @@ paths:
       tags:
         - search
 
+  /api/search/{search_id}/data_entities/{data_entity_id}/highlights:
+    get:
+      summary: 'Highlight data entity fields'
+      description: 'Returns fields which were used in search query'
+      operationId: highlightDataEntity
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntitySearchHighlight'
+      tags:
+        - search
+
   /api/search/suggestions:
     get:
       summary: Get search suggestions by query

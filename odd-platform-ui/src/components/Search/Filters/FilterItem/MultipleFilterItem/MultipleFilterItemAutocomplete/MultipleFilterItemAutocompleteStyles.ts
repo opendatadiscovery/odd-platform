@@ -1,4 +1,4 @@
-import styled, { CSSObject } from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 
 export const FilterCount = styled('span')(({ theme }) => ({
   color: theme.palette.texts.hint,

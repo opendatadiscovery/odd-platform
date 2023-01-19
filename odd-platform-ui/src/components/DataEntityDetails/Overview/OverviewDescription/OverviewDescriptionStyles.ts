@@ -1,19 +1,10 @@
 import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
 
 export const CaptionContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   marginBottom: theme.spacing(0.5),
-}));
-
-export const Preview = styled(ReactMarkdown)(({ theme }) => ({
-  fontSize: theme.typography.body1.fontSize,
-  fontFamily: 'inherit',
-  fontWeight: theme.typography.body1.fontWeight,
-  lineHeight: theme.typography.body1.lineHeight,
-  color: theme.palette.text.secondary,
 }));
 
 export const FormActions = styled('div')(({ theme }) => ({

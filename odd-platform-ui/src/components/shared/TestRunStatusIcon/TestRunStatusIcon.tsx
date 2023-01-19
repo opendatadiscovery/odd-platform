@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataEntityRunStatus } from 'generated-sources';
+import { type DataEntityRunStatus } from 'generated-sources';
 import * as S from './TestRunStatusIconStyles';
 
 export interface TestRunStatusIconProps {
