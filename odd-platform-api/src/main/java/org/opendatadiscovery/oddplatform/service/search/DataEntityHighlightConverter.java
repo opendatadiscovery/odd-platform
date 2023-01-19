@@ -94,10 +94,10 @@ public class DataEntityHighlightConverter {
 
     private String dataEntityDetailsFields(final DataEntityPojo pojo) {
         return String.join(RECORD_DELIMITER,
-            StringUtils.defaultIfEmpty(pojo.getExternalName(), ""),
-            StringUtils.defaultIfEmpty(pojo.getInternalName(), ""),
-            StringUtils.defaultIfEmpty(pojo.getExternalDescription(), ""),
-            StringUtils.defaultIfEmpty(pojo.getInternalDescription(), "")
+            searchableString(pojo.getExternalName()),
+            searchableString(pojo.getInternalName()),
+            searchableString(pojo.getExternalDescription()),
+            searchableString(pojo.getInternalDescription())
         );
     }
 
@@ -106,8 +106,8 @@ public class DataEntityHighlightConverter {
             return "";
         }
         return String.join(RECORD_DELIMITER,
-            StringUtils.defaultIfEmpty(pojo.getName(), ""),
-            StringUtils.defaultIfEmpty(pojo.getOddrn(), "")
+            searchableString(pojo.getName()),
+            searchableString(pojo.getOddrn())
         );
     }
 
@@ -115,7 +115,7 @@ public class DataEntityHighlightConverter {
         if (pojo == null) {
             return "";
         }
-        return StringUtils.defaultIfEmpty(pojo.getName(), "");
+        return searchableString(pojo.getName());
     }
 
     private String tagFields(final Collection<TagDto> tags) {
@@ -123,7 +123,7 @@ public class DataEntityHighlightConverter {
             return "";
         }
         return tags.stream()
-            .map(t -> t.tagPojo().getName())
+            .map(t -> searchableString(t.tagPojo().getName()))
             .collect(Collectors.joining(DELIMITER));
     }
 
@@ -133,8 +133,8 @@ public class DataEntityHighlightConverter {
         }
         return ownership.stream()
             .map(o -> {
-                final String ownerName = o.getOwner().getName();
-                final String ownerTitle = o.getTitle().getName();
+                final String ownerName = searchableString(o.getOwner().getName());
+                final String ownerTitle = searchableString(o.getTitle().getName());
                 return String.join(RECORD_DELIMITER, ownerName, ownerTitle);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
@@ -156,8 +156,8 @@ public class DataEntityHighlightConverter {
         return metadata.stream()
             .filter(m -> m.metadataField().getOrigin().equalsIgnoreCase(origin.name()))
             .map(m -> {
-                final String key = m.metadataField().getName();
-                final String value = m.metadataFieldValue().getValue();
+                final String key = searchableString(m.metadataField().getName());
+                final String value = searchableString(m.metadataFieldValue().getValue());
                 return String.join(RECORD_DELIMITER, key, value);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
@@ -169,11 +169,9 @@ public class DataEntityHighlightConverter {
         }
         return structureDto.getDatasetFields().stream()
             .map(f -> {
-                final String name = f.getDatasetFieldPojo().getName();
-                final String internalDescription =
-                    StringUtils.defaultIfEmpty(f.getDatasetFieldPojo().getInternalDescription(), "");
-                final String externalDescription =
-                    StringUtils.defaultIfEmpty(f.getDatasetFieldPojo().getExternalDescription(), "");
+                final String name = searchableString(f.getDatasetFieldPojo().getName());
+                final String internalDescription = searchableString(f.getDatasetFieldPojo().getInternalDescription());
+                final String externalDescription = searchableString(f.getDatasetFieldPojo().getExternalDescription());
                 final String labels = mapDatasetFieldLabels(f.getLabels());
                 return String.join(RECORD_DELIMITER, name, internalDescription, externalDescription, labels);
             })
@@ -185,7 +183,7 @@ public class DataEntityHighlightConverter {
             return "";
         }
         return labels.stream()
-            .map(l -> l.pojo().getName())
+            .map(l -> searchableString(l.pojo().getName()))
             .collect(Collectors.joining(DELIMITER));
     }
 
@@ -363,5 +361,10 @@ public class DataEntityHighlightConverter {
 
     private boolean isHighlighted(final String field) {
         return StringUtils.isNotEmpty(field) && field.contains(HIGHLIGHT_TAG) && field.contains(HIGHLIGHT_TAG_END);
+    }
+
+    private String searchableString(final String value) {
+        return StringUtils.defaultIfEmpty(value, "")
+            .replace("'", "''");
     }
 }
