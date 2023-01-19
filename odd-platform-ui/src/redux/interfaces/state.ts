@@ -36,6 +36,7 @@ import type {
   Term,
   TermDetails,
   TermRef,
+  Link,
   ActivityType,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
@@ -197,6 +198,7 @@ export interface OwnerAssociationState {
 export interface AppInfoState {
   appInfo: AppInfo;
   activeFeatures: Feature[];
+  links: Link[];
 }
 
 export interface TermsState {

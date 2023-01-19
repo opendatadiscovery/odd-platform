@@ -13,3 +13,8 @@ export const getActiveFeatures = createSelector(
   appInfoState,
   appInfo => appInfo.activeFeatures || emptyArr
 );
+
+export const getAppLinks = createSelector(
+  appInfoState,
+  appInfo => appInfo.links || emptyArr
+);
