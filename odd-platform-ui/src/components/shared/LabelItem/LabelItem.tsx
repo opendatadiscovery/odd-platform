@@ -1,12 +1,12 @@
 import React from 'react';
 import { SystemIcon, ClearIcon } from 'components/shared/Icons';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { Theme, TypographyProps } from '@mui/material';
-import { SxProps } from '@mui/system';
+import type { Theme, TypographyProps } from '@mui/material';
+import type { SxProps } from '@mui/system';
 import { Container } from './LabelItemStyles';
 
 interface LabelItemProps {
-  labelName: string | undefined;
+  labelName: string | undefined | React.ReactElement;
   removable?: boolean;
   onRemoveClick?: () => void;
   unfilled?: boolean;
@@ -33,7 +33,7 @@ const LabelItem: React.FC<LabelItemProps> = ({
     $systemLabel={systemLabel}
     variant={variant}
     component={component}
-    title={labelName}
+    title={typeof labelName === 'string' ? labelName : ''}
   >
     {systemLabel && <SystemIcon />}
     {labelName}

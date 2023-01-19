@@ -101,15 +101,15 @@ export const fetchSearchSuggestions = handleResponseAsyncThunk<
 );
 
 export const fetchDataEntitySearchHighlights = handleResponseAsyncThunk<
-  RelatedToEntityId<{ highlights: DataEntitySearchHighlight }> & { searchId: string },
+  RelatedToEntityId<{ highlights: DataEntitySearchHighlight }>,
   SearchApiHighlightDataEntityRequest
 >(
   actions.fetchDataEntitySearchHighlightsActionType,
   async params => {
-    const { searchId, dataEntityId } = params;
+    const { dataEntityId } = params;
     const highlights = await searchApi.highlightDataEntity(params);
 
-    return { highlights, searchId, dataEntityId };
+    return { highlights, dataEntityId };
   },
   {}
 );

@@ -4,21 +4,28 @@ import styled from 'styled-components';
 export const Container = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(1),
   width: '640px',
-  // minHeight: '255px',
-  maxHeight: '510px',
-  overflowY: 'hidden',
+  flexDirection: 'column',
+  rowGap: theme.spacing(1),
 }));
 
 export const HighlightText = styled(Typography)(({ theme }) => ({
-  overflowX: 'hidden',
-  textOverflow: 'ellipsis',
   '& > b': { backgroundColor: theme.palette.warning.light, fontWeight: 400 },
 }));
 
-export const AboutContainer = styled(Grid)(({ theme }) => ({
-  borderTop: '1px solid',
-  borderTopColor: theme.palette.divider,
-  paddingTop: theme.spacing(2),
+export const OwnerItem = styled('span')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0.25, 0.5),
+  borderBottom: '1px solid',
+  borderColor: theme.palette.border.primary,
+  marginBottom: theme.spacing(0.5),
+  '&:last-child': { border: 'none', marginBottom: 0 },
 }));
 
-export const AboutText = styled(Typography)(() => ({ width: '100%' }));
+export const StructureItem = styled(Grid)(({ theme }) => ({
+  paddingBottom: theme.spacing(0.25),
+  borderBottom: '1px solid',
+  borderColor: theme.palette.border.primary,
+  marginBottom: theme.spacing(0.5),
+  '&:last-child': { border: 'none', marginBottom: 0 },
+}));

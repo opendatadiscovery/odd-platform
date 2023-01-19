@@ -1,6 +1,8 @@
+import type { MetadataField } from 'generated-sources';
 import {
   type DataQualityTestExpectation,
   DataSetFieldTypeTypeEnum,
+  MetadataFieldType,
 } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
@@ -192,4 +194,35 @@ export function sliceStringByWidth(
   }
 
   return resultString.join(' ');
+}
+
+export function getMetadataValue(
+  field: MetadataField,
+  value: string,
+  formatMetadataTime: (date: number) => string
+): string {
+  let metadataVal;
+
+  try {
+    switch (field.type) {
+      case MetadataFieldType.BOOLEAN:
+        metadataVal = value === 'true' ? 'Yes' : 'No';
+        break;
+      case MetadataFieldType.DATETIME:
+        metadataVal = formatMetadataTime(new Date(value).getTime());
+        break;
+      case MetadataFieldType.ARRAY:
+        metadataVal = JSON.parse(value).join(', ');
+        break;
+      case MetadataFieldType.JSON:
+        metadataVal = JSON.stringify(JSON.parse(value), null, 2);
+        break;
+      default:
+        metadataVal = value;
+    }
+  } catch {
+    metadataVal = value;
+  }
+
+  return metadataVal;
 }

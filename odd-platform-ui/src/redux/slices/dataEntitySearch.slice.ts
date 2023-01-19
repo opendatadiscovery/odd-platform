@@ -248,12 +248,10 @@ export const dataEntitiesSearchSlice = createSlice({
     builder.addCase(
       thunks.fetchDataEntitySearchHighlights.fulfilled,
       (state, { payload }) => {
-        const { highlights, searchId, dataEntityId } = payload;
-
-        const isEqual = isSearchIdsEquals(state.searchId, searchId);
+        const { highlights, dataEntityId } = payload;
 
         state.dataEntitySearchHighlightById = {
-          ...(isEqual ? state.dataEntitySearchHighlightById : {}),
+          ...state.dataEntitySearchHighlightById,
           [dataEntityId]: highlights,
         };
       }
