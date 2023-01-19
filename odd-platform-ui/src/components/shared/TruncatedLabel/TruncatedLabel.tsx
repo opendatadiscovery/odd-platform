@@ -1,6 +1,6 @@
 import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
-import { Label } from 'generated-sources';
+import { type Label } from 'generated-sources';
 import { Grid } from '@mui/material';
 import LabelItem from '../LabelItem/LabelItem';
 import TruncatedLabelMenu from './TruncatedLabelMenu/TruncatedLabelMenu';

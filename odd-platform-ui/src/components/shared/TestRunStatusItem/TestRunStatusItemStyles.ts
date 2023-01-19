@@ -1,4 +1,4 @@
-import { DataEntityRunStatus } from 'generated-sources';
+import { type DataEntityRunStatus } from 'generated-sources';
 import styled from 'styled-components';
 import { Box, Typography } from '@mui/material';
 

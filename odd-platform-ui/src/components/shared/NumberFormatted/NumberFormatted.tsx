@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, BoxProps } from '@mui/material';
+import { Box, type BoxProps } from '@mui/material';
 
 export interface NumberFormattedProps extends Pick<BoxProps, 'sx' | 'component'> {
   value: string | number | undefined | null;

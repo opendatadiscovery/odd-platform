@@ -1,5 +1,5 @@
 import React from 'react';
-import { Feature } from 'generated-sources';
+import { type Feature } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getActiveFeatures } from 'redux/selectors';
 

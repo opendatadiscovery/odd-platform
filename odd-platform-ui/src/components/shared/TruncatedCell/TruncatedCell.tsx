@@ -1,6 +1,6 @@
 import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
-import { DataEntityRef } from 'generated-sources';
+import { type DataEntityRef } from 'generated-sources';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppPaths } from 'lib/hooks';
 import TruncatedCellMenu from './TruncatedCellMenu/TruncatedCellMenu';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { DataEntityRef } from 'generated-sources';
+import { type DataEntityRef } from 'generated-sources';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';

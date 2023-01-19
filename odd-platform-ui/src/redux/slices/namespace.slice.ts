@@ -1,6 +1,6 @@
 import { namespaceActionTypePrefix } from 'redux/actions';
 import type { NamespacesState } from 'redux/interfaces';
-import { Namespace } from 'generated-sources';
+import { type Namespace } from 'generated-sources';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 

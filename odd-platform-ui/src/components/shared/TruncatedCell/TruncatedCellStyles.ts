@@ -1,4 +1,4 @@
-import { Typography, TypographyProps } from '@mui/material';
+import { Typography, type TypographyProps } from '@mui/material';
 import styled from 'styled-components';
 
 export const TruncatedList = styled('div')(({ theme }) => ({

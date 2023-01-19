@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { Redirect, Route, type RouteProps } from 'react-router-dom';
 
 interface Props extends RouteProps {
   isAllowedTo: boolean;

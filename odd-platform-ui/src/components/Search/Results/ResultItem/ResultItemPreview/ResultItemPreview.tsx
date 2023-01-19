@@ -1,13 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  AppCircularProgress,
-  BooleanFormatted,
-  LabeledInfoItem,
-  NumberFormatted,
-} from 'components/shared';
-import type { MetadataFieldValue } from 'generated-sources';
-import { MetadataFieldType } from 'generated-sources';
+import { AppCircularProgress, LabeledInfoItem, NumberFormatted } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {
@@ -19,6 +12,7 @@ import {
 import { useAppDateTime } from 'lib/hooks';
 import isEmpty from 'lodash/isEmpty';
 import MDEditor from '@uiw/react-md-editor';
+import { getMetadataValue } from 'lib/helpers';
 import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
@@ -43,28 +37,6 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
   React.useEffect(() => {
     if (isEmpty(dataEntityDetails)) dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, []);
-
-  const getMetadataValue = (metadataItem: MetadataFieldValue) => {
-    let metadataVal;
-    try {
-      switch (metadataItem.field.type) {
-        case MetadataFieldType.BOOLEAN:
-          metadataVal = <BooleanFormatted value={metadataItem.value} />;
-          break;
-        case MetadataFieldType.DATETIME:
-          metadataVal = metadataFormattedDateTime(new Date(metadataItem.value).getTime());
-          break;
-        case MetadataFieldType.ARRAY:
-          metadataVal = JSON.parse(metadataItem.value).join(', ');
-          break;
-        default:
-          metadataVal = metadataItem.value;
-      }
-    } catch {
-      metadataVal = metadataItem.value;
-    }
-    return metadataVal;
-  };
 
   return (
     <S.Container container>
@@ -95,7 +67,11 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
                   label={metadata.field.name}
                   labelWidth={4}
                 >
-                  {getMetadataValue(metadata)}
+                  {getMetadataValue(
+                    metadata.field,
+                    metadata.value,
+                    metadataFormattedDateTime
+                  )}
                 </LabeledInfoItem>
               ))
             ) : (
@@ -121,7 +97,11 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
                   label={metadata.field.name}
                   labelWidth={4}
                 >
-                  {getMetadataValue(metadata)}
+                  {getMetadataValue(
+                    metadata.field,
+                    metadata.value,
+                    metadataFormattedDateTime
+                  )}
                 </LabeledInfoItem>
               ))
             ) : (

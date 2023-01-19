@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { DataEntityRunStatus } from 'generated-sources';
+import { type DataEntityRunStatus } from 'generated-sources';
 
 export const Content = styled('div')<{
   $typeName: DataEntityRunStatus;

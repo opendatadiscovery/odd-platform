@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 
 import {
   StyledEngineProvider,
-  Theme,
+  type Theme,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
