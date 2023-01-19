@@ -157,6 +157,7 @@ const Results: React.FC = () => {
           <EmptyContentPlaceholder
             isContentLoaded={!isSearchFetching}
             isContentEmpty={!total}
+            text='No matches found'
           />
         </S.ListContainer>
       )}
