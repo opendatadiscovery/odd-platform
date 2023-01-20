@@ -1780,11 +1780,11 @@ paths:
 
       tags:
         - metadata
-  /api/datasetfields/{dataset_field_id}:
+  /api/datasetfields/{dataset_field_id}/description:
     put:
-      summary: Update DatasetField's labels and description
-      description: Updates DatasetField's labels and description
-      operationId: updateDatasetField
+      summary: Update DatasetField's description
+      description: Updates DatasetField's description
+      operationId: updateDatasetFieldDescription
       parameters:
         - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
       requestBody:
@@ -1792,7 +1792,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DatasetFieldUpdateFormData'
+              $ref: './components.yaml/#/components/schemas/DatasetFieldDescriptionUpdateFormData'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetField'
+      tags:
+        - datasetField
+
+  /api/datasetfields/{dataset_field_id}/labels:
+    put:
+      summary: Update DatasetField's labels
+      description: Updates DatasetField's labels
+      operationId: updateDatasetFieldLabels
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DatasetFieldLabelsUpdateFormData'
       responses:
         '201':
           description: OK

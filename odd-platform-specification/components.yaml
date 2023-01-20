@@ -1420,6 +1420,10 @@ components:
           $ref: '#/components/schemas/LabelList'
         enum_value_count:
           type: integer
+        metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetadataFieldValue'
       required:
         - id
         - oddrn
@@ -1454,12 +1458,16 @@ components:
         - type
         - is_nullable
 
-    DatasetFieldUpdateFormData:
+    DatasetFieldDescriptionUpdateFormData:
       type: object
       properties:
         description:
           type: string
-        label_names:
+
+    DatasetFieldLabelsUpdateFormData:
+      type: object
+      properties:
+        labels:
           type: array
           items:
             type: string
