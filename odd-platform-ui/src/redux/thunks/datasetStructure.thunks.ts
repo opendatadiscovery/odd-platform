@@ -6,7 +6,6 @@ import {
   DatasetFieldApi,
   type DatasetFieldApiCreateEnumValueRequest,
   type DatasetFieldApiGetEnumValuesRequest,
-  type DatasetFieldApiUpdateDatasetFieldRequest,
 } from 'generated-sources';
 import type {
   DataSetFieldEnumsResponse,
@@ -59,27 +58,25 @@ export const fetchDataSetStructure = handleResponseAsyncThunk<
   { switchOffErrorMessage: true }
 );
 
-export const updateDataSetFieldFormData = handleResponseAsyncThunk<
-  UpdateDataSetFieldFormResponse,
-  DatasetFieldApiUpdateDatasetFieldRequest
->(
-  actions.updateDataSetFieldFormDataParamsActionType,
-  async ({ datasetFieldId, datasetFieldUpdateFormData }) => {
-    const { internalDescription, labels } =
-      await datasetFieldApiClient.updateDatasetField({
-        datasetFieldId,
-        datasetFieldUpdateFormData,
-      });
-
-    return { datasetFieldId, internalDescription, labels };
-  },
-  {
-    setSuccessOptions: ({ datasetFieldId }) => ({
-      id: `DatasetField-form-updating-${datasetFieldId}`,
-      message: `Dataset field labels and description successfully updated.`,
-    }),
-  }
-);
+export const updateDataSetFieldFormData =
+  handleResponseAsyncThunk<UpdateDataSetFieldFormResponse>(
+    actions.updateDataSetFieldFormDataParamsActionType,
+    async () => {
+      // const { internalDescription, labels } =
+      //   await datasetFieldApiClient.updateDatasetField({
+      //     datasetFieldId,
+      //     datasetFieldUpdateFormData,
+      //   });
+      console.log('aaaa');
+      return { datasetFieldId: 1, internalDescription: '', labels: [] };
+    },
+    {
+      setSuccessOptions: () => ({
+        id: `DatasetField-form-updating`,
+        message: `Dataset field labels and description successfully updated.`,
+      }),
+    }
+  );
 
 export const fetchDataSetFieldEnum = handleResponseAsyncThunk<
   DataSetFieldEnumsResponse,

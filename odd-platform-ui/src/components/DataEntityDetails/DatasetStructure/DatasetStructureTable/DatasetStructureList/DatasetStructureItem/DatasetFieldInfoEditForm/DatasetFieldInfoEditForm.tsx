@@ -71,26 +71,26 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   };
 
   const handleFormSubmit = (data: DatasetFieldInfoFormType) => {
-    dispatch(
-      updateDataSetFieldFormData({
-        datasetFieldId,
-        datasetFieldUpdateFormData: {
-          labelNames: data.labels.map(label => label.name),
-          description: data.internalDescription.trim() || undefined,
-        },
-      })
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update info',
-        });
-      }
-    );
+    // dispatch(
+    //   updateDataSetFieldFormData({
+    //     datasetFieldId,
+    //     datasetFieldUpdateFormData: {
+    //       labelNames: data.labels.map(label => label.name),
+    //       description: data.internalDescription.trim() || undefined,
+    //     },
+    //   })
+    // ).then(
+    //   () => {
+    //     setFormState({ ...initialFormState, isSuccessfulSubmit: true });
+    //     clearFormState();
+    //   },
+    //   (response: Response) => {
+    //     setFormState({
+    //       ...initialFormState,
+    //       error: response.statusText || 'Unable to update info',
+    //     });
+    //   }
+    // );
   };
 
   const formTitle = (

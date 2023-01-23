@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { fetchDataSetStructure, fetchDataSetStructureLatest } from 'redux/thunks';
 import {
