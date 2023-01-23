@@ -81,7 +81,7 @@ const DataEntityAlerts: React.FC = () => {
         isContentLoaded={isAlertsFetched}
         isContentEmpty={!alertsList.length}
       />
-      <AppErrorPage isNotContentLoaded={isAlertsNotFetched} error={alertsListError} />
+      <AppErrorPage showError={isAlertsNotFetched} error={alertsListError} />
     </S.Container>
   );
 };

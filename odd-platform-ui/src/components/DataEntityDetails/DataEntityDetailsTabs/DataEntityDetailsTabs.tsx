@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppTabItem, AppTabs } from 'components/shared';
+import { type AppTabItem, AppTabs } from 'components/shared';
 import { useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
 import {
   getDataEntityDetails,

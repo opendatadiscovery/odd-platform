@@ -9,6 +9,7 @@ interface DatasetStructureListProps {
   versionId?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: DataSetStats['rowsCount'];
+  idxToScroll: number;
 }
 
 const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
@@ -16,6 +17,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   versionId,
   datasetStructureRoot,
   datasetRowsCount,
+  idxToScroll,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -25,6 +27,10 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
     estimateSize: () => 150,
     overscan: 20,
   });
+
+  React.useEffect(() => {
+    if (idxToScroll > 0) virtualizer.scrollToIndex(idxToScroll, { align: 'start' });
+  }, [idxToScroll]);
 
   const rootStructureItems = React.useMemo(
     () => datasetStructureRoot.filter(field => !field.parentFieldId),

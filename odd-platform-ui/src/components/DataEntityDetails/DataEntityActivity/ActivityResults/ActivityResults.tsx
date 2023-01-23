@@ -69,7 +69,7 @@ const ActivityResults: React.FC = () => {
         activityItem={ActivityItem}
       />
       <AppErrorPage
-        isNotContentLoaded={isActivitiesNotFetched}
+        showError={isActivitiesNotFetched}
         offsetTop={155}
         error={activitiesError}
       />

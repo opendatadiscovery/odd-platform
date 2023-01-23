@@ -1,8 +1,10 @@
 import React from 'react';
-import { CircularProgress, TextFieldProps, Theme } from '@mui/material';
-import { AppInputSizes, StyledAppInput } from 'components/shared/AppInput/AppInputStyles';
+import type { TextFieldProps, Theme } from '@mui/material';
+import { CircularProgress } from '@mui/material';
+import type { AppInputSizes } from 'components/shared/AppInput/AppInputStyles';
+import { StyledAppInput } from 'components/shared/AppInput/AppInputStyles';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { SxProps } from '@mui/system';
+import type { SxProps } from '@mui/system';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
 
@@ -94,7 +96,7 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
         variant='outlined'
         fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
-        ref={ref}
+        inputRef={ref}
         inputProps={{ ...props.inputProps, 'data-qa': dataQAId }}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{

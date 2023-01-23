@@ -162,7 +162,7 @@ const Results: React.FC = () => {
         </S.ListContainer>
       )}
       <AppErrorPage
-        isNotContentLoaded={isSearchResultsNotLoaded}
+        showError={isSearchResultsNotLoaded}
         error={searchResultsError}
         offsetTop={210}
       />

@@ -98,7 +98,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
         </InfiniteScroll>
       </S.AlertsContainer>
 
-      <AppErrorPage isNotContentLoaded={isAlertsNotLoaded} error={alertsError} />
+      <AppErrorPage showError={isAlertsNotLoaded} error={alertsError} />
       <EmptyContentPlaceholder
         isContentLoaded={isAlertsFetched && !isAlertsFetching && !isAlertsNotLoaded}
         isContentEmpty={!alerts.length}

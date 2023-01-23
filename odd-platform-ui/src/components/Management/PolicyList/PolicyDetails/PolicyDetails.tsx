@@ -60,7 +60,7 @@ const PolicyDetails: React.FC = () => {
         />
       ) : null}
       <AppErrorPage
-        isNotContentLoaded={isDetailsNotFetched || isSchemaNotFetched}
+        showError={isDetailsNotFetched || isSchemaNotFetched}
         error={policyDetailsFetchingError || policySchemaFetchingError}
       />
     </Grid>

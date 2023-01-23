@@ -1,7 +1,8 @@
 import React from 'react';
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
+import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { DatasetTypeLabelMap } from 'redux/interfaces';
-import { BoxProps, Typography } from '@mui/material';
+import type { BoxProps } from '@mui/material';
+import { Typography } from '@mui/material';
 import round from 'lodash/round';
 import * as S from './DatasetStructureTypeCountLabelStyles';
 
@@ -26,5 +27,4 @@ const DatasetStructureTypeCountLabel: React.FC<DatasetStructureTypeCountLabelPro
     </Typography>
   </S.Container>
 );
-
 export default DatasetStructureTypeCountLabel;

@@ -1,59 +1,63 @@
 import React from 'react';
+import type { DataSetField, DataSetStats, DataSetVersion } from 'generated-sources';
+import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { Grid } from '@mui/material';
-import type { DataSetField, DataSetStats } from 'generated-sources';
-import { useAppSelector } from 'redux/lib/hooks';
-import { getIsUniqStatsExist } from 'redux/selectors';
 import DatasetStructureList from './DatasetStructureList/DatasetStructureList';
-import * as S from './DatasetStructureViewStyles';
+import DatasetStructureHeader from './DatasetStructureHeader/DatasetStructureHeader';
 
 interface DatasetStructureViewProps {
+  showStructure: boolean;
   dataEntityId: number;
   versionId?: number;
-  indexToScroll: number;
+  datasetStructureVersion?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: DataSetStats['rowsCount'];
+  fieldsCount: DataSetStats['fieldsCount'];
+  typesCount: DataSetStructureTypesCount;
+  datasetVersions?: DataSetVersion[];
 }
 
 const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
+  showStructure,
   dataEntityId,
   versionId,
-  indexToScroll,
+  datasetStructureVersion,
   datasetStructureRoot,
   datasetRowsCount,
+  fieldsCount,
+  typesCount,
+  datasetVersions,
 }) => {
-  const isUniqStatsExist = useAppSelector(
-    getIsUniqStatsExist({ datasetId: dataEntityId, versionId })
+  const [idxToScroll, setIdxToScroll] = React.useState(-1);
+
+  const handleSearch = React.useCallback(
+    (query: string) => {
+      const itemIdx = datasetStructureRoot.findIndex(item =>
+        item.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setIdxToScroll(itemIdx);
+    },
+    [datasetStructureRoot]
   );
 
-  return (
-    <S.Container container>
-      <S.TableHeader container>
-        <S.TableCell item lg={5.98}>
-          Column
-        </S.TableCell>
-        {isUniqStatsExist && (
-          <>
-            <S.TableCell item lg={0.76}>
-              Unique
-            </S.TableCell>
-            <S.TableCell item lg={0.75}>
-              Missing
-            </S.TableCell>
-            <S.TableCell item lg={4.51}>
-              Stats
-            </S.TableCell>
-          </>
-        )}
-      </S.TableHeader>
-      <Grid item xs={12} container>
-        <DatasetStructureList
-          dataEntityId={dataEntityId}
-          versionId={versionId}
-          datasetStructureRoot={datasetStructureRoot}
-          datasetRowsCount={datasetRowsCount}
-        />
-      </Grid>
-    </S.Container>
-  );
+  return showStructure ? (
+    <Grid container>
+      <DatasetStructureHeader
+        dataEntityId={dataEntityId}
+        datasetStructureVersion={datasetStructureVersion}
+        fieldsCount={fieldsCount}
+        typesCount={typesCount}
+        handleSearch={handleSearch}
+        datasetVersions={datasetVersions}
+      />
+      <DatasetStructureList
+        dataEntityId={dataEntityId}
+        versionId={versionId}
+        datasetStructureRoot={datasetStructureRoot}
+        datasetRowsCount={datasetRowsCount}
+        idxToScroll={idxToScroll}
+      />
+    </Grid>
+  ) : null;
 };
 export default DatasetStructureView;

@@ -62,12 +62,12 @@ export const getDatasetStructure = ({
     getDatasetStructureState,
     getDatasetVersionId({ datasetId, versionId }),
     (datasetStructureState, currentVersionId) => {
-      if (!currentVersionId) return [];
+      if (!currentVersionId) return emptyArr;
 
       return (
         datasetStructureState.allFieldIdsByVersion[currentVersionId][
           parentFieldId || 0
-        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || []
+        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || emptyArr
       );
     }
   );
