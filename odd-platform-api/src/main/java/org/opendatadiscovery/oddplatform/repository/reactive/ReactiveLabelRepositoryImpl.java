@@ -2,11 +2,9 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.DeleteResultStep;
-import org.jooq.Field;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -154,6 +152,16 @@ public class ReactiveLabelRepositoryImpl
         final DeleteResultStep<LabelToDatasetFieldRecord> query = DSL
             .delete(LABEL_TO_DATASET_FIELD)
             .where(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(labelId))
+            .returning();
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(LabelToDatasetFieldPojo.class));
+    }
+
+    @Override
+    public Flux<LabelToDatasetFieldPojo> deleteInternalRelations(final long datasetFieldId) {
+        final var query = DSL.delete(LABEL_TO_DATASET_FIELD)
+            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId))
+            .and(LABEL_TO_DATASET_FIELD.ORIGIN.eq(LabelOrigin.INTERNAL.toString()))
             .returning();
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(LabelToDatasetFieldPojo.class));

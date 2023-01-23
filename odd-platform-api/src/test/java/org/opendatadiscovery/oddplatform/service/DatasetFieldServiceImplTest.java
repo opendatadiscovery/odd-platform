@@ -12,20 +12,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -33,10 +30,8 @@ import static org.jooq.JSONB.jsonb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,31 +68,23 @@ class DatasetFieldServiceImplTest {
     @Test
     @Ignore
     @DisplayName("Test updates dataset field")
-    void testUpdateDatasetField() {
-        final DatasetFieldUpdateFormData datasetFieldUpdateFormData =
-            EASY_RANDOM.nextObject(DatasetFieldUpdateFormData.class);
+    void testUpdateDatasetFieldDescription() {
+        final DatasetFieldDescriptionUpdateFormData datasetFieldUpdateFormData =
+            EASY_RANDOM.nextObject(DatasetFieldDescriptionUpdateFormData.class);
         final DatasetFieldDto datasetFieldDto = createDatasetFieldDto();
-        final LabelPojo labelPojo = EASY_RANDOM.nextObject(LabelPojo.class);
         final DataSetField datasetField = EASY_RANDOM.nextObject(DataSetField.class);
         final Long datasetFieldId = datasetFieldDto.getDatasetFieldPojo().getId();
 
         when(reactiveDatasetFieldRepository.getDto(anyLong()))
             .thenReturn(Mono.just(datasetFieldDto));
-        when(reactiveLabelRepository.listLabelRelations(any(), eq(LabelOrigin.INTERNAL)))
-            .thenReturn(Flux.just(
-                EASY_RANDOM.nextObject(LabelToDatasetFieldPojo.class).setOrigin(LabelOrigin.INTERNAL.toString())));
-        when(reactiveLabelService.getOrCreateLabelsByName(any()))
-            .thenReturn(Flux.just(labelPojo));
         when(reactiveDatasetFieldRepository.updateDescription(anyLong(), anyString()))
             .thenReturn(Mono.just(datasetFieldDto.getDatasetFieldPojo()));
-        when(reactiveLabelService.updateDatasetFieldLabels(anyLong(), anyList(), anyList())).thenReturn(
-            Mono.just(List.of(new LabelDto(labelPojo, false))));
         when(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(anyLong())).thenReturn(Mono.just(1));
         when(dataEntityFilledService.markEntityFilledByDatasetFieldId(anyLong(), any()))
             .thenReturn(Mono.just(new DataEntityFilledPojo()));
         when(datasetFieldApiMapper.mapDto(any())).thenReturn(datasetField);
 
-        datasetFieldService.updateDatasetField(datasetFieldId, datasetFieldUpdateFormData)
+        datasetFieldService.updateDatasetFieldDescription(datasetFieldId, datasetFieldUpdateFormData)
             .as(StepVerifier::create)
             .assertNext(dsf -> {
                 assertNotNull(dsf);
@@ -108,15 +95,15 @@ class DatasetFieldServiceImplTest {
 
     @Test
     @DisplayName("Test updates dataset field, expecting exception dto not found")
-    void testUpdateDatasetFieldDtoNotFound() {
-        final DatasetFieldUpdateFormData datasetFieldUpdateFormData =
-            EASY_RANDOM.nextObject(DatasetFieldUpdateFormData.class);
+    void testUpdateDatasetFieldDescriptionDtoNotFound() {
+        final DatasetFieldDescriptionUpdateFormData datasetFieldUpdateFormData =
+            EASY_RANDOM.nextObject(DatasetFieldDescriptionUpdateFormData.class);
 
         when(reactiveDatasetFieldRepository.getDto(anyLong()))
             .thenReturn(Mono.empty());
 
         final long datasetFieldId = 1L;
-        datasetFieldService.updateDatasetField(datasetFieldId, datasetFieldUpdateFormData)
+        datasetFieldService.updateDatasetFieldDescription(datasetFieldId, datasetFieldUpdateFormData)
             .as(StepVerifier::create)
             .expectErrorMessage("DatasetField with id %s is not found".formatted(datasetFieldId))
             .verify();

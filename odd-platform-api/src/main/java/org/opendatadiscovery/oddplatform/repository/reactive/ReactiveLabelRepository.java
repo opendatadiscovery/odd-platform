@@ -26,4 +26,6 @@ public interface ReactiveLabelRepository extends ReactiveCRUDRepository<LabelPoj
     Flux<LabelToDatasetFieldPojo> deleteRelations(final Collection<LabelToDatasetFieldPojo> pojos);
 
     Flux<LabelToDatasetFieldPojo> deleteRelations(final long labelId);
+
+    Flux<LabelToDatasetFieldPojo> deleteInternalRelations(final long datasetFieldId);
 }
