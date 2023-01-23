@@ -28,7 +28,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
 import DatasetStructureTypeCountLabelList from './DatasetStructureTypeCountLabelList/DatasetStructureTypeCountLabelList';
-import DatasetStructureTable from './DatasetStructureTable/DatasetStructureTable';
+import DatasetStructureView from './DatasetStructureView/DatasetStructureView';
 
 const DatasetStructure: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -71,7 +71,7 @@ const DatasetStructure: React.FC = () => {
     } else {
       dispatch(fetchDataSetStructureLatest({ dataEntityId }));
     }
-  }, [versionId, dataEntityId]);
+  }, []);
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
@@ -189,7 +189,7 @@ const DatasetStructure: React.FC = () => {
               </>
             </Grid>
           </Grid>
-          <DatasetStructureTable
+          <DatasetStructureView
             datasetStructureRoot={datasetStructureRoot}
             dataEntityId={dataEntityId}
             versionId={versionId}

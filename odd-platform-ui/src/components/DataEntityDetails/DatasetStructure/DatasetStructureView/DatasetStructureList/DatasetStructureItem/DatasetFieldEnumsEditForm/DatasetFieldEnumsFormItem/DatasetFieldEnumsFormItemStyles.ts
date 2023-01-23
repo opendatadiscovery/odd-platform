@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Grid, GridProps } from '@mui/material';
+import type { GridProps } from '@mui/material';
+import { Grid } from '@mui/material';
 
 export const EditBtnContainer = styled(Grid)<GridProps>(() => ({
   visibility: 'hidden',

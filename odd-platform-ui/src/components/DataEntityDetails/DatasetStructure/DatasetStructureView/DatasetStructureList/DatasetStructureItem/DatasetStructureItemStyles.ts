@@ -1,4 +1,5 @@
-import { Grid, GridProps } from '@mui/material';
+import type { GridProps } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { AppButton } from 'components/shared';
 

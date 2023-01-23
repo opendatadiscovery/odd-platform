@@ -1,12 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  DataSetFormattedStats,
-  DataSetFormattedStatsKeys,
-  DatasetStatsLabelMap,
-} from 'redux/interfaces';
+import type { DataSetFormattedStats, DataSetFormattedStatsKeys } from 'redux/interfaces';
+import { DatasetStatsLabelMap } from 'redux/interfaces';
 import { LabeledInfoItem, NumberFormatted } from 'components/shared';
-import { DataSetField, DataSetFieldTypeTypeEnum, DataSetStats } from 'generated-sources';
+import type { DataSetField, DataSetStats } from 'generated-sources';
+import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import round from 'lodash/round';
 import { useAppDateTime } from 'lib/hooks';
 import * as S from './DatsetFieldStatsStyles';

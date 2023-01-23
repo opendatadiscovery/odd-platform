@@ -1,12 +1,12 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { DataSetField, DataSetStats } from 'generated-sources';
+import type { DataSetField, DataSetStats } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsUniqStatsExist } from 'redux/selectors';
 import DatasetStructureList from './DatasetStructureList/DatasetStructureList';
-import * as S from './DatasetStructureTableStyles';
+import * as S from './DatasetStructureViewStyles';
 
-interface DatasetStructureTableProps {
+interface DatasetStructureViewProps {
   dataEntityId: number;
   versionId?: number;
   indexToScroll: number;
@@ -14,7 +14,7 @@ interface DatasetStructureTableProps {
   datasetRowsCount: DataSetStats['rowsCount'];
 }
 
-const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
+const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
   dataEntityId,
   versionId,
   indexToScroll,
@@ -51,11 +51,9 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
           versionId={versionId}
           datasetStructureRoot={datasetStructureRoot}
           datasetRowsCount={datasetRowsCount}
-          datasetColumnsCount={datasetStructureRoot.length}
-          indexToScroll={indexToScroll}
         />
       </Grid>
     </S.Container>
   );
 };
-export default DatasetStructureTable;
+export default DatasetStructureView;

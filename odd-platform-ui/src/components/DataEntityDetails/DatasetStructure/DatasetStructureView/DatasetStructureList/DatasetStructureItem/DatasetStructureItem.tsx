@@ -33,10 +33,9 @@ interface DatasetStructureItemProps {
   renderStructureItem: (
     field: DataSetField,
     nesting: number,
-    onSizeChange: () => void
+    rowHeight?: number
   ) => JSX.Element;
-  onSizeChange: () => void;
-  rowHeight?: string | number;
+  rowHeight?: number;
 }
 
 const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
@@ -47,7 +46,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   renderStructureItem,
   dataEntityId,
   versionId,
-  onSizeChange,
   rowHeight,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
@@ -170,7 +168,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   lg={12}
                 >
                   <TruncatedLabel
-                    onSizeChange={onSizeChange}
+                    onSizeChange={() => {}}
                     labelList={datasetField.labels}
                   />
                   {datasetField.isPrimaryKey && (
@@ -194,7 +192,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 <Grid container sx={{ py: 0.25, mt: 0.75 }} item lg={12}>
                   <DatasetFieldCollapsedDescription
                     content={datasetField.internalDescription}
-                    onSizeChange={onSizeChange}
+                    onSizeChange={() => {}}
                   />
                 </Grid>
               )}
@@ -222,16 +220,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         )}
       </S.RowContainer>
       <Grid item lg={12}>
-        <Collapse
-          in={open}
-          timeout={0}
-          unmountOnExit
-          addEndListener={() => onSizeChange()}
-        >
+        <Collapse in={open} timeout={0} unmountOnExit>
           {open && childFields.length
-            ? childFields.map(field =>
-                renderStructureItem(field, nesting + 1, onSizeChange)
-              )
+            ? childFields.map(field => renderStructureItem(field, nesting + 1))
             : null}
         </Collapse>
       </Grid>

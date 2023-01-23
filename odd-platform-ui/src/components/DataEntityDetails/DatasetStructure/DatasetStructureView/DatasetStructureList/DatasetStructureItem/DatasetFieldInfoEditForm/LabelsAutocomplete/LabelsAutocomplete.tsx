@@ -1,16 +1,14 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import {
-  AutocompleteInputChangeReason,
-  createFilterOptions,
-} from '@mui/material/useAutocomplete';
+import type { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
+import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { fetchLabelsList as searchLabels } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import { Label } from 'generated-sources';
+import type { Label } from 'generated-sources';
 import { AppInput, AutocompleteSuggestion } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import type { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 type DatasetFieldInfoFormType = {

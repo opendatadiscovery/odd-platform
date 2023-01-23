@@ -2,7 +2,6 @@ import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
 export const Container = styled(Grid)(({ theme }) => ({
-  position: 'relative',
   marginTop: theme.spacing(2.5),
 }));
 
