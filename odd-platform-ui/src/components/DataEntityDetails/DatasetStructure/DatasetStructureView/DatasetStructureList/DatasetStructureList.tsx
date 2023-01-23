@@ -23,6 +23,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
     count: datasetStructureRoot.length,
     getScrollElement: () => containerRef.current,
     estimateSize: () => 150,
+    overscan: 20,
   });
 
   const rootStructureItems = React.useMemo(

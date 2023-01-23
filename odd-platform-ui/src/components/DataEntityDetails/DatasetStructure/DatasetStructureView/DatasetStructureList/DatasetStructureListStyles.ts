@@ -11,9 +11,10 @@ export const Scrollable = styled('div')(
 );
 
 export const Container = styled('div')<{ $height: number }>(({ $height }) => ({
-  height: $height,
+  height: `${$height}px`,
   width: '100%',
   position: 'relative',
+  willChange: 'transform',
 }));
 
 export const ItemContainer = styled('div')<{ $translateY: number }>(

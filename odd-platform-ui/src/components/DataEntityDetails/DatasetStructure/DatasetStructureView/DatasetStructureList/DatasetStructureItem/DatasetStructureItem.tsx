@@ -220,7 +220,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         )}
       </S.RowContainer>
       <Grid item lg={12}>
-        <Collapse in={open} timeout={0} unmountOnExit>
+        <Collapse in={open} timeout='auto' unmountOnExit>
           {open && childFields.length
             ? childFields.map(field => renderStructureItem(field, nesting + 1))
             : null}
