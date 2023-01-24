@@ -75,6 +75,7 @@ interface ButtonType {
 interface BackgroundType extends TypeBackground {
   primary: string;
   secondary: string;
+  tertiary: string;
   darken: string;
 }
 

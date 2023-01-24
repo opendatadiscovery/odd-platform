@@ -10,12 +10,11 @@ export type IconButtonColors =
 
 export interface AppIconButtonStyleProps {
   $color: IconButtonColors;
-  $open?: boolean;
   $height?: number;
 }
 
 export const StyledIconButton = styled(IconButton)<AppIconButtonStyleProps>(
-  ({ theme, $color, $open, $height }) => ({
+  ({ theme, $color, $height }) => ({
     [`&.${iconButtonClasses.sizeSmall}`]: {
       width: $color === 'expand' ? '21px' : '16px',
       height: $height ? `${$height}px` : '16px',
@@ -29,11 +28,10 @@ export const StyledIconButton = styled(IconButton)<AppIconButtonStyleProps>(
       borderRadius: '16px',
     },
     color: theme.palette.button[$color].normal.color,
-    backgroundColor: theme.palette.button[$color].normal[$open ? 'border' : 'background'],
+    backgroundColor: theme.palette.button[$color].normal.background,
     '&:hover': {
       color: theme.palette.button[$color].hover?.color,
-      backgroundColor:
-        theme.palette.button[$color].hover?.[$open ? 'border' : 'background'],
+      backgroundColor: theme.palette.button[$color].hover?.background,
     },
     '&:active': {
       color: theme.palette.button[$color].active?.color,

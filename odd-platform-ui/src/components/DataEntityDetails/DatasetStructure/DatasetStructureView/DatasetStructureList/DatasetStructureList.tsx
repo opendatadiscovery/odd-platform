@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DataSetField, DataSetStats } from 'generated-sources';
+import type { DataSetField } from 'generated-sources';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureListStyles';
@@ -8,13 +8,11 @@ import { useStructureContext } from '../../StructureContext/StructureContext';
 interface DatasetStructureListProps {
   dataEntityId: number;
   versionId?: number;
-  datasetRowsCount: DataSetStats['rowsCount'];
 }
 
 const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   dataEntityId,
   versionId,
-  datasetRowsCount,
 }) => {
   const { idxToScroll, isSearchUpdated, datasetStructureRoot } = useStructureContext();
 
@@ -50,13 +48,12 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
         versionId={versionId}
         datasetField={field}
         nesting={nesting}
-        rowsCount={datasetRowsCount}
         initialStateOpen={initialStateOpen(nesting)}
         renderStructureItem={renderStructureItem}
         rowHeight={rowHeight}
       />
     ),
-    [structureLength, datasetRowsCount, dataEntityId, versionId]
+    [structureLength, dataEntityId, versionId]
   );
 
   return (

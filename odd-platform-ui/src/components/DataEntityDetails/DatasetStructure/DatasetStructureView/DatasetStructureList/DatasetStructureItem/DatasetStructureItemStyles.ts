@@ -14,11 +14,11 @@ export const RowContainer = styled(Grid)<{
 }>(({ theme, $offset, $rowHeight, $isRowSelected }) => ({
   flexWrap: 'nowrap',
   position: 'relative',
-  border: $isRowSelected ? '1px solid red' : 'none',
+  backgroundColor: theme.palette.backgrounds[$isRowSelected ? 'primary' : 'default'],
 
   '&:hover': {
-    backgroundColor: theme.palette.backgrounds.primary,
-    [`${Button}`]: { opacity: 1 },
+    backgroundColor: theme.palette.backgrounds.tertiary,
+    cursor: 'pointer',
   },
 
   '&::after': {
@@ -41,19 +41,4 @@ export const RowInfoWrapper = styled(Grid)<{
   flexWrap: 'nowrap',
   alignItems: 'baseline',
   paddingLeft: `${$padOffset}px`,
-}));
-
-export const RowInfoHeader = styled(Grid)(({ theme }) => ({
-  display: 'flex',
-  padding: theme.spacing(0.25, 0),
-  alignItems: 'center',
-  flexWrap: 'nowrap',
-  justifyContent: 'space-between',
-}));
-
-export const RowInfoHeaderActions = styled(Grid)<GridProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  flexWrap: 'nowrap',
-  justifyContent: 'flex-end',
 }));

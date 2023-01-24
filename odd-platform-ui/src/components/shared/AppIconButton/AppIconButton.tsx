@@ -1,6 +1,6 @@
 import React from 'react';
-import { IconButtonProps } from '@mui/material';
-import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
+import { type IconButtonProps } from '@mui/material';
+import { type IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 
 interface AppIconButtonProps extends Omit<IconButtonProps, 'color'> {
   size?: 'medium' | 'small';
@@ -33,7 +33,6 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
     aria-expanded={ariaExpanded}
     aria-controls={ariaControls}
     $color={color}
-    $open={open}
     $height={height}
     disableRipple
     size={size}

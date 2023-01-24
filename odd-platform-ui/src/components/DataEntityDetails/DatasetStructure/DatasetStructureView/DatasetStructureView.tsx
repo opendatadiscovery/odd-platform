@@ -38,11 +38,7 @@ const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
       />
       <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider' }}>
         <Grid item lg={6}>
-          <DatasetStructureList
-            dataEntityId={dataEntityId}
-            versionId={versionId}
-            datasetRowsCount={datasetRowsCount}
-          />
+          <DatasetStructureList dataEntityId={dataEntityId} versionId={versionId} />
         </Grid>
         <Grid item lg={6} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }}>
           <DatasetFieldOverview />

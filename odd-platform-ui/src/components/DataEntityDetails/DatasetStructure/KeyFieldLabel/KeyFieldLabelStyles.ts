@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Box, BoxProps } from '@mui/material';
+import { Box, type BoxProps } from '@mui/material';
 
 export type DatasetFieldKeyType = 'primary' | 'sort';
 
