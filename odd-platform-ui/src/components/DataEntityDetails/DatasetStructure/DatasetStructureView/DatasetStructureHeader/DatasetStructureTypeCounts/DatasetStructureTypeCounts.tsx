@@ -1,22 +1,25 @@
-import React, { useCallback } from 'react';
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
+import React from 'react';
+import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
-import { DataSetStructureTypesCount } from 'redux/interfaces';
+import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import TruncateMarkup from 'react-truncate-markup';
 import { AppButton } from 'components/shared';
 import { Grid } from '@mui/material';
 import DatasetStructureTypeCountLabel from './DatasetStructureTypeCountLabel/DatasetStructureTypeCountLabel';
 
-interface DatasetStructureTypeCountLabelListProps {
+interface DatasetStructureTypeCountsProps {
   fieldsCount: number;
   typesCount: DataSetStructureTypesCount;
-  onListOpening: (flag: boolean) => void;
+  expanded: boolean;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DatasetStructureTypeCountLabelList: React.FC<
-  DatasetStructureTypeCountLabelListProps
-> = ({ fieldsCount, typesCount, onListOpening }) => {
-  const [viewAll, setViewAll] = React.useState(false);
+const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
+  fieldsCount,
+  typesCount,
+  expanded,
+  setExpanded,
+}) => {
   const typesCountList = Object.entries(typesCount);
 
   const getTruncateMarkupAtom = ([type, count]: [string, number]) =>
@@ -31,15 +34,12 @@ const DatasetStructureTypeCountLabelList: React.FC<
       </TruncateMarkup.Atom>
     );
 
-  const truncateButton = useCallback(
+  const truncateButton = React.useCallback(
     (showOrHide: boolean, listLength?: number, renderedListLength?: number) => (
       <AppButton
         size='medium'
         color='tertiary'
-        onClick={() => {
-          setViewAll(!showOrHide);
-          onListOpening(!showOrHide);
-        }}
+        onClick={() => setExpanded(prev => !prev)}
       >
         {!showOrHide && listLength && renderedListLength
           ? `Show ${listLength - renderedListLength - 1} hidden`
@@ -52,10 +52,10 @@ const DatasetStructureTypeCountLabelList: React.FC<
   const ellipsis = (label: React.ReactPortal) => {
     const labelsRendered = label.props.children;
 
-    return truncateButton(viewAll, typesCountList.length, labelsRendered.length);
+    return truncateButton(expanded, typesCountList.length, labelsRendered.length);
   };
 
-  return !viewAll ? (
+  return !expanded ? (
     <TruncateMarkup lines={1} ellipsis={ellipsis}>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {typesCountList.map(getTruncateMarkupAtom)}
@@ -64,8 +64,9 @@ const DatasetStructureTypeCountLabelList: React.FC<
   ) : (
     <Grid container rowGap={1}>
       {typesCountList.map(getTruncateMarkupAtom)}
-      {truncateButton(viewAll)}
+      {truncateButton(expanded)}
     </Grid>
   );
 };
-export default DatasetStructureTypeCountLabelList;
+
+export default DatasetStructureTypeCounts;

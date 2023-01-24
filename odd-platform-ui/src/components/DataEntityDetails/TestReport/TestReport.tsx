@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataEntityRunStatus } from 'generated-sources';
+import type { DataEntityRunStatus } from 'generated-sources';
 import {
   getDatasetQualityTestsBySuiteNames,
   getDatasetTestListFetchingError,
@@ -109,7 +109,7 @@ const TestReport: React.FC = () => {
             </Grid>
           ) : null}
           <AppErrorPage
-            isNotContentLoaded={isDatasetTestListNotLoaded}
+            showError={isDatasetTestListNotLoaded}
             error={datasetTestListError}
             offsetTop={154}
           />

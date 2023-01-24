@@ -126,7 +126,7 @@ const Lineage: React.FC = () => {
       )}
 
       <AppErrorPage
-        isNotContentLoaded={isLineageNotFetched}
+        showError={isLineageNotFetched}
         error={upstreamError || downstreamError}
         offsetTop={132}
       />

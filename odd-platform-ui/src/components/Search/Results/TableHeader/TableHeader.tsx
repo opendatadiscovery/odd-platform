@@ -14,62 +14,62 @@ const TableHeader: React.FC<TableHeaderProps> = ({ grid, isCurrentSearchClass })
 
   return (
     <S.ResultsTableHeader container sx={{ mt: 2, pr: scrollbarWidth }} wrap='nowrap'>
-      <S.SearchCol item lg={grid.lg.nm}>
+      <S.SearchCol item lg={grid.lg.nm} md={grid.md.nm}>
         <Typography variant='caption'>Name</Typography>
       </S.SearchCol>
       {isCurrentSearchClass(DataEntityClassNameEnum.SET) && (
         <>
-          <S.SearchCol item lg={grid.lg.us}>
+          <S.SearchCol item lg={grid.lg.us} md={grid.md.us}>
             <Typography variant='caption'>Use</Typography>
           </S.SearchCol>
-          <S.SearchCol item lg={grid.lg.rc}>
+          <S.SearchCol item lg={grid.lg.rc} md={grid.md.rc}>
             <Typography variant='caption'>Rows/Columns</Typography>
           </S.SearchCol>
         </>
       )}
       {isCurrentSearchClass(DataEntityClassNameEnum.TRANSFORMER) && (
         <>
-          <S.SearchCol item lg={grid.lg.sr}>
+          <S.SearchCol item lg={grid.lg.sr} md={grid.md.sr}>
             <Typography variant='caption'>Sources</Typography>
           </S.SearchCol>
-          <S.SearchCol item lg={grid.lg.tr}>
+          <S.SearchCol item lg={grid.lg.tr} md={grid.md.tr}>
             <Typography variant='caption'>Targets</Typography>
           </S.SearchCol>
         </>
       )}
       {isCurrentSearchClass(DataEntityClassNameEnum.CONSUMER) && (
-        <S.SearchCol item lg={grid.lg.sr}>
+        <S.SearchCol item lg={grid.lg.sr} md={grid.md.sr}>
           <Typography variant='caption'>Source</Typography>
         </S.SearchCol>
       )}
       {isCurrentSearchClass(DataEntityClassNameEnum.QUALITY_TEST) && (
         <>
-          <S.SearchCol item lg={grid.lg.en}>
+          <S.SearchCol item lg={grid.lg.en} md={grid.md.en}>
             <Typography variant='caption'>Entities</Typography>
           </S.SearchCol>
-          <S.SearchCol item lg={grid.lg.su}>
+          <S.SearchCol item lg={grid.lg.su} md={grid.md.su}>
             <Typography variant='caption'>Suite URL</Typography>
           </S.SearchCol>
         </>
       )}
       {isCurrentSearchClass(DataEntityClassNameEnum.ENTITY_GROUP) && (
-        <S.SearchCol item lg={grid.lg.ne}>
+        <S.SearchCol item lg={grid.lg.ne} md={grid.md.ne}>
           <Typography variant='caption'>Number of entities</Typography>
         </S.SearchCol>
       )}
-      <S.SearchCol item lg={grid.lg.nd}>
+      <S.SearchCol item lg={grid.lg.nd} md={grid.md.nd}>
         <Typography variant='caption'>Namespace, Datasource</Typography>
       </S.SearchCol>
-      <S.SearchCol item lg={grid.lg.ow}>
+      <S.SearchCol item lg={grid.lg.ow} md={grid.md.ow}>
         <Typography variant='caption'>Owners</Typography>
       </S.SearchCol>
-      <S.SearchCol item lg={grid.lg.gr}>
+      <S.SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
         <Typography variant='caption'>Groups</Typography>
       </S.SearchCol>
-      <S.SearchCol item lg={grid.lg.cr}>
+      <S.SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
         <Typography variant='caption'>Created</Typography>
       </S.SearchCol>
-      <S.SearchCol item lg={grid.lg.up}>
+      <S.SearchCol item lg={grid.lg.up} md={grid.md.up}>
         <Typography variant='caption'>Last Update</Typography>
       </S.SearchCol>
     </S.ResultsTableHeader>

@@ -96,7 +96,7 @@ const TermDetailsView: React.FC = () => {
         </React.Suspense>
       )}
       <AppErrorPage
-        isNotContentLoaded={isTermDetailsNotFetched}
+        showError={isTermDetailsNotFetched}
         error={termDetailsFetchingErrors}
       />
     </TermDetailsComponentWrapper>

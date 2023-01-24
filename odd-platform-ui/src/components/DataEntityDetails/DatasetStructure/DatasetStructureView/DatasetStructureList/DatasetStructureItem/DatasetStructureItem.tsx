@@ -22,6 +22,7 @@ import DatasetFieldCollapsedDescription from './DatasetFieldCollapsedDescription
 import DatasetStructureKeyFieldLabel from '../../../DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
 import * as S from './DatasetStructureItemStyles';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
+import { useStructureContext } from '../../../StructureContext/StructureContext';
 
 interface DatasetStructureItemProps {
   initialStateOpen?: boolean;
@@ -33,10 +34,9 @@ interface DatasetStructureItemProps {
   renderStructureItem: (
     field: DataSetField,
     nesting: number,
-    onSizeChange: () => void
+    rowHeight?: number
   ) => JSX.Element;
-  onSizeChange: () => void;
-  rowHeight?: string | number;
+  rowHeight?: number;
 }
 
 const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
@@ -47,10 +47,11 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   renderStructureItem,
   dataEntityId,
   versionId,
-  onSizeChange,
   rowHeight,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(initialStateOpen);
+  const { selectedFieldId, setSelectedFieldId } = useStructureContext();
+
+  const [open, setOpen] = React.useState(initialStateOpen);
 
   const datasetStructure = useAppSelector(
     getDatasetStructure({
@@ -110,7 +111,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 
   return (
     <>
-      <S.RowContainer container $offset={nestedOffset} $rowHeight={rowHeight}>
+      <S.RowContainer
+        onClick={() => setSelectedFieldId(datasetField.id)}
+        container
+        $offset={nestedOffset}
+        $rowHeight={rowHeight}
+        $isRowSelected={selectedFieldId === datasetField.id}
+      >
         <Grid
           container
           item
@@ -170,7 +177,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   lg={12}
                 >
                   <TruncatedLabel
-                    onSizeChange={onSizeChange}
+                    onSizeChange={() => {}}
                     labelList={datasetField.labels}
                   />
                   {datasetField.isPrimaryKey && (
@@ -194,7 +201,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 <Grid container sx={{ py: 0.25, mt: 0.75 }} item lg={12}>
                   <DatasetFieldCollapsedDescription
                     content={datasetField.internalDescription}
-                    onSizeChange={onSizeChange}
+                    onSizeChange={() => {}}
                   />
                 </Grid>
               )}
@@ -222,16 +229,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         )}
       </S.RowContainer>
       <Grid item lg={12}>
-        <Collapse
-          in={open}
-          timeout={0}
-          unmountOnExit
-          addEndListener={() => onSizeChange()}
-        >
+        <Collapse in={open} timeout='auto' unmountOnExit>
           {open && childFields.length
-            ? childFields.map(field =>
-                renderStructureItem(field, nesting + 1, onSizeChange)
-              )
+            ? childFields.map(field => renderStructureItem(field, nesting + 1))
             : null}
         </Collapse>
       </Grid>

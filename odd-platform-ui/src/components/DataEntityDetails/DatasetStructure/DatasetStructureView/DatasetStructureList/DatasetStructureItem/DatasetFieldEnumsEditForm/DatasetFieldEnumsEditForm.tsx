@@ -1,11 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import {
-  DataSetFieldTypeTypeEnum,
-  EnumValueFormData,
-  Permission,
-} from 'generated-sources';
+import type { DataSetFieldTypeTypeEnum, EnumValueFormData } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import {
   getDatasetFieldEnums,
   getDatasetFieldEnumsCreatingStatus,

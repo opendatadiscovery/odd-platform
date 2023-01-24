@@ -1,4 +1,5 @@
-import { Grid, GridProps } from '@mui/material';
+import type { GridProps } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { AppButton } from 'components/shared';
 
@@ -9,9 +10,11 @@ export const Button = styled(AppButton)<{ $showBtn?: boolean }>(({ $showBtn }) =
 export const RowContainer = styled(Grid)<{
   $offset: number;
   $rowHeight?: string | number;
-}>(({ theme, $offset, $rowHeight }) => ({
+  $isRowSelected: boolean;
+}>(({ theme, $offset, $rowHeight, $isRowSelected }) => ({
   flexWrap: 'nowrap',
   position: 'relative',
+  border: $isRowSelected ? '1px solid red' : 'none',
 
   '&:hover': {
     backgroundColor: theme.palette.backgrounds.primary,

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
+import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import styled from 'styled-components';
 
 export const Content = styled(Box)<{

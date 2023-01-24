@@ -244,7 +244,7 @@ const DataEntityDetails: React.FC = () => {
         </React.Suspense>
       ) : null}
       <AppErrorPage
-        isNotContentLoaded={isDataEntityDetailsNotFetched}
+        showError={isDataEntityDetailsNotFetched}
         error={dataEntityDetailsFetchingError}
       />
     </S.Container>

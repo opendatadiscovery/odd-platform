@@ -1,4 +1,5 @@
-import React, { HTMLInputTypeAttribute } from 'react';
+import type { HTMLInputTypeAttribute } from 'react';
+import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';

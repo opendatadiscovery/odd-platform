@@ -62,12 +62,12 @@ export const getDatasetStructure = ({
     getDatasetStructureState,
     getDatasetVersionId({ datasetId, versionId }),
     (datasetStructureState, currentVersionId) => {
-      if (!currentVersionId) return [];
+      if (!currentVersionId) return emptyArr;
 
       return (
         datasetStructureState.allFieldIdsByVersion[currentVersionId][
           parentFieldId || 0
-        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || []
+        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || emptyArr
       );
     }
   );
@@ -109,4 +109,10 @@ export const getDatasetFieldEnums = (datasetFieldId: number) =>
   createSelector(getDatasetStructureState, datasetStructureState => {
     if (!datasetFieldId) return [{ name: '', description: '' } as EnumValue];
     return datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr;
+  });
+
+export const getDatasetFieldById = (datasetFieldId: number | undefined) =>
+  createSelector(getDatasetStructureState, datasetStructureState => {
+    if (!datasetFieldId) return undefined;
+    return datasetStructureState.fieldById[datasetFieldId];
   });
