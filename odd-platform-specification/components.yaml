@@ -1410,6 +1410,8 @@ components:
           type: boolean
         is_sort_key:
           type: boolean
+        is_nullable:
+          type: boolean
         default_value:
           type: string
         external_description:
@@ -1484,6 +1486,14 @@ components:
       required:
         - field_list
         - data_set_version
+
+    DataSetFieldDescription:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
 
     EnumValueList:
       type: object

@@ -1799,7 +1799,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataSetField'
+                $ref: './components.yaml/#/components/schemas/DataSetFieldDescription'
       tags:
         - datasetField
 
@@ -1822,7 +1822,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataSetField'
+                $ref: './components.yaml/#/components/schemas/LabelList'
       tags:
         - datasetField
 

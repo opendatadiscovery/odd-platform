@@ -8,13 +8,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
-import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
@@ -57,8 +57,9 @@ public class ReactiveDatasetFieldRepositoryImpl
     @Override
     public Mono<DatasetFieldPojo> updateDescription(final long datasetFieldId,
                                                     final String description) {
-        final UpdateResultStep<DatasetFieldRecord> updateQuery = DSL.update(DATASET_FIELD)
-            .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
+        final String newDescription = StringUtils.isEmpty(description) ? null : description;
+        final var updateQuery = DSL.update(DATASET_FIELD)
+            .set(DATASET_FIELD.INTERNAL_DESCRIPTION, newDescription)
             .where(DATASET_FIELD.ID.eq(datasetFieldId)).returning();
         return jooqReactiveOperations.mono(updateQuery).map(this::recordToPojo);
     }
