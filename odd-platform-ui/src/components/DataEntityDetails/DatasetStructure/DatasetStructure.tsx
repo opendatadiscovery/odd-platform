@@ -17,6 +17,7 @@ import { useAppParams } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
 import DatasetStructureView from './DatasetStructureView/DatasetStructureView';
+import DatasetStructureProvider from './StructureContext/StructureProvider';
 
 const DatasetStructure: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -59,25 +60,26 @@ const DatasetStructure: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ mt: 1 }}>
+    <Box>
       <DatasetStructureSkeleton
         showSkeleton={isDatasetStructureFetching || isDatasetStructureLatestFetching}
       />
-      <DatasetStructureView
-        showStructure={
-          !!datasetStructureVersion &&
-          datasetStructureRoot.length > 0 &&
-          !(isDatasetStructureFetching || isDatasetStructureLatestFetching)
-        }
-        fieldsCount={datasetStats.fieldsCount}
-        typesCount={typesCount}
-        datasetVersions={datasetVersions}
-        datasetStructureVersion={datasetStructureVersion}
-        datasetStructureRoot={datasetStructureRoot}
-        dataEntityId={dataEntityId}
-        versionId={versionId}
-        datasetRowsCount={datasetStats.rowsCount}
-      />
+      <DatasetStructureProvider datasetStructureRoot={datasetStructureRoot}>
+        <DatasetStructureView
+          showStructure={
+            !!datasetStructureVersion &&
+            datasetStructureRoot.length > 0 &&
+            !(isDatasetStructureFetching || isDatasetStructureLatestFetching)
+          }
+          fieldsCount={datasetStats.fieldsCount}
+          typesCount={typesCount}
+          datasetVersions={datasetVersions}
+          datasetStructureVersion={datasetStructureVersion}
+          dataEntityId={dataEntityId}
+          versionId={versionId}
+          datasetRowsCount={datasetStats.rowsCount}
+        />
+      </DatasetStructureProvider>
       <AppErrorPage
         showError={isDatasetStructureNotFetched || isDatasetStructureLatestNotFetched}
         error={datasetStructureFetchingError || datasetStructureLatestFetchingError}

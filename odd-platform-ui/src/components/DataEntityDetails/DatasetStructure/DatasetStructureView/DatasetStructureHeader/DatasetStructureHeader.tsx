@@ -9,12 +9,12 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { useHistory } from 'react-router-dom';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import DatasetStructureTypeCounts from './DatasetStructureTypeCounts/DatasetStructureTypeCounts';
+import { useStructureContext } from '../../StructureContext/StructureContext';
 
 interface DatasetStructureHeaderProps {
   dataEntityId: number;
   fieldsCount: DataSetStats['fieldsCount'];
   typesCount: DataSetStructureTypesCount;
-  handleSearch: (query: string) => void;
   datasetStructureVersion?: number;
   datasetVersions?: DataSetVersion[];
 }
@@ -23,7 +23,6 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
   dataEntityId,
   fieldsCount,
   typesCount,
-  handleSearch,
   datasetStructureVersion,
   datasetVersions,
 }) => {
@@ -31,9 +30,9 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
   const history = useHistory();
   const { datasetStructurePath } = useAppPaths();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
+  const { searchQuery, setSearchQuery, handleSearch } = useStructureContext();
 
   const [typesExpanded, setTypesExpanded] = React.useState(false);
-  const [query, setQuery] = React.useState('');
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
@@ -43,22 +42,25 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') handleSearch(query);
+      if (e.key === 'Enter') handleSearch(searchQuery);
     },
-    [handleSearch, query]
+    [handleSearch, searchQuery]
   );
 
-  const handleOnChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  }, []);
+  const handleOnChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+    },
+    [setSearchQuery]
+  );
 
   const onSearchClick = React.useCallback(() => {
-    handleSearch(query);
-  }, [handleSearch, query]);
+    handleSearch(searchQuery);
+  }, [handleSearch, searchQuery]);
 
   const clearSearchField = React.useCallback(() => {
-    setQuery('');
-  }, []);
+    setSearchQuery('');
+  }, [setSearchQuery]);
 
   const search = React.useMemo(
     () => (
@@ -66,7 +68,7 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
         placeholder='Search'
         sx={{ minWidth: '250px', mr: 1 }}
         fullWidth={false}
-        value={query}
+        value={searchQuery}
         InputProps={{ 'aria-label': 'search' }}
         onKeyDown={handleKeyDown}
         onChange={handleOnChange}
@@ -78,18 +80,18 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
         }}
         customEndAdornment={{
           variant: 'clear',
-          showAdornment: !!query,
+          showAdornment: !!searchQuery,
           onCLick: clearSearchField,
           icon: <ClearIcon />,
         }}
       />
     ),
-    [handleKeyDown, handleOnChange, onSearchClick, query, clearSearchField]
+    [handleKeyDown, handleOnChange, onSearchClick, searchQuery, clearSearchField]
   );
 
   return (
     <Grid
-      sx={{ px: 2, py: 1 }}
+      p={2}
       item
       justifyContent='space-between'
       alignItems={typesExpanded ? 'flex-start' : 'center'}

@@ -1,12 +1,15 @@
-import styled from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 
-export const Scrollable = styled('div')(({ theme }) => ({
-  height: 'calc(100vh - 251px)',
-  width: '100%',
-  overflowY: 'auto',
-  contain: 'strict',
-  marginTop: theme.spacing(1),
-}));
+export const Scrollable = styled('div')(
+  () =>
+    ({
+      height: 'calc(100vh - 251px)',
+      width: '100%',
+      overflowY: 'auto',
+      contain: 'strict',
+      '::-webkit-scrollbar': { display: 'none' },
+    } as CSSObject)
+);
 
 export const Container = styled('div')<{ $height: number }>(({ $height }) => ({
   height: `${$height}px`,

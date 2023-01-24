@@ -110,3 +110,9 @@ export const getDatasetFieldEnums = (datasetFieldId: number) =>
     if (!datasetFieldId) return [{ name: '', description: '' } as EnumValue];
     return datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr;
   });
+
+export const getDatasetFieldById = (datasetFieldId: number | undefined) =>
+  createSelector(getDatasetStructureState, datasetStructureState => {
+    if (!datasetFieldId) return undefined;
+    return datasetStructureState.fieldById[datasetFieldId];
+  });

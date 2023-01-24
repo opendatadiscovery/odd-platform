@@ -84,6 +84,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
       <S.Container container>
         <SearchCol
           lg={grid.lg.nm}
+          md={grid.md.nm}
           item
           container
           justifyContent='space-between'
@@ -121,12 +122,12 @@ const ResultItem: React.FC<ResultItemProps> = ({
         </SearchCol>
         {searchClassIdPredicate(DataEntityClassNameEnum.SET) ? (
           <>
-            <SearchCol item lg={grid.lg.us}>
+            <SearchCol item lg={grid.lg.us} md={grid.md.us}>
               <Typography variant='body1' noWrap>
                 {searchResult.stats?.consumersCount}
               </Typography>
             </SearchCol>
-            <SearchCol item lg={grid.lg.rc}>
+            <SearchCol item lg={grid.lg.rc} md={grid.md.rc}>
               <S.RCContainer variant='body1' noWrap mr={1}>
                 <RowsIcon fill='#C4C4C4' sx={{ mr: 0.25 }} />
                 <NumberFormatted value={searchResult.stats?.rowsCount} />
@@ -140,13 +141,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
         ) : null}
         {searchClassIdPredicate(DataEntityClassNameEnum.TRANSFORMER) ? (
           <>
-            <SearchCol lg={grid.lg.sr} item container wrap='wrap'>
+            <SearchCol lg={grid.lg.sr} md={grid.md.sr} item container wrap='wrap'>
               <TruncatedCell
                 dataList={searchResult.sourceList}
                 externalEntityId={searchResult.id}
               />
             </SearchCol>
-            <SearchCol item lg={grid.lg.tr}>
+            <SearchCol item lg={grid.lg.tr} md={grid.md.tr}>
               <TruncatedCell
                 dataList={searchResult.targetList}
                 externalEntityId={searchResult.id}
@@ -155,7 +156,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           </>
         ) : null}
         {searchClassIdPredicate(DataEntityClassNameEnum.CONSUMER) ? (
-          <SearchCol item lg={grid.lg.sr}>
+          <SearchCol item lg={grid.lg.sr} md={grid.md.sr}>
             <TruncatedCell
               dataList={searchResult.inputList}
               externalEntityId={searchResult.id}
@@ -164,13 +165,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
         ) : null}
         {searchClassIdPredicate(DataEntityClassNameEnum.QUALITY_TEST) ? (
           <>
-            <SearchCol item container wrap='wrap' lg={grid.lg.en}>
+            <SearchCol item container wrap='wrap' lg={grid.lg.en} md={grid.md.en}>
               <TruncatedCell
                 dataList={searchResult.datasetsList}
                 externalEntityId={searchResult.id}
               />
             </SearchCol>
-            <SearchCol item lg={grid.lg.su}>
+            <SearchCol item lg={grid.lg.su} md={grid.md.su}>
               <TruncatedCell
                 dataList={searchResult.linkedUrlList}
                 externalEntityId={searchResult.id}
@@ -179,13 +180,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
           </>
         ) : null}
         {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) ? (
-          <SearchCol item lg={grid.lg.ne}>
+          <SearchCol item lg={grid.lg.ne} md={grid.md.ne}>
             <Typography variant='body1' noWrap>
               {searchResult?.itemsCount}
             </Typography>
           </SearchCol>
         ) : null}
-        <SearchCol item lg={grid.lg.nd} flexDirection='column'>
+        <SearchCol item lg={grid.lg.nd} md={grid.md.nd} flexDirection='column'>
           {searchResult.dataSource.namespace?.name ? (
             <Typography
               variant='body1'
@@ -205,7 +206,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <Typography variant='subtitle2'>manually created</Typography>
           )}
         </SearchCol>
-        <SearchCol item lg={grid.lg.ow}>
+        <SearchCol item lg={grid.lg.ow} md={grid.md.ow}>
           <Grid container direction='column' alignItems='flex-start'>
             {searchResult.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
@@ -216,16 +217,16 @@ const ResultItem: React.FC<ResultItemProps> = ({
             ))}
           </Grid>
         </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
           <TruncatedCell
             dataList={searchResult.dataEntityGroups}
             externalEntityId={searchResult.id}
           />
         </SearchCol>
-        <SearchCol item lg={grid.lg.cr}>
+        <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
           {createdAt}
         </SearchCol>
-        <SearchCol item lg={grid.lg.up}>
+        <SearchCol item lg={grid.lg.up} md={grid.md.up}>
           {updatedAt}
         </SearchCol>
       </S.Container>

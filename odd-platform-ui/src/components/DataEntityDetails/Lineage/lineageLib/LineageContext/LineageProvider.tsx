@@ -1,6 +1,6 @@
 import React from 'react';
 import { type TreeNodeDatum } from 'redux/interfaces';
-import { HierarchyPointLink, type HierarchyPointNode } from 'd3-hierarchy';
+import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
 import { useQueryParams } from 'lib/hooks';
 import type { LineageQueryParams } from '../interfaces';
 import { getMaxODDRNHeight, getMaxTitleHeight } from '../helpers';

@@ -1,7 +1,8 @@
 import React from 'react';
-import type { DataSetField, DataSetStats, DataSetVersion } from 'generated-sources';
+import type { DataSetStats, DataSetVersion } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { Grid } from '@mui/material';
+import DatasetFieldOverview from './DatasetFieldOverview/DatasetFieldOverview';
 import DatasetStructureList from './DatasetStructureList/DatasetStructureList';
 import DatasetStructureHeader from './DatasetStructureHeader/DatasetStructureHeader';
 
@@ -10,7 +11,6 @@ interface DatasetStructureViewProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureVersion?: number;
-  datasetStructureRoot: DataSetField[];
   datasetRowsCount: DataSetStats['rowsCount'];
   fieldsCount: DataSetStats['fieldsCount'];
   typesCount: DataSetStructureTypesCount;
@@ -22,42 +22,32 @@ const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
   dataEntityId,
   versionId,
   datasetStructureVersion,
-  datasetStructureRoot,
   datasetRowsCount,
   fieldsCount,
   typesCount,
   datasetVersions,
-}) => {
-  const [idxToScroll, setIdxToScroll] = React.useState(-1);
-
-  const handleSearch = React.useCallback(
-    (query: string) => {
-      const itemIdx = datasetStructureRoot.findIndex(item =>
-        item.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setIdxToScroll(itemIdx);
-    },
-    [datasetStructureRoot]
-  );
-
-  return showStructure ? (
+}) =>
+  showStructure ? (
     <Grid container>
       <DatasetStructureHeader
         dataEntityId={dataEntityId}
         datasetStructureVersion={datasetStructureVersion}
         fieldsCount={fieldsCount}
         typesCount={typesCount}
-        handleSearch={handleSearch}
         datasetVersions={datasetVersions}
       />
-      <DatasetStructureList
-        dataEntityId={dataEntityId}
-        versionId={versionId}
-        datasetStructureRoot={datasetStructureRoot}
-        datasetRowsCount={datasetRowsCount}
-        idxToScroll={idxToScroll}
-      />
+      <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider' }}>
+        <Grid item lg={6}>
+          <DatasetStructureList
+            dataEntityId={dataEntityId}
+            versionId={versionId}
+            datasetRowsCount={datasetRowsCount}
+          />
+        </Grid>
+        <Grid item lg={6} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }}>
+          <DatasetFieldOverview />
+        </Grid>
+      </Grid>
     </Grid>
   ) : null;
-};
 export default DatasetStructureView;

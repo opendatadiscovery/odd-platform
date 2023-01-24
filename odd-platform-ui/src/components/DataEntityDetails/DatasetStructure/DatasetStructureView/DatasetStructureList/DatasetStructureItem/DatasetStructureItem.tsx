@@ -22,6 +22,7 @@ import DatasetFieldCollapsedDescription from './DatasetFieldCollapsedDescription
 import DatasetStructureKeyFieldLabel from '../../../DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
 import * as S from './DatasetStructureItemStyles';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
+import { useStructureContext } from '../../../StructureContext/StructureContext';
 
 interface DatasetStructureItemProps {
   initialStateOpen?: boolean;
@@ -48,7 +49,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   versionId,
   rowHeight,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(initialStateOpen);
+  const { selectedFieldId, setSelectedFieldId } = useStructureContext();
+
+  const [open, setOpen] = React.useState(initialStateOpen);
 
   const datasetStructure = useAppSelector(
     getDatasetStructure({
@@ -108,7 +111,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 
   return (
     <>
-      <S.RowContainer container $offset={nestedOffset} $rowHeight={rowHeight}>
+      <S.RowContainer
+        onClick={() => setSelectedFieldId(datasetField.id)}
+        container
+        $offset={nestedOffset}
+        $rowHeight={rowHeight}
+        $isRowSelected={selectedFieldId === datasetField.id}
+      >
         <Grid
           container
           item
