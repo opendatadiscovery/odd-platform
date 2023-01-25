@@ -762,6 +762,17 @@ components:
         - MAJOR
         - CRITICAL
 
+    LinkedUrl:
+      type: object
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+      required:
+        - url
+        - name
+
     DataQualityTest:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
@@ -780,7 +791,7 @@ components:
             linked_url_list:
               type: array
               items:
-                type: string
+                $ref: '#/components/schemas/LinkedUrl'
             latest_run:
               $ref: '#/components/schemas/DataEntityRun'
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataQualityTestExpectation } from 'generated-sources';
+import type { DataQualityTestExpectation, LinkedUrl } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import { AppButton } from 'components/shared';
 import { DropdownIcon } from 'components/shared/Icons';
@@ -7,7 +7,7 @@ import * as S from './OverviewExpectationsStyles';
 
 interface OverviewExpectationsProps {
   parameters: DataQualityTestExpectation | undefined;
-  linkedUrlList: string[] | undefined;
+  linkedUrlList: LinkedUrl[] | undefined;
 }
 
 const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
@@ -40,16 +40,17 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
           <S.Divider />
           <Typography variant='h4'>Links</Typography>
           <Grid container flexDirection='column'>
-            {linkedUrlList?.map(link => (
+            {linkedUrlList?.map(({ name, url }) => (
               <AppButton
-                to={{ pathname: link }}
-                key={link}
+                to={{ pathname: url }}
+                key={url}
                 sx={{ my: 0.25 }}
                 size='medium'
                 color='tertiary'
                 linkTarget='_blank'
+                truncate
               >
-                {link}
+                {name}
               </AppButton>
             ))}
           </Grid>

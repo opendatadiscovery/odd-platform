@@ -1,11 +1,9 @@
 import React from 'react';
-import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { AppButton, AppMenuItem, AppSelect, LabeledInfoItem } from 'components/shared';
-import {
-  DataQualityTestExpectation,
-  DataQualityTestSeverity,
-  Permission,
-} from 'generated-sources';
+import type { DataQualityTestExpectation } from 'generated-sources';
+import { DataQualityTestSeverity, Permission } from 'generated-sources';
 import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
@@ -128,19 +126,17 @@ const TestReportDetailsOverview: React.FC = () => {
             <Grid item sx={{ mt: 2.25 }} xs={12}>
               <Typography variant='h4'>Links</Typography>
               <Grid container sx={{ mt: 1 }}>
-                {qualityTest.linkedUrlList.map(link => (
+                {qualityTest.linkedUrlList.map(({ name, url }) => (
                   <AppButton
-                    to={{ pathname: link }}
-                    key={link}
-                    sx={{
-                      py: 0.25,
-                    }}
+                    to={{ pathname: url }}
+                    key={url}
+                    sx={{ py: 0.25 }}
                     size='medium'
                     color='tertiary'
                     linkTarget='_blank'
                     truncate
                   >
-                    {link}
+                    {name}
                   </AppButton>
                 ))}
               </Grid>

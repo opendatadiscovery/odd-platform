@@ -1,21 +1,24 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { type DataEntityRef } from 'generated-sources';
+import type { DataEntityRef, LinkedUrl } from 'generated-sources';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
-import { useAppPaths } from 'lib/hooks';
+import { type Values } from '../TruncatedCell';
 
 interface TruncatedCellMenuProps {
-  dataList: DataEntityRef[] | string[] | undefined;
+  dataList: DataEntityRef[] | string[] | LinkedUrl[] | undefined;
   menuId: number;
+  getValues: (item: DataEntityRef | LinkedUrl | string) => Values;
 }
 
-const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({ dataList, menuId }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
-
+const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
+  dataList,
+  menuId,
+  getValues,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleMenuOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,29 +56,28 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({ dataList, menuId 
         maxHeight={300}
         maxWidth={240}
       >
-        {dataList?.map((item: DataEntityRef | string) =>
-          typeof item === 'string' ? (
-            <AppMenuItem key={item}>{item}</AppMenuItem>
+        {dataList?.map((item: DataEntityRef | LinkedUrl | string) => {
+          const { key, linkTo, linkContent } = getValues(item);
+          const updatedLink =
+            typeof item !== 'string' && 'id' in item ? linkTo : { pathname: linkTo };
+
+          return typeof item === 'string' ? (
+            <AppMenuItem key={key}>{linkContent}</AppMenuItem>
           ) : (
-            <Link
-              key={item.id}
-              to={dataEntityDetailsPath(item.id)}
-              target='_blank'
-              onClick={handleMenuClose}
-            >
+            <Link key={key} to={updatedLink} target='_blank' onClick={handleMenuClose}>
               <AppMenuItem>
                 <Typography
                   variant='body1'
                   color='texts.action'
                   noWrap
-                  title={item.internalName || item.externalName}
+                  title={linkContent}
                 >
-                  {item.internalName || item.externalName}
+                  {linkContent}
                 </Typography>
               </AppMenuItem>
             </Link>
-          )
-        )}
+          );
+        })}
       </AppMenu>
     </>
   );
