@@ -15,8 +15,9 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.C
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_TOKEN_REGENERATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_DESCRIPTION_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_ENUMS_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_INFO_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_LABELS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_TEST_RUN_SET_SEVERITY;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TO_GROUP;
@@ -211,8 +212,11 @@ public final class SecurityConstants {
             "/api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}/severity", PUT),
             DATASET_TEST_RUN_SET_SEVERITY),
         new SecurityRule(DATASET_FIELD,
-            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}", PUT),
-            DATASET_FIELD_INFO_UPDATE),
+            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/description", PUT),
+            DATASET_FIELD_DESCRIPTION_UPDATE),
+        new SecurityRule(DATASET_FIELD,
+            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/labels", PUT),
+            DATASET_FIELD_LABELS_UPDATE),
         new SecurityRule(
             DATASET_FIELD,
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/enum_values", POST),
