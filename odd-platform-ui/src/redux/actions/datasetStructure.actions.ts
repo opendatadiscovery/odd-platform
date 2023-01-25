@@ -17,6 +17,16 @@ export const updateDataSetFieldFormDataParamsActionType = createActionType(
   'updateDataSetFieldFormDataParams'
 );
 
+export const updateDataSetFieldDescriptionActionType = createActionType(
+  datasetStructureActionTypePrefix,
+  'updateDataSetFieldDescription'
+);
+
+export const updateDataSetFieldLabelsActionType = createActionType(
+  datasetStructureActionTypePrefix,
+  'updateDataSetFieldLabels'
+);
+
 export const fetchDataSetFieldEnumActionType = createActionType(
   datasetStructureActionTypePrefix,
   'fetchDataSetFieldEnum'

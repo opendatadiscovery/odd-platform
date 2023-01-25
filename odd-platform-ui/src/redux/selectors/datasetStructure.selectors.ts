@@ -25,8 +25,12 @@ export const getDataSetStructureLatestFetchingError = createErrorSelector(
   actions.fetchDataSetStructureLatestActionType
 );
 
-export const getDatasetFieldFormDataUpdatingStatus = createStatusesSelector(
-  actions.updateDataSetFieldFormDataParamsActionType
+export const getDatasetFieldDescriptionUpdatingStatus = createStatusesSelector(
+  actions.updateDataSetFieldDescriptionActionType
+);
+
+export const getDatasetFieldLabelsUpdatingStatus = createStatusesSelector(
+  actions.updateDataSetFieldLabelsActionType
 );
 
 export const getDatasetFieldEnumsFetchingStatus = createStatusesSelector(
@@ -84,26 +88,6 @@ export const getDatasetStructureTypeStats = ({
       return datasetStructureState.statsByVersionId[currentVersionId].typeStats;
     }
   );
-
-export const getIsUniqStatsExist = ({ datasetId, versionId }: DatasetStructureIds) =>
-  createSelector(
-    getDatasetStructureState,
-    getDatasetVersionId({ datasetId, versionId }),
-    (datasetStructureState, currentVersionId) => {
-      if (!currentVersionId) return false;
-      return datasetStructureState.statsByVersionId[currentVersionId].isUniqueStatsExist;
-    }
-  );
-
-export const getDatasetFieldData = (datasetFieldId: number) =>
-  createSelector(getDatasetStructureState, datasetStructureState => {
-    if (!datasetFieldId) return { internalDescription: '', labels: [] };
-    return {
-      internalDescription:
-        datasetStructureState.fieldById[datasetFieldId]?.internalDescription || '',
-      labels: datasetStructureState.fieldById[datasetFieldId]?.labels || [],
-    };
-  });
 
 export const getDatasetFieldEnums = (datasetFieldId: number) =>
   createSelector(getDatasetStructureState, datasetStructureState => {

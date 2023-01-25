@@ -1,6 +1,6 @@
 import type React from 'react';
 import { createGenericContext } from 'lib/genericContext';
-import type { DataSetField } from 'generated-sources';
+import type { DataSetField, DataSetStats } from 'generated-sources';
 
 export type SearchQuery = string;
 export type IsSearchUpdated = boolean;
@@ -16,6 +16,7 @@ export interface StructureContextProps {
   handleSearch: (query: string) => void;
   datasetStructureRoot: DataSetField[];
   idxToScroll: number;
+  datasetRowsCount: DataSetStats['rowsCount'];
 }
 
 export const [useStructureContext, StructureContextProvider] =

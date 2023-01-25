@@ -11,7 +11,6 @@ interface DatasetStructureViewProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureVersion?: number;
-  datasetRowsCount: DataSetStats['rowsCount'];
   fieldsCount: DataSetStats['fieldsCount'];
   typesCount: DataSetStructureTypesCount;
   datasetVersions?: DataSetVersion[];
@@ -22,7 +21,6 @@ const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
   dataEntityId,
   versionId,
   datasetStructureVersion,
-  datasetRowsCount,
   fieldsCount,
   typesCount,
   datasetVersions,
@@ -46,4 +44,5 @@ const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
       </Grid>
     </Grid>
   ) : null;
+
 export default DatasetStructureView;

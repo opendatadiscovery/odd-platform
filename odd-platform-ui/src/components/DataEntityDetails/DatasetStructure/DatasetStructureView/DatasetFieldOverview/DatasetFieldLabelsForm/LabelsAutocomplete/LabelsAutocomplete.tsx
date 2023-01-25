@@ -11,13 +11,12 @@ import { ClearIcon } from 'components/shared/Icons';
 import type { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
-type DatasetFieldInfoFormType = {
-  labels: { name: string; external?: boolean }[];
-  internalDescription: string;
+type DatasetFieldLabelsFormData = {
+  labels: Omit<Label, 'id'>[];
 };
 
 interface LabelsAutocompleteProps {
-  appendLabel: UseFieldArrayAppend<DatasetFieldInfoFormType, 'labels'>;
+  appendLabel: UseFieldArrayAppend<DatasetFieldLabelsFormData, 'labels'>;
   labelsEditing?: boolean;
 }
 
@@ -129,7 +128,6 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
       renderInput={params => (
         <AppInput
           {...params}
-          sx={{ mt: 1.5 }}
           ref={params.InputProps.ref}
           placeholder='Enter label name…'
           label='Label'

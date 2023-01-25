@@ -7,7 +7,7 @@ import type { DataSetField, DataSetStats } from 'generated-sources';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import round from 'lodash/round';
 import { useAppDateTime } from 'lib/hooks';
-import * as S from './DatsetFieldStatsStyles';
+import * as S from './DatasetFieldStyles';
 
 interface DatasetFieldStatsProps {
   datasetField: DataSetField;
@@ -45,13 +45,7 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
   }
 
   const getCustomStat = React.useCallback(() => {
-    let resultFieldStats = fieldStats
-      ? Object.keys(fieldStats)
-      : ['', '', '', '', '', ''];
-
-    if (resultFieldStats.length === 4) {
-      resultFieldStats = [...resultFieldStats, '', ''];
-    }
+    const resultFieldStats = Object.keys(fieldStats);
 
     const getStatLabel = (fieldStatName: string) =>
       DatasetStatsLabelMap.get(fieldStatName as DataSetFormattedStatsKeys);
@@ -60,13 +54,13 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
 
     return (
       <>
-        {resultFieldStats.map((fieldStatName, idx) => {
+        {resultFieldStats.map(fieldStatName => {
           const label = getStatLabel(fieldStatName);
           const value = getStatValue(fieldStatName);
 
           if (fieldStatName.length !== 0 && label && value) {
             return (
-              <S.StatCellContainer item lg={1.5} key={fieldStatName}>
+              <S.StatCellContainer key={fieldStatName}>
                 <LabeledInfoItem label={label}>
                   {datasetField.type.type === DataSetFieldTypeTypeEnum.DATETIME ? (
                     datasetFieldFormattedDateTime((value as unknown as Date).getTime())
@@ -78,14 +72,7 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
             );
           }
 
-          return (
-            <S.StatCellContainer
-              item
-              lg={1.5}
-              // eslint-disable-next-line react/no-array-index-key
-              key={`${fieldStatName}-${idx}`}
-            />
-          );
+          return null;
         })}
       </>
     );
@@ -93,24 +80,30 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
 
   const getPredefinedStats = React.useCallback(
     (statValue: number) => (
-      <S.StatCellContainer item lg={1.5}>
+      <Grid container flexWrap='nowrap'>
         <NumberFormatted value={statValue} />
         <Typography sx={{ ml: 0.5 }} variant='body1' color='texts.hint'>
           {statValue && rowsCount > 0
             ? `(${round((statValue * 100) / rowsCount, 0)}%)`
             : null}
         </Typography>
-      </S.StatCellContainer>
+      </Grid>
     ),
     [rowsCount]
   );
 
   return (
-    <Grid container item lg={12} flexWrap='nowrap'>
-      {getPredefinedStats(fieldStats?.uniqueCount)}
-      {getPredefinedStats(fieldStats?.nullsCount)}
+    <S.Container container>
+      <S.StatCellContainer>
+        <Typography variant='subtitle1'>Unique</Typography>
+        {getPredefinedStats(fieldStats?.uniqueCount)}
+      </S.StatCellContainer>
+      <S.StatCellContainer>
+        <Typography variant='subtitle1'>Missing</Typography>
+        {getPredefinedStats(fieldStats?.nullsCount)}
+      </S.StatCellContainer>
       {getCustomStat()}
-    </Grid>
+    </S.Container>
   );
 };
 

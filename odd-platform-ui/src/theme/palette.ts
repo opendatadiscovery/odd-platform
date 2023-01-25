@@ -253,16 +253,9 @@ export const palette = createPalette({
     TYPE_UNKNOWN: { border: colors.black10 },
   },
   datasetFieldKey: {
-    primary: {
-      background: colors.black30,
-      color: colors.white,
-      border: colors.blue30,
-    },
-    sort: {
-      background: colors.black30,
-      color: colors.white,
-      border: colors.blue10,
-    },
+    primary: { background: colors.black30, color: colors.white, border: colors.blue30 },
+    sort: { background: colors.black30, color: colors.white, border: colors.blue10 },
+    nullable: { background: colors.blue10, color: colors.black70, border: colors.blue10 },
   },
   alert: {
     OPEN: { background: colors.red10, border: colors.red20 },

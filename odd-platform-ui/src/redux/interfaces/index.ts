@@ -1,7 +1,7 @@
-import rootReducer from 'redux/slices';
-import { store } from 'redux/store';
+import type rootReducer from 'redux/slices';
+import type { store } from 'redux/store';
 import type { ActionType } from 'typesafe-actions';
-import * as actions from 'redux/actions';
+import type * as actions from 'redux/actions';
 
 export * from './state';
 export * from './loader';

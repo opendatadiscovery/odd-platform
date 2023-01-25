@@ -7,7 +7,7 @@ import { AppIconButton, AppTooltip } from 'components/shared';
 import { StrokedInfoIcon, ChevronIcon } from 'components/shared/Icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
-import KeyFieldLabel from '../../../KeyFieldLabel/KeyFieldLabel';
+import KeyFieldLabel from '../../shared/KeyFieldLabel/KeyFieldLabel';
 import * as S from './DatasetStructureItemStyles';
 import { useStructureContext } from '../../../StructureContext/StructureContext';
 
@@ -83,9 +83,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             {collapseBlock && (
               <Grid sx={{ p: 0.5, display: 'flex' }}>{collapseBlock}</Grid>
             )}
-            <Grid container justifyContent='space-between' py={0.25}>
-              <Grid display='flex' flexWrap='nowrap' alignItems='center'>
-                <Typography variant='h4' noWrap>
+            <Grid container justifyContent='space-between' py={0.25} flexWrap='nowrap'>
+              <Grid display='flex' minWidth={0} flexWrap='nowrap' alignItems='center'>
+                <Typography variant='h4' noWrap title={datasetField.name}>
                   {(datasetField.isKey && 'Key') ||
                     (datasetField.isValue && 'Value') ||
                     datasetField.name}

@@ -97,10 +97,7 @@ export interface DatasetStructureState {
     [versionId: number]: { [parentFieldId: number]: DataSetField['id'][] };
   };
   statsByVersionId: {
-    [versionId: number]: {
-      typeStats: DataSetStructureTypesCount;
-      isUniqueStatsExist: boolean;
-    };
+    [versionId: number]: { typeStats: DataSetStructureTypesCount };
   };
   latestVersionByDataset: { [datasetId: string]: DataSetVersion['id'] };
   fieldEnumsByFieldId: { [fieldId: number]: EnumValue[] };

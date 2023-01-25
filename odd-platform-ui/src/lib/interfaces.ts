@@ -16,3 +16,5 @@ export type ManagementViewType =
 export type OwnerAssociationRequestsViewType = 'New' | 'Resolved';
 
 export type EventType = 'created' | 'added' | 'assigned' | 'updated' | 'deleted';
+
+export type DatasetFieldKey = 'primary' | 'sort' | 'nullable';

@@ -64,7 +64,10 @@ const DatasetStructure: React.FC = () => {
       <DatasetStructureSkeleton
         showSkeleton={isDatasetStructureFetching || isDatasetStructureLatestFetching}
       />
-      <DatasetStructureProvider datasetStructureRoot={datasetStructureRoot}>
+      <DatasetStructureProvider
+        datasetStructureRoot={datasetStructureRoot}
+        datasetRowsCount={datasetStats.rowsCount}
+      >
         <DatasetStructureView
           showStructure={
             !!datasetStructureVersion &&
@@ -77,7 +80,6 @@ const DatasetStructure: React.FC = () => {
           datasetStructureVersion={datasetStructureVersion}
           dataEntityId={dataEntityId}
           versionId={versionId}
-          datasetRowsCount={datasetStats.rowsCount}
         />
       </DatasetStructureProvider>
       <AppErrorPage

@@ -10,11 +10,13 @@ import {
 
 interface StructureProviderProps {
   datasetStructureRoot: DataSetField[];
+  datasetRowsCount: number;
 }
 
 const StructureProvider: React.FC<StructureProviderProps> = ({
   children,
   datasetStructureRoot,
+  datasetRowsCount,
 }) => {
   const [searchQuery, setSearchQuery] = React.useState<SearchQuery>('');
   const [isSearchUpdated, setIsSearchUpdated] = React.useState<IsSearchUpdated>(false);
@@ -55,8 +57,16 @@ const StructureProvider: React.FC<StructureProviderProps> = ({
       handleSearch,
       datasetStructureRoot,
       idxToScroll,
+      datasetRowsCount,
     }),
-    [searchQuery, selectedFieldId, handleSearch, isSearchUpdated, datasetStructureRoot]
+    [
+      searchQuery,
+      selectedFieldId,
+      handleSearch,
+      isSearchUpdated,
+      datasetStructureRoot,
+      datasetRowsCount,
+    ]
   );
 
   return (

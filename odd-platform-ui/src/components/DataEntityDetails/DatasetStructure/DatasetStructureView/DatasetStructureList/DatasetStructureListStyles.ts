@@ -7,7 +7,6 @@ export const Scrollable = styled('div')(
       width: '100%',
       overflowY: 'auto',
       contain: 'strict',
-      '::-webkit-scrollbar': { display: 'none' },
     } as CSSObject)
 );
 

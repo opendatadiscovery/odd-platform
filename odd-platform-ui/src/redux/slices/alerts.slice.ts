@@ -49,7 +49,7 @@ export const alertsSlice = createSlice({
     builder.addCase(thunks.fetchMyDependentsAlertList.fulfilled, updateAlerts);
 
     builder.addCase(thunks.fetchDataEntityAlerts.fulfilled, (state, { payload }) => {
-      const { items, pageInfo, dataEntityId } = payload;
+      const { items, pageInfo, entityId: dataEntityId } = payload;
 
       const dataEntityAlerts = items.reduce<AlertsState['dataEntityAlerts']>(
         memo => ({
@@ -69,7 +69,7 @@ export const alertsSlice = createSlice({
       return { ...state, dataEntityAlerts };
     });
     builder.addCase(thunks.updateAlertStatus.fulfilled, (state, { payload }) => {
-      const { alert, dataEntityId } = payload;
+      const { alert, entityId: dataEntityId } = payload;
 
       if (dataEntityId) {
         const dataEntityAlerts = state.dataEntityAlerts[dataEntityId].items;
@@ -88,7 +88,7 @@ export const alertsSlice = createSlice({
     builder.addCase(
       thunks.fetchDataEntityAlertsCounts.fulfilled,
       (state, { payload }) => {
-        const { dataEntityId, count } = payload;
+        const { entityId: dataEntityId, count } = payload;
 
         return {
           ...state,

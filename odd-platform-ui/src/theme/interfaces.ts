@@ -11,6 +11,7 @@ import type {
 import type { TypographyStyle } from '@mui/material';
 import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 import type { ToastType } from 'react-hot-toast';
+import type { DatasetFieldKey } from 'lib/interfaces';
 
 // helpers interfaces
 export type CSSObject = Partial<CSSStyleDeclaration>;
@@ -86,10 +87,7 @@ interface TagType {
 
 type AlertType = Record<AlertStatus, ItemColors>;
 
-interface DatasetFieldKeyType {
-  primary: ItemColors;
-  sort: ItemColors;
-}
+type DatasetFieldKeyType = Record<DatasetFieldKey, ItemColors>;
 
 interface ActivityEventType {
   created: string;

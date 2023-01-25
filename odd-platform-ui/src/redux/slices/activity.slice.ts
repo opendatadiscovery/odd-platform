@@ -52,7 +52,7 @@ export const activitiesSlice = createSlice({
       );
     });
     builder.addCase(fetchDataEntityActivityList.fulfilled, (state, { payload }) => {
-      const { items, pageInfo, dataEntityId, isQueryUpdated } = payload;
+      const { items, pageInfo, entityId: dataEntityId, isQueryUpdated } = payload;
 
       const itemsByDate = items.reduce(
         (memo: { [date: string]: Activity[] }, activity: Activity) => ({

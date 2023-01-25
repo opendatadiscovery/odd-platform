@@ -22,7 +22,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   const virtualizer = useVirtualizer({
     count: structureLength,
     getScrollElement: () => containerRef.current,
-    estimateSize: () => 150,
+    estimateSize: () => 46,
     overscan: 20,
   });
 

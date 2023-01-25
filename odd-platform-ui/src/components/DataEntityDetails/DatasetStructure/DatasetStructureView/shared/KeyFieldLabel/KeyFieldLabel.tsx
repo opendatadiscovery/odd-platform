@@ -1,11 +1,11 @@
 import React from 'react';
 import { type SxProps } from '@mui/system';
 import { type Theme } from '@mui/material';
-import type { DatasetFieldKeyType } from './KeyFieldLabelStyles';
+import type { DatasetFieldKey } from 'lib/interfaces';
 import * as S from './KeyFieldLabelStyles';
 
 interface KeyFieldLabelProps {
-  keyType: DatasetFieldKeyType;
+  keyType: DatasetFieldKey;
   sx?: SxProps<Theme>;
 }
 

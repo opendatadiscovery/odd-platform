@@ -25,10 +25,11 @@ export const RowContainer = styled(Grid)<{
     display: 'block',
     position: 'absolute',
     content: '""',
-    width: `calc(100% - ${$offset + 8}px)`,
+    width: `calc(100% - ${$offset}px)`,
     borderBottom: `1px solid ${theme.palette.backgrounds.primary}`,
-    marginLeft: `${$offset + 8}px`,
+    marginLeft: `${$offset}px`,
     top: $rowHeight,
+    zIndex: 1,
     '&:last-child': {
       borderBottom: `1px solid ${theme.palette.backgrounds.primary}`,
     },

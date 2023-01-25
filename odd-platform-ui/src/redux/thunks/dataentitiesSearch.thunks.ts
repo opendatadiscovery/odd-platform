@@ -109,7 +109,7 @@ export const fetchDataEntitySearchHighlights = handleResponseAsyncThunk<
     const { dataEntityId } = params;
     const highlights = await searchApi.highlightDataEntity(params);
 
-    return { highlights, dataEntityId };
+    return { highlights, entityId: dataEntityId };
   },
   {}
 );
