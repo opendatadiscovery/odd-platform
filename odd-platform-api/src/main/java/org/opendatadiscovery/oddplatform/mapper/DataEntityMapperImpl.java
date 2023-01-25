@@ -99,13 +99,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
-            final List<LinkedUrl> linkedUrls = CollectionUtils
-                .emptyIfNull(dto.getDataQualityTestDetailsDto().linkedUrlList())
-                .stream()
-                .map(this::mapLinkedUrl)
-                .toList();
-
-            entity.setLinkedUrlList(linkedUrls);
+            entity.setLinkedUrlList(mapLinkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList()));
 
             entity.setDatasetsList(dto.getDataQualityTestDetailsDto()
                 .datasetList()
@@ -262,9 +256,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .distinct()
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
-                .linkedUrlList(CollectionUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().linkedUrlList())
-                    .stream()
-                    .map(this::mapLinkedUrl).toList())
+                .linkedUrlList(mapLinkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList()))
                 .latestRun(dataEntityRunMapper.mapDataEntityRun(
                     dto.getDataEntity().getId(),
                     dto.getDataQualityTestDetailsDto().latestTaskRun())
@@ -315,7 +307,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .suiteUrl(dqDto.suiteUrl())
             .expectation(mapDataQualityTestExpectation(dqDto))
             .latestRun(latestRun)
-            .linkedUrlList(dqDto.linkedUrlList().stream().map(this::mapLinkedUrl).toList())
+            .linkedUrlList(mapLinkedUrlList(dqDto.linkedUrlList()))
             .severity(severity != null ? DataQualityTestSeverity.valueOf(severity) : null)
             .datasetsList(dqDto
                 .datasetList()
@@ -421,6 +413,12 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return new LinkedUrl()
             .url(linkedUrlAttribute.url())
             .name(linkedUrlAttribute.name());
+    }
+
+    private List<LinkedUrl> mapLinkedUrlList(final Collection<LinkedUrlAttribute> linkedUrlAttributes) {
+        return CollectionUtils.emptyIfNull(linkedUrlAttributes)
+            .stream()
+            .map(this::mapLinkedUrl).toList();
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {
