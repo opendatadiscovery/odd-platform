@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -64,7 +65,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     public record DataQualityTestDetailsDto(String suiteName,
                                             String suiteUrl,
                                             Collection<DataEntityPojo> datasetList,
-                                            List<String> linkedUrlList,
+                                            List<LinkedUrlAttribute> linkedUrlList,
                                             String expectationType,
                                             DataEntityTaskRunPojo latestTaskRun,
                                             Map<String, String> expectationParameters) {

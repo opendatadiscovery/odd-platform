@@ -37,7 +37,11 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       textOverflow: 'ellipsis',
       overflow: 'hidden',
       ...breakpointDownLgBody2,
-      ...($isOverflowed && { width: 'inherit', display: 'block' }),
+      ...($isOverflowed && {
+        width: 'inherit',
+        maxWidth: 'fit-content',
+        display: 'block',
+      }),
     },
     [`&.${buttonClasses.text}`]: {
       padding: isTertiary($color) ? theme.spacing(0, 0.5) : theme.spacing(0.25, 1.5),
