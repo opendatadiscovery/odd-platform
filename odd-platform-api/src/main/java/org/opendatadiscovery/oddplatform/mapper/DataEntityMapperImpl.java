@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
@@ -98,11 +99,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
-            entity.setLinkedUrlList(dto.getDataQualityTestDetailsDto()
-                .linkedUrlList()
+            final List<LinkedUrl> linkedUrls = CollectionUtils
+                .emptyIfNull(dto.getDataQualityTestDetailsDto().linkedUrlList())
                 .stream()
                 .map(this::mapLinkedUrl)
-                .toList());
+                .toList();
+
+            entity.setLinkedUrlList(linkedUrls);
 
             entity.setDatasetsList(dto.getDataQualityTestDetailsDto()
                 .datasetList()
