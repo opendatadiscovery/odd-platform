@@ -28,6 +28,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedUrl;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -35,6 +36,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
@@ -251,7 +253,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .distinct()
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
-                .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList())
+                .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList().stream()
+                    .map(this::mapLinkedUrl).toList())
                 .latestRun(dataEntityRunMapper.mapDataEntityRun(
                     dto.getDataEntity().getId(),
                     dto.getDataQualityTestDetailsDto().latestTaskRun())
@@ -302,7 +305,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .suiteUrl(dqDto.suiteUrl())
             .expectation(mapDataQualityTestExpectation(dqDto))
             .latestRun(latestRun)
-            .linkedUrlList(dqDto.linkedUrlList())
+            .linkedUrlList(dqDto.linkedUrlList().stream().map(this::mapLinkedUrl).toList())
             .severity(severity != null ? DataQualityTestSeverity.valueOf(severity) : null)
             .datasetsList(dqDto
                 .datasetList()
@@ -402,6 +405,12 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                         .totalCount(classesCount.getOrDefault(dto.getId(), 0L)))
                     .toList()
             );
+    }
+
+    private LinkedUrl mapLinkedUrl(final LinkedUrlAttribute linkedUrlAttribute) {
+        return new LinkedUrl()
+            .url(linkedUrlAttribute.url())
+            .name(linkedUrlAttribute.name());
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {

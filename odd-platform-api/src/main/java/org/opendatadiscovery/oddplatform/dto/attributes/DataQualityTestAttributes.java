@@ -25,7 +25,7 @@ public class DataQualityTestAttributes extends DataEntityAttributes {
     private Set<String> datasetOddrnList;
 
     @JsonProperty("linked_url_list")
-    private List<String> linkedUrlList;
+    private List<LinkedUrlAttribute> linkedUrlList;
 
     @JsonProperty("expectation")
     private DataQualityTestExpectationAttributes expectation;
