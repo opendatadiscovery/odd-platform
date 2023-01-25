@@ -98,7 +98,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
-            entity.datasetsList(dto.getDataQualityTestDetailsDto()
+            entity.setLinkedUrlList(dto.getDataQualityTestDetailsDto()
+                .linkedUrlList()
+                .stream()
+                .map(this::mapLinkedUrl)
+                .toList());
+
+            entity.setDatasetsList(dto.getDataQualityTestDetailsDto()
                 .datasetList()
                 .stream()
                 .distinct()
