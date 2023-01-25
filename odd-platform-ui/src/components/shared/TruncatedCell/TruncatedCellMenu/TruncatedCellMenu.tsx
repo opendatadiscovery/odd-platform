@@ -62,7 +62,12 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
           return typeof item === 'string' ? (
             <AppMenuItem key={key}>{linkContent}</AppMenuItem>
           ) : (
-            <Link key={key} to={linkTo} target='_blank' onClick={handleMenuClose}>
+            <Link
+              key={key}
+              to={'id' in item ? linkTo : { pathname: linkTo }}
+              target='_blank'
+              onClick={handleMenuClose}
+            >
               <AppMenuItem>
                 <Typography
                   variant='body1'
