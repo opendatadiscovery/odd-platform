@@ -58,16 +58,13 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
       >
         {dataList?.map((item: DataEntityRef | LinkedUrl | string) => {
           const { key, linkTo, linkContent } = getValues(item);
+          const updatedLink =
+            typeof item !== 'string' && 'id' in item ? linkTo : { pathname: linkTo };
 
           return typeof item === 'string' ? (
             <AppMenuItem key={key}>{linkContent}</AppMenuItem>
           ) : (
-            <Link
-              key={key}
-              to={'id' in item ? linkTo : { pathname: linkTo }}
-              target='_blank'
-              onClick={handleMenuClose}
-            >
+            <Link key={key} to={updatedLink} target='_blank' onClick={handleMenuClose}>
               <AppMenuItem>
                 <Typography
                   variant='body1'

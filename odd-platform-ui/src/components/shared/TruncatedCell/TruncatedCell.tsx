@@ -11,7 +11,8 @@ interface TruncatedCellProps {
   dataList: DataEntityRef[] | string[] | LinkedUrl[] | undefined;
 }
 
-const isLinkedUrl = (val: LinkedUrl | DataEntityRef): val is LinkedUrl => 'url' in val;
+const isLinkedUrl = (val: LinkedUrl | DataEntityRef): val is LinkedUrl =>
+  !('id' in val) && 'url' in val;
 
 export type Values = {
   key: string;
@@ -24,9 +25,9 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
 
   const getValues = React.useCallback(
     (item: DataEntityRef | LinkedUrl | string): Values => {
-      let key: string;
-      let linkTo: string;
-      let linkContent: string | undefined;
+      let key = '';
+      let linkTo = '';
+      let linkContent: string | undefined = '';
 
       if (typeof item === 'string') {
         key = item;
@@ -49,6 +50,8 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
 
   const getTruncateMarkupAtom = (item: DataEntityRef | LinkedUrl | string) => {
     const { key, linkTo, linkContent } = getValues(item);
+    const updatedLink =
+      typeof item !== 'string' && 'id' in item ? linkTo : { pathname: linkTo };
 
     return (
       <TruncateMarkup.Atom key={key}>
@@ -56,7 +59,7 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
           onClick={e => {
             e.stopPropagation();
           }}
-          to={linkTo}
+          to={updatedLink}
           linkTarget='_blank'
           color='primaryLight'
           size='small'
