@@ -262,7 +262,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .distinct()
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
-                .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList().stream()
+                .linkedUrlList(CollectionUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().linkedUrlList())
+                    .stream()
                     .map(this::mapLinkedUrl).toList())
                 .latestRun(dataEntityRunMapper.mapDataEntityRun(
                     dto.getDataEntity().getId(),

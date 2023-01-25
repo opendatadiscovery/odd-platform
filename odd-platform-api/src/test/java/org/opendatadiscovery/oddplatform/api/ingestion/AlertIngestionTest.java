@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -235,6 +236,8 @@ public class AlertIngestionTest extends BaseIngestionTest {
 
                     expectedDetails.setLatestRun(
                         buildExpectedDataEntityRun(ingestionMap.get(dataQualityTest.getOddrn()), dataQualityTestRun));
+
+                    expectedDetails.setLinkedUrlList(Collections.emptyList());
 
                     assertDataEntityDetailsEqual(expectedDetails, (expected, actual) ->
                         assertThat(actual.getDatasetsList())
