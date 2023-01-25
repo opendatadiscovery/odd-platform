@@ -17,13 +17,9 @@ type DatasetFieldLabelsFormData = {
 
 interface LabelsAutocompleteProps {
   appendLabel: UseFieldArrayAppend<DatasetFieldLabelsFormData, 'labels'>;
-  labelsEditing?: boolean;
 }
 
-const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
-  appendLabel,
-  labelsEditing,
-}) => {
+const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) => {
   const dispatch = useAppDispatch();
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
@@ -114,7 +110,6 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
       onClose={() => setAutocompleteOpen(false)}
       onChange={handleAutocompleteSelect}
       options={options}
-      disabled={!labelsEditing}
       onInputChange={searchInputChange}
       getOptionLabel={getOptionLabel}
       filterOptions={getFilterOptions}

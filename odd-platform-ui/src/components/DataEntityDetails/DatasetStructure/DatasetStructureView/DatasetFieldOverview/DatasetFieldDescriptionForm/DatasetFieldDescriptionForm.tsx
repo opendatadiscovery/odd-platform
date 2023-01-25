@@ -3,12 +3,10 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldDescriptionUpdatingStatus } from 'redux/selectors';
 import { Controller, useForm } from 'react-hook-form';
 import { Typography } from '@mui/material';
-import { WithPermissions } from 'components/shared/contexts';
 import type {
   DataSetField,
   DatasetFieldDescriptionUpdateFormData,
 } from 'generated-sources';
-import { Permission } from 'generated-sources';
 import { AppButton, AppInput, DialogWrapper } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { updateDataSetFieldDescription } from 'redux/thunks';
@@ -86,25 +84,18 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
         name='description'
         defaultValue={description || ''}
         render={({ field }) => (
-          // TODO change permission
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-            renderContent={({ isAllowedTo: editDescription }) => (
-              <AppInput
-                {...field}
-                label='Description'
-                placeholder='Enter description'
-                multiline
-                maxRows={4}
-                disabled={!editDescription}
-                customEndAdornment={{
-                  variant: 'clear',
-                  showAdornment: !!field.value,
-                  onCLick: () => methods.setValue('description', ''),
-                  icon: <ClearIcon />,
-                }}
-              />
-            )}
+          <AppInput
+            {...field}
+            label='Description'
+            placeholder='Enter description'
+            multiline
+            maxRows={4}
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => methods.setValue('description', ''),
+              icon: <ClearIcon />,
+            }}
           />
         )}
       />
@@ -112,23 +103,16 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
   );
 
   const formActionButtons = () => (
-    // TODO change permission
-    <WithPermissions
-      permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-      renderContent={({ isAllowedTo: editInfo }) => (
-        <AppButton
-          size='large'
-          type='submit'
-          form='dataset-field-description-form'
-          color='primary'
-          fullWidth
-          disabled={!editInfo}
-          isLoading={isLoading}
-        >
-          Save
-        </AppButton>
-      )}
-    />
+    <AppButton
+      size='large'
+      type='submit'
+      form='dataset-field-description-form'
+      color='primary'
+      fullWidth
+      isLoading={isLoading}
+    >
+      Save
+    </AppButton>
   );
 
   return (

@@ -2,10 +2,12 @@ import React from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
-import DatasetFieldDescriptionForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureView/DatasetFieldOverview/DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
 import { AppButton, LabelItem } from 'components/shared';
-import DatasetFieldLabelsForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureView/DatasetFieldOverview/DatasetFieldLabelsForm/DatasetFieldLabelsForm';
+import { Permission } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
+import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
+import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import KeyFieldLabel from '../shared/KeyFieldLabel/KeyFieldLabel';
 import { useStructureContext } from '../../StructureContext/StructureContext';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
@@ -53,19 +55,25 @@ const DatasetFieldOverview: React.FC = () => {
       <Grid container mt={2} flexDirection='column'>
         <Grid container justifyContent='space-between'>
           <Typography variant='h3'>Internal description</Typography>
-          <DatasetFieldDescriptionForm
-            datasetFieldId={field.id}
-            description={field.internalDescription}
-            btnCreateEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={field.internalDescription ? <EditIcon /> : <AddIcon />}
-                sx={{ mr: 1 }}
-              >
-                {field.internalDescription ? 'Edit' : 'Add'} description
-              </AppButton>
-            }
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}
+            renderContent={({ isAllowedTo: editDescription }) => (
+              <DatasetFieldDescriptionForm
+                datasetFieldId={field.id}
+                description={field.internalDescription}
+                btnCreateEl={
+                  <AppButton
+                    disabled={!editDescription}
+                    size='medium'
+                    color='primaryLight'
+                    startIcon={field.internalDescription ? <EditIcon /> : <AddIcon />}
+                    sx={{ mr: 1 }}
+                  >
+                    {field.internalDescription ? 'Edit' : 'Add'} description
+                  </AppButton>
+                }
+              />
+            )}
           />
         </Grid>
         <Typography mt={1} variant='subtitle1'>
@@ -75,21 +83,27 @@ const DatasetFieldOverview: React.FC = () => {
       <Grid container mt={2} flexDirection='column'>
         <Grid container justifyContent='space-between'>
           <Typography variant='h3'>Labels</Typography>
-          <DatasetFieldLabelsForm
-            datasetFieldId={field.id}
-            labels={field.labels}
-            btnCreateEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
-                startIcon={
-                  field.labels && field.labels.length > 0 ? <EditIcon /> : <AddIcon />
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
+            renderContent={({ isAllowedTo: editLabels }) => (
+              <DatasetFieldLabelsForm
+                datasetFieldId={field.id}
+                labels={field.labels}
+                btnCreateEl={
+                  <AppButton
+                    disabled={!editLabels}
+                    size='medium'
+                    color='primaryLight'
+                    startIcon={
+                      field.labels && field.labels.length > 0 ? <EditIcon /> : <AddIcon />
+                    }
+                    sx={{ mr: 1 }}
+                  >
+                    {field.labels && field.labels?.length > 0 ? 'Edit' : 'Add'} labels
+                  </AppButton>
                 }
-                sx={{ mr: 1 }}
-              >
-                {field.labels && field.labels?.length > 0 ? 'Edit' : 'Add'} labels
-              </AppButton>
-            }
+              />
+            )}
           />
         </Grid>
         <Grid container flexDirection='column' alignItems='flex-start'>

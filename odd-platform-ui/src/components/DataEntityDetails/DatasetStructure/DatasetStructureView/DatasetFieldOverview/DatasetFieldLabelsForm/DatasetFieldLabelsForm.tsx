@@ -3,9 +3,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldLabelsUpdatingStatus } from 'redux/selectors';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
-import { WithPermissions } from 'components/shared/contexts';
 import type { DataSetField, Label } from 'generated-sources';
-import { Permission } from 'generated-sources';
 import { AppButton, DialogWrapper, LabelItem } from 'components/shared';
 import { updateDataSetFieldLabels } from 'redux/thunks';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
@@ -87,28 +85,16 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
       id='dataset-field-labels-form'
       onSubmit={methods.handleSubmit(handleFormSubmit)}
     >
-      {/* TODO change permission */}
-      <WithPermissions
-        permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-        renderContent={({ isAllowedTo: editLabels }) => (
-          <LabelsAutocomplete appendLabel={append} labelsEditing={editLabels} />
-        )}
-      />
+      <LabelsAutocomplete appendLabel={append} />
       <Grid sx={{ mt: 1 }} alignItems='center'>
         {fields.map((label, index) => (
-          // TODO change permission
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-            renderContent={({ isAllowedTo: editLabels }) => (
-              <LabelItem
-                systemLabel={label.external}
-                key={label.id}
-                labelName={label.name}
-                removable={editLabels}
-                unfilled
-                onRemoveClick={() => remove(index)}
-              />
-            )}
+          <LabelItem
+            systemLabel={label.external}
+            key={label.id}
+            labelName={label.name}
+            removable
+            unfilled
+            onRemoveClick={() => remove(index)}
           />
         ))}
       </Grid>
@@ -116,23 +102,16 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
   );
 
   const formActionButtons = () => (
-    // TODO change permission
-    <WithPermissions
-      permissionTo={Permission.DATASET_FIELD_INFO_UPDATE}
-      renderContent={({ isAllowedTo: editInfo }) => (
-        <AppButton
-          size='large'
-          type='submit'
-          form='dataset-field-labels-form'
-          color='primary'
-          fullWidth
-          disabled={!editInfo}
-          isLoading={isLoading}
-        >
-          Save
-        </AppButton>
-      )}
-    />
+    <AppButton
+      size='large'
+      type='submit'
+      form='dataset-field-labels-form'
+      color='primary'
+      fullWidth
+      isLoading={isLoading}
+    >
+      Save
+    </AppButton>
   );
 
   return (
