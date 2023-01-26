@@ -95,8 +95,8 @@ export const getDatasetFieldEnums = (datasetFieldId: number | undefined) =>
     return datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr;
   });
 
-export const getDatasetFieldById = (datasetFieldId: number | undefined) =>
-  createSelector(getDatasetStructureState, datasetStructureState => {
-    if (!datasetFieldId) return undefined;
-    return datasetStructureState.fieldById[datasetFieldId];
-  });
+export const getDatasetFieldById = (datasetFieldId: number) =>
+  createSelector(
+    getDatasetStructureState,
+    datasetStructureState => datasetStructureState.fieldById[datasetFieldId]
+  );

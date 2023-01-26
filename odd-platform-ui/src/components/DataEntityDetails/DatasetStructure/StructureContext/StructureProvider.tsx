@@ -20,12 +20,9 @@ const StructureProvider: React.FC<StructureProviderProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = React.useState<SearchQuery>('');
   const [isSearchUpdated, setIsSearchUpdated] = React.useState<IsSearchUpdated>(false);
-  const [selectedFieldId, setSelectedFieldId] =
-    React.useState<SelectedFieldId>(undefined);
-
-  React.useEffect(() => {
-    setSelectedFieldId(datasetStructureRoot[0]?.id);
-  }, []);
+  const [selectedFieldId, setSelectedFieldId] = React.useState<SelectedFieldId>(
+    () => datasetStructureRoot[0].id
+  );
 
   const idxToScroll = React.useMemo(
     () => datasetStructureRoot.findIndex(field => field.id === selectedFieldId),

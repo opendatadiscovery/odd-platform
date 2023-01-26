@@ -6,8 +6,9 @@ import { AddIcon, EditIcon } from 'components/shared/Icons';
 import { AppButton, LabeledInfoItem, LabelItem } from 'components/shared';
 import { DataSetFieldTypeTypeEnum, Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import DatasetFieldEnumsForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureView/DatasetFieldOverview/DatasetFieldEnumsForm/DatasetFieldEnumsForm';
 import { fetchDataSetFieldEnum } from 'redux/thunks';
+import isEmpty from 'lodash/isEmpty';
+import DatasetFieldEnumsForm from './DatasetFieldEnumsForm/DatasetFieldEnumsForm';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
 import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import KeyFieldLabel from '../shared/KeyFieldLabel/KeyFieldLabel';
@@ -33,7 +34,17 @@ const DatasetFieldOverview: React.FC = () => {
     }
   }, [selectedFieldId]);
 
-  if (!field) return null;
+  if (isEmpty(field)) return null;
+
+  const getOverviewSection = (title: string, data: unknown | undefined) =>
+    data ? (
+      <Grid container mt={2} flexDirection='column'>
+        <Typography variant='h3'>{title}</Typography>
+        <Typography mt={1} variant='subtitle1'>
+          {data}
+        </Typography>
+      </Grid>
+    ) : null;
 
   return (
     <S.Container container>
@@ -50,22 +61,8 @@ const DatasetFieldOverview: React.FC = () => {
           <DatasetFieldStats datasetField={field} rowsCount={datasetRowsCount} />
         )}
       </Grid>
-      {field?.defaultValue && (
-        <Grid container mt={2} flexDirection='column'>
-          <Typography variant='h3'>Default value</Typography>
-          <Typography mt={1} variant='subtitle1'>
-            {field?.defaultValue}
-          </Typography>
-        </Grid>
-      )}
-      {field?.externalDescription && (
-        <Grid container mt={2} flexDirection='column'>
-          <Typography variant='h3'>External description</Typography>
-          <Typography mt={1} variant='subtitle1'>
-            {field?.externalDescription}
-          </Typography>
-        </Grid>
-      )}
+      {getOverviewSection('Default value', field.defaultValue)}
+      {getOverviewSection('External description', field.externalDescription)}
       <Grid container mt={2} flexDirection='column'>
         <Grid container justifyContent='space-between'>
           <Typography variant='h3'>Internal description</Typography>
@@ -121,7 +118,7 @@ const DatasetFieldOverview: React.FC = () => {
           />
         </Grid>
         <Grid container flexDirection='column' alignItems='flex-start'>
-          {field.labels && field.labels.length > 0 ? (
+          {field.labels && field.labels?.length > 0 ? (
             <Grid container mt={1}>
               {field.labels &&
                 field.labels.map(({ name, external }) => (

@@ -4,7 +4,7 @@ import type { DataSetField, DataSetStats } from 'generated-sources';
 
 export type SearchQuery = string;
 export type IsSearchUpdated = boolean;
-export type SelectedFieldId = number | undefined;
+export type SelectedFieldId = number;
 
 export interface StructureContextProps {
   searchQuery: SearchQuery;
