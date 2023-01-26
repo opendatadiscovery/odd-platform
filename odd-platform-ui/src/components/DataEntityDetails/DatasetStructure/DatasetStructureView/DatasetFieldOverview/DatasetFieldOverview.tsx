@@ -130,7 +130,7 @@ const DatasetFieldOverview: React.FC = () => {
             </Grid>
           ) : (
             <Typography mt={1} variant='subtitle1'>
-              Labels is not created yet
+              Labels are not created yet
             </Typography>
           )}
         </Grid>
@@ -174,7 +174,7 @@ const DatasetFieldOverview: React.FC = () => {
               </Grid>
             ) : (
               <Typography mt={1} variant='subtitle1'>
-                Enums is not created yet
+                Enums are not created yet
               </Typography>
             )}
           </Grid>

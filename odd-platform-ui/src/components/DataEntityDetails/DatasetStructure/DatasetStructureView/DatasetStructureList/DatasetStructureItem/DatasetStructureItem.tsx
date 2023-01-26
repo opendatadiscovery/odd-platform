@@ -90,7 +90,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         <Grid container item sx={{ px: 1, py: 1.25 }} flexWrap='nowrap'>
           <S.RowInfoWrapper container $padOffset={nestedOffset} item>
             {collapseBlock && (
-              <Grid sx={{ p: 0.5, display: 'flex' }}>{collapseBlock}</Grid>
+              <Grid sx={{ p: 0.5, display: 'flex', alignSelf: 'center' }}>
+                {collapseBlock}
+              </Grid>
             )}
             <Grid container justifyContent='space-between' py={0.25} flexWrap='nowrap'>
               <Grid display='flex' minWidth={0} flexWrap='nowrap' alignItems='center'>
