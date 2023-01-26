@@ -4,7 +4,7 @@ import { type DataSetField } from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure } from 'redux/selectors';
 import { AppIconButton, AppTooltip } from 'components/shared';
-import { StrokedInfoIcon, ChevronIcon } from 'components/shared/Icons';
+import { ChevronIcon, StrokedInfoIcon } from 'components/shared/Icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import KeyFieldLabel from '../../shared/KeyFieldLabel/KeyFieldLabel';
@@ -69,14 +69,23 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     );
   }
 
+  const handleRowClick = React.useCallback(() => {
+    setSelectedFieldId(datasetField.id);
+  }, [datasetField.id, setSelectedFieldId]);
+
+  const isRowSelected = React.useMemo(
+    () => selectedFieldId === datasetField.id,
+    [selectedFieldId, datasetField.id]
+  );
+
   return (
     <>
       <S.RowContainer
-        onClick={() => setSelectedFieldId(datasetField.id)}
+        onClick={handleRowClick}
         container
         $offset={nestedOffset}
         $rowHeight={rowHeight}
-        $isRowSelected={selectedFieldId === datasetField.id}
+        $isRowSelected={isRowSelected}
       >
         <Grid container item sx={{ px: 1, py: 1.25 }} flexWrap='nowrap'>
           <S.RowInfoWrapper container $padOffset={nestedOffset} item>

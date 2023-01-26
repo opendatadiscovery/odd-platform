@@ -23,6 +23,14 @@ const DatasetStructure: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, versionId } = useAppParams();
 
+  React.useEffect(() => {
+    if (versionId) {
+      dispatch(fetchDataSetStructure({ dataEntityId, versionId }));
+    } else {
+      dispatch(fetchDataSetStructureLatest({ dataEntityId }));
+    }
+  }, []);
+
   const {
     isLoaded: isDatasetStructureFetched,
     isLoading: isDatasetStructureFetching,
@@ -51,37 +59,32 @@ const DatasetStructure: React.FC = () => {
     getDatasetStructureTypeStats({ datasetId: dataEntityId, versionId })
   );
 
-  React.useEffect(() => {
-    if (versionId) {
-      dispatch(fetchDataSetStructure({ dataEntityId, versionId }));
-    } else {
-      dispatch(fetchDataSetStructureLatest({ dataEntityId }));
-    }
-  }, []);
-
   return (
     <Box>
       <DatasetStructureSkeleton
         showSkeleton={isDatasetStructureFetching || isDatasetStructureLatestFetching}
       />
-      <DatasetStructureProvider
-        datasetStructureRoot={datasetStructureRoot}
-        datasetRowsCount={datasetStats.rowsCount}
-      >
-        <DatasetStructureView
-          showStructure={
-            !!datasetStructureVersion &&
-            datasetStructureRoot.length > 0 &&
-            !(isDatasetStructureFetching || isDatasetStructureLatestFetching)
-          }
-          fieldsCount={datasetStats.fieldsCount}
-          typesCount={typesCount}
-          datasetVersions={datasetVersions}
-          datasetStructureVersion={datasetStructureVersion}
-          dataEntityId={dataEntityId}
-          versionId={versionId}
-        />
-      </DatasetStructureProvider>
+      {datasetStructureRoot.length > 0 && (
+        <DatasetStructureProvider
+          datasetStructureRoot={datasetStructureRoot}
+          datasetRowsCount={datasetStats.rowsCount}
+        >
+          {/* TODO change showing condition */}
+          <DatasetStructureView
+            showStructure={
+              !!datasetStructureVersion &&
+              datasetStructureRoot.length > 0 &&
+              !(isDatasetStructureFetching || isDatasetStructureLatestFetching)
+            }
+            fieldsCount={datasetStats.fieldsCount}
+            typesCount={typesCount}
+            datasetVersions={datasetVersions}
+            datasetStructureVersion={datasetStructureVersion}
+            dataEntityId={dataEntityId}
+            versionId={versionId}
+          />
+        </DatasetStructureProvider>
+      )}
       <AppErrorPage
         showError={isDatasetStructureNotFetched || isDatasetStructureLatestNotFetched}
         error={datasetStructureFetchingError || datasetStructureLatestFetchingError}

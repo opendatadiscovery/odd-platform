@@ -1,10 +1,5 @@
 import styled from 'styled-components';
-import type { GridProps } from '@mui/material';
 import { Grid } from '@mui/material';
-
-export const EditBtnContainer = styled(Grid)<GridProps>(() => ({
-  visibility: 'hidden',
-}));
 
 export const Container = styled(Grid)(({ theme }) => ({
   justifyContent: 'space-between',
@@ -13,9 +8,6 @@ export const Container = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(1, 0),
   borderTop: '1px solid',
   borderTopColor: theme.palette.divider,
-  '&:hover': {
-    [`${EditBtnContainer}`]: { visibility: 'visible' },
-  },
 }));
 
 export const ValueNameContainer = styled(Grid)(() => ({

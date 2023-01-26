@@ -89,7 +89,7 @@ export const getDatasetStructureTypeStats = ({
     }
   );
 
-export const getDatasetFieldEnums = (datasetFieldId: number) =>
+export const getDatasetFieldEnums = (datasetFieldId: number | undefined) =>
   createSelector(getDatasetStructureState, datasetStructureState => {
     if (!datasetFieldId) return [{ name: '', description: '' } as EnumValue];
     return datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr;

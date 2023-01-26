@@ -1,11 +1,13 @@
 import React from 'react';
-import { useAppSelector } from 'redux/lib/hooks';
-import { getDatasetFieldById } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { getDatasetFieldById, getDatasetFieldEnums } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
-import { AppButton, LabelItem } from 'components/shared';
-import { Permission } from 'generated-sources';
+import { AppButton, LabeledInfoItem, LabelItem } from 'components/shared';
+import { DataSetFieldTypeTypeEnum, Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import DatasetFieldEnumsForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureView/DatasetFieldOverview/DatasetFieldEnumsForm/DatasetFieldEnumsForm';
+import { fetchDataSetFieldEnum } from 'redux/thunks';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
 import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import KeyFieldLabel from '../shared/KeyFieldLabel/KeyFieldLabel';
@@ -14,10 +16,22 @@ import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverviewStyles';
 
 const DatasetFieldOverview: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { selectedFieldId, datasetRowsCount } = useStructureContext();
 
   const field = useAppSelector(getDatasetFieldById(selectedFieldId));
+  const datasetFieldEnums = useAppSelector(getDatasetFieldEnums(selectedFieldId));
   const isUniqStatsExists = Object.values(field?.stats || {}).filter(Boolean).length > 0;
+
+  React.useEffect(() => {
+    if (
+      (field?.type.type === DataSetFieldTypeTypeEnum.STRING ||
+        field?.type.type === DataSetFieldTypeTypeEnum.INTEGER) &&
+      selectedFieldId
+    ) {
+      dispatch(fetchDataSetFieldEnum({ datasetFieldId: selectedFieldId }));
+    }
+  }, [selectedFieldId]);
 
   if (!field) return null;
 
@@ -121,6 +135,51 @@ const DatasetFieldOverview: React.FC = () => {
           )}
         </Grid>
       </Grid>
+      {(field.type.type === DataSetFieldTypeTypeEnum.STRING ||
+        field.type.type === DataSetFieldTypeTypeEnum.INTEGER) && (
+        <Grid container mt={2} flexDirection='column'>
+          <Grid container justifyContent='space-between'>
+            <Typography variant='h3'>Enums</Typography>
+            <WithPermissions
+              permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+              renderContent={({ isAllowedTo: editEnums }) => (
+                <DatasetFieldEnumsForm
+                  datasetFieldId={field.id}
+                  datasetFieldName={field.name}
+                  datasetFieldType={field.type.type}
+                  defaultEnums={datasetFieldEnums}
+                  btnCreateEl={
+                    <AppButton
+                      disabled={!editEnums}
+                      size='medium'
+                      color='primaryLight'
+                      startIcon={field.enumValueCount ? <EditIcon /> : <AddIcon />}
+                      sx={{ mr: 1 }}
+                    >
+                      {field.enumValueCount ? 'Edit' : 'Add'} enums
+                    </AppButton>
+                  }
+                />
+              )}
+            />
+          </Grid>
+          <Grid container flexDirection='column' alignItems='flex-start'>
+            {field.enumValueCount ? (
+              <Grid container mt={1}>
+                {datasetFieldEnums.map(({ name, description, id }) => (
+                  <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
+                    {description}
+                  </LabeledInfoItem>
+                ))}
+              </Grid>
+            ) : (
+              <Typography mt={1} variant='subtitle1'>
+                Enums is not created yet
+              </Typography>
+            )}
+          </Grid>
+        </Grid>
+      )}
     </S.Container>
   );
 };

@@ -25,7 +25,7 @@ const StructureProvider: React.FC<StructureProviderProps> = ({
 
   React.useEffect(() => {
     setSelectedFieldId(datasetStructureRoot[0]?.id);
-  }, [datasetStructureRoot]);
+  }, []);
 
   const idxToScroll = React.useMemo(
     () => datasetStructureRoot.findIndex(field => field.id === selectedFieldId),
