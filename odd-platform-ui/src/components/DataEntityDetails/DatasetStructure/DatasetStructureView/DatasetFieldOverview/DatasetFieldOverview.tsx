@@ -41,7 +41,7 @@ const DatasetFieldOverview: React.FC = () => {
         </Typography>
         {field?.isPrimaryKey && <KeyFieldLabel sx={{ ml: 1 }} keyType='primary' />}
         {field?.isSortKey && <KeyFieldLabel sx={{ ml: 1 }} keyType='sort' />}
-        {field?.isNullable && <KeyFieldLabel sx={{ ml: 1 }} keyType='nullable' />}
+        {field?.type.isNullable && <KeyFieldLabel sx={{ ml: 1 }} keyType='nullable' />}
       </Grid>
       <Grid mt={2} flexDirection='column'>
         {isUniqStatsExists && field && (
