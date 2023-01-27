@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
+import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.springframework.stereotype.Component;
 
@@ -39,5 +40,19 @@ public class MetadataFieldValueMapperImpl implements MetadataFieldValueMapper {
             return List.of();
         }
         return dto.stream().map(this::mapDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MetadataFieldValue> mapDatasetFieldDtos(final Collection<DatasetFieldMetadataDto> dto) {
+        if (CollectionUtils.isEmpty(dto)) {
+            return List.of();
+        }
+        return dto.stream().map(this::mapDatasetFieldMetadataDto).collect(Collectors.toList());
+    }
+
+    private MetadataFieldValue mapDatasetFieldMetadataDto(final DatasetFieldMetadataDto dto) {
+        return new MetadataFieldValue()
+            .field(mapper.mapPojo(dto.metadataField()))
+            .value(dto.value().getValue());
     }
 }

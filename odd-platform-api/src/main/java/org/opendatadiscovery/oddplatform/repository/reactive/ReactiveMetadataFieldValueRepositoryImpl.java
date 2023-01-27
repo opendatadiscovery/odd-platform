@@ -122,7 +122,7 @@ public class ReactiveMetadataFieldValueRepositoryImpl implements ReactiveMetadat
         final Condition condition = bindings.stream()
             .map(binding ->
                 METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(binding.metadataFieldId())
-                    .and(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(binding.dataEntityId()))
+                    .and(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(binding.entityId()))
             )
             .reduce(Condition::or)
             .orElseThrow();

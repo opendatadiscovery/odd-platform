@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.DatasetStructureService;
+import org.opendatadiscovery.oddplatform.service.ingestion.DatasetFieldMetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -29,6 +30,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
     private final ReactiveDatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureService datasetStructureService;
     private final LabelIngestionService labelIngestionService;
+    private final DatasetFieldMetadataIngestionService datasetFieldMetadataIngestionService;
     private final DatasetVersionMapper datasetVersionMapper;
 
     @Override
@@ -36,6 +38,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         return ingestNewDatasetStructure(request)
             .then(ingestExistingDatasetStructure(request))
             .then(labelIngestionService.ingestExternalLabels(request))
+            .then(datasetFieldMetadataIngestionService.ingestMetadata(request))
             .then();
     }
 

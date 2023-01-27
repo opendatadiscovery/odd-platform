@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DatasetFieldApiMapperTest {
 
     @InjectMocks
-    DatasetFieldApiMapper datasetFieldApiMapper = new DatasetFieldApiMapperImpl(new LabelMapperImpl());
+    DatasetFieldApiMapper datasetFieldApiMapper = new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
+        new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()));
 
     @Test
     @DisplayName("mapping dataset fields")
@@ -49,7 +50,6 @@ class DatasetFieldApiMapperTest {
         assertNotNull(actualDataSetField.getName());
         assertEquals(datasetFieldDto.getEnumValueCount(), actualDataSetField.getEnumValueCount());
         assertEquals(datasetFieldDto.getParentFieldId(), actualDataSetField.getParentFieldId());
-        assertNull(actualDataSetField.getDefaultValue());
         assertDataField(datasetFieldDto.getDatasetFieldPojo(), actualDataSetField);
     }
 
@@ -62,5 +62,6 @@ class DatasetFieldApiMapperTest {
         assertEquals(expectedDatasetFieldPojo.getIsValue(), actualDataSetField.getIsValue());
         assertEquals(expectedDatasetFieldPojo.getExternalDescription(), actualDataSetField.getExternalDescription());
         assertEquals(expectedDatasetFieldPojo.getInternalDescription(), actualDataSetField.getInternalDescription());
+        assertEquals(expectedDatasetFieldPojo.getDefaultValue(), actualDataSetField.getDefaultValue());
     }
 }

@@ -82,7 +82,8 @@ class LineageServiceTest {
                 ),
                 new DatasetVersionMapperImpl(
                     new DatasetFieldApiMapperImpl(
-                        new LabelMapperImpl()
+                        new LabelMapperImpl(),
+                        new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl())
                     ),
                     new OffsetDateTimeMapperImpl()
                 ),
