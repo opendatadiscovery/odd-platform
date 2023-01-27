@@ -59,6 +59,6 @@ public interface DatasetFieldIngestionMapper {
         if (CollectionUtils.isNotEmpty(metadata)) {
             return metadata.get(0).getMetadata();
         }
-        return null;
+        return Map.of();
     }
 }
