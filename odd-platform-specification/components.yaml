@@ -1422,8 +1422,6 @@ components:
           type: boolean
         is_sort_key:
           type: boolean
-        is_nullable:
-          type: boolean
         default_value:
           type: string
         external_description:
