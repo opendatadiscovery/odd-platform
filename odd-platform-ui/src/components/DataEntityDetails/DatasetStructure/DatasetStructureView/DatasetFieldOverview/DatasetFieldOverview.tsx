@@ -1,14 +1,13 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { getDatasetFieldById, getDatasetFieldEnums } from 'redux/selectors';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getDatasetFieldById } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
-import { AppButton, LabeledInfoItem, LabelItem } from 'components/shared';
-import { DataSetFieldTypeTypeEnum, Permission } from 'generated-sources';
+import { AppButton, LabelItem, MetadataItem } from 'components/shared';
+import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { fetchDataSetFieldEnum } from 'redux/thunks';
 import isEmpty from 'lodash/isEmpty';
-import DatasetFieldEnumsForm from './DatasetFieldEnumsForm/DatasetFieldEnumsForm';
+import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
 import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import KeyFieldLabel from '../shared/KeyFieldLabel/KeyFieldLabel';
@@ -17,38 +16,26 @@ import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverviewStyles';
 
 const DatasetFieldOverview: React.FC = () => {
-  const dispatch = useAppDispatch();
   const { selectedFieldId, datasetRowsCount } = useStructureContext();
 
   const field = useAppSelector(getDatasetFieldById(selectedFieldId));
-  const datasetFieldEnums = useAppSelector(getDatasetFieldEnums(selectedFieldId));
   const isUniqStatsExists = Object.values(field?.stats || {}).filter(Boolean).length > 0;
-
-  React.useEffect(() => {
-    if (
-      (field?.type.type === DataSetFieldTypeTypeEnum.STRING ||
-        field?.type.type === DataSetFieldTypeTypeEnum.INTEGER) &&
-      selectedFieldId
-    ) {
-      dispatch(fetchDataSetFieldEnum({ datasetFieldId: selectedFieldId }));
-    }
-  }, [selectedFieldId]);
 
   if (isEmpty(field)) return null;
 
   const getOverviewSection = (title: string, data: unknown | undefined) =>
     data ? (
-      <Grid container mt={2} flexDirection='column'>
+      <S.SectionContainer container>
         <Typography variant='h3'>{title}</Typography>
         <Typography mt={1} variant='subtitle1'>
           {data}
         </Typography>
-      </Grid>
+      </S.SectionContainer>
     ) : null;
 
   return (
     <S.Container container>
-      <Grid container>
+      <Grid container flexWrap='nowrap'>
         <Typography variant='h1' title={field?.name} noWrap>
           {field?.name}
         </Typography>
@@ -63,7 +50,7 @@ const DatasetFieldOverview: React.FC = () => {
       </Grid>
       {getOverviewSection('Default value', field.defaultValue)}
       {getOverviewSection('External description', field.externalDescription)}
-      <Grid container mt={2} flexDirection='column'>
+      <S.SectionContainer container>
         <Grid container justifyContent='space-between'>
           <Typography variant='h3'>Internal description</Typography>
           <WithPermissions
@@ -90,8 +77,8 @@ const DatasetFieldOverview: React.FC = () => {
         <Typography mt={1} variant='subtitle1'>
           {field?.internalDescription || 'Description is not created yet'}
         </Typography>
-      </Grid>
-      <Grid container mt={2} flexDirection='column'>
+      </S.SectionContainer>
+      <S.SectionContainer container>
         <Grid container justifyContent='space-between'>
           <Typography variant='h3'>Labels</Typography>
           <WithPermissions
@@ -131,51 +118,11 @@ const DatasetFieldOverview: React.FC = () => {
             </Typography>
           )}
         </Grid>
-      </Grid>
-      {(field.type.type === DataSetFieldTypeTypeEnum.STRING ||
-        field.type.type === DataSetFieldTypeTypeEnum.INTEGER) && (
-        <Grid container mt={2} flexDirection='column'>
-          <Grid container justifyContent='space-between'>
-            <Typography variant='h3'>Enums</Typography>
-            <WithPermissions
-              permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-              renderContent={({ isAllowedTo: editEnums }) => (
-                <DatasetFieldEnumsForm
-                  datasetFieldId={field.id}
-                  datasetFieldName={field.name}
-                  datasetFieldType={field.type.type}
-                  defaultEnums={datasetFieldEnums}
-                  btnCreateEl={
-                    <AppButton
-                      disabled={!editEnums}
-                      size='medium'
-                      color='primaryLight'
-                      startIcon={field.enumValueCount ? <EditIcon /> : <AddIcon />}
-                      sx={{ mr: 1 }}
-                    >
-                      {field.enumValueCount ? 'Edit' : 'Add'} enums
-                    </AppButton>
-                  }
-                />
-              )}
-            />
-          </Grid>
-          <Grid container flexDirection='column' alignItems='flex-start'>
-            {field.enumValueCount ? (
-              <Grid container mt={1}>
-                {datasetFieldEnums.map(({ name, description, id }) => (
-                  <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
-                    {description}
-                  </LabeledInfoItem>
-                ))}
-              </Grid>
-            ) : (
-              <Typography mt={1} variant='subtitle1'>
-                Enums are not created yet
-              </Typography>
-            )}
-          </Grid>
-        </Grid>
+      </S.SectionContainer>
+      <DatasetFieldOverviewEnums field={field} />
+      {getOverviewSection(
+        'Metadata',
+        field.metadata?.map(metadata => <MetadataItem metadata={metadata} />)
       )}
     </S.Container>
   );

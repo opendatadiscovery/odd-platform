@@ -20,6 +20,7 @@ export const loaderSlice = createSlice({
       { payload }: PayloadAction<string>
     ) => {
       delete state.statuses[payload];
+      delete state.errors[payload];
     },
   },
   extraReducers: builder => {

@@ -9,3 +9,10 @@ export const Container = styled(Grid)(({ theme }) => ({
   overflowY: 'auto',
   padding: theme.spacing(2),
 }));
+
+export const SectionContainer = styled(Grid)(({ theme }) => ({
+  flexDirection: 'column',
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  marginTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
+}));

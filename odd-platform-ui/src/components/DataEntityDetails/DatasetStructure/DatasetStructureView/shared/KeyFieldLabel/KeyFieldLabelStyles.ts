@@ -14,8 +14,8 @@ export const Container = styled(Box)<BoxProps>(() => ({
 
 export const FilledContainer = styled('span')<FilledContainerProps>(
   ({ theme, $keyType }) => ({
-    fontSize: '10px',
-    lineHeight: '11px',
+    fontSize: '12px',
+    lineHeight: '12px',
     borderRadius: '9px',
     fontWeight: 500,
     padding: theme.spacing(0.3125, 0.625),

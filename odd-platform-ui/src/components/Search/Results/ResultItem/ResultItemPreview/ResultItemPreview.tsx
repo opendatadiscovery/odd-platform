@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppCircularProgress, LabeledInfoItem, NumberFormatted } from 'components/shared';
+import { AppCircularProgress, MetadataItem, NumberFormatted } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {
@@ -9,10 +9,8 @@ import {
   getDataEntityDetailsFetchingStatuses,
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors';
-import { useAppDateTime } from 'lib/hooks';
 import isEmpty from 'lodash/isEmpty';
 import MDEditor from '@uiw/react-md-editor';
-import { getMetadataValue } from 'lib/helpers';
 import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
@@ -21,7 +19,6 @@ interface ResultItemPreviewProps {
 
 const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) => {
   const dispatch = useAppDispatch();
-  const { metadataFormattedDateTime } = useAppDateTime();
 
   const metadataNum = 5;
 
@@ -60,20 +57,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
               </Typography>
             </Grid>
             {customMetadata.length ? (
-              customMetadata.slice(0, metadataNum).map(metadata => (
-                <LabeledInfoItem
-                  key={metadata.field.id}
-                  inline
-                  label={metadata.field.name}
-                  labelWidth={4}
-                >
-                  {getMetadataValue(
-                    metadata.field,
-                    metadata.value,
-                    metadataFormattedDateTime
-                  )}
-                </LabeledInfoItem>
-              ))
+              customMetadata
+                .slice(0, metadataNum)
+                .map(metadata => <MetadataItem metadata={metadata} />)
             ) : (
               <Typography variant='body1' color='texts.secondary'>
                 No custom metadata
@@ -90,20 +76,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
               </Typography>
             </Grid>
             {predefinedMetadata.length ? (
-              predefinedMetadata.slice(0, metadataNum).map(metadata => (
-                <LabeledInfoItem
-                  key={metadata.field.id}
-                  inline
-                  label={metadata.field.name}
-                  labelWidth={4}
-                >
-                  {getMetadataValue(
-                    metadata.field,
-                    metadata.value,
-                    metadataFormattedDateTime
-                  )}
-                </LabeledInfoItem>
-              ))
+              predefinedMetadata
+                .slice(0, metadataNum)
+                .map(metadata => <MetadataItem metadata={metadata} />)
             ) : (
               <Typography variant='body1' color='texts.secondary'>
                 No predefined metadata
