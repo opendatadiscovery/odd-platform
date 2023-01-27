@@ -11,7 +11,9 @@ interface KeyFieldLabelProps {
 
 const KeyFieldLabel: React.FC<KeyFieldLabelProps> = ({ keyType, sx }) => (
   <S.Container title={keyType} sx={sx}>
-    <S.FilledContainer $keyType={keyType}>{keyType} key</S.FilledContainer>
+    <S.FilledContainer $keyType={keyType}>{`${keyType} ${
+      keyType === 'nullable' ? '' : 'key'
+    }`}</S.FilledContainer>
   </S.Container>
 );
 
