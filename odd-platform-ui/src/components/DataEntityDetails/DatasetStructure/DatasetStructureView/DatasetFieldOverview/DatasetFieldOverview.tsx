@@ -120,10 +120,12 @@ const DatasetFieldOverview: React.FC = () => {
         </Grid>
       </S.SectionContainer>
       <DatasetFieldOverviewEnums field={field} />
-      {getOverviewSection(
-        'Metadata',
-        field.metadata?.map(metadata => <MetadataItem metadata={metadata} />)
-      )}
+      {field.metadata &&
+        field.metadata?.length > 0 &&
+        getOverviewSection(
+          'Metadata',
+          field.metadata?.map(metadata => <MetadataItem metadata={metadata} />)
+        )}
     </S.Container>
   );
 };
