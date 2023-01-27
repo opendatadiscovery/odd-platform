@@ -207,7 +207,7 @@ test.describe('Search by data in data-entity in the Catalog', () => {
       await pages.catalog.searchBy('art_aqa');
       await pages.catalog.clickOnListItem('art_aqa');
       await pages.structure.goToStructureTab.click();
-      await pages.structure.addLabel(`isLocal`, label, `new local brands + ${workerId}`);
+      await pages.structure.addLabel(`isLocal`, label);
       await pages.topPanel.clickTab('Catalog');
       await pages.catalog.searchBy(label);
       expect(await pages.catalog.isListItemVisible('art_aqa')).toBeTruthy();

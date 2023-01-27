@@ -89,6 +89,7 @@ const DatasetFieldOverview: React.FC = () => {
                 labels={field.labels}
                 btnCreateEl={
                   <AppButton
+                    data-qa='edit_labels'
                     disabled={!editLabels}
                     size='medium'
                     color='primaryLight'
