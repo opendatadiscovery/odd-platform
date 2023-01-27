@@ -17,7 +17,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -35,7 +34,8 @@ class DatasetVersionMapperTest {
     @InjectMocks
     DatasetVersionMapper datasetVersionMapper =
         new DatasetVersionMapperImpl(
-            new DatasetFieldApiMapperImpl(new LabelMapperImpl()),
+            new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
+                new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl())),
             new OffsetDateTimeMapperImpl());
     private static final EasyRandom EASY_RANDOM;
 

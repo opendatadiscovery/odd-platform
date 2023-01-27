@@ -20,10 +20,13 @@ import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
+import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldMetadataValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetVersionRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -41,12 +44,14 @@ import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_METADATA_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 
 @Repository
 @Slf4j
@@ -57,6 +62,9 @@ public class ReactiveDatasetVersionRepositoryImpl
     public static final String LABELS = "labels";
     public static final String LABEL_RELATIONS = "label_relations";
     public static final String ENUM_VALUE_COUNT = "enum_value_count";
+    public static final String METADATA_VALUES = "metadata_values";
+    public static final String METADATA = "metadata";
+
     private final JooqRecordHelper jooqRecordHelper;
 
     public ReactiveDatasetVersionRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
@@ -76,6 +84,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
+            .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
+            .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(DATASET_VERSION)
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
@@ -84,6 +94,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
             .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
                 .and(ENUM_VALUE.DELETED_AT.isNull()))
+            .leftJoin(DATASET_FIELD_METADATA_VALUE)
+            .on(DATASET_FIELD.ID.eq(DATASET_FIELD_METADATA_VALUE.DATASET_FIELD_ID))
+            .leftJoin(METADATA_FIELD).on(DATASET_FIELD_METADATA_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
             .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields);
 
@@ -119,6 +132,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
+            .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
+            .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(subquery)
             .join(DATASET_VERSION)
@@ -130,6 +145,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
             .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
                 .and(ENUM_VALUE.DELETED_AT.isNull()))
+            .leftJoin(DATASET_FIELD_METADATA_VALUE)
+            .on(DATASET_FIELD.ID.eq(DATASET_FIELD_METADATA_VALUE.DATASET_FIELD_ID))
+            .leftJoin(METADATA_FIELD).on(DATASET_FIELD_METADATA_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
             .groupBy(selectFields);
 
         return jooqReactiveOperations
@@ -228,6 +246,7 @@ public class ReactiveDatasetVersionRepositoryImpl
         return DatasetFieldDto.builder()
             .datasetFieldPojo(extractDatasetField(datasetVersionRecord))
             .labels(extractLabels(datasetVersionRecord))
+            .metadata(extractMetadata(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
             .build();
     }
@@ -245,6 +264,20 @@ public class ReactiveDatasetVersionRepositoryImpl
                 labelPojo,
                 !LabelOrigin.INTERNAL.equals(LabelOrigin.valueOf(relations.get(labelPojo.getId()).getOrigin()))
             ))
+            .toList();
+    }
+
+    private List<DatasetFieldMetadataDto> extractMetadata(final Record record) {
+        final Set<MetadataFieldPojo> metadataFields =
+            jooqRecordHelper.extractAggRelation(record, METADATA, MetadataFieldPojo.class);
+
+        final Map<Long, DatasetFieldMetadataValuePojo> values = jooqRecordHelper
+            .extractAggRelation(record, METADATA_VALUES, DatasetFieldMetadataValuePojo.class)
+            .stream()
+            .collect(Collectors.toMap(DatasetFieldMetadataValuePojo::getMetadataFieldId, identity()));
+
+        return metadataFields.stream()
+            .map(pojo -> new DatasetFieldMetadataDto(pojo, values.get(pojo.getId())))
             .toList();
     }
 }

@@ -124,6 +124,8 @@ public class IngestionModelMapper {
             .isValue(field.getIsValue())
             .isSortKey(field.getIsSortKey())
             .isPrimaryKey(field.getIsPrimaryKey())
+            .defaultValue(field.getDefaultValue())
+            .metadata(List.of())
             .enumValueCount(0);
     }
 

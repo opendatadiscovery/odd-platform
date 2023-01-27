@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 
 @Data
@@ -14,6 +15,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 public class DatasetFieldDto {
     private DatasetFieldPojo datasetFieldPojo;
     private List<LabelDto> labels;
+    private List<DatasetFieldMetadataDto> metadata;
     private Long parentFieldId;
     private Integer enumValueCount;
 }
