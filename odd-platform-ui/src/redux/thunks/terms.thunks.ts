@@ -1,23 +1,18 @@
-import {
-  Configuration,
-  type Tag,
-  TermApi,
-  type TermApiCreateTermRequest,
-  type TermApiCreateTermTagsRelationsRequest,
-  type TermApiDeleteTermRequest,
-  type TermApiGetTermDetailsRequest,
-  type TermApiGetTermsListRequest,
-  type TermApiUpdateTermRequest,
-  type TermDetails,
-  type TermRef,
+import type {
+  Tag,
+  TermApiCreateTermRequest,
+  TermApiCreateTermTagsRelationsRequest,
+  TermApiDeleteTermRequest,
+  TermApiGetTermDetailsRequest,
+  TermApiGetTermsListRequest,
+  TermApiUpdateTermRequest,
+  TermDetails,
+  TermRef,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const termApi = new TermApi(apiClientConf);
+import { termApi } from 'lib/api';
 
 export const createTerm = handleResponseAsyncThunk<TermDetails, TermApiCreateTermRequest>(
   actions.createTermActType,

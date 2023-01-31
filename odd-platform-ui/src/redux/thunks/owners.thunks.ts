@@ -1,34 +1,23 @@
-import {
-  Configuration,
-  DataEntityApi,
-  type DataEntityApiCreateOwnershipRequest,
-  type DataEntityApiDeleteOwnershipRequest,
-  type DataEntityApiUpdateOwnershipRequest,
-  type Owner,
-  OwnerApi,
-  type OwnerApiCreateOwnerRequest,
-  type OwnerApiDeleteOwnerRequest,
-  type OwnerApiGetOwnerListRequest,
-  type OwnerApiUpdateOwnerRequest,
-  type Ownership,
-  TermApi,
-  type TermApiCreateTermOwnershipRequest,
-  type TermApiDeleteTermOwnershipRequest,
-  type TermApiUpdateTermOwnershipRequest,
-  TitleApi,
-  type TitleApiGetTitleListRequest,
-  type TitleList,
+import type {
+  DataEntityApiCreateOwnershipRequest,
+  DataEntityApiDeleteOwnershipRequest,
+  DataEntityApiUpdateOwnershipRequest,
+  Owner,
+  OwnerApiCreateOwnerRequest,
+  OwnerApiDeleteOwnerRequest,
+  OwnerApiGetOwnerListRequest,
+  OwnerApiUpdateOwnerRequest,
+  Ownership,
+  TermApiCreateTermOwnershipRequest,
+  TermApiDeleteTermOwnershipRequest,
+  TermApiUpdateTermOwnershipRequest,
+  TitleApiGetTitleListRequest,
+  TitleList,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const ownerApi = new OwnerApi(apiClientConf);
-const dataEntityApi = new DataEntityApi(apiClientConf);
-const titleApi = new TitleApi(apiClientConf);
-const termApi = new TermApi(apiClientConf);
+import { dataEntityApi, ownerApi, termApi, titleApi } from 'lib/api';
 
 export const fetchOwnershipTitleList = handleResponseAsyncThunk<
   { titleList: TitleList['items'] },

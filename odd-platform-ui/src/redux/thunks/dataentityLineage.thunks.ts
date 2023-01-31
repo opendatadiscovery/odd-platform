@@ -1,19 +1,14 @@
-import {
-  Configuration,
-  DataEntityApi,
-  type DataEntityApiGetDataEntityDownstreamLineageRequest,
-  type DataEntityApiGetDataEntityUpstreamLineageRequest,
+import type {
+  DataEntityApiGetDataEntityDownstreamLineageRequest,
+  DataEntityApiGetDataEntityUpstreamLineageRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type {
   DataEntityLineageRequestParams,
   DataEntityLineageResponse,
 } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const dataEntityApi = new DataEntityApi(apiClientConf);
+import { dataEntityApi } from 'lib/api';
 
 export const fetchDataEntityDownstreamLineage = handleResponseAsyncThunk<
   DataEntityLineageResponse,
