@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -12,6 +13,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.Bucket;
+import org.opendatadiscovery.oddplatform.api.contract.model.CounterValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
@@ -23,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
+import org.opendatadiscovery.oddplatform.api.contract.model.HistogramValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -33,6 +37,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
+import org.opendatadiscovery.oddplatform.api.contract.model.Metric;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricFamily;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricLabel;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricPoint;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
@@ -395,5 +405,77 @@ public class DataEntityController implements DataEntityApi {
         return dataEntityAlertConfig
             .flatMap(cfg -> alertHaltConfigService.saveAlertHaltConfig(dataEntityId, cfg))
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<MetricSet>> getDataEntityMetrics(final Long dataEntityId,
+                                                                final ServerWebExchange exchange) {
+        final MetricSet metricSet = new MetricSet();
+        final MetricFamily firstFamily =
+            createMetricFamily("data_entity_metrics", MetricType.COUNTER, "ops/sec", "Data entity metrics");
+        final MetricFamily secondFamily =
+            createMetricFamily("http_requests", MetricType.HISTOGRAM, "count/sec", null);
+        firstFamily.setMetrics(getCounterMetrics());
+        secondFamily.setMetrics(getHistogramMetrics());
+        metricSet.setMetricFamilies(List.of(firstFamily, secondFamily));
+
+        return Mono.just(metricSet)
+            .map(ResponseEntity::ok);
+    }
+
+    private MetricFamily createMetricFamily(final String name,
+                                            final MetricType type,
+                                            final String unit,
+                                            final String description) {
+        final MetricFamily metricFamily = new MetricFamily();
+        metricFamily.setName(name);
+        metricFamily.setType(type);
+        metricFamily.setUnit(unit);
+        metricFamily.setDescription(description);
+        return metricFamily;
+    }
+
+    private List<Metric> getCounterMetrics() {
+        final Metric metric = new Metric();
+        metric.setLabels(
+            List.of(new MetricLabel().name("name").value("test"), new MetricLabel().name("type").value("counter")));
+        metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("100"))));
+
+        final Metric second = new Metric();
+        metric.setLabels(
+            List.of(new MetricLabel().name("aaa").value("vvv"), new MetricLabel().name("wwewe").value("sdcsdcds")));
+        metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("1"))));
+
+        final Metric third = new Metric();
+        metric.setLabels(
+            List.of(new MetricLabel().name("werewrew").value("vdfvdfv"),
+                new MetricLabel().name("eferfre").value("vdfvdfvdf")));
+        metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("10000"))));
+        return List.of(metric, second, third);
+    }
+
+    private List<Metric> getHistogramMetrics() {
+        final Metric metric = new Metric();
+        metric.setLabels(
+            List.of(new MetricLabel().name("name").value("test"), new MetricLabel().name("type").value("counter")));
+        metric.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue().sum(new BigDecimal("100"))
+            .count(100L)
+            .sum(new BigDecimal("100"))
+            .buckets(List.of(new Bucket().upperBound(new BigDecimal("5")).count(40L),
+                new Bucket().upperBound(new BigDecimal("10")).count(60L),
+                new Bucket().upperBound(new BigDecimal("15")).count(80L),
+                new Bucket().upperBound(new BigDecimal("20")).count(100L)))));
+
+        final Metric metric1 = new Metric();
+        metric.setLabels(
+            List.of(new MetricLabel().name("asdsa").value("scsd"), new MetricLabel().name("werwer").value("vdfvdfvd")));
+        metric.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue().sum(new BigDecimal("100"))
+            .count(100L)
+            .sum(new BigDecimal("100"))
+            .buckets(List.of(new Bucket().upperBound(new BigDecimal("5")).count(40L),
+                new Bucket().upperBound(new BigDecimal("10")).count(60L),
+                new Bucket().upperBound(new BigDecimal("15")).count(80L),
+                new Bucket().upperBound(new BigDecimal("20")).count(100L)))));
+        return List.of(metric, metric1);
     }
 }
