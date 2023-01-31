@@ -1,3 +1,9 @@
+import type {
+  DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
+  DataSetFieldDescription,
+  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
+  Label,
+} from 'generated-sources';
 import {
   Configuration,
   DataSetApi,
@@ -6,12 +12,11 @@ import {
   DatasetFieldApi,
   type DatasetFieldApiCreateEnumValueRequest,
   type DatasetFieldApiGetEnumValuesRequest,
-  type DatasetFieldApiUpdateDatasetFieldRequest,
 } from 'generated-sources';
 import type {
   DataSetFieldEnumsResponse,
   DataSetStructureResponse,
-  UpdateDataSetFieldFormResponse,
+  RelatedToEntityId,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -59,24 +64,40 @@ export const fetchDataSetStructure = handleResponseAsyncThunk<
   { switchOffErrorMessage: true }
 );
 
-export const updateDataSetFieldFormData = handleResponseAsyncThunk<
-  UpdateDataSetFieldFormResponse,
-  DatasetFieldApiUpdateDatasetFieldRequest
+export const updateDataSetFieldDescription = handleResponseAsyncThunk<
+  RelatedToEntityId<DataSetFieldDescription>,
+  DatasetFieldApiUpdateDatasetFieldDescriptionRequest
 >(
-  actions.updateDataSetFieldFormDataParamsActionType,
-  async ({ datasetFieldId, datasetFieldUpdateFormData }) => {
-    const { internalDescription, labels } =
-      await datasetFieldApiClient.updateDatasetField({
-        datasetFieldId,
-        datasetFieldUpdateFormData,
-      });
+  actions.updateDataSetFieldDescriptionActionType,
+  async params => {
+    const { description } = await datasetFieldApiClient.updateDatasetFieldDescription(
+      params
+    );
 
-    return { datasetFieldId, internalDescription, labels };
+    return { entityId: params.datasetFieldId, description };
   },
   {
     setSuccessOptions: ({ datasetFieldId }) => ({
-      id: `DatasetField-form-updating-${datasetFieldId}`,
-      message: `Dataset field labels and description successfully updated.`,
+      id: `DatasetField-description-updating-${datasetFieldId}`,
+      message: `Dataset field description successfully updated.`,
+    }),
+  }
+);
+
+export const updateDataSetFieldLabels = handleResponseAsyncThunk<
+  RelatedToEntityId<{ labels: Label[] }>,
+  DatasetFieldApiUpdateDatasetFieldLabelsRequest
+>(
+  actions.updateDataSetFieldLabelsActionType,
+  async params => {
+    const labels = await datasetFieldApiClient.updateDatasetFieldLabels(params);
+
+    return { entityId: params.datasetFieldId, labels };
+  },
+  {
+    setSuccessOptions: ({ datasetFieldId }) => ({
+      id: `DatasetField-labels-updating-${datasetFieldId}`,
+      message: `Dataset field labels successfully updated.`,
     }),
   }
 );

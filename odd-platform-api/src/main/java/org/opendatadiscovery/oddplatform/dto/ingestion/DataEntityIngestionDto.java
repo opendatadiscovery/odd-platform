@@ -57,6 +57,7 @@ public class DataEntityIngestionDto {
     public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {
     }
 
-    public record DatasetFieldIngestionDto(DatasetFieldPojo field, List<String> labels) {
+    public record DatasetFieldIngestionDto(DatasetFieldPojo field, List<String> labels,
+                                           Map<String, Object> metadata) {
     }
 }

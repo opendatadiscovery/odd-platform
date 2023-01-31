@@ -14,28 +14,28 @@ const SearchResultsSkeleton: React.FC<SearchResultsSkeletonProps> = ({ grid }) =
     length={30}
     renderContent={({ randWidth, key }) => (
       <Grid container sx={{ py: 1.25 }} key={key} wrap='nowrap'>
-        <SearchCol item lg={grid.lg.nm}>
+        <SearchCol item lg={grid.lg.nm} md={grid.md.nm}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.nd}>
+        <SearchCol item lg={grid.lg.nd} md={grid.md.nd}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.ow}>
+        <SearchCol item lg={grid.lg.ow} md={grid.md.ow}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.cr}>
+        <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.up}>
+        <SearchCol item lg={grid.lg.up} md={grid.md.up}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.gr}>
+        <SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
           <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </SearchCol>
       </Grid>

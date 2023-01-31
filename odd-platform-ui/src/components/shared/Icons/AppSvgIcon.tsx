@@ -1,4 +1,4 @@
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import SvgIcon, { type SvgIconProps } from '@mui/material/SvgIcon';
 import styled from 'styled-components';
 
 const AppSvgIcon = styled(SvgIcon)<SvgIconProps>(({ width, height }) => ({

@@ -35,10 +35,9 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   const alertStatusHandler = () => {
     const status =
       alertStatus === AlertStatus.OPEN ? AlertStatus.RESOLVED : AlertStatus.OPEN;
+    const params = { alertId, alertStatusFormData: { status }, entityId: dataEntityId };
 
-    dispatch(
-      updateAlertStatus({ alertId, alertStatusFormData: { status }, dataEntityId })
-    );
+    dispatch(updateAlertStatus(params));
   };
 
   const resolvedInfo = React.useMemo(() => {

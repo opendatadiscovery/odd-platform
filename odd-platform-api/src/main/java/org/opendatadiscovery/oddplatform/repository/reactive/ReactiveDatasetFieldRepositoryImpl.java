@@ -8,17 +8,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
-import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
@@ -26,8 +25,6 @@ import org.opendatadiscovery.oddplatform.model.tables.records.DatasetFieldRecord
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -41,7 +38,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Repository
 @Slf4j
@@ -59,11 +55,11 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED)
-    public Mono<DatasetFieldPojo> updateDescription(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+    public Mono<DatasetFieldPojo> updateDescription(final long datasetFieldId,
                                                     final String description) {
-        final UpdateResultStep<DatasetFieldRecord> updateQuery = DSL.update(DATASET_FIELD)
-            .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
+        final String newDescription = StringUtils.isEmpty(description) ? null : description;
+        final var updateQuery = DSL.update(DATASET_FIELD)
+            .set(DATASET_FIELD.INTERNAL_DESCRIPTION, newDescription)
             .where(DATASET_FIELD.ID.eq(datasetFieldId)).returning();
         return jooqReactiveOperations.mono(updateQuery).map(this::recordToPojo);
     }

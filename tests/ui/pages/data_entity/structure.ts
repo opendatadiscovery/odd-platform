@@ -11,7 +11,7 @@ const SELECTORS = {
   createNewLabelLink: `[role="presentation"]:has-text('Create new')`,
   resultsList: `[aria-label="grid"]`,
   listItem: `[role="rowgroup"] >> div`,
-  editButton: `button:has-text('Edit')`,
+  editButton: `[data-qa="edit_labels"]`,
 };
 
 export default class StructurePage extends DataEntityPage {
@@ -39,16 +39,14 @@ export default class StructurePage extends DataEntityPage {
     return new Button(this.page, SELECTORS.structureTab);
   }
 
-  private async clickEditButton(listItemName: string) {
-    const listItem = this.resultsList.getListElement(listItemName);
-    await listItem.locator(SELECTORS.editButton).click();
+  private async clickEditButton() {
+    await new Button(this.page, SELECTORS.editButton).click();
   }
 
-  async addLabel(name: string, label: string, description: string) {
-    await this.clickEditButton(name);
+  async addLabel(name: string, label: string) {
+    await this.clickEditButton();
     await this.inputField.fill(label);
     await this.createNewLabelLink.click();
-    await this.inputDescription.fill(description);
     await this.submitButton.click();
   }
 }

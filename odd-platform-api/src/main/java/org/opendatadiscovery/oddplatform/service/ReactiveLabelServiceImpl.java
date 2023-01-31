@@ -39,20 +39,6 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     }
 
     @Override
-    @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED)
-    public Mono<List<LabelDto>> updateDatasetFieldLabels(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
-                                                         final List<LabelToDatasetFieldPojo> currentRelations,
-                                                         final List<LabelToDatasetFieldPojo> updatedRelations) {
-        final List<LabelToDatasetFieldPojo> pojosToDelete = currentRelations.stream()
-            .filter(r -> !updatedRelations.contains(r))
-            .toList();
-        return labelRepository.deleteRelations(pojosToDelete)
-            .thenMany(labelRepository.createRelations(updatedRelations))
-            .then(labelRepository.listDatasetFieldDtos(datasetFieldId));
-    }
-
-    @Override
     public Flux<LabelPojo> getOrCreateLabelsByName(final Set<String> labelNames) {
         return labelRepository.listByNames(labelNames)
             .collectList()

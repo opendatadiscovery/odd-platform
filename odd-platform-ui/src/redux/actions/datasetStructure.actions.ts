@@ -12,9 +12,14 @@ export const fetchDataSetStructureLatestActionType = createActionType(
   'fetchDataSetStructureLatest'
 );
 
-export const updateDataSetFieldFormDataParamsActionType = createActionType(
+export const updateDataSetFieldDescriptionActionType = createActionType(
   datasetStructureActionTypePrefix,
-  'updateDataSetFieldFormDataParams'
+  'updateDataSetFieldDescription'
+);
+
+export const updateDataSetFieldLabelsActionType = createActionType(
+  datasetStructureActionTypePrefix,
+  'updateDataSetFieldLabels'
 );
 
 export const fetchDataSetFieldEnumActionType = createActionType(

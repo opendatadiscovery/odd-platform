@@ -1,5 +1,5 @@
 import React from 'react';
-import { DialogProps } from '@mui/material';
+import { type DialogProps } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import * as S from './DialogWrapperStyles';

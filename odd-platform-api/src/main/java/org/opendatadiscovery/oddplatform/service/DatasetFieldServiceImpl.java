@@ -13,37 +13,41 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
-import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
+import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
-import static reactor.function.TupleUtils.function;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +55,7 @@ import static reactor.function.TupleUtils.function;
 public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final DatasetFieldApiMapper datasetFieldApiMapper;
     private final ReactiveLabelService labelService;
+    private final LabelMapper labelMapper;
     private final ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
     private final ReactiveLabelRepository reactiveLabelRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
@@ -58,36 +63,39 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     @ReactiveTransactional
-    public Mono<DataSetField> updateDatasetField(final long datasetFieldId,
-                                                 final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
-        return reactiveDatasetFieldRepository.getDto(datasetFieldId)
-            .switchIfEmpty(Mono.error(
-                new NotFoundException("DatasetField", datasetFieldId)))
-            .flatMap(dto -> updateDescription(datasetFieldId, datasetFieldUpdateFormData, dto))
-            .zipWith(Mono.defer(() -> updateInternalDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData)))
-            .map(tuple -> {
-                final DatasetFieldDto dto = tuple.getT1();
-                final List<LabelDto> labels = tuple.getT2();
-                dto.setLabels(labels);
-                return dto;
-            })
-            .flatMap(dto -> reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId)
-                .ignoreElement().thenReturn(dto))
-            .flatMap(dto -> {
-                final List<LabelDto> internalLabels = dto.getLabels().stream()
-                    .filter(not(LabelDto::hasExternalRelations))
-                    .toList();
-                if (CollectionUtils.isEmpty(internalLabels)) {
-                    return dataEntityFilledService
-                        .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS)
-                        .thenReturn(dto);
-                } else {
-                    return dataEntityFilledService
-                        .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS)
-                        .thenReturn(dto);
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED)
+    public Mono<DataSetFieldDescription> updateDatasetFieldDescription(
+        @ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+        final DatasetFieldDescriptionUpdateFormData formData) {
+        return reactiveDatasetFieldRepository.updateDescription(datasetFieldId, formData.getDescription())
+            .switchIfEmpty(Mono.error(new NotFoundException("DatasetField", datasetFieldId)))
+            .map(pojo -> new DataSetFieldDescription().description(pojo.getInternalDescription()))
+            .flatMap(description -> {
+                if (StringUtils.isEmpty(description.getDescription())) {
+                    return dataEntityFilledService.markEntityUnfilledByDatasetFieldId(datasetFieldId,
+                        DataEntityFilledField.DATASET_FIELD_DESCRIPTION).thenReturn(description);
                 }
+                return dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
+                    DataEntityFilledField.DATASET_FIELD_DESCRIPTION).thenReturn(description);
             })
-            .map(datasetFieldApiMapper::mapDto);
+            .flatMap(description -> reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId)
+                .thenReturn(description));
+    }
+
+    @Override
+    @ReactiveTransactional
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED)
+    public Flux<Label> updateDatasetFieldLabels(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+                                                final DatasetFieldLabelsUpdateFormData formData) {
+        final Set<String> names = new HashSet<>(formData.getLabels());
+        return reactiveLabelRepository.deleteInternalRelations(datasetFieldId)
+            .then(getUpdatedRelations(names, datasetFieldId))
+            .flatMapMany(reactiveLabelRepository::createRelations)
+            .then(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId))
+            .then(markDataEntityByLabels(formData.getLabels(), datasetFieldId))
+            .then(reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId))
+            .flatMapMany(Flux::fromIterable)
+            .map(labelMapper::mapToLabel);
     }
 
     @Override
@@ -127,8 +135,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     @Override
     @ReactiveTransactional
     public Mono<Void> updateStatistics(final DatasetStatisticsList datasetStatisticsList) {
-        final Map<String, DataSetFieldStat> statistics = datasetStatisticsList.getItems()
-            .stream()
+        final Map<String, DataSetFieldStat> statistics = datasetStatisticsList.getItems().stream()
             .map(DataSetStatistics::getFields)
             .reduce(new HashMap<>(), (acc, fields) -> {
                 acc.putAll(fields);
@@ -212,45 +219,15 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         return reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate).then();
     }
 
-    private Mono<List<LabelDto>> updateInternalDatasetFieldLabels(
-        final long datasetFieldId,
-        final DatasetFieldUpdateFormData datasetFieldUpdateFormData
-    ) {
-        final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());
-
-        return reactiveLabelRepository.listLabelRelations(List.of(datasetFieldId), LabelOrigin.INTERNAL)
-            .collectList()
-            .zipWith(getUpdatedRelations(names, datasetFieldId))
-            .flatMap((function((current, updated) -> {
-                if (labelsAreTheSame(current, updated)) {
-                    return reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId);
-                }
-
-                return labelService.updateDatasetFieldLabels(datasetFieldId, current, updated);
-            })));
-    }
-
-    @NotNull
-    private Mono<DatasetFieldDto> updateDescription(final long datasetFieldId,
-                                                    final DatasetFieldUpdateFormData datasetFieldUpdateFormData,
-                                                    final DatasetFieldDto dto) {
-        final DatasetFieldPojo currentPojo = dto.getDatasetFieldPojo();
-        final String newDescription = StringUtils.isEmpty(datasetFieldUpdateFormData.getDescription()) ? null
-            : datasetFieldUpdateFormData.getDescription();
-        if (!StringUtils.equals(currentPojo.getInternalDescription(), newDescription)) {
-            currentPojo.setInternalDescription(newDescription);
-            return reactiveDatasetFieldRepository.updateDescription(datasetFieldId, newDescription)
-                .flatMap(pojo -> {
-                    if (StringUtils.isEmpty(pojo.getInternalDescription())) {
-                        return dataEntityFilledService.markEntityUnfilledByDatasetFieldId(datasetFieldId,
-                            DataEntityFilledField.DATASET_FIELD_DESCRIPTION);
-                    }
-                    return dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
-                        DataEntityFilledField.DATASET_FIELD_DESCRIPTION);
-                })
-                .thenReturn(dto);
+    private Mono<DataEntityFilledPojo> markDataEntityByLabels(final List<String> internalLabels,
+                                                              final long datasetFieldId) {
+        if (CollectionUtils.isEmpty(internalLabels)) {
+            return dataEntityFilledService
+                .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS);
+        } else {
+            return dataEntityFilledService
+                .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS);
         }
-        return Mono.just(dto);
     }
 
     private Mono<List<LabelToDatasetFieldPojo>> getUpdatedRelations(final Set<String> labelNames,
@@ -284,14 +261,5 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         });
 
         return result;
-    }
-
-    private boolean labelsAreTheSame(final List<LabelToDatasetFieldPojo> current,
-                                     final List<LabelToDatasetFieldPojo> updated) {
-        return CollectionUtils.isEqualCollection(extractLabelIds(current), extractLabelIds(updated));
-    }
-
-    private List<Long> extractLabelIds(final List<LabelToDatasetFieldPojo> relations) {
-        return relations.stream().map(LabelToDatasetFieldPojo::getLabelId).toList();
     }
 }

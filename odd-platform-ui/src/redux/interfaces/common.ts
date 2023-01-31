@@ -26,6 +26,6 @@ export interface KeySetPaginatedResponse<Data, LastId extends number> {
   pageInfo: PageInfo<LastId>;
 }
 
-export type DataEntityId = { dataEntityId: number };
-export type RelatedToEntityId<Data> = Data & DataEntityId;
+export type EntityId = { entityId: number };
+export type RelatedToEntityId<Data> = Data & EntityId;
 export type RequiredField<I, K extends keyof I> = I & Required<Pick<I, K>>;

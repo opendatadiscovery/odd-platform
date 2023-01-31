@@ -48,6 +48,8 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
         <Link
           to={to}
           style={{
+            minWidth: 0,
+            flex: '0 1 fit-content',
             inlineSize: 'inherit',
             pointerEvents: props.disabled ? 'none' : undefined,
           }}

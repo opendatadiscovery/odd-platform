@@ -24,8 +24,8 @@ const OverviewMetadata: React.FC = () => {
 
   const visibleLimit = 10;
 
-  const [predefOpen, setPredefOpen] = React.useState<boolean>(false);
-  const [customOpen, setCustomOpen] = React.useState<boolean>(false);
+  const [predefOpen, setPredefOpen] = React.useState(false);
+  const [customOpen, setCustomOpen] = React.useState(false);
 
   let collapsedPredefined;
   if (predefinedMetadata?.length > visibleLimit) {

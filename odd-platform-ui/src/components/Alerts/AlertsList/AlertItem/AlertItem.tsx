@@ -112,13 +112,14 @@ const AlertItem: React.FC<AlertItemProps> = ({
 
   return (
     <S.Container container>
-      <Grid container alignItems='center'>
+      <Grid display='flex' container alignItems='center' flexWrap='nowrap'>
         {dataEntity && (
           <>
             <AppButton
               to={dataEntityDetailsPath(dataEntity.id)}
               size='medium'
               color='tertiary'
+              truncate
             >
               {dataEntity.externalName || dataEntity.internalName}
             </AppButton>

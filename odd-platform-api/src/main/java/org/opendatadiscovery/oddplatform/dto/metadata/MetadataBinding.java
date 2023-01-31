@@ -1,4 +1,4 @@
 package org.opendatadiscovery.oddplatform.dto.metadata;
 
-public record MetadataBinding(long dataEntityId, long metadataFieldId) {
+public record MetadataBinding(long entityId, long metadataFieldId) {
 }

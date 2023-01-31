@@ -7,7 +7,6 @@ import type {
 import * as thunks from 'redux/thunks';
 import { createSlice } from '@reduxjs/toolkit';
 import { datasetStructureActionTypePrefix } from 'redux/actions';
-import compact from 'lodash/compact';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
@@ -22,8 +21,6 @@ export const updateDatasetStructure = (
   { payload }: { payload: DataSetStructureResponse }
 ): DatasetStructureState => {
   const { dataEntityId, dataSetVersionId, fieldList, isLatestVersion } = payload;
-
-  let isUniqueStatsExist = false;
 
   return {
     ...state,
@@ -53,21 +50,14 @@ export const updateDatasetStructure = (
       ...state.statsByVersionId,
       [dataSetVersionId]: fieldList.reduce<{
         typeStats: DataSetStructureTypesCount;
-        isUniqueStatsExist: boolean;
       }>(
-        ({ typeStats }, field) => {
-          const uniqStats = compact(Object.values(field.stats || {}));
-          if (uniqStats.length > 0) isUniqueStatsExist = true;
-
-          return {
-            typeStats: {
-              ...typeStats,
-              [field.type.type]: (typeStats[field.type.type] || 0) + 1,
-            },
-            isUniqueStatsExist,
-          };
-        },
-        { typeStats: {}, isUniqueStatsExist: false }
+        ({ typeStats }, field) => ({
+          typeStats: {
+            ...typeStats,
+            [field.type.type]: (typeStats[field.type.type] || 0) + 1,
+          },
+        }),
+        { typeStats: {} }
       ),
     },
     latestVersionByDataset: {
@@ -109,19 +99,29 @@ export const datasetStructureSlice = createSlice({
     builder.addCase(thunks.fetchDataSetFieldEnum.fulfilled, updateDataSetFieldEnums);
     builder.addCase(thunks.createDataSetFieldEnum.fulfilled, updateDataSetFieldEnums);
     builder.addCase(
-      thunks.updateDataSetFieldFormData.fulfilled,
+      thunks.updateDataSetFieldDescription.fulfilled,
       (state, { payload }): DatasetStructureState => {
-        const { datasetFieldId, internalDescription, labels } = payload;
+        const { entityId: datasetFieldId, description: internalDescription } = payload;
 
         return {
           ...state,
           fieldById: {
             ...state.fieldById,
-            [datasetFieldId]: {
-              ...state.fieldById[datasetFieldId],
-              internalDescription,
-              labels,
-            },
+            [datasetFieldId]: { ...state.fieldById[datasetFieldId], internalDescription },
+          },
+        };
+      }
+    );
+    builder.addCase(
+      thunks.updateDataSetFieldLabels.fulfilled,
+      (state, { payload }): DatasetStructureState => {
+        const { entityId: datasetFieldId, labels } = payload;
+
+        return {
+          ...state,
+          fieldById: {
+            ...state.fieldById,
+            [datasetFieldId]: { ...state.fieldById[datasetFieldId], labels },
           },
         };
       }

@@ -151,7 +151,8 @@ const DataEntityDetails: React.FC = () => {
                 <WithPermissionsProvider
                   allowedPermissions={[
                     Permission.DATASET_FIELD_ENUMS_UPDATE,
-                    Permission.DATASET_FIELD_INFO_UPDATE,
+                    Permission.DATASET_FIELD_LABELS_UPDATE,
+                    Permission.DATASET_FIELD_DESCRIPTION_UPDATE,
                   ]}
                   resourcePermissions={resourcePermissions}
                   Component={DatasetStructure}
@@ -244,7 +245,7 @@ const DataEntityDetails: React.FC = () => {
         </React.Suspense>
       ) : null}
       <AppErrorPage
-        isNotContentLoaded={isDataEntityDetailsNotFetched}
+        showError={isDataEntityDetailsNotFetched}
         error={dataEntityDetailsFetchingError}
       />
     </S.Container>

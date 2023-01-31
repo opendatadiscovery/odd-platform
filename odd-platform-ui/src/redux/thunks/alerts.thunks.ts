@@ -18,7 +18,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import type {
   Alert,
   AlertsConfig,
-  DataEntityId,
+  EntityId,
   PaginatedResponse,
   RelatedToEntityId,
   SerializeDateToNumber,
@@ -77,14 +77,14 @@ export const fetchMyDependentsAlertList = handleResponseAsyncThunk<
 );
 
 export const updateAlertStatus = handleResponseAsyncThunk<
-  { alert: Alert } & Partial<DataEntityId>,
-  AlertApiChangeAlertStatusRequest & Partial<DataEntityId>
+  { alert: Alert } & Partial<EntityId>,
+  AlertApiChangeAlertStatusRequest & Partial<EntityId>
 >(
   actions.updateAlertStatusActionType,
   async params => {
     const alert = await alertApi.changeAlertStatus(params);
 
-    return { alert: castDatesToTimestamp(alert), dataEntityId: params.dataEntityId };
+    return { alert: castDatesToTimestamp(alert), dataEntityId: params.entityId };
   },
   {
     setSuccessOptions: ({ alertStatusFormData, alertId }) => ({
@@ -106,7 +106,7 @@ export const fetchDataEntityAlerts = handleResponseAsyncThunk<
     return {
       items: castDatesToTimestamp(items),
       pageInfo: { ...pageInfo, page },
-      dataEntityId,
+      entityId: dataEntityId,
     };
   },
   { switchOffErrorMessage: true }
@@ -121,7 +121,7 @@ export const fetchDataEntityAlertsCounts = handleResponseAsyncThunk<
     const { dataEntityId } = params;
     const count = await dataEntityApi.getDataEntityAlertsCounts(params);
 
-    return { count, dataEntityId };
+    return { count, entityId: dataEntityId };
   },
   {}
 );

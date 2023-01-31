@@ -7,7 +7,6 @@ import {
   DataSetFieldTypeTypeEnum,
   type DateTimeFieldStat,
   type EnumValue,
-  type Label,
   type NumberFieldStat,
   type StringFieldStat,
   type IntegerFieldStat,
@@ -55,12 +54,6 @@ export const DatasetStatsLabelMap: Map<DataSetFormattedStatsKeys, string> = new 
   ['meanValue', 'Mean'],
   ['medianValue', 'Median'],
 ]);
-
-export interface UpdateDataSetFieldFormResponse {
-  datasetFieldId: number;
-  internalDescription?: string;
-  labels?: Label[];
-}
 
 export type DataSetStructureTypesCount = Partial<
   Record<DataSetFieldType['type'], number>

@@ -1,13 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityClassNameEnum, DataEntityDetails } from 'generated-sources';
-import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
-import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
+import type { DataEntityDetails } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
+import { UpstreamIcon, DownstreamIcon } from 'components/shared/Icons';
+import { EntityClassItem, AppButton, EntitiesListModal } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
-import { EntityLink, StatIconContainer } from './OverviewTransformerStatsStyles';
+import { StatIconContainer } from './OverviewTransformerStatsStyles';
 
 interface OverviewTransformerStatsProps {
   sources: DataEntityDetails['sourceList'];
@@ -53,10 +51,15 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {sources?.slice(0, displayedEntitiesNumber).map(source => (
-            <AppButton key={source.id} size='medium' color='tertiary' sx={{ my: 0.25 }}>
-              <EntityLink to={dataEntityDetailsPath(source.id)}>
-                {source.internalName || source.externalName}
-              </EntityLink>
+            <AppButton
+              to={dataEntityDetailsPath(source.id)}
+              key={source.id}
+              size='medium'
+              color='tertiary'
+              sx={{ my: 0.25 }}
+              truncate
+            >
+              {source.internalName || source.externalName}
             </AppButton>
           ))}
           {unknownSourcesCount ? (
@@ -100,10 +103,15 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {targets?.slice(0, displayedEntitiesNumber).map(target => (
-            <AppButton key={target.id} sx={{ my: 0.25 }} size='medium' color='tertiary'>
-              <EntityLink to={dataEntityDetailsPath(target.id)}>
-                {target.internalName || target.externalName}
-              </EntityLink>
+            <AppButton
+              to={dataEntityDetailsPath(target.id)}
+              key={target.id}
+              sx={{ my: 0.25 }}
+              size='medium'
+              color='tertiary'
+              truncate
+            >
+              {target.internalName || target.externalName}
             </AppButton>
           ))}
           {unknownTargetsCount ? (

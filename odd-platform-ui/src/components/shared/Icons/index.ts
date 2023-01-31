@@ -42,3 +42,5 @@ export { default as UserIcon } from './UserIcon';
 export { default as GearIcon } from './GearIcon';
 export { default as RowsIcon } from './RowsIcon';
 export { default as QuestionIcon } from './QuestionIcon';
+export { default as ChevronIcon } from './ChevronIcon';
+export { default as StrokedInfoIcon } from './StrokedInfoIcon';

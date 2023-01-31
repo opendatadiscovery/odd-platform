@@ -25,11 +25,19 @@ export const getDataSetStructureLatestFetchingError = createErrorSelector(
   actions.fetchDataSetStructureLatestActionType
 );
 
-export const getDatasetFieldFormDataUpdatingStatus = createStatusesSelector(
-  actions.updateDataSetFieldFormDataParamsActionType
+export const getDatasetFieldDescriptionUpdatingStatus = createStatusesSelector(
+  actions.updateDataSetFieldDescriptionActionType
+);
+
+export const getDatasetFieldLabelsUpdatingStatus = createStatusesSelector(
+  actions.updateDataSetFieldLabelsActionType
 );
 
 export const getDatasetFieldEnumsFetchingStatus = createStatusesSelector(
+  actions.fetchDataSetFieldEnumActionType
+);
+
+export const getDatasetFieldEnumsFetchingError = createErrorSelector(
   actions.fetchDataSetFieldEnumActionType
 );
 
@@ -62,12 +70,12 @@ export const getDatasetStructure = ({
     getDatasetStructureState,
     getDatasetVersionId({ datasetId, versionId }),
     (datasetStructureState, currentVersionId) => {
-      if (!currentVersionId) return [];
+      if (!currentVersionId) return emptyArr;
 
       return (
         datasetStructureState.allFieldIdsByVersion[currentVersionId][
           parentFieldId || 0
-        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || []
+        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || emptyArr
       );
     }
   );
@@ -85,28 +93,14 @@ export const getDatasetStructureTypeStats = ({
     }
   );
 
-export const getIsUniqStatsExist = ({ datasetId, versionId }: DatasetStructureIds) =>
-  createSelector(
-    getDatasetStructureState,
-    getDatasetVersionId({ datasetId, versionId }),
-    (datasetStructureState, currentVersionId) => {
-      if (!currentVersionId) return false;
-      return datasetStructureState.statsByVersionId[currentVersionId].isUniqueStatsExist;
-    }
-  );
-
-export const getDatasetFieldData = (datasetFieldId: number) =>
-  createSelector(getDatasetStructureState, datasetStructureState => {
-    if (!datasetFieldId) return { internalDescription: '', labels: [] };
-    return {
-      internalDescription:
-        datasetStructureState.fieldById[datasetFieldId]?.internalDescription || '',
-      labels: datasetStructureState.fieldById[datasetFieldId]?.labels || [],
-    };
-  });
-
-export const getDatasetFieldEnums = (datasetFieldId: number) =>
+export const getDatasetFieldEnums = (datasetFieldId: number | undefined) =>
   createSelector(getDatasetStructureState, datasetStructureState => {
     if (!datasetFieldId) return [{ name: '', description: '' } as EnumValue];
     return datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr;
   });
+
+export const getDatasetFieldById = (datasetFieldId: number) =>
+  createSelector(
+    getDatasetStructureState,
+    datasetStructureState => datasetStructureState.fieldById[datasetFieldId]
+  );

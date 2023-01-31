@@ -16,6 +16,7 @@ const colors = {
   black15: '#DFE1E6',
   black10: '#EBECF0',
   black5: '#F4F5F7',
+  black3: '#F7F7F7',
 
   blue65: '#0059B2',
   blue60: '#0066CC',
@@ -83,6 +84,7 @@ export const palette = createPalette({
   backgrounds: {
     primary: colors.black5,
     secondary: colors.black10,
+    tertiary: colors.black3,
     darken: colors.black90,
     default: colors.white,
   },
@@ -251,16 +253,9 @@ export const palette = createPalette({
     TYPE_UNKNOWN: { border: colors.black10 },
   },
   datasetFieldKey: {
-    primary: {
-      background: colors.black30,
-      color: colors.white,
-      border: colors.blue30,
-    },
-    sort: {
-      background: colors.black30,
-      color: colors.white,
-      border: colors.blue10,
-    },
+    primary: { background: colors.black30, color: colors.white, border: colors.blue30 },
+    sort: { background: colors.black30, color: colors.white, border: colors.blue10 },
+    nullable: { background: colors.blue10, color: colors.black70, border: colors.blue10 },
   },
   alert: {
     OPEN: { background: colors.red10, border: colors.red20 },

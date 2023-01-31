@@ -91,7 +91,7 @@ export const fetchDataEntityActivityList = handleResponseAsyncThunk<
     const items = castDatesToTimestamp(activities);
     const pageInfo = setPageInfo<Activity>(items, activityListSize);
 
-    return { items, pageInfo, dataEntityId, isQueryUpdated };
+    return { items, pageInfo, entityId: dataEntityId, isQueryUpdated };
   },
   {}
 );
