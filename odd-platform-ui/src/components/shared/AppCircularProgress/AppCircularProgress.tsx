@@ -1,7 +1,7 @@
 import React from 'react';
-import { Typography, Theme } from '@mui/material';
-import { SxProps } from '@mui/system';
-import {
+import { Typography, type Theme } from '@mui/material';
+import { type SxProps } from '@mui/system';
+import type {
   Background,
   ProgressBackground,
 } from 'components/shared/AppCircularProgress/interfaces';

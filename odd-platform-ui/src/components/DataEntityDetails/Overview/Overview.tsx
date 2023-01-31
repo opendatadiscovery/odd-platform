@@ -13,6 +13,7 @@ import { SkeletonWrapper } from 'components/shared';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
+import OverviewMetrics from './OverviewMetrics/OverviewMetrics';
 import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
 import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
 import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
@@ -75,6 +76,7 @@ const Overview: React.FC = () => {
                 Component={OverviewMetadata}
               />
             </SectionContainer>
+            <OverviewMetrics showOverview={isDataset} />
             <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
               About
             </Typography>
