@@ -69,10 +69,6 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
         return (long) extractIngestedEntitiesAndAssert(createdDataSource, 1).values().toArray()[0];
     }
 
-    protected void assertDataEntityDetailsEqual(final DataEntityDetails expected) {
-        assertDataEntityDetailsEqual(expected, null);
-    }
-
     protected void assertDataEntityDetailsEqual(
         final DataEntityDetails expected,
         final BiConsumer<DataEntityDetails, DataEntityDetails> additionalAssertions
@@ -131,12 +127,16 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
 
                     assertThat(actualField)
                         .usingRecursiveComparison()
-                        .ignoringFields("id", "labels")
+                        .ignoringFields("id", "labels", "metadata")
                         .isEqualTo(expectedField);
 
                     assertThat(actualField.getLabels())
                         .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
                         .hasSameElementsAs(expectedField.getLabels());
+
+                    assertThat(actualField.getMetadata())
+                        .usingRecursiveFieldByFieldElementComparatorIgnoringFields("field.id")
+                        .hasSameElementsAs(expectedField.getMetadata());
                 }
             });
     }
