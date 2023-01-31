@@ -34,9 +34,13 @@ public class IngestionModelGenerator {
         return new DataEntity()
             .name(uuid)
             .oddrn(uuid)
-            .metadata(List.of(EASY_RANDOM.nextObject(MetadataExtension.class).metadata(generateMetadataMap())))
+            .metadata(generateMetadataExtension())
             .type(ingestionEntityType)
             .createdAt(OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS));
+    }
+
+    public static List<MetadataExtension> generateMetadataExtension() {
+        return List.of(EASY_RANDOM.nextObject(MetadataExtension.class).metadata(generateMetadataMap()));
     }
 
     public static Map<String, Object> generateMetadataMap() {
@@ -54,18 +58,6 @@ public class IngestionModelGenerator {
         return EASY_RANDOM
             .nextObject(DataSetFieldStat.class)
             .tags(labels.stream().map(l -> new Tag().name(l)).toList());
-    }
-
-    public static DatasetStatisticsList generateNullableDatasetStatisticsList(
-        final String datasetOddrn,
-        final List<String> datasetFieldOddrns
-    ) {
-        final Map<String, DataSetFieldStat> fieldStats = datasetFieldOddrns
-            .stream()
-            .collect(toMap(identity(), ignored -> new DataSetFieldStat()));
-
-        return new DatasetStatisticsList()
-            .items(List.of(new DataSetStatistics().datasetOddrn(datasetOddrn).fields(fieldStats)));
     }
 
     public static DatasetStatisticsList generateDatasetStatisticsList(

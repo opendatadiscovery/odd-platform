@@ -20,7 +20,9 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
 
 import static java.util.function.Function.identity;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,10 +38,13 @@ public class DatasetIngestionTest extends BaseIngestionTest {
     public void simpleDatasetIngestionTest() {
         final var createdDataSource = createDataSource();
 
+        final List<DataSetField> fieldList = IngestionModelGenerator.generateDatasetFields(5);
+        fieldList.forEach(field -> field.setMetadata(IngestionModelGenerator.generateMetadataExtension()));
+
         final DataEntity datasetToIngest = IngestionModelGenerator
             .generateSimpleDataEntity(DataEntityType.TABLE)
             .type(DataEntityType.TABLE)
-            .dataset(new DataSet().fieldList(IngestionModelGenerator.generateDatasetFields(5)).rowsNumber(1000L));
+            .dataset(new DataSet().fieldList(fieldList).rowsNumber(1000L));
 
         final var dataEntityList = new DataEntityList()
             .dataSourceOddrn(createdDataSource.getOddrn())
@@ -86,9 +91,12 @@ public class DatasetIngestionTest extends BaseIngestionTest {
     public void changeDatasetStructureTest() {
         final var createdDataSource = createDataSource();
 
+        final List<DataSetField> fieldList = IngestionModelGenerator.generateDatasetFields(5);
+        final List<MetadataExtension> metadata = IngestionModelGenerator.generateMetadataExtension();
+        fieldList.get(0).setMetadata(metadata);
         final DataEntity datasetToIngest = IngestionModelGenerator
             .generateSimpleDataEntity(DataEntityType.TABLE)
-            .dataset(new DataSet().fieldList(IngestionModelGenerator.generateDatasetFields(5)).rowsNumber(1000L));
+            .dataset(new DataSet().fieldList(fieldList).rowsNumber(1000L));
 
         final var dataEntityList = new DataEntityList()
             .dataSourceOddrn(createdDataSource.getOddrn())
@@ -116,6 +124,13 @@ public class DatasetIngestionTest extends BaseIngestionTest {
         });
         assertDatasetStructuresEqual(foundEntityId, expectedDataStructure);
 
+        final Map<String, Object> updatedMetadata = metadata.get(0).getMetadata().entrySet().stream()
+            .limit(5)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        updatedMetadata.put("newKey", "newValue");
+        datasetToIngest.getDataset().getFieldList().get(0).setMetadata(List.of(
+            new MetadataExtension().metadata(updatedMetadata)
+        ));
         final var newFields = ListUtils.union(
             datasetToIngest.getDataset().getFieldList().subList(0, 2),
             IngestionModelGenerator.generateDatasetFields(2)
