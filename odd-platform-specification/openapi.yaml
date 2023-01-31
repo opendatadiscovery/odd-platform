@@ -39,6 +39,7 @@ tags:
   - name: role
   - name: permission
   - name: links
+  - name: metrics
 
 paths:
   /api/links:
@@ -1523,6 +1524,22 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/metrics:
+    get:
+      summary: Get metrics for data entity
+      operationId: getMetrics
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetricSet'
+      tags:
+        - dataEntity
+
   /api/messages/{message_id}/url:
     get:
       summary: Redirects user to correspondent message in the provider
@@ -1861,6 +1878,23 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/EnumValueList'
+      tags:
+        - datasetField
+
+  /api/datasetfields/{dataset_field_id}/metrics:
+    get:
+      summary: Get field's metrics
+      description: Get last metrics for certain field
+      operationId: getMetrics
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetricSet'
       tags:
         - datasetField
 
