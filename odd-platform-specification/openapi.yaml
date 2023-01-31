@@ -1527,7 +1527,7 @@ paths:
   /api/dataentities/{data_entity_id}/metrics:
     get:
       summary: Get metrics for data entity
-      operationId: getMetrics
+      operationId: getDataEntityMetrics
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
       responses:
@@ -1885,7 +1885,7 @@ paths:
     get:
       summary: Get field's metrics
       description: Get last metrics for certain field
-      operationId: getMetrics
+      operationId: getDatasetFieldMetrics
       parameters:
         - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
       responses:
