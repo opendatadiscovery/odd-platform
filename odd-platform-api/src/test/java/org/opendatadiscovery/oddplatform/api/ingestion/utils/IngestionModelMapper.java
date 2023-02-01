@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.api.ingestion.utils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.opendatadiscovery.oddplatform.api.contract.model.BinaryFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.BooleanFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.ComplexFieldStat;
@@ -113,6 +114,11 @@ public class IngestionModelMapper {
             .map(d -> new Label().name(d.getName()).external(true))
             .toList();
 
+        final List<MetadataFieldValue> metadataFieldValues = Optional.ofNullable(field.getMetadata())
+            .filter(m -> !m.isEmpty())
+            .map(m -> buildExpectedMetadataFieldValue(m.get(0).getMetadata()))
+            .orElse(List.of());
+
         return new DataSetField()
             .name(field.getName())
             .oddrn(field.getOddrn())
@@ -125,7 +131,7 @@ public class IngestionModelMapper {
             .isSortKey(field.getIsSortKey())
             .isPrimaryKey(field.getIsPrimaryKey())
             .defaultValue(field.getDefaultValue())
-            .metadata(List.of())
+            .metadata(metadataFieldValues)
             .enumValueCount(0);
     }
 
