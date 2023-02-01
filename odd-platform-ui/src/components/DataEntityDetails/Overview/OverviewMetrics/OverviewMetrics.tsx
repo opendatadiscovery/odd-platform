@@ -3,10 +3,12 @@ import { Grid, Typography } from '@mui/material';
 import { AppCircularProgress, AppPaper } from 'components/shared';
 import { useDataEntityMetrics } from 'lib/hooks/api';
 import { useAppParams } from 'lib/hooks';
+import MetricFamily from './MetricFamily/MetricFamily';
 
 interface OverviewMetricsProps {
   showOverview: boolean;
 }
+
 const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
   const { dataEntityId } = useAppParams();
   const { data, isError, isLoading } = useDataEntityMetrics({
@@ -23,8 +25,8 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
       );
     }
 
-    return <div>content</div>;
-  }, [isLoading]);
+    return data?.metricFamilies.map(family => <MetricFamily family={family} />);
+  }, [isLoading, data]);
 
   if (!showOverview || isError) return null;
 
