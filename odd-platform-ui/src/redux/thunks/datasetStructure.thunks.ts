@@ -1,17 +1,12 @@
 import type {
   DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
-  DataSetFieldDescription,
   DatasetFieldApiUpdateDatasetFieldLabelsRequest,
+  DataSetFieldDescription,
   Label,
-} from 'generated-sources';
-import {
-  Configuration,
-  DataSetApi,
-  type DataSetApiGetDataSetStructureByVersionIdRequest,
-  type DataSetApiGetDataSetStructureLatestRequest,
-  DatasetFieldApi,
-  type DatasetFieldApiCreateEnumValueRequest,
-  type DatasetFieldApiGetEnumValuesRequest,
+  DataSetApiGetDataSetStructureByVersionIdRequest,
+  DataSetApiGetDataSetStructureLatestRequest,
+  DatasetFieldApiCreateEnumValueRequest,
+  DatasetFieldApiGetEnumValuesRequest,
 } from 'generated-sources';
 import type {
   DataSetFieldEnumsResponse,
@@ -19,12 +14,8 @@ import type {
   RelatedToEntityId,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const datasetApiClient = new DataSetApi(apiClientConf);
-const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
+import { datasetApiClient, datasetFieldApiClient } from 'lib/api';
 
 export const fetchDataSetStructureLatest = handleResponseAsyncThunk<
   DataSetStructureResponse,

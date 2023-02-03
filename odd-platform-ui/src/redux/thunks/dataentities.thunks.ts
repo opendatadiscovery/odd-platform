@@ -1,36 +1,31 @@
-import {
-  Configuration,
-  DataEntityApi,
-  type DataEntityApiAddDataEntityDataEntityGroupRequest,
-  type DataEntityApiAddDataEntityTermRequest,
-  type DataEntityApiCreateDataEntityGroupRequest,
-  type DataEntityApiCreateDataEntityTagsRelationsRequest,
-  type DataEntityApiDeleteDataEntityFromDataEntityGroupRequest,
-  type DataEntityApiDeleteDataEntityGroupRequest,
-  type DataEntityApiDeleteTermFromDataEntityRequest,
-  type DataEntityApiGetDataEntityDetailsRequest,
-  type DataEntityApiGetMyObjectsRequest,
-  type DataEntityApiGetMyObjectsWithDownstreamRequest,
-  type DataEntityApiGetMyObjectsWithUpstreamRequest,
-  type DataEntityApiGetPopularRequest,
-  type DataEntityApiUpdateDataEntityGroupRequest,
-  type DataEntityApiUpsertDataEntityInternalDescriptionRequest,
-  type DataEntityApiUpsertDataEntityInternalNameRequest,
-  type DataEntityClassAndTypeDictionary,
-  type DataEntityDetails,
-  type DataEntityRef,
-  type DataEntityUsageInfo,
-  type InternalDescription,
-  type InternalName,
-  type Tag,
-  type TermRef,
+import type {
+  DataEntityApiAddDataEntityDataEntityGroupRequest,
+  DataEntityApiAddDataEntityTermRequest,
+  DataEntityApiCreateDataEntityGroupRequest,
+  DataEntityApiCreateDataEntityTagsRelationsRequest,
+  DataEntityApiDeleteDataEntityFromDataEntityGroupRequest,
+  DataEntityApiDeleteDataEntityGroupRequest,
+  DataEntityApiDeleteTermFromDataEntityRequest,
+  DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityApiGetMyObjectsRequest,
+  DataEntityApiGetMyObjectsWithDownstreamRequest,
+  DataEntityApiGetMyObjectsWithUpstreamRequest,
+  DataEntityApiGetPopularRequest,
+  DataEntityApiUpdateDataEntityGroupRequest,
+  DataEntityApiUpsertDataEntityInternalDescriptionRequest,
+  DataEntityApiUpsertDataEntityInternalNameRequest,
+  DataEntityClassAndTypeDictionary,
+  DataEntityDetails,
+  DataEntityRef,
+  DataEntityUsageInfo,
+  InternalDescription,
+  InternalName,
+  Tag,
+  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const dataEntityApi = new DataEntityApi(apiClientConf);
+import { dataEntityApi } from 'lib/api';
 
 export const fetchDataEntitiesClassesAndTypes = handleResponseAsyncThunk<
   DataEntityClassAndTypeDictionary,

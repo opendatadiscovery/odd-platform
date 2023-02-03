@@ -1,20 +1,16 @@
-import {
-  AlertApi,
-  type AlertApiChangeAlertStatusRequest,
-  type AlertApiGetAllAlertsRequest,
-  type AlertApiGetAssociatedUserAlertsRequest,
-  type AlertApiGetDependentEntitiesAlertsRequest,
-  type AlertTotals,
-  Configuration,
-  type DataEntityAlertConfig,
-  DataEntityApi,
-  type DataEntityApiGetAlertConfigRequest,
-  type DataEntityApiGetDataEntityAlertsCountsRequest,
-  type DataEntityApiGetDataEntityAlertsRequest,
-  type DataEntityApiUpdateAlertConfigRequest,
+import type {
+  AlertApiChangeAlertStatusRequest,
+  AlertApiGetAllAlertsRequest,
+  AlertApiGetAssociatedUserAlertsRequest,
+  AlertApiGetDependentEntitiesAlertsRequest,
+  AlertTotals,
+  DataEntityAlertConfig,
+  DataEntityApiGetAlertConfigRequest,
+  DataEntityApiGetDataEntityAlertsCountsRequest,
+  DataEntityApiGetDataEntityAlertsRequest,
+  DataEntityApiUpdateAlertConfigRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type {
   Alert,
   AlertsConfig,
@@ -26,10 +22,7 @@ import type {
 import { castDatesToTimestamp } from 'redux/lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { toDate } from 'lib/helpers';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const alertApi = new AlertApi(apiClientConf);
-const dataEntityApi = new DataEntityApi(apiClientConf);
+import { alertApi, dataEntityApi } from 'lib/api';
 
 export const fetchAlertsTotals = handleResponseAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,

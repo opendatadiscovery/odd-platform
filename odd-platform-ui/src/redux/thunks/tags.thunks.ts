@@ -1,19 +1,14 @@
-import {
-  Configuration,
-  type Tag,
-  TagApi,
-  type TagApiCreateTagRequest,
-  type TagApiDeleteTagRequest,
-  type TagApiGetPopularTagListRequest,
-  type TagApiUpdateTagRequest,
+import type {
+  Tag,
+  TagApiCreateTagRequest,
+  TagApiDeleteTagRequest,
+  TagApiGetPopularTagListRequest,
+  TagApiUpdateTagRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new TagApi(apiClientConf);
+import { tagApi } from 'lib/api';
 
 export const fetchTagsList = handleResponseAsyncThunk<
   { items: Array<Tag>; pageInfo: CurrentPageInfo },
@@ -21,7 +16,7 @@ export const fetchTagsList = handleResponseAsyncThunk<
 >(
   actions.fetchTagsActType,
   async ({ page, size, query, ids }) => {
-    const { items, pageInfo } = await apiClient.getPopularTagList({
+    const { items, pageInfo } = await tagApi.getPopularTagList({
       page,
       size,
       query,
@@ -35,7 +30,7 @@ export const fetchTagsList = handleResponseAsyncThunk<
 
 export const createTag = handleResponseAsyncThunk<Tag[], TagApiCreateTagRequest>(
   actions.createTagsActType,
-  async ({ tagFormData }) => await apiClient.createTag({ tagFormData }),
+  async ({ tagFormData }) => await tagApi.createTag({ tagFormData }),
   {
     setSuccessOptions: ({ tagFormData }) => ({
       id: `Tags-creating-${tagFormData.length}`,
@@ -48,7 +43,7 @@ export const createTag = handleResponseAsyncThunk<Tag[], TagApiCreateTagRequest>
 
 export const updateTag = handleResponseAsyncThunk<Tag, TagApiUpdateTagRequest>(
   actions.updateTagActType,
-  async ({ tagId, tagFormData }) => await apiClient.updateTag({ tagId, tagFormData }),
+  async ({ tagId, tagFormData }) => await tagApi.updateTag({ tagId, tagFormData }),
   {
     setSuccessOptions: ({ tagFormData }) => ({
       id: `Tags-updating-${tagFormData.name}`,
@@ -60,7 +55,7 @@ export const updateTag = handleResponseAsyncThunk<Tag, TagApiUpdateTagRequest>(
 export const deleteTag = handleResponseAsyncThunk<number, TagApiDeleteTagRequest>(
   actions.deleteTagActType,
   async ({ tagId }) => {
-    await apiClient.deleteTag({ tagId });
+    await tagApi.deleteTag({ tagId });
 
     return tagId;
   },

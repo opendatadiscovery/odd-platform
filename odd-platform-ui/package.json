@@ -69,6 +69,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-json-tree": "^0.16.2",
     "react-multi-date-picker": "^3.3.4",
+    "react-query": "^3.39.3",
     "react-redux": "^8.0.1",
     "react-router-dom": "^5.2.0",
     "react-truncate-markup": "^5.1.2",

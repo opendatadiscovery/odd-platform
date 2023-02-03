@@ -1,20 +1,15 @@
-import {
-  Configuration,
-  type DataSource,
-  DataSourceApi,
-  type DataSourceApiDeleteDataSourceRequest,
-  type DataSourceApiGetDataSourceListRequest,
-  type DataSourceApiRegenerateDataSourceTokenRequest,
-  type DataSourceApiRegisterDataSourceRequest,
-  type DataSourceApiUpdateDataSourceRequest,
+import type {
+  DataSource,
+  DataSourceApiDeleteDataSourceRequest,
+  DataSourceApiGetDataSourceListRequest,
+  DataSourceApiRegenerateDataSourceTokenRequest,
+  DataSourceApiRegisterDataSourceRequest,
+  DataSourceApiUpdateDataSourceRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new DataSourceApi(apiClientConf);
+import { dataSourceApi } from 'lib/api';
 
 export const fetchDataSourcesList = handleResponseAsyncThunk<
   { datasourceList: Array<DataSource>; pageInfo: CurrentPageInfo },
@@ -22,7 +17,7 @@ export const fetchDataSourcesList = handleResponseAsyncThunk<
 >(
   actions.fetchDatasorcesActionType,
   async ({ page, size, query }) => {
-    const { items, pageInfo } = await apiClient.getDataSourceList({
+    const { items, pageInfo } = await dataSourceApi.getDataSourceList({
       page,
       size,
       query,
@@ -39,7 +34,7 @@ export const registerDataSource = handleResponseAsyncThunk<
 >(
   actions.registerDataSourceActionType,
   async ({ dataSourceFormData }) =>
-    await apiClient.registerDataSource({ dataSourceFormData }),
+    await dataSourceApi.registerDataSource({ dataSourceFormData }),
   {
     setSuccessOptions: ({ dataSourceFormData }) => ({
       id: `Datasource-creating-${dataSourceFormData.name}`,
@@ -54,7 +49,7 @@ export const updateDataSource = handleResponseAsyncThunk<
 >(
   actions.updateDatasourceActionType,
   async ({ dataSourceId, dataSourceUpdateFormData }) =>
-    await apiClient.updateDataSource({ dataSourceId, dataSourceUpdateFormData }),
+    await dataSourceApi.updateDataSource({ dataSourceId, dataSourceUpdateFormData }),
   {
     setSuccessOptions: ({ dataSourceUpdateFormData }) => ({
       id: `Datasource-updating-${dataSourceUpdateFormData.name}`,
@@ -68,7 +63,8 @@ export const regenerateDataSourceToken = handleResponseAsyncThunk<
   DataSourceApiRegenerateDataSourceTokenRequest
 >(
   actions.regenerateDataSourceTokenActionType,
-  async ({ dataSourceId }) => await apiClient.regenerateDataSourceToken({ dataSourceId }),
+  async ({ dataSourceId }) =>
+    await dataSourceApi.regenerateDataSourceToken({ dataSourceId }),
   {
     setSuccessOptions: ({ dataSourceId }) => ({
       id: `Datasource-token-updating-${dataSourceId}`,
@@ -83,7 +79,7 @@ export const deleteDataSource = handleResponseAsyncThunk<
 >(
   actions.deleteDatasourceActionType,
   async ({ dataSourceId }) => {
-    await apiClient.deleteDataSource({ dataSourceId });
+    await dataSourceApi.deleteDataSource({ dataSourceId });
 
     return dataSourceId;
   },
