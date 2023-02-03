@@ -46,6 +46,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetricType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.Quantile;
+import org.opendatadiscovery.oddplatform.api.contract.model.SummaryValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
@@ -415,9 +417,12 @@ public class DataEntityController implements DataEntityApi {
             createMetricFamily("data_entity_metrics", MetricType.COUNTER, "ops/sec", "Data entity metrics");
         final MetricFamily secondFamily =
             createMetricFamily("http_requests", MetricType.HISTOGRAM, "count/sec", null);
+        final MetricFamily thirdFamily =
+            createMetricFamily("queue_size", MetricType.SUMMARY, "count", null);
         firstFamily.setMetrics(getCounterMetrics());
         secondFamily.setMetrics(getHistogramMetrics());
-        metricSet.setMetricFamilies(List.of(firstFamily, secondFamily));
+        thirdFamily.setMetrics(getSummaryMetrics());
+        metricSet.setMetricFamilies(List.of(firstFamily, secondFamily, thirdFamily));
 
         return Mono.just(metricSet)
             .map(ResponseEntity::ok);
@@ -438,27 +443,28 @@ public class DataEntityController implements DataEntityApi {
     private List<Metric> getCounterMetrics() {
         final Metric metric = new Metric();
         metric.setLabels(
-            List.of(new MetricLabel().name("name").value("test"), new MetricLabel().name("type").value("counter")));
+            List.of(new MetricLabel().name("env").value("prod"),
+                new MetricLabel().name("instance-id").value("623rg8wefh")));
         metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("100"))));
 
         final Metric second = new Metric();
-        metric.setLabels(
-            List.of(new MetricLabel().name("aaa").value("vvv"), new MetricLabel().name("wwewe").value("sdcsdcds")));
-        metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("1"))));
+        second.setLabels(List.of());
+        second.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("1"))));
 
         final Metric third = new Metric();
-        metric.setLabels(
-            List.of(new MetricLabel().name("werewrew").value("vdfvdfv"),
-                new MetricLabel().name("eferfre").value("vdfvdfvdf")));
-        metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("10000"))));
+        third.setLabels(List.of(
+            new MetricLabel().name("env").value("dev"),
+            new MetricLabel().name("instance-id").value("832hfh89erh"))
+        );
+        third.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("10000"))));
         return List.of(metric, second, third);
     }
 
     private List<Metric> getHistogramMetrics() {
         final Metric metric = new Metric();
-        metric.setLabels(
-            List.of(new MetricLabel().name("name").value("test"), new MetricLabel().name("type").value("counter")));
-        metric.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue().sum(new BigDecimal("100"))
+        metric.setLabels(List.of());
+        metric.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue()
+            .sum(new BigDecimal("100"))
             .count(100L)
             .sum(new BigDecimal("100"))
             .buckets(List.of(new Bucket().upperBound(new BigDecimal("5")).count(40L),
@@ -467,15 +473,48 @@ public class DataEntityController implements DataEntityApi {
                 new Bucket().upperBound(new BigDecimal("20")).count(100L)))));
 
         final Metric metric1 = new Metric();
-        metric.setLabels(
-            List.of(new MetricLabel().name("asdsa").value("scsd"), new MetricLabel().name("werwer").value("vdfvdfvd")));
-        metric.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue().sum(new BigDecimal("100"))
-            .count(100L)
-            .sum(new BigDecimal("100"))
+        metric1.setLabels(List.of(
+            new MetricLabel().name("env").value("staging"),
+            new MetricLabel().name("instance-id").value("38hrfvefbi"))
+        );
+        metric1.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue()
+            .sum(new BigDecimal("200"))
+            .count(200L)
+            .sum(new BigDecimal("200"))
             .buckets(List.of(new Bucket().upperBound(new BigDecimal("5")).count(40L),
                 new Bucket().upperBound(new BigDecimal("10")).count(60L),
                 new Bucket().upperBound(new BigDecimal("15")).count(80L),
-                new Bucket().upperBound(new BigDecimal("20")).count(100L)))));
+                new Bucket().upperBound(new BigDecimal("20")).count(200L)))));
+        return List.of(metric, metric1);
+    }
+
+    private List<Metric> getSummaryMetrics() {
+        final Metric metric = new Metric();
+        metric.setLabels(List.of());
+        metric.setMetricPoint(new MetricPoint().summaryValue(new SummaryValue()
+            .sum(new BigDecimal("150"))
+            .count(150L)
+            .sum(new BigDecimal("150"))
+            .quantile(List.of(new Quantile().quantile(new BigDecimal("0.1")).value(new BigDecimal("40")),
+                new Quantile().quantile(new BigDecimal("0.5")).value(new BigDecimal("30")),
+                new Quantile().quantile(new BigDecimal("0.75")).value(new BigDecimal("60")),
+                new Quantile().quantile(new BigDecimal("0.95")).value(new BigDecimal("100"))
+            ))));
+
+        final Metric metric1 = new Metric();
+        metric1.setLabels(List.of(
+            new MetricLabel().name("env").value("staging"),
+            new MetricLabel().name("instance-id").value("38hrfvefbi"))
+        );
+        metric1.setMetricPoint(new MetricPoint().summaryValue(new SummaryValue()
+            .sum(new BigDecimal("400"))
+            .count(400L)
+            .sum(new BigDecimal("450"))
+            .quantile(List.of(new Quantile().quantile(new BigDecimal("0.1")).value(new BigDecimal("45")),
+                new Quantile().quantile(new BigDecimal("0.5")).value(new BigDecimal("76")),
+                new Quantile().quantile(new BigDecimal("0.75")).value(new BigDecimal("23")),
+                new Quantile().quantile(new BigDecimal("0.95")).value(new BigDecimal("56"))
+            ))));
         return List.of(metric, metric1);
     }
 }
