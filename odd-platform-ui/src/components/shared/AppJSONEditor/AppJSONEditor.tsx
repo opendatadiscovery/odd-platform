@@ -118,7 +118,6 @@ const AppJSONEditor: FC<JSONEditorProps> = ({ onValidate, schema, ...props }) =>
           onChange: (content, previousContent, OnChangeStatus) => {
             if (props.onChange) {
               props.onChange(content, previousContent, OnChangeStatus);
-              refEditor.current?.updateProps(props);
             }
             if ((content as TextContent).text.length === 0) {
               return onValidate(false, '');
@@ -129,6 +128,8 @@ const AppJSONEditor: FC<JSONEditorProps> = ({ onValidate, schema, ...props }) =>
         },
       });
     }
+
+    refEditor.current?.updateProps(props);
 
     return () => {
       if (refEditor.current) {

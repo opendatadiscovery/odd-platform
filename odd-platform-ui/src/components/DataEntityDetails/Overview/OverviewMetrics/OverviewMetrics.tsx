@@ -1,9 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppCircularProgress, AppPaper } from 'components/shared';
 import { useDataEntityMetrics } from 'lib/hooks/api';
 import { useAppParams } from 'lib/hooks';
+import { AppCircularProgress } from 'components/shared';
 import MetricFamily from './MetricFamily/MetricFamily';
+import * as S from './OverviewMetricsStyles';
 
 interface OverviewMetricsProps {
   showOverview: boolean;
@@ -16,28 +17,64 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
     enabled: showOverview,
   });
 
-  const getContent = React.useMemo(() => {
-    if (isLoading) {
-      return (
-        <Grid container justifyContent='center'>
-          <AppCircularProgress background='transparent' size={40} />
-        </Grid>
-      );
+  const maxHeight = 800;
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+
+  type ContainerState = { open: boolean; visibleHeight: string; showBtn: boolean };
+  const [{ open, visibleHeight, showBtn }, setState] = React.useState<ContainerState>({
+    open: false,
+    visibleHeight: `fit-content`,
+    showBtn: false,
+  });
+
+  React.useEffect(() => {
+    if (containerRef.current && containerRef.current?.scrollHeight > maxHeight) {
+      setState(prev => ({ ...prev, visibleHeight: `${maxHeight}px`, showBtn: true }));
     }
+  }, [containerRef.current]);
 
-    return data?.metricFamilies.map(family => <MetricFamily family={family} />);
-  }, [isLoading, data]);
+  const handleOnClick = React.useCallback(() => {
+    if (!open && containerRef.current && containerRef.current?.scrollHeight) {
+      const height = containerRef.current?.scrollHeight;
+      setState(prev => ({ ...prev, visibleHeight: `${height}px`, open: true }));
+    } else {
+      setState(prev => ({ ...prev, visibleHeight: `${maxHeight}px`, open: false }));
+    }
+  }, [open, containerRef.current]);
 
-  if (!showOverview || isError) return null;
+  if (!showOverview || isError || data?.metricFamilies.length === 0) return null;
+  if (!showOverview || isError || data?.metricFamilies.length === 0) return null;
 
   return (
     <>
       <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
         Metrics
       </Typography>
-      <AppPaper sx={{ p: 2 }} square elevation={0}>
-        {getContent}
-      </AppPaper>
+      <S.Container
+        ref={containerRef}
+        $visibleHeight={visibleHeight}
+        $open={open}
+        $showBtn={showBtn}
+        square
+        elevation={0}
+      >
+        {isLoading ? (
+          <Grid container justifyContent='center'>
+            <AppCircularProgress background='transparent' size={40} />
+          </Grid>
+        ) : (
+          <>
+            {data?.metricFamilies.map(family => (
+              <MetricFamily family={family} />
+            ))}
+            {showBtn && (
+              <S.ViewButton size='small' color='tertiary' onClick={handleOnClick}>
+                {open ? 'Hide' : `View All`}
+              </S.ViewButton>
+            )}
+          </>
+        )}
+      </S.Container>
     </>
   );
 };

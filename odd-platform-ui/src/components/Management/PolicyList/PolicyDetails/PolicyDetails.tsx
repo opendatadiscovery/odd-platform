@@ -46,7 +46,7 @@ const PolicyDetails: React.FC = () => {
     if (policyId) {
       dispatch(fetchPolicyDetails({ policyId }));
     }
-  }, [fetchPolicyDetails, policyId]);
+  }, [policyId]);
 
   return (
     <Grid container>
