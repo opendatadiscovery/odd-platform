@@ -1,104 +1,172 @@
 import React from 'react';
-import type { Metric, MetricFamily } from 'generated-sources';
+import type { Metric, MetricFamily, MetricLabel } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
+import { AppTooltip } from 'components/shared';
 
 interface MetricFamilyProps {
   family: MetricFamily;
 }
 
 const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
-  const getCounterMetric = (metric: Metric) =>
-    metric.labels?.map((label, idx) => (
-      <Grid
-        container
-        sx={{ ml: 2, mt: idx === 0 ? 0.5 : 0 }}
-        flexWrap='nowrap'
-        alignItems='center'
-      >
-        <Typography variant='subtitle1'>{`{${label.name} = ${label.value}}`}</Typography>
-        <Typography mx={1} variant='body1'>
+  const emptyLabelsMetric = family.metrics.find(metric => metric.labels?.length === 0);
+
+  const getLabel = (label: MetricLabel) => (
+    <AppTooltip title={`${label.name} = ${label.value}`}>
+      <Typography variant='subtitle1'>{`${label.name} = ${label.value}`}</Typography>
+    </AppTooltip>
+  );
+
+  const emptyLabelsMetricValue = React.useMemo(() => {
+    if (emptyLabelsMetric) {
+      if (family.type === 'COUNTER' || family.type === 'GAUGE') {
+        return (
+          <Grid container flexWrap='nowrap'>
+            <Typography mr={1} variant='body1'>
+              {emptyLabelsMetric.metricPoint.counterValue?.total}
+            </Typography>
+          </Grid>
+        );
+      }
+
+      if (family.type === 'HISTOGRAM' || family.type === 'GAUGE_HISTOGRAM') {
+        return (
+          <Grid container flexWrap='nowrap'>
+            {emptyLabelsMetric.metricPoint.histogramValue?.buckets?.map(bucket => (
+              <Grid
+                display='flex'
+                flexDirection='column'
+                mr={1}
+                alignItems='center'
+                p={0.5}
+              >
+                <Typography borderBottom='1px solid #EBECF0' variant='h4'>
+                  {bucket.upperBound}
+                </Typography>
+                <Typography variant='body1'>{bucket.count}</Typography>
+              </Grid>
+            ))}
+          </Grid>
+        );
+      }
+
+      if (family.type === 'SUMMARY') {
+        return (
+          <Grid container flexWrap='nowrap'>
+            {emptyLabelsMetric.metricPoint.summaryValue?.quantile?.map(quantile => (
+              <Grid
+                display='flex'
+                flexDirection='column'
+                mr={1}
+                alignItems='center'
+                p={0.5}
+              >
+                <Typography borderBottom='1px solid #EBECF0' variant='h4'>
+                  {`${quantile.quantile * 100}%`}
+                </Typography>
+                <Typography variant='body1'>{quantile.value}</Typography>
+              </Grid>
+            ))}
+          </Grid>
+        );
+      }
+    }
+
+    return null;
+  }, [emptyLabelsMetric, family.type]);
+
+  const getCounterMetric = (metric: Metric) => (
+    <Grid container sx={{ ml: 2, mt: 0.5 }} flexWrap='nowrap' alignItems='center'>
+      <Grid container flexDirection='column' item lg={3.4}>
+        {metric.labels?.map(getLabel)}
+      </Grid>
+      <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
+        <Typography mr={0.5} variant='body1'>
           {metric.metricPoint.counterValue?.total}
         </Typography>
-        <Typography variant='body1'>{family.unit}</Typography>
       </Grid>
-    ));
+    </Grid>
+  );
 
-  const getGaugeMetric = (metric: Metric) =>
-    metric.labels?.map((label, idx) => (
-      <Grid
-        container
-        sx={{ ml: 2, mt: idx === 0 ? 0.5 : 0 }}
-        flexWrap='nowrap'
-        alignItems='center'
-      >
-        <Typography variant='subtitle1'>{`{${label.name} = ${label.value}}`}</Typography>
-        <Typography mx={1} variant='body1'>
+  const getGaugeMetric = (metric: Metric) => (
+    <Grid container sx={{ ml: 2, mt: 0.5 }} flexWrap='nowrap' alignItems='center'>
+      <Grid container flexDirection='column' item lg={3.35}>
+        {metric.labels?.map(getLabel)}
+      </Grid>
+      <Grid item display='flex' flexWrap='nowrap' lg={8.65}>
+        <Typography mr={0.5} variant='body1'>
           {metric.metricPoint.gaugeValue?.value}
         </Typography>
-        <Typography variant='body1'>{family.unit}</Typography>
       </Grid>
-    ));
+    </Grid>
+  );
 
-  const getHistogramMetric = (metric: Metric) =>
-    metric.labels?.map(label => (
-      <Grid container sx={{ ml: 2 }} flexDirection='column'>
-        <Typography
-          variant='subtitle1'
-          my={0.5}
-        >{`{${label.name} = ${label.value}}`}</Typography>
-        <Grid container sx={{ ml: 1 }} flexDirection='column'>
-          {metric.metricPoint.histogramValue?.buckets?.map(bucket => (
-            <Grid container flexWrap='nowrap'>
-              <Typography variant='subtitle1'>{`{le = ${bucket.upperBound}}`}</Typography>
-              <Typography ml={0.5} variant='body1'>
-                {bucket.count}
-              </Typography>
-              <Typography ml={0.75} variant='body1'>
-                {family.unit}
-              </Typography>
-            </Grid>
-          ))}
-        </Grid>
+  const getHistogramMetric = (metric: Metric) => (
+    <Grid container sx={{ ml: 2, mt: 1 }} flexWrap='nowrap' alignItems='center'>
+      <Grid container flexDirection='column' item lg={3.4}>
+        {metric.labels?.map(getLabel)}
       </Grid>
-    ));
+      <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
+        {metric.metricPoint.histogramValue?.buckets?.map(bucket => (
+          <Grid display='flex' flexDirection='column' mr={1} alignItems='center' p={0.5}>
+            <Typography borderBottom='1px solid #EBECF0' variant='h4'>
+              {bucket.upperBound}
+            </Typography>
+            <Typography variant='body1'>{bucket.count}</Typography>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  );
 
-  const getSummaryMetric = (metric: Metric) =>
-    metric.labels?.map(label => (
-      <Grid container sx={{ ml: 2 }} flexDirection='column'>
-        <Typography
-          variant='subtitle1'
-          my={0.5}
-        >{`{${label.name} = ${label.value}}`}</Typography>
-        <Grid container sx={{ ml: 1 }} flexDirection='column'>
-          {metric.metricPoint.summaryValue?.quantile?.map(quantile => (
-            <Grid container flexWrap='nowrap'>
-              <Typography variant='subtitle1'>{`{quantile = ${quantile.quantile}}`}</Typography>
-              <Typography ml={0.5} variant='body1'>
-                {quantile.value}
-              </Typography>
-              <Typography ml={0.75} variant='body1'>
-                {family.unit}
-              </Typography>
-            </Grid>
-          ))}
-        </Grid>
+  const getSummaryMetric = (metric: Metric) => (
+    <Grid container sx={{ ml: 2, mt: 1 }} flexWrap='nowrap' alignItems='center'>
+      <Grid container flexDirection='column' item lg={3.4}>
+        {metric.labels?.map(getLabel)}
       </Grid>
-    ));
+      <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
+        {metric.metricPoint.summaryValue?.quantile?.map(quantile => (
+          <Grid display='flex' flexDirection='column' mr={1} alignItems='center' p={0.5}>
+            <Typography borderBottom='1px solid #EBECF0' variant='h4'>
+              {`${quantile.quantile * 100}%`}
+            </Typography>
+            <Typography variant='body1'>{quantile.value}</Typography>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  );
 
   return (
     <Grid container flexDirection='column'>
-      <Typography variant='h4'>{family.type}</Typography>
       <Grid container flexDirection='column' mt={0.5} mb={1.5}>
-        <Typography variant='subtitle1'>{family.name}</Typography>
-        {family.metrics.map(metric => {
-          if (family.type === 'COUNTER') return getCounterMetric(metric);
-          if (family.type === 'GAUGE') return getGaugeMetric(metric);
-          if (family.type === 'HISTOGRAM') return getHistogramMetric(metric);
-          if (family.type === 'GAUGE_HISTOGRAM') return getHistogramMetric(metric);
-          if (family.type === 'SUMMARY') return getSummaryMetric(metric);
+        <Grid container flexWrap='nowrap' alignItems='center'>
+          <Grid item container flexWrap='nowrap' alignItems='center' lg={3.5} mr={1.5}>
+            <AppTooltip title={`Name: ${family.name}`}>
+              <Typography variant='subtitle1' noWrap>
+                {family.description ? family.description : family.name}
+              </Typography>
+            </AppTooltip>
 
-          return null;
-        })}
+            <Typography ml={1} variant='subtitle2'>
+              {`(${family.unit})`}
+            </Typography>
+          </Grid>
+          <Grid item lg={8.5}>
+            {emptyLabelsMetricValue}
+          </Grid>
+        </Grid>
+
+        {family.metrics
+          .filter(metric => (metric?.labels ? metric?.labels?.length > 0 : false))
+          .map(metric => {
+            if (family.type === 'COUNTER') return getCounterMetric(metric);
+            if (family.type === 'GAUGE') return getGaugeMetric(metric);
+            if (family.type === 'HISTOGRAM') return getHistogramMetric(metric);
+            if (family.type === 'GAUGE_HISTOGRAM') return getHistogramMetric(metric);
+            if (family.type === 'SUMMARY') return getSummaryMetric(metric);
+
+            return null;
+          })}
       </Grid>
     </Grid>
   );

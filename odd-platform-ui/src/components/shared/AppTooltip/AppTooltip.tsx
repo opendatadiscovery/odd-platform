@@ -4,7 +4,10 @@ import type { SxProps } from '@mui/system';
 import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps
-  extends Pick<TooltipProps, 'placement' | 'followCursor' | 'componentsProps'> {
+  extends Pick<
+    TooltipProps,
+    'placement' | 'followCursor' | 'componentsProps' | 'disableHoverListener'
+  > {
   title: React.ReactElement | string | undefined;
   type?: S.TooltipColorTypes;
   checkForOverflow?: boolean;
@@ -21,6 +24,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   checkForOverflow = true,
   childSx,
   componentsProps,
+  disableHoverListener,
 }) => {
   const [isOverflowed, setIsOverflow] = React.useState(checkForOverflow);
   const childrenRef = React.useRef<HTMLDivElement>(null);
@@ -40,15 +44,10 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       placement={placement}
       followCursor={followCursor}
       disableInteractive
-      disableHoverListener={checkForOverflow ? !isOverflowed : false}
+      disableHoverListener={disableHoverListener}
       componentsProps={componentsProps}
     >
-      <S.ChildrenContainer
-        $isCursorPointer={checkForOverflow ? isOverflowed : true}
-        $isOverflowed={isOverflowed}
-        ref={childrenRef}
-        sx={childSx}
-      >
+      <S.ChildrenContainer $isOverflowed={isOverflowed} ref={childrenRef} sx={childSx}>
         {children}
       </S.ChildrenContainer>
     </S.AppTooltip>

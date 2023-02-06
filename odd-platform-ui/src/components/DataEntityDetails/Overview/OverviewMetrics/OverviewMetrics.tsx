@@ -17,7 +17,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
     enabled: showOverview,
   });
 
-  const maxHeight = 800;
+  const maxHeight = 450;
   const containerRef = React.useRef<HTMLDivElement | null>(null);
 
   type ContainerState = { open: boolean; visibleHeight: string; showBtn: boolean };
