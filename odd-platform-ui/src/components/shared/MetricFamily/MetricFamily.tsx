@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metric, MetricFamily, MetricLabel } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 
 interface MetricFamilyProps {
   family: MetricFamily;
@@ -11,7 +12,10 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
   const emptyLabelsMetric = family.metrics.find(metric => metric.labels?.length === 0);
 
   const getLabel = (label: MetricLabel) => (
-    <AppTooltip title={`${label.name} = ${label.value}`}>
+    <AppTooltip
+      title={`${label.name} = ${label.value}`}
+      childSx={{ width: 'inherit', paddingRight: 1 }}
+    >
       <Typography variant='subtitle1'>{`${label.name} = ${label.value}`}</Typography>
     </AppTooltip>
   );
@@ -22,7 +26,11 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         return (
           <Grid container flexWrap='nowrap'>
             <Typography mr={1} variant='body1'>
-              {emptyLabelsMetric.metricPoint.counterValue?.total}
+              <AppTooltip title={emptyLabelsMetric.metricPoint.counterValue?.total}>
+                <NumberFormatted
+                  value={emptyLabelsMetric.metricPoint.counterValue?.total}
+                />
+              </AppTooltip>
             </Typography>
           </Grid>
         );
@@ -31,7 +39,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
       if (family.type === 'HISTOGRAM' || family.type === 'GAUGE_HISTOGRAM') {
         return (
           <Grid container flexWrap='nowrap'>
-            {emptyLabelsMetric.metricPoint.histogramValue?.buckets?.map(bucket => (
+            {emptyLabelsMetric.metricPoint.histogramValue?.buckets?.map((bucket, idx) => (
               <Grid
                 display='flex'
                 flexDirection='column'
@@ -40,9 +48,11 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
                 p={0.5}
               >
                 <Typography borderBottom='1px solid #EBECF0' variant='h4'>
-                  {bucket.upperBound}
+                  {`${idx === 0 ? '<' : ''} ${bucket.upperBound}`}
                 </Typography>
-                <Typography variant='body1'>{bucket.count}</Typography>
+                <AppTooltip title={bucket.count}>
+                  <NumberFormatted value={bucket.count} />
+                </AppTooltip>
               </Grid>
             ))}
           </Grid>
@@ -63,7 +73,9 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
                 <Typography borderBottom='1px solid #EBECF0' variant='h4'>
                   {`${quantile.quantile * 100}%`}
                 </Typography>
-                <Typography variant='body1'>{quantile.value}</Typography>
+                <AppTooltip title={quantile.value}>
+                  <NumberFormatted value={quantile.value} />
+                </AppTooltip>
               </Grid>
             ))}
           </Grid>
@@ -80,9 +92,9 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
-        <Typography mr={0.5} variant='body1'>
-          {metric.metricPoint.counterValue?.total}
-        </Typography>
+        <AppTooltip title={metric.metricPoint.counterValue?.total}>
+          <NumberFormatted value={metric.metricPoint.counterValue?.total} />
+        </AppTooltip>
       </Grid>
     </Grid>
   );
@@ -93,9 +105,9 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.65}>
-        <Typography mr={0.5} variant='body1'>
-          {metric.metricPoint.gaugeValue?.value}
-        </Typography>
+        <AppTooltip title={metric.metricPoint.gaugeValue?.value}>
+          <NumberFormatted value={metric.metricPoint.gaugeValue?.value} />
+        </AppTooltip>
       </Grid>
     </Grid>
   );
@@ -106,12 +118,14 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
-        {metric.metricPoint.histogramValue?.buckets?.map(bucket => (
+        {metric.metricPoint.histogramValue?.buckets?.map((bucket, idx) => (
           <Grid display='flex' flexDirection='column' mr={1} alignItems='center' p={0.5}>
             <Typography borderBottom='1px solid #EBECF0' variant='h4'>
-              {bucket.upperBound}
+              {`${idx === 0 ? '<' : ''} ${bucket.upperBound}`}
             </Typography>
-            <Typography variant='body1'>{bucket.count}</Typography>
+            <AppTooltip title={bucket.count}>
+              <NumberFormatted value={bucket.count} />
+            </AppTooltip>
           </Grid>
         ))}
       </Grid>
@@ -129,7 +143,9 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
             <Typography borderBottom='1px solid #EBECF0' variant='h4'>
               {`${quantile.quantile * 100}%`}
             </Typography>
-            <Typography variant='body1'>{quantile.value}</Typography>
+            <AppTooltip title={quantile.value}>
+              <NumberFormatted value={quantile.value} />
+            </AppTooltip>
           </Grid>
         ))}
       </Grid>

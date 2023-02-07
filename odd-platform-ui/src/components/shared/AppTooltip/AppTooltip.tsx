@@ -8,7 +8,7 @@ interface AppTooltipProps
     TooltipProps,
     'placement' | 'followCursor' | 'componentsProps' | 'disableHoverListener'
   > {
-  title: React.ReactElement | string | undefined;
+  title: React.ReactElement | string | undefined | number;
   type?: S.TooltipColorTypes;
   checkForOverflow?: boolean;
   children?: React.ReactNode | React.ReactElement | string;
