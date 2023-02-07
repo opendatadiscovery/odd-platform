@@ -15,6 +15,7 @@ export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
     DataSetFieldTypeTypeEnum.STRUCT,
     DataSetFieldTypeTypeEnum.LIST,
     DataSetFieldTypeTypeEnum.MAP,
+    DataSetFieldTypeTypeEnum.UNION,
   ].includes(fieldType);
 
 export const stringFormatted = (
