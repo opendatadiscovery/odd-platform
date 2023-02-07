@@ -15,7 +15,7 @@ export const Container = styled(AppPaper)<{
     display: $open || !$showBtn ? 'none' : 'block',
     content: '""',
     position: 'absolute',
-    bottom: '1px',
+    bottom: 0,
     left: '1px',
     width: '99.6%',
     height: '90px',

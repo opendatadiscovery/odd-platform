@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metric, MetricFamily, MetricLabel } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { AppTooltip } from 'components/shared';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 
 interface MetricFamilyProps {
   family: MetricFamily;
@@ -155,7 +155,6 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
             {emptyLabelsMetricValue}
           </Grid>
         </Grid>
-
         {family.metrics
           .filter(metric => (metric?.labels ? metric?.labels?.length > 0 : false))
           .map(metric => {

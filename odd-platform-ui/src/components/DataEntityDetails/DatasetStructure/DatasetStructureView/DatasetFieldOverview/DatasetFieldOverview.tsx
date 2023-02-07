@@ -7,6 +7,7 @@ import { AppButton, LabelItem, MetadataItem } from 'components/shared';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
+import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
 import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
@@ -127,6 +128,7 @@ const DatasetFieldOverview: React.FC = () => {
           'Metadata',
           field.metadata?.map(metadata => <MetadataItem metadata={metadata} />)
         )}
+      <DatasetFieldMetrics datasetFieldId={field.id} />
     </S.Container>
   );
 };
