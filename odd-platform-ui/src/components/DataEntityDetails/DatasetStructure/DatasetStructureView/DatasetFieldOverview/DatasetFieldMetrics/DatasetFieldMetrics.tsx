@@ -8,9 +8,7 @@ interface DatasetFieldMetricsProps {
   datasetFieldId: number;
 }
 const DatasetFieldMetrics: React.FC<DatasetFieldMetricsProps> = ({ datasetFieldId }) => {
-  const { data, isError, isLoading } = useDataSetFieldMetrics({
-    datasetFieldId,
-  });
+  const { data, isError, isLoading } = useDataSetFieldMetrics({ datasetFieldId });
 
   return !isError ? (
     <S.SectionContainer container>
