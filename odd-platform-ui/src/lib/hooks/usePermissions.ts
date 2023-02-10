@@ -1,6 +1,6 @@
 import { PermissionContext } from 'components/shared/contexts';
 import { useContext } from 'react';
-import { Permission } from 'generated-sources';
+import type { Permission } from 'generated-sources';
 
 interface UsePermissionReturn {
   isAllowedTo: boolean;

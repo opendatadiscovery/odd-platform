@@ -1,10 +1,10 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Grid } from '@mui/material';
-import { AppLoadingPage, AppTabItem, AppTabs, RestrictedRoute } from 'components/shared';
-import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
+import { AppLoadingPage, RestrictedRoute } from 'components/shared';
+import { useAppPaths, usePermissions } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import ManagementTabs from './ManagementTabs/ManagementTabs';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -24,55 +24,26 @@ const PolicyDetails = React.lazy(
 );
 
 const Management: React.FC = () => {
-  const { viewType } = useAppParams();
-  const { managementPath } = useAppPaths();
+  const {
+    managementPath,
+    managementOwnerAssociationsPath,
+    createPolicyPath,
+    policyDetailsPath,
+    ManagementRoutesEnum,
+  } = useAppPaths();
   const { hasAccessTo } = usePermissions();
-
-  const [tabs] = React.useState<AppTabItem[]>([
-    { name: 'Namespaces', link: managementPath('namespaces') },
-    { name: 'Datasources', link: managementPath('datasources') },
-    { name: 'Collectors', link: managementPath('collectors') },
-    { name: 'Owners', link: managementPath('owners') },
-    { name: 'Tags', link: managementPath('tags') },
-    { name: 'Labels', link: managementPath('labels') },
-    {
-      name: 'Associations',
-      link: managementPath('associations'),
-      hidden: !hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE),
-    },
-    { name: 'Roles', link: managementPath('roles') },
-    { name: 'Policies', link: managementPath('policies') },
-  ]);
-
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
-
-  React.useEffect(() => {
-    setSelectedTab(
-      viewType ? tabs.findIndex(tab => tab.name.toLowerCase() === viewType) : 0
-    );
-  }, [tabs, viewType]);
 
   return (
     <S.Container container wrap='nowrap'>
       <S.SidebarContainer item xs={3}>
-        <Grid sx={{ p: 0.5 }}>
-          {tabs.length && selectedTab >= 0 ? (
-            <AppTabs
-              orientation='vertical'
-              type='menu'
-              items={tabs}
-              selectedTab={selectedTab}
-              handleTabChange={() => {}}
-            />
-          ) : null}
-        </Grid>
+        <ManagementTabs />
       </S.SidebarContainer>
       <S.ContentContainer item xs={9}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route
               exact
-              path='/management/namespaces'
+              path={managementPath(ManagementRoutesEnum.namespaces)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -87,7 +58,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path='/management/datasources'
+              path={managementPath(ManagementRoutesEnum.datasources)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -103,7 +74,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path='/management/collectors'
+              path={managementPath(ManagementRoutesEnum.collectors)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -119,7 +90,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path='/management/owners'
+              path={managementPath(ManagementRoutesEnum.owners)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -134,7 +105,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path='/management/tags'
+              path={managementPath(ManagementRoutesEnum.tags)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -149,7 +120,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path='/management/labels'
+              path={managementPath(ManagementRoutesEnum.labels)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -164,14 +135,13 @@ const Management: React.FC = () => {
             />
             <RestrictedRoute
               isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
-              redirectTo='/management/namespaces'
-              exact
-              path='/management/associations/:viewType?'
+              redirectTo={managementPath(ManagementRoutesEnum.namespaces)}
+              path={managementOwnerAssociationsPath()}
               component={OwnerAssociationsList}
             />
             <Route
               exact
-              path='/management/roles'
+              path={managementPath(ManagementRoutesEnum.roles)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -186,7 +156,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path='/management/policies'
+              path={managementPath(ManagementRoutesEnum.policies)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -201,10 +171,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={[
-                '/management/policies/createPolicy',
-                '/management/policies/:policyId',
-              ]}
+              path={[createPolicyPath(), policyDetailsPath()]}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[Permission.POLICY_UPDATE]}
@@ -213,7 +180,11 @@ const Management: React.FC = () => {
                 />
               )}
             />
-            <Redirect exact from='/management' to='/management/namespaces' />
+            <Redirect
+              exact
+              from={managementPath(ManagementRoutesEnum.associations)}
+              to={managementOwnerAssociationsPath(ManagementRoutesEnum.associationsNew)}
+            />
           </Switch>
         </React.Suspense>
       </S.ContentContainer>

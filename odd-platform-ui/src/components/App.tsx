@@ -1,9 +1,15 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
 import { AppLoadingPage, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
+import {
+  fetchActiveFeatures,
+  fetchAppInfo,
+  fetchAppLinks,
+  fetchDataEntitiesClassesAndTypes,
+  fetchIdentity,
+} from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
@@ -23,12 +29,16 @@ const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isPathEmbedded, managementPath, ManagementRoutesEnum, baseManagementPath } =
+    useAppPaths();
 
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
-  }, [dispatch]);
-
-  const { isPathEmbedded } = useAppPaths();
+    dispatch(fetchIdentity());
+    dispatch(fetchAppInfo());
+    dispatch(fetchActiveFeatures());
+    dispatch(fetchAppLinks());
+  }, []);
 
   return (
     <div className='App'>
@@ -40,7 +50,7 @@ const App: React.FC = () => {
             <Route exact path='/' component={Overview} />
             <Route path='/alerts/:viewType?' component={Alerts} />
             <Route
-              path='/management/:viewType?'
+              path={[managementPath()]}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
@@ -64,6 +74,10 @@ const App: React.FC = () => {
               component={DataEntityDetails}
             />
             <Route path='/activity' component={Activity} />
+            <Redirect
+              from={baseManagementPath()}
+              to={managementPath(ManagementRoutesEnum.namespaces)}
+            />
           </Switch>
         </React.Suspense>
       </div>

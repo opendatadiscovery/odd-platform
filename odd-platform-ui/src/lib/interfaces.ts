@@ -3,6 +3,7 @@ export type AlertViewType = 'all' | 'my' | 'dependents';
 export type TermsViewType = 'overview' | 'linked-items';
 export type TestReportViewType = 'overview' | 'history';
 export type ManagementViewType =
+  | ':viewType'
   | 'namespaces'
   | 'datasources'
   | 'collectors'
@@ -12,8 +13,7 @@ export type ManagementViewType =
   | 'associations'
   | 'roles'
   | 'policies';
-
-export type OwnerAssociationRequestsViewType = 'New' | 'Resolved';
+export type OwnerAssociationRequestsViewType = ':viewType' | 'New' | 'Resolved';
 
 export type EventType = 'created' | 'added' | 'assigned' | 'updated' | 'deleted';
 

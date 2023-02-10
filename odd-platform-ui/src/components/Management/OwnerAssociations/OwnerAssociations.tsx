@@ -13,13 +13,13 @@ import {
 } from 'redux/selectors';
 import {
   AppInput,
-  AppTabItem,
+  type AppTabItem,
   AppTabs,
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared';
-import { useAppParams } from 'lib/hooks';
-import { OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest } from 'generated-sources';
+import { useAppParams, useAppPaths } from 'lib/hooks';
+import { type OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import ManagementSkeletonItem from '../ManagementSkeletonItem/ManagementSkeletonItem';
 import ActiveAssociationRequest from './AssociationRequestItem/ActiveAssociationRequest';
@@ -29,10 +29,11 @@ import * as S from './OwnerAssociationsStyles';
 const OwnerAssociations: React.FC = () => {
   const dispatch = useAppDispatch();
   const { viewType } = useAppParams();
+  const { managementOwnerAssociationsPath, ManagementRoutesEnum } = useAppPaths();
 
   const size = 30;
   const [query, setQuery] = React.useState('');
-  const [active, setActive] = React.useState(true);
+  const active = React.useMemo(() => viewType === 'New', [viewType]);
 
   const newRequestsPageInfo = useAppSelector(getNewOwnerAssociationRequestsPageInfo);
   const resolvedRequestsPageInfo = useAppSelector(
@@ -63,12 +64,21 @@ const OwnerAssociations: React.FC = () => {
 
   React.useEffect(() => {
     setTabs([
-      { name: 'New', hint: newRequestsPageInfo.total, value: true },
-      { name: 'Resolved', value: false },
+      {
+        name: 'New',
+        hint: newRequestsPageInfo.total,
+        link: managementOwnerAssociationsPath(ManagementRoutesEnum.associationsNew),
+        value: true,
+      },
+      {
+        name: 'Resolved',
+        link: managementOwnerAssociationsPath(ManagementRoutesEnum.associationsResolved),
+        value: false,
+      },
     ]);
   }, [newRequestsPageInfo.total]);
 
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+  const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
     const tabIdx = viewType ? tabs.findIndex(tab => tab.name === viewType) : 0;
@@ -81,7 +91,6 @@ const OwnerAssociations: React.FC = () => {
 
   const onTabChange = () => {
     setQuery('');
-    setActive(prevState => !prevState);
     dispatchedFetchRequestsList({ page: 1, size, active: !active });
   };
 

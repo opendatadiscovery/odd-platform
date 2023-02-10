@@ -6,7 +6,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { createPolicy, updatePolicy } from 'redux/thunks';
 import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { Permission, PolicyDetails, PolicyFormData } from 'generated-sources';
+import type { PolicyDetails, PolicyFormData } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { Link, useHistory } from 'react-router-dom';
 
 interface PolicyFormProps {
@@ -19,12 +20,12 @@ interface PolicyFormProps {
 const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { managementPath } = useAppPaths();
+  const { managementPath, ManagementRoutesEnum } = useAppPaths();
   const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';
-  const toPolicies = managementPath('policies');
+  const toPolicies = managementPath(ManagementRoutesEnum.policies);
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
   const { control, handleSubmit, setValue, formState } = useForm<PolicyFormData>({

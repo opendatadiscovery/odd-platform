@@ -15,19 +15,28 @@ const ToolbarTabs: React.FC = () => {
   const history = useHistory();
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
-  const { activityPath, termSearchPath, searchPath } = useAppPaths();
+  const {
+    activityPath,
+    termSearchPath,
+    searchPath,
+    managementPath,
+    ManagementRoutesEnum,
+  } = useAppPaths();
 
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
-
-  React.useEffect(() => {
-    setTabs([
+  const tabs = React.useMemo<AppTabItem[]>(
+    () => [
       { name: 'Catalog', link: '/search', value: 'search' },
-      { name: 'Management', link: '/management', value: 'management' },
+      {
+        name: 'Management',
+        link: managementPath(ManagementRoutesEnum.namespaces),
+        value: 'management',
+      },
       { name: 'Dictionary', link: '/termsearch', value: 'termsearch' },
       { name: 'Alerts', link: '/alerts', value: 'alerts' },
       { name: 'Activity', link: activityPath(activityQueryString), value: 'activity' },
-    ]);
-  }, [activityQueryString]);
+    ],
+    [activityQueryString]
+  );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 

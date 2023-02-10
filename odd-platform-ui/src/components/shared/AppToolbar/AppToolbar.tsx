@@ -1,13 +1,7 @@
 import React, { type MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
 import { getIdentity, getOwnership } from 'redux/selectors';
-import {
-  fetchActiveFeatures,
-  fetchAppInfo,
-  fetchAppLinks,
-  fetchIdentity,
-} from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/Icons';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
@@ -17,8 +11,6 @@ import * as S from './AppToolbarStyles';
 import AppInfoMenu from './AppInfoMenu/AppInfoMenu';
 
 const AppToolbar: React.FC = () => {
-  const dispatch = useAppDispatch();
-
   const identity = useAppSelector(getIdentity);
   const owner = useAppSelector(getOwnership);
 
@@ -46,13 +38,6 @@ const AppToolbar: React.FC = () => {
   });
 
   React.useEffect(() => setElevation(trigger ? 3 : 0), [trigger]);
-
-  React.useEffect(() => {
-    dispatch(fetchIdentity());
-    dispatch(fetchAppInfo());
-    dispatch(fetchActiveFeatures());
-    dispatch(fetchAppLinks());
-  }, []);
 
   return (
     <S.Bar position='fixed' elevation={elevation}>

@@ -1,14 +1,11 @@
-import { useLocation } from 'react-router-dom';
-import type { AlertViewType, ManagementViewType } from 'lib/interfaces';
+import React from 'react';
+import type { AlertViewType } from 'lib/interfaces';
+import { useIsEmbeddedPath } from './useIsEmbeddedPath';
+import { useManagementPaths } from './useManagementPaths';
 
 const useAppPaths = () => {
-  const location = useLocation();
-  const isPathEmbedded = location.pathname.includes('embedded');
-  const updatePath = (link: string) => {
-    if (isPathEmbedded) return `/embedded${link}`;
-    return link;
-  };
-
+  const { updatePath, isPathEmbedded } = useIsEmbeddedPath();
+  const managementPaths = useManagementPaths();
   // search
   const searchPath = (searchId?: string) =>
     updatePath(`/search${searchId ? `/${searchId}` : ''}`);
@@ -80,47 +77,39 @@ const useAppPaths = () => {
   const alertsPath = (viewType: AlertViewType = 'all') =>
     updatePath(`/alerts/${viewType}`);
 
-  // Management page
-  const managementPath = (viewType: ManagementViewType = 'namespaces') =>
-    updatePath(`/management/${viewType}`);
-
-  const policyDetailsPath = (policyId: number) =>
-    `${managementPath('policies')}/${policyId}`;
-
-  const createPolicyPath = () => `${managementPath('policies')}/createPolicy`;
-
   // Activity
   const activityPath = (query: string) => updatePath(`/activity?${query}`);
 
-  return {
-    isPathEmbedded,
-    searchPath,
-    dataEntityDetailsPath,
-    termSearchPath,
-    dataEntityOverviewPath,
-    datasetStructurePath,
-    dataEntityLineagePath,
-    dataEntityTestReportPath,
-    dataEntityHistoryPath,
-    dataEntityAlertsPath,
-    dataEntityLinkedItemsPath,
-    dataEntityActivityPath,
-    termDetailsPath,
-    termDetailsLinkedItemsPath,
-    termDetailsOverviewPath,
-    dataEntityTestPath,
-    testReportDetailsOverviewPath,
-    testReportDetailsHistoryPath,
-    testReportDetailsRetriesPath,
-    alertsPath,
-    managementPath,
-    activityPath,
-    dataEntityCollaborationPath,
-    dataEntityCollaborationMessagePath,
-    dataEntityCollaborationCreateMessagePath,
-    policyDetailsPath,
-    createPolicyPath,
-  };
+  return React.useMemo(
+    () => ({
+      isPathEmbedded,
+      searchPath,
+      dataEntityDetailsPath,
+      termSearchPath,
+      dataEntityOverviewPath,
+      datasetStructurePath,
+      dataEntityLineagePath,
+      dataEntityTestReportPath,
+      dataEntityHistoryPath,
+      dataEntityAlertsPath,
+      dataEntityLinkedItemsPath,
+      dataEntityActivityPath,
+      termDetailsPath,
+      termDetailsLinkedItemsPath,
+      termDetailsOverviewPath,
+      dataEntityTestPath,
+      testReportDetailsOverviewPath,
+      testReportDetailsHistoryPath,
+      testReportDetailsRetriesPath,
+      alertsPath,
+      activityPath,
+      dataEntityCollaborationPath,
+      dataEntityCollaborationMessagePath,
+      dataEntityCollaborationCreateMessagePath,
+      ...managementPaths,
+    }),
+    [isPathEmbedded, managementPaths]
+  );
 };
 
 export default useAppPaths;
