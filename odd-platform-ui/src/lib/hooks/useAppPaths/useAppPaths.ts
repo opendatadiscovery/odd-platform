@@ -2,25 +2,20 @@ import React from 'react';
 import type { AlertViewType } from 'lib/interfaces';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
 import { useManagementPaths } from './useManagementPaths';
+import { useTermsPaths } from './useTermsPaths';
+import { AppRoutesEnum } from './shared';
 
 const useAppPaths = () => {
   const { updatePath, isPathEmbedded } = useIsEmbeddedPath();
   const managementPaths = useManagementPaths();
+  const termsPaths = useTermsPaths();
+
+  const basePath = updatePath('/');
+
   // search
-  const searchPath = (searchId?: string) =>
-    updatePath(`/search${searchId ? `/${searchId}` : ''}`);
-
-  // terms
-  const termSearchPath = (termSearchId?: string) =>
-    updatePath(`/termsearch${termSearchId ? `/${termSearchId}` : ''}`);
-
-  const termDetailsPath = (termId: number) => updatePath(`/terms/${termId}`);
-
-  const termDetailsLinkedItemsPath = (termId: number) =>
-    `${termDetailsPath(termId)}/linked-items`;
-
-  const termDetailsOverviewPath = (termId: number) =>
-    `${termDetailsPath(termId)}/overview`;
+  const baseSearchPath = () => updatePath(`/search`);
+  const searchPath = (searchId: string = AppRoutesEnum.searchId) =>
+    `${baseSearchPath()}/${searchId}`;
 
   // dataentity paths
   const dataEntityDetailsPath = (entityId: number) =>
@@ -83,9 +78,10 @@ const useAppPaths = () => {
   return React.useMemo(
     () => ({
       isPathEmbedded,
+      basePath,
+      baseSearchPath,
       searchPath,
       dataEntityDetailsPath,
-      termSearchPath,
       dataEntityOverviewPath,
       datasetStructurePath,
       dataEntityLineagePath,
@@ -94,9 +90,6 @@ const useAppPaths = () => {
       dataEntityAlertsPath,
       dataEntityLinkedItemsPath,
       dataEntityActivityPath,
-      termDetailsPath,
-      termDetailsLinkedItemsPath,
-      termDetailsOverviewPath,
       dataEntityTestPath,
       testReportDetailsOverviewPath,
       testReportDetailsHistoryPath,
@@ -107,6 +100,7 @@ const useAppPaths = () => {
       dataEntityCollaborationMessagePath,
       dataEntityCollaborationCreateMessagePath,
       ...managementPaths,
+      ...termsPaths,
     }),
     [isPathEmbedded, managementPaths]
   );

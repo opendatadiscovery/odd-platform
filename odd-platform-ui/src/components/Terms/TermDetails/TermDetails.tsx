@@ -30,7 +30,8 @@ const TermDetailsView: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
-  const { termSearchPath } = useAppPaths();
+  const { termSearchPath, termDetailsLinkedItemsPath, termDetailsOverviewPath } =
+    useAppPaths();
 
   const {
     isLoading: isTermDetailsFetching,
@@ -90,8 +91,12 @@ const TermDetailsView: React.FC = () => {
       {isTermDetailsFetched && (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route exact path='/terms/:termId/overview' component={Overview} />
-            <Route exact path='/terms/:termId/linked-items' component={LinkedItemsList} />
+            <Route exact path={termDetailsOverviewPath()} component={Overview} />
+            <Route
+              exact
+              path={termDetailsLinkedItemsPath()}
+              component={LinkedItemsList}
+            />
           </Switch>
         </React.Suspense>
       )}

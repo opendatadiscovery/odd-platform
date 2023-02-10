@@ -29,8 +29,18 @@ const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isPathEmbedded, managementPath, ManagementRoutesEnum, baseManagementPath } =
-    useAppPaths();
+  const {
+    isPathEmbedded,
+    managementPath,
+    ManagementRoutesEnum,
+    baseManagementPath,
+    basePath,
+    baseSearchPath,
+    searchPath,
+    baseTermSearchPath,
+    termSearchPath,
+    termDetailsPath,
+  } = useAppPaths();
 
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
@@ -47,7 +57,7 @@ const App: React.FC = () => {
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route exact path='/' component={Overview} />
+            <Route exact path={basePath} component={Overview} />
             <Route path='/alerts/:viewType?' component={Alerts} />
             <Route
               path={[managementPath()]}
@@ -59,13 +69,14 @@ const App: React.FC = () => {
                 />
               )}
             />
-            <Route exact path='/termsearch/:termSearchId?' component={TermSearch} />
+
+            <Route exact path={[baseSearchPath(), searchPath()]} component={Search} />
             <Route
               exact
-              path={['/search/:searchId?', '/embedded/search/:searchId?']}
-              component={Search}
+              path={[baseTermSearchPath(), termSearchPath()]}
+              component={TermSearch}
             />
-            <Route path='/terms/:termId/:viewType?' component={TermDetails} />
+            <Route path={termDetailsPath()} component={TermDetails} />
             <Route
               path={[
                 '/dataentities/:dataEntityId/:viewType?',
