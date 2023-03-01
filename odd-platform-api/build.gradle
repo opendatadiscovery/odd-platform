@@ -161,7 +161,7 @@ compileJava.dependsOn jooqDockerGenerate
 test {
     useJUnitPlatform()
     testLogging.showStandardStreams = true
-    maxParallelForks 4
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 }
 
 if (env == "dev") {

@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.DatasetStructureService;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetFieldMetadataIngestionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.EnumValuesIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -31,6 +32,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
     private final DatasetStructureService datasetStructureService;
     private final LabelIngestionService labelIngestionService;
     private final DatasetFieldMetadataIngestionService datasetFieldMetadataIngestionService;
+    private final EnumValuesIngestionService enumValuesIngestionService;
     private final DatasetVersionMapper datasetVersionMapper;
 
     @Override
@@ -39,6 +41,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
             .then(ingestExistingDatasetStructure(request))
             .then(labelIngestionService.ingestExternalLabels(request))
             .then(datasetFieldMetadataIngestionService.ingestMetadata(request))
+            .then(enumValuesIngestionService.ingestEnumValues(request))
             .then();
     }
 
@@ -120,8 +123,8 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         }
 
         // the following code serves two reasons:
-        // 1. If an entity is former hollow, it will have no fetched versions, so we need to create a new one
-        // 2. If an entity due to some ingestion error didn't have a version created for it, we need to create a new one
+        // 1. If an entity is a former hollow, it will have no fetched versions, so we need to create a new one
+        // 2. If an entity due to some ingestion error doesn't have a version created for it, we need to create a new one
         final Set<String> datasetsWithVersions = fetchedVersions.stream()
             .map(DatasetVersionPojo::getDatasetOddrn)
             .collect(Collectors.toSet());

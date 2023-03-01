@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.api.ingestion.utils;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections4.ListUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.BinaryFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.BooleanFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.ComplexFieldStat;
@@ -13,6 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DateTimeFieldStat;
+import org.opendatadiscovery.oddplatform.api.contract.model.EnumValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.IntegerFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
@@ -22,6 +24,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.NumberFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.StringFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 
 import static java.util.Collections.emptyList;
 
@@ -132,7 +135,7 @@ public class IngestionModelMapper {
             .isPrimaryKey(field.getIsPrimaryKey())
             .defaultValue(field.getDefaultValue())
             .metadata(metadataFieldValues)
-            .enumValueCount(0);
+            .enumValueCount(ListUtils.emptyIfNull(field.getEnumValues()).size());
     }
 
     public static List<MetadataFieldValue> buildExpectedMetadataFieldValue(final Map<String, Object> metadata) {
@@ -144,6 +147,14 @@ public class IngestionModelMapper {
                     .type(MetadataFieldType.STRING))
                 .value(e.getValue().toString())
             )
+            .toList();
+    }
+
+    public static List<EnumValue> buildExpectedEnumValues(final List<DataSetFieldEnumValue> enumValues) {
+        return enumValues.stream()
+            .map(ev -> new EnumValue()
+                .name(ev.getName())
+                .externalDescription(ev.getDescription()))
             .toList();
     }
 }

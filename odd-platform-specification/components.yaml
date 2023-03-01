@@ -1508,10 +1508,14 @@ components:
     EnumValueList:
       type: object
       properties:
+        external:
+          type: boolean
         items:
           type: array
           items:
             $ref: '#/components/schemas/EnumValue'
+      required:
+        - external
 
     EnumValue:
       description: DatasetField enum value
@@ -1522,7 +1526,9 @@ components:
           format: int64
         name:
           type: string
-        description:
+        internal_description:
+          type: string
+        external_description:
           type: string
       required:
         - id

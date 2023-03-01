@@ -15,7 +15,6 @@ import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -64,9 +63,10 @@ public class EnumValueServiceTest {
         .name(newEnumName)
         .description(newEnumDescription);
 
-    private final EnumValuePojo existingEnumPojo = enumValueMapper.mapToPojo(existingEnum, datasetFieldId);
+    private final EnumValuePojo existingEnumPojo = enumValueMapper.mapInternalToPojo(existingEnum, datasetFieldId);
 
-    private final EnumValuePojo newEnumPojo = enumValueMapper.mapToPojo(newEnum, datasetFieldId).setId(newEnumId);
+    private final EnumValuePojo newEnumPojo =
+        enumValueMapper.mapInternalToPojo(newEnum, datasetFieldId).setId(newEnumId);
 
     @BeforeEach
     void setUp() {
@@ -76,10 +76,12 @@ public class EnumValueServiceTest {
     @Test
     @DisplayName("Creates new enums, updates existing ones and soft deletes the rest")
     public void testCreateEnumValues() {
-        final EnumValueList expected = new EnumValueList().items(List.of(
-            enumValueMapper.mapToEnum(existingEnumPojo),
-            enumValueMapper.mapToEnum(newEnumPojo)
-        ));
+        final EnumValueList expected = new EnumValueList()
+            .external(false)
+            .items(List.of(
+                enumValueMapper.mapToEnum(existingEnumPojo),
+                enumValueMapper.mapToEnum(newEnumPojo)
+            ));
 
         when(enumValueRepository.bulkCreate(anyList()))
             .thenReturn(Flux.just(newEnumPojo));
@@ -87,7 +89,7 @@ public class EnumValueServiceTest {
         when(enumValueRepository.bulkUpdate(anyList()))
             .thenReturn(Flux.just(existingEnumPojo));
 
-        when(enumValueRepository.softDeleteOutdatedEnumValuesExcept(anyLong(), anyList())).thenReturn(Flux.empty());
+        when(enumValueRepository.softDeleteEnumValuesExcept(anyLong(), anyList())).thenReturn(Flux.empty());
 
         when(dataEntityFilledService.markEntityFilledByDatasetFieldId(anyLong(), any()))
             .thenReturn(Mono.just(new DataEntityFilledPojo()));
@@ -99,11 +101,11 @@ public class EnumValueServiceTest {
             .verifyComplete();
 
         verify(enumValueRepository, Mockito.times(1))
-            .softDeleteOutdatedEnumValuesExcept(datasetFieldId, List.of(existingEnumId));
+            .softDeleteEnumValuesExcept(datasetFieldId, List.of(existingEnumId));
         verify(enumValueRepository, Mockito.times(1))
-            .bulkCreate(List.of(enumValueMapper.mapToPojo(newEnum, datasetFieldId)));
+            .bulkCreate(List.of(enumValueMapper.mapInternalToPojo(newEnum, datasetFieldId)));
         verify(enumValueRepository, Mockito.times(1))
-            .bulkUpdate(List.of(enumValueMapper.mapToPojo(existingEnum, datasetFieldId)));
+            .bulkUpdate(List.of(enumValueMapper.mapInternalToPojo(existingEnum, datasetFieldId)));
     }
 
     @Test
@@ -123,9 +125,11 @@ public class EnumValueServiceTest {
     @Test
     @DisplayName("Returns enums by dataset field id")
     public void testGetEnumValues() {
-        final EnumValueList expected = new EnumValueList().addItemsItem(
-            enumValueMapper.mapToEnum(existingEnumPojo)
-        );
+        final EnumValueList expected = new EnumValueList()
+            .external(false)
+            .addItemsItem(
+                enumValueMapper.mapToEnum(existingEnumPojo)
+            );
 
         when(enumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)).thenReturn(Flux.just(existingEnumPojo));
 
@@ -144,7 +148,9 @@ public class EnumValueServiceTest {
 
         final Mono<EnumValueList> result = enumValueService.getEnumValues(datasetFieldId);
 
-        final EnumValueList expected = new EnumValueList().items(Collections.emptyList());
+        final EnumValueList expected = new EnumValueList()
+            .external(false)
+            .items(Collections.emptyList());
 
         StepVerifier
             .create(result)

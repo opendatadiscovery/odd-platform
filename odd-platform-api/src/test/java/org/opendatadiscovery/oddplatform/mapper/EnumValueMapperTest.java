@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
+import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -19,7 +20,7 @@ public class EnumValueMapperTest {
     @ParameterizedTest
     @MethodSource("formAndPojoProvider")
     public void testMapToPojo(final EnumValueFormData tested, final EnumValuePojo expected) {
-        assertThat(mapper.mapToPojo(tested, DATASET_FIELD_ID)).isEqualTo(expected);
+        assertThat(mapper.mapInternalToPojo(tested, DATASET_FIELD_ID)).isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -29,17 +30,6 @@ public class EnumValueMapperTest {
     }
 
     private static Stream<Arguments> formAndPojoProvider() {
-        final var formWithUntrimmedNameAndDescription = new EnumValueFormData()
-            .id(1L)
-            .name("untrimmedName   ")
-            .description("untrimmedDescription   ");
-
-        final var pojoWithUntrimmedNameAndDescription = new EnumValuePojo()
-            .setId(1L)
-            .setName("untrimmedName")
-            .setDescription("untrimmedDescription")
-            .setDatasetFieldId(DATASET_FIELD_ID);
-
         final var formWithoutDescription = new EnumValueFormData()
             .id(1L)
             .name("name");
@@ -47,10 +37,10 @@ public class EnumValueMapperTest {
         final var pojoWithoutDescription = new EnumValuePojo()
             .setId(1L)
             .setName("name")
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setDatasetFieldId(DATASET_FIELD_ID);
 
         return Stream.of(
-            Arguments.arguments(formWithUntrimmedNameAndDescription, pojoWithUntrimmedNameAndDescription),
             Arguments.arguments(formWithoutDescription, pojoWithoutDescription),
             Arguments.arguments(null, null)
         );
@@ -61,12 +51,12 @@ public class EnumValueMapperTest {
             .setId(1L)
             .setName("name")
             .setDatasetFieldId(DATASET_FIELD_ID)
-            .setDescription("description");
+            .setInternalDescription("description");
 
         final var enumValue = new EnumValue()
             .id(1L)
             .name("name")
-            .description("description");
+            .internalDescription("description");
 
         return Stream.of(
             Arguments.arguments(pojo, enumValue),

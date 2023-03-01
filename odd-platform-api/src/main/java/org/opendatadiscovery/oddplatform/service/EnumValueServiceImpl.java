@@ -36,7 +36,7 @@ public class EnumValueServiceImpl implements EnumValueService {
     public Mono<EnumValueList> createEnumValues(@ActivityParameter(DATASET_FIELD_ID) final Long datasetFieldId,
                                                 final List<EnumValueFormData> formData) {
         final List<EnumValuePojo> pojos = formData.stream()
-            .map(fd -> mapper.mapToPojo(fd, datasetFieldId))
+            .map(fd -> mapper.mapInternalToPojo(fd, datasetFieldId))
             .toList();
 
         final List<String> enumNames = pojos.stream()
@@ -55,14 +55,14 @@ public class EnumValueServiceImpl implements EnumValueService {
         final Map<Boolean, List<EnumValuePojo>> partitions = pojos.stream()
             .collect(Collectors.partitioningBy(p -> p.getId() != null));
 
-        return reactiveEnumValueRepository.softDeleteOutdatedEnumValuesExcept(datasetFieldId, idsToKeep)
+        return reactiveEnumValueRepository.softDeleteEnumValuesExcept(datasetFieldId, idsToKeep)
             .then(
                 Flux.concat(reactiveEnumValueRepository.bulkUpdate(partitions.get(true)),
                         reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
-                    .map(mapper::mapToEnum)
                     .collectList()
+                    .map(mapper::mapToEnum)
                     .flatMap(list -> {
-                        if (CollectionUtils.isEmpty(list)) {
+                        if (CollectionUtils.isEmpty(list.getItems())) {
                             return dataEntityFilledService
                                 .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_ENUMS)
                                 .thenReturn(list);
@@ -71,16 +71,14 @@ public class EnumValueServiceImpl implements EnumValueService {
                                 .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_ENUMS)
                                 .thenReturn(list);
                         }
-                    })
-                    .map(list -> new EnumValueList().items(list)));
+                    }));
     }
 
     @Override
     public Mono<EnumValueList> getEnumValues(final Long datasetFieldId) {
         return reactiveEnumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)
-            .map(mapper::mapToEnum)
             .collectList()
-            .map(enumValues -> new EnumValueList().items(enumValues));
+            .map(mapper::mapToEnum);
     }
 
     private boolean hasDuplicates(final List<String> sourceList) {
