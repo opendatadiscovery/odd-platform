@@ -34,9 +34,7 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
 
     @Override
     public Mono<Void> ingestEnumValues(final IngestionRequest dataStructure) {
-        // TODO: implement validation that can allow do not query a database
-        //  1. (empty datasets is already implemented)
-        //  2. (empty labels in the state and in the request)
+        // TODO: if request doesn't have any of the enums **for the field** -> return from this method
 
         // get current state
         // delete everything from the old state
@@ -61,6 +59,10 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
                 final Map<Long, String> toUpdate = new HashMap<>();
 
                 for (final var entry : dict.entrySet()) {
+                    if (CollectionUtils.isEmpty(entry.getValue().enumValues())) {
+                        continue;
+                    }
+
                     final var enumValueDto = state.get(entry.getKey());
 
                     if (enumValueDto == null) {
@@ -90,7 +92,6 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
                     toCreate.addAll(prepareForCreate(entry.getValue().enumValues(), currentFieldPayload.enumValues(),
                         currentFieldPayload.fieldId()));
                     toUpdate.putAll(prepareForUpdate(currentFieldPayload.enumValues(), entry.getValue().enumValues()));
-
                 }
 
                 return Flux.merge(
