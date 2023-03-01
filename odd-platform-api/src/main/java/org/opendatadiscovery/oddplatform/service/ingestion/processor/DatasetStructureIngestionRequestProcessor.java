@@ -123,8 +123,8 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         }
 
         // the following code serves two reasons:
-        // 1. If an entity is a former hollow, it will have no fetched versions, so we need to create a new one
-        // 2. If an entity due to some ingestion error doesn't have a version created for it, we need to create a new one
+        // 1. If an entity is a former hollow, it will have no fetched versions, so the platform creates a new one
+        // 2. If an entity due to some ingestion error doesn't have a version created for it, platform creates a new one
         final Set<String> datasetsWithVersions = fetchedVersions.stream()
             .map(DatasetVersionPojo::getDatasetOddrn)
             .collect(Collectors.toSet());

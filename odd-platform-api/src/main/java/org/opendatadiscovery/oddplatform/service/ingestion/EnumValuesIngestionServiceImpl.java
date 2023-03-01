@@ -13,18 +13,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.EnumValueDto;
 import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
-import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
+import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
-import static org.opendatadiscovery.oddplatform.dto.EnumValueDto.EnumValueDtoPayload;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DatasetFieldIngestionDto;
 
 @Service
 @RequiredArgsConstructor
@@ -33,125 +33,117 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
     private final ReactiveEnumValueRepository enumValueRepository;
 
     @Override
-    public Mono<Void> ingestEnumValues(final IngestionRequest dataStructure) {
-        // TODO: if request doesn't have any of the enums **for the field** -> return from this method
-
-        // get current state
-        // delete everything from the old state
-        // if description == null -> allow user to create descriptions
-        // if description != null -> do not allow user to update descriptions
-        // if current_description != null and description != null -> description takes precedence and rewrites
-        //      current description
-        final List<EnrichedDataEntityIngestionDto> datasetEntities = dataStructure.getAllEntities()
+    public Mono<Void> ingestEnumValues(final IngestionRequest request) {
+        final Map<String, DatasetFieldIngestionDto> requestState = request.getAllEntities()
             .stream()
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
-            .toList();
-
-        final var dict = datasetEntities.stream()
-            .flatMap(dataset -> dataset.getDataSet().fieldList().stream())
+            .flatMap(entity -> entity.getDataSet().fieldList().stream())
             .collect(toMap(field -> field.field().getOddrn(), identity()));
 
-        return enumValueRepository.getEnumState(dict.keySet())
+        return enumValueRepository.getEnumState(requestState.keySet())
             .collectMap(EnumValueDto::fieldOddrn)
-            .flatMap(state -> {
-                final List<EnumValuePojo> toCreate = new ArrayList<>();
-                final List<Long> toDelete = new ArrayList<>();
-                final Map<Long, String> toUpdate = new HashMap<>();
-
-                for (final var entry : dict.entrySet()) {
-                    if (CollectionUtils.isEmpty(entry.getValue().enumValues())) {
-                        continue;
-                    }
-
-                    final var enumValueDto = state.get(entry.getKey());
-
-                    if (enumValueDto == null) {
-                        return Mono.error(new IllegalStateException("Payload is null"));
-                    }
-
-                    final EnumValueDtoPayload currentFieldPayload = enumValueDto.payload();
-
-                    if (CollectionUtils.isEmpty(currentFieldPayload.enumValues())) {
-                        // TODO: entry.getValue().enumValues() can be null!!
-                        //  but why only here?
-                        final List<EnumValuePojo> enumValues =
-                            CollectionUtils.emptyIfNull(entry.getValue().enumValues())
-                                .stream()
-                                .map(ev -> new EnumValuePojo()
-                                    .setOrigin(EnumValueOrigin.EXTERNAL.getCode())
-                                    .setDatasetFieldId(currentFieldPayload.fieldId())
-                                    .setExternalDescription(StringUtils.defaultIfBlank(ev.getDescription(), null))
-                                    .setName(ev.getName()))
-                                .toList();
-
-                        toCreate.addAll(enumValues);
-                        continue;
-                    }
-
-                    toDelete.addAll(prepareForDelete(currentFieldPayload.enumValues(), entry.getValue().enumValues()));
-                    toCreate.addAll(prepareForCreate(entry.getValue().enumValues(), currentFieldPayload.enumValues(),
-                        currentFieldPayload.fieldId()));
-                    toUpdate.putAll(prepareForUpdate(currentFieldPayload.enumValues(), entry.getValue().enumValues()));
-                }
-
-                return Flux.merge(
-                    enumValueRepository.bulkCreate(toCreate),
-                    enumValueRepository.delete(toDelete),
-                    enumValueRepository.updateExternalDescriptions(toUpdate)
-                ).collectList();
-            })
-            .then();
+            .map(existingState -> prepareAccumulator(requestState, existingState))
+            .flatMap(acc -> acc.apply(enumValueRepository));
     }
 
-    private List<EnumValuePojo> prepareForCreate(final List<DataSetFieldEnumValue> base,
-                                                 final List<EnumValuePojo> deduction,
-                                                 // TODO: could be taken from deduction list's member
-                                                 final long datasetFieldId) {
-        final Set<String> collect = deduction.stream().map(EnumValuePojo::getName).collect(Collectors.toSet());
+    private EnumValueStateAccumulator prepareAccumulator(final Map<String, DatasetFieldIngestionDto> requestState,
+                                                         final Map<String, EnumValueDto> existingState) {
+        final EnumValueStateAccumulator accumulator = new EnumValueStateAccumulator();
 
-        final List<EnumValuePojo> result = new ArrayList<>();
-        for (final DataSetFieldEnumValue ev : base) {
-            if (!collect.contains(ev.getName())) {
-                result.add(new EnumValuePojo()
-                    .setOrigin(EnumValueOrigin.EXTERNAL.getCode())
-                    .setDatasetFieldId(datasetFieldId)
-                    .setExternalDescription(StringUtils.defaultIfBlank(ev.getDescription(), null))
-                    .setName(ev.getName()));
+        for (final var reqStateEntry : requestState.entrySet()) {
+            final List<DataSetFieldEnumValue> reqEnumValues = reqStateEntry.getValue().enumValues();
+
+            if (CollectionUtils.isEmpty(reqEnumValues)) {
+                continue;
             }
+
+            final var curEnumValues = existingState.get(reqStateEntry.getKey()).payload().enumValues();
+            final long datasetFieldId = existingState.get(reqStateEntry.getKey()).payload().fieldId();
+
+            if (CollectionUtils.isEmpty(curEnumValues)) {
+                final List<EnumValuePojo> enumValues = reqEnumValues
+                    .stream()
+                    .map(ev -> createPojo(ev, datasetFieldId))
+                    .toList();
+
+                accumulator.addToCreate(enumValues);
+                continue;
+            }
+
+            accumulator.addToDelete(forDelete(curEnumValues, reqEnumValues));
+            accumulator.addToCreate(forCreate(curEnumValues, reqEnumValues));
+            accumulator.addToUpdate(forUpdate(curEnumValues, reqEnumValues));
         }
 
-        return result;
+        return accumulator;
     }
 
-    private List<Long> prepareForDelete(final List<EnumValuePojo> base, final List<DataSetFieldEnumValue> deduction) {
-        final Set<String> collect = deduction.stream().map(DataSetFieldEnumValue::getName).collect(Collectors.toSet());
-        final List<Long> list = new ArrayList<>();
-        for (final EnumValuePojo enumValuePojo : base) {
-            if (!collect.contains(enumValuePojo.getName())) {
-                list.add(enumValuePojo.getId());
-            }
-        }
-        return list;
+    private List<EnumValuePojo> forCreate(final List<EnumValuePojo> cur, final List<DataSetFieldEnumValue> req) {
+        final Set<String> curEnumValues = cur.stream().map(EnumValuePojo::getName).collect(Collectors.toSet());
+        final long datasetFieldId = cur.stream().map(EnumValuePojo::getDatasetFieldId).findFirst().orElseThrow();
+
+        return req.stream()
+            .filter(ev -> !curEnumValues.contains(ev.getName()))
+            .map(ev -> createPojo(ev, datasetFieldId))
+            .toList();
     }
 
+    private List<Long> forDelete(final List<EnumValuePojo> cur, final List<DataSetFieldEnumValue> req) {
+        final Set<String> requestEnumValues = req.stream()
+            .map(DataSetFieldEnumValue::getName)
+            .collect(Collectors.toSet());
 
-    private Map<Long, String> prepareForUpdate(final List<EnumValuePojo> currentEnums,
-                                               final List<DataSetFieldEnumValue> deltaList) {
-        final Map<String, DataSetFieldEnumValue> collect =
-            deltaList.stream().collect(toMap(DataSetFieldEnumValue::getName, identity()));
+        return cur.stream()
+            .filter(ev -> !requestEnumValues.contains(ev.getName()))
+            .map(EnumValuePojo::getId)
+            .toList();
+    }
 
-        final Map<Long, String> result = new HashMap<>();
+    private Map<Long, String> forUpdate(final List<EnumValuePojo> cur, final List<DataSetFieldEnumValue> req) {
+        final Map<String, DataSetFieldEnumValue> reqDirectory = req
+            .stream()
+            .collect(toMap(DataSetFieldEnumValue::getName, identity()));
 
-        for (final EnumValuePojo ev : currentEnums) {
-            final DataSetFieldEnumValue delta = collect.get(ev.getName());
+        return cur.stream()
+            .map(ev -> Pair.of(ev, reqDirectory.get(ev.getName())))
+            .filter(p -> p.getRight() != null)
+            .filter(p -> StringUtils.isNotEmpty(p.getRight().getDescription()))
+            .filter(p -> !p.getRight().getDescription().equals(p.getLeft().getExternalDescription()))
+            .collect(Collectors.toMap(p -> p.getLeft().getId(), p -> p.getRight().getDescription()));
+    }
 
-            if (delta != null && StringUtils.isNotEmpty(delta.getDescription()) &&
-                !delta.getDescription().equals(ev.getExternalDescription())
-            ) {
-                result.put(ev.getId(), delta.getDescription());
-            }
+    private EnumValuePojo createPojo(final DataSetFieldEnumValue enumValue, final long datasetFieldId) {
+        return new EnumValuePojo()
+            .setName(enumValue.getName())
+            .setExternalDescription(StringUtils.defaultIfBlank(enumValue.getDescription(), null))
+            .setDatasetFieldId(datasetFieldId)
+            .setOrigin(EnumValueOrigin.EXTERNAL.getCode());
+    }
+
+    private static class EnumValueStateAccumulator {
+        private final List<EnumValuePojo> entitiesToCreate = new ArrayList<>();
+        private final List<Long> entitiesToDelete = new ArrayList<>();
+        private final Map<Long, String> idsToUpdate = new HashMap<>();
+
+        void addToCreate(final List<EnumValuePojo> entities) {
+            this.entitiesToCreate.addAll(entities);
         }
 
-        return result;
+        void addToUpdate(final Map<Long, String> entities) {
+            this.idsToUpdate.putAll(entities);
+        }
+
+        void addToDelete(final List<Long> ids) {
+            this.entitiesToDelete.addAll(ids);
+        }
+
+        Mono<Void> apply(final ReactiveEnumValueRepository repo) {
+            return Flux.merge(
+                    repo.bulkCreate(entitiesToCreate),
+                    repo.delete(entitiesToDelete),
+                    repo.updateExternalDescriptions(idsToUpdate)
+                )
+                .then();
+        }
     }
 }

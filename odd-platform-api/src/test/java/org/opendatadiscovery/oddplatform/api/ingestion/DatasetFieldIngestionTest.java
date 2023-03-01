@@ -36,8 +36,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DatasetFieldIngestionTest extends BaseIngestionTest {
     /**
      * External enum values complex test.
-     * <p>
-     * Flow:
+     *
+     * <p>Flow:
      * 1. Injects datasets and fields with enum values, asserts success
      * 2. Modifies enum values' state in various ways (deletes, updates descriptions, etc.) and asserts correct changes
      * 3. Injects an empty enum value state and asserts that no changes were written into the database
@@ -127,8 +127,8 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
 
     /**
      * Rewriting internal state of enum values test
-     * <p>
-     * Flow:
+     *
+     * <p>Flow:
      * 1. Injects dataset with fields and creates internal enum values
      * 2. Rewrites internal state with external state and asserts changes written into the database
      */
