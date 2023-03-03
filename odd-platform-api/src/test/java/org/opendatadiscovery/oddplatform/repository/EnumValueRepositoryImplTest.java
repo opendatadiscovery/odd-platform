@@ -95,7 +95,7 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
 
         enumValueRepository.bulkCreate(List.of(pojoToSoftDelete, pojoToKeep)).blockLast();
 
-        enumValueRepository.softDeleteEnumValuesExcept(datasetFieldId, List.of(pojoToKeep.getId()))
+        enumValueRepository.softDeleteExcept(datasetFieldId, List.of(pojoToKeep.getId()))
             .as(StepVerifier::create)
             .assertNext(r -> {
                 assertThat(r.getId()).isEqualTo(pojoToSoftDelete.getId());

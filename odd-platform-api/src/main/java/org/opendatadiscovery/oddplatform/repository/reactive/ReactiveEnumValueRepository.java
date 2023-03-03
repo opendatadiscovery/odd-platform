@@ -11,9 +11,11 @@ import reactor.core.publisher.Mono;
 public interface ReactiveEnumValueRepository extends ReactiveCRUDRepository<EnumValuePojo> {
     Flux<EnumValueDto> getEnumState(final Collection<String> datasetFieldOddrns);
 
+    Mono<EnumValueDto> getEnumState(final long datasetFieldId);
+
     Flux<EnumValuePojo> getEnumValuesByDatasetFieldId(final long datasetFieldId);
 
-    Flux<EnumValuePojo> softDeleteEnumValuesExcept(final long datasetFieldId, final List<Long> idsToKeep);
+    Flux<EnumValuePojo> softDeleteExcept(final long datasetFieldId, final List<Long> idsToKeep);
 
-    Mono<Void> updateExternalDescriptions(final Map<Long, String> idToDescription);
+    Flux<EnumValuePojo> updateDescriptions(final Map<Long, String> idToDescription, final boolean updateAsExternal);
 }

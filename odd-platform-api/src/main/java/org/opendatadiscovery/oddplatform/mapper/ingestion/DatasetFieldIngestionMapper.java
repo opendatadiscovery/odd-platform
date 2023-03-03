@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
@@ -9,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DatasetFieldIngestionDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
@@ -24,6 +27,7 @@ public interface DatasetFieldIngestionMapper {
     @Mapping(target = "labels", source = "tags")
     @Mapping(target = "field", source = ".")
     @Mapping(target = "metadata", source = "field.metadata", qualifiedByName = "mapFieldMetadata")
+    @Mapping(target = "enumValues", source = "enumValues", qualifiedByName = "prepareEnumValues")
     DatasetFieldIngestionDto mapField(final DataSetField field);
 
     List<DatasetFieldIngestionDto> mapFields(final List<DataSetField> fields);
@@ -52,6 +56,21 @@ public interface DatasetFieldIngestionMapper {
 
     default JSONB serializeIntoJSONB(final Object object) {
         return JSONB.jsonb(JSONSerDeUtils.serializeJson(object));
+    }
+
+    @Named("prepareEnumValues")
+    default List<DataSetFieldEnumValue> distinctEnumValues(final List<DataSetFieldEnumValue> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return values;
+        }
+
+        final Map<String, DataSetFieldEnumValue> directory = new HashMap<>();
+
+        for (final DataSetFieldEnumValue value : values) {
+            directory.put(value.getName(), value);
+        }
+
+        return new ArrayList<>(directory.values());
     }
 
     @Named("mapFieldMetadata")

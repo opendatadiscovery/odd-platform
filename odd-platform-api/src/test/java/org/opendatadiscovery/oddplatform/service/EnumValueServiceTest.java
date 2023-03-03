@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
+import org.opendatadiscovery.oddplatform.dto.EnumValueDto;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
@@ -74,7 +75,7 @@ public class EnumValueServiceTest {
     }
 
     @Test
-    @DisplayName("Creates new enums, updates existing ones and soft deletes the rest")
+    @DisplayName("Creates new enums, updates existing ones and soft deletes the rest in the scope of internal state")
     public void testCreateEnumValues() {
         final EnumValueList expected = new EnumValueList()
             .external(false)
@@ -89,10 +90,13 @@ public class EnumValueServiceTest {
         when(enumValueRepository.bulkUpdate(anyList()))
             .thenReturn(Flux.just(existingEnumPojo));
 
-        when(enumValueRepository.softDeleteEnumValuesExcept(anyLong(), anyList())).thenReturn(Flux.empty());
+        when(enumValueRepository.softDeleteExcept(anyLong(), anyList())).thenReturn(Flux.empty());
 
         when(dataEntityFilledService.markEntityFilledByDatasetFieldId(anyLong(), any()))
             .thenReturn(Mono.just(new DataEntityFilledPojo()));
+
+        when(enumValueRepository.getEnumState(datasetFieldId)).thenReturn(
+            Mono.just(new EnumValueDto("oddrn", datasetFieldId, Collections.emptyList())));
 
         enumValueService
             .createEnumValues(datasetFieldId, List.of(existingEnum, newEnum))
@@ -101,7 +105,7 @@ public class EnumValueServiceTest {
             .verifyComplete();
 
         verify(enumValueRepository, Mockito.times(1))
-            .softDeleteEnumValuesExcept(datasetFieldId, List.of(existingEnumId));
+            .softDeleteExcept(datasetFieldId, List.of(existingEnumId));
         verify(enumValueRepository, Mockito.times(1))
             .bulkCreate(List.of(enumValueMapper.mapInternalToPojo(newEnum, datasetFieldId)));
         verify(enumValueRepository, Mockito.times(1))

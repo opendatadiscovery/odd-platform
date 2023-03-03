@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
@@ -20,6 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_ENUMS;
+import static org.opendatadiscovery.oddplatform.dto.EnumValueOrigin.EXTERNAL;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_VALUES_UPDATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldValuesUpdated.DATASET_FIELD_ID;
 
@@ -35,17 +38,52 @@ public class EnumValueServiceImpl implements EnumValueService {
     @ActivityLog(event = DATASET_FIELD_VALUES_UPDATED)
     public Mono<EnumValueList> createEnumValues(@ActivityParameter(DATASET_FIELD_ID) final Long datasetFieldId,
                                                 final List<EnumValueFormData> formData) {
+        final List<String> reqNames = formData.stream().map(EnumValueFormData::getName).toList();
+
+        if (hasDuplicates(reqNames)) {
+            return Mono.error(new BadUserRequestException("There are duplicates in enum values"));
+        }
+
+        return reactiveEnumValueRepository.getEnumState(datasetFieldId).flatMap(state -> {
+            if (state.enumValues().stream().noneMatch(ev -> ev.getOrigin().equals(EXTERNAL.getCode()))) {
+                return upsertInternalEnumValues(datasetFieldId, formData);
+            }
+
+            if (state.enumValues().stream().anyMatch(ev -> StringUtils.isNotEmpty(ev.getExternalDescription()))) {
+                return Mono.error(new BadUserRequestException(
+                    "User cannot change descriptions for external enum values"));
+            }
+
+            final Map<String, Long> stateNameToId = state.enumValues()
+                .stream()
+                .collect(Collectors.toMap(EnumValuePojo::getName, EnumValuePojo::getId));
+
+            if (!SetUtils.isEqualSet(stateNameToId.keySet(), reqNames)) {
+                return Mono.error(new BadUserRequestException("User cannot create or delete external enum values"));
+            }
+
+            final Map<Long, String> descriptions = formData.stream()
+                .collect(Collectors.toMap(fd -> stateNameToId.get(fd.getName()), EnumValueFormData::getDescription));
+
+            return reactiveEnumValueRepository
+                .updateDescriptions(descriptions, false)
+                .collectList()
+                .map(mapper::mapToEnum);
+        });
+    }
+
+    @Override
+    public Mono<EnumValueList> getEnumValues(final Long datasetFieldId) {
+        return reactiveEnumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)
+            .collectList()
+            .map(mapper::mapToEnum);
+    }
+
+    private Mono<EnumValueList> upsertInternalEnumValues(final Long datasetFieldId,
+                                                         final List<EnumValueFormData> formData) {
         final List<EnumValuePojo> pojos = formData.stream()
             .map(fd -> mapper.mapInternalToPojo(fd, datasetFieldId))
             .toList();
-
-        final List<String> enumNames = pojos.stream()
-            .map(EnumValuePojo::getName)
-            .collect(Collectors.toList());
-
-        if (hasDuplicates(enumNames)) {
-            return Mono.error(new BadUserRequestException("There are duplicates in enum values"));
-        }
 
         final List<Long> idsToKeep = pojos.stream()
             .map(EnumValuePojo::getId)
@@ -55,7 +93,7 @@ public class EnumValueServiceImpl implements EnumValueService {
         final Map<Boolean, List<EnumValuePojo>> partitions = pojos.stream()
             .collect(Collectors.partitioningBy(p -> p.getId() != null));
 
-        return reactiveEnumValueRepository.softDeleteEnumValuesExcept(datasetFieldId, idsToKeep)
+        return reactiveEnumValueRepository.softDeleteExcept(datasetFieldId, idsToKeep)
             .then(
                 Flux.concat(reactiveEnumValueRepository.bulkUpdate(partitions.get(true)),
                         reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
@@ -72,13 +110,7 @@ public class EnumValueServiceImpl implements EnumValueService {
                                 .thenReturn(list);
                         }
                     }));
-    }
 
-    @Override
-    public Mono<EnumValueList> getEnumValues(final Long datasetFieldId) {
-        return reactiveEnumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)
-            .collectList()
-            .map(mapper::mapToEnum);
     }
 
     private boolean hasDuplicates(final List<String> sourceList) {

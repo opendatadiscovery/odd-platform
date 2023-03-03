@@ -57,8 +57,8 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
                 continue;
             }
 
-            final var curEnumValues = existingState.get(reqStateEntry.getKey()).payload().enumValues();
-            final long datasetFieldId = existingState.get(reqStateEntry.getKey()).payload().fieldId();
+            final var curEnumValues = existingState.get(reqStateEntry.getKey()).enumValues();
+            final long datasetFieldId = existingState.get(reqStateEntry.getKey()).fieldId();
 
             if (CollectionUtils.isEmpty(curEnumValues)) {
                 final List<EnumValuePojo> enumValues = reqEnumValues
@@ -141,7 +141,7 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
             return Flux.merge(
                     repo.bulkCreate(entitiesToCreate),
                     repo.delete(entitiesToDelete),
-                    repo.updateExternalDescriptions(idsToUpdate)
+                    repo.updateDescriptions(idsToUpdate, true)
                 )
                 .then();
         }
