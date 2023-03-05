@@ -20,22 +20,47 @@ const ToolbarTabs: React.FC = () => {
     termSearchPath,
     searchPath,
     managementPath,
-    ManagementRoutesEnum,
+    ManagementRoutes,
+    alertsBasePath,
+    AlertsRoutes,
+    TermsRoutes,
+    baseTermSearchPath,
+    AppRoutes,
+    baseSearchPath,
   } = useAppPaths();
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
-      { name: 'Catalog', link: '/search', value: 'search' },
+      { name: 'Catalog', link: baseSearchPath(), value: AppRoutes.search },
       {
         name: 'Management',
-        link: managementPath(ManagementRoutesEnum.namespaces),
-        value: 'management',
+        link: managementPath(ManagementRoutes.namespaces),
+        value: ManagementRoutes.management,
       },
-      { name: 'Dictionary', link: '/termsearch', value: 'termsearch' },
-      { name: 'Alerts', link: '/alerts', value: 'alerts' },
-      { name: 'Activity', link: activityPath(activityQueryString), value: 'activity' },
+      {
+        name: 'Dictionary',
+        link: baseTermSearchPath(),
+        value: TermsRoutes.termSearch,
+      },
+      { name: 'Alerts', link: alertsBasePath(), value: AlertsRoutes.alerts },
+      {
+        name: 'Activity',
+        link: activityPath(activityQueryString),
+        value: AppRoutes.activity,
+      },
     ],
-    [activityQueryString]
+    [
+      activityQueryString,
+      alertsBasePath,
+      AlertsRoutes,
+      activityPath,
+      managementPath,
+      ManagementRoutes,
+      baseTermSearchPath,
+      TermsRoutes,
+      baseSearchPath,
+      AppRoutes,
+    ]
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);

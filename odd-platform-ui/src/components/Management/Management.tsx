@@ -29,7 +29,7 @@ const Management: React.FC = () => {
     managementOwnerAssociationsPath,
     createPolicyPath,
     policyDetailsPath,
-    ManagementRoutesEnum,
+    ManagementRoutes,
   } = useAppPaths();
   const { hasAccessTo } = usePermissions();
 
@@ -43,7 +43,7 @@ const Management: React.FC = () => {
           <Switch>
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.namespaces)}
+              path={managementPath(ManagementRoutes.namespaces)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -58,7 +58,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.datasources)}
+              path={managementPath(ManagementRoutes.datasources)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -74,7 +74,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.collectors)}
+              path={managementPath(ManagementRoutes.collectors)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -90,7 +90,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.owners)}
+              path={managementPath(ManagementRoutes.owners)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -105,7 +105,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.tags)}
+              path={managementPath(ManagementRoutes.tags)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -120,7 +120,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.labels)}
+              path={managementPath(ManagementRoutes.labels)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -135,13 +135,13 @@ const Management: React.FC = () => {
             />
             <RestrictedRoute
               isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
-              redirectTo={managementPath(ManagementRoutesEnum.namespaces)}
+              redirectTo={managementPath(ManagementRoutes.namespaces)}
               path={managementOwnerAssociationsPath()}
               component={OwnerAssociationsList}
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.roles)}
+              path={managementPath(ManagementRoutes.roles)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -156,7 +156,7 @@ const Management: React.FC = () => {
             />
             <Route
               exact
-              path={managementPath(ManagementRoutesEnum.policies)}
+              path={managementPath(ManagementRoutes.policies)}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -182,8 +182,8 @@ const Management: React.FC = () => {
             />
             <Redirect
               exact
-              from={managementPath(ManagementRoutesEnum.associations)}
-              to={managementOwnerAssociationsPath(ManagementRoutesEnum.associationsNew)}
+              from={managementPath(ManagementRoutes.associations)}
+              to={managementOwnerAssociationsPath(ManagementRoutes.associationsNew)}
             />
           </Switch>
         </React.Suspense>

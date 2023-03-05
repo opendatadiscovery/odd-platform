@@ -32,7 +32,7 @@ const App: React.FC = () => {
   const {
     isPathEmbedded,
     managementPath,
-    ManagementRoutesEnum,
+    ManagementRoutes,
     baseManagementPath,
     basePath,
     baseSearchPath,
@@ -40,6 +40,9 @@ const App: React.FC = () => {
     baseTermSearchPath,
     termSearchPath,
     termDetailsPath,
+    activityPath,
+    alertsBasePath,
+    alertsPath,
   } = useAppPaths();
 
   React.useEffect(() => {
@@ -58,7 +61,7 @@ const App: React.FC = () => {
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route exact path={basePath} component={Overview} />
-            <Route path='/alerts/:viewType?' component={Alerts} />
+            <Route path={[alertsBasePath(), alertsPath()]} component={Alerts} />
             <Route
               path={[managementPath()]}
               render={() => (
@@ -84,10 +87,10 @@ const App: React.FC = () => {
               ]}
               component={DataEntityDetails}
             />
-            <Route path='/activity' component={Activity} />
+            <Route path={activityPath()} component={Activity} />
             <Redirect
               from={baseManagementPath()}
-              to={managementPath(ManagementRoutesEnum.namespaces)}
+              to={managementPath(ManagementRoutes.namespaces)}
             />
           </Switch>
         </React.Suspense>

@@ -1,11 +1,6 @@
-import type {
-  AlertViewType,
-  ManagementViewType,
-  OwnerAssociationRequestsViewType,
-  TermsViewType,
-  TestReportViewType,
-} from 'lib/interfaces';
+import type { TestReportViewType } from 'lib/interfaces';
 import { useParams } from 'react-router-dom';
+import type { AlertsRoutes, ManagementRoutes, TermsRoutes } from './useAppPaths/shared';
 
 interface RouteParams {
   dataEntityId: string;
@@ -16,11 +11,7 @@ interface RouteParams {
   searchId: string;
   messageId: string;
   policyId: string;
-  viewType:
-    | TermsViewType
-    | AlertViewType
-    | ManagementViewType
-    | OwnerAssociationRequestsViewType;
+  viewType: TermsRoutes | AlertsRoutes | ManagementRoutes;
 }
 
 interface AppRouteParams {
@@ -32,12 +23,7 @@ interface AppRouteParams {
   searchId: string;
   messageId: string;
   policyId: number;
-  viewType:
-    | TermsViewType
-    | AlertViewType
-    | ManagementViewType
-    | TestReportViewType
-    | OwnerAssociationRequestsViewType;
+  viewType: TermsRoutes | AlertsRoutes | ManagementRoutes | TestReportViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {

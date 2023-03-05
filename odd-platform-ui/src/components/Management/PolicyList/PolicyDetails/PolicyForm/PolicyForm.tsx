@@ -20,12 +20,12 @@ interface PolicyFormProps {
 const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { managementPath, ManagementRoutesEnum } = useAppPaths();
+  const { managementPath, ManagementRoutes } = useAppPaths();
   const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';
-  const toPolicies = managementPath(ManagementRoutesEnum.policies);
+  const toPolicies = managementPath(ManagementRoutes.policies);
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
   const { control, handleSubmit, setValue, formState } = useForm<PolicyFormData>({

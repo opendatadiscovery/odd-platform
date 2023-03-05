@@ -25,7 +25,7 @@ import AlertsList from './AlertsList/AlertsList';
 const Alerts: React.FC = () => {
   const dispatch = useAppDispatch();
   const { viewType } = useAppParams();
-  const { alertsPath } = useAppPaths();
+  const { alertsPath, AlertsRoutes, alertsBasePath } = useAppPaths();
 
   const totals = useAppSelector(getAlertsTotals);
   const showMyAndDepends = useAppSelector(getOwnership);
@@ -40,21 +40,21 @@ const Alerts: React.FC = () => {
       {
         name: 'All',
         hint: totals?.total || 0,
-        value: 'all',
-        link: alertsPath('all'),
+        value: AlertsRoutes.all,
+        link: alertsPath(AlertsRoutes.all),
       },
       {
         name: 'My Objects',
         hint: totals?.myTotal || 0,
-        value: 'my',
-        link: alertsPath('my'),
+        value: AlertsRoutes.my,
+        link: alertsPath(AlertsRoutes.my),
         hidden: !showMyAndDepends,
       },
       {
         name: 'Dependents',
         hint: totals?.dependentTotal || 0,
-        value: 'dependents',
-        link: alertsPath('dependents'),
+        value: AlertsRoutes.dependents,
+        link: alertsPath(AlertsRoutes.dependents),
         hidden: !showMyAndDepends,
       },
     ]);
@@ -94,20 +94,20 @@ const Alerts: React.FC = () => {
       <Switch>
         <Route
           exact
-          path={alertsPath('all')}
+          path={alertsPath(AlertsRoutes.all)}
           render={() => alertListWithProvider(fetchAllAlertList)}
         />
         <Route
           exact
-          path={alertsPath('my')}
+          path={alertsPath(AlertsRoutes.my)}
           render={() => alertListWithProvider(fetchMyAlertList)}
         />
         <Route
           exact
-          path={alertsPath('dependents')}
+          path={alertsPath(AlertsRoutes.dependents)}
           render={() => alertListWithProvider(fetchMyDependentsAlertList)}
         />
-        <Redirect from='/alerts' to={alertsPath()} />
+        <Redirect from={alertsBasePath()} to={alertsPath()} />
       </Switch>
     </S.Container>
   );

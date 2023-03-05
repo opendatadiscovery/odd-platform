@@ -1,13 +1,21 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { EMBEDDED } from './shared';
 
 export const useIsEmbeddedPath = () => {
   const location = useLocation();
-  const isPathEmbedded = location.pathname.includes('embedded');
-  const updatePath = (link: string) => {
-    if (isPathEmbedded) return `/embedded${link}`;
-    return link;
-  };
+  const isPathEmbedded = location.pathname.includes(EMBEDDED);
 
-  return React.useMemo(() => ({ isPathEmbedded, updatePath }), [isPathEmbedded]);
+  const updatePath = React.useCallback(
+    (link: string) => {
+      if (isPathEmbedded) return `/${EMBEDDED}${link}`;
+      return link;
+    },
+    [isPathEmbedded]
+  );
+
+  return React.useMemo(
+    () => ({ isPathEmbedded, updatePath }),
+    [isPathEmbedded, updatePath]
+  );
 };

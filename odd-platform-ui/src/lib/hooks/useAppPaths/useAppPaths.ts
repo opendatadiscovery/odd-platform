@@ -1,20 +1,21 @@
 import React from 'react';
-import type { AlertViewType } from 'lib/interfaces';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
 import { useManagementPaths } from './useManagementPaths';
 import { useTermsPaths } from './useTermsPaths';
-import { AppRoutesEnum } from './shared';
+import { AppRoutes, AlertsRoutes, ManagementRoutes, TermsRoutes } from './shared';
+import { useAlertsPaths } from './useAlertsPaths';
 
 const useAppPaths = () => {
   const { updatePath, isPathEmbedded } = useIsEmbeddedPath();
   const managementPaths = useManagementPaths();
   const termsPaths = useTermsPaths();
+  const alertsPaths = useAlertsPaths();
 
   const basePath = updatePath('/');
 
   // search
-  const baseSearchPath = () => updatePath(`/search`);
-  const searchPath = (searchId: string = AppRoutesEnum.searchId) =>
+  const baseSearchPath = () => updatePath(`/${AppRoutes.search}`);
+  const searchPath = (searchId: string = AppRoutes.searchId) =>
     `${baseSearchPath()}/${searchId}`;
 
   // dataentity paths
@@ -68,16 +69,17 @@ const useAppPaths = () => {
   const datasetStructurePath = (entityId: number, versionId?: number) =>
     `${dataEntityDetailsPath(entityId)}/structure${versionId ? `/${versionId}` : ''}`;
 
-  // Alerts
-  const alertsPath = (viewType: AlertViewType = 'all') =>
-    updatePath(`/alerts/${viewType}`);
-
   // Activity
-  const activityPath = (query: string) => updatePath(`/activity?${query}`);
+  const activityPath = (query?: string) =>
+    updatePath(`/${AppRoutes.activity}${query ? `?${query}` : ''}`);
 
   return React.useMemo(
     () => ({
       isPathEmbedded,
+      AppRoutes,
+      AlertsRoutes,
+      ManagementRoutes,
+      TermsRoutes,
       basePath,
       baseSearchPath,
       searchPath,
@@ -94,15 +96,15 @@ const useAppPaths = () => {
       testReportDetailsOverviewPath,
       testReportDetailsHistoryPath,
       testReportDetailsRetriesPath,
-      alertsPath,
       activityPath,
       dataEntityCollaborationPath,
       dataEntityCollaborationMessagePath,
       dataEntityCollaborationCreateMessagePath,
       ...managementPaths,
       ...termsPaths,
+      ...alertsPaths,
     }),
-    [isPathEmbedded, managementPaths]
+    [isPathEmbedded, managementPaths, termsPaths, alertsPaths]
   );
 };
 

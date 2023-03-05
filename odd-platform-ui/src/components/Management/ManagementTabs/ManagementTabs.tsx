@@ -6,7 +6,7 @@ import { Grid } from '@mui/material';
 
 const ManagementTabs: React.FC = () => {
   const { viewType } = useAppParams();
-  const { managementPath, managementOwnerAssociationsPath, ManagementRoutesEnum } =
+  const { managementPath, managementOwnerAssociationsPath, ManagementRoutes } =
     useAppPaths();
   const { hasAccessTo } = usePermissions();
 
@@ -19,19 +19,19 @@ const ManagementTabs: React.FC = () => {
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
-      { name: 'Namespaces', link: managementPath(ManagementRoutesEnum.namespaces) },
-      { name: 'Datasources', link: managementPath(ManagementRoutesEnum.datasources) },
-      { name: 'Collectors', link: managementPath(ManagementRoutesEnum.collectors) },
-      { name: 'Owners', link: managementPath(ManagementRoutesEnum.owners) },
-      { name: 'Tags', link: managementPath(ManagementRoutesEnum.tags) },
-      { name: 'Labels', link: managementPath(ManagementRoutesEnum.labels) },
+      { name: 'Namespaces', link: managementPath(ManagementRoutes.namespaces) },
+      { name: 'Datasources', link: managementPath(ManagementRoutes.datasources) },
+      { name: 'Collectors', link: managementPath(ManagementRoutes.collectors) },
+      { name: 'Owners', link: managementPath(ManagementRoutes.owners) },
+      { name: 'Tags', link: managementPath(ManagementRoutes.tags) },
+      { name: 'Labels', link: managementPath(ManagementRoutes.labels) },
       {
         name: 'Associations',
-        link: managementOwnerAssociationsPath(ManagementRoutesEnum.associationsNew),
+        link: managementOwnerAssociationsPath(ManagementRoutes.associationsNew),
         hidden: hideAssociations,
       },
-      { name: 'Roles', link: managementPath(ManagementRoutesEnum.roles) },
-      { name: 'Policies', link: managementPath(ManagementRoutesEnum.policies) },
+      { name: 'Roles', link: managementPath(ManagementRoutes.roles) },
+      { name: 'Policies', link: managementPath(ManagementRoutes.policies) },
     ],
     [hideAssociations]
   );

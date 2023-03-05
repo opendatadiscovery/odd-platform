@@ -29,7 +29,7 @@ import * as S from './OwnerAssociationsStyles';
 const OwnerAssociations: React.FC = () => {
   const dispatch = useAppDispatch();
   const { viewType } = useAppParams();
-  const { managementOwnerAssociationsPath, ManagementRoutesEnum } = useAppPaths();
+  const { managementOwnerAssociationsPath, ManagementRoutes } = useAppPaths();
 
   const size = 30;
   const [query, setQuery] = React.useState('');
@@ -67,12 +67,12 @@ const OwnerAssociations: React.FC = () => {
       {
         name: 'New',
         hint: newRequestsPageInfo.total,
-        link: managementOwnerAssociationsPath(ManagementRoutesEnum.associationsNew),
+        link: managementOwnerAssociationsPath(ManagementRoutes.associationsNew),
         value: true,
       },
       {
         name: 'Resolved',
-        link: managementOwnerAssociationsPath(ManagementRoutesEnum.associationsResolved),
+        link: managementOwnerAssociationsPath(ManagementRoutes.associationsResolved),
         value: false,
       },
     ]);
