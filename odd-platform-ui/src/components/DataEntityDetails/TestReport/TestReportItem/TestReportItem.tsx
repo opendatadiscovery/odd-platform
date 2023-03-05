@@ -25,7 +25,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   dataQATestReport,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { dataEntityTestPath } = useAppPaths();
+  const { testReportDetailsOverviewPath } = useAppPaths();
 
   React.useEffect(() => {
     if (dataQATestList.length < 5) setOpen(true);
@@ -72,7 +72,10 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
       <Collapse in={open} timeout='auto' unmountOnExit>
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
-              <Link to={dataEntityTestPath(dataSetId, dataQATest.id)} key={dataQATest.id}>
+              <Link
+                to={testReportDetailsOverviewPath(dataSetId, dataQATest.id)}
+                key={dataQATest.id}
+              >
                 <TestItem
                   active={dataQATestId === dataQATest.id}
                   latestRunStatus={dataQATest.latestRun?.status}

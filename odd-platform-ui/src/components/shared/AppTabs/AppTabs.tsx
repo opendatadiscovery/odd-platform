@@ -47,6 +47,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   React.useEffect(() => {
     setCurrent(selectedTabState);
   }, [selectedTab]);
+
   return (
     <TabsContainer
       $type={type}

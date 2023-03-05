@@ -27,6 +27,7 @@ const ToolbarTabs: React.FC = () => {
     baseTermSearchPath,
     AppRoutes,
     baseSearchPath,
+    DataEntityRoutes,
   } = useAppPaths();
 
   const tabs = React.useMemo<AppTabItem[]>(
@@ -70,7 +71,7 @@ const ToolbarTabs: React.FC = () => {
     tabs.forEach((tab, idx) => {
       if (
         location.pathname.includes(tab.value as string) &&
-        !location.pathname.includes('dataentities')
+        !location.pathname.includes(DataEntityRoutes.dataentities)
       )
         newTabIdx = idx;
     });

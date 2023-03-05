@@ -7,6 +7,25 @@ export enum AppRoutes {
   searchId = ':searchId',
 }
 
+export enum DataEntityRoutes {
+  dataentities = 'dataentities',
+  dataEntityId = ':dataEntityId',
+  dataQATestId = ':dataQATestId?',
+  messageId = ':messageId',
+  viewType = ':viewType?',
+  overview = 'overview',
+  lineage = 'lineage',
+  structure = 'structure',
+  testReports = 'test-reports',
+  history = 'history',
+  alerts = 'alerts',
+  linkedItems = 'linked-items',
+  activity = 'activity',
+  collaboration = 'collaboration',
+  createMessage = 'createMessage',
+  retries = 'retries',
+}
+
 export enum AlertsRoutes {
   alerts = 'alerts',
   all = 'all',

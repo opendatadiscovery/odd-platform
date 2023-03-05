@@ -43,6 +43,7 @@ const App: React.FC = () => {
     activityPath,
     alertsBasePath,
     alertsPath,
+    dataEntityDetailsPath,
   } = useAppPaths();
 
   React.useEffect(() => {
@@ -80,13 +81,7 @@ const App: React.FC = () => {
               component={TermSearch}
             />
             <Route path={termDetailsPath()} component={TermDetails} />
-            <Route
-              path={[
-                '/dataentities/:dataEntityId/:viewType?',
-                '/embedded/dataentities/:dataEntityId/:viewType?',
-              ]}
-              component={DataEntityDetails}
-            />
+            <Route path={dataEntityDetailsPath()} component={DataEntityDetails} />
             <Route path={activityPath()} component={Activity} />
             <Redirect
               from={baseManagementPath()}

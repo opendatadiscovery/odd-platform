@@ -33,11 +33,11 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
   dataEntityId,
   reportDetailsViewType,
 }) => {
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
   const {
     dataEntityDetailsPath,
     testReportDetailsOverviewPath,
     testReportDetailsHistoryPath,
+    dataEntityTestPath,
   } = useAppPaths();
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
@@ -45,8 +45,8 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
   );
 
-  React.useEffect(() => {
-    setTabs([
+  const tabs = React.useMemo<AppTabItem[]>(
+    () => [
       {
         name: 'Overview',
         link: testReportDetailsOverviewPath(dataEntityId, dataQATestId),
@@ -57,10 +57,11 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
         link: testReportDetailsHistoryPath(dataEntityId, dataQATestId),
         value: 'history',
       },
-    ]);
-  }, [dataEntityId, dataQATestId]);
+    ],
+    [dataEntityId, dataQATestId]
+  );
 
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+  const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
     setSelectedTab(
@@ -108,10 +109,7 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
           <Switch>
             <Route
               exact
-              path={[
-                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
-                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
-              ]}
+              path={testReportDetailsOverviewPath()}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
@@ -122,20 +120,10 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
             />
             <Route
               exact
-              path={[
-                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
-                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
-              ]}
+              path={testReportDetailsHistoryPath()}
               component={TestReportDetailsHistory}
             />
-            <Redirect
-              from='/dataentities/:dataEntityId/test-reports/:dataQATestId?'
-              to='/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
-            />
-            <Redirect
-              from='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?'
-              to='/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview'
-            />
+            <Redirect from={dataEntityTestPath()} to={testReportDetailsOverviewPath()} />
           </Switch>
         </React.Suspense>
       </Grid>

@@ -21,6 +21,7 @@ export const MessagesContainer = styled('div')<{ $disableHeight: boolean }>(
         )})`
       : 'unset',
     display: 'flex',
+    width: '100%',
     overflowY: 'scroll',
     flexDirection: 'column',
     flexWrap: 'nowrap',

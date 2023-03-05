@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   fetchDataEntityAlertsCounts,
   fetchDataEntityDetails,
@@ -50,6 +50,20 @@ const DataCollaboration = React.lazy(
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
+  const {
+    dataEntityDetailsPath,
+    datasetStructurePath,
+    dataEntityLineagePath,
+    dataEntityActivityPath,
+    dataEntityAlertsPath,
+    dataEntityOverviewPath,
+    dataEntityCollaborationMessagePath,
+    dataEntityCollaborationCreateMessagePath,
+    dataEntityTestPath,
+    dataEntityHistoryPath,
+    dataEntityCollaborationPath,
+    dataEntityLinkedItemsPath,
+  } = useAppPaths();
 
   const details = useAppSelector(getDataEntityDetails(dataEntityId));
   const resourcePermissions = useAppSelector(
@@ -133,20 +147,10 @@ const DataEntityDetails: React.FC = () => {
       {isDataEntityDetailsFetched ? (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
+            <Route exact path={dataEntityOverviewPath()} component={Overview} />
             <Route
               exact
-              path={[
-                '/dataentities/:dataEntityId/overview',
-                '/embedded/dataentities/:dataEntityId/overview',
-              ]}
-              component={Overview}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/structure/:versionId?',
-                '/embedded/dataentities/:dataEntityId/structure/:versionId?',
-              ]}
+              path={datasetStructurePath()}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -159,36 +163,12 @@ const DataEntityDetails: React.FC = () => {
                 />
               )}
             />
+            <Route exact path={dataEntityLineagePath()} component={Lineage} />
+            <Route exact path={dataEntityTestPath()} component={TestReport} />
+            <Route exact path={dataEntityTestPath()} component={TestReportDetails} />
             <Route
               exact
-              path={[
-                '/dataentities/:dataEntityId/lineage',
-                '/embedded/dataentities/:dataEntityId/lineage',
-              ]}
-              component={Lineage}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-              ]}
-              component={TestReport}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-              ]}
-              component={TestReportDetails}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/alerts',
-                '/embedded/dataentities/:dataEntityId/alerts',
-              ]}
+              path={dataEntityAlertsPath()}
               render={() => (
                 <WithPermissionsProvider
                   allowedPermissions={[
@@ -200,47 +180,19 @@ const DataEntityDetails: React.FC = () => {
                 />
               )}
             />
+            <Route exact path={dataEntityHistoryPath()} component={QualityTestHistory} />
+            <Route exact path={dataEntityLinkedItemsPath()} component={LinkedItemsList} />
+            <Route exact path={dataEntityActivityPath()} component={DataEntityActivity} />
             <Route
               exact
               path={[
-                '/dataentities/:dataEntityId/history',
-                '/embedded/dataentities/:dataEntityId/history',
-              ]}
-              component={QualityTestHistory}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/linked-items',
-                '/embedded/dataentities/:dataEntityId/linked-items',
-              ]}
-              component={LinkedItemsList}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/activity',
-                '/embedded/dataentities/:dataEntityId/activity',
-              ]}
-              component={DataEntityActivity}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/collaboration',
-                '/dataentities/:dataEntityId/collaboration/createMessage',
-                '/dataentities/:dataEntityId/collaboration/:messageId',
+                dataEntityCollaborationPath(),
+                dataEntityCollaborationMessagePath(),
+                dataEntityCollaborationCreateMessagePath(),
               ]}
               component={DataCollaboration}
             />
-            <Redirect
-              from='/dataentities/:dataEntityId'
-              to='/dataentities/:dataEntityId/overview'
-            />
-            <Redirect
-              from='/embedded/dataentities/:dataEntityId'
-              to='/embedded/dataentities/:dataEntityId/overview'
-            />
+            <Redirect from={dataEntityDetailsPath()} to={dataEntityOverviewPath()} />
           </Switch>
         </React.Suspense>
       ) : null}
