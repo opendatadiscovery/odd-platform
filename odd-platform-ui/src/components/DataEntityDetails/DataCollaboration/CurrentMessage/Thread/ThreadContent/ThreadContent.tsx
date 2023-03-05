@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message } from 'redux/interfaces';
+import { type Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
 import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';

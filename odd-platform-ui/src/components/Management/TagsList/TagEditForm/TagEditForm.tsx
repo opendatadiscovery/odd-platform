@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, FormControlLabel, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { Tag, TagFormData } from 'generated-sources';
+import type { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTag } from 'redux/thunks';
 import { getTagDeletingStatuses, getTagUpdatingStatuses } from 'redux/selectors';

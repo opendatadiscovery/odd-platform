@@ -11,7 +11,7 @@ import {
   SlackChannelsAutocomplete,
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { MessageRequest } from 'generated-sources';
+import { type MessageRequest } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
 

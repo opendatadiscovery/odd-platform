@@ -1,4 +1,4 @@
-import styled, { CSSObject } from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 import { Grid } from '@mui/material';
 
 export const Container = styled(Grid)(

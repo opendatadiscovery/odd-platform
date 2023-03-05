@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import React from 'react';
 import {
   JSONEditor,
   type JSONEditorPropsOptional,
-  JSONValue,
+  type JSONValue,
   Mode,
   parsePath,
-  TextContent,
+  type TextContent,
   type ValidationError,
   ValidationSeverity,
 } from 'vanilla-jsoneditor';
@@ -54,7 +54,7 @@ interface JSONEditorProps extends JSONEditorPropsOptional {
   schema: Record<string, unknown>;
 }
 
-const AppJSONEditor: FC<JSONEditorProps> = ({
+const AppJSONEditor: React.FC<JSONEditorProps> = ({
   onValidate,
   schema,
   onChange,

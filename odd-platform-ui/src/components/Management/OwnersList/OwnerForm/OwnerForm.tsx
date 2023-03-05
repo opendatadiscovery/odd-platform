@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { Owner, OwnerFormData } from 'generated-sources';
+import type { Owner, OwnerFormData } from 'generated-sources';
 import { AppButton, AppInput, DialogWrapper, TagItem } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';

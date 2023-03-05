@@ -1,7 +1,7 @@
 import React from 'react';
-import { Typography, Theme } from '@mui/material';
-import { SxProps } from '@mui/system';
-import {
+import { type Theme, Typography } from '@mui/material';
+import { type SxProps } from '@mui/system';
+import type {
   Background,
   ProgressBackground,
 } from 'components/shared/AppCircularProgress/interfaces';
@@ -32,7 +32,6 @@ const AppCircularProgress: React.FC<AppCircularProgressProps> = ({
       />
       <S.Progress size={size} />
     </S.SpinnerContainer>
-
     {text && (
       <S.TextContainer item container xs={10}>
         <Typography variant='body2' color='textSecondary'>

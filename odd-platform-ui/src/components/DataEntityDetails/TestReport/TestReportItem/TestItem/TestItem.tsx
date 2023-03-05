@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityRunStatus } from 'generated-sources';
+import type { DataEntityRunStatus } from 'generated-sources';
 import { TestRunStatusIcon } from 'components/shared';
 import { useAppDateTime } from 'lib/hooks';
 import { Container } from './TestitemStyles';

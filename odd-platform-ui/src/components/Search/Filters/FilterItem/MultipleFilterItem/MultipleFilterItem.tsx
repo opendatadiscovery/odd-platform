@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { OptionalFacetNames } from 'redux/interfaces';
+import type { OptionalFacetNames } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSelectedSearchFacetOptions } from 'redux/selectors';
 import SelectedFilterOption from '../SelectedFilterOption/SelectedFilterOption';

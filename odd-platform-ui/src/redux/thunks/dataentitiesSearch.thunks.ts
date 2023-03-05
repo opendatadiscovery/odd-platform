@@ -1,16 +1,14 @@
-import type {
-  DataEntitySearchHighlight,
-  SearchApiHighlightDataEntityRequest,
-} from 'generated-sources';
 import {
   Configuration,
-  type DataEntityRef,
-  type MultipleFacetType,
   SearchApi,
+  type DataEntityRef,
+  type DataEntitySearchHighlight,
+  type MultipleFacetType,
   type SearchApiGetFiltersForFacetRequest,
   type SearchApiGetSearchFacetListRequest,
   type SearchApiGetSearchResultsRequest,
   type SearchApiGetSearchSuggestionsRequest,
+  type SearchApiHighlightDataEntityRequest,
   type SearchApiSearchRequest,
   type SearchApiUpdateSearchFacetsRequest,
   type SearchFacetsData,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToastType } from 'react-hot-toast';
+import { type ToastType } from 'react-hot-toast';
 import { Typography } from '@mui/material';
 import AlertIcon from '../Icons/AlertIcon';
 import ClearIcon from '../Icons/ClearIcon';

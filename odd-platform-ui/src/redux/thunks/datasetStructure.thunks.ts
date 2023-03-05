@@ -1,15 +1,13 @@
-import type {
-  DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
-  DataSetFieldDescription,
-  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
-  Label,
-} from 'generated-sources';
 import {
   Configuration,
   DataSetApi,
+  DatasetFieldApi,
+  type DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
+  type DataSetFieldDescription,
+  type DatasetFieldApiUpdateDatasetFieldLabelsRequest,
+  type Label,
   type DataSetApiGetDataSetStructureByVersionIdRequest,
   type DataSetApiGetDataSetStructureLatestRequest,
-  DatasetFieldApi,
   type DatasetFieldApiCreateEnumValueRequest,
   type DatasetFieldApiGetEnumValuesRequest,
 } from 'generated-sources';

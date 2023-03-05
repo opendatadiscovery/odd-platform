@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityClassNameEnum, DataEntityDetails } from 'generated-sources';
+import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';

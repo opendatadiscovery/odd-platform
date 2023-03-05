@@ -1,4 +1,4 @@
-import styled, { CSSObject } from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 import { Box, Popover, popoverClasses } from '@mui/material';
 
 export const AppPopover = styled(Popover)(({ theme }) => ({

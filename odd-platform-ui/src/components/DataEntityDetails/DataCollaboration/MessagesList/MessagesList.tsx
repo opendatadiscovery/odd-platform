@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { MessagesByDate } from 'redux/interfaces';
+import { type MessagesByDate } from 'redux/interfaces';
 import { EmptyContentPlaceholder } from 'components/shared';
 import Message from './Message/Message';
 import * as S from './MessagesListStyles';

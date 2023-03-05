@@ -4,7 +4,7 @@ import {
   MenuItem,
   menuItemClasses,
 } from '@mui/material';
-import { Variant } from '@mui/material/styles/createTypography';
+import { type Variant } from '@mui/material/styles/createTypography';
 import styled from 'styled-components';
 
 interface AppMenuItemStyleProps {

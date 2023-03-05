@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Box } from '@mui/material';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, type LinkProps } from 'react-router-dom';
 
 export const StatIconContainer = styled(Box)(({ theme }) => ({
   fontSize: theme.typography.h5.fontSize,

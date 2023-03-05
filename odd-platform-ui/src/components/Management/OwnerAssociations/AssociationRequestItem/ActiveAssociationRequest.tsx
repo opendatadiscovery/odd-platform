@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  OwnerAssociationRequest,
-  OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
+  type OwnerAssociationRequest,
+  type OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
   OwnerAssociationRequestStatus,
   Permission,
 } from 'generated-sources';

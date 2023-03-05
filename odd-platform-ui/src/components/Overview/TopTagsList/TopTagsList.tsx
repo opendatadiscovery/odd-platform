@@ -1,5 +1,5 @@
 import React from 'react';
-import { SearchFormData, Tag } from 'generated-sources';
+import type { SearchFormData, Tag } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { TagItem } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';

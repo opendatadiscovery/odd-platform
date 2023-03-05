@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { SearchFilter } from 'generated-sources';
+import type { SearchFilter } from 'generated-sources';
 import { AppMenuItem, AppSelect } from 'components/shared';
-import { TermSearchOptionalFacetNames } from 'redux/interfaces';
+import type { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getSelectedTermSearchFacetOptions } from 'redux/selectors';
 import { changeTermSearchFacet } from 'redux/slices/termSearch.slice';

@@ -3,8 +3,8 @@ import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
   DataEntityClassNameEnum,
-  DataEntityDetails,
-  DataQualityTest,
+  type DataEntityDetails,
+  type DataQualityTest,
 } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityRef, Permission } from 'generated-sources';
+import { type DataEntityRef, Permission } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';

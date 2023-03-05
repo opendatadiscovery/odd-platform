@@ -1,6 +1,6 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { TermDetails, TermFormData } from 'generated-sources';
+import type { TermDetails, TermFormData } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import {

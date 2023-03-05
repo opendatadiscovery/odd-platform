@@ -1,9 +1,8 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { DataEntityTermFormData, TermRef } from 'generated-sources';
+import type { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { DialogWrapper, AppButton } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { addDataEntityTerm } from 'redux/thunks';
 import TermsAutocomplete from './TermsAutocomplete/TermsAutocomplete';

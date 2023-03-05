@@ -1,8 +1,8 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import { Tag } from 'generated-sources';
+import { type Tag } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -10,7 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { AppInput, AutocompleteSuggestion } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { fetchTagsList as searchTags } from 'redux/thunks';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { OptionsContainer } from '../TagsEditFormStyles';
 
 type DataEntityTagsFormType = {

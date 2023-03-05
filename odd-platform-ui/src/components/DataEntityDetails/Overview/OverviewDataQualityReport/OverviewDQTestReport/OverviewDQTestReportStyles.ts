@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { DataEntityRunStatus } from 'generated-sources';
+import { type DataEntityRunStatus } from 'generated-sources';
 
 export const Container = styled('div')(() => ({
   width: '100%',

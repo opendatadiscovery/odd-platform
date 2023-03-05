@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Namespace, Permission } from 'generated-sources';
+import { type Namespace, Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { deleteNamespace } from 'redux/thunks';

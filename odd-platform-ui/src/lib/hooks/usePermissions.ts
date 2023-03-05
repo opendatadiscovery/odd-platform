@@ -1,4 +1,4 @@
-import { PermissionContext } from 'components/shared/contexts';
+import PermissionContext from 'components/shared/contexts/Permission/PermissionContext';
 import { useContext } from 'react';
 import type { Permission } from 'generated-sources';
 

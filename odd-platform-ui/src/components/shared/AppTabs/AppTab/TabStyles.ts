@@ -1,9 +1,15 @@
-import { buttonBaseClasses, Tab, tabClasses, TabProps, TabsProps } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { TabType } from 'components/shared/AppTabs/interfaces';
-import React from 'react';
-import { LinkProps } from 'react-router-dom';
-import styled, { CSSObject } from 'styled-components';
+import type React from 'react';
+import {
+  buttonBaseClasses,
+  Tab,
+  tabClasses,
+  type TabProps,
+  type TabsProps,
+} from '@mui/material';
+import { type Theme } from '@mui/material/styles';
+import { type TabType } from 'components/shared/AppTabs/interfaces';
+import { type LinkProps } from 'react-router-dom';
+import styled, { type CSSObject } from 'styled-components';
 
 const LinkTab: React.ComponentType<
   Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>

@@ -3,9 +3,9 @@ import { Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   DataEntityClassNameEnum,
-  DataEntityDetails,
-  DataEntityGroupFormData,
-  DataEntityType,
+  type DataEntityDetails,
+  type DataEntityGroupFormData,
+  type DataEntityType,
   DataEntityTypeNameEnum,
 } from 'generated-sources';
 import {

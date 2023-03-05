@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { deletePolicy, deleteRole } from 'redux/thunks';
-import { Permission, Policy } from 'generated-sources';
+import { Permission, type Policy } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { useAppPaths, usePermissions } from 'lib/hooks';

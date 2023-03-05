@@ -1,7 +1,7 @@
 import React from 'react';
-import { TabProps, TabsProps } from '@mui/material';
-import { TabType } from 'components/shared/AppTabs/interfaces';
-import { LinkProps } from 'react-router-dom';
+import type { TabProps, TabsProps } from '@mui/material';
+import type { TabType } from 'components/shared/AppTabs/interfaces';
+import type { LinkProps } from 'react-router-dom';
 import { LinkTabContainer } from 'components/shared/AppTabs/AppTab/TabStyles';
 
 interface AppLinkTabProps
