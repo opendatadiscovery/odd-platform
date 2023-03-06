@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -13,8 +12,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
-import org.opendatadiscovery.oddplatform.api.contract.model.Bucket;
-import org.opendatadiscovery.oddplatform.api.contract.model.CounterValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
@@ -26,7 +23,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
-import org.opendatadiscovery.oddplatform.api.contract.model.HistogramValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -37,17 +33,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
-import org.opendatadiscovery.oddplatform.api.contract.model.Metric;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetricFamily;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetricLabel;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetricPoint;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetricType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.Quantile;
-import org.opendatadiscovery.oddplatform.api.contract.model.SummaryValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
@@ -59,6 +48,7 @@ import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.MessageService;
+import org.opendatadiscovery.oddplatform.service.MetricService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
@@ -81,6 +71,7 @@ public class DataEntityController implements DataEntityApi {
     private final ActivityService activityService;
     private final MessageService messageService;
     private final AlertHaltConfigService alertHaltConfigService;
+    private final MetricService metricService;
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
@@ -412,109 +403,7 @@ public class DataEntityController implements DataEntityApi {
     @Override
     public Mono<ResponseEntity<MetricSet>> getDataEntityMetrics(final Long dataEntityId,
                                                                 final ServerWebExchange exchange) {
-        final MetricSet metricSet = new MetricSet();
-        final MetricFamily firstFamily =
-            createMetricFamily("data_entity_metrics", MetricType.COUNTER, "ops/sec", "Data entity metrics");
-        final MetricFamily secondFamily =
-            createMetricFamily("http_requests", MetricType.HISTOGRAM, "count/sec", null);
-        final MetricFamily thirdFamily =
-            createMetricFamily("queue_size", MetricType.SUMMARY, "count", null);
-        firstFamily.setMetrics(getCounterMetrics());
-        secondFamily.setMetrics(getHistogramMetrics());
-        thirdFamily.setMetrics(getSummaryMetrics());
-        metricSet.setMetricFamilies(List.of(firstFamily, secondFamily, thirdFamily));
-
-        return Mono.just(metricSet)
+        return metricService.getLatestMetricsForDataEntity(dataEntityId)
             .map(ResponseEntity::ok);
-    }
-
-    private MetricFamily createMetricFamily(final String name,
-                                            final MetricType type,
-                                            final String unit,
-                                            final String description) {
-        final MetricFamily metricFamily = new MetricFamily();
-        metricFamily.setName(name);
-        metricFamily.setType(type);
-        metricFamily.setUnit(unit);
-        metricFamily.setDescription(description);
-        return metricFamily;
-    }
-
-    private List<Metric> getCounterMetrics() {
-        final Metric metric = new Metric();
-        metric.setLabels(
-            List.of(new MetricLabel().name("env").value("prod"),
-                new MetricLabel().name("instance-id").value("623rg8wefh")));
-        metric.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("100"))));
-
-        final Metric second = new Metric();
-        second.setLabels(List.of());
-        second.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("1"))));
-
-        final Metric third = new Metric();
-        third.setLabels(List.of(
-            new MetricLabel().name("env").value("dev"),
-            new MetricLabel().name("instance-id").value("832hfh89erh"))
-        );
-        third.setMetricPoint(new MetricPoint().counterValue(new CounterValue().total(new BigDecimal("10000"))));
-        return List.of(metric, second, third);
-    }
-
-    private List<Metric> getHistogramMetrics() {
-        final Metric metric = new Metric();
-        metric.setLabels(List.of());
-        metric.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue()
-            .sum(new BigDecimal("100"))
-            .count(100L)
-            .sum(new BigDecimal("100"))
-            .buckets(List.of(new Bucket().upperBound(new BigDecimal("5")).count(40L),
-                new Bucket().upperBound(new BigDecimal("10")).count(60L),
-                new Bucket().upperBound(new BigDecimal("15")).count(80L),
-                new Bucket().upperBound(new BigDecimal("20")).count(100L)))));
-
-        final Metric metric1 = new Metric();
-        metric1.setLabels(List.of(
-            new MetricLabel().name("env").value("staging"),
-            new MetricLabel().name("instance-id").value("38hrfvefbi"))
-        );
-        metric1.setMetricPoint(new MetricPoint().histogramValue(new HistogramValue()
-            .sum(new BigDecimal("200"))
-            .count(200L)
-            .sum(new BigDecimal("200"))
-            .buckets(List.of(new Bucket().upperBound(new BigDecimal("5")).count(40L),
-                new Bucket().upperBound(new BigDecimal("10")).count(60L),
-                new Bucket().upperBound(new BigDecimal("15")).count(80L),
-                new Bucket().upperBound(new BigDecimal("20")).count(200L)))));
-        return List.of(metric, metric1);
-    }
-
-    private List<Metric> getSummaryMetrics() {
-        final Metric metric = new Metric();
-        metric.setLabels(List.of());
-        metric.setMetricPoint(new MetricPoint().summaryValue(new SummaryValue()
-            .sum(new BigDecimal("150"))
-            .count(150L)
-            .sum(new BigDecimal("150"))
-            .quantile(List.of(new Quantile().quantile(new BigDecimal("0.1")).value(new BigDecimal("40")),
-                new Quantile().quantile(new BigDecimal("0.5")).value(new BigDecimal("30")),
-                new Quantile().quantile(new BigDecimal("0.75")).value(new BigDecimal("60")),
-                new Quantile().quantile(new BigDecimal("0.95")).value(new BigDecimal("100"))
-            ))));
-
-        final Metric metric1 = new Metric();
-        metric1.setLabels(List.of(
-            new MetricLabel().name("env").value("staging"),
-            new MetricLabel().name("instance-id").value("38hrfvefbi"))
-        );
-        metric1.setMetricPoint(new MetricPoint().summaryValue(new SummaryValue()
-            .sum(new BigDecimal("400"))
-            .count(400L)
-            .sum(new BigDecimal("450"))
-            .quantile(List.of(new Quantile().quantile(new BigDecimal("0.1")).value(new BigDecimal("45")),
-                new Quantile().quantile(new BigDecimal("0.5")).value(new BigDecimal("76")),
-                new Quantile().quantile(new BigDecimal("0.75")).value(new BigDecimal("23")),
-                new Quantile().quantile(new BigDecimal("0.95")).value(new BigDecimal("56"))
-            ))));
-        return List.of(metric, metric1);
     }
 }

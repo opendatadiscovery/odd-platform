@@ -1,11 +1,17 @@
 package org.opendatadiscovery.oddplatform;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.assertj.core.internal.OffsetDateTimeByInstantComparator;
+import org.assertj.core.util.BigDecimalComparator;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -13,13 +19,14 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricSetList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -65,8 +72,55 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
             .expectStatus().isCreated();
     }
 
+    protected void ingestMetrics(final MetricSetList metricSetList) {
+        webTestClient.post()
+            .uri("/ingestion/metrics")
+            .body(Mono.just(metricSetList), MetricSetList.class)
+            .exchange()
+            .expectStatus().isCreated();
+    }
+
     protected long extractIngestedEntityIdAndAssert(final DataSource createdDataSource) {
         return (long) extractIngestedEntitiesAndAssert(createdDataSource, 1).values().toArray()[0];
+    }
+
+    protected void assertMetrics(final Long dataEntityId, final MetricSet expected) {
+        webTestClient.get()
+            .uri("/api/dataentities/{data_entity_id}/metrics", dataEntityId)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(MetricSet.class)
+            .value(actual -> {
+                assertThat(actual.getMetricFamilies())
+                    .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "metrics")
+                    .hasSameElementsAs(expected.getMetricFamilies());
+
+                expected.getMetricFamilies().forEach(expectedMetricFamily -> {
+                    final var actualMF = actual.getMetricFamilies().stream()
+                        .filter(metricFamily -> metricFamily.getName().equals(expectedMetricFamily.getName())
+                            && metricFamily.getType().equals(expectedMetricFamily.getType())
+                            && metricFamily.getUnit().equals(expectedMetricFamily.getUnit()))
+                        .findFirst()
+                        .orElseThrow();
+
+                    expectedMetricFamily.getMetrics().forEach(expectedMetric -> {
+                        final var actualMetric = actualMF.getMetrics().stream()
+                            .filter(metric -> CollectionUtils.isEqualCollection(expectedMetric.getLabels(),
+                                metric.getLabels()))
+                            .findFirst()
+                            .orElseThrow();
+
+                        assertThat(actualMetric)
+                            .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                                .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+                                .withComparatorForType(OffsetDateTimeByInstantComparator.getInstance(),
+                                    OffsetDateTime.class)
+                                .withIgnoredCollectionOrderInFields("labels")
+                                .build())
+                            .isEqualTo(expectedMetric);
+                    });
+                });
+            });
     }
 
     protected void assertDataEntityDetailsEqual(

@@ -2,7 +2,7 @@
 spring-webflux = '5.3.19'
 reactor-extra = '3.4.8'
 micrometer-registry-prometheus = '1.9.0'
-ingestion-contract-server = '0.1.19'
+ingestion-contract-server = '0.1.22'
 oddrn-generator-java = '0.1.10'
 apache-collections = '4.4'
 apache-lang = '3.12.0'
@@ -34,6 +34,8 @@ testcontainers = '1.17.1'
 slf4j-api = '1.7.30'
 logback = '1.2.11'
 easy-random-core = '5.0.0'
+protobuf-java = '3.21.12'
+snappy-java = '1.1.9.1'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
@@ -58,7 +60,7 @@ oddrn-generator-java = { module = 'org.opendatadiscovery:oddrn-generator-java', 
 apache-collections = { module = 'org.apache.commons:commons-collections4', version.ref = 'apache-collections' }
 apache-lang = { module = 'org.apache.commons:commons-lang3', version.ref = 'apache-lang' }
 r2dbc-spi = { module = 'io.r2dbc:r2dbc-spi', version.ref = 'r2dbc-spi' }
-r2dbc-postgresql = { module = 'org.postgresql:r2dbc-postgresql', version.ref = 'r2dbc-postgresql'}
+r2dbc-postgresql = { module = 'org.postgresql:r2dbc-postgresql', version.ref = 'r2dbc-postgresql' }
 r2dbc-pool = { module = 'io.r2dbc:r2dbc-pool', version.ref = 'r2dbc-pool' }
 jooq = { module = 'org.jooq:jooq', version.ref = 'jooq' }
 jooq-codegen = { module = 'org.jooq:jooq-codegen', version.ref = 'jooq-codegen' }
@@ -96,6 +98,8 @@ testcontainers = { module = 'org.testcontainers:testcontainers', version.ref = '
 testcontainers-postgresql = { module = 'org.testcontainers:postgresql', version.ref = 'testcontainers' }
 testcontainers-junit-jupiter = { module = 'org.testcontainers:junit-jupiter', version.ref = 'testcontainers' }
 easy-random-core = { module = 'org.jeasy:easy-random-core', version.ref = 'easy-random-core' }
+protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf-java' }
+snappy-java = { module = 'org.xerial.snappy:snappy-java', version.ref = 'snappy-java' }
 
 [bundles]
 spring = [

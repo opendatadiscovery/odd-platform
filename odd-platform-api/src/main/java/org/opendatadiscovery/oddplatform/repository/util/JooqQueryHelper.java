@@ -134,14 +134,6 @@ public class JooqQueryHelper {
         return f;
     }
 
-    public Field<?> excludedField(final Field<?> field) {
-        return DSL.field("excluded.%s".formatted(field.getName()));
-    }
-
-    public <T> Field<T> excludedField(final Field<T> field, final Class<T> fieldType) {
-        return DSL.field("excluded.%s".formatted(field.getName()), fieldType);
-    }
-
     public void homogeneityCheck(final List<Field<?>> fields) {
         String tableName = null;
 

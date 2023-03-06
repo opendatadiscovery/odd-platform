@@ -39,7 +39,6 @@ tags:
   - name: role
   - name: permission
   - name: links
-  - name: metrics
 
 paths:
   /api/links:

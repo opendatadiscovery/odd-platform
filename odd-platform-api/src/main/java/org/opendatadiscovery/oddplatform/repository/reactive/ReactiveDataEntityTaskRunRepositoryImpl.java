@@ -144,12 +144,12 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
                     insertStep.set(records.get(records.size() - 1))
                         .onDuplicateKeyUpdate()
                         .set(Map.of(
-                            DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN, jooqQueryHelper
-                                .excludedField(DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN),
+                            DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN,
+                            DSL.excluded(DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN),
                             DATA_ENTITY_TASK_LAST_RUN.END_TIME,
-                            jooqQueryHelper.excludedField(DATA_ENTITY_TASK_LAST_RUN.END_TIME),
+                            DSL.excluded(DATA_ENTITY_TASK_LAST_RUN.END_TIME),
                             DATA_ENTITY_TASK_LAST_RUN.STATUS,
-                            jooqQueryHelper.excludedField(DATA_ENTITY_TASK_LAST_RUN.STATUS)
+                            DSL.excluded(DATA_ENTITY_TASK_LAST_RUN.STATUS)
                         ));
 
                 return jooqReactiveOperations.mono(query);

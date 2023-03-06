@@ -99,10 +99,7 @@ public class ReactiveMetadataFieldRepositoryImpl
                     .onConflict(conflictFields)
                     .where(METADATA_FIELD.ORIGIN.ne(MetadataOrigin.INTERNAL.toString()))
                     .doUpdate()
-                    .set(
-                        METADATA_FIELD.NAME,
-                        jooqQueryHelper.excludedField(METADATA_FIELD.NAME, METADATA_FIELD.NAME.getType())
-                    )
+                    .set(METADATA_FIELD.NAME, DSL.excluded(METADATA_FIELD.NAME))
                     .returning();
 
                 return jooqReactiveOperations.flux(query);

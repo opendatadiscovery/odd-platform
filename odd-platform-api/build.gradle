@@ -6,6 +6,7 @@ plugins {
     id "de.undercouch.download" version "4.1.2" apply false
     id "org.sonarqube" version "3.3"
     id "org.opendatadiscovery.internal.plugin.jooq-generate"
+    id "com.google.protobuf" version "0.9.2"
 }
 
 if (env == 'dev') {
@@ -44,6 +45,8 @@ dependencies {
     implementation libs.shedlock.jdbc.lock.provider
     implementation libs.json.schema.validator
     implementation libs.caffeine
+    implementation libs.protobuf.java
+    implementation libs.snappy.java
 
     compileOnly libs.lombok
 
@@ -82,10 +85,19 @@ jooqGenerate {
     }
 }
 
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.12"
+    }
+}
+
 jibDockerBuild.dependsOn test
 
 sourceSets {
     main {
+        proto {
+            srcDirs 'src/main/resources/proto'
+        }
         java {
             srcDirs 'src/main/java'
             srcDirs 'build/generated-jooq/src/main/java'

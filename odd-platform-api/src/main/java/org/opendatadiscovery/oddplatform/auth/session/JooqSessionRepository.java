@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IterableUtils;
 import org.jooq.DeleteConditionStep;
-import org.jooq.Field;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -130,8 +129,7 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
         return insertStep.set(attributeRecords.get(attributeRecords.size() - 1))
             .onDuplicateKeyUpdate()
             .set(Map.of(
-                SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES,
-                jooqQueryHelper.excludedField(SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES)
+                SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES, DSL.excluded(SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES)
             ))
             .returning();
     }

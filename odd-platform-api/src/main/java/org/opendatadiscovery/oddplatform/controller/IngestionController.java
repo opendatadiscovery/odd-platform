@@ -10,9 +10,11 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEnt
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricSetList;
 import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.IngestionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.metric.IngestionMetricsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +30,7 @@ public class IngestionController implements IngestionApi {
     private final IngestionService ingestionService;
     private final DataEntityGroupService dataEntityGroupService;
     private final DataSourceIngestionService dataSourceIngestionService;
+    private final IngestionMetricsService ingestionMetricsService;
 
     @Override
     public Mono<ResponseEntity<Void>> postDataEntityList(final Mono<DataEntityList> dataEntityList,
@@ -70,6 +73,14 @@ public class IngestionController implements IngestionApi {
                                                            final ServerWebExchange exchange) {
         return datasetStatisticsList
             .flatMap(ingestionService::ingestStats)
+            .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> ingestMetrics(final Mono<MetricSetList> metricSetList,
+                                                    final ServerWebExchange exchange) {
+        return metricSetList
+            .flatMap(ingestionMetricsService::ingestMetrics)
             .thenReturn(ResponseEntity.status(HttpStatus.CREATED).build());
     }
 }
