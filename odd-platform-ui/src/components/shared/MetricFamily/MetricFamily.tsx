@@ -22,13 +22,27 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
 
   const emptyLabelsMetricValue = React.useMemo(() => {
     if (emptyLabelsMetric) {
-      if (family.type === 'COUNTER' || family.type === 'GAUGE') {
+      if (family.type === 'COUNTER') {
         return (
           <Grid container flexWrap='nowrap'>
             <Typography mr={1} variant='body1'>
               <AppTooltip title={emptyLabelsMetric.metricPoint.counterValue?.total}>
                 <NumberFormatted
                   value={emptyLabelsMetric.metricPoint.counterValue?.total}
+                />
+              </AppTooltip>
+            </Typography>
+          </Grid>
+        );
+      }
+
+      if (family.type === 'GAUGE') {
+        return (
+          <Grid container flexWrap='nowrap'>
+            <Typography mr={1} variant='body1'>
+              <AppTooltip title={emptyLabelsMetric.metricPoint.gaugeValue?.value}>
+                <NumberFormatted
+                  value={emptyLabelsMetric.metricPoint.gaugeValue?.value}
                 />
               </AppTooltip>
             </Typography>
@@ -156,7 +170,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
     <Grid container flexDirection='column'>
       <Grid container flexDirection='column' mt={0.5} mb={1.5}>
         <Grid container flexWrap='nowrap' alignItems='center'>
-          <Grid item container flexWrap='nowrap' alignItems='center' lg={3.5} mr={1.5}>
+          <Grid item container flexWrap='nowrap' alignItems='center' lg={3.5} mr={0.5}>
             <AppTooltip title={`Name: ${family.name}`}>
               <Typography variant='subtitle1' noWrap>
                 {family.description ? family.description : family.name}
