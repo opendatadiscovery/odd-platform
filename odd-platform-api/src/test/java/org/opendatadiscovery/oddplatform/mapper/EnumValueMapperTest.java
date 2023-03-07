@@ -51,12 +51,14 @@ public class EnumValueMapperTest {
             .setId(1L)
             .setName("name")
             .setDatasetFieldId(DATASET_FIELD_ID)
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setInternalDescription("description");
 
         final var enumValue = new EnumValue()
             .id(1L)
             .name("name")
-            .internalDescription("description");
+            .modifiable(true)
+            .description("description");
 
         return Stream.of(
             Arguments.arguments(pojo, enumValue),

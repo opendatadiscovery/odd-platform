@@ -154,7 +154,9 @@ public class IngestionModelMapper {
         return enumValues.stream()
             .map(ev -> new EnumValue()
                 .name(ev.getName())
-                .externalDescription(ev.getDescription()))
+                .description(ev.getDescription())
+                .modifiable(false)
+            )
             .toList();
     }
 }

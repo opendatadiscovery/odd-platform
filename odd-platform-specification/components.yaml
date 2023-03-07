@@ -1526,10 +1526,10 @@ components:
           format: int64
         name:
           type: string
-        internal_description:
+        description:
           type: string
-        external_description:
-          type: string
+        modifiable:
+          type: boolean
       required:
         - id
         - name

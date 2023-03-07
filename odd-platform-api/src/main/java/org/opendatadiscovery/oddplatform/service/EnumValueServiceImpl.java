@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_ENUMS;
 import static org.opendatadiscovery.oddplatform.dto.EnumValueOrigin.EXTERNAL;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_VALUES_UPDATED;
@@ -49,21 +51,20 @@ public class EnumValueServiceImpl implements EnumValueService {
                 return upsertInternalEnumValues(datasetFieldId, formData);
             }
 
-            if (state.enumValues().stream().anyMatch(ev -> StringUtils.isNotEmpty(ev.getExternalDescription()))) {
-                return Mono.error(new BadUserRequestException(
-                    "User cannot change descriptions for external enum values"));
-            }
-
-            final Map<String, Long> stateNameToId = state.enumValues()
+            final Map<String, EnumValuePojo> stateDirectory = state.enumValues()
                 .stream()
-                .collect(Collectors.toMap(EnumValuePojo::getName, EnumValuePojo::getId));
+                .collect(Collectors.toMap(EnumValuePojo::getName, identity()));
 
-            if (!SetUtils.isEqualSet(stateNameToId.keySet(), reqNames)) {
+            if (!SetUtils.isEqualSet(stateDirectory.keySet(), reqNames)) {
                 return Mono.error(new BadUserRequestException("User cannot create or delete external enum values"));
             }
 
             final Map<Long, String> descriptions = formData.stream()
-                .collect(Collectors.toMap(fd -> stateNameToId.get(fd.getName()), EnumValueFormData::getDescription));
+                .filter(fd -> {
+                    final EnumValuePojo existingEnumValue = stateDirectory.get(fd.getName());
+                    return !StringUtils.equals(fd.getDescription(), existingEnumValue.getInternalDescription());
+                })
+                .collect(Collectors.toMap(EnumValueFormData::getId, EnumValueFormData::getDescription));
 
             return reactiveEnumValueRepository
                 .updateDescriptions(descriptions, false)
