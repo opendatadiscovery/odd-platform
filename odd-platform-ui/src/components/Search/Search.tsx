@@ -3,7 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { MainSearch, PageWithLeftSidebar } from 'components/shared';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   createDataEntitiesSearch,
@@ -26,7 +26,7 @@ import Results from './Results/Results';
 
 const Search: React.FC = () => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { searchPath } = useAppPaths();
   const { searchId: routerSearchId } = useAppParams();
 
@@ -44,7 +44,7 @@ const Search: React.FC = () => {
         .unwrap()
         .then(search => {
           const searchLink = searchPath(search.searchId);
-          history.replace(searchLink);
+          navigate(searchLink);
         });
     }
   }, [routerSearchId, isSearchCreating]);

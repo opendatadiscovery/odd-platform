@@ -8,7 +8,8 @@ import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/sh
 import { ClearIcon } from 'components/shared/Icons';
 import type { PolicyDetails, PolicyFormData } from 'generated-sources';
 import { Permission } from 'generated-sources';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -19,7 +20,7 @@ interface PolicyFormProps {
 
 const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { managementPath, ManagementRoutes } = useAppPaths();
   const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
@@ -41,7 +42,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         : createPolicy({ policyFormData })
     ).then(response => {
       if (response.meta.requestStatus === 'fulfilled') {
-        history.push(toPolicies);
+        navigate(toPolicies);
       }
     });
   };

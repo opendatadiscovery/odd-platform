@@ -1,6 +1,6 @@
 import React from 'react';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import type { TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
@@ -40,7 +40,7 @@ const Node = React.memo<NodeProps>(
     reverse,
     hasChildren,
   }) => {
-    const history = useHistory();
+    const navigate = useNavigate();
     const { dataEntityLineagePath } = useAppPaths();
     const {
       defaultQueryString: lineageQueryString,
@@ -62,8 +62,8 @@ const Node = React.memo<NodeProps>(
     );
 
     const handleTitleClick = React.useCallback(() => {
-      history.push(lineageLink);
-    }, [lineageLink, history]);
+      navigate(lineageLink);
+    }, [lineageLink]);
 
     const [showLoadMore, setShowLoadMore] = React.useState(false);
     const [hideLoadMore, setHideLoadMore] = React.useState(false);

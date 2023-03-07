@@ -1,6 +1,6 @@
 import React from 'react';
 import type { SearchFormData, Tag } from 'generated-sources';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { TagItem } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
@@ -13,7 +13,7 @@ interface TopTagListProps {
 
 const TopTagsList: React.FC<TopTagListProps> = ({ topTags, isTagsNotFetched }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { searchPath } = useAppPaths();
 
   const [searchLoading, setSearchLoading] = React.useState(false);
@@ -30,11 +30,11 @@ const TopTagsList: React.FC<TopTagListProps> = ({ topTags, isTagsNotFetched }) =
         .unwrap()
         .then(({ searchId }) => {
           const searchLink = searchPath(searchId);
-          history.replace(searchLink);
+          navigate(searchLink);
         });
-      history.push(searchPath());
+      navigate(searchPath());
     },
-    [searchLoading, setSearchLoading, createDataEntitiesSearch, history]
+    [searchLoading, setSearchLoading, createDataEntitiesSearch]
   );
 
   const sortedTags = React.useMemo(

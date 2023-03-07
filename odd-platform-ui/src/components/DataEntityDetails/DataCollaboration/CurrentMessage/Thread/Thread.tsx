@@ -9,7 +9,7 @@ import {
 } from 'redux/selectors';
 import { fetchRelatedMessages, messagesListSize as size } from 'redux/thunks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { clearThreadState } from 'redux/slices/dataCollaboration.slice';
 import ThreadContent from './ThreadContent/ThreadContent';
 
@@ -18,7 +18,7 @@ interface ThreadProps {
 }
 const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityId, messageId } = useAppParams();
   const { dataEntityCollaborationPath } = useAppPaths();
 
@@ -31,7 +31,7 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
 
   React.useEffect(() => {
     if (relatedMessagesError) {
-      history.push(dataEntityCollaborationPath(dataEntityId));
+      navigate(dataEntityCollaborationPath(dataEntityId));
     }
     dispatch(
       fetchRelatedMessages({ dataEntityId, messageId, size, lastMessageId: lastId })

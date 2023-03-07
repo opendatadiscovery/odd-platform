@@ -12,7 +12,7 @@ import {
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { type MessageRequest } from 'generated-sources';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
 
 interface CreateMessageFormProps {
@@ -25,7 +25,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityCollaborationPath } = useAppPaths();
 
   const { isLoading: isMessageCreating } = useAppSelector(
@@ -61,7 +61,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
         if (resolved.meta.requestStatus === 'fulfilled') {
           setState({ ...initialState, isSuccessfulSubmit: true });
           clearState();
-          history.push(toCollaboration);
+          navigate(toCollaboration);
         }
       },
       (response: Response) => {

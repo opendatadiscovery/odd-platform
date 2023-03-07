@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
@@ -20,7 +20,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
   mainSearch,
 }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { searchPath } = useAppPaths();
 
   const storedSearchId = useAppSelector(getSearchId);
@@ -42,12 +42,12 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
         .unwrap()
         .then(({ searchId }) => {
           const searchLink = searchPath(searchId);
-          history.replace(searchLink);
+          navigate(searchLink);
         });
 
-      history.push(searchPath());
+      navigate(searchPath());
     },
-    [createDataEntitiesSearch, searchPath, history]
+    [createDataEntitiesSearch, searchPath]
   );
 
   const updateSearch = React.useCallback(

@@ -2,7 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { PageWithLeftSidebar } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
@@ -21,7 +21,7 @@ import TermsSearchResults from './TermSearchResults/TermSearchResults';
 import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 
 const TermSearch: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { termSearchPath } = useAppPaths();
   const { termSearchId: routerTermSearchId } = useAppParams();
@@ -39,7 +39,7 @@ const TermSearch: React.FC = () => {
         .unwrap()
         .then(termSearch => {
           const termSearchLink = termSearchPath(termSearch.searchId);
-          history.replace(termSearchLink);
+          navigate(termSearchLink);
         });
     }
   }, [routerTermSearchId, createTermSearch, isTermSearchCreating]);

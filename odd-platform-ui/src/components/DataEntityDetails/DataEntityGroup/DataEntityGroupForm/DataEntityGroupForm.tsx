@@ -27,7 +27,7 @@ import {
   getDataEntityTypesByClassName,
 } from 'redux/selectors';
 import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import isEmpty from 'lodash/isEmpty';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
@@ -39,7 +39,7 @@ interface DataEntityGroupFormProps {
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityDetailsPath } = useAppPaths();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
@@ -108,7 +108,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         response => {
           setState({ ...initialState, isSuccessfulSubmit: true });
           clearState();
-          history.push(dataEntityDetailsPath(response.id));
+          navigate(dataEntityDetailsPath(response.id));
         },
         (response: Response) => {
           setState({

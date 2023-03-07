@@ -1,5 +1,6 @@
 import React from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
@@ -27,7 +28,7 @@ const LinkedItemsList = React.lazy(
 );
 
 const TermDetailsView: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
   const { termSearchPath, termDetailsLinkedItemsPath, termDetailsOverviewPath } =
@@ -59,7 +60,7 @@ const TermDetailsView: React.FC = () => {
   const handleTermDelete = React.useCallback(
     (id: number) => () =>
       dispatch(deleteTerm({ termId: id })).then(() =>
-        history.push(termSearchPath(termSearchId))
+        navigate(termSearchPath(termSearchId))
       ),
     [termSearchId]
   );

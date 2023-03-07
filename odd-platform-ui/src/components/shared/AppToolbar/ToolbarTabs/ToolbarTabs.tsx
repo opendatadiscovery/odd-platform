@@ -6,13 +6,14 @@ import {
 } from 'components/shared/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, createTermSearch } from 'redux/thunks';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom-v5-compat';
 import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
 
 const ToolbarTabs: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
   const {
@@ -90,7 +91,7 @@ const ToolbarTabs: React.FC = () => {
           .unwrap()
           .then(termSearch => {
             const termSearchLink = termSearchPath(termSearch.searchId);
-            history.replace(termSearchLink);
+            navigate(termSearchLink);
           });
         return;
       }
@@ -100,11 +101,11 @@ const ToolbarTabs: React.FC = () => {
           .unwrap()
           .then(({ searchId }) => {
             const searchLink = searchPath(searchId);
-            history.replace(searchLink);
+            navigate(searchLink);
           });
       }
     },
-    [tabs, history]
+    [tabs]
   );
 
   return (
