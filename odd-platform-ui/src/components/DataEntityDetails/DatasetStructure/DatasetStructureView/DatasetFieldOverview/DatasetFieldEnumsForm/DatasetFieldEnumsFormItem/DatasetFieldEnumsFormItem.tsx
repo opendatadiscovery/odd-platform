@@ -10,12 +10,16 @@ interface DatasetFieldEnumsFormItemProps {
   itemIndex: number;
   onItemRemove: () => void;
   datasetFieldType: DataSetFieldTypeTypeEnum;
+  isKeyEditable: boolean;
+  isValueEditable: boolean;
 }
 
 const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
   itemIndex,
   onItemRemove,
   datasetFieldType,
+  isKeyEditable,
+  isValueEditable,
 }) => {
   const { control, getValues } = useFormContext();
 
@@ -47,6 +51,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
           <S.ValueNameContainer sx={{ mr: 1 }}>
             <AppInput
               {...field}
+              disabled={!isKeyEditable}
               placeholder='Name of value'
               name={`enums.${itemIndex}.name`}
               type={setTextFieldType()}
@@ -69,6 +74,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             <AppInput
               {...field}
               sx={{ mr: 1 }}
+              disabled={!isValueEditable}
               placeholder='Description'
               name={`enums.${itemIndex}.description`}
               customEndAdornment={{

@@ -39,7 +39,9 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
     };
   }, [field.id, showEnums]);
 
-  const datasetFieldEnums = useAppSelector(getDatasetFieldEnums(field.id));
+  const { external, items: datasetFieldEnums } = useAppSelector(
+    getDatasetFieldEnums(field.id)
+  );
   const error = useAppSelector(getDatasetFieldEnumsFetchingError);
 
   const content = React.useMemo(() => {
@@ -52,11 +54,13 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
 
     return field.enumValueCount ? (
       <Grid container mt={1}>
-        {datasetFieldEnums.map(({ name, description, id }) => (
-          <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
-            {description}
-          </LabeledInfoItem>
-        ))}
+        {datasetFieldEnums?.map(
+          ({ name, internalDescription, externalDescription, id }) => (
+            <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
+              {external ? externalDescription : internalDescription}
+            </LabeledInfoItem>
+          )
+        )}
       </Grid>
     ) : (
       <Typography mt={1} variant='subtitle1'>
@@ -65,7 +69,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
     );
   }, [error, field.enumValueCount, datasetFieldEnums]);
 
-  return showEnums ? (
+  return showEnums && datasetFieldEnums ? (
     <S.SectionContainer container>
       <Grid container justifyContent='space-between'>
         <Typography variant='h3'>Enums</Typography>
@@ -73,6 +77,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
           permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
           renderContent={({ isAllowedTo: editEnums }) => (
             <DatasetFieldEnumsForm
+              isExternal={external}
               datasetFieldId={field.id}
               datasetFieldName={field.name}
               datasetFieldType={field.type.type}

@@ -38,6 +38,7 @@ import type {
   TermRef,
   Link,
   ActivityType,
+  EnumValueList,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
 import type { Dictionary } from 'lodash';
@@ -100,7 +101,7 @@ export interface DatasetStructureState {
     [versionId: number]: { typeStats: DataSetStructureTypesCount };
   };
   latestVersionByDataset: { [datasetId: string]: DataSetVersion['id'] };
-  fieldEnumsByFieldId: { [fieldId: number]: EnumValue[] };
+  fieldEnumsByFieldId: { [fieldId: number]: EnumValueList };
 }
 
 export interface DataQualityTestState {
