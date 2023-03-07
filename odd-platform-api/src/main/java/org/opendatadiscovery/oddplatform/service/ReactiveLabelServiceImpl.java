@@ -9,22 +9,17 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.LabelFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LabelsResponse;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
 @RequiredArgsConstructor

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,15 +60,21 @@ public class EnumValueServiceImpl implements EnumValueService {
                 return Mono.error(new BadUserRequestException("User cannot create or delete external enum values"));
             }
 
-            final Map<Long, String> descriptions = formData.stream()
-                .filter(fd -> {
-                    final EnumValuePojo existingEnumValue = stateDirectory.get(fd.getName());
-                    return !StringUtils.equals(fd.getDescription(), existingEnumValue.getInternalDescription());
-                })
-                .collect(Collectors.toMap(EnumValueFormData::getId, EnumValueFormData::getDescription));
+            final Map<Long, String> descriptions = new HashMap<>();
+            final List<EnumValuePojo> skippedValues = new ArrayList<>();
+
+            for (final EnumValueFormData fd : formData) {
+                final EnumValuePojo existingEnumValue = stateDirectory.get(fd.getName());
+                if (StringUtils.equals(fd.getDescription(), existingEnumValue.getInternalDescription())) {
+                    skippedValues.add(existingEnumValue);
+                } else {
+                    descriptions.put(fd.getId(), fd.getDescription());
+                }
+            }
 
             return reactiveEnumValueRepository
                 .updateDescriptions(descriptions, false)
+                .mergeWith(Flux.fromIterable(skippedValues))
                 .collectList()
                 .map(mapper::mapToEnum);
         });
