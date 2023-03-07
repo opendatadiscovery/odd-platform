@@ -1829,7 +1829,7 @@ paths:
   /api/datasetfields/{dataset_field_id}/enum_values:
     get:
       summary: Get field's enum values
-      description: Get all posible values for this field with description
+      description: Get all possible values for this field with description
       operationId: getEnumValues
       parameters:
         - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
