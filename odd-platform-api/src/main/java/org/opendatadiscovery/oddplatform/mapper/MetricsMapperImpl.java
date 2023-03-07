@@ -105,8 +105,7 @@ public class MetricsMapperImpl implements MetricsMapper {
         final MetricPoint point = switch (metricType) {
             case GAUGE -> mapGaugePoint(points, seriesByType);
             case COUNTER -> mapCounterPoint(points, seriesByType);
-            case HISTOGRAM -> mapHistogramPoint(HISTOGRAM, points, seriesByType, labelValues);
-            case GAUGE_HISTOGRAM -> mapHistogramPoint(GAUGE_HISTOGRAM, points, seriesByType, labelValues);
+            case HISTOGRAM, GAUGE_HISTOGRAM -> mapHistogramPoint(points, seriesByType, labelValues);
             case SUMMARY -> mapSummaryPoint(points, seriesByType, labelValues);
         };
         metric.setMetricPoint(point);
@@ -151,8 +150,7 @@ public class MetricsMapperImpl implements MetricsMapper {
         return point;
     }
 
-    private MetricPoint mapHistogramPoint(final MetricType metricType,
-                                          final List<MetricPointPojo> points,
+    private MetricPoint mapHistogramPoint(final List<MetricPointPojo> points,
                                           final Map<Integer, MetricSeriesDto> seriesByType,
                                           final List<MetricLabelValueDto> labelValues) {
         final MetricPoint point = new MetricPoint();

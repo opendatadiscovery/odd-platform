@@ -19,6 +19,8 @@ import org.apache.commons.collections4.MultiMapUtils;
 import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.exception.PrometheusException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Label;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Metric;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricFamily;
@@ -36,6 +38,7 @@ import org.opendatadiscovery.oddplatform.repository.metric.MetricFamilyRepositor
 import org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.external.TimeSeriesExtractor;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
+import org.opendatadiscovery.oddplatform.utils.MetricUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
@@ -46,10 +49,11 @@ import org.xerial.snappy.Snappy;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
+import static org.opendatadiscovery.oddplatform.utils.MetricUtils.buildMetricFamilyKey;
 
 @Service
 @Slf4j
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "external")
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "PROMETHEUS")
 public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsService {
     private static final String SNAPPY_ENCODING = "snappy";
     private static final String REMOTE_WRITE_URL = "/api/v1/write";
@@ -77,6 +81,7 @@ public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsServ
     }
 
     @Override
+    @ReactiveTransactional
     public Mono<Void> ingestMetrics(final MetricSetList metricSetList) {
         if (CollectionUtils.isEmpty(metricSetList.getItems())) {
             return Mono.empty();
@@ -84,7 +89,7 @@ public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsServ
         final Collection<MetricFamilyPojo> metricFamilies = getMetricFamilies(metricSetList);
         final Mono<Map<String, MetricFamilyPojo>> savedMetricFamilies = metricFamilyRepository
             .createOrUpdateMetricFamilies(metricFamilies)
-            .collect(Collectors.toMap(this::buildMetricFamilyKey, identity()));
+            .collect(Collectors.toMap(MetricUtils::buildMetricFamilyKey, identity()));
 
         final LocalDateTime ingestedTime = DateTimeUtil.generateNow();
 
@@ -144,33 +149,35 @@ public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsServ
                     final boolean present =
                         metricsWithLastValueLabelsArePresent(existingPojo, metricFamily.getMetrics());
                     if (present) {
-                        final ExternalMetricLastValuePojo lastValuePojo = new ExternalMetricLastValuePojo()
-                            .setOddrn(metricSet.getOddrn())
-                            .setMetricFamilyId(familyPojo.getId())
-                            .setLabels(JSONB.jsonb(JSONSerDeUtils.serializeJson(labels)))
-                            .setTimestamp(leastMaximumPointTime);
+                        final ExternalMetricLastValuePojo lastValuePojo = buildLastValuePojo(metricSet.getOddrn(),
+                            familyPojo.getId(), labels, leastMaximumPointTime);
                         pojos.add(lastValuePojo);
                     } else {
                         if (leastMaximumPointTime.isBefore(existingPojo.getTimestamp())) {
-                            final ExternalMetricLastValuePojo lastValuePojo = new ExternalMetricLastValuePojo()
-                                .setOddrn(metricSet.getOddrn())
-                                .setMetricFamilyId(familyPojo.getId())
-                                .setLabels(JSONB.jsonb(JSONSerDeUtils.serializeJson(labels)))
-                                .setTimestamp(leastMaximumPointTime);
+                            final ExternalMetricLastValuePojo lastValuePojo = buildLastValuePojo(metricSet.getOddrn(),
+                                familyPojo.getId(), labels, leastMaximumPointTime);
                             pojos.add(lastValuePojo);
                         }
                     }
                 } else {
-                    final ExternalMetricLastValuePojo lastValuePojo = new ExternalMetricLastValuePojo()
-                        .setOddrn(metricSet.getOddrn())
-                        .setMetricFamilyId(familyPojo.getId())
-                        .setLabels(JSONB.jsonb(JSONSerDeUtils.serializeJson(labels)))
-                        .setTimestamp(leastMaximumPointTime);
+                    final ExternalMetricLastValuePojo lastValuePojo = buildLastValuePojo(metricSet.getOddrn(),
+                        familyPojo.getId(), labels, leastMaximumPointTime);
                     pojos.add(lastValuePojo);
                 }
             }
         }
         return metricLastValueRepository.createOrUpdateLastValues(pojos).collectList();
+    }
+
+    private ExternalMetricLastValuePojo buildLastValuePojo(final String oddrn,
+                                                           final Integer familyPojoId,
+                                                           final List<List<Label>> labels,
+                                                           final LocalDateTime timestamp) {
+        return new ExternalMetricLastValuePojo()
+            .setOddrn(oddrn)
+            .setMetricFamilyId(familyPojoId)
+            .setLabels(JSONB.jsonb(JSONSerDeUtils.serializeJson(labels)))
+            .setTimestamp(timestamp);
     }
 
     private LocalDateTime getMaxMetricDateTime(final List<MetricPoint> metricPoints,
@@ -192,7 +199,6 @@ public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsServ
         return count == currentLabels.size();
     }
 
-
     private Mono<Void> saveMetricsToPrometheus(final MetricSetList metricSetList,
                                                final Map<String, MetricFamilyPojo> families,
                                                final LocalDateTime ingestedTime) {
@@ -205,9 +211,10 @@ public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsServ
             .bodyValue(writeRequest)
             .retrieve()
             .bodyToMono(String.class)
-            .doOnError(e -> {
-                final String s = ((WebClientResponseException) e).getResponseBodyAsString();
-                log.info(s);
+            .onErrorMap(e -> {
+                final String errorMessage = ((WebClientResponseException) e).getResponseBodyAsString();
+                log.error(errorMessage);
+                return new PrometheusException(e);
             })
             .then();
     }
@@ -261,17 +268,6 @@ public class ExternalIngestionMetricsServiceImpl implements IngestionMetricsServ
         return metrics.stream()
             .filter(metric -> getMaxMetricDateTime(metric.getMetricPoints(), ingestedDateTime).equals(dateTime))
             .toList();
-    }
-
-    //todo extract
-    private String buildMetricFamilyKey(final MetricFamilyPojo metricFamily) {
-        return String.join("_", metricFamily.getName().toLowerCase(),
-            metricFamily.getUnit().toLowerCase(), metricFamily.getType().toLowerCase());
-    }
-
-    private String buildMetricFamilyKey(final MetricFamily metricFamily) {
-        return String.join("_", metricFamily.getName().toLowerCase(),
-            metricFamily.getUnit().toLowerCase(), metricFamily.getType().getValue().toLowerCase());
     }
 
     private TimeSeriesExtractor getExtractor(final MetricType type) {

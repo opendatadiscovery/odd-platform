@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.internal;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricLabelsDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricPointDto;
@@ -14,5 +15,6 @@ public interface MetricSeriesExtractor {
     List<MetricSeriesDto> extractSeries(final IngestionMetricPointDto point,
                                         final MetricEntityPojo metricEntityPojo,
                                         final MetricFamilyPojo metricFamilyPojo,
-                                        final IngestionMetricLabelsDto allLabelsDto);
+                                        final IngestionMetricLabelsDto allLabelsDto,
+                                        final LocalDateTime ingestedTime);
 }

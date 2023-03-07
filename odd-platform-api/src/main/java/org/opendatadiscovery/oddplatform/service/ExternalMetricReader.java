@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricFamily;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetricType;
 import org.opendatadiscovery.oddplatform.dto.metric.ExternalMetricLastValueDto;
 import org.opendatadiscovery.oddplatform.dto.metric.prometheus.PrometheusResponse;
+import org.opendatadiscovery.oddplatform.exception.PrometheusException;
 import org.opendatadiscovery.oddplatform.mapper.PrometheusMetricsMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricFamilyPojo;
 import org.opendatadiscovery.oddplatform.repository.metric.ExternalMetricLastValueRepository;
@@ -29,15 +30,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
+import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.METRIC_FAMILY_ID;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.ODDRN;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.TENANT_ID;
 import static reactor.function.TupleUtils.function;
 
 @Service
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "external")
+@Slf4j
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "PROMETHEUS")
 public class ExternalMetricReader implements MetricReader {
+    private static final int LAG_WINDOW = 2;
     private static final String INSTANT_QUERY_URL = "/api/v1/query";
-    private static final String QUERY_PATTERN = "last_over_time(%s{%s}[%ss])";
+    private static final String LAST_METRIC_QUERY_PATTERN = "last_over_time({%s}[%ss])";
     private static final String LABEL_PATTERN = "%s='%s'";
 
     private final WebClient webClient;
@@ -70,10 +74,8 @@ public class ExternalMetricReader implements MetricReader {
                 final Map<Integer, MetricFamilyPojo> metricFamilyPojos = lastValues.stream()
                     .map(ExternalMetricLastValueDto::familyPojo)
                     .collect(Collectors.toMap(MetricFamilyPojo::getId, Function.identity()));
-                final MetricSet metricSet = new MetricSet();
                 final List<MetricFamily> metricFamilies = mapper.mapFromPrometheus(responses, metricFamilyPojos);
-                metricSet.setMetricFamilies(metricFamilies);
-                return metricSet;
+                return new MetricSet().metricFamilies(metricFamilies);
             }));
     }
 
@@ -84,76 +86,28 @@ public class ExternalMetricReader implements MetricReader {
             .body(BodyInserters.fromFormData("query", query))
             .retrieve()
             .bodyToMono(PrometheusResponse.class)
-            .doOnError(e -> {
-                final String s = ((WebClientResponseException) e).getResponseBodyAsString();
-                System.out.println(2);
+            .onErrorMap(e -> {
+                final String errorMessage = ((WebClientResponseException) e).getResponseBodyAsString();
+                log.error(errorMessage);
+                return new PrometheusException(e);
             });
     }
 
     private Flux<String> generateMetricQueries(final List<ExternalMetricLastValueDto> lastValues) {
-        final List<String> metricQueries = lastValues.stream()
-            .flatMap(dto -> generateMetricNames(dto).stream())
-            .toList();
-        return Flux.fromIterable(metricQueries);
+        return Flux.fromStream(lastValues.stream().map(this::generateMetricQuery));
     }
 
-    private List<String> generateMetricNames(final ExternalMetricLastValueDto dto) {
-        final MetricType type = MetricType.valueOf(dto.familyPojo().getType());
-        return switch (type) {
-            case GAUGE -> generateGaugeNames(dto);
-            case COUNTER -> generateCounterNames(dto);
-            case HISTOGRAM, GAUGE_HISTOGRAM -> generateHistogramNames(dto);
-            case SUMMARY -> generateSummaryNames(dto);
-        };
+    private String generateMetricQuery(final ExternalMetricLastValueDto dto) {
+        final long seconds =
+            Duration.between(dto.pojo().getTimestamp(), DateTimeUtil.generateNow()).toSeconds() + LAG_WINDOW;
+        final String queryLabels = getQueryLabels(dto.pojo().getOddrn(), dto.familyPojo().getId());
+        return LAST_METRIC_QUERY_PATTERN.formatted(queryLabels, seconds);
     }
 
-    private List<String> generateGaugeNames(final ExternalMetricLastValueDto dto) {
-        final long seconds = Duration.between(dto.pojo().getTimestamp(), DateTimeUtil.generateNow()).toSeconds() + 5;
-        return List.of(
-            QUERY_PATTERN.formatted(dto.familyPojo().getName(), getQueryLabels(dto.pojo().getOddrn()), seconds));
-    }
-
-    private List<String> generateCounterNames(final ExternalMetricLastValueDto dto) {
-        final long seconds = Duration.between(dto.pojo().getTimestamp(), DateTimeUtil.generateNow()).toSeconds() + 5;
-        return List.of(
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_total", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_created", getQueryLabels(dto.pojo().getOddrn()),
-                seconds)
-        );
-    }
-
-    private List<String> generateHistogramNames(final ExternalMetricLastValueDto dto) {
-        final long seconds = Duration.between(dto.pojo().getTimestamp(), DateTimeUtil.generateNow()).toSeconds() + 5;
-        return List.of(
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_created", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_count", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_sum", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_bucket", getQueryLabels(dto.pojo().getOddrn()),
-                seconds)
-        );
-    }
-
-    private List<String> generateSummaryNames(final ExternalMetricLastValueDto dto) {
-        final long seconds = Duration.between(dto.pojo().getTimestamp(), DateTimeUtil.generateNow()).toSeconds() + 5;
-        return List.of(
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_created", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_count", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_sum", getQueryLabels(dto.pojo().getOddrn()),
-                seconds),
-            QUERY_PATTERN.formatted(dto.familyPojo().getName() + "_quantile", getQueryLabels(dto.pojo().getOddrn()),
-                seconds)
-        );
-    }
-
-    private String getQueryLabels(final String oddrn) {
+    private String getQueryLabels(final String oddrn, final Integer metricFamilyId) {
         final List<String> queryLabels = new ArrayList<>();
         queryLabels.add(LABEL_PATTERN.formatted(ODDRN.getLabelName(), oddrn));
+        queryLabels.add(LABEL_PATTERN.formatted(METRIC_FAMILY_ID.getLabelName(), metricFamilyId));
         if (StringUtils.isNotEmpty(tenantId)) {
             queryLabels.add(LABEL_PATTERN.formatted(TENANT_ID.getLabelName(), tenantId));
         }

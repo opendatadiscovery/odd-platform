@@ -26,7 +26,7 @@ import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "INTERNAL_POSTGRES", matchIfMissing = true)
 public class InternalMetricReader implements MetricReader {
     private final MetricSeriesRepository metricSeriesRepository;
     private final MetricLabelValueRepository metricLabelValueRepository;

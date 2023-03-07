@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "INTERNAL_POSTGRES", matchIfMissing = true)
 public class GaugeMetricSeriesExtractor extends AbstractMetricSeriesExtractor implements MetricSeriesExtractor {
 
     public GaugeMetricSeriesExtractor(final IngestionMetricsMapper mapper) {
@@ -31,14 +31,14 @@ public class GaugeMetricSeriesExtractor extends AbstractMetricSeriesExtractor im
     public List<MetricSeriesDto> extractSeries(final IngestionMetricPointDto point,
                                                final MetricEntityPojo metricEntityPojo,
                                                final MetricFamilyPojo metricFamilyPojo,
-                                               final IngestionMetricLabelsDto allLabelsDto) {
+                                               final IngestionMetricLabelsDto allLabelsDto,
+                                               final LocalDateTime ingestedDateTime) {
         if (point.metricPoint().getGaugeValue() == null || point.metricPoint().getGaugeValue().getValue() == null) {
             throw new IllegalArgumentException("Gauge value is null");
         }
-        final LocalDateTime defaultDateTime = DateTimeUtil.generateNow();
         final double value = point.metricPoint().getGaugeValue().getValue().doubleValue();
         final MetricSeriesDto series = createSimpleSeries(point, metricEntityPojo, metricFamilyPojo,
-            allLabelsDto, defaultDateTime, MetricSeriesValueType.VALUE, value);
+            allLabelsDto, ingestedDateTime, MetricSeriesValueType.VALUE, value);
         return List.of(series);
     }
 }

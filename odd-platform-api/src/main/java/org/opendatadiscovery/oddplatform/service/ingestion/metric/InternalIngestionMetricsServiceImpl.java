@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service.ingestion.metric;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -45,6 +46,8 @@ import org.opendatadiscovery.oddplatform.repository.metric.MetricLabelValueRepos
 import org.opendatadiscovery.oddplatform.repository.metric.MetricPointRepository;
 import org.opendatadiscovery.oddplatform.repository.metric.MetricSeriesRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.internal.MetricSeriesExtractor;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
+import org.opendatadiscovery.oddplatform.utils.MetricUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -52,11 +55,12 @@ import reactor.core.publisher.Mono;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.BUCKET_UPPER_BOUND;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.QUANTILE;
+import static org.opendatadiscovery.oddplatform.utils.MetricUtils.buildMetricFamilyKey;
 import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "INTERNAL_POSTGRES", matchIfMissing = true)
 public class InternalIngestionMetricsServiceImpl implements IngestionMetricsService {
     private final MetricEntityRepository metricEntityRepository;
     private final MetricFamilyRepository metricFamilyRepository;
@@ -73,6 +77,7 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
         if (CollectionUtils.isEmpty(metricSetList.getItems())) {
             return Mono.empty();
         }
+        final LocalDateTime ingestedTime = DateTimeUtil.generateNow();
         final IngestionMetricsRequest request = buildIngestionMetricsRequest(metricSetList);
 
         final Mono<Map<String, MetricEntityPojo>> registeredOddrns = metricEntityRepository
@@ -81,12 +86,12 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
 
         final Mono<Map<String, MetricFamilyPojo>> savedMetricFamilies = metricFamilyRepository
             .createOrUpdateMetricFamilies(request.metricFamilies().values())
-            .collect(Collectors.toMap(this::buildMetricFamilyKey, identity()));
+            .collect(Collectors.toMap(MetricUtils::buildMetricFamilyKey, identity()));
 
         final Mono<IngestionMetricLabelsDto> metricLabelsMono = getOrCreateMetricLabels(request.labels());
         return Mono.zip(registeredOddrns, savedMetricFamilies, metricLabelsMono)
             .flatMap(function((oddrnsMap, families, labels)
-                -> createMetricSeriesAndMetricPoints(request.points(), oddrnsMap, families, labels)));
+                -> createMetricSeriesAndMetricPoints(request.points(), oddrnsMap, families, labels, ingestedTime)));
     }
 
     private IngestionMetricsRequest buildIngestionMetricsRequest(final MetricSetList metricSetList) {
@@ -158,9 +163,10 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
     private Mono<Void> createMetricSeriesAndMetricPoints(final List<IngestionMetricPointDto> points,
                                                          final Map<String, MetricEntityPojo> oddrnsMap,
                                                          final Map<String, MetricFamilyPojo> families,
-                                                         final IngestionMetricLabelsDto labels) {
-        final List<MetricSeriesDto> metricSeriesList =
-            extractSeriesAndPoints(points, oddrnsMap, families, labels);
+                                                         final IngestionMetricLabelsDto labels,
+                                                         final LocalDateTime ingestedDateTime) {
+        final List<MetricSeriesDto> metricSeriesList = extractSeriesAndPoints(points, oddrnsMap, families,
+            labels, ingestedDateTime);
         final List<MetricSeriesPojo> metricSeriesPojos = metricSeriesList.stream()
             .map(MetricSeriesDto::series)
             .distinct()
@@ -183,12 +189,13 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
     private List<MetricSeriesDto> extractSeriesAndPoints(final List<IngestionMetricPointDto> pointDtoList,
                                                          final Map<String, MetricEntityPojo> oddrnsMap,
                                                          final Map<String, MetricFamilyPojo> familiesMap,
-                                                         final IngestionMetricLabelsDto metricLabels) {
+                                                         final IngestionMetricLabelsDto metricLabels,
+                                                         final LocalDateTime ingestedDateTime) {
         return pointDtoList.stream().flatMap(pointDto -> {
             final MetricEntityPojo metricEntityPojo = oddrnsMap.get(pointDto.oddrn());
             final MetricFamilyPojo metricFamilyPojo = familiesMap.get(buildMetricFamilyKey(pointDto.metricFamily()));
             return getExtractor(pointDto.metricFamily().getType())
-                .extractSeries(pointDto, metricEntityPojo, metricFamilyPojo, metricLabels).stream();
+                .extractSeries(pointDto, metricEntityPojo, metricFamilyPojo, metricLabels, ingestedDateTime).stream();
         }).toList();
     }
 
@@ -228,16 +235,6 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
                 .orElseGet(() -> (int) Instant.now().getEpochSecond());
             return firstTime.compareTo(secondTime);
         };
-    }
-
-    private String buildMetricFamilyKey(final MetricFamily metricFamily) {
-        return String.join("_", metricFamily.getName().toLowerCase(),
-            metricFamily.getUnit().toLowerCase(), metricFamily.getType().getValue().toLowerCase());
-    }
-
-    private String buildMetricFamilyKey(final MetricFamilyPojo metricFamily) {
-        return String.join("_", metricFamily.getName().toLowerCase(),
-            metricFamily.getUnit().toLowerCase(), metricFamily.getType().toLowerCase());
     }
 
     private MetricSeriesExtractor getExtractor(final MetricType type) {

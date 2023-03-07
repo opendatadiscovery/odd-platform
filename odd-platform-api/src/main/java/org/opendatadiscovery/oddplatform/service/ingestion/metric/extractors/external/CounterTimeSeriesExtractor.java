@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.CREATED;
+import static org.opendatadiscovery.oddplatform.utils.MetricUtils.generateMetricSeriesName;
+
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "external")
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "PROMETHEUS")
 public class CounterTimeSeriesExtractor extends AbstractTimeSeriesExtractor implements TimeSeriesExtractor {
     public CounterTimeSeriesExtractor(final IngestionMetricsMapper mapper,
                                       @Value("${odd.tenant-id}") final String tenantId) {
@@ -50,7 +53,7 @@ public class CounterTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                          final List<Label> labels,
                                          final long timestamp) {
         final double value = metricPoint.getCounterValue().getTotal().doubleValue();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_total", metricFamilyPojo.getId(), labels, value,
+        return createTimeSeries(oddrn, metricFamilyPojo.getName(), metricFamilyPojo.getId(), labels, value,
             timestamp);
     }
 
@@ -60,7 +63,8 @@ public class CounterTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                            final List<Label> labels,
                                            final long timestamp) {
         final double value = metricPoint.getCounterValue().getCreated().doubleValue();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_created", metricFamilyPojo.getId(), labels, value,
+        return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), CREATED),
+            metricFamilyPojo.getId(), labels, value,
             timestamp);
     }
 }

@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.internal;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +10,6 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricLabelsDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricPointDto;
 import org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesDto;
 import org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType;
-import org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricType;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMetricsMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricEntityPojo;
@@ -28,7 +25,7 @@ import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.QUANTILE;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "INTERNAL_POSTGRES", matchIfMissing = true)
 public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor implements MetricSeriesExtractor {
 
     public SummaryMetricsSeriesExtractor(final IngestionMetricsMapper mapper) {
@@ -44,7 +41,8 @@ public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
     public List<MetricSeriesDto> extractSeries(final IngestionMetricPointDto point,
                                                final MetricEntityPojo metricEntityPojo,
                                                final MetricFamilyPojo metricFamilyPojo,
-                                               final IngestionMetricLabelsDto allLabelsDto) {
+                                               final IngestionMetricLabelsDto allLabelsDto,
+                                               final LocalDateTime ingestedTime) {
         if (point.metricPoint().getSummaryValue() == null) {
             throw new IllegalArgumentException("Summary metric point must have summary value");
         }
@@ -52,18 +50,17 @@ public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
             throw new IllegalArgumentException("Summary metric point must have at least one quantile");
         }
         final List<MetricSeriesDto> result = new ArrayList<>();
-        final LocalDateTime defaultDateTime = OffsetDateTime.now(ZoneOffset.UTC).toLocalDateTime();
         if (point.metricPoint().getSummaryValue().getSum() != null) {
-            result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
         }
         if (point.metricPoint().getSummaryValue().getCount() != null) {
-            result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
         }
         if (point.metricPoint().getSummaryValue().getQuantile() != null) {
-            result.add(createQuantileSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createQuantileSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
         }
         if (point.metricPoint().getSummaryValue().getCreated() != null) {
-            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
         }
         return result;
     }

@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "internal", matchIfMissing = true)
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "INTERNAL_POSTGRES", matchIfMissing = true)
 public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtractor implements MetricSeriesExtractor {
 
     public HistogramMetricSeriesExtractor(final IngestionMetricsMapper mapper) {
@@ -34,7 +34,8 @@ public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtracto
     public List<MetricSeriesDto> extractSeries(final IngestionMetricPointDto point,
                                                final MetricEntityPojo metricEntityPojo,
                                                final MetricFamilyPojo metricFamilyPojo,
-                                               final IngestionMetricLabelsDto allLabelsDto) {
+                                               final IngestionMetricLabelsDto allLabelsDto,
+                                               final LocalDateTime ingestedDateTime) {
         if (point.metricPoint().getHistogramValue() == null) {
             throw new IllegalArgumentException("Histogram metric point must have histogram value");
         }
@@ -42,18 +43,17 @@ public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtracto
             throw new IllegalArgumentException("Histogram metric point must have at least one bucket");
         }
         final List<MetricSeriesDto> result = new ArrayList<>();
-        final LocalDateTime defaultDateTime = OffsetDateTime.now(ZoneOffset.UTC).toLocalDateTime();
         if (point.metricPoint().getHistogramValue().getSum() != null) {
-            result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         }
         if (point.metricPoint().getHistogramValue().getCount() != null) {
-            result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         }
         if (point.metricPoint().getHistogramValue().getBuckets() != null) {
-            result.add(createBucketSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createBucketSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         }
         if (point.metricPoint().getHistogramValue().getCreated() != null) {
-            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         }
         return result;
     }

@@ -6,12 +6,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum MetricSeriesValueType {
-    VALUE(1),
-    COUNT(2),
-    SUM(3),
-    CREATED(4),
-    BUCKET(5),
-    QUANTILE(6);
+    VALUE(1, ""),
+    COUNT(2, "_count"),
+    SUM(3, "_sum"),
+    CREATED(4, "_created"),
+    BUCKET(5, "_bucket"),
+    QUANTILE(6, "_quantile");
 
     private final int code;
+    private final String suffix;
 }

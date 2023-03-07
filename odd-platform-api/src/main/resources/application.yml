@@ -134,7 +134,7 @@ auth:
 #          - Managers
 
 metrics:
-  storage: internal # internal, external
+  storage: INTERNAL_POSTGRES # INTERNAL_POSTGRES, PROMETHEUS
   prometheus-host: http://localhost:9090
   export:
     enabled: false

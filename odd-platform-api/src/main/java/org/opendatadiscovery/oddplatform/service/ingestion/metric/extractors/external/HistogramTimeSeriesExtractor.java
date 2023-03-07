@@ -11,14 +11,20 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricType;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMetricsMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricFamilyPojo;
 import org.opendatadiscovery.oddplatform.proto.TimeSeries;
+import org.opendatadiscovery.oddplatform.utils.MetricUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.BUCKET;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.COUNT;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.CREATED;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.SUM;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.BUCKET_UPPER_BOUND;
+import static org.opendatadiscovery.oddplatform.utils.MetricUtils.generateMetricSeriesName;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "external")
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "PROMETHEUS")
 public class HistogramTimeSeriesExtractor extends AbstractTimeSeriesExtractor implements TimeSeriesExtractor {
     public HistogramTimeSeriesExtractor(final IngestionMetricsMapper mapper,
                                         @Value("${odd.tenant-id}") final String tenantId) {
@@ -63,8 +69,8 @@ public class HistogramTimeSeriesExtractor extends AbstractTimeSeriesExtractor im
                                            final List<Label> labels,
                                            final long timestamp) {
         final Integer value = metricPoint.getHistogramValue().getCreated();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_created", metricFamilyPojo.getId(), labels,
-            value.doubleValue(), timestamp);
+        return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), CREATED),
+            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
     }
 
     private TimeSeries createCountSeries(final String oddrn,
@@ -72,8 +78,8 @@ public class HistogramTimeSeriesExtractor extends AbstractTimeSeriesExtractor im
                                          final MetricPoint metricPoint, final List<Label> labels,
                                          final long timestamp) {
         final Long value = metricPoint.getHistogramValue().getCount();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_count", metricFamilyPojo.getId(), labels,
-            value.doubleValue(), timestamp);
+        return createTimeSeries(oddrn, MetricUtils.generateMetricSeriesName(metricFamilyPojo.getName(), COUNT),
+            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
     }
 
     private TimeSeries createSumSeries(final String oddrn,
@@ -81,8 +87,8 @@ public class HistogramTimeSeriesExtractor extends AbstractTimeSeriesExtractor im
                                        final MetricPoint metricPoint,
                                        final List<Label> labels, final long timestamp) {
         final BigDecimal value = metricPoint.getHistogramValue().getSum();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_sum", metricFamilyPojo.getId(), labels,
-            value.doubleValue(), timestamp);
+        return createTimeSeries(oddrn, MetricUtils.generateMetricSeriesName(metricFamilyPojo.getName(), SUM),
+            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
     }
 
     private List<TimeSeries> createBucketSeries(final String oddrn,
@@ -93,8 +99,8 @@ public class HistogramTimeSeriesExtractor extends AbstractTimeSeriesExtractor im
         return metricPoint.getHistogramValue().getBuckets().stream().map(bucket -> {
             final var l = new ArrayList<>(labels);
             l.add(new Label().name(BUCKET_UPPER_BOUND.getLabelName()).value(bucket.getUpperBound().toString()));
-            return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_bucket", metricFamilyPojo.getId(), l,
-                bucket.getCount(), timestamp);
+            return createTimeSeries(oddrn, MetricUtils.generateMetricSeriesName(metricFamilyPojo.getName(), BUCKET),
+                metricFamilyPojo.getId(), l, bucket.getCount(), timestamp);
         }).toList();
     }
 }

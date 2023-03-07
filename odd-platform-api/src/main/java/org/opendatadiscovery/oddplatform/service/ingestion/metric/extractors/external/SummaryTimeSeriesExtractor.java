@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
+import org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Label;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricPoint;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricType;
@@ -15,10 +16,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.QUANTILE;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.COUNT;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.CREATED;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.QUANTILE;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.SUM;
+import static org.opendatadiscovery.oddplatform.utils.MetricUtils.generateMetricSeriesName;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "external")
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "PROMETHEUS")
 public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor implements TimeSeriesExtractor {
     public SummaryTimeSeriesExtractor(final IngestionMetricsMapper mapper,
                                       final @Value("${odd.tenant-id}") String tenantId) {
@@ -63,8 +68,8 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                            final List<Label> labels,
                                            final long timestamp) {
         final Integer value = metricPoint.getSummaryValue().getCreated();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_created", metricFamilyPojo.getId(), labels,
-            value.doubleValue(), timestamp);
+        return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), CREATED),
+            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
     }
 
     private TimeSeries createCountSeries(final String oddrn,
@@ -73,8 +78,8 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                          final List<Label> labels,
                                          final long timestamp) {
         final Long value = metricPoint.getSummaryValue().getCount();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_count", metricFamilyPojo.getId(), labels,
-            value.doubleValue(), timestamp);
+        return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), COUNT),
+            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
     }
 
     private TimeSeries createSumSeries(final String oddrn,
@@ -83,8 +88,8 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                        final List<Label> labels,
                                        final long timestamp) {
         final BigDecimal value = metricPoint.getSummaryValue().getSum();
-        return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_sum", metricFamilyPojo.getId(), labels,
-            value.doubleValue(), timestamp);
+        return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), SUM),
+            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
     }
 
     private List<TimeSeries> createQuantileSeries(final String oddrn,
@@ -94,9 +99,9 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                                   final long timestamp) {
         return metricPoint.getSummaryValue().getQuantile().stream().map(quantile -> {
             final var l = new ArrayList<>(labels);
-            l.add(new Label().name(QUANTILE.getLabelName()).value(quantile.getQuantile().toString()));
-            return createTimeSeries(oddrn, metricFamilyPojo.getName() + "_quantile", metricFamilyPojo.getId(), l,
-                quantile.getValue().doubleValue(), timestamp);
+            l.add(new Label().name(SystemMetricLabel.QUANTILE.getLabelName()).value(quantile.getQuantile().toString()));
+            return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), QUANTILE),
+                metricFamilyPojo.getId(), l, quantile.getValue().doubleValue(), timestamp);
         }).toList();
     }
 }

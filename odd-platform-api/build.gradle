@@ -95,9 +95,6 @@ jibDockerBuild.dependsOn test
 
 sourceSets {
     main {
-        proto {
-            srcDirs 'src/main/resources/proto'
-        }
         java {
             srcDirs 'src/main/java'
             srcDirs 'build/generated-jooq/src/main/java'

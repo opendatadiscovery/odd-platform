@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "external")
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "PROMETHEUS")
 public class GaugeTimeSeriesExtractor extends AbstractTimeSeriesExtractor implements TimeSeriesExtractor {
     public GaugeTimeSeriesExtractor(final IngestionMetricsMapper mapper,
                                     @Value("${odd.tenant-id}") final String tenantId) {

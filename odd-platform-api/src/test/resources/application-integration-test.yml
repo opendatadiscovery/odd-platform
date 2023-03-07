@@ -11,7 +11,7 @@ datacollaboration:
   enabled: false
 
 metrics:
-  storage: internal
+  storage: INTERNAL_POSTGRES
 
 logging:
   level:

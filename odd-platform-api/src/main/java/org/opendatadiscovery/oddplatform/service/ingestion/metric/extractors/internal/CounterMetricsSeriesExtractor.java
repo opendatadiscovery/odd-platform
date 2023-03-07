@@ -17,10 +17,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "metrics.storage", havingValue = "internal", matchIfMissing = true)
-public class CountMetricsSeriesExtractor extends AbstractMetricSeriesExtractor implements MetricSeriesExtractor {
+@ConditionalOnProperty(name = "metrics.storage", havingValue = "INTERNAL_POSTGRES", matchIfMissing = true)
+public class CounterMetricsSeriesExtractor extends AbstractMetricSeriesExtractor implements MetricSeriesExtractor {
 
-    public CountMetricsSeriesExtractor(final IngestionMetricsMapper mapper) {
+    public CounterMetricsSeriesExtractor(final IngestionMetricsMapper mapper) {
         super(mapper);
     }
 
@@ -33,15 +33,15 @@ public class CountMetricsSeriesExtractor extends AbstractMetricSeriesExtractor i
     public List<MetricSeriesDto> extractSeries(final IngestionMetricPointDto point,
                                                final MetricEntityPojo metricEntityPojo,
                                                final MetricFamilyPojo metricFamilyPojo,
-                                               final IngestionMetricLabelsDto allLabelsDto) {
+                                               final IngestionMetricLabelsDto allLabelsDto,
+                                               final LocalDateTime ingestedDateTime) {
         if (point.metricPoint().getCounterValue() == null || point.metricPoint().getCounterValue().getTotal() == null) {
             throw new IllegalArgumentException("Counter value is null");
         }
-        final LocalDateTime defaultDateTime = OffsetDateTime.now(ZoneOffset.UTC).toLocalDateTime();
         final List<MetricSeriesDto> result = new ArrayList<>();
-        result.add(createTotalSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+        result.add(createTotalSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         if (point.metricPoint().getCounterValue().getCreated() != null) {
-            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime));
+            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         }
         return result;
     }
