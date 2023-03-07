@@ -19,7 +19,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
   onItemRemove,
   datasetFieldType,
   isKeyEditable,
-  isValueEditable,
+  isValueEditable = true,
 }) => {
   const { control, getValues } = useFormContext();
 

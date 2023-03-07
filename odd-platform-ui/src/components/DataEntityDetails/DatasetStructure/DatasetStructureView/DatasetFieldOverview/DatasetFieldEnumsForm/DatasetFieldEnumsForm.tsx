@@ -52,12 +52,12 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
       return { enums };
     }
 
-    return { enums: [{ name: '', description: '' }] };
+    return { enums: [{ name: '', description: '', modifiable: true }] };
   }, [defaultEnums]);
 
   const isFormEditable = React.useMemo(
     () => defaultValues.enums.some(el => el?.modifiable),
-    [defaultEnums]
+    [defaultValues]
   );
 
   const methods = useForm<DatasetFieldEnumsFormData>({
