@@ -16,18 +16,20 @@ import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldE
 interface DataSetFieldEnumsFormProps {
   datasetFieldId: number;
   datasetFieldName: string;
+  isExternal: boolean;
   btnCreateEl: JSX.Element;
   datasetFieldType: DataSetFieldTypeTypeEnum;
-  defaultEnums: EnumValue[];
+  defaultEnums: EnumValue[] | undefined;
 }
 
 interface DatasetFieldEnumsFormData {
-  enums: EnumValueFormData[];
+  enums: Array<EnumValueFormData & { modifiable?: boolean }>;
 }
 
 const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
   datasetFieldId,
   datasetFieldName,
+  isExternal,
   btnCreateEl,
   datasetFieldType,
   defaultEnums,
@@ -38,19 +40,25 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
     getDatasetFieldEnumsCreatingStatus
   );
 
-  const defaultValues = React.useMemo(() => {
-    if (defaultEnums[0] && 'id' in defaultEnums[0]) {
-      return {
-        enums: defaultEnums.map(enumItem => ({
-          id: enumItem.id,
-          name: enumItem.name,
-          description: enumItem.description,
-        })),
-      };
+  const defaultValues = React.useMemo<DatasetFieldEnumsFormData>(() => {
+    if (defaultEnums && defaultEnums[0] && 'id' in defaultEnums[0]) {
+      const enums = defaultEnums?.map(({ id, name, description, modifiable }) => ({
+        id,
+        name,
+        description,
+        modifiable,
+      }));
+
+      return { enums };
     }
 
-    return { enums: [{ name: '', description: '' }] };
+    return { enums: [{ name: '', description: '', modifiable: true }] };
   }, [defaultEnums]);
+
+  const isFormEditable = React.useMemo(
+    () => defaultValues.enums.some(el => el?.modifiable),
+    [defaultValues]
+  );
 
   const methods = useForm<DatasetFieldEnumsFormData>({
     defaultValues,
@@ -127,14 +135,16 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
           Custom values
         </Typography>
       </Grid>
-      <AppButton
-        size='medium'
-        color='primaryLight'
-        startIcon={<AddIcon />}
-        onClick={handleAppend}
-      >
-        Add value
-      </AppButton>
+      {!isExternal && (
+        <AppButton
+          size='medium'
+          color='primaryLight'
+          startIcon={<AddIcon />}
+          onClick={handleAppend}
+        >
+          Add value
+        </AppButton>
+      )}
     </Grid>
   );
 
@@ -150,6 +160,8 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
             itemIndex={idx}
             onItemRemove={handleRemove(idx)}
             datasetFieldType={datasetFieldType}
+            isKeyEditable={isExternal}
+            isValueEditable={item.modifiable}
           />
         ))}
       </form>
@@ -163,7 +175,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
         type='submit'
         form='dataset-field-enums-form'
         color='primary'
-        disabled={!methods.formState.isValid}
+        disabled={!methods.formState.isValid || !isFormEditable}
         isLoading={isEnumsCreating}
         sx={{ mr: 1, minWidth: '64px !important' }}
       >

@@ -9,7 +9,7 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import type { EnumValue } from 'generated-sources';
+import type { EnumValue, EnumValueList } from 'generated-sources';
 import { emptyArr } from 'lib/constants';
 
 export const getDataSetStructureFetchingStatus = createStatusesSelector(
@@ -93,11 +93,12 @@ export const getDatasetStructureTypeStats = ({
     }
   );
 
-export const getDatasetFieldEnums = (datasetFieldId: number | undefined) =>
-  createSelector(getDatasetStructureState, datasetStructureState => {
-    if (!datasetFieldId) return [{ name: '', description: '' } as EnumValue];
-    return datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr;
-  });
+export const getDatasetFieldEnums = (datasetFieldId: number) =>
+  createSelector(
+    getDatasetStructureState,
+    (datasetStructureState): EnumValueList =>
+      datasetStructureState.fieldEnumsByFieldId[datasetFieldId]
+  );
 
 export const getDatasetFieldById = (datasetFieldId: number) =>
   createSelector(
