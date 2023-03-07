@@ -39,9 +39,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
     };
   }, [field.id, showEnums]);
 
-  const { external, items: datasetFieldEnums } = useAppSelector(
-    getDatasetFieldEnums(field.id)
-  );
+  const datasetFieldEnums = useAppSelector(getDatasetFieldEnums(field.id));
   const error = useAppSelector(getDatasetFieldEnumsFetchingError);
 
   const content = React.useMemo(() => {
@@ -54,22 +52,20 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
 
     return field.enumValueCount ? (
       <Grid container mt={1}>
-        {datasetFieldEnums?.map(
-          ({ name, internalDescription, externalDescription, id }) => (
-            <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
-              {external ? externalDescription : internalDescription}
-            </LabeledInfoItem>
-          )
-        )}
+        {datasetFieldEnums?.items?.map(({ name, description, id }) => (
+          <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
+            {description}
+          </LabeledInfoItem>
+        ))}
       </Grid>
     ) : (
       <Typography mt={1} variant='subtitle1'>
         Enums are not created yet
       </Typography>
     );
-  }, [error, field.enumValueCount, datasetFieldEnums]);
+  }, [error, field.enumValueCount, datasetFieldEnums?.items]);
 
-  return showEnums && datasetFieldEnums ? (
+  return showEnums ? (
     <S.SectionContainer container>
       <Grid container justifyContent='space-between'>
         <Typography variant='h3'>Enums</Typography>
@@ -77,11 +73,11 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
           permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
           renderContent={({ isAllowedTo: editEnums }) => (
             <DatasetFieldEnumsForm
-              isExternal={external}
+              isExternal={datasetFieldEnums?.external}
               datasetFieldId={field.id}
               datasetFieldName={field.name}
               datasetFieldType={field.type.type}
-              defaultEnums={datasetFieldEnums}
+              defaultEnums={datasetFieldEnums?.items}
               btnCreateEl={
                 <AppButton
                   disabled={!editEnums}

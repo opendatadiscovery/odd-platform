@@ -19,11 +19,11 @@ interface DataSetFieldEnumsFormProps {
   isExternal: boolean;
   btnCreateEl: JSX.Element;
   datasetFieldType: DataSetFieldTypeTypeEnum;
-  defaultEnums: EnumValue[];
+  defaultEnums: EnumValue[] | undefined;
 }
 
 interface DatasetFieldEnumsFormData {
-  enums: EnumValueFormData[];
+  enums: Array<EnumValueFormData & { modifiable?: boolean }>;
 }
 
 const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
@@ -40,24 +40,25 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
     getDatasetFieldEnumsCreatingStatus
   );
 
-  const defaultValues = React.useMemo(() => {
-    if (defaultEnums[0] && 'id' in defaultEnums[0]) {
-      return {
-        enums: defaultEnums.map(
-          ({ id, name, externalDescription, internalDescription }) => ({
-            id,
-            name,
-            description:
-              isExternal && externalDescription
-                ? externalDescription
-                : internalDescription,
-          })
-        ),
-      };
+  const defaultValues = React.useMemo<DatasetFieldEnumsFormData>(() => {
+    if (defaultEnums && defaultEnums[0] && 'id' in defaultEnums[0]) {
+      const enums = defaultEnums?.map(({ id, name, description, modifiable }) => ({
+        id,
+        name,
+        description,
+        modifiable,
+      }));
+
+      return { enums };
     }
 
     return { enums: [{ name: '', description: '' }] };
-  }, [defaultEnums, isExternal]);
+  }, [defaultEnums]);
+
+  const isFormEditable = React.useMemo(
+    () => defaultValues.enums.some(el => el?.modifiable),
+    [defaultEnums]
+  );
 
   const methods = useForm<DatasetFieldEnumsFormData>({
     defaultValues,
@@ -153,17 +154,16 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
         id='dataset-field-enums-form'
         onSubmit={methods.handleSubmit(handleFormSubmit)}
       >
-        content
-        {/* {fields.map((item, idx) => ( */}
-        {/*   <DatasetFieldEnumsFormItem */}
-        {/*     key={item.id} */}
-        {/*     itemIndex={idx} */}
-        {/*     onItemRemove={handleRemove(idx)} */}
-        {/*     datasetFieldType={datasetFieldType} */}
-        {/*     isKeyEditable={isExternal} */}
-        {/*     // isValueEditable={isExternal && ex} */}
-        {/*   /> */}
-        {/* ))} */}
+        {fields.map((item, idx) => (
+          <DatasetFieldEnumsFormItem
+            key={item.id}
+            itemIndex={idx}
+            onItemRemove={handleRemove(idx)}
+            datasetFieldType={datasetFieldType}
+            isKeyEditable={isExternal}
+            isValueEditable={item.modifiable}
+          />
+        ))}
       </form>
     </FormProvider>
   );
@@ -175,7 +175,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
         type='submit'
         form='dataset-field-enums-form'
         color='primary'
-        disabled={!methods.formState.isValid}
+        disabled={!methods.formState.isValid || !isFormEditable}
         isLoading={isEnumsCreating}
         sx={{ mr: 1, minWidth: '64px !important' }}
       >
