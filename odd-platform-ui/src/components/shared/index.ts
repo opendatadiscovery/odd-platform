@@ -61,3 +61,4 @@ export { default as WithFeature } from './WithFeature/WithFeature';
 export { default as TruncatedSVGText } from './TruncatedSVGText/TruncatedSVGText';
 export { default as AppSwitch } from './AppSwitch/AppSwitch';
 export { default as MetadataItem } from './MetadataItem/MetadataItem';
+export { default as AppSuspenseWrapper } from './AppSuspenseWrapper/AppSuspenseWrapper';

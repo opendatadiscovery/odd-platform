@@ -73,7 +73,6 @@ const App: React.FC = () => {
                 />
               )}
             />
-
             <Route exact path={[baseSearchPath(), searchPath()]} component={Search} />
             <Route
               exact

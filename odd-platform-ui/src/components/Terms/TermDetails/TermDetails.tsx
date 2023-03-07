@@ -1,7 +1,6 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getResourcePermissions,
@@ -18,21 +17,13 @@ import TermDetailsHeader from './TermDetailsHeader/TermDetailsHeader';
 import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
 import TermDetailsTabs from './TermDetailsTabs/TermDetailsTabs';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
-
-// lazy components
-const Overview = React.lazy(
-  () => import('components/Terms/TermDetails/Overview/Overview')
-);
-const LinkedItemsList = React.lazy(
-  () => import('components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsList')
-);
+import TermDetailsRoutes from './TermDetailsRoutes/TermDetailsRoutes';
 
 const TermDetailsView: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
-  const { termSearchPath, termDetailsLinkedItemsPath, termDetailsOverviewPath } =
-    useAppPaths();
+  const { termSearchPath } = useAppPaths();
 
   const {
     isLoading: isTermDetailsFetching,
@@ -89,18 +80,7 @@ const TermDetailsView: React.FC = () => {
           renderContent={({ randWidth }) => <TermDetailsSkeleton width={randWidth()} />}
         />
       ) : null}
-      {isTermDetailsFetched && (
-        <React.Suspense fallback={<AppLoadingPage />}>
-          <Switch>
-            <Route exact path={termDetailsOverviewPath()} component={Overview} />
-            <Route
-              exact
-              path={termDetailsLinkedItemsPath()}
-              component={LinkedItemsList}
-            />
-          </Switch>
-        </React.Suspense>
-      )}
+      {isTermDetailsFetched && <TermDetailsRoutes />}
       <AppErrorPage
         showError={isTermDetailsNotFetched}
         error={termDetailsFetchingErrors}

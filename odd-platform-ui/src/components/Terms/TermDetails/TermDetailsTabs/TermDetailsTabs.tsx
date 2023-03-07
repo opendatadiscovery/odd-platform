@@ -6,30 +6,30 @@ import { useAppSelector } from 'redux/lib/hooks';
 
 const TermDetailsTabs: React.FC = () => {
   const { termId, viewType } = useAppParams();
-  const { termDetailsOverviewPath, termDetailsLinkedItemsPath } = useAppPaths();
+  const { termDetailsOverviewPath, termDetailsLinkedItemsPath, TermsRoutes } =
+    useAppPaths();
 
   const termDetails = useAppSelector(getTermDetails(termId));
 
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
-
-  React.useEffect(() => {
-    setTabs([
+  const tabs = React.useMemo<AppTabItem[]>(
+    () => [
       {
         name: 'Overview',
         link: termDetailsOverviewPath(termId),
-        value: 'overview',
+        value: TermsRoutes.overview,
       },
       {
         name: 'Linked items',
         link: termDetailsLinkedItemsPath(termId),
         hint: termDetails?.entitiesUsingCount,
         hidden: !termDetails?.entitiesUsingCount,
-        value: 'linked-items',
+        value: TermsRoutes.linkedItems,
       },
-    ]);
-  }, [termId, termDetails?.entitiesUsingCount]);
+    ],
+    [termId, termDetails?.entitiesUsingCount]
+  );
 
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+  const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
     setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
