@@ -98,6 +98,6 @@ public class IngestionController implements IngestionApi {
         return dsList.getItems()
             .stream()
             .flatMap(ds -> Stream.of(ds.getName(), ds.getOddrn()))
-            .allMatch(string -> StringUtils.isNotEmpty(string == null ? null : string.trim()));
+            .allMatch(string -> string != null && StringUtils.isNotEmpty(string.trim()));
     }
 }
