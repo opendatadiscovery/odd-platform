@@ -15,7 +15,7 @@ public class OffsetDateTimeComparator implements Comparator<OffsetDateTime> {
     }
 
     @Override
-    public int compare(final OffsetDateTime o1, OffsetDateTime o2) {
+    public int compare(final OffsetDateTime o1, final OffsetDateTime o2) {
         if (o1 == null && o2 == null) {
             return 0;
         }
