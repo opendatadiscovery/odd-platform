@@ -1,18 +1,33 @@
 export const EMBEDDED = 'embedded';
 
-export enum AppRoutes {
-  search = 'search',
+export enum BaseRoutes {
+  base = '/',
+}
+
+export enum ActivityRoutes {
   activity = 'activity',
-  alerts = 'alerts',
-  searchId = ':searchId',
+}
+
+export enum SearchRoutes {
+  search = 'search',
+  searchId = 'searchId',
+  searchIdParam = ':searchId',
 }
 
 export enum DataEntityRoutes {
   dataentities = 'dataentities',
-  dataEntityId = ':dataEntityId',
-  dataQATestId = ':dataQATestId?',
-  messageId = ':messageId',
-  viewType = ':viewType?',
+  dataEntityId = 'dataEntityId',
+  dataEntityIdParam = ':dataEntityId',
+  dataQATestId = 'dataQATestId',
+  dataQATestIdParam = ':dataQATestId',
+  messageId = 'messageId',
+  messageIdParam = ':messageId',
+  dataEntityViewType = 'dataEntityViewType',
+  dataEntityViewTypeParam = ':dataEntityViewType',
+  testReportViewType = 'testReportViewType',
+  testReportViewTypeParam = ':testReportViewType',
+  versionId = 'versionId',
+  versionIdParam = ':versionId',
   overview = 'overview',
   lineage = 'lineage',
   structure = 'structure',
@@ -31,11 +46,13 @@ export enum AlertsRoutes {
   all = 'all',
   my = 'my',
   dependents = 'dependents',
-  viewType = ':viewType',
+  alertsViewType = 'alertsViewType',
+  alertsViewTypeParam = ':alertsViewType',
 }
 
 export enum ManagementRoutes {
-  viewType = ':viewType',
+  managementViewType = 'managementViewType',
+  managementViewTypeParam = ':managementViewType',
   management = 'management',
   namespaces = 'namespaces',
   datasources = 'datasources',
@@ -44,20 +61,26 @@ export enum ManagementRoutes {
   tags = 'tags',
   labels = 'labels',
   associations = 'associations',
-  associationsNew = 'New',
-  associationsResolved = 'Resolved',
+  associationsViewType = 'associationsViewType',
+  associationsViewTypeParam = ':associationsViewType',
+  associationsNew = 'new',
+  associationsResolved = 'resolved',
   roles = 'roles',
   policies = 'policies',
   createPolicy = 'createPolicy',
-  policyId = ':policyId',
+  policyId = 'policyId',
+  policyIdParam = ':policyId',
 }
 
 export enum TermsRoutes {
   termSearch = 'termsearch',
   terms = 'terms',
-  termSearchId = ':termSearchId',
-  termId = ':termId',
-  viewType = ':viewType',
+  termSearchId = 'termSearchId',
+  termSearchIdParam = ':termSearchId',
+  termId = 'termId',
+  termIdParam = ':termId',
+  termsViewType = 'termsViewType',
+  termsViewTypeParam = ':termsViewType',
   overview = 'overview',
   linkedItems = 'linked-items',
 }

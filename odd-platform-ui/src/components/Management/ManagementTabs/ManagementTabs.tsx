@@ -5,7 +5,7 @@ import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import { Grid } from '@mui/material';
 
 const ManagementTabs: React.FC = () => {
-  const { viewType } = useAppParams();
+  const { managementViewType } = useAppParams();
   const { managementPath, managementOwnerAssociationsPath, ManagementRoutes } =
     useAppPaths();
   const { hasAccessTo } = usePermissions();
@@ -27,7 +27,7 @@ const ManagementTabs: React.FC = () => {
       { name: 'Labels', link: managementPath(ManagementRoutes.labels) },
       {
         name: 'Associations',
-        link: managementOwnerAssociationsPath(ManagementRoutes.associationsNew),
+        link: managementPath(ManagementRoutes.associations),
         hidden: hideAssociations,
       },
       { name: 'Roles', link: managementPath(ManagementRoutes.roles) },
@@ -38,9 +38,13 @@ const ManagementTabs: React.FC = () => {
 
   React.useEffect(() => {
     setSelectedTab(
-      viewType ? tabs.findIndex(tab => tab.name.toLowerCase() === viewType) : 0
+      managementViewType
+        ? tabs.findIndex(tab => tab.name.toLowerCase() === managementViewType)
+        : 0
     );
-  }, [tabs, viewType]);
+  }, [tabs, managementViewType]);
+
+  console.log('managementViewType', managementViewType);
 
   return (
     <Grid sx={{ p: 0.5 }}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
-import * as S from './RequestStatusStyles';
+import * as S from 'components/Management/OwnerAssociations/shared/RequestStatus/RequestStatusStyles';
 
 interface Props {
   status: OwnerAssociationRequestStatus | undefined;

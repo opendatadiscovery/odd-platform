@@ -20,7 +20,7 @@ export const TermLinkedItemsColContainer = styled(Grid)<{
 
 export const TermLinkedItemsListContainer = styled(Grid)(({ theme }) => ({
   height: `calc(100vh - ${toolbarHeight}px - ${itemHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
-    8
+    13.25
   )})`,
   overflow: 'auto',
 }));

@@ -8,7 +8,7 @@ export const useIsEmbeddedPath = () => {
 
   const updatePath = React.useCallback(
     (link: string) => {
-      if (isPathEmbedded) return `/${EMBEDDED}${link}`;
+      if (isPathEmbedded) return `${EMBEDDED}/${link}`;
       return link;
     },
     [isPathEmbedded]

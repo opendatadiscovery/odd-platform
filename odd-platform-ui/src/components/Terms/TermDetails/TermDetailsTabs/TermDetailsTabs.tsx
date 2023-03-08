@@ -5,7 +5,7 @@ import { getTermDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 
 const TermDetailsTabs: React.FC = () => {
-  const { termId, viewType } = useAppParams();
+  const { termId, termsViewType } = useAppParams();
   const { termDetailsOverviewPath, termDetailsLinkedItemsPath, TermsRoutes } =
     useAppPaths();
 
@@ -32,8 +32,10 @@ const TermDetailsTabs: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
-    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
-  }, [tabs, viewType]);
+    setSelectedTab(
+      termsViewType ? tabs.findIndex(tab => tab.value === termsViewType) : 0
+    );
+  }, [tabs, termsViewType]);
 
   return (
     <>

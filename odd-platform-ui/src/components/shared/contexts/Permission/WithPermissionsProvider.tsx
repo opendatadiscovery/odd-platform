@@ -33,7 +33,9 @@ const WithPermissionsProvider: React.FC<WithPermissionsProviderProps> = ({
     >
       <Component />
     </PermissionProvider>
-  ) : null;
+  ) : (
+    <div>zalupa</div>
+  );
 };
 
 export default WithPermissionsProvider;

@@ -11,7 +11,7 @@ import { AcceptIcon, RejectIcon } from 'components/shared/Icons';
 import { updateOwnerAssociationRequest } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { usePermissions } from 'lib/hooks';
-import * as S from './AssociationRequestStyles';
+import * as S from '../../shared/OwnerAssociationsStyles';
 
 interface Props {
   id: OwnerAssociationRequest['id'];
@@ -56,7 +56,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
   );
 
   return (
-    <S.Container container>
+    <S.AssociationsItemContainer container>
       <Grid item lg={4}>
         <Typography variant='body1' noWrap title={username}>
           {username}
@@ -70,7 +70,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
       <Grid item lg={3}>
         {provider}
       </Grid>
-      <S.ActionsContainer container item lg={2}>
+      <S.AssociationsItemActionsContainer container item lg={2}>
         <ConfirmationDialog
           actionTitle='Are you sure you want to accept association request?'
           actionName='Accept'
@@ -104,8 +104,8 @@ const ActiveAssociationRequest: React.FC<Props> = ({
             </AppButton>
           }
         />
-      </S.ActionsContainer>
-    </S.Container>
+      </S.AssociationsItemActionsContainer>
+    </S.AssociationsItemContainer>
   );
 };
 

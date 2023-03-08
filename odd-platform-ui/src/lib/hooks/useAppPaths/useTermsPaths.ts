@@ -13,7 +13,7 @@ export const useTermsPaths = () => {
 
   const termDetailsPath = (
     termId: TermId = TermsRoutes.termId,
-    viewType: string = TermsRoutes.viewType
+    viewType: string = TermsRoutes.termsViewTypeParam
   ) => updatePath(`/${TermsRoutes.terms}/${termId}/${viewType}`);
 
   const termDetailsLinkedItemsPath = (termId: TermId = TermsRoutes.termId) =>

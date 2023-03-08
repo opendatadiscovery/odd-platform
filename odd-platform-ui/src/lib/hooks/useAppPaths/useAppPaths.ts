@@ -4,7 +4,9 @@ import { useManagementPaths } from './useManagementPaths';
 import { useTermsPaths } from './useTermsPaths';
 import { useDataEntityPaths } from './useDataEntityPaths';
 import {
-  AppRoutes,
+  BaseRoutes,
+  ActivityRoutes,
+  SearchRoutes,
   AlertsRoutes,
   ManagementRoutes,
   TermsRoutes,
@@ -19,27 +21,32 @@ const useAppPaths = () => {
   const alertsPaths = useAlertsPaths();
   const dataEntityPaths = useDataEntityPaths();
 
-  const basePath = updatePath('/');
+  const getNonExactPath = (path: string) => updatePath(`${path}/*`);
+
+  const basePath = updatePath(BaseRoutes.base);
 
   // search
-  const baseSearchPath = () => updatePath(`/${AppRoutes.search}`);
-  const searchPath = (searchId: string = AppRoutes.searchId) =>
+  const baseSearchPath = () => updatePath(`/${SearchRoutes.search}`);
+  const searchPath = (searchId: string = SearchRoutes.searchIdParam) =>
     `${baseSearchPath()}/${searchId}`;
 
   // Activity
   const activityPath = (query?: string) =>
-    updatePath(`/${AppRoutes.activity}${query ? `?${query}` : ''}`);
+    updatePath(`/${ActivityRoutes.activity}${query ? `?${query}` : ''}`);
 
   return React.useMemo(
     () => ({
       isPathEmbedded,
-      AppRoutes,
+      BaseRoutes,
+      ActivityRoutes,
+      SearchRoutes,
       AlertsRoutes,
       ManagementRoutes,
       TermsRoutes,
       DataEntityRoutes,
       basePath,
       baseSearchPath,
+      getNonExactPath,
       searchPath,
       activityPath,
       ...managementPaths,

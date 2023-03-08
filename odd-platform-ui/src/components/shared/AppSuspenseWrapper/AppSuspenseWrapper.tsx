@@ -2,13 +2,22 @@ import React from 'react';
 import AppLoadingPage from '../AppLoadingPage/AppLoadingPage';
 
 interface SuspenseWrapperProps {
-  LazyComponent: React.FC;
+  lazyComponent?: React.FC;
 }
 
-const AppSuspenseWrapper: React.FC<SuspenseWrapperProps> = ({ LazyComponent }) => (
-  <React.Suspense fallback={<AppLoadingPage />}>
-    <LazyComponent />
-  </React.Suspense>
-);
+const AppSuspenseWrapper: React.FC<SuspenseWrapperProps> = ({
+  lazyComponent: LazyComponent,
+  children,
+}) => {
+  if (LazyComponent) {
+    return (
+      <React.Suspense fallback={<AppLoadingPage />}>
+        <LazyComponent />
+      </React.Suspense>
+    );
+  }
+
+  return <React.Suspense fallback={<AppLoadingPage />}>{children}</React.Suspense>;
+};
 
 export default AppSuspenseWrapper;

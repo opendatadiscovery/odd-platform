@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { AppErrorPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, AppSuspenseWrapper, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getResourcePermissions,
@@ -80,7 +80,11 @@ const TermDetailsView: React.FC = () => {
           renderContent={({ randWidth }) => <TermDetailsSkeleton width={randWidth()} />}
         />
       ) : null}
-      {isTermDetailsFetched && <TermDetailsRoutes />}
+      {isTermDetailsFetched && (
+        <AppSuspenseWrapper>
+          <TermDetailsRoutes />
+        </AppSuspenseWrapper>
+      )}
       <AppErrorPage
         showError={isTermDetailsNotFetched}
         error={termDetailsFetchingErrors}

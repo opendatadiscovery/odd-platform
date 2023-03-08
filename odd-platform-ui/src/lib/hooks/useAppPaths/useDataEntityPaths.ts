@@ -11,7 +11,7 @@ export const useDataEntityPaths = () => {
   // const dataEntityBasePath = () => updatePath(`/${DataEntityRoutes.dataEntity}`);
   const dataEntityDetailsPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
-    viewType: string = DataEntityRoutes.viewType
+    viewType: string = DataEntityRoutes.dataEntityViewTypeParam
   ) => updatePath(`/${DataEntityRoutes.dataentities}/${entityId}/${viewType}`);
 
   const dataEntityLineagePath = (
@@ -76,7 +76,7 @@ export const useDataEntityPaths = () => {
   const dataEntityTestPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     testId: TestId = DataEntityRoutes.dataQATestId,
-    viewType: string = DataEntityRoutes.viewType
+    viewType: string = DataEntityRoutes.testReportViewTypeParam
   ) =>
     `${dataEntityDetailsPath(
       entityId,

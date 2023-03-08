@@ -22,7 +22,7 @@ import * as S from './TestReportStyles';
 
 const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataQATestId, dataEntityId, viewType } = useAppParams();
+  const { dataQATestId, dataEntityId, testReportViewType } = useAppParams();
 
   const datasetTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
   const datasetQualityTestList = useAppSelector(
@@ -101,7 +101,7 @@ const TestReport: React.FC = () => {
                     <TestReportDetails
                       dataEntityId={dataEntityId}
                       dataQATestId={dataQATestId}
-                      reportDetailsViewType={viewType}
+                      reportDetailsViewType={testReportViewType}
                     />
                   </AppPaper>
                 </Grid>

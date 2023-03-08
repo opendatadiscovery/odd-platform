@@ -6,11 +6,12 @@ export const useManagementPaths = () => {
   const { updatePath } = useIsEmbeddedPath();
 
   const baseManagementPath = () => updatePath(`/${ManagementRoutes.management}`);
-  const managementPath = (viewType: ManagementRoutes = ManagementRoutes.viewType) =>
-    `${baseManagementPath()}/${viewType}`;
+  const managementPath = (
+    viewType: ManagementRoutes = ManagementRoutes.managementViewType
+  ) => `${baseManagementPath()}/${viewType}`;
 
   const managementOwnerAssociationsPath = (
-    associationsViewType: ManagementRoutes = ManagementRoutes.viewType
+    associationsViewType: ManagementRoutes = ManagementRoutes.associationsViewType
   ) => `${managementPath(ManagementRoutes.associations)}/${associationsViewType}`;
 
   const policyDetailsPath = (

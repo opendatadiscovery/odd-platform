@@ -15,7 +15,7 @@ import {
 import { defaultLineageQuery } from '../Lineage/lineageLib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
-  const { dataEntityId, viewType } = useAppParams();
+  const { dataEntityId, dataEntityViewType } = useAppParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
@@ -112,8 +112,10 @@ const DataEntityDetailsTabs: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
-    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
-  }, [tabs, viewType]);
+    setSelectedTab(
+      dataEntityViewType ? tabs.findIndex(tab => tab.value === dataEntityViewType) : 0
+    );
+  }, [tabs, dataEntityViewType]);
 
   return (
     <>
