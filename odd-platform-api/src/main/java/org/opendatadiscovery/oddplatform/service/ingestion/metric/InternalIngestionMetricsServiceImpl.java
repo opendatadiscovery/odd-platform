@@ -180,8 +180,9 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
                         return dto.points().stream()
                             .peek(point -> point.setSeriesId(createdSeriesId));
                     }).toList();
-                return metricPointRepository.createOrUpdatePoints(metricPointPojos)
-                    .collectList();
+                return metricPointRepository.deletePointsWithLessTime(metricPointPojos)
+                    .then(metricPointRepository.createOrUpdatePoints(metricPointPojos)
+                        .collectList());
             })
             .then();
     }

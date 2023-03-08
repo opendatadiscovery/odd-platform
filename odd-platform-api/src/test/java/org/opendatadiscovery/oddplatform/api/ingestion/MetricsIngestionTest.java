@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.ingestion.utils.IngestionModelGenerator;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.Bucket;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
@@ -110,7 +111,12 @@ public class MetricsIngestionTest extends BaseIngestionTest {
         final MetricPoint metricPointToUpdate = updatedMetricSet.getItems().get(0).getMetricFamilies().get(0)
             .getMetrics().get(0).getMetricPoints().get(0);
         metricPointToUpdate.setTimestamp(metricPointToUpdate.getTimestamp() - 100);
-        metricPointToUpdate.getHistogramValue().getBuckets().get(0).setCount(25L);
+        metricPointToUpdate.getHistogramValue().setBuckets(
+            List.of(
+                new Bucket().count(5L).upperBound(new BigDecimal(10)),
+                new Bucket().count(15L).upperBound(new BigDecimal(20))
+            )
+        );
         ingestMetrics(updatedMetricSet);
 
         // We still expect metrics with previous values
@@ -123,7 +129,12 @@ public class MetricsIngestionTest extends BaseIngestionTest {
             .getMetrics().get(0).getMetricPoints().get(0);
         newUpdatedMetricPoint.setTimestamp(newUpdatedMetricPoint.getTimestamp() + 100);
         newUpdatedMetricPoint.getHistogramValue().setCount(null);
-        newUpdatedMetricPoint.getHistogramValue().getBuckets().get(0).setCount(25L);
+        newUpdatedMetricPoint.getHistogramValue().setBuckets(
+            List.of(
+                new Bucket().count(6L).upperBound(new BigDecimal(30)),
+                new Bucket().count(16L).upperBound(new BigDecimal(40))
+            )
+        );
         ingestMetrics(newUpdatedMetricSet);
 
         final org.opendatadiscovery.oddplatform.api.contract.model.MetricSet newExpectedMetricSet =

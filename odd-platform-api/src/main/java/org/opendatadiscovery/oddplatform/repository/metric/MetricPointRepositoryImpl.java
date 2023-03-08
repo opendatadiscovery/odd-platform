@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.metric;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.InsertSetStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricPointPojo;
@@ -17,6 +18,21 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METRIC_POINT;
 @RequiredArgsConstructor
 public class MetricPointRepositoryImpl implements MetricPointRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
+
+    @Override
+    public Flux<MetricPointPojo> deletePointsWithLessTime(final List<MetricPointPojo> newPoints) {
+        return jooqReactiveOperations.executeInPartitionReturning(newPoints, points -> {
+            final Condition condition = points.stream()
+                .map(p -> METRIC_POINT.SERIES_ID.eq(p.getSeriesId())
+                    .and(METRIC_POINT.LABEL_VALUES_IDS.ne(p.getLabelValuesIds()))
+                    .and(METRIC_POINT.TIMESTAMP.lessThan(p.getTimestamp())))
+                .reduce(Condition::or)
+                .orElseThrow(() -> new RuntimeException("Can't build delete condition for points"));
+            return jooqReactiveOperations.flux(DSL.deleteFrom(METRIC_POINT)
+                .where(condition)
+                .returning(METRIC_POINT.fields()));
+        }).map(r -> r.into(MetricPointPojo.class));
+    }
 
     @Override
     public Flux<MetricPointPojo> createOrUpdatePoints(final List<MetricPointPojo> metricPoints) {
