@@ -1,21 +1,16 @@
-import {
-  Configuration,
-  type DataEntity,
-  type DataEntityList,
-  DataQualityApi,
-  type DataQualityApiGetDataEntityDataQATestsRequest,
-  type DataQualityApiGetDatasetSLAReportRequest,
-  type DataQualityApiGetDatasetTestReportRequest,
-  type DataQualityApiSetDataQATestSeverityRequest,
-  type DataSetSLAReport,
-  type DataSetTestReport,
+import type {
+  DataEntity,
+  DataEntityList,
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataQualityApiGetDatasetSLAReportRequest,
+  DataQualityApiGetDatasetTestReportRequest,
+  DataQualityApiSetDataQATestSeverityRequest,
+  DataSetSLAReport,
+  DataSetTestReport,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const dataQualityApi = new DataQualityApi(apiClientConf);
+import { dataQualityApi } from 'lib/api';
 
 export const fetchDataSetQualityTestReport = handleResponseAsyncThunk<
   { entityId: number; value: DataSetTestReport },

@@ -1,19 +1,14 @@
-import {
-  Configuration,
-  type Label,
-  LabelApi,
-  type LabelApiCreateLabelRequest,
-  type LabelApiDeleteLabelRequest,
-  type LabelApiGetLabelListRequest,
-  type LabelApiUpdateLabelRequest,
+import type {
+  Label,
+  LabelApiCreateLabelRequest,
+  LabelApiDeleteLabelRequest,
+  LabelApiGetLabelListRequest,
+  LabelApiUpdateLabelRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new LabelApi(apiClientConf);
+import { labelApi } from 'lib/api';
 
 export const fetchLabelsList = handleResponseAsyncThunk<
   { items: Array<Label>; pageInfo: CurrentPageInfo },
@@ -21,7 +16,7 @@ export const fetchLabelsList = handleResponseAsyncThunk<
 >(
   actions.fetchLabelsActionType,
   async ({ page, size, query }) => {
-    const { items, pageInfo } = await apiClient.getLabelList({
+    const { items, pageInfo } = await labelApi.getLabelList({
       page,
       size,
       query,
@@ -34,7 +29,7 @@ export const fetchLabelsList = handleResponseAsyncThunk<
 
 export const createLabel = handleResponseAsyncThunk<Label[], LabelApiCreateLabelRequest>(
   actions.createLabelsActionType,
-  async ({ labelFormData }) => await apiClient.createLabel({ labelFormData }),
+  async ({ labelFormData }) => await labelApi.createLabel({ labelFormData }),
   {
     setSuccessOptions: ({ labelFormData }) => ({
       id: `Labels-creating-${labelFormData.length}`,
@@ -48,7 +43,7 @@ export const createLabel = handleResponseAsyncThunk<Label[], LabelApiCreateLabel
 export const updateLabel = handleResponseAsyncThunk<Label, LabelApiUpdateLabelRequest>(
   actions.updateLabelActionType,
   async ({ labelId, labelFormData }) =>
-    await apiClient.updateLabel({ labelId, labelFormData }),
+    await labelApi.updateLabel({ labelId, labelFormData }),
   {
     setSuccessOptions: ({ labelFormData }) => ({
       id: `Labels-updating-${labelFormData.name}`,
@@ -60,7 +55,7 @@ export const updateLabel = handleResponseAsyncThunk<Label, LabelApiUpdateLabelRe
 export const deleteLabel = handleResponseAsyncThunk<number, LabelApiDeleteLabelRequest>(
   actions.deleteLabelActionType,
   async ({ labelId }) => {
-    await apiClient.deleteLabel({ labelId });
+    await labelApi.deleteLabel({ labelId });
     return labelId;
   },
   {

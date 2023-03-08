@@ -1,19 +1,14 @@
-import {
-  Configuration,
-  type Namespace,
-  NamespaceApi,
-  type NamespaceApiCreateNamespaceRequest,
-  type NamespaceApiDeleteNamespaceRequest,
-  type NamespaceApiGetNamespaceListRequest,
-  type NamespaceApiUpdateNamespaceRequest,
+import type {
+  Namespace,
+  NamespaceApiCreateNamespaceRequest,
+  NamespaceApiDeleteNamespaceRequest,
+  NamespaceApiGetNamespaceListRequest,
+  NamespaceApiUpdateNamespaceRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const namespaceApi = new NamespaceApi(apiClientConf);
+import { namespaceApi } from 'lib/api';
 
 export const fetchNamespaceList = handleResponseAsyncThunk<
   { namespaceList: Array<Namespace>; pageInfo: CurrentPageInfo },

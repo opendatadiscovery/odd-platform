@@ -32,17 +32,16 @@ export const getIsDataEntityBelongsToClass = (dataEntityId: number | string) =>
       (desiredClass: DataEntityClassNameEnum) => (entityClass: DataEntityClass) =>
         entityClass.name === desiredClass;
 
-    const isDataset = dataEntityClasses?.some(
-      isClassesEquals(DataEntityClassNameEnum.SET)
-    );
+    const isDataset =
+      dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.SET)) ?? false;
 
-    const isQualityTest = dataEntityClasses?.some(
-      isClassesEquals(DataEntityClassNameEnum.QUALITY_TEST)
-    );
+    const isQualityTest =
+      dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.QUALITY_TEST)) ??
+      false;
 
-    const isTransformer = dataEntityClasses?.some(
-      isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)
-    );
+    const isTransformer =
+      dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)) ??
+      false;
 
     return { isDataset, isQualityTest, isTransformer };
   });

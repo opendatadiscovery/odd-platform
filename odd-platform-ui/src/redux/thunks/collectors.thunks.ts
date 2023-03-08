@@ -1,20 +1,15 @@
-import {
-  type Collector,
-  CollectorApi,
-  type CollectorApiDeleteCollectorRequest,
-  type CollectorApiGetCollectorsListRequest,
-  type CollectorApiRegenerateCollectorTokenRequest,
-  type CollectorApiRegisterCollectorRequest,
-  type CollectorApiUpdateCollectorRequest,
-  Configuration,
+import type {
+  Collector,
+  CollectorApiDeleteCollectorRequest,
+  CollectorApiGetCollectorsListRequest,
+  CollectorApiRegenerateCollectorTokenRequest,
+  CollectorApiRegisterCollectorRequest,
+  CollectorApiUpdateCollectorRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new CollectorApi(apiClientConf);
+import { collectorApi } from 'lib/api';
 
 export const fetchCollectorsList = handleResponseAsyncThunk<
   { items: Array<Collector>; pageInfo: CurrentPageInfo },
@@ -22,7 +17,11 @@ export const fetchCollectorsList = handleResponseAsyncThunk<
 >(
   actions.fetchCollectorsActionType,
   async ({ page, size, query }) => {
-    const { items, pageInfo } = await apiClient.getCollectorsList({ page, size, query });
+    const { items, pageInfo } = await collectorApi.getCollectorsList({
+      page,
+      size,
+      query,
+    });
 
     return { items, pageInfo: { ...pageInfo, page } };
   },
@@ -35,7 +34,7 @@ export const registerCollector = handleResponseAsyncThunk<
 >(
   actions.registerCollectorActionType,
   async ({ collectorFormData }) =>
-    await apiClient.registerCollector({ collectorFormData }),
+    await collectorApi.registerCollector({ collectorFormData }),
   {
     setSuccessOptions: ({ collectorFormData }) => ({
       id: `Collector-creating-${collectorFormData.name}`,
@@ -50,7 +49,7 @@ export const updateCollector = handleResponseAsyncThunk<
 >(
   actions.updateCollectorActionType,
   async ({ collectorId, collectorFormData }) =>
-    await apiClient.updateCollector({ collectorId, collectorFormData }),
+    await collectorApi.updateCollector({ collectorId, collectorFormData }),
   {
     setSuccessOptions: ({ collectorFormData }) => ({
       id: `Collector-updating-${collectorFormData.name}`,
@@ -64,7 +63,7 @@ export const regenerateCollectorToken = handleResponseAsyncThunk<
   CollectorApiRegenerateCollectorTokenRequest
 >(
   actions.regenerateCollectorTokenActionType,
-  async ({ collectorId }) => await apiClient.regenerateCollectorToken({ collectorId }),
+  async ({ collectorId }) => await collectorApi.regenerateCollectorToken({ collectorId }),
   {
     setSuccessOptions: ({ collectorId }) => ({
       id: `Collector-token-updating-${collectorId}`,
@@ -79,7 +78,7 @@ export const deleteCollector = handleResponseAsyncThunk<
 >(
   actions.deleteCollectorActionType,
   async ({ collectorId }) => {
-    await apiClient.deleteCollector({ collectorId });
+    await collectorApi.deleteCollector({ collectorId });
 
     return collectorId;
   },

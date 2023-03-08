@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnProperty(value = "metrics.export.enabled", havingValue = "true")
-public class MetricServiceImpl implements MetricService {
+public class OTLPMetricServiceImpl implements OTLPMetricService {
     private final OtlpGrpcMetricExporter otlpExporter;
     private final List<MetricExtractor> metricExtractors;
 

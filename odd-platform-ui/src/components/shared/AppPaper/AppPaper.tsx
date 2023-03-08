@@ -1,10 +1,12 @@
 import React from 'react';
-import { PaperProps } from '@mui/material';
+import { type PaperProps } from '@mui/material';
 import * as S from './AppPaperStyles';
 
-const AppPaper: React.FC<PaperProps> = ({ children, sx, ...props }) => (
-  <S.AppPapper sx={sx} {...props}>
-    {children}
-  </S.AppPapper>
+const AppPaper: React.FC<PaperProps> = React.forwardRef(
+  ({ children, sx, ...props }, ref) => (
+    <S.AppPapper ref={ref} sx={sx} {...props}>
+      {children}
+    </S.AppPapper>
+  )
 );
 export default AppPaper;

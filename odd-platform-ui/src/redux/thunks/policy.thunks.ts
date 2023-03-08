@@ -1,21 +1,16 @@
-import {
-  Configuration,
-  type Policy,
-  PolicyApi,
-  type PolicyApiCreatePolicyRequest,
-  type PolicyApiDeletePolicyRequest,
-  type PolicyApiGetPolicyDetailsRequest,
-  type PolicyApiGetPolicyListRequest,
-  type PolicyApiUpdatePolicyRequest,
-  type PolicyDetails,
+import type {
+  Policy,
+  PolicyApiCreatePolicyRequest,
+  PolicyApiDeletePolicyRequest,
+  PolicyApiGetPolicyDetailsRequest,
+  PolicyApiGetPolicyListRequest,
+  PolicyApiUpdatePolicyRequest,
+  PolicyDetails,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const policyApi = new PolicyApi(apiClientConf);
+import { policyApi } from 'lib/api';
 
 export const fetchPolicyList = handleResponseAsyncThunk<
   { items: Array<Policy>; pageInfo: CurrentPageInfo },

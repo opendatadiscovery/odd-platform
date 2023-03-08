@@ -167,7 +167,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
                     .onConflict(conflictFields)
                     .where(TAG.DELETED_AT.isNull())
                     .doUpdate()
-                    .set(TAG.NAME, jooqQueryHelper.excludedField(TAG.NAME, TAG.NAME.getType()))
+                    .set(TAG.NAME, DSL.excluded(TAG.NAME))
                     .returning();
 
                 return jooqReactiveOperations.flux(query);

@@ -1,19 +1,14 @@
-import {
-  Configuration,
-  type Role,
-  RoleApi,
-  type RoleApiCreateRoleRequest,
-  type RoleApiDeleteRoleRequest,
-  type RoleApiGetRolesListRequest,
-  type RoleApiUpdateRoleRequest,
+import type {
+  Role,
+  RoleApiCreateRoleRequest,
+  RoleApiDeleteRoleRequest,
+  RoleApiGetRolesListRequest,
+  RoleApiUpdateRoleRequest,
 } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const roleApi = new RoleApi(apiClientConf);
+import { roleApi } from 'lib/api';
 
 export const fetchRolesList = handleResponseAsyncThunk<
   { items: Array<Role>; pageInfo: CurrentPageInfo },

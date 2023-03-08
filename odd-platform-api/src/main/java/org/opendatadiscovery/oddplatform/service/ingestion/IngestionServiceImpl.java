@@ -37,7 +37,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.ingestion.processor.IngestionProcessorChain;
-import org.opendatadiscovery.oddplatform.service.metric.MetricService;
+import org.opendatadiscovery.oddplatform.service.metric.OTLPMetricService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -51,7 +51,7 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEnt
 @Slf4j
 public class IngestionServiceImpl implements IngestionService {
     private final IngestionProcessorChain ingestionProcessorChain;
-    private final MetricService metricService;
+    private final OTLPMetricService otlpMetricService;
     private final DatasetFieldService datasetFieldService;
 
     private final ReactiveDataEntityRepository dataEntityRepository;
@@ -66,7 +66,7 @@ public class IngestionServiceImpl implements IngestionService {
             .switchIfEmpty(Mono.error(() -> new NotFoundException("dataSource", dataEntityList.getDataSourceOddrn())))
             .flatMap(dataSourceId -> persistDataEntities(dataSourceId, dataEntityList.getItems()))
             .flatMap(ingestionProcessorChain::processIngestionRequest)
-            .flatMap(metricService::exportMetrics)
+            .flatMap(otlpMetricService::exportMetrics)
             .then();
     }
 

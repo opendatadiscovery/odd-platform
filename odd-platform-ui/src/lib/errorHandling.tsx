@@ -2,14 +2,14 @@ import React from 'react';
 import toast, { type ToastType } from 'react-hot-toast';
 import AppToast from '../components/shared/AppToast/AppToast';
 
-export const getResponse = async (
-  response: Response
-): Promise<{
+export interface AppError {
   status: number;
   statusText: string;
   url: string;
   message: string;
-}> => {
+}
+
+export const getErrorResponse = async (response: Response): Promise<AppError> => {
   let body: Record<string, string> = {};
   try {
     body = await response.clone().json();
@@ -41,19 +41,28 @@ export const showSuccessToast = (options: ToastOptions) => {
   showToast('success', options);
 };
 
-export const showServerErrorToast = ({
-  status,
-  toastId,
-  message,
-}: {
-  status: number;
-  message: string | undefined;
-  toastId: string;
-}) => {
-  if (status) {
-    showToast('error', {
-      id: toastId,
-      message: message || 'An error occurred',
-    });
+interface ErrorToastOptions {
+  additionalMessage: string;
+}
+
+export const showServerErrorToast = async (
+  response: Response,
+  options?: ErrorToastOptions
+) => {
+  let body: Record<string, string> = {};
+  try {
+    body = await response.json();
+  } catch (e) {
+    // do nothing;
+  }
+
+  let message = body?.message || 'An error occurred';
+
+  if (options?.additionalMessage) {
+    message = `${body?.message} ${options.additionalMessage}`;
+  }
+
+  if (response.status) {
+    showToast('error', { id: response.url, message });
   }
 };

@@ -8,8 +8,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescript
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.EnumValueService;
+import org.opendatadiscovery.oddplatform.service.MetricService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,7 @@ import reactor.core.publisher.Mono;
 public class DatasetFieldController implements DatasetFieldApi {
     private final DatasetFieldService datasetFieldService;
     private final EnumValueService enumValueService;
+    private final MetricService metricService;
 
     @Override
     public Mono<ResponseEntity<DataSetFieldDescription>> updateDatasetFieldDescription(
@@ -56,6 +59,13 @@ public class DatasetFieldController implements DatasetFieldApi {
     public Mono<ResponseEntity<EnumValueList>> getEnumValues(final Long datasetFieldId,
                                                              final ServerWebExchange exchange) {
         return enumValueService.getEnumValues(datasetFieldId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<MetricSet>> getDatasetFieldMetrics(final Long datasetFieldId,
+                                                                  final ServerWebExchange exchange) {
+        return metricService.getLatestMetricsForDatasetField(datasetFieldId)
             .map(ResponseEntity::ok);
     }
 }

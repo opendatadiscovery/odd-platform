@@ -1,28 +1,21 @@
-import {
-  ActivityApi,
-  type ActivityApiGetActivityCountsRequest,
-  type ActivityApiGetActivityRequest,
-  type ActivityCountInfo,
-  ActivityType,
-  Configuration,
-  DataEntityApi,
-  type DataEntityApiGetDataEntityActivityRequest,
+import { ActivityType } from 'generated-sources';
+import type {
+  ActivityApiGetActivityCountsRequest,
+  ActivityApiGetActivityRequest,
+  ActivityCountInfo,
+  DataEntityApiGetDataEntityActivityRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type {
-  RelatedToEntityId,
   Activity,
   KeySetPaginatedResponse,
+  RelatedToEntityId,
   SerializeDateToNumber,
 } from 'redux/interfaces';
 import { toDate } from 'lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { castDatesToTimestamp, setPageInfo } from 'redux/lib/helpers';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const activityApi = new ActivityApi(apiClientConf);
-const dataEntityApi = new DataEntityApi(apiClientConf);
+import { activityApi, dataEntityApi } from 'lib/api';
 
 export const activityListSize = 30;
 
