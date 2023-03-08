@@ -12,8 +12,8 @@ interface AlertsTabsProps {
 
 const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
   const dispatch = useAppDispatch();
-  const { viewType } = useAppParams();
-  const { alertsPath, AlertsRoutes } = useAppPaths();
+  const { alertsViewType } = useAppParams();
+  const { AlertsRoutes } = useAppPaths();
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
@@ -23,20 +23,20 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
         name: 'All',
         hint: totals?.total || 0,
         value: AlertsRoutes.all,
-        link: alertsPath(AlertsRoutes.all),
+        link: AlertsRoutes.all,
       },
       {
         name: 'My Objects',
         hint: totals?.myTotal || 0,
         value: AlertsRoutes.my,
-        link: alertsPath(AlertsRoutes.my),
+        link: AlertsRoutes.my,
         hidden: !showMyAndDepends,
       },
       {
         name: 'Dependents',
         hint: totals?.dependentTotal || 0,
         value: AlertsRoutes.dependents,
-        link: alertsPath(AlertsRoutes.dependents),
+        link: AlertsRoutes.dependents,
         hidden: !showMyAndDepends,
       },
     ],
@@ -44,8 +44,10 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
   );
 
   React.useEffect(() => {
-    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
-  }, [tabs, viewType]);
+    setSelectedTab(
+      alertsViewType ? tabs.findIndex(tab => tab.value === alertsViewType) : 0
+    );
+  }, [tabs, alertsViewType]);
 
   const alertsFilterUpdateAction = React.useCallback(() => {
     dispatch(changeAlertsFilterAction());

@@ -9,23 +9,23 @@ import { useAppPaths } from 'lib/hooks';
 import AlertsList from '../AlertsList/AlertsList';
 
 const AlertsRoutes: React.FC = () => {
-  const { alertsPath, AlertsRoutes: AlertsRoutesEnum, alertsBasePath } = useAppPaths();
+  const { AlertsRoutes: AlertsRoutesEnum } = useAppPaths();
 
   return (
     <Routes>
       <Route
-        path={alertsPath(AlertsRoutesEnum.all)}
+        path={AlertsRoutesEnum.all}
         element={<AlertsList fetchAlerts={fetchAllAlertList} />}
       />
       <Route
-        path={alertsPath(AlertsRoutesEnum.my)}
+        path={AlertsRoutesEnum.my}
         element={<AlertsList fetchAlerts={fetchMyAlertList} />}
       />
       <Route
-        path={alertsPath(AlertsRoutesEnum.dependents)}
+        path={AlertsRoutesEnum.dependents}
         element={<AlertsList fetchAlerts={fetchMyDependentsAlertList} />}
       />
-      <Route path={alertsBasePath()} element={<Navigate to={alertsPath()} replace />} />
+      <Route path='/' element={<Navigate to={AlertsRoutesEnum.all} replace />} />
     </Routes>
   );
 };

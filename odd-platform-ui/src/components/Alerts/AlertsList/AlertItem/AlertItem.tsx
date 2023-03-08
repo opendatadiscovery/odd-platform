@@ -29,7 +29,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { alertFormattedDateTime } = useAppDateTime();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const [showHistory, setShowHistory] = React.useState(false);
   const [disableResolve, setDisableResolve] = React.useState(false);
@@ -116,7 +116,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
         {dataEntity && (
           <>
             <AppButton
-              to={dataEntityDetailsPath(dataEntity.id)}
+              to={dataEntityOverviewPath(dataEntity.id)}
               size='medium'
               color='tertiary'
               truncate
