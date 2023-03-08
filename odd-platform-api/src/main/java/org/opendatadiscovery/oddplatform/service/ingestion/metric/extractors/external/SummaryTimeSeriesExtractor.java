@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.external;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,15 +49,9 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
         final List<TimeSeries> result = new ArrayList<>();
         final long timestamp = getMetricPointTimestamp(metricPoint.getTimestamp(), ingestedDateTime);
         result.addAll(createQuantileSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
-        if (metricPoint.getSummaryValue().getSum() != null) {
-            result.add(createSumSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
-        }
-        if (metricPoint.getSummaryValue().getCount() != null) {
-            result.add(createCountSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
-        }
-        if (metricPoint.getSummaryValue().getCreated() != null) {
-            result.add(createCreatedSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
-        }
+        result.add(createSumSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
+        result.add(createCountSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
+        result.add(createCreatedSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
         return result;
     }
 
@@ -67,9 +60,10 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                            final MetricPoint metricPoint,
                                            final List<Label> labels,
                                            final long timestamp) {
-        final Integer value = metricPoint.getSummaryValue().getCreated();
+        final Double value = metricPoint.getSummaryValue().getCreated() != null
+            ? metricPoint.getSummaryValue().getCreated().doubleValue() : Double.NaN;
         return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), CREATED),
-            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
+            metricFamilyPojo.getId(), labels, value, timestamp);
     }
 
     private TimeSeries createCountSeries(final String oddrn,
@@ -77,9 +71,10 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                          final MetricPoint metricPoint,
                                          final List<Label> labels,
                                          final long timestamp) {
-        final Long value = metricPoint.getSummaryValue().getCount();
+        final Double value = metricPoint.getSummaryValue().getCount() != null
+            ? metricPoint.getSummaryValue().getCount().doubleValue() : Double.NaN;
         return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), COUNT),
-            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
+            metricFamilyPojo.getId(), labels, value, timestamp);
     }
 
     private TimeSeries createSumSeries(final String oddrn,
@@ -87,9 +82,10 @@ public class SummaryTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                        final MetricPoint metricPoint,
                                        final List<Label> labels,
                                        final long timestamp) {
-        final BigDecimal value = metricPoint.getSummaryValue().getSum();
+        final Double value = metricPoint.getSummaryValue().getSum() != null
+            ? metricPoint.getSummaryValue().getSum().doubleValue() : Double.NaN;
         return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), SUM),
-            metricFamilyPojo.getId(), labels, value.doubleValue(), timestamp);
+            metricFamilyPojo.getId(), labels, value, timestamp);
     }
 
     private List<TimeSeries> createQuantileSeries(final String oddrn,

@@ -199,11 +199,18 @@ public class PrometheusMetricsMapperImpl implements PrometheusMetricsMapper {
 
     private BigDecimal getBigDecimalValue(final Object object) {
         final String value = object.toString();
+        if (Double.valueOf(value).isNaN()) {
+            return null;
+        }
         return new BigDecimal(value);
     }
 
     private Long getLongValue(final Object object) {
-        return Long.parseLong(object.toString());
+        final String value = object.toString();
+        if (Double.valueOf(value).isNaN()) {
+            return null;
+        }
+        return Long.parseLong(value);
     }
 
     private OffsetDateTime getTimestampValue(final Object object) {
@@ -214,6 +221,9 @@ public class PrometheusMetricsMapperImpl implements PrometheusMetricsMapper {
             timestamp = d;
         } else {
             throw new IllegalArgumentException("Unexpected value for timestamp %s".formatted(object));
+        }
+        if (timestamp.isNaN()) {
+            return null;
         }
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(timestamp.longValue()), ZoneOffset.UTC);
     }

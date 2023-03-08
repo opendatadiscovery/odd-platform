@@ -10,7 +10,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
-import org.assertj.core.internal.OffsetDateTimeByInstantComparator;
 import org.assertj.core.util.BigDecimalComparator;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -27,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilter
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricSetList;
+import org.opendatadiscovery.oddplatform.utils.OffsetDateTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -84,7 +84,7 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
         return (long) extractIngestedEntitiesAndAssert(createdDataSource, 1).values().toArray()[0];
     }
 
-    protected void assertMetrics(final Long dataEntityId, final MetricSet expected) {
+    protected void assertMetrics(final Long dataEntityId, final MetricSet expected, final boolean skipTimestamps) {
         webTestClient.get()
             .uri("/api/dataentities/{data_entity_id}/metrics", dataEntityId)
             .exchange()
@@ -110,13 +110,16 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
                             .findFirst()
                             .orElseThrow();
 
-                        assertThat(actualMetric)
-                            .usingRecursiveComparison(RecursiveComparisonConfiguration.builder()
+                        final RecursiveComparisonConfiguration.Builder comparatorConfig =
+                            RecursiveComparisonConfiguration.builder()
                                 .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
-                                .withComparatorForType(OffsetDateTimeByInstantComparator.getInstance(),
-                                    OffsetDateTime.class)
-                                .withIgnoredCollectionOrderInFields("labels")
-                                .build())
+                                .withComparatorForType(OffsetDateTimeComparator.getInstance(), OffsetDateTime.class)
+                                .withIgnoredCollectionOrderInFields("labels");
+                        if (skipTimestamps) {
+                            comparatorConfig.withIgnoredFields("metricPoint.timestamp");
+                        }
+                        assertThat(actualMetric)
+                            .usingRecursiveComparison(comparatorConfig.build())
                             .isEqualTo(expectedMetric);
                     });
                 });

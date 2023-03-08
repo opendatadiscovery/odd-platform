@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.internal;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricLabelsDto;
@@ -40,9 +38,7 @@ public class CounterMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
         }
         final List<MetricSeriesDto> result = new ArrayList<>();
         result.add(createTotalSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
-        if (point.metricPoint().getCounterValue().getCreated() != null) {
-            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
-        }
+        result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         return result;
     }
 
@@ -61,7 +57,8 @@ public class CounterMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
                                                 final MetricFamilyPojo metricFamilyPojo,
                                                 final IngestionMetricLabelsDto allLabelsDto,
                                                 final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getCounterValue().getCreated().doubleValue();
+        final Double value = point.metricPoint().getCounterValue().getCreated() != null
+            ? point.metricPoint().getCounterValue().getCreated().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.CREATED, value);
     }

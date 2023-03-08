@@ -50,18 +50,10 @@ public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
             throw new IllegalArgumentException("Summary metric point must have at least one quantile");
         }
         final List<MetricSeriesDto> result = new ArrayList<>();
-        if (point.metricPoint().getSummaryValue().getSum() != null) {
-            result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
-        }
-        if (point.metricPoint().getSummaryValue().getCount() != null) {
-            result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
-        }
-        if (point.metricPoint().getSummaryValue().getQuantile() != null) {
-            result.add(createQuantileSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
-        }
-        if (point.metricPoint().getSummaryValue().getCreated() != null) {
-            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
-        }
+        result.add(createQuantileSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
+        result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
+        result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
+        result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedTime));
         return result;
     }
 
@@ -70,7 +62,8 @@ public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
                                             final MetricFamilyPojo metricFamilyPojo,
                                             final IngestionMetricLabelsDto allLabelsDto,
                                             final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getSummaryValue().getSum().doubleValue();
+        final Double value = point.metricPoint().getSummaryValue().getSum() != null
+            ? point.metricPoint().getSummaryValue().getSum().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.SUM, value);
     }
@@ -80,7 +73,8 @@ public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
                                               final MetricFamilyPojo metricFamilyPojo,
                                               final IngestionMetricLabelsDto allLabelsDto,
                                               final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getSummaryValue().getCount().doubleValue();
+        final Double value = point.metricPoint().getSummaryValue().getCount() != null
+            ? point.metricPoint().getSummaryValue().getCount().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.COUNT, value);
     }
@@ -90,7 +84,8 @@ public class SummaryMetricsSeriesExtractor extends AbstractMetricSeriesExtractor
                                                 final MetricFamilyPojo metricFamilyPojo,
                                                 final IngestionMetricLabelsDto allLabelsDto,
                                                 final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getSummaryValue().getCreated().doubleValue();
+        final Double value = point.metricPoint().getSummaryValue().getCreated() != null
+            ? point.metricPoint().getSummaryValue().getCreated().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.CREATED, value);
     }

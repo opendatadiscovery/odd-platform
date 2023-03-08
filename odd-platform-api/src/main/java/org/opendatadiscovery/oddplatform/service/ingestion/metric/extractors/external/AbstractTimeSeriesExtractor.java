@@ -25,7 +25,7 @@ public abstract class AbstractTimeSeriesExtractor {
                                           final String metricName,
                                           final Integer metricFamilyId,
                                           final List<Label> labels,
-                                          final double value,
+                                          final Double value,
                                           final long timestamp) {
         final var protoLabels = mapper.mapToProtoLabels(labels);
         protoLabels.addAll(systemLabels(oddrn, metricName, metricFamilyId.toString()));
@@ -43,7 +43,7 @@ public abstract class AbstractTimeSeriesExtractor {
     }
 
     private Sample createSample(final long timestamp,
-                                final double value) {
+                                final Double value) {
         return Sample.newBuilder()
             .setTimestamp(timestamp)
             .setValue(value)

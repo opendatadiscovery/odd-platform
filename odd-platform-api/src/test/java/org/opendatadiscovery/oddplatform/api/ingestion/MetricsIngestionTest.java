@@ -52,7 +52,7 @@ public class MetricsIngestionTest extends BaseIngestionTest {
 
         final org.opendatadiscovery.oddplatform.api.contract.model.MetricSet expectedMetricSet =
             buildExpectedMetricSet(metricSetList.getItems().get(0));
-        assertMetrics(foundEntityId, expectedMetricSet);
+        assertMetrics(foundEntityId, expectedMetricSet, false);
 
         // Update metrics timestamp to value less than previous
         final MetricSetList updatedMetrics = createMetrics(datasetToIngest.getOddrn(), "metrics/gauge_and_count.json");
@@ -64,7 +64,7 @@ public class MetricsIngestionTest extends BaseIngestionTest {
         ingestMetrics(updatedMetrics);
 
         // We still expect metrics with previous values
-        assertMetrics(foundEntityId, expectedMetricSet);
+        assertMetrics(foundEntityId, expectedMetricSet, false);
 
         // Update metrics timestamp to value more than previous
         final MetricSetList newMetrics = createMetrics(datasetToIngest.getOddrn(), "metrics/gauge_and_count.json");
@@ -78,7 +78,7 @@ public class MetricsIngestionTest extends BaseIngestionTest {
         // We expect, that metric value is updated
         final org.opendatadiscovery.oddplatform.api.contract.model.MetricSet newExpectedMetricSet =
             buildExpectedMetricSet(newMetrics.getItems().get(0));
-        assertMetrics(foundEntityId, newExpectedMetricSet);
+        assertMetrics(foundEntityId, newExpectedMetricSet, false);
     }
 
     @Test
@@ -102,7 +102,36 @@ public class MetricsIngestionTest extends BaseIngestionTest {
 
         final org.opendatadiscovery.oddplatform.api.contract.model.MetricSet expectedMetricSet =
             buildExpectedMetricSet(metricSetList.getItems().get(0));
-        assertMetrics(foundEntityId, expectedMetricSet);
+        assertMetrics(foundEntityId, expectedMetricSet, false);
+
+        // Update metrics timestamp to value less than previous
+        final MetricSetList updatedMetricSet = createMetrics(datasetToIngest.getOddrn(),
+            "metrics/histogram_and_summary.json");
+        final MetricPoint metricPointToUpdate = updatedMetricSet.getItems().get(0).getMetricFamilies().get(0)
+            .getMetrics().get(0).getMetricPoints().get(0);
+        metricPointToUpdate.setTimestamp(metricPointToUpdate.getTimestamp() - 100);
+        metricPointToUpdate.getHistogramValue().getBuckets().get(0).setCount(25L);
+        ingestMetrics(updatedMetricSet);
+
+        // We still expect metrics with previous values
+        assertMetrics(foundEntityId, expectedMetricSet, false);
+
+        // Update metrics timestamp to value more than previous
+        final MetricSetList newUpdatedMetricSet = createMetrics(datasetToIngest.getOddrn(),
+            "metrics/histogram_and_summary.json");
+        final MetricPoint newUpdatedMetricPoint = newUpdatedMetricSet.getItems().get(0).getMetricFamilies().get(0)
+            .getMetrics().get(0).getMetricPoints().get(0);
+        newUpdatedMetricPoint.setTimestamp(newUpdatedMetricPoint.getTimestamp() + 100);
+        newUpdatedMetricPoint.getHistogramValue().setCount(null);
+        newUpdatedMetricPoint.getHistogramValue().getBuckets().get(0).setCount(25L);
+        ingestMetrics(newUpdatedMetricSet);
+
+        final org.opendatadiscovery.oddplatform.api.contract.model.MetricSet newExpectedMetricSet =
+            buildExpectedMetricSet(newUpdatedMetricSet.getItems().get(0));
+        assertMetrics(foundEntityId, newExpectedMetricSet, false);
+
+        // We expect, that metric value is updated
+        assertMetrics(foundEntityId, newExpectedMetricSet, false);
     }
 
     private MetricSetList createMetrics(final String oddrn,

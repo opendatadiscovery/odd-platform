@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.metric.extractors.internal;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,18 +41,10 @@ public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtracto
             throw new IllegalArgumentException("Histogram metric point must have at least one bucket");
         }
         final List<MetricSeriesDto> result = new ArrayList<>();
-        if (point.metricPoint().getHistogramValue().getSum() != null) {
-            result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
-        }
-        if (point.metricPoint().getHistogramValue().getCount() != null) {
-            result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
-        }
-        if (point.metricPoint().getHistogramValue().getBuckets() != null) {
-            result.add(createBucketSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
-        }
-        if (point.metricPoint().getHistogramValue().getCreated() != null) {
-            result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
-        }
+        result.add(createSumSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
+        result.add(createCountSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
+        result.add(createBucketSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
+        result.add(createCreatedSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, ingestedDateTime));
         return result;
     }
 
@@ -63,7 +53,8 @@ public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtracto
                                             final MetricFamilyPojo metricFamilyPojo,
                                             final IngestionMetricLabelsDto allLabelsDto,
                                             final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getHistogramValue().getSum().doubleValue();
+        final Double value = point.metricPoint().getHistogramValue().getSum() != null
+            ? point.metricPoint().getHistogramValue().getSum().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.SUM, value);
     }
@@ -73,7 +64,8 @@ public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtracto
                                               final MetricFamilyPojo metricFamilyPojo,
                                               final IngestionMetricLabelsDto allLabelsDto,
                                               final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getHistogramValue().getCount().doubleValue();
+        final Double value = point.metricPoint().getHistogramValue().getCount() != null
+            ? point.metricPoint().getHistogramValue().getCount().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.COUNT, value);
     }
@@ -83,7 +75,8 @@ public class HistogramMetricSeriesExtractor extends AbstractMetricSeriesExtracto
                                                 final MetricFamilyPojo metricFamilyPojo,
                                                 final IngestionMetricLabelsDto allLabelsDto,
                                                 final LocalDateTime defaultDateTime) {
-        final double value = point.metricPoint().getHistogramValue().getCreated().doubleValue();
+        final Double value = point.metricPoint().getHistogramValue().getCreated() != null
+            ? point.metricPoint().getHistogramValue().getCreated().doubleValue() : null;
         return createSimpleSeries(point, metricEntityPojo, metricFamilyPojo, allLabelsDto, defaultDateTime,
             MetricSeriesValueType.CREATED, value);
     }

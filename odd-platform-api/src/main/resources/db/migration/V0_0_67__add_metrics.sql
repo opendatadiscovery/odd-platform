@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS metric_point
     timestamp        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     series_id        INT                         NOT NULL,
     label_values_ids INT[],
-    value            FLOAT                       NOT NULL,
+    value            FLOAT,
 
     PRIMARY KEY (series_id, label_values_ids),
     CHECK (label_values_ids = sort(label_values_ids)),

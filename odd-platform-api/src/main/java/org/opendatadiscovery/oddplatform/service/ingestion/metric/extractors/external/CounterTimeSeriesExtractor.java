@@ -41,9 +41,7 @@ public class CounterTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
         final long timestamp = getMetricPointTimestamp(metricPoint.getTimestamp(), ingestedDateTime);
         final List<TimeSeries> timeSeries = new ArrayList<>();
         timeSeries.add(createTotalSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
-        if (metricPoint.getCounterValue().getCreated() != null) {
-            timeSeries.add(createCreatedSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
-        }
+        timeSeries.add(createCreatedSeries(oddrn, metricFamilyPojo, metricPoint, labels, timestamp));
         return timeSeries;
     }
 
@@ -62,7 +60,8 @@ public class CounterTimeSeriesExtractor extends AbstractTimeSeriesExtractor impl
                                            final MetricPoint metricPoint,
                                            final List<Label> labels,
                                            final long timestamp) {
-        final double value = metricPoint.getCounterValue().getCreated().doubleValue();
+        final Double value = metricPoint.getCounterValue().getCreated() != null
+            ? metricPoint.getCounterValue().getCreated().doubleValue() : Double.NaN;
         return createTimeSeries(oddrn, generateMetricSeriesName(metricFamilyPojo.getName(), CREATED),
             metricFamilyPojo.getId(), labels, value,
             timestamp);

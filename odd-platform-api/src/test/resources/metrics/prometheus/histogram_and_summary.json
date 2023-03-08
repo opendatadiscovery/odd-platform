@@ -9,7 +9,6 @@
           "labels" : [],
           "metric_points" : [
             {
-              "timestamp" : "1676399903",
               "histogram_value" : {
                 "sum" : 100,
                 "count" : 50,
@@ -41,7 +40,6 @@
           ],
           "metric_points" : [
             {
-              "timestamp" : "1676399903",
               "histogram_value" : {
                 "count" : 50,
                 "buckets" : [
@@ -73,7 +71,6 @@
           "labels" : [],
           "metric_points" : [
             {
-              "timestamp" : "1676399903",
               "summary_value" : {
                 "sum" : 100,
                 "count" : 50,
@@ -109,7 +106,6 @@
           ],
           "metric_points" : [
             {
-              "timestamp" : "1676399903",
               "summary_value" : {
                 "sum" : 100,
                 "count" : 70,
@@ -143,7 +139,6 @@
           "labels" : [],
           "metric_points" : [
             {
-              "timestamp" : "1676399903",
               "histogram_value" : {
                 "sum" : 100,
                 "count" : 50,

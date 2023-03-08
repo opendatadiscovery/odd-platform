@@ -139,6 +139,9 @@ public class IngestionMetricModelMapper {
     }
 
     private static OffsetDateTime mapTimeFromInstant(final Integer instant) {
+        if (instant == null) {
+            return null;
+        }
         return OffsetDateTime.ofInstant(Instant.ofEpochSecond(instant), ZoneOffset.UTC);
     }
 }

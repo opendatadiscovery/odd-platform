@@ -27,14 +27,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SummaryValue;
 import org.opendatadiscovery.oddplatform.dto.metric.MetricLabelValueDto;
 import org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesDto;
 import org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType;
-import org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel;
-import org.opendatadiscovery.oddplatform.dto.metric.prometheus.PrometheusResponse;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricFamilyPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricPointPojo;
 import org.springframework.stereotype.Component;
 
-import static org.opendatadiscovery.oddplatform.api.contract.model.MetricType.GAUGE_HISTOGRAM;
-import static org.opendatadiscovery.oddplatform.api.contract.model.MetricType.HISTOGRAM;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.BUCKET_UPPER_BOUND;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.QUANTILE;
 
@@ -143,7 +139,9 @@ public class MetricsMapperImpl implements MetricsMapper {
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.CREATED);
         if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)) {
             final MetricPointPojo createdPoint = pointsBySeriesCreatedType.get(0);
-            counterValue.setCreated(offsetDateTimeMapper.mapEpochSeconds(createdPoint.getValue().intValue()));
+            if (createdPoint.getValue() != null) {
+                counterValue.setCreated(offsetDateTimeMapper.mapEpochSeconds(createdPoint.getValue().intValue()));
+            }
         }
         point.setCounterValue(counterValue);
         point.setTimestamp(offsetDateTimeMapper.mapLocalDateTime(valuePoint.getTimestamp()));
@@ -157,19 +155,20 @@ public class MetricsMapperImpl implements MetricsMapper {
         final HistogramValue histogramValue = new HistogramValue();
         final List<MetricPointPojo> pointsBySeriesSumType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.SUM);
-        if (CollectionUtils.isNotEmpty(pointsBySeriesSumType)) {
+        if (CollectionUtils.isNotEmpty(pointsBySeriesSumType) && pointsBySeriesSumType.get(0).getValue() != null) {
             histogramValue.setSum(BigDecimal.valueOf(pointsBySeriesSumType.get(0).getValue()));
         }
         final List<MetricPointPojo> pointsBySeriesCountType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.COUNT);
-        if (CollectionUtils.isNotEmpty(pointsBySeriesCountType)) {
+        if (CollectionUtils.isNotEmpty(pointsBySeriesCountType) && pointsBySeriesCountType.get(0).getValue() != null) {
             histogramValue.setCount(pointsBySeriesCountType.get(0).getValue().longValue());
         }
         final List<MetricPointPojo> pointsBySeriesCreatedType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.CREATED);
-        if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)) {
-            final MetricPointPojo createdPoint = pointsBySeriesCreatedType.get(0);
-            histogramValue.setCreated(offsetDateTimeMapper.mapEpochSeconds(createdPoint.getValue().intValue()));
+        if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)
+            && pointsBySeriesCreatedType.get(0).getValue() != null) {
+            histogramValue.setCreated(
+                offsetDateTimeMapper.mapEpochSeconds(pointsBySeriesCreatedType.get(0).getValue().intValue()));
         }
         final List<MetricPointPojo> pointsBySeriesBucketType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.BUCKET);
@@ -203,19 +202,20 @@ public class MetricsMapperImpl implements MetricsMapper {
         final SummaryValue summaryValue = new SummaryValue();
         final List<MetricPointPojo> pointsBySeriesSumType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.SUM);
-        if (CollectionUtils.isNotEmpty(pointsBySeriesSumType)) {
+        if (CollectionUtils.isNotEmpty(pointsBySeriesSumType) && pointsBySeriesSumType.get(0).getValue() != null) {
             summaryValue.setSum(BigDecimal.valueOf(pointsBySeriesSumType.get(0).getValue()));
         }
         final List<MetricPointPojo> pointsBySeriesCountType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.COUNT);
-        if (CollectionUtils.isNotEmpty(pointsBySeriesCountType)) {
+        if (CollectionUtils.isNotEmpty(pointsBySeriesCountType) && pointsBySeriesCountType.get(0).getValue() != null) {
             summaryValue.setCount(pointsBySeriesCountType.get(0).getValue().longValue());
         }
         final List<MetricPointPojo> pointsBySeriesCreatedType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.CREATED);
-        if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)) {
-            final MetricPointPojo createdPoint = pointsBySeriesCreatedType.get(0);
-            summaryValue.setCreated(offsetDateTimeMapper.mapEpochSeconds(createdPoint.getValue().intValue()));
+        if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)
+            && pointsBySeriesCreatedType.get(0).getValue() != null) {
+            summaryValue.setCreated(
+                offsetDateTimeMapper.mapEpochSeconds(pointsBySeriesCreatedType.get(0).getValue().intValue()));
         }
         final List<MetricPointPojo> pointsBySeriesQuantileType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.QUANTILE);
