@@ -47,6 +47,7 @@ public class ControllerAdvice {
     @ExceptionHandler(WebExchangeBindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleException(final WebExchangeBindException e) {
+        log.error("Data binding/validation failed", e);
         return buildResponse(e);
     }
 
