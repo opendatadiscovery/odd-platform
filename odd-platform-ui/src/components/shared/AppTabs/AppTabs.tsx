@@ -1,7 +1,7 @@
 import React, { type SyntheticEvent } from 'react';
 import { type TabsProps } from '@mui/material';
-import { Link } from 'react-router-dom';
 import type { HintType, TabType } from 'components/shared/AppTabs/interfaces';
+import { Link } from 'react-router-dom-v5-compat';
 import AppTab from './AppTab/AppTab';
 import AppLinkTab from './AppTab/AppLinkTab';
 import AppTabLabel from './AppTabLabel/AppTabLabel';

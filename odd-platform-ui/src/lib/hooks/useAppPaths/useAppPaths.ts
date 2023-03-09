@@ -1,6 +1,5 @@
 import React from 'react';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
-import { useManagementPaths } from './useManagementPaths';
 import { useTermsPaths } from './useTermsPaths';
 import { useDataEntityPaths } from './useDataEntityPaths';
 import {
@@ -12,18 +11,16 @@ import {
   TermsRoutes,
   DataEntityRoutes,
 } from './shared';
-import { useAlertsPaths } from './useAlertsPaths';
 
 const useAppPaths = () => {
   const { updatePath, isPathEmbedded } = useIsEmbeddedPath();
-  const managementPaths = useManagementPaths();
   const termsPaths = useTermsPaths();
-  const alertsPaths = useAlertsPaths();
   const dataEntityPaths = useDataEntityPaths();
 
   const getNonExactPath = (path: string) => updatePath(`${path}/*`);
+  const getNonExactParamPath = (path: string) => `${path}/*`;
 
-  const basePath = updatePath(BaseRoutes.base);
+  const basePath = updatePath('');
 
   // search
   const baseSearchPath = () => updatePath(`/${SearchRoutes.search}`);
@@ -47,14 +44,13 @@ const useAppPaths = () => {
       basePath,
       baseSearchPath,
       getNonExactPath,
+      getNonExactParamPath,
       searchPath,
       activityPath,
-      ...managementPaths,
       ...termsPaths,
-      ...alertsPaths,
       ...dataEntityPaths,
     }),
-    [isPathEmbedded, managementPaths, termsPaths, alertsPaths, dataEntityPaths]
+    [isPathEmbedded, termsPaths, dataEntityPaths]
   );
 };
 

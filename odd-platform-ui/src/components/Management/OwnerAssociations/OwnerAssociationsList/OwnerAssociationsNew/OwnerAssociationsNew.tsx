@@ -1,30 +1,39 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { useAtom } from 'jotai';
+import { EmptyContentPlaceholder, AppErrorPage } from 'components/shared';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import {
   getNewAssociationRequestsList,
   getNewOwnerAssociationRequestsPageInfo,
+  getOwnerAssociationRequestsListFetchingError,
   getOwnerAssociationRequestsListFetchingStatuses,
 } from 'redux/selectors';
-import ActiveAssociationRequest from 'components/Management/OwnerAssociations/OwnerAssociationsNew/ActiveAssociationRequest/ActiveAssociationRequest';
-import ManagementSkeletonItem from '../../ManagementSkeletonItem/ManagementSkeletonItem';
-import * as S from '../shared/OwnerAssociationsStyles';
+import ActiveAssociationRequest from './ActiveAssociationRequest/ActiveAssociationRequest';
+import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
+import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
+import * as S from '../OwnerAssociationsSharedStyles';
 
 interface OwnerAssociationsNewProps {
   size: number;
-  query: string;
 }
 
-const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size, query }) => {
+const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => {
   const dispatch = useAppDispatch();
+  const [query] = useAtom(queryAtom);
 
   const { hasNext, page } = useAppSelector(getNewOwnerAssociationRequestsPageInfo);
   const requestList = useAppSelector(getNewAssociationRequestsList);
-  const { isLoading: isRequestsListFetching, isLoaded: isRequestsListFetched } =
-    useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
+  const ownerAssociationRequestsListFetchingError = useAppSelector(
+    getOwnerAssociationRequestsListFetchingError
+  );
+  const {
+    isLoading: isRequestsListFetching,
+    isLoaded: isRequestsListFetched,
+    isNotLoaded: isRequestsListNotFetched,
+  } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
 
   const fetchNextPage = React.useCallback(() => {
     if (!hasNext) return;
@@ -79,9 +88,15 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size, query
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isRequestsListFetching && !requestList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      <EmptyContentPlaceholder
+        isContentEmpty={!requestList.length}
+        isContentLoaded={isRequestsListFetched}
+      />
+      <AppErrorPage
+        showError={isRequestsListNotFetched}
+        error={ownerAssociationRequestsListFetchingError}
+        offsetTop={182}
+      />
     </Grid>
   );
 };

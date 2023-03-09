@@ -1,19 +1,11 @@
 import React from 'react';
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-} from 'react-router-dom-v5-compat';
+import { Navigate, Route, Routes } from 'react-router-dom-v5-compat';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { RestrictedRoute, AppSuspenseWrapper } from 'components/shared';
+import { RestrictedRoute } from 'components/shared';
 import { useAppPaths, usePermissions } from 'lib/hooks';
 
-const NamespaceList = React.lazy(
-  () => import('components/Management/NamespaceList/NamespaceList')
-);
+const NamespaceList = React.lazy(() => import('../NamespaceList/NamespaceList'));
 const OwnersList = React.lazy(() => import('../OwnersList/OwnersList'));
 const LabelsList = React.lazy(() => import('../LabelsList/LabelsList'));
 const TagsList = React.lazy(() => import('../TagsList/TagsList'));
@@ -29,21 +21,13 @@ const PolicyDetails = React.lazy(
 );
 
 const ManagementRoutes: React.FC = () => {
-  const {
-    managementPath,
-    managementOwnerAssociationsPath,
-    createPolicyPath,
-    policyDetailsPath,
-    getNonExactPath,
-    ManagementRoutes: ManagementRoutesEnum,
-  } = useAppPaths();
+  const { ManagementRoutes: ManagementRoutesEnum } = useAppPaths();
   const { hasAccessTo } = usePermissions();
 
   return (
     <Routes>
       <Route
         path={ManagementRoutesEnum.namespaces}
-        // path='namespaces'
         element={
           <WithPermissionsProvider
             allowedPermissions={[
@@ -133,17 +117,14 @@ const ManagementRoutes: React.FC = () => {
         element={
           <RestrictedRoute
             isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
-            redirectTo={managementPath(ManagementRoutesEnum.namespaces)}
+            redirectTo={`../${ManagementRoutesEnum.namespaces}`}
             component={OwnerAssociations}
           />
         }
       >
-        <Route path={ManagementRoutesEnum.associationsViewType} />
+        <Route path={ManagementRoutesEnum.associationsViewTypeParam} />
       </Route>
-      {/* <Route */}
-      {/*   path={ManagementRoutesEnum.associations} */}
-      {/*   element={<Navigate to={ManagementRoutesEnum.associationsNew} replace />} */}
-      {/* /> */}
+
       <Route
         path={ManagementRoutesEnum.roles}
         element={
@@ -172,19 +153,16 @@ const ManagementRoutes: React.FC = () => {
           />
         }
       />
-      {[createPolicyPath(), policyDetailsPath()].map(path => (
-        <Route
-          key={path}
-          path={path}
-          element={
-            <WithPermissionsProvider
-              allowedPermissions={[Permission.POLICY_UPDATE]}
-              resourcePermissions={[]}
-              Component={PolicyDetails}
-            />
-          }
-        />
-      ))}
+      <Route
+        path={`${ManagementRoutesEnum.policies}/${ManagementRoutesEnum.policyIdParam}`}
+        element={
+          <WithPermissionsProvider
+            allowedPermissions={[Permission.POLICY_UPDATE]}
+            resourcePermissions={[]}
+            Component={PolicyDetails}
+          />
+        }
+      />
       <Route
         path='/'
         element={<Navigate to={ManagementRoutesEnum.namespaces} replace />}

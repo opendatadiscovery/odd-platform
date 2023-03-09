@@ -1,37 +1,42 @@
 import React from 'react';
+import { useAtom } from 'jotai';
+import { Grid, Typography } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
+  getOwnerAssociationRequestsListFetchingError,
   getOwnerAssociationRequestsListFetchingStatuses,
   getResolvedAssociationRequestsList,
   getResolvedOwnerAssociationRequestsPageInfo,
 } from 'redux/selectors';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
-import { Grid, Typography } from '@mui/material';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import ManagementSkeletonItem from 'components/Management/ManagementSkeletonItem/ManagementSkeletonItem';
-import ResolvedAssociationRequest from 'components/Management/OwnerAssociations/OwnerAssociationsResolved/ResolvedAssociationRequest/ResolvedAssociationRequest';
-import * as S from '../shared/OwnerAssociationsStyles';
+import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
+import ResolvedAssociationRequest from './ResolvedAssociationRequest/ResolvedAssociationRequest';
+import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
+import * as S from '../OwnerAssociationsSharedStyles';
 
 interface OwnerAssociationsResolvedProps {
   size: number;
-  query: string;
 }
 
 const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   size,
-  query,
 }) => {
   const dispatch = useAppDispatch();
-  const { associationsViewType } = useAppParams();
-  const { managementOwnerAssociationsPath, ManagementRoutes } = useAppPaths();
+  const [query] = useAtom(queryAtom);
 
   const { hasNext, page } = useAppSelector(getResolvedOwnerAssociationRequestsPageInfo);
   const requestList = useAppSelector(getResolvedAssociationRequestsList);
 
-  const { isLoading: isRequestsListFetching, isLoaded: isRequestsListFetched } =
-    useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
+  const {
+    isLoading: isRequestsListFetching,
+    isLoaded: isRequestsListFetched,
+    isNotLoaded: isRequestsListNotFetched,
+  } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
+  const ownerAssociationRequestsListFetchingError = useAppSelector(
+    getOwnerAssociationRequestsListFetchingError
+  );
 
   const fetchNextPage = React.useCallback(() => {
     if (!hasNext) return;
@@ -96,9 +101,15 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isRequestsListFetching && !requestList.length ? (
-        <EmptyContentPlaceholder />
-      ) : null}
+      <EmptyContentPlaceholder
+        isContentEmpty={!requestList.length}
+        isContentLoaded={isRequestsListFetched}
+      />
+      <AppErrorPage
+        showError={isRequestsListNotFetched}
+        error={ownerAssociationRequestsListFetchingError}
+        offsetTop={182}
+      />
     </Grid>
   );
 };

@@ -11,7 +11,7 @@ import { AcceptIcon, RejectIcon } from 'components/shared/Icons';
 import { updateOwnerAssociationRequest } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { usePermissions } from 'lib/hooks';
-import * as S from '../../shared/OwnerAssociationsStyles';
+import * as S from '../../OwnerAssociationsSharedStyles';
 
 interface Props {
   id: OwnerAssociationRequest['id'];

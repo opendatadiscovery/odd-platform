@@ -2,8 +2,8 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { OwnerAssociationRequest } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
-import RequestStatus from 'components/Management/OwnerAssociations/shared/RequestStatus/RequestStatus';
-import * as S from '../../shared/OwnerAssociationsStyles';
+import RequestStatus from './RequestStatus/RequestStatus';
+import * as S from '../../OwnerAssociationsSharedStyles';
 
 interface Props {
   ownerName: OwnerAssociationRequest['ownerName'];

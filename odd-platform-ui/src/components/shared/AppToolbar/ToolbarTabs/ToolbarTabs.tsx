@@ -20,9 +20,7 @@ const ToolbarTabs: React.FC = () => {
     activityPath,
     termSearchPath,
     searchPath,
-    managementPath,
     ManagementRoutes,
-    alertsBasePath,
     AlertsRoutes,
     TermsRoutes,
     baseTermSearchPath,
@@ -37,7 +35,7 @@ const ToolbarTabs: React.FC = () => {
       { name: 'Catalog', link: baseSearchPath(), value: SearchRoutes.search },
       {
         name: 'Management',
-        link: managementPath(ManagementRoutes.namespaces),
+        link: ManagementRoutes.management,
         value: ManagementRoutes.management,
       },
       {
@@ -45,7 +43,7 @@ const ToolbarTabs: React.FC = () => {
         link: baseTermSearchPath(),
         value: TermsRoutes.termSearch,
       },
-      { name: 'Alerts', link: alertsBasePath(), value: AlertsRoutes.alerts },
+      { name: 'Alerts', link: AlertsRoutes.alerts, value: AlertsRoutes.alerts },
       {
         name: 'Activity',
         link: activityPath(activityQueryString),

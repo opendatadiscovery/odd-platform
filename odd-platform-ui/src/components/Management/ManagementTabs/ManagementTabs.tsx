@@ -6,8 +6,7 @@ import { Grid } from '@mui/material';
 
 const ManagementTabs: React.FC = () => {
   const { managementViewType } = useAppParams();
-  const { managementPath, managementOwnerAssociationsPath, ManagementRoutes } =
-    useAppPaths();
+  const { ManagementRoutes } = useAppPaths();
   const { hasAccessTo } = usePermissions();
 
   const [selectedTab, setSelectedTab] = React.useState(0);
@@ -19,19 +18,19 @@ const ManagementTabs: React.FC = () => {
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
-      { name: 'Namespaces', link: managementPath(ManagementRoutes.namespaces) },
-      { name: 'Datasources', link: managementPath(ManagementRoutes.datasources) },
-      { name: 'Collectors', link: managementPath(ManagementRoutes.collectors) },
-      { name: 'Owners', link: managementPath(ManagementRoutes.owners) },
-      { name: 'Tags', link: managementPath(ManagementRoutes.tags) },
-      { name: 'Labels', link: managementPath(ManagementRoutes.labels) },
+      { name: 'Namespaces', link: ManagementRoutes.namespaces },
+      { name: 'Datasources', link: ManagementRoutes.datasources },
+      { name: 'Collectors', link: ManagementRoutes.collectors },
+      { name: 'Owners', link: ManagementRoutes.owners },
+      { name: 'Tags', link: ManagementRoutes.tags },
+      { name: 'Labels', link: ManagementRoutes.labels },
       {
         name: 'Associations',
-        link: managementPath(ManagementRoutes.associations),
+        link: ManagementRoutes.associations,
         hidden: hideAssociations,
       },
-      { name: 'Roles', link: managementPath(ManagementRoutes.roles) },
-      { name: 'Policies', link: managementPath(ManagementRoutes.policies) },
+      { name: 'Roles', link: ManagementRoutes.roles },
+      { name: 'Policies', link: ManagementRoutes.policies },
     ],
     [hideAssociations]
   );
@@ -43,8 +42,6 @@ const ManagementTabs: React.FC = () => {
         : 0
     );
   }, [tabs, managementViewType]);
-
-  console.log('managementViewType', managementViewType);
 
   return (
     <Grid sx={{ p: 0.5 }}>
