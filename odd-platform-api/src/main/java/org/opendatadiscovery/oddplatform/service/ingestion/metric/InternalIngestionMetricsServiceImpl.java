@@ -276,14 +276,6 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
             .orElseThrow();
     }
 
-//    private List<Integer> getBucketAndQuantileSeries(final List<MetricSeriesPojo> series) {
-//        return series.stream()
-//            .filter(s -> List.of(BUCKET.getCode(), MetricSeriesValueType.QUANTILE.getCode())
-//                .contains(s.getValueType()))
-//            .map(MetricSeriesPojo::getId)
-//            .toList();
-//    }
-
     private Comparator<MetricPoint> timestampComparator() {
         return (mp1, mp2) -> {
             final Integer firstTime = Optional.ofNullable(mp1.getTimestamp())
