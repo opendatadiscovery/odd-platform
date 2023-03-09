@@ -6,17 +6,6 @@
       "unit" : "req/sec",
       "metrics" : [
         {
-          "labels" : [],
-          "metric_points" : [
-            {
-              "timestamp" : "1676399903",
-              "gauge_value" : {
-                "value" : 100
-              }
-            }
-          ]
-        },
-        {
           "labels" : [
             {
               "name" : "env",
@@ -32,6 +21,37 @@
               "timestamp" : "1676399903",
               "gauge_value" : {
                 "value" : 200
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [
+            {
+              "name" : "env",
+              "value" : "stage"
+            },
+            {
+              "name" : "instance-id",
+              "value" : "333"
+            }
+          ],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "gauge_value" : {
+                "value" : 150
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "gauge_value" : {
+                "value" : 100
               }
             }
           ]

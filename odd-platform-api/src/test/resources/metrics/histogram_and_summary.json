@@ -6,29 +6,6 @@
       "unit" : "req/sec",
       "metrics" : [
         {
-          "labels" : [],
-          "metric_points" : [
-            {
-              "timestamp" : "1676399903",
-              "histogram_value" : {
-                "sum" : 100,
-                "count" : 50,
-                "created" : "1676399903",
-                "buckets" : [
-                  {
-                    "upper_bound" : 10,
-                    "count" : 20
-                  },
-                  {
-                    "upper_bound" : 20,
-                    "count" : 30
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
           "labels" : [
             {
               "name" : "env",
@@ -56,6 +33,63 @@
                   {
                     "upper_bound" : 50,
                     "count" : 50
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [
+            {
+              "name" : "env",
+              "value" : "dev"
+            },
+            {
+              "name" : "instance-id",
+              "value" : "123"
+            }
+          ],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "histogram_value" : {
+                "count" : 60,
+                "buckets" : [
+                  {
+                    "upper_bound" : 11,
+                    "count" : 44
+                  },
+                  {
+                    "upper_bound" : 22,
+                    "count" : 66
+                  },
+                  {
+                    "upper_bound" : 33,
+                    "count" : 77
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "labels" : [],
+          "metric_points" : [
+            {
+              "timestamp" : "1676399903",
+              "histogram_value" : {
+                "sum" : 100,
+                "count" : 50,
+                "created" : "1676399903",
+                "buckets" : [
+                  {
+                    "upper_bound" : 10,
+                    "count" : 20
+                  },
+                  {
+                    "upper_bound" : 20,
+                    "count" : 30
                   }
                 ]
               }
