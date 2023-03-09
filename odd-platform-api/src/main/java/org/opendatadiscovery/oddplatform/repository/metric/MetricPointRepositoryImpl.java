@@ -20,12 +20,19 @@ public class MetricPointRepositoryImpl implements MetricPointRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
-    public Flux<MetricPointPojo> deletePointsWithLessTime(final List<MetricPointPojo> newPoints) {
-        return jooqReactiveOperations.executeInPartitionReturning(newPoints, points -> {
+    public Flux<MetricPointPojo> getPointsBySeriesId(final List<Integer> seriesIds) {
+        final var query = DSL.selectFrom(METRIC_POINT)
+            .where(METRIC_POINT.SERIES_ID.in(seriesIds));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(MetricPointPojo.class));
+    }
+
+    @Override
+    public Flux<MetricPointPojo> deletePoints(final List<MetricPointPojo> pointsToDelete) {
+        return jooqReactiveOperations.executeInPartitionReturning(pointsToDelete, points -> {
             final Condition condition = points.stream()
                 .map(p -> METRIC_POINT.SERIES_ID.eq(p.getSeriesId())
-                    .and(METRIC_POINT.LABEL_VALUES_IDS.ne(p.getLabelValuesIds()))
-                    .and(METRIC_POINT.TIMESTAMP.lessThan(p.getTimestamp())))
+                    .and(METRIC_POINT.LABEL_VALUES_IDS.eq(p.getLabelValuesIds())))
                 .reduce(Condition::or)
                 .orElseThrow(() -> new RuntimeException("Can't build delete condition for points"));
             return jooqReactiveOperations.flux(DSL.deleteFrom(METRIC_POINT)
