@@ -60,7 +60,7 @@ public class MetricsIngestionTest extends BaseIngestionTest {
         final MetricPoint metricPointToUpdate = updatedMetrics.getItems().get(0).getMetricFamilies().get(0)
             .getMetrics().get(0)
             .getMetricPoints().get(0);
-        metricPointToUpdate.setTimestamp(metricPointToUpdate.getTimestamp() - 100);
+        metricPointToUpdate.setTimestamp(metricPointToUpdate.getTimestamp() - 1000);
         metricPointToUpdate.getGaugeValue().setValue(BigDecimal.ONE);
         ingestMetrics(updatedMetrics);
 

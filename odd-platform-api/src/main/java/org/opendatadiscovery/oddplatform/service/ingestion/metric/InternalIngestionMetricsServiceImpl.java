@@ -23,7 +23,10 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricLabelsDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricPointDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionMetricsRequest;
+import org.opendatadiscovery.oddplatform.dto.metric.MetricLabelValueDto;
 import org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesDto;
+import org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType;
+import org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Label;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Metric;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetricFamily;
@@ -51,10 +54,12 @@ import org.opendatadiscovery.oddplatform.utils.MetricUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.function.TupleUtils;
+import reactor.util.function.Tuples;
 
 import static java.util.function.Function.identity;
+import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.BUCKET;
 import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.BUCKET_UPPER_BOUND;
-import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.QUANTILE;
 import static org.opendatadiscovery.oddplatform.utils.MetricUtils.buildMetricFamilyKey;
 import static reactor.function.TupleUtils.function;
 
@@ -125,7 +130,8 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
                     if (metricFamily.getType() == MetricType.SUMMARY) {
                         validateQuantileValues(metricPoint.getSummaryValue().getQuantile());
                         metricPoint.getSummaryValue().getQuantile()
-                            .forEach(q -> labels.put(QUANTILE.getLabelName(), q.getQuantile().toString()));
+                            .forEach(
+                                q -> labels.put(SystemMetricLabel.QUANTILE.getLabelName(), q.getQuantile().toString()));
                     }
                     final IngestionMetricPointDto pointDto =
                         new IngestionMetricPointDto(metricSet.getOddrn(),
@@ -174,17 +180,57 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
         return metricSeriesRepository.createOrUpdateMetricSeries(metricSeriesPojos)
             .collectList()
             .flatMap(series -> {
-                final List<MetricPointPojo> metricPointPojos = metricSeriesList.stream()
+                final List<Integer> bucketAndQuantileSeries = getBucketAndQuantileSeries(series);
+                final List<MetricPointPojo> pointsToIngest = metricSeriesList.stream()
                     .flatMap(dto -> {
                         final Integer createdSeriesId = getCreatedSeriesId(series, dto.series());
                         return dto.points().stream()
                             .peek(point -> point.setSeriesId(createdSeriesId));
                     }).toList();
-                return metricPointRepository.deletePointsWithLessTime(metricPointPojos)
-                    .then(metricPointRepository.createOrUpdatePoints(metricPointPojos)
-                        .collectList());
+                return metricPointRepository.getPointsBySeriesId(bucketAndQuantileSeries)
+                    .collectList()
+                    .flatMap(bucketQuantilePoints -> {
+                        final Set<Integer> labelValueIds = bucketQuantilePoints.stream()
+                            .flatMap(p -> Arrays.stream(p.getLabelValuesIds()))
+                            .collect(Collectors.toSet());
+                        return metricLabelValueRepository.getDtoByIds(labelValueIds)
+                            .map(labelDtos -> {
+                                final Set<Integer> systemLabelValues = getSystemLabelValues(labelDtos);
+                                return Tuples.of(bucketQuantilePoints, systemLabelValues);
+                            });
+                    }).flatMap(TupleUtils.function((bucketQuantilePoints, systemLabelValues) -> {
+                        final List<MetricPointPojo> pointsToDelete = bucketQuantilePoints.stream()
+                            .filter(p -> needToDeletePoint(p, pointsToIngest, systemLabelValues))
+                            .toList();
+                        return metricPointRepository.deletePoints(pointsToDelete)
+                            .then(metricPointRepository.createOrUpdatePoints(pointsToIngest).collectList());
+                    }));
             })
             .then();
+    }
+
+    private boolean needToDeletePoint(final MetricPointPojo pointPojo,
+                                      final List<MetricPointPojo> pointsToIngest,
+                                      final Set<Integer> systemLabelIds) {
+        final List<Integer> existingLabelValues = new ArrayList<>(Arrays.asList(pointPojo.getLabelValuesIds())).stream()
+            .filter(id -> !systemLabelIds.contains(id))
+            .toList();
+        return pointsToIngest.stream()
+            .anyMatch(p -> {
+                final List<Integer> ingestedLabelValues = new ArrayList<>(Arrays.asList(p.getLabelValuesIds())).stream()
+                    .filter(id -> !systemLabelIds.contains(id))
+                    .toList();
+                return CollectionUtils.isEqualCollection(existingLabelValues, ingestedLabelValues)
+                    && pointPojo.getTimestamp().isBefore(p.getTimestamp());
+            });
+    }
+
+    private Set<Integer> getSystemLabelValues(final List<MetricLabelValueDto> labelValueDtos) {
+        return labelValueDtos.stream()
+            .filter(lv -> lv.label().getName().equals(BUCKET_UPPER_BOUND.getLabelName())
+                || lv.label().getName().equals(SystemMetricLabel.QUANTILE.getLabelName()))
+            .map(lv -> lv.labelValue().getId())
+            .collect(Collectors.toSet());
     }
 
     private List<MetricSeriesDto> extractSeriesAndPoints(final List<IngestionMetricPointDto> pointDtoList,
@@ -226,6 +272,14 @@ public class InternalIngestionMetricsServiceImpl implements IngestionMetricsServ
             .findFirst()
             .map(MetricSeriesPojo::getId)
             .orElseThrow();
+    }
+
+    private List<Integer> getBucketAndQuantileSeries(final List<MetricSeriesPojo> series) {
+        return series.stream()
+            .filter(s -> List.of(BUCKET.getCode(), MetricSeriesValueType.QUANTILE.getCode())
+                .contains(s.getValueType()))
+            .map(MetricSeriesPojo::getId)
+            .toList();
     }
 
     private Comparator<MetricPoint> timestampComparator() {
