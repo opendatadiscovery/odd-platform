@@ -23,7 +23,7 @@ const useAppPaths = () => {
   const basePath = updatePath('');
 
   // search
-  const baseSearchPath = () => updatePath(`/${SearchRoutes.search}`);
+  const baseSearchPath = () => `${SearchRoutes.search}`;
   const searchPath = (searchId: string = SearchRoutes.searchIdParam) =>
     `${baseSearchPath()}/${searchId}`;
 
@@ -42,7 +42,6 @@ const useAppPaths = () => {
       TermsRoutes,
       DataEntityRoutes,
       basePath,
-      baseSearchPath,
       getNonExactPath,
       getNonExactParamPath,
       searchPath,

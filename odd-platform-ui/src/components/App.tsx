@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Redirect, Route, Switch } from 'react-router-dom';
 import {
   Navigate,
   Route,
@@ -21,7 +20,6 @@ import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Toaster } from 'react-hot-toast';
-import NamespaceList from 'components/Management/NamespaceList/NamespaceList';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -37,23 +35,20 @@ const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
+
   const {
     isPathEmbedded,
-    managementPath,
     ManagementRoutes,
-    baseManagementPath,
+    SearchRoutes,
     basePath,
-    baseSearchPath,
-    searchPath,
     baseTermSearchPath,
     termSearchPath,
     termDetailsPath,
     activityPath,
-    alertsBasePath,
-    alertsPath,
     dataEntityDetailsPath,
     AlertsRoutes,
     getNonExactPath,
+    getNonExactParamPath,
   } = useAppPaths();
 
   React.useEffect(() => {
@@ -106,11 +101,10 @@ const App: React.FC = () => {
               path={getNonExactPath(AlertsRoutes.alerts)}
               element={<Alerts />}
             >
-              <Route path={getNonExactPath(AlertsRoutes.alertsViewTypeParam)} />
+              <Route path={AlertsRoutes.alertsViewTypeParam} />
             </Route>
             <Route
               path={getNonExactPath(ManagementRoutes.management)}
-              // path={ManagementRoutes.management}
               element={
                 <WithPermissionsProvider
                   allowedPermissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
@@ -119,28 +113,24 @@ const App: React.FC = () => {
                 />
               }
             >
-              <Route path={ManagementRoutes.managementViewType} />
+              <Route
+                path={getNonExactParamPath(ManagementRoutes.managementViewTypeParam)}
+              />
             </Route>
-            {[baseSearchPath(), searchPath()].map(path => (
-              <Route key='Search' path={path} element={<Search />} />
-            ))}
-
+            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />}>
+              <Route path={SearchRoutes.searchIdParam} />
+            </Route>
             {/* <Route */}
             {/*   exact */}
             {/*   path={[baseTermSearchPath(), termSearchPath()]} */}
             {/*   component={TermSearch} */}
             {/* /> */}
             <Route path={termDetailsPath()} element={<TermDetails />} />
-            <Route path={dataEntityDetailsPath()} element={<DataEntityDetails />} />
+            {/* <Route path={dataEntityDetailsPath()} element={<DataEntityDetails />} /> */}
+            <Route path='dataentities' element={<DataEntityDetails />}>
+              <Route path=':dataEntityViewType' />
+            </Route>
             <Route path={activityPath()} element={<Activity />} />
-            {/* <Route */}
-            {/*   path={baseManagementPath()} */}
-            {/*   element={<Navigate to={managementPath(ManagementRoutes.namespaces)} />} */}
-            {/* /> */}
-            {/* <Redirect */}
-            {/*   from={baseManagementPath()} */}
-            {/*   to={managementPath(ManagementRoutes.namespaces)} */}
-            {/* /> */}
           </Routes>
         </React.Suspense>
       </div>

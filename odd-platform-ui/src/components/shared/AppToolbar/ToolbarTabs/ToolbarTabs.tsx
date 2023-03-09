@@ -6,8 +6,7 @@ import {
 } from 'components/shared/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, createTermSearch } from 'redux/thunks';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate, useLocation } from 'react-router-dom-v5-compat';
 import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
 
 const ToolbarTabs: React.FC = () => {
@@ -26,13 +25,12 @@ const ToolbarTabs: React.FC = () => {
     baseTermSearchPath,
     SearchRoutes,
     ActivityRoutes,
-    baseSearchPath,
     DataEntityRoutes,
   } = useAppPaths();
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
-      { name: 'Catalog', link: baseSearchPath(), value: SearchRoutes.search },
+      { name: 'Catalog', link: SearchRoutes.search, value: SearchRoutes.search },
       {
         name: 'Management',
         link: ManagementRoutes.management,

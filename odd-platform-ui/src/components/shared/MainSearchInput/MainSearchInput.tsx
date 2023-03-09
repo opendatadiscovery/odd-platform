@@ -34,21 +34,16 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     return clearSearchQuery();
   }, [mainSearch]);
 
-  const createSearch = React.useCallback(
-    (query: string) => {
-      const searchFormData = { query, pageSize: 30, filters: {} };
+  const createSearch = React.useCallback((query: string) => {
+    const searchFormData = { query, pageSize: 30, filters: {} };
 
-      dispatch(createDataEntitiesSearch({ searchFormData }))
-        .unwrap()
-        .then(({ searchId }) => {
-          const searchLink = searchPath(searchId);
-          navigate(searchLink);
-        });
-
-      navigate(searchPath());
-    },
-    [createDataEntitiesSearch, searchPath]
-  );
+    dispatch(createDataEntitiesSearch({ searchFormData }))
+      .unwrap()
+      .then(({ searchId }) => {
+        const searchLink = searchPath(searchId);
+        navigate(searchLink);
+      });
+  }, []);
 
   const updateSearch = React.useCallback(
     (query: string) => {

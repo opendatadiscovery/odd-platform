@@ -32,9 +32,8 @@ const TopTagsList: React.FC<TopTagListProps> = ({ topTags, isTagsNotFetched }) =
           const searchLink = searchPath(searchId);
           navigate(searchLink);
         });
-      navigate(searchPath());
     },
-    [searchLoading, setSearchLoading, createDataEntitiesSearch]
+    [searchLoading]
   );
 
   const sortedTags = React.useMemo(
