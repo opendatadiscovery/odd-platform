@@ -15,6 +15,7 @@ const ToolbarTabs: React.FC = () => {
   const navigate = useNavigate();
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
+
   const {
     activityPath,
     termSearchPath,
@@ -22,7 +23,6 @@ const ToolbarTabs: React.FC = () => {
     ManagementRoutes,
     AlertsRoutes,
     TermsRoutes,
-    baseTermSearchPath,
     SearchRoutes,
     ActivityRoutes,
     DataEntityRoutes,
@@ -38,7 +38,7 @@ const ToolbarTabs: React.FC = () => {
       },
       {
         name: 'Dictionary',
-        link: baseTermSearchPath(),
+        link: TermsRoutes.termSearch,
         value: TermsRoutes.termSearch,
       },
       { name: 'Alerts', link: AlertsRoutes.alerts, value: AlertsRoutes.alerts },

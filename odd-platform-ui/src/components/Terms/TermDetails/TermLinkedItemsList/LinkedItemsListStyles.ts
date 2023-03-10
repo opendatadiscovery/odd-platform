@@ -18,9 +18,13 @@ export const TermLinkedItemsColContainer = styled(Grid)<{
   ...termSearchResultsColWidthStyles[$colType],
 }));
 
-export const TermLinkedItemsListContainer = styled(Grid)(({ theme }) => ({
-  height: `calc(100vh - ${toolbarHeight}px - ${itemHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
-    13.25
-  )})`,
-  overflow: 'auto',
-}));
+export const TermLinkedItemsListContainer = styled(Grid)<{ $isListEmpty: boolean }>(
+  ({ theme, $isListEmpty }) => ({
+    height: $isListEmpty
+      ? 'auto'
+      : `calc(100vh - ${toolbarHeight}px - ${itemHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
+          13.25
+        )})`,
+    overflow: 'auto',
+  })
+);

@@ -4,7 +4,7 @@ import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { useNavigate } from 'react-router-dom-v5-compat';
 import { PageWithLeftSidebar } from 'components/shared';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   getTermSearchCreateStatuses,
   getTermSearchFacetsParams,
@@ -23,7 +23,6 @@ import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 const TermSearch: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { termSearchPath } = useAppPaths();
   const { termSearchId: routerTermSearchId } = useAppParams();
 
   const termSearchId = useAppSelector(getTermSearchId);
@@ -38,8 +37,7 @@ const TermSearch: React.FC = () => {
       dispatch(createTermSearch({ termSearchFormData }))
         .unwrap()
         .then(termSearch => {
-          const termSearchLink = termSearchPath(termSearch.searchId);
-          navigate(termSearchLink);
+          navigate(`${termSearch.searchId}`);
         });
     }
   }, [routerTermSearchId, createTermSearch, isTermSearchCreating]);
@@ -79,8 +77,9 @@ const TermSearch: React.FC = () => {
           <WithPermissionsProvider
             allowedPermissions={[Permission.TERM_CREATE]}
             resourcePermissions={[]}
-            Component={TermSearchHeader}
-          />
+          >
+            <TermSearchHeader />
+          </WithPermissionsProvider>
           <TermsSearchResults />
         </PageWithLeftSidebar.ListContainer>
       </PageWithLeftSidebar.ContentContainer>

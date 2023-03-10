@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-} from 'react-router-dom-v5-compat';
+import { Route, Routes } from 'react-router-dom-v5-compat';
 import { toolbarHeight } from 'lib/constants';
-import { AppLoadingPage, AppToolbar } from 'components/shared';
+import { AppSuspenseWrapper, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
   fetchActiveFeatures,
@@ -17,8 +11,6 @@ import {
   fetchIdentity,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { Permission } from 'generated-sources';
-import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Toaster } from 'react-hot-toast';
 
 // lazy components
@@ -41,9 +33,7 @@ const App: React.FC = () => {
     ManagementRoutes,
     SearchRoutes,
     basePath,
-    baseTermSearchPath,
-    termSearchPath,
-    termDetailsPath,
+    TermsRoutes,
     activityPath,
     dataEntityDetailsPath,
     AlertsRoutes,
@@ -64,38 +54,26 @@ const App: React.FC = () => {
       <Toaster position='bottom-right' toastOptions={{ custom: { duration: 6000 } }} />
       {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
-        {/* <React.Suspense fallback={<AppLoadingPage />}> */}
-        {/*   <Switch> */}
-        {/*     <Route exact path={basePath} component={Overview} /> */}
-        {/*     <Route path={[alertsBasePath(), alertsPath()]} component={Alerts} /> */}
-        {/*     <Route */}
-        {/*       path={[managementPath()]} */}
-        {/*       render={() => ( */}
-        {/*         <WithPermissionsProvider */}
-        {/*           allowedPermissions={[Permission.OWNER_ASSOCIATION_MANAGE]} */}
-        {/*           resourcePermissions={[]} */}
-        {/*           Component={Management} */}
-        {/*         /> */}
-        {/*       )} */}
-        {/*     /> */}
-        {/*     <Route exact path={[baseSearchPath(), searchPath()]} component={Search} /> */}
-        {/*     <Route */}
-        {/*       exact */}
-        {/*       path={[baseTermSearchPath(), termSearchPath()]} */}
-        {/*       component={TermSearch} */}
-        {/*     /> */}
-        {/*     <Route path={termDetailsPath()} component={TermDetails} /> */}
-        {/*     <Route path={dataEntityDetailsPath()} component={DataEntityDetails} /> */}
-        {/*     <Route path={activityPath()} component={Activity} /> */}
-        {/*     <Redirect */}
-        {/*       from={baseManagementPath()} */}
-        {/*       to={managementPath(ManagementRoutes.namespaces)} */}
-        {/*     /> */}
-        {/*   </Switch> */}
-        {/* </React.Suspense> */}
-        <React.Suspense fallback={<AppLoadingPage />}>
+        <AppSuspenseWrapper>
           <Routes>
             <Route path={basePath} element={<Overview />} />
+            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />}>
+              <Route path={SearchRoutes.searchIdParam} />
+            </Route>
+            <Route
+              path={getNonExactPath(ManagementRoutes.management)}
+              element={<Management />}
+            >
+              <Route
+                path={getNonExactParamPath(ManagementRoutes.managementViewTypeParam)}
+              />
+            </Route>
+            <Route
+              path={getNonExactPath(TermsRoutes.termSearch)}
+              element={<TermSearch />}
+            >
+              <Route path={TermsRoutes.termSearchIdParam} />
+            </Route>
             <Route
               key='Alerts'
               path={getNonExactPath(AlertsRoutes.alerts)}
@@ -103,36 +81,19 @@ const App: React.FC = () => {
             >
               <Route path={AlertsRoutes.alertsViewTypeParam} />
             </Route>
-            <Route
-              path={getNonExactPath(ManagementRoutes.management)}
-              element={
-                <WithPermissionsProvider
-                  allowedPermissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
-                  resourcePermissions={[]}
-                  Component={Management}
-                />
-              }
-            >
-              <Route
-                path={getNonExactParamPath(ManagementRoutes.managementViewTypeParam)}
-              />
+            <Route path={activityPath()} element={<Activity />} />
+
+            <Route path={getNonExactPath(TermsRoutes.terms)} element={<TermDetails />}>
+              <Route path={getNonExactParamPath(TermsRoutes.termIdParam)}>
+                <Route path={TermsRoutes.termsViewTypeParam} />
+              </Route>
             </Route>
-            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />}>
-              <Route path={SearchRoutes.searchIdParam} />
-            </Route>
-            {/* <Route */}
-            {/*   exact */}
-            {/*   path={[baseTermSearchPath(), termSearchPath()]} */}
-            {/*   component={TermSearch} */}
-            {/* /> */}
-            <Route path={termDetailsPath()} element={<TermDetails />} />
             {/* <Route path={dataEntityDetailsPath()} element={<DataEntityDetails />} /> */}
             <Route path='dataentities' element={<DataEntityDetails />}>
               <Route path=':dataEntityViewType' />
             </Route>
-            <Route path={activityPath()} element={<Activity />} />
           </Routes>
-        </React.Suspense>
+        </AppSuspenseWrapper>
       </div>
     </div>
   );

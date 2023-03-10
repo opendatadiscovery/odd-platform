@@ -7,23 +7,23 @@ type TermId = Term['id'] | string;
 export const useTermsPaths = () => {
   const { updatePath } = useIsEmbeddedPath();
 
-  const baseTermSearchPath = () => updatePath(`/${TermsRoutes.termSearch}`);
-  const termSearchPath = (termSearchId: string = TermsRoutes.termSearchId) =>
-    `${baseTermSearchPath()}/${termSearchId}`;
+  const baseTermSearchPath = () => `${TermsRoutes.termSearch}`;
+  const termSearchPath = (termSearchId: string = TermsRoutes.termSearchIdParam) =>
+    updatePath(`${baseTermSearchPath()}/${termSearchId}`);
 
+  const baseTermDetailsPath = () => updatePath(`${TermsRoutes.terms}`);
   const termDetailsPath = (
-    termId: TermId = TermsRoutes.termId,
+    termId: TermId = TermsRoutes.termIdParam,
     viewType: string = TermsRoutes.termsViewTypeParam
-  ) => updatePath(`/${TermsRoutes.terms}/${termId}/${viewType}`);
+  ) => `${baseTermDetailsPath()}/${termId}/${viewType}`;
 
-  const termDetailsLinkedItemsPath = (termId: TermId = TermsRoutes.termId) =>
+  const termDetailsLinkedItemsPath = (termId: TermId = TermsRoutes.termIdParam) =>
     `${termDetailsPath(termId, TermsRoutes.linkedItems)}`;
 
-  const termDetailsOverviewPath = (termId: TermId = TermsRoutes.termId) =>
+  const termDetailsOverviewPath = (termId: TermId = TermsRoutes.termIdParam) =>
     `${termDetailsPath(termId, TermsRoutes.overview)}`;
 
   return {
-    baseTermSearchPath,
     termSearchPath,
     termDetailsPath,
     termDetailsLinkedItemsPath,

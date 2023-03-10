@@ -1,6 +1,7 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom-v5-compat';
+import { Route, Routes, Navigate } from 'react-router-dom-v5-compat';
 import { useAppPaths } from 'lib/hooks';
+import { AppSuspenseWrapper } from 'components/shared';
 
 const Overview = React.lazy(() => import('../Overview/Overview'));
 const LinkedItemsList = React.lazy(
@@ -8,13 +9,18 @@ const LinkedItemsList = React.lazy(
 );
 
 const TermDetailsRoutes: React.FC = () => {
-  const { termDetailsLinkedItemsPath, termDetailsOverviewPath } = useAppPaths();
+  const { TermsRoutes } = useAppPaths();
 
   return (
-    <Routes>
-      <Route path={termDetailsOverviewPath()} element={<Overview />} />
-      <Route path={termDetailsLinkedItemsPath()} element={<LinkedItemsList />} />
-    </Routes>
+    <AppSuspenseWrapper>
+      <Routes>
+        <Route path={TermsRoutes.termsViewTypeParam}>
+          <Route path={TermsRoutes.overview} element={<Overview />} />
+          <Route path={TermsRoutes.linkedItems} element={<LinkedItemsList />} />
+          <Route path='' element={<Navigate to={TermsRoutes.overview} />} />
+        </Route>
+      </Routes>
+    </AppSuspenseWrapper>
   );
 };
 

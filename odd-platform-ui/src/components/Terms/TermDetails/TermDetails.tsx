@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom-v5-compat';
-import { AppErrorPage, AppSuspenseWrapper, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getResourcePermissions,
@@ -25,11 +25,8 @@ const TermDetailsView: React.FC = () => {
   const { termId } = useAppParams();
   const { termSearchPath } = useAppPaths();
 
-  const {
-    isLoading: isTermDetailsFetching,
-    isLoaded: isTermDetailsFetched,
-    isNotLoaded: isTermDetailsNotFetched,
-  } = useAppSelector(getTermDetailsFetchingStatuses);
+  const { isLoading: isTermDetailsFetching, isNotLoaded: isTermDetailsNotFetched } =
+    useAppSelector(getTermDetailsFetchingStatuses);
   const termDetailsFetchingErrors = useAppSelector(getTermDetailsFetchingErrors);
 
   const termSearchId = useAppSelector(getTermSearchId);
@@ -58,7 +55,7 @@ const TermDetailsView: React.FC = () => {
 
   return (
     <TermDetailsComponentWrapper>
-      {termDetails.id && !isTermDetailsFetching ? (
+      {termDetails.id && !isTermDetailsNotFetched ? (
         <>
           <WithPermissionsProvider
             allowedPermissions={[Permission.TERM_UPDATE, Permission.TERM_DELETE]}
@@ -73,6 +70,7 @@ const TermDetailsView: React.FC = () => {
             )}
           />
           <TermDetailsTabs />
+          <TermDetailsRoutes />
         </>
       ) : null}
       {isTermDetailsFetching ? (
@@ -80,11 +78,6 @@ const TermDetailsView: React.FC = () => {
           renderContent={({ randWidth }) => <TermDetailsSkeleton width={randWidth()} />}
         />
       ) : null}
-      {isTermDetailsFetched && (
-        <AppSuspenseWrapper>
-          <TermDetailsRoutes />
-        </AppSuspenseWrapper>
-      )}
       <AppErrorPage
         showError={isTermDetailsNotFetched}
         error={termDetailsFetchingErrors}

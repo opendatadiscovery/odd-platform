@@ -30,5 +30,5 @@ export const fetchTermLinkedList = handleResponseAsyncThunk<
       },
     };
   },
-  {}
+  { switchOffErrorMessage: true }
 );

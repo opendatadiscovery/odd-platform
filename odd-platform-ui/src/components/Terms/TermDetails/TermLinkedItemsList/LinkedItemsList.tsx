@@ -6,6 +6,7 @@ import {
   AppSelect,
   AppInput,
   AppMenuItem,
+  AppErrorPage,
 } from 'components/shared';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useDebouncedCallback } from 'use-debounce';
@@ -15,6 +16,7 @@ import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityClassesList,
   getTermLinkedList,
+  getTermLinkedListFetchingErrors,
   getTermLinkedListFetchingStatuses,
   getTermLinkedListPageInfo,
 } from 'redux/selectors';
@@ -34,9 +36,12 @@ const LinkedItemsList: React.FC = () => {
   const termLinkedList = useAppSelector(getTermLinkedList(termId));
 
   const entityClasses = useAppSelector(getDataEntityClassesList);
-  const { isLoading: isLinkedListFetching } = useAppSelector(
-    getTermLinkedListFetchingStatuses
-  );
+  const {
+    isLoading: isLinkedListFetching,
+    isLoaded: isLinkedListFetched,
+    isNotLoaded: isLinkedListNotFetched,
+  } = useAppSelector(getTermLinkedListFetchingStatuses);
+  const linkedListFetchingError = useAppSelector(getTermLinkedListFetchingErrors);
   const { hasNext, page, total } = useAppSelector(getTermLinkedListPageInfo);
 
   const [query, setQuery] = React.useState('');
@@ -50,8 +55,8 @@ const LinkedItemsList: React.FC = () => {
   };
 
   React.useEffect(() => {
-    fetchNextPage();
-  }, [termId]);
+    dispatch(fetchTermLinkedList({ termId, page: 1, size, query, entityClassId }));
+  }, []);
 
   const createSearch = useDebouncedCallback(() => {
     dispatch(fetchTermLinkedList({ termId, page, size, query, entityClassId }));
@@ -127,29 +132,36 @@ const LinkedItemsList: React.FC = () => {
           <Typography variant='caption'>Last Update</Typography>
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
-      {isLinkedListFetching ? (
-        <LinkedItemsListSkeleton />
-      ) : (
-        <TermLinkedItemsListContainer id='term-linked-items-list'>
-          {termLinkedList && (
-            <InfiniteScroll
-              dataLength={termLinkedList?.length}
-              next={fetchNextPage}
-              hasMore={hasNext}
-              loader={isLinkedListFetching && <LinkedItemsListSkeleton />}
-              scrollThreshold='200px'
-              scrollableTarget='term-linked-items-list'
-            >
-              {termLinkedList?.map(linkedItem => (
-                <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
-              ))}
-            </InfiniteScroll>
-          )}
-        </TermLinkedItemsListContainer>
-      )}
-      {isLinkedListFetching && !total && (
-        <EmptyContentPlaceholder text='No linked items' />
-      )}
+      {isLinkedListFetching && <LinkedItemsListSkeleton />}
+      <TermLinkedItemsListContainer
+        $isListEmpty={!total || isLinkedListNotFetched}
+        id='term-linked-items-list'
+      >
+        {termLinkedList && (
+          <InfiniteScroll
+            dataLength={termLinkedList?.length}
+            next={fetchNextPage}
+            hasMore={hasNext}
+            loader={isLinkedListFetching && <LinkedItemsListSkeleton />}
+            scrollThreshold='200px'
+            scrollableTarget='term-linked-items-list'
+          >
+            {termLinkedList?.map(linkedItem => (
+              <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
+            ))}
+          </InfiniteScroll>
+        )}
+      </TermLinkedItemsListContainer>
+      <EmptyContentPlaceholder
+        text='No linked items'
+        isContentLoaded={isLinkedListFetched}
+        isContentEmpty={!total}
+      />
+      <AppErrorPage
+        showError={isLinkedListNotFetched}
+        error={linkedListFetchingError}
+        offsetTop={194}
+      />
     </Grid>
   );
 };

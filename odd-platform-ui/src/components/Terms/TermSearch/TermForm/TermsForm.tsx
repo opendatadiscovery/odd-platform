@@ -66,12 +66,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const onSubmit = (data: TermFormData) => {
     const parsedData = { ...data };
     (term && term.id
-      ? dispatch(
-          updateTerm({
-            termId: term.id,
-            termFormData: parsedData,
-          })
-        )
+      ? dispatch(updateTerm({ termId: term.id, termFormData: parsedData }))
       : dispatch(createTerm({ termFormData: parsedData }))
     )
       .unwrap()
