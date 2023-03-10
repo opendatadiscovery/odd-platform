@@ -26,22 +26,31 @@ const ToolbarTabs: React.FC = () => {
     SearchRoutes,
     ActivityRoutes,
     DataEntityRoutes,
+    updatePath,
   } = useAppPaths();
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
-      { name: 'Catalog', link: SearchRoutes.search, value: SearchRoutes.search },
+      {
+        name: 'Catalog',
+        link: updatePath(SearchRoutes.search),
+        value: SearchRoutes.search,
+      },
       {
         name: 'Management',
-        link: ManagementRoutes.management,
+        link: updatePath(ManagementRoutes.management),
         value: ManagementRoutes.management,
       },
       {
         name: 'Dictionary',
-        link: TermsRoutes.termSearch,
+        link: updatePath(TermsRoutes.termSearch),
         value: TermsRoutes.termSearch,
       },
-      { name: 'Alerts', link: AlertsRoutes.alerts, value: AlertsRoutes.alerts },
+      {
+        name: 'Alerts',
+        link: updatePath(AlertsRoutes.alerts),
+        value: AlertsRoutes.alerts,
+      },
       {
         name: 'Activity',
         link: activityPath(activityQueryString),

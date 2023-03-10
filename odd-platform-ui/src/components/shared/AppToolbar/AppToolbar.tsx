@@ -6,11 +6,13 @@ import { DropdownIcon } from 'components/shared/Icons';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { useAppPaths } from 'lib/hooks';
 import ToolbarTabs from './ToolbarTabs/ToolbarTabs';
 import * as S from './AppToolbarStyles';
 import AppInfoMenu from './AppInfoMenu/AppInfoMenu';
 
 const AppToolbar: React.FC = () => {
+  const { basePath } = useAppPaths();
   const identity = useAppSelector(getIdentity);
   const owner = useAppSelector(getOwnership);
 
@@ -44,7 +46,7 @@ const AppToolbar: React.FC = () => {
       <S.Container disableGutters>
         <S.ContentContainer container>
           <S.LogoContainer item xs={3}>
-            <S.Title to='/'>
+            <S.Title to={basePath}>
               <S.Logo />
               <Typography variant='h4' noWrap>
                 Platform

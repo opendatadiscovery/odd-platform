@@ -1,7 +1,7 @@
 import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
 import { maxContentWidth, maxSidebarWidth, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import UserIcon from 'components/shared/Icons/UserIcon';
 
 export const Bar = styled(AppBar)(({ theme }) => ({

@@ -25,11 +25,11 @@ const useAppPaths = () => {
   // search
   const baseSearchPath = () => `${SearchRoutes.search}`;
   const searchPath = (searchId: string = SearchRoutes.searchIdParam) =>
-    `${baseSearchPath()}/${searchId}`;
+    updatePath(`${baseSearchPath()}/${searchId}`);
 
   // Activity
   const activityPath = (query?: string) =>
-    updatePath(`/${ActivityRoutes.activity}${query ? `?${query}` : ''}`);
+    updatePath(`${ActivityRoutes.activity}${query ? `?${query}` : ''}`);
 
   return React.useMemo(
     () => ({
@@ -42,6 +42,7 @@ const useAppPaths = () => {
       TermsRoutes,
       DataEntityRoutes,
       basePath,
+      updatePath,
       getNonExactPath,
       getNonExactParamPath,
       searchPath,

@@ -36,6 +36,7 @@ const App: React.FC = () => {
     TermsRoutes,
     activityPath,
     dataEntityDetailsPath,
+    ActivityRoutes,
     AlertsRoutes,
     getNonExactPath,
     getNonExactParamPath,
@@ -81,7 +82,10 @@ const App: React.FC = () => {
             >
               <Route path={AlertsRoutes.alertsViewTypeParam} />
             </Route>
-            <Route path={activityPath()} element={<Activity />} />
+            <Route
+              path={getNonExactPath(ActivityRoutes.activity)}
+              element={<Activity />}
+            />
 
             <Route path={getNonExactPath(TermsRoutes.terms)} element={<TermDetails />}>
               <Route path={getNonExactParamPath(TermsRoutes.termIdParam)}>
