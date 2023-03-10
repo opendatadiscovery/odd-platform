@@ -336,6 +336,19 @@ components:
         total_count:
           type: integer
           format: int64
+        data_entity_types_info:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityTypeUsageInfo'
+
+    DataEntityTypeUsageInfo:
+      type: object
+      properties:
+        entity_type:
+          $ref: '#/components/schemas/DataEntityType'
+        total_count:
+          type: integer
+          format: int64
 
     DataEntityClassAndTypeDictionary:
       type: object
