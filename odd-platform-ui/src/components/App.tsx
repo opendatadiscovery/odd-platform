@@ -34,8 +34,7 @@ const App: React.FC = () => {
     SearchRoutes,
     basePath,
     TermsRoutes,
-    activityPath,
-    dataEntityDetailsPath,
+    DataEntityRoutes,
     ActivityRoutes,
     AlertsRoutes,
     getNonExactPath,
@@ -92,9 +91,15 @@ const App: React.FC = () => {
                 <Route path={TermsRoutes.termsViewTypeParam} />
               </Route>
             </Route>
-            {/* <Route path={dataEntityDetailsPath()} element={<DataEntityDetails />} /> */}
-            <Route path='dataentities' element={<DataEntityDetails />}>
-              <Route path=':dataEntityViewType' />
+            <Route
+              path={getNonExactPath(DataEntityRoutes.dataentities)}
+              element={<DataEntityDetails />}
+            >
+              <Route path={getNonExactParamPath(DataEntityRoutes.dataEntityIdParam)}>
+                <Route
+                  path={getNonExactParamPath(DataEntityRoutes.dataEntityViewTypeParam)}
+                />
+              </Route>
             </Route>
           </Routes>
         </AppSuspenseWrapper>

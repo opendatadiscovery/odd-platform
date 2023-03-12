@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 
 export const Container = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',

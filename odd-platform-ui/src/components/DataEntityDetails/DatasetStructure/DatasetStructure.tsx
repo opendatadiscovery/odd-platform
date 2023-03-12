@@ -69,7 +69,6 @@ const DatasetStructure: React.FC = () => {
           datasetStructureRoot={datasetStructureRoot}
           datasetRowsCount={datasetStats.rowsCount}
         >
-          {/* TODO change showing condition */}
           <DatasetStructureView
             showStructure={
               !!datasetStructureVersion &&

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import type { DataEntityRef } from 'generated-sources';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from '../EntityClassItem/EntityClassItem';
 import DialogWrapper from '../DialogWrapper/DialogWrapper';
@@ -29,10 +29,10 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   entities,
   openBtnEl,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const listItem = (item: DataEntityRef) => (
-    <Link to={dataEntityDetailsPath(item.id)}>
+    <Link to={dataEntityOverviewPath(item.id)}>
       <S.ListItemContainer container>
         <Typography noWrap title={item.internalName || item.externalName}>
           {item.internalName || item.externalName}

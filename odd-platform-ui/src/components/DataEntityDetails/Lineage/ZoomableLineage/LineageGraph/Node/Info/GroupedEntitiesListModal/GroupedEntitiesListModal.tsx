@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataEntityLineageNode } from 'generated-sources';
 import { DialogWrapper, AppButton, EntityClassItem } from 'components/shared';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
@@ -34,7 +34,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   rootNodeId,
 }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
   const {
     queryParams: { eag },
     setQueryParams,
@@ -84,7 +84,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   };
 
   const listItem = (item: DataEntityLineageNode) => (
-    <Link to={dataEntityDetailsPath(item.id)}>
+    <Link to={dataEntityOverviewPath(item.id)}>
       <S.ListItemContainer container>
         <Grid maxWidth='370px'>
           <Typography noWrap title={item.internalName || item.externalName}>

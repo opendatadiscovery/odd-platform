@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -19,7 +19,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
   dataEntityName,
 }) => {
   const displayedEntitiesNumber = 10;
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   return (
     <Grid container>
@@ -44,7 +44,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
               color='tertiary'
               onClick={() => {}}
             >
-              <Link to={dataEntityDetailsPath(output.id)}>
+              <Link to={dataEntityOverviewPath(output.id)}>
                 {output.internalName || output.externalName}
               </Link>
             </AppButton>

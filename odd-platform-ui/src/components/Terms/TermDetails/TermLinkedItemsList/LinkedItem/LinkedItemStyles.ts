@@ -1,7 +1,7 @@
 import type { GridProps } from '@mui/material';
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { colWidthStyles } from '../LinkedItemsListSkeleton/LinkedItemsListSkeletonStyles';
 
 export const Container = styled(Grid)(({ theme }) => ({

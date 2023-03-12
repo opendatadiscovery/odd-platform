@@ -21,7 +21,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   isFetching,
   isNotFetched,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   return isNotFetched ? null : (
     <S.DataEntityListContainer item lg={3}>
@@ -33,7 +33,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
       <S.ListLinksContainer>
         {dataEntitiesList.map(item => (
           <li key={item.id}>
-            <S.ListLink to={dataEntityDetailsPath(item.id)} $hasAlerts={item.hasAlerts}>
+            <S.ListLink to={dataEntityOverviewPath(item.id)} $hasAlerts={item.hasAlerts}>
               <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
 

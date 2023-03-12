@@ -21,7 +21,7 @@ export type Values = {
 };
 
 const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityId }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const getValues = React.useCallback(
     (item: DataEntityRef | LinkedUrl | string): Values => {
@@ -39,7 +39,7 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
         linkContent = item.name;
       } else {
         key = `${item.id}`;
-        linkTo = dataEntityDetailsPath(item.id);
+        linkTo = dataEntityOverviewPath(item.id);
         linkContent = item.internalName || item.externalName;
       }
 

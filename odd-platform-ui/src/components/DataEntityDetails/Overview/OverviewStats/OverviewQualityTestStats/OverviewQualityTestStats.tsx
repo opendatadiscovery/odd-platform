@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import {
   DataEntityClassNameEnum,
   type DataEntityDetails,
@@ -30,7 +30,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   qualityTest,
   datasetsList,
 }) => {
-  const { dataEntityDetailsPath, dataEntityHistoryPath } = useAppPaths();
+  const { dataEntityOverviewPath, dataEntityHistoryPath } = useAppPaths();
   const { qualityTestFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const displayedEntitiesNumber = 10;
@@ -51,7 +51,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Typography>
           {datasetsList?.slice(0, displayedEntitiesNumber).map(dataset => (
             <AppButton
-              to={dataEntityDetailsPath(dataset.id)}
+              to={dataEntityOverviewPath(dataset.id)}
               key={dataset.id}
               sx={{ my: 0.25 }}
               size='medium'

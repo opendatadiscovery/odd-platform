@@ -20,7 +20,7 @@ import {
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { useAppPaths } from 'lib/hooks';
 import type { AppInputProps } from '../../AppInput/AppInput';
 import AppInput from '../../AppInput/AppInput';
@@ -53,7 +53,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
   searchQuery,
 }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);
   const { isLoading: isSuggestionsLoading } = useAppSelector(
@@ -137,7 +137,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
       </Box>
     );
 
-    const linkedItem = id ? <Link to={dataEntityDetailsPath(id)}>{item}</Link> : null;
+    const linkedItem = id ? <Link to={dataEntityOverviewPath(id)}>{item}</Link> : null;
 
     return (
       <li {...props} key={id}>

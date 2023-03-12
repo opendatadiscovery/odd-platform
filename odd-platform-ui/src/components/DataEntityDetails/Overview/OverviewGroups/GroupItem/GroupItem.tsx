@@ -16,8 +16,8 @@ interface GroupItemProps {
 
 const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityDetailsPath } = useAppPaths();
-  const groupDetailsLink = dataEntityDetailsPath(group.id);
+  const { dataEntityOverviewPath } = useAppPaths();
+  const groupDetailsLink = dataEntityOverviewPath(group.id);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();

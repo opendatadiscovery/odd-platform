@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import type { ColType } from '../LinkedItemsListStyles';
 import { colWidthStyles } from '../LinkedItemsListStyles';
 

@@ -3,7 +3,7 @@ import { Box, Grid, Typography } from '@mui/material';
 import { type CustomGroupActivityState } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom-v5-compat';
 import { useAppPaths } from 'lib/hooks';
 import AppButton from '../../../AppButton/AppButton';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';
@@ -34,7 +34,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   newState,
   hideAllDetails,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
@@ -136,7 +136,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
         item =>
           item.id && (
             <S.ArrayItemWrapper $typeOfChange={item.typeOfChange}>
-              <Link to={dataEntityDetailsPath(item.id)}>
+              <Link to={dataEntityOverviewPath(item.id)}>
                 <AppButton
                   size='medium'
                   color='tertiary'

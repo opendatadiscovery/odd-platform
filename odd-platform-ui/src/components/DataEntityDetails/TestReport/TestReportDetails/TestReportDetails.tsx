@@ -8,8 +8,8 @@ import {
   AppTooltip,
 } from 'components/shared';
 import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import { useAppPaths } from 'lib/hooks';
+import { Navigate, Route, Routes } from 'react-router-dom-v5-compat';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
@@ -22,22 +22,13 @@ const TestReportDetailsHistory = React.lazy(
   () => import('./TestReportDetailsHistory/TestReportDetailsHistory')
 );
 
-interface TestRunDetailsProps {
-  dataQATestId: number;
-  dataEntityId: number;
-  reportDetailsViewType: string;
-}
-
-const TestReportDetails: React.FC<TestRunDetailsProps> = ({
-  dataQATestId,
-  dataEntityId,
-  reportDetailsViewType,
-}) => {
+const TestReportDetails: React.FC = () => {
+  const { dataQATestId, dataEntityId, testReportViewType } = useAppParams();
   const {
-    dataEntityDetailsPath,
+    dataEntityOverviewPath,
     testReportDetailsOverviewPath,
     testReportDetailsHistoryPath,
-    dataEntityTestPath,
+    DataEntityRoutes,
   } = useAppPaths();
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
@@ -50,12 +41,12 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
       {
         name: 'Overview',
         link: testReportDetailsOverviewPath(dataEntityId, dataQATestId),
-        value: 'overview',
+        value: DataEntityRoutes.overview,
       },
       {
         name: 'History',
         link: testReportDetailsHistoryPath(dataEntityId, dataQATestId),
-        value: 'history',
+        value: DataEntityRoutes.history,
       },
     ],
     [dataEntityId, dataQATestId]
@@ -65,11 +56,9 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
 
   React.useEffect(() => {
     setSelectedTab(
-      reportDetailsViewType
-        ? tabs.findIndex(tab => tab.value === reportDetailsViewType)
-        : 0
+      testReportViewType ? tabs.findIndex(tab => tab.value === testReportViewType) : 0
     );
-  }, [tabs, reportDetailsViewType]);
+  }, [tabs, testReportViewType]);
 
   return (
     <Grid container sx={{ p: 2 }}>
@@ -82,7 +71,7 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
           </AppTooltip>
         </Grid>
         <AppButton
-          to={dataEntityDetailsPath(dataQATestId)}
+          to={dataEntityOverviewPath(dataQATestId)}
           size='small'
           color='tertiary'
           sx={{ ml: 2, width: 'auto' }}
@@ -106,25 +95,26 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
           />
         ) : null}
         <React.Suspense fallback={<AppCircularProgress sx={{ mt: 5 }} size={40} />}>
-          <Switch>
-            <Route
-              exact
-              path={testReportDetailsOverviewPath()}
-              render={() => (
-                <WithPermissionsProvider
-                  allowedPermissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
-                  resourcePermissions={resourcePermissions}
-                  Component={TestReportDetailsOverview}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={testReportDetailsHistoryPath()}
-              component={TestReportDetailsHistory}
-            />
-            <Redirect from={dataEntityTestPath()} to={testReportDetailsOverviewPath()} />
-          </Switch>
+          <Routes>
+            <Route path={DataEntityRoutes.testReportViewTypeParam}>
+              <Route
+                path={DataEntityRoutes.overview}
+                element={
+                  <WithPermissionsProvider
+                    allowedPermissions={[Permission.DATASET_TEST_RUN_SET_SEVERITY]}
+                    resourcePermissions={resourcePermissions}
+                    Component={TestReportDetailsOverview}
+                  />
+                }
+              />
+              <Route
+                path={DataEntityRoutes.history}
+                element={<TestReportDetailsHistory />}
+              />
+              element
+              <Route path='' element={<Navigate to={DataEntityRoutes.overview} />} />
+            </Route>
+          </Routes>
         </React.Suspense>
       </Grid>
     </Grid>

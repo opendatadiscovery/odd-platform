@@ -40,7 +40,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
   const navigate = useNavigate();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
@@ -108,7 +108,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         response => {
           setState({ ...initialState, isSuccessfulSubmit: true });
           clearState();
-          navigate(dataEntityDetailsPath(response.id));
+          navigate(dataEntityOverviewPath(response.id));
         },
         (response: Response) => {
           setState({

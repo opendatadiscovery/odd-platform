@@ -1,5 +1,4 @@
 import React from 'react';
-import { AppSuspenseWrapper } from 'components/shared';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import ManagementRoutes from './ManagementRoutes/ManagementRoutes';
@@ -16,9 +15,7 @@ const Management: React.FC = () => (
         <ManagementTabs />
       </S.SidebarContainer>
       <S.ContentContainer item xs={9}>
-        <AppSuspenseWrapper>
-          <ManagementRoutes />
-        </AppSuspenseWrapper>
+        <ManagementRoutes />
       </S.ContentContainer>
     </S.Container>
   </WithPermissionsProvider>

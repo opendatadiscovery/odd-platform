@@ -8,77 +8,77 @@ type TestId = DataQualityTest['id'] | string;
 export const useDataEntityPaths = () => {
   const { updatePath } = useIsEmbeddedPath();
 
-  // const dataEntityBasePath = () => updatePath(`/${DataEntityRoutes.dataEntity}`);
-  const dataEntityDetailsPath = (
+  const dataEntityDetailsBasePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     viewType: string = DataEntityRoutes.dataEntityViewTypeParam
-  ) => updatePath(`/${DataEntityRoutes.dataentities}/${entityId}/${viewType}`);
+  ) => updatePath(`${DataEntityRoutes.dataentities}/${entityId}/${viewType}`);
 
   const dataEntityLineagePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     query = ''
   ) =>
-    `${dataEntityDetailsPath(entityId, DataEntityRoutes.lineage)}${
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.lineage)}${
       query ? `?${query}` : ''
     }`;
 
   const dataEntityHistoryPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsPath(entityId, DataEntityRoutes.history)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.history)}`;
 
   const dataEntityOverviewPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsPath(entityId, DataEntityRoutes.overview)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.overview)}`;
 
   const dataEntityAlertsPath = (entityId: DataEntityId = DataEntityRoutes.dataEntityId) =>
-    `${dataEntityDetailsPath(entityId, DataEntityRoutes.alerts)}`;
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.alerts)}`;
 
   const dataEntityActivityPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     query?: string
   ) =>
-    `${dataEntityDetailsPath(entityId, DataEntityRoutes.activity)}${
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.activity)}${
       query ? `?${query}` : ''
     }`;
 
   const dataEntityLinkedItemsPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsPath(entityId, DataEntityRoutes.linkedItems)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.linkedItems)}`;
 
   const datasetStructurePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     versionId?: number
   ) =>
-    `${dataEntityDetailsPath(entityId, DataEntityRoutes.structure)}${
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.structure)}${
       versionId ? `/${versionId}` : ''
     }`;
 
   const dataEntityCollaborationPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsPath(entityId, DataEntityRoutes.collaboration)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.collaboration)}`;
 
   const dataEntityCollaborationMessagePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     messageId: string = DataEntityRoutes.messageId
-  ) => `${dataEntityDetailsPath(entityId, DataEntityRoutes.collaboration)}/${messageId}`;
+  ) =>
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.collaboration)}/${messageId}`;
 
   const dataEntityCollaborationCreateMessagePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
   ) =>
-    `${dataEntityDetailsPath(entityId, DataEntityRoutes.collaboration)}/${
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.collaboration)}/${
       DataEntityRoutes.createMessage
     }`;
 
   const dataEntityTestReportPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsPath(entityId, DataEntityRoutes.testReports)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.testReports)}`;
 
   const dataEntityTestPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     testId: TestId = DataEntityRoutes.dataQATestId,
     viewType: string = DataEntityRoutes.testReportViewTypeParam
   ) =>
-    `${dataEntityDetailsPath(
+    `${dataEntityDetailsBasePath(
       entityId,
       DataEntityRoutes.testReports
     )}/${testId}/${viewType}`;
@@ -95,7 +95,6 @@ export const useDataEntityPaths = () => {
   ) => `${dataEntityTestPath(entityId, testId, DataEntityRoutes.history)}`;
 
   return {
-    dataEntityDetailsPath,
     dataEntityTestPath,
     dataEntityLineagePath,
     dataEntityActivityPath,
