@@ -21,21 +21,18 @@ interface LabelEditFormProps {
 
 const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isLabelDeleting } = useAppSelector(getLabelDeletingStatuses);
-  const { isLoading: isLabelUpdating } = useAppSelector(getLabelUpdatingStatuses);
+  const { isLoading: isLabelDeleting, isLoaded: isLabelDeleted } = useAppSelector(
+    getLabelDeletingStatuses
+  );
+  const { isLoading: isLabelUpdating, isLoaded: isLabelUpdated } = useAppSelector(
+    getLabelUpdatingStatuses
+  );
   const { control, handleSubmit, reset, formState } = useForm<LabelFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
@@ -45,18 +42,9 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
         labelId: label.id,
         labelFormData: data,
       })
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Label already exists',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -110,9 +98,8 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isLabelDeleted || isLabelUpdated}
       isLoading={isLabelDeleting || isLabelUpdating}
-      errorText={error}
     />
   );
 };

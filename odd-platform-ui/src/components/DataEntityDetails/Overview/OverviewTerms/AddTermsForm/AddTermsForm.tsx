@@ -3,8 +3,9 @@ import { Controller, useForm } from 'react-hook-form';
 import type { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import { DialogWrapper, AppButton } from 'components/shared';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { addDataEntityTerm } from 'redux/thunks';
+import { getDataEntityAddTermStatuses } from 'redux/selectors';
 import TermsAutocomplete from './TermsAutocomplete/TermsAutocomplete';
 
 interface AddTermsFormProps {
@@ -15,21 +16,18 @@ interface AddTermsFormProps {
 const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }) => {
   const dispatch = useAppDispatch();
 
+  const { isLoading: isTermAdding, isLoaded: isTermAdded } = useAppSelector(
+    getDataEntityAddTermStatuses
+  );
+
   const { handleSubmit, control, reset, formState } = useForm<DataEntityTermFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const [selectedTerm, setSelectedTerm] = React.useState<TermRef | null>(null);
 
   const clearState = () => {
-    setState(initialState);
     setSelectedTerm(null);
     reset();
   };
@@ -40,18 +38,9 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
         dataEntityId,
         dataEntityTermFormData: { termId: data.termId },
       })
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to register term',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const handleSetSelectedTerm = React.useCallback(
@@ -121,8 +110,8 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
       title={termFormTitle}
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      errorText={error}
+      handleCloseSubmittedForm={isTermAdded}
+      isLoading={isTermAdding}
       clearState={clearState}
     />
   );

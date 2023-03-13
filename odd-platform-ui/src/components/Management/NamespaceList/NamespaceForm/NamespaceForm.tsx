@@ -19,22 +19,19 @@ interface NamespaceFormProps {
 const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isNamespaceCreating } = useAppSelector(getNamespaceCreatingStatuses);
-  const { isLoading: isNamespaceUpdating } = useAppSelector(getNamespaceUpdatingStatuses);
+  const { isLoading: isNamespaceCreating, isLoaded: isNamespaceCreated } = useAppSelector(
+    getNamespaceCreatingStatuses
+  );
+  const { isLoading: isNamespaceUpdating, isLoaded: isNamespaceUpdated } = useAppSelector(
+    getNamespaceUpdatingStatuses
+  );
 
   const { control, handleSubmit, reset, formState } = useForm<NamespaceFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
@@ -46,23 +43,10 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
             namespaceUpdateFormData: data,
           })
         )
-      : dispatch(
-          createNamespace({
-            namespaceFormData: data,
-          })
-        )
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Namespace already exists',
-        });
-      }
-    );
+      : dispatch(createNamespace({ namespaceFormData: data }))
+    ).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -116,9 +100,8 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={namespace ? isNamespaceUpdated : isNamespaceCreated}
       isLoading={isNamespaceCreating || isNamespaceUpdating}
-      errorText={error}
       clearState={clearState}
     />
   );

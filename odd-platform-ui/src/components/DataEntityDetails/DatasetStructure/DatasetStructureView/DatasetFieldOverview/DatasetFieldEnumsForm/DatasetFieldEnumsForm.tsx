@@ -34,7 +34,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isEnumsCreating } = useAppSelector(
+  const { isLoading: isEnumsCreating, isLoaded: isEnumsCreated } = useAppSelector(
     getDatasetFieldEnumsCreatingStatus
   );
 
@@ -62,12 +62,6 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
     name: 'enums',
   });
 
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialFormState);
-
   const onOpen = React.useCallback(
     (handleOpen: () => void) => () => {
       if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
@@ -78,9 +72,8 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
   );
 
   const clearFormState = React.useCallback(() => {
-    setFormState(initialFormState);
     methods.reset();
-  }, [initialFormState]);
+  }, []);
 
   const handleFormSubmit = (data: DatasetFieldEnumsFormData) => {
     dispatch(
@@ -94,18 +87,9 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
           })),
         },
       })
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update enums',
-        });
-      }
-    );
+    ).then(() => {
+      clearFormState();
+    });
   };
 
   const handleAppend = React.useCallback(() => {
@@ -183,8 +167,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={({ handleClose }) => formActionButtons(handleClose)}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      errorText={error}
+      handleCloseSubmittedForm={isEnumsCreated}
       maxWidth='xl'
       clearState={clearFormState}
     />

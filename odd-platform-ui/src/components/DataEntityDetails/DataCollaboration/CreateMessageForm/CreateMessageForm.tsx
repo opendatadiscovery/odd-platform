@@ -28,7 +28,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   const navigate = useNavigate();
   const { dataEntityCollaborationPath } = useAppPaths();
 
-  const { isLoading: isMessageCreating } = useAppSelector(
+  const { isLoading: isMessageCreating, isLoaded: isMessageCreated } = useAppSelector(
     getMessageToSlackCreatingStatuses
   );
 
@@ -42,35 +42,19 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
     defaultValues: {},
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = React.useCallback(() => {
-    setState(initialState);
     reset();
-  }, [reset]);
+  }, []);
 
   const handleFormSubmit = (formData: MessageFormData) => {
     dispatch(
       createMessageToSlack({ messageRequest: { dataEntityId, ...formData } })
-    ).then(
-      resolved => {
-        if (resolved.meta.requestStatus === 'fulfilled') {
-          setState({ ...initialState, isSuccessfulSubmit: true });
-          clearState();
-          navigate(toCollaboration);
-        }
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to create message',
-        });
+    ).then(resolved => {
+      if (resolved.meta.requestStatus === 'fulfilled') {
+        clearState();
+        navigate(toCollaboration);
       }
-    );
+    });
   };
 
   const formTitle = (
@@ -139,9 +123,8 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isMessageCreated}
       isLoading={isMessageCreating}
-      errorText={error}
       clearState={clearState}
     />
   );

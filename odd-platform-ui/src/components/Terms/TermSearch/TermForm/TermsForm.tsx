@@ -30,8 +30,12 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const { termDetailsOverviewPath } = useAppPaths();
 
   const term = useAppSelector(getTermDetails(termId));
-  const { isLoading: isTermCreating } = useAppSelector(getTermCreatingStatuses);
-  const { isLoading: isTermUpdating } = useAppSelector(getTermUpdatingStatuses);
+  const { isLoading: isTermCreating, isLoaded: isTermCreated } = useAppSelector(
+    getTermCreatingStatuses
+  );
+  const { isLoading: isTermUpdating, isLoaded: isTermUpdated } = useAppSelector(
+    getTermUpdatingStatuses
+  );
 
   const getDefaultValues = React.useCallback(
     (): TermFormData => ({
@@ -52,14 +56,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
     reset(getDefaultValues());
   }, [term]);
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
@@ -70,19 +67,10 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
       : dispatch(createTerm({ termFormData: parsedData }))
     )
       .unwrap()
-      .then(
-        (response: TermDetails) => {
-          setState({ ...initialState, isSuccessfulSubmit: true });
-          clearState();
-          navigate(termDetailsOverviewPath(response.id));
-        },
-        (response: Response) => {
-          setState({
-            ...initialState,
-            error: response.statusText || 'Unable to register term',
-          });
-        }
-      );
+      .then((response: TermDetails) => {
+        clearState();
+        navigate(termDetailsOverviewPath(response.id));
+      });
   };
 
   const termFormTitle = (
@@ -179,9 +167,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
       title={termFormTitle}
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={term ? isTermUpdated : isTermCreated}
       isLoading={term ? isTermUpdating : isTermCreating}
-      errorText={error}
       clearState={clearState}
       formSubmitHandler={handleSubmit(onSubmit)}
     />

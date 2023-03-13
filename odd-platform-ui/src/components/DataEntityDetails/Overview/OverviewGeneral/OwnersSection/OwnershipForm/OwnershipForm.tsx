@@ -27,7 +27,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isOwnershipUpdating } = useAppSelector(
+  const { isLoading: isOwnershipUpdating, isLoaded: isOwnershipUpdated } = useAppSelector(
     getDataEntityOwnerUpdatingStatuses
   );
 
@@ -35,13 +35,10 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
     mode: 'onChange',
     defaultValues: { ownerName: '', titleName: dataEntityOwnership?.title?.name || '' },
   });
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState(initialFormState);
 
   const resetState = React.useCallback(() => {
-    setFormState(initialFormState);
     methods.reset();
-  }, [setFormState]);
+  }, []);
 
   const ownershipUpdate = (data: OwnershipFormData) => {
     (dataEntityOwnership
@@ -53,18 +50,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           })
         )
       : dispatch(createDataEntityOwnership({ dataEntityId, ownershipFormData: data }))
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        resetState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update owner',
-        });
-      }
-    );
+    ).then(() => {
+      resetState();
+    });
   };
 
   const formTitle = (
@@ -127,9 +115,8 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isOwnershipUpdated}
       isLoading={isOwnershipUpdating}
-      errorText={error}
       clearState={resetState}
       formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />
