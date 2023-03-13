@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataEntityLineageNode } from 'generated-sources';
 import { DialogWrapper, AppButton, EntityClassItem } from 'components/shared';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,

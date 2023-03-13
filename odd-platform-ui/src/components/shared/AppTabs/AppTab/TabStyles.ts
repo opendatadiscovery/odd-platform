@@ -1,4 +1,3 @@
-import type React from 'react';
 import {
   buttonBaseClasses,
   Tab,
@@ -8,12 +7,7 @@ import {
 } from '@mui/material';
 import { type Theme } from '@mui/material/styles';
 import { type TabType } from 'components/shared/AppTabs/interfaces';
-import { type LinkProps } from 'react-router-dom';
 import styled, { type CSSObject } from 'styled-components';
-
-const LinkTab: React.ComponentType<
-  Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
-> = Tab as React.ComponentType<Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>>;
 
 const getTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {
@@ -130,10 +124,12 @@ export const TabContainer = styled(Tab)<{
   tabStyles(theme, $type, $hidden, $orientation)
 );
 
-export const LinkTabContainer = styled(LinkTab)<{
-  $type: TabType;
-  $hidden?: boolean;
-  $orientation?: TabsProps['orientation'];
-}>(({ theme, $type, $hidden, $orientation }) =>
+export const LinkTabContainer = styled(Tab)<
+  {
+    $type: TabType;
+    $hidden?: boolean;
+    $orientation?: TabsProps['orientation'];
+  } & TabProps
+>(({ theme, $type, $hidden, $orientation }) =>
   tabStyles(theme, $type, $hidden, $orientation)
 );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom-v5-compat';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { AppSuspenseWrapper } from 'components/shared';
 

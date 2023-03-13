@@ -1,7 +1,7 @@
 import type { HTMLAttributeAnchorTarget } from 'react';
 import React from 'react';
 import type { ButtonProps } from '@mui/material';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import type { ButtonColors } from './AppButtonStyles';
 import { Loader, StyledAppButton } from './AppButtonStyles';
 

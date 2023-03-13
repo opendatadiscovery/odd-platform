@@ -20,7 +20,7 @@ import {
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import type { AppInputProps } from '../../AppInput/AppInput';
 import AppInput from '../../AppInput/AppInput';

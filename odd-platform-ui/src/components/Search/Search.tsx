@@ -3,7 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { MainSearch, PageWithLeftSidebar } from 'components/shared';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { useAppParams } from 'lib/hooks';
 import {
   createDataEntitiesSearch,

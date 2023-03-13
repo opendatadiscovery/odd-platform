@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';

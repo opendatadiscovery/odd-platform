@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { AppErrorPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {

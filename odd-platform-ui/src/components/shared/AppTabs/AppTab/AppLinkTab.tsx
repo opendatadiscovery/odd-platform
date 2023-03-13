@@ -4,11 +4,11 @@ import type { TabType } from 'components/shared/AppTabs/interfaces';
 import type { LinkProps } from 'react-router-dom';
 import { LinkTabContainer } from 'components/shared/AppTabs/AppTab/TabStyles';
 
-interface AppLinkTabProps
-  extends Pick<LinkProps, 'to' | 'component'>,
-    Pick<TabProps, 'key' | 'label' | 'hidden'> {
+interface AppLinkTabProps extends TabProps {
   type: TabType;
   $orientation?: TabsProps['orientation'];
+  to: LinkProps['to'];
+  component: React.ComponentType<any>;
 }
 
 const AppLinkTab: React.FC<AppLinkTabProps> = ({
@@ -18,7 +18,6 @@ const AppLinkTab: React.FC<AppLinkTabProps> = ({
   ...props
 }) => (
   <LinkTabContainer
-    // eslint-disable-next-line react/jsx-props-no-spreading
     {...props}
     disableRipple
     $type={type}
@@ -26,5 +25,4 @@ const AppLinkTab: React.FC<AppLinkTabProps> = ({
     $orientation={$orientation}
   />
 );
-
 export default AppLinkTab;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom-v5-compat';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared';
@@ -21,7 +21,7 @@ const PolicyDetails = React.lazy(
 );
 
 const ManagementRoutes: React.FC = () => {
-  const { ManagementRoutes: ManagementRoutesEnum } = useAppPaths();
+  const { ManagementRoutes: ManagementRoutesEnum, getNonExactParamPath } = useAppPaths();
   const { hasAccessTo } = usePermissions();
 
   return (
@@ -114,7 +114,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={ManagementRoutesEnum.associations}
+          path={getNonExactParamPath(ManagementRoutesEnum.associations)}
           element={
             <RestrictedRoute
               isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}

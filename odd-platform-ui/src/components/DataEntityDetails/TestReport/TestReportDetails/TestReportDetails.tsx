@@ -8,7 +8,7 @@ import {
   AppTooltip,
 } from 'components/shared';
 import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors';
-import { Navigate, Route, Routes } from 'react-router-dom-v5-compat';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';

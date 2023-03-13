@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom-v5-compat';
 import {
   DataEntityClassNameEnum,
   type DataEntityDetails,
@@ -81,7 +80,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
                 Suite
               </Typography>
               <AppButton
-                to={{ pathname: suiteUrl }}
+                to={suiteUrl}
                 sx={{ my: 0.25 }}
                 size='medium'
                 color='tertiary'
@@ -117,11 +116,13 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
               )}
           </LabeledInfoItem>
           <Grid container>
-            <Link to={dataEntityHistoryPath(qualityTest?.id)}>
-              <AppButton size='small' color='tertiary'>
-                History
-              </AppButton>
-            </Link>
+            <AppButton
+              size='small'
+              color='tertiary'
+              to={dataEntityHistoryPath(qualityTest?.id)}
+            >
+              History
+            </AppButton>
           </Grid>
         </S.Overview>
       </S.StatsContainer>

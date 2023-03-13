@@ -8,7 +8,7 @@ import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/sh
 import { ClearIcon } from 'components/shared/Icons';
 import type { PolicyDetails, PolicyFormData } from 'generated-sources';
 import { Permission } from 'generated-sources';
-import { Link, useNavigate } from 'react-router-dom-v5-compat';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;

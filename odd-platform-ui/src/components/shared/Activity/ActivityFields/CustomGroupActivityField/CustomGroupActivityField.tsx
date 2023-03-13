@@ -3,7 +3,7 @@ import { Box, Grid, Typography } from '@mui/material';
 import { type CustomGroupActivityState } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import AppButton from '../../../AppButton/AppButton';
 import ActivityFieldState from '../ActivityFieldState/ActivityFieldState';

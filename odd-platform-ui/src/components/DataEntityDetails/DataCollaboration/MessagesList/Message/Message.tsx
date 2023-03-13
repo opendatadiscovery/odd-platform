@@ -54,7 +54,7 @@ const Message: React.FC<MessageProps> = ({
           <S.SlackButtonContainer $active={isActive}>
             <WithFeature featureName={Feature.DATA_COLLABORATION}>
               <AppButton
-                to={{ pathname: url }}
+                to={url}
                 linkTarget='_blank'
                 size='medium'
                 color='primaryLight'

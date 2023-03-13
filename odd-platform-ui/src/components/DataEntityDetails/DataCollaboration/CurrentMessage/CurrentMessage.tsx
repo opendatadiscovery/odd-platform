@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom-v5-compat';
+import { Route, Routes } from 'react-router-dom';
 import { AppCircularProgress } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './CurrentMessageStyles';

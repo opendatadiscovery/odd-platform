@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { EntityClassItem, LabelItem, TagItem } from 'components/shared';
 import { GearIcon, UserIcon } from 'components/shared/Icons';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { ActivityEventType } from 'generated-sources';
 import {
   ActivityFieldHeader,

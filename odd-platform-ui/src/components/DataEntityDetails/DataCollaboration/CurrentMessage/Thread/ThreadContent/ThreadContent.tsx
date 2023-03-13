@@ -4,7 +4,7 @@ import { Grid, Typography } from '@mui/material';
 import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ThreadMessage from './ThreadMessage/ThreadMessage';
 import MainThreadMessage from './MainThreadMessage/MainThreadMessage';

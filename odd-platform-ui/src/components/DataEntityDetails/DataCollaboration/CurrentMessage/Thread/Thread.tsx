@@ -9,7 +9,7 @@ import {
 } from 'redux/selectors';
 import { fetchRelatedMessages, messagesListSize as size } from 'redux/thunks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { clearThreadState } from 'redux/slices/dataCollaboration.slice';
 import ThreadContent from './ThreadContent/ThreadContent';
 

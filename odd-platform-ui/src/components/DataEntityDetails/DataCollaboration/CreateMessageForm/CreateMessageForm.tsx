@@ -12,7 +12,7 @@ import {
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { type MessageRequest } from 'generated-sources';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
 
 interface CreateMessageFormProps {

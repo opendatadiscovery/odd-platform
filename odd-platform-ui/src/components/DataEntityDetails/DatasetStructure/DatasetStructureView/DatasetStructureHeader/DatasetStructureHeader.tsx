@@ -6,7 +6,7 @@ import type { DataSetStats, DataSetVersion } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { fetchDataSetStructure } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import DatasetStructureTypeCounts from './DatasetStructureTypeCounts/DatasetStructureTypeCounts';
 import { useStructureContext } from '../../StructureContext/StructureContext';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { parse, stringify, type StringifyOptions } from 'query-string';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type QueryParams<Params extends Record<string, unknown>> = {
   [Key in keyof Params]: Params[Key];

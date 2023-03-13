@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import type { DataEntityRef } from 'generated-sources';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from '../EntityClassItem/EntityClassItem';
 import DialogWrapper from '../DialogWrapper/DialogWrapper';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { type MessagesByDate } from 'redux/interfaces';

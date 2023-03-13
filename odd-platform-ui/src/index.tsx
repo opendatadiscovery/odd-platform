@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
 import { Provider } from 'react-redux';
 
 import {
@@ -33,11 +32,9 @@ ReactDOM.render(
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
-              <CompatRouter>
-                <StyleSheetManager disableVendorPrefixes>
-                  <App />
-                </StyleSheetManager>
-              </CompatRouter>
+              <StyleSheetManager disableVendorPrefixes>
+                <App />
+              </StyleSheetManager>
             </BrowserRouter>
           </LocalizationProvider>
         </ThemeProvider>

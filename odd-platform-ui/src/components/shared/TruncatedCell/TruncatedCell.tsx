@@ -50,8 +50,6 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
 
   const getTruncateMarkupAtom = (item: DataEntityRef | LinkedUrl | string) => {
     const { key, linkTo, linkContent } = getValues(item);
-    const updatedLink =
-      typeof item !== 'string' && 'id' in item ? linkTo : { pathname: linkTo };
 
     return (
       <TruncateMarkup.Atom key={key}>
@@ -59,7 +57,7 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
           onClick={e => {
             e.stopPropagation();
           }}
-          to={updatedLink}
+          to={linkTo}
           linkTarget='_blank'
           color='primaryLight'
           size='small'

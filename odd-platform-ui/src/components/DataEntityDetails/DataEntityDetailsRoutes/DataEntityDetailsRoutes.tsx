@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom-v5-compat';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppSuspenseWrapper } from 'components/shared';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';

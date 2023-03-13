@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom-v5-compat';
+import { Route, Routes } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
 import { AppSuspenseWrapper, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -12,6 +12,7 @@ import {
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Toaster } from 'react-hot-toast';
+import ManagementRoutes from './Management/ManagementRoutes/ManagementRoutes';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -30,7 +31,7 @@ const App: React.FC = () => {
 
   const {
     isPathEmbedded,
-    ManagementRoutes,
+    ManagementRoutes: ManagementRoutesEnum,
     SearchRoutes,
     basePath,
     TermsRoutes,
@@ -61,11 +62,12 @@ const App: React.FC = () => {
               <Route path={SearchRoutes.searchIdParam} />
             </Route>
             <Route
-              path={getNonExactPath(ManagementRoutes.management)}
+              path={getNonExactPath(ManagementRoutesEnum.management)}
               element={<Management />}
             >
               <Route
-                path={getNonExactParamPath(ManagementRoutes.managementViewTypeParam)}
+                path={getNonExactParamPath(ManagementRoutesEnum.managementViewTypeParam)}
+                element={<ManagementRoutes />}
               />
             </Route>
             <Route
@@ -74,11 +76,7 @@ const App: React.FC = () => {
             >
               <Route path={TermsRoutes.termSearchIdParam} />
             </Route>
-            <Route
-              key='Alerts'
-              path={getNonExactPath(AlertsRoutes.alerts)}
-              element={<Alerts />}
-            >
+            <Route path={getNonExactPath(AlertsRoutes.alerts)} element={<Alerts />}>
               <Route path={AlertsRoutes.alertsViewTypeParam} />
             </Route>
             <Route

@@ -2,7 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { PageWithLeftSidebar } from 'components/shared';
 import { useAppParams } from 'lib/hooks';
 import {

@@ -6,7 +6,7 @@ import {
 } from 'components/shared/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, createTermSearch } from 'redux/thunks';
-import { useNavigate, useLocation } from 'react-router-dom-v5-compat';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
 
 const ToolbarTabs: React.FC = () => {

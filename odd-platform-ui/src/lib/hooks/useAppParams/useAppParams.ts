@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom-v5-compat';
+import { useParams } from 'react-router-dom';
 import type { AppRouteParams, RouteParams } from './interfaces';
 
 export const useAppParams = (): AppRouteParams => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import type { TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';

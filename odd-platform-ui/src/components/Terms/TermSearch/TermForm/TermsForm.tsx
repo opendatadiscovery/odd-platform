@@ -1,7 +1,7 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { TermDetails, TermFormData } from 'generated-sources';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import {
   AppButton,
