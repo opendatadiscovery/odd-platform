@@ -32,7 +32,7 @@ public interface EnumValueMapper {
             .fromCode(pojo.getOrigin())
             .orElseThrow(() -> new IllegalStateException("Unknown origin code: %d".formatted(pojo.getOrigin())));
 
-        var modifiable = switch (origin) {
+        final boolean modifiable = switch (origin) {
             case EXTERNAL -> StringUtils.isEmpty(pojo.getExternalDescription());
             case INTERNAL -> true;
         };

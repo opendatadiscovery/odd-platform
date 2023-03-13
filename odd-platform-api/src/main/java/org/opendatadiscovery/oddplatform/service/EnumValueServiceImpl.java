@@ -118,7 +118,6 @@ public class EnumValueServiceImpl implements EnumValueService {
                                 .thenReturn(list);
                         }
                     }));
-
     }
 
     private boolean hasDuplicates(final List<String> sourceList) {
