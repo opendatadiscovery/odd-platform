@@ -1,20 +1,17 @@
-import {
-  Configuration,
-  SearchApi,
-  type DataEntityRef,
-  type DataEntitySearchHighlight,
-  type MultipleFacetType,
-  type SearchApiGetFiltersForFacetRequest,
-  type SearchApiGetSearchFacetListRequest,
-  type SearchApiGetSearchResultsRequest,
-  type SearchApiGetSearchSuggestionsRequest,
-  type SearchApiHighlightDataEntityRequest,
-  type SearchApiSearchRequest,
-  type SearchApiUpdateSearchFacetsRequest,
-  type SearchFacetsData,
+import type {
+  DataEntityRef,
+  DataEntitySearchHighlight,
+  MultipleFacetType,
+  SearchApiGetFiltersForFacetRequest,
+  SearchApiGetSearchFacetListRequest,
+  SearchApiGetSearchResultsRequest,
+  SearchApiGetSearchSuggestionsRequest,
+  SearchApiHighlightDataEntityRequest,
+  SearchApiSearchRequest,
+  SearchApiUpdateSearchFacetsRequest,
+  SearchFacetsData,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type {
   CurrentPageInfo,
   DataEntity,
@@ -23,9 +20,7 @@ import type {
 } from 'redux/interfaces';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { castDatesToTimestamp } from 'redux/lib/helpers';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const searchApi = new SearchApi(apiClientConf);
+import { searchApi } from 'lib/api';
 
 export const createDataEntitiesSearch = handleResponseAsyncThunk<
   SearchFacetsData,

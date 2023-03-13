@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import {
   StyledEngineProvider,
@@ -24,22 +25,26 @@ declare module 'styled-components' {
   interface DefaultTheme extends Theme {}
 }
 
+const queryClient = new QueryClient({});
+
 ReactDOM.render(
-  <Provider store={store}>
-    <StyledEngineProvider injectFirst>
-      <MuiThemeProvider theme={theme}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <BrowserRouter>
-              <StyleSheetManager disableVendorPrefixes>
-                <App />
-              </StyleSheetManager>
-            </BrowserRouter>
-          </LocalizationProvider>
-        </ThemeProvider>
-      </MuiThemeProvider>
-    </StyledEngineProvider>
-  </Provider>,
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <StyledEngineProvider injectFirst>
+        <MuiThemeProvider theme={theme}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <BrowserRouter>
+                <StyleSheetManager disableVendorPrefixes>
+                  <App />
+                </StyleSheetManager>
+              </BrowserRouter>
+            </LocalizationProvider>
+          </ThemeProvider>
+        </MuiThemeProvider>
+      </StyledEngineProvider>
+    </Provider>
+  </QueryClientProvider>,
   document.getElementById('root')
 );

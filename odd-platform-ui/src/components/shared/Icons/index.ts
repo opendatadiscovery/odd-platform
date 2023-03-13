@@ -43,3 +43,4 @@ export { default as RowsIcon } from './RowsIcon';
 export { default as QuestionIcon } from './QuestionIcon';
 export { default as ChevronIcon } from './ChevronIcon';
 export { default as StrokedInfoIcon } from './StrokedInfoIcon';
+export { default as FeedbackIcon } from './FeedbackIcon';

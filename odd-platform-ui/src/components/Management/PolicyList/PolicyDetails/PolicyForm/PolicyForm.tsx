@@ -6,8 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { createPolicy, updatePolicy } from 'redux/thunks';
 import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import type { PolicyDetails, PolicyFormData } from 'generated-sources';
-import { Permission } from 'generated-sources';
+import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface PolicyFormProps {
@@ -61,32 +60,6 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
     [setIsValid]
   );
 
-  const policyController = React.useMemo(
-    () => (
-      <>
-        <Typography variant='subtitle2' mt={1} mb={0.5} fontWeight={500}>
-          JSON
-        </Typography>
-        <Controller
-          name='policy'
-          control={control}
-          rules={{ required: true }}
-          render={({ field }) => (
-            <AppJSONEditor
-              readOnly={!canUpdatePolicy || isAdministrator}
-              schema={schema}
-              onValidate={(isJSONValid, result) =>
-                handleOnValidate(isJSONValid, result, field.onChange)
-              }
-              content={{ text: field.value || '{}' }}
-            />
-          )}
-        />
-      </>
-    ),
-    [control, schema]
-  );
-
   return (
     <Grid container flexDirection='column' flexWrap='nowrap'>
       <Grid container justifyContent='space-between' alignItems='center'>
@@ -125,7 +98,24 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
             />
           )}
         />
-        {policyController}
+        <Typography variant='subtitle2' mt={1} mb={0.5} fontWeight={500}>
+          JSON
+        </Typography>
+        <Controller
+          name='policy'
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <AppJSONEditor
+              readOnly={!canUpdatePolicy || isAdministrator}
+              schema={schema}
+              onValidate={(isJSONValid, result) =>
+                handleOnValidate(isJSONValid, result, field.onChange)
+              }
+              content={{ text: field.value || '{}' }}
+            />
+          )}
+        />
       </form>
       {canUpdatePolicy && !isAdministrator && (
         <AppButton

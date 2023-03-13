@@ -1,21 +1,14 @@
-import {
-  Configuration,
-  DataEntityApi,
-  type DataEntityApiCreateDataEntityMetadataFieldValueRequest,
-  type DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
-  type DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
-  MetadataApi,
-  type MetadataApiGetMetadataFieldListRequest,
-  type MetadataField,
-  type MetadataFieldValue,
+import type {
+  DataEntityApiCreateDataEntityMetadataFieldValueRequest,
+  DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
+  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
+  MetadataApiGetMetadataFieldListRequest,
+  MetadataField,
+  MetadataFieldValue,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const dataEntityApi = new DataEntityApi(apiClientConf);
-const metadataApi = new MetadataApi(apiClientConf);
+import { dataEntityApi, metadataApi } from 'lib/api';
 
 export const createDataEntityCustomMetadata = handleResponseAsyncThunk<
   { dataEntityId: number; metadataList: Array<MetadataFieldValue> },

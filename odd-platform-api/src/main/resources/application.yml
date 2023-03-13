@@ -134,6 +134,8 @@ auth:
 #          - Managers
 
 metrics:
+  storage: INTERNAL_POSTGRES # INTERNAL_POSTGRES, PROMETHEUS
+  prometheus-host: http://localhost:9090
   export:
     enabled: false
     otlp-endpoint: http://localhost:4317
@@ -171,6 +173,7 @@ datacollaboration:
 
 odd:
   platform-base-url: http://localhost:8080
+  tenant-id:
   activity:
     partition-period: 30
 

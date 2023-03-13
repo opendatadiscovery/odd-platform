@@ -9,11 +9,6 @@ interface TooltipStyleProps extends TooltipProps {
   $type: TooltipColorTypes;
 }
 
-interface ChildrenContainerProps {
-  $isCursorPointer: boolean;
-  $isOverflowed: boolean;
-}
-
 const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObject => {
   if (type === 'dark')
     return {
@@ -48,10 +43,10 @@ export const AppTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-export const ChildrenContainer = styled(Box)<ChildrenContainerProps>(
-  ({ $isCursorPointer, $isOverflowed }) => ({
-    cursor: $isCursorPointer ? 'pointer' : 'inherit',
+export const ChildrenContainer = styled(Box)<{ $isOverflowed: boolean }>(
+  ({ $isOverflowed }) => ({
+    cursor: 'pointer',
     overflow: $isOverflowed ? 'hidden' : 'initial',
-    ...($isOverflowed ? { maxWidth: '0px', minWidth: '100%' } : {}),
+    ...($isOverflowed ? { minWidth: '0px' } : {}),
   })
 );

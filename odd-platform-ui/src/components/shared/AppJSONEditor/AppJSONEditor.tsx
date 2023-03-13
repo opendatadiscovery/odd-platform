@@ -54,12 +54,7 @@ interface JSONEditorProps extends JSONEditorPropsOptional {
   schema: Record<string, unknown>;
 }
 
-const AppJSONEditor: React.FC<JSONEditorProps> = ({
-  onValidate,
-  schema,
-  onChange,
-  ...props
-}) => {
+const AppJSONEditor: React.FC<JSONEditorProps> = ({ onValidate, schema, ...props }) => {
   const refContainer = React.useRef<HTMLDivElement>(null);
   const refEditor = React.useRef<JSONEditor | null>(null);
   const ajv = new Ajv2019({ allErrors: true });
@@ -121,8 +116,8 @@ const AppJSONEditor: React.FC<JSONEditorProps> = ({
           mode: Mode.text,
           navigationBar: false,
           onChange: (content, previousContent, OnChangeStatus) => {
-            if (onChange) {
-              onChange(content, previousContent, OnChangeStatus);
+            if (props.onChange) {
+              props.onChange(content, previousContent, OnChangeStatus);
             }
             if ((content as TextContent).text.length === 0) {
               return onValidate(false, '');
@@ -134,19 +129,15 @@ const AppJSONEditor: React.FC<JSONEditorProps> = ({
       });
     }
 
+    refEditor.current?.updateProps(props);
+
     return () => {
       if (refEditor.current) {
         refEditor.current.destroy();
         refEditor.current = null;
       }
     };
-  }, [refEditor.current, refContainer.current]);
-
-  React.useEffect(() => {
-    if (refEditor.current) {
-      refEditor.current.updateProps(props);
-    }
-  }, [props]);
+  }, [refEditor, refContainer]);
 
   return <div className='svelte-jsoneditor-react' ref={refContainer} />;
 };

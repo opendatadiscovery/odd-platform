@@ -1,5 +1,6 @@
 import React, { type MouseEvent } from 'react';
 import {
+  FeedbackIcon,
   GitBookIcon,
   GitHubIcon,
   InformationIcon,
@@ -20,6 +21,7 @@ const AppInfoMenu: React.FC = () => {
   const gitbookLink = 'https://docs.opendatadiscovery.org/';
   const slackLink = 'https://go.opendatadiscovery.org/slack';
   const githubLink = 'https://github.com/opendatadiscovery/odd-platform';
+  const reviewLink = 'https://www.producthunt.com/products/opendatadiscovery/reviews/new';
 
   const menuId = 'app-info-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
@@ -63,7 +65,7 @@ const AppInfoMenu: React.FC = () => {
             <S.Icon>
               <GitBookIcon />
             </S.Icon>
-            <Typography variant='h3'>Documents</Typography>
+            <Typography variant='h3'>Documentation</Typography>
           </S.MenuItem>
         </Link>
         <Link to={slackLink} target='_blank'>
@@ -87,6 +89,14 @@ const AppInfoMenu: React.FC = () => {
             </S.MenuItem>
           </Link>
         )}
+        <Link to={{ pathname: reviewLink }} target='_blank'>
+          <S.MenuItem container onClick={handleAppMenuClose}>
+            <S.Icon>
+              <FeedbackIcon />
+            </S.Icon>
+            <Typography variant='h3'>Leave a feedback</Typography>
+          </S.MenuItem>
+        </Link>
         {links.length > 0 && (
           <S.LinksContainer container>
             {links.map(link => (

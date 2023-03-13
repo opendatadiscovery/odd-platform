@@ -19,6 +19,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldOrigin;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.api.contract.model.NumberFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.StringFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;

@@ -187,6 +187,9 @@ OpenDataDiscovery Platform offers comprehensive data source support to meet your
             <td><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow</a>
         </td>
         </tr>
+        <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-great-expectations">Great Expectations</td>
+        </tr>
     </tbody>
 </table>
 
