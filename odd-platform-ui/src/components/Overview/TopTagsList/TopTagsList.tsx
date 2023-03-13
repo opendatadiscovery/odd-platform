@@ -1,32 +1,22 @@
 import React from 'react';
-import type { SearchFormData } from 'generated-sources';
-import { useNavigate } from 'react-router-dom';
 import { TagItem } from 'components/shared';
-import { useAppPaths } from 'lib/hooks';
-import { createDataEntitiesSearch } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useCreateSearch } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { getTagListFetchingStatuses, getTagsList } from 'redux/selectors';
 
 const TopTagsList: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { searchPath } = useAppPaths();
+  const createSearch = useCreateSearch();
 
   const topTags = useAppSelector(getTagsList);
   const { isNotLoaded: isTagsNotFetched } = useAppSelector(getTagListFetchingStatuses);
 
   const handleTagClick = React.useCallback(
     (id: number, name: string) => () => {
-      const searchQuery: SearchFormData = {
+      const searchFormData = {
         query: '',
         filters: { tags: [{ entityId: id, entityName: name, selected: true }] },
       };
-      dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
-        .unwrap()
-        .then(({ searchId }) => {
-          const searchLink = searchPath(searchId);
-          navigate(searchLink);
-        });
+      createSearch(searchFormData);
     },
     []
   );
