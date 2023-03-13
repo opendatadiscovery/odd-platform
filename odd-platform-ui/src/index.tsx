@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 import {
   StyledEngineProvider,
@@ -10,12 +9,13 @@ import {
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 import { CssBaseline } from '@mui/material';
 import { store } from 'redux/store';
+import { showServerErrorToast } from 'lib/errorHandling';
 import theme from './theme/mui.theme';
 
 import App from './components/App';
@@ -25,7 +25,15 @@ declare module 'styled-components' {
   interface DefaultTheme extends Theme {}
 }
 
-const queryClient = new QueryClient({});
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      onError(e) {
+        showServerErrorToast(e as Response);
+      },
+    },
+  },
+});
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>

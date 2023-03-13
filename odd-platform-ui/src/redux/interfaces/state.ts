@@ -11,7 +11,6 @@ import type {
   DataEntityRun,
   DataEntitySearchHighlight,
   DataEntityType,
-  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetSLAReport,
@@ -156,7 +155,6 @@ export interface DataEntitiesState {
     entityTypes: Dictionary<DataEntityType>;
     entityClasses: Dictionary<DataEntityClass>;
   };
-  dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
 export interface DataEntitySearchState {

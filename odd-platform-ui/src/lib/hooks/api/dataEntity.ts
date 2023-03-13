@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { dataEntityApi } from 'lib/api';
 import { showServerErrorToast } from 'lib/errorHandling';
+import { useQuery } from '@tanstack/react-query';
 
 interface UseDataEntityMetricsProps {
   dataEntityId: number;
@@ -24,4 +24,8 @@ export function useDataEntityMetrics({
       enabled,
     }
   );
+}
+
+export function useDataEntitiesUsage() {
+  return useQuery(['dataEntitiesUsage'], () => dataEntityApi.getDataEntitiesUsage());
 }

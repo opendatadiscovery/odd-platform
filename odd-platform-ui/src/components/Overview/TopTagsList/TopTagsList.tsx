@@ -1,27 +1,22 @@
 import React from 'react';
-import type { SearchFormData, Tag } from 'generated-sources';
+import type { SearchFormData } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
 import { TagItem } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { getTagListFetchingStatuses, getTagsList } from 'redux/selectors';
 
-interface TopTagListProps {
-  topTags: Tag[];
-  isTagsNotFetched: boolean;
-}
-
-const TopTagsList: React.FC<TopTagListProps> = ({ topTags, isTagsNotFetched }) => {
+const TopTagsList: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { searchPath } = useAppPaths();
 
-  const [searchLoading, setSearchLoading] = React.useState(false);
+  const topTags = useAppSelector(getTagsList);
+  const { isNotLoaded: isTagsNotFetched } = useAppSelector(getTagListFetchingStatuses);
 
   const handleTagClick = React.useCallback(
     (id: number, name: string) => () => {
-      if (searchLoading) return;
-      setSearchLoading(true);
       const searchQuery: SearchFormData = {
         query: '',
         filters: { tags: [{ entityId: id, entityName: name, selected: true }] },
@@ -33,7 +28,7 @@ const TopTagsList: React.FC<TopTagListProps> = ({ topTags, isTagsNotFetched }) =
           navigate(searchLink);
         });
     },
-    [searchLoading]
+    []
   );
 
   const sortedTags = React.useMemo(

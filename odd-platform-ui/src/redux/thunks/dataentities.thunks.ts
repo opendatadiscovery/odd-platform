@@ -17,7 +17,6 @@ import type {
   DataEntityClassAndTypeDictionary,
   DataEntityDetails,
   DataEntityRef,
-  DataEntityUsageInfo,
   InternalDescription,
   InternalName,
   Tag,
@@ -273,13 +272,4 @@ export const deleteDataEntityFromGroup = handleResponseAsyncThunk<
       message: `Data entity successfully deleted from group.`,
     }),
   }
-);
-
-export const fetchDataEntitiesUsageInfo = handleResponseAsyncThunk<
-  DataEntityUsageInfo,
-  void
->(
-  actions.fetchDataEntitiesUsageActionType,
-  async () => dataEntityApi.getDataEntitiesUsage(),
-  {}
 );

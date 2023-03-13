@@ -19,11 +19,6 @@ export const initialState: DataEntitiesState = {
   myUpstream: [],
   myDownstream: [],
   popular: [],
-  dataEntityUsageInfo: {
-    totalCount: 0,
-    unfilledCount: 0,
-    dataEntityClassesInfo: [],
-  },
 };
 
 const updateDataEntity = (
@@ -80,7 +75,6 @@ export const dataEntitiesSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(thunks.fetchDataEntitiesClassesAndTypes.pending, () => initialState);
     builder.addCase(
       thunks.fetchDataEntitiesClassesAndTypes.fulfilled,
       (state, { payload }) => ({
@@ -223,13 +217,6 @@ export const dataEntitiesSlice = createSlice({
       (state, { payload }) => ({
         ...state,
         popular: payload,
-      })
-    );
-    builder.addCase(
-      thunks.fetchDataEntitiesUsageInfo.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        dataEntityUsageInfo: payload,
       })
     );
 

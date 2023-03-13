@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { datasetFieldApiClient } from 'lib/api';
 import { showServerErrorToast } from 'lib/errorHandling';
+import { useQuery } from '@tanstack/react-query';
 
 interface UseDataEntityMetricsProps {
   datasetFieldId: number;

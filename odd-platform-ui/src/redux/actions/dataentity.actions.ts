@@ -69,8 +69,3 @@ export const deleteDataEntityFromGroupActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'deleteDataEntityFromGroup'
 );
-
-export const fetchDataEntitiesUsageActionType = createActionType(
-  dataEntitiesActionTypePrefix,
-  'dataEntitiesUsage'
-);

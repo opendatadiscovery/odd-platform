@@ -9,6 +9,7 @@ import {
   fetchAppLinks,
   fetchDataEntitiesClassesAndTypes,
   fetchIdentity,
+  fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Toaster } from 'react-hot-toast';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
     dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
     dispatch(fetchAppLinks());
+    dispatch(fetchTagsList({ page: 1, size: 20 }));
   }, []);
 
   return (
