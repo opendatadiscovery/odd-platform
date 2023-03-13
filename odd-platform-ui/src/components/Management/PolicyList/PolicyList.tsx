@@ -25,9 +25,7 @@ import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
 
 const PolicyList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { createPolicyPath } = useAppPaths();
-
-  const createPolicyLink = createPolicyPath();
+  const { ManagementRoutes } = useAppPaths();
 
   const { isLoading: isPoliciesFetching } = useAppSelector(getPoliciesFetchingStatuses);
 
@@ -104,7 +102,7 @@ const PolicyList: React.FC = () => {
         />
         <WithPermissions permissionTo={Permission.POLICY_CREATE}>
           <AppButton
-            to={createPolicyLink}
+            to={ManagementRoutes.createPolicy}
             size='medium'
             color='primaryLight'
             startIcon={<AddIcon />}

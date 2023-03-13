@@ -1,11 +1,11 @@
 import React from 'react';
-import { Autocomplete, Box, SelectChangeEvent, Typography } from '@mui/material';
+import { Autocomplete, Box, type SelectChangeEvent, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
-import { MetadataField, MetadataFieldType } from 'generated-sources';
+import { type MetadataField, MetadataFieldType } from 'generated-sources';
 import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { searchMetadata } from 'redux/thunks';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataSource, Permission } from 'generated-sources';
+import { type DataSource, Permission } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
 import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared';
 import { Typography } from '@mui/material';

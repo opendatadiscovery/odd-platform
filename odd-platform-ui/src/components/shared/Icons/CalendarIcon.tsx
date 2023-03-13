@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgIconProps } from '@mui/material/SvgIcon';
+import { type SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
 const CalendarIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (

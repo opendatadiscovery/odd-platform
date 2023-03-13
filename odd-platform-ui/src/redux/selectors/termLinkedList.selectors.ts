@@ -6,7 +6,10 @@ import type {
   TermLinkedListState,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import {
+  createErrorSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import { emptyArr } from 'lib/constants';
 import type { DataEntity } from 'generated-sources';
 
@@ -17,6 +20,10 @@ const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
 
 export const getTermLinkedListFetchingStatuses = createStatusesSelector(
+  actions.fetchTermLinkedListAction
+);
+
+export const getTermLinkedListFetchingErrors = createErrorSelector(
   actions.fetchTermLinkedListAction
 );
 

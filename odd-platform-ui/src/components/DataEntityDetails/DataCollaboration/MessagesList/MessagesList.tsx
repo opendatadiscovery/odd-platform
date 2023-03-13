@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { MessagesByDate } from 'redux/interfaces';
+import { type MessagesByDate } from 'redux/interfaces';
 import { EmptyContentPlaceholder } from 'components/shared';
 import Message from './Message/Message';
 import * as S from './MessagesListStyles';
@@ -28,13 +28,13 @@ const MessagesList: React.FC<MessagesListProps> = ({
   isMessagesLoaded,
   handleSetMessageDate,
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityId, messageId: routerMessageId } = useAppParams();
   const { dataEntityCollaborationMessagePath } = useAppPaths();
 
   const handleMessageOnClick = React.useCallback(
     (messageId: string) => () => {
-      history.push(dataEntityCollaborationMessagePath(dataEntityId, messageId));
+      navigate(dataEntityCollaborationMessagePath(dataEntityId, messageId));
     },
     [dataEntityId]
   );

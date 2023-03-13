@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import {
-  TermSearchResultsColType,
+  type TermSearchResultsColType,
   termSearchResultsColWidthStyles,
 } from '../TermSearchResultsStyles';
 

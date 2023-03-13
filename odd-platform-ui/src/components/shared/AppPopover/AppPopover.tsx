@@ -1,6 +1,6 @@
 import React from 'react';
-import { PopoverProps, Theme } from '@mui/material';
-import { SxProps } from '@mui/system';
+import type { PopoverProps, Theme } from '@mui/material';
+import { type SxProps } from '@mui/system';
 import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import * as S from './AppPopoverStyles';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { deleteTag } from 'redux/thunks';
-import { Permission, Tag } from 'generated-sources';
+import { Permission, type Tag } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';

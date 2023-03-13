@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Box } from '@mui/material';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const StatIconContainer = styled(Box)(({ theme }) => ({
   fontSize: theme.typography.h5.fontSize,
@@ -9,7 +9,7 @@ export const StatIconContainer = styled(Box)(({ theme }) => ({
   alignSelf: 'center',
 }));
 
-export const EntityLink = styled(Link)<LinkProps>(() => ({
+export const EntityLink = styled(Link)(() => ({
   width: 'inherit',
 }));
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { MenuItemProps } from '@mui/material';
-import { Variant } from '@mui/material/styles/createTypography';
+import { type MenuItemProps } from '@mui/material';
+import { type Variant } from '@mui/material/styles/createTypography';
 import * as S from './AppMenuItemStyles';
 
 interface AppMenuItemProps

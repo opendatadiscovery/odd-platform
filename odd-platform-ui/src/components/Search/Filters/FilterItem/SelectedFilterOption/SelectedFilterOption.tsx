@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { SearchFilter, SearchFilterState } from 'generated-sources';
+import type { SearchFilter, SearchFilterState } from 'generated-sources';
 import { TextFormatted, AppIconButton } from 'components/shared';
-import { OptionalFacetNames } from 'redux/interfaces/dataEntitySearch';
+import type { OptionalFacetNames } from 'redux/interfaces';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';

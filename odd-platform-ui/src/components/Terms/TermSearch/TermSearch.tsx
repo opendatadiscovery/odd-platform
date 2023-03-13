@@ -2,9 +2,9 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PageWithLeftSidebar } from 'components/shared';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   getTermSearchCreateStatuses,
   getTermSearchFacetsParams,
@@ -21,9 +21,8 @@ import TermsSearchResults from './TermSearchResults/TermSearchResults';
 import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 
 const TermSearch: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { termSearchPath } = useAppPaths();
   const { termSearchId: routerTermSearchId } = useAppParams();
 
   const termSearchId = useAppSelector(getTermSearchId);
@@ -38,8 +37,7 @@ const TermSearch: React.FC = () => {
       dispatch(createTermSearch({ termSearchFormData }))
         .unwrap()
         .then(termSearch => {
-          const termSearchLink = termSearchPath(termSearch.searchId);
-          history.replace(termSearchLink);
+          navigate(`${termSearch.searchId}`);
         });
     }
   }, [routerTermSearchId, createTermSearch, isTermSearchCreating]);
@@ -79,8 +77,9 @@ const TermSearch: React.FC = () => {
           <WithPermissionsProvider
             allowedPermissions={[Permission.TERM_CREATE]}
             resourcePermissions={[]}
-            Component={TermSearchHeader}
-          />
+          >
+            <TermSearchHeader />
+          </WithPermissionsProvider>
           <TermsSearchResults />
         </PageWithLeftSidebar.ListContainer>
       </PageWithLeftSidebar.ContentContainer>

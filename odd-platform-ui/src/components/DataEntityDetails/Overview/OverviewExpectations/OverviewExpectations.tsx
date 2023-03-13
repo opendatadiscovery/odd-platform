@@ -42,7 +42,7 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
           <Grid container flexDirection='column'>
             {linkedUrlList?.map(({ name, url }) => (
               <AppButton
-                to={{ pathname: url }}
+                to={url}
                 key={url}
                 sx={{ my: 0.25 }}
                 size='medium'

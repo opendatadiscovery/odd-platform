@@ -1,14 +1,14 @@
-import type { MetadataField } from 'generated-sources';
-import {
-  type DataQualityTestExpectation,
-  DataSetFieldTypeTypeEnum,
-  MetadataFieldType,
-} from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
 import { type EventType } from 'lib/interfaces';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
+import {
+  DataSetFieldTypeTypeEnum,
+  MetadataFieldType,
+  type DataQualityTestExpectation,
+  type MetadataField,
+} from 'generated-sources';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
   [

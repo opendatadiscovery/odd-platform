@@ -1,4 +1,4 @@
-import { Menu, menuClasses, MenuProps } from '@mui/material';
+import { Menu, menuClasses, type MenuProps } from '@mui/material';
 import styled from 'styled-components';
 
 interface AppMenuStyleProps extends MenuProps {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AvatarProps } from '@mui/material';
+import { type AvatarProps } from '@mui/material';
 import { StyledAvatar } from './AppAvatarStyles';
 
 type AppAvatarProps = AvatarProps;

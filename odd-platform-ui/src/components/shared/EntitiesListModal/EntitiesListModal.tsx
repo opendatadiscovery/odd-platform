@@ -29,10 +29,10 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   entities,
   openBtnEl,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const listItem = (item: DataEntityRef) => (
-    <Link to={dataEntityDetailsPath(item.id)}>
+    <Link to={dataEntityOverviewPath(item.id)}>
       <S.ListItemContainer container>
         <Typography noWrap title={item.internalName || item.externalName}>
           {item.internalName || item.externalName}

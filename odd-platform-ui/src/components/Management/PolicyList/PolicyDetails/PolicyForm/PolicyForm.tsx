@@ -7,7 +7,7 @@ import { createPolicy, updatePolicy } from 'redux/thunks';
 import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -18,13 +18,13 @@ interface PolicyFormProps {
 
 const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
-  const { managementPath } = useAppPaths();
+  const navigate = useNavigate();
+  const { ManagementRoutes } = useAppPaths();
   const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';
-  const toPolicies = managementPath('policies');
+  const toPolicies = `../${ManagementRoutes.policies}`;
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
   const { control, handleSubmit, setValue, formState } = useForm<PolicyFormData>({
@@ -40,7 +40,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         : createPolicy({ policyFormData })
     ).then(response => {
       if (response.meta.requestStatus === 'fulfilled') {
-        history.push(toPolicies);
+        navigate(toPolicies);
       }
     });
   };

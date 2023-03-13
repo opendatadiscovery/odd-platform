@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, type Theme } from '@mui/material';
+import { type Theme, Typography } from '@mui/material';
 import { type SxProps } from '@mui/system';
 import type {
   Background,
@@ -32,7 +32,6 @@ const AppCircularProgress: React.FC<AppCircularProgressProps> = ({
       />
       <S.Progress size={size} />
     </S.SpinnerContainer>
-
     {text && (
       <S.TextContainer item container xs={10}>
         <Typography variant='body2' color='textSecondary'>

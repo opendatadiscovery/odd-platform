@@ -1,23 +1,23 @@
-import React, { HTMLAttributes } from 'react';
+import React, { type HTMLAttributes } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
-  Theme,
+  type AutocompleteRenderInputParams,
+  type Theme,
   Typography,
 } from '@mui/material';
-import { OwnerFormData, Role } from 'generated-sources';
+import { type OwnerFormData, type Role } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
-  FilterOptionsState,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { AppInput } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchRolesList } from 'redux/thunks';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { SxProps } from '@mui/system';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type SxProps } from '@mui/system';
 
 interface RoleAutocompleteProps {
   append: UseFieldArrayAppend<OwnerFormData, 'roles'>;

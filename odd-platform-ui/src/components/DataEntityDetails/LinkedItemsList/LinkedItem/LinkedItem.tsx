@@ -9,9 +9,9 @@ interface LinkedItemProps {
 }
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
   const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = dataEntityDetailsPath(linkedItem.id);
+  const detailsLink = dataEntityOverviewPath(linkedItem.id);
 
   return (
     <ItemLink to={detailsLink}>

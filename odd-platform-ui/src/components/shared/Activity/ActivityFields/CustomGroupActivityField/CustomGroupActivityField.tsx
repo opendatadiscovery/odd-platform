@@ -34,7 +34,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   newState,
   hideAllDetails,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
@@ -136,7 +136,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
         item =>
           item.id && (
             <S.ArrayItemWrapper $typeOfChange={item.typeOfChange}>
-              <Link to={dataEntityDetailsPath(item.id)}>
+              <Link to={dataEntityOverviewPath(item.id)}>
                 <AppButton
                   size='medium'
                   color='tertiary'

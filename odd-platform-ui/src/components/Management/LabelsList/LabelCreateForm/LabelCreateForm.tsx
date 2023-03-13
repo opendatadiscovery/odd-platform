@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import { LabelFormData } from 'generated-sources';
+import type { LabelFormData } from 'generated-sources';
 import { getLabelCreatingStatuses } from 'redux/selectors';
 import { createLabel } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';

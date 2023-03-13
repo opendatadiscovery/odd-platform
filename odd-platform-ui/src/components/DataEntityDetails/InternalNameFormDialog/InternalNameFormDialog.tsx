@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { InternalNameFormData } from 'generated-sources';
+import { type InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import { AppButton, AppInput, DialogWrapper } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';

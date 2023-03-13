@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityClassNameEnum, DataEntityDetails } from 'generated-sources';
+import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
@@ -19,7 +19,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
   entities,
   entityGroups,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   return (
     <Grid container>
@@ -47,7 +47,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {entities?.slice(0, 5).map(entity => (
-            <S.EntityLink key={entity.id} to={dataEntityDetailsPath(entity.id)}>
+            <S.EntityLink key={entity.id} to={dataEntityOverviewPath(entity.id)}>
               <AppButton
                 key={entity.id}
                 size='medium'
@@ -99,7 +99,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {entityGroups?.slice(0, 5).map(entityGroup => (
-            <S.EntityLink to={dataEntityDetailsPath(entityGroup.id)}>
+            <S.EntityLink to={dataEntityOverviewPath(entityGroup.id)}>
               <AppButton
                 key={entityGroup.id}
                 size='medium'

@@ -3,9 +3,9 @@ import { Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   DataEntityClassNameEnum,
-  DataEntityDetails,
-  DataEntityGroupFormData,
-  DataEntityType,
+  type DataEntityDetails,
+  type DataEntityGroupFormData,
+  type DataEntityType,
   DataEntityTypeNameEnum,
 } from 'generated-sources';
 import {
@@ -27,7 +27,7 @@ import {
   getDataEntityTypesByClassName,
 } from 'redux/selectors';
 import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
@@ -39,8 +39,8 @@ interface DataEntityGroupFormProps {
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const history = useHistory();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const navigate = useNavigate();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
@@ -108,7 +108,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         response => {
           setState({ ...initialState, isSuccessfulSubmit: true });
           clearState();
-          history.push(dataEntityDetailsPath(response.id));
+          navigate(dataEntityOverviewPath(response.id));
         },
         (response: Response) => {
           setState({

@@ -1,18 +1,18 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import {
+import type {
   CollectorFormData,
   DataEntityGroupFormData,
   Namespace,
   TermFormData,
 } from 'generated-sources';
 import { ClearIcon } from 'components/shared/Icons';
-import { ControllerRenderProps } from 'react-hook-form';
+import { type ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import type { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';

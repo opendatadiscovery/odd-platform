@@ -1,20 +1,21 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Collector, CollectorFormData } from 'generated-sources';
+import type { Collector, CollectorFormData } from 'generated-sources';
 import { registerCollector, updateCollector } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   getCollectorCreatingStatuses,
   getCollectorsUpdatingStatuses,
 } from 'redux/selectors';
 import { Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import {
+  AppButton,
+  AppInput,
+  NamespaceAutocomplete,
+  DialogWrapper,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
-import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface CollectorFormDialogProps {
   btnCreateEl: JSX.Element;

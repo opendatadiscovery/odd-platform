@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Collector, Permission } from 'generated-sources';
+import { type Collector, Permission } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
 import { AppButton, ConfirmationDialog, LabeledInfoItem } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';

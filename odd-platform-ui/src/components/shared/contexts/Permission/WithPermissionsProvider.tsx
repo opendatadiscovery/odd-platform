@@ -14,6 +14,7 @@ const WithPermissionsProvider: React.FC<WithPermissionsProviderProps> = ({
   resourcePermissions,
   Component,
   render,
+  children,
 }) => {
   if (render) {
     return (
@@ -26,14 +27,25 @@ const WithPermissionsProvider: React.FC<WithPermissionsProviderProps> = ({
     );
   }
 
-  return Component ? (
+  if (Component) {
+    return (
+      <PermissionProvider
+        resourcePermissions={resourcePermissions}
+        allowedPermissions={allowedPermissions}
+      >
+        <Component />
+      </PermissionProvider>
+    );
+  }
+
+  return (
     <PermissionProvider
       resourcePermissions={resourcePermissions}
       allowedPermissions={allowedPermissions}
     >
-      <Component />
+      {children}
     </PermissionProvider>
-  ) : null;
+  );
 };
 
 export default WithPermissionsProvider;
