@@ -71,7 +71,7 @@
     "react-multi-date-picker": "^3.3.4",
     "react-query": "^3.39.3",
     "react-redux": "^8.0.1",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.9.0",
     "react-truncate-markup": "^5.1.2",
     "styled-components": "^5.3.5",
     "typesafe-actions": "^5.1.0",
