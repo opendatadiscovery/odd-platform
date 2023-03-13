@@ -33,6 +33,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
@@ -47,6 +48,7 @@ import org.opendatadiscovery.oddplatform.service.DataEntityGroupService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.MessageService;
+import org.opendatadiscovery.oddplatform.service.MetricService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
@@ -69,6 +71,7 @@ public class DataEntityController implements DataEntityApi {
     private final ActivityService activityService;
     private final MessageService messageService;
     private final AlertHaltConfigService alertHaltConfigService;
+    private final MetricService metricService;
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
@@ -394,6 +397,13 @@ public class DataEntityController implements DataEntityApi {
     ) {
         return dataEntityAlertConfig
             .flatMap(cfg -> alertHaltConfigService.saveAlertHaltConfig(dataEntityId, cfg))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<MetricSet>> getDataEntityMetrics(final Long dataEntityId,
+                                                                final ServerWebExchange exchange) {
+        return metricService.getLatestMetricsForDataEntity(dataEntityId)
             .map(ResponseEntity::ok);
     }
 }

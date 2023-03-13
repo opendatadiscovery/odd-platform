@@ -1,15 +1,13 @@
-import {
-  Configuration,
-  type Term,
-  TermApi,
-  type TermApiGetTermFiltersForFacetRequest,
-  type TermApiGetTermSearchFacetListRequest,
-  type TermApiGetTermSearchResultsRequest,
-  type TermApiGetTermSearchSuggestionsRequest,
-  type TermApiTermSearchRequest,
-  type TermApiUpdateTermSearchFacetsRequest,
-  type TermRef,
-  type TermSearchFacetsData,
+import type {
+  Term,
+  TermApiGetTermFiltersForFacetRequest,
+  TermApiGetTermSearchFacetListRequest,
+  TermApiGetTermSearchResultsRequest,
+  TermApiGetTermSearchSuggestionsRequest,
+  TermApiTermSearchRequest,
+  TermApiUpdateTermSearchFacetsRequest,
+  TermRef,
+  TermSearchFacetsData,
 } from 'generated-sources';
 import type {
   CurrentPageInfo,
@@ -17,11 +15,8 @@ import type {
   TermSearchOptionalFacetNames,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const termApi = new TermApi(apiClientConf);
+import { termApi } from 'lib/api';
 
 export const createTermSearch = handleResponseAsyncThunk<
   TermSearchFacetsData,

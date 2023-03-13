@@ -7,6 +7,8 @@ import { AppButton, LabelItem, MetadataItem } from 'components/shared';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
+import { useDataSetFieldMetrics } from 'lib/hooks/api';
+import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
 import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
@@ -20,6 +22,12 @@ const DatasetFieldOverview: React.FC = () => {
 
   const field = useAppSelector(getDatasetFieldById(selectedFieldId));
   const isUniqStatsExists = Object.values(field?.stats || {}).filter(Boolean).length > 0;
+
+  const {
+    data: metricSet,
+    isLoading: isMetricsLoading,
+    isSuccess: isMetricsLoaded,
+  } = useDataSetFieldMetrics({ datasetFieldId: field.id });
 
   if (isEmpty(field)) return null;
 
@@ -127,6 +135,12 @@ const DatasetFieldOverview: React.FC = () => {
           'Metadata',
           field.metadata?.map(metadata => <MetadataItem metadata={metadata} />)
         )}
+      {isMetricsLoaded && metricSet?.metricFamilies?.length !== 0 && (
+        <DatasetFieldMetrics
+          metricFamilies={metricSet?.metricFamilies}
+          isLoading={isMetricsLoading}
+        />
+      )}
     </S.Container>
   );
 };

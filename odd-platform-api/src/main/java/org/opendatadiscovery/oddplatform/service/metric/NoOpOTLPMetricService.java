@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 @ConditionalOnProperty(value = "metrics.export.enabled", havingValue = "false")
 @Component
-public class NoOpMetricService implements MetricService {
+public class NoOpOTLPMetricService implements OTLPMetricService {
     @Override
     public Mono<IngestionRequest> exportMetrics(final IngestionRequest dataStructure) {
         return Mono.just(dataStructure);

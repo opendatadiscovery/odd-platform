@@ -1,24 +1,17 @@
-import {
-  Configuration,
-  DataCollaborationApi,
-  type DataCollaborationApiGetSlackChannelsRequest,
-  type DataCollaborationApiPostMessageInSlackRequest,
-  DataEntityApi,
-  type DataEntityApiGetChannelsRequest,
-  type Message as GeneratedMessage,
-  type MessageChannel,
-  type DataEntityApiGetDataEntityMessagesRequest,
-  type DataEntityApiGetMessagesRequest,
+import type {
+  DataCollaborationApiGetSlackChannelsRequest,
+  DataCollaborationApiPostMessageInSlackRequest,
+  DataEntityApiGetChannelsRequest,
+  DataEntityApiGetDataEntityMessagesRequest,
+  DataEntityApiGetMessagesRequest,
+  Message as GeneratedMessage,
+  MessageChannel,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import { BASE_PARAMS } from 'lib/constants';
 import type { Message, PageInfo } from 'redux/interfaces';
 import { castDatesToTimestampInItemsArray, setPageInfo } from 'redux/lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const dataCollaborationApi = new DataCollaborationApi(apiClientConf);
-const dataEntityApi = new DataEntityApi(apiClientConf);
+import { dataCollaborationApi, dataEntityApi } from 'lib/api';
 
 export const messagesListSize = 20;
 

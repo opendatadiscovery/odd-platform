@@ -1,16 +1,8 @@
-import {
-  Configuration,
-  DataEntityRunApi,
-  type DataEntityRunApiGetRunsRequest,
-  type DataEntityRun,
-} from 'generated-sources';
+import type { DataEntityRun, DataEntityRunApiGetRunsRequest } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
-import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
-
-const apiClientConf = new Configuration(BASE_PARAMS);
-const dataEntityRunApi = new DataEntityRunApi(apiClientConf);
+import { dataEntityRunApi } from 'lib/api';
 
 export const fetchDataEntityRuns = handleResponseAsyncThunk<
   { items: DataEntityRun[]; pageInfo: CurrentPageInfo },

@@ -7,7 +7,6 @@ import DatasetStructureList from './DatasetStructureList/DatasetStructureList';
 import DatasetStructureHeader from './DatasetStructureHeader/DatasetStructureHeader';
 
 interface DatasetStructureViewProps {
-  showStructure: boolean;
   dataEntityId: number;
   versionId?: number;
   datasetStructureVersion?: number;
@@ -17,32 +16,30 @@ interface DatasetStructureViewProps {
 }
 
 const DatasetStructureView: React.FC<DatasetStructureViewProps> = ({
-  showStructure,
   dataEntityId,
   versionId,
   datasetStructureVersion,
   fieldsCount,
   typesCount,
   datasetVersions,
-}) =>
-  showStructure ? (
-    <Grid container>
-      <DatasetStructureHeader
-        dataEntityId={dataEntityId}
-        datasetStructureVersion={datasetStructureVersion}
-        fieldsCount={fieldsCount}
-        typesCount={typesCount}
-        datasetVersions={datasetVersions}
-      />
-      <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider' }}>
-        <Grid item lg={6}>
-          <DatasetStructureList dataEntityId={dataEntityId} versionId={versionId} />
-        </Grid>
-        <Grid item lg={6} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }}>
-          <DatasetFieldOverview />
-        </Grid>
+}) => (
+  <Grid container>
+    <DatasetStructureHeader
+      dataEntityId={dataEntityId}
+      datasetStructureVersion={datasetStructureVersion}
+      fieldsCount={fieldsCount}
+      typesCount={typesCount}
+      datasetVersions={datasetVersions}
+    />
+    <Grid container sx={{ borderTop: '1px solid', borderTopColor: 'divider' }}>
+      <Grid item lg={6}>
+        <DatasetStructureList dataEntityId={dataEntityId} versionId={versionId} />
+      </Grid>
+      <Grid item lg={6} sx={{ borderLeft: '1px solid', borderLeftColor: 'divider' }}>
+        <DatasetFieldOverview />
       </Grid>
     </Grid>
-  ) : null;
+  </Grid>
+);
 
 export default DatasetStructureView;

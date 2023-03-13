@@ -59,23 +59,30 @@ const DatasetStructure: React.FC = () => {
     getDatasetStructureTypeStats({ datasetId: dataEntityId, versionId })
   );
 
+  const showStructure = React.useMemo(
+    () =>
+      !!datasetStructureVersion &&
+      datasetStructureRoot.length > 0 &&
+      !(isDatasetStructureFetching || isDatasetStructureLatestFetching),
+    [
+      datasetStructureVersion,
+      datasetStructureRoot,
+      isDatasetStructureFetching,
+      isDatasetStructureLatestFetching,
+    ]
+  );
+
   return (
     <Box>
       <DatasetStructureSkeleton
         showSkeleton={isDatasetStructureFetching || isDatasetStructureLatestFetching}
       />
-      {datasetStructureRoot.length > 0 && (
+      {showStructure && (
         <DatasetStructureProvider
           datasetStructureRoot={datasetStructureRoot}
           datasetRowsCount={datasetStats.rowsCount}
         >
-          {/* TODO change showing condition */}
           <DatasetStructureView
-            showStructure={
-              !!datasetStructureVersion &&
-              datasetStructureRoot.length > 0 &&
-              !(isDatasetStructureFetching || isDatasetStructureLatestFetching)
-            }
             fieldsCount={datasetStats.fieldsCount}
             typesCount={typesCount}
             datasetVersions={datasetVersions}

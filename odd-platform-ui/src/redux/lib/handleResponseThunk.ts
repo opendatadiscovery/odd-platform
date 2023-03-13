@@ -3,7 +3,11 @@ import {
   type AsyncThunkPayloadCreator,
   createAsyncThunk,
 } from '@reduxjs/toolkit';
-import { getResponse, showServerErrorToast, showSuccessToast } from 'lib/errorHandling';
+import {
+  getErrorResponse,
+  showServerErrorToast,
+  showSuccessToast,
+} from 'lib/errorHandling';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ThunkAPIConfig {}
@@ -29,14 +33,10 @@ export const handleResponseAsyncThunk = <Returned, ThunkArg = void>(
 
       return response;
     } catch (err) {
-      const errResp = await getResponse(err as Response);
+      const errResp = await getErrorResponse(err as Response);
 
       if (!options.switchOffErrorMessage) {
-        showServerErrorToast({
-          status: errResp.status,
-          message: errResp.message,
-          toastId: errResp.url,
-        });
+        showServerErrorToast(err as Response);
       }
 
       return thunkAPI.rejectWithValue(errResp);

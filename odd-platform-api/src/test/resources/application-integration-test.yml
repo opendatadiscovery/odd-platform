@@ -10,6 +10,9 @@ housekeeping:
 datacollaboration:
   enabled: false
 
+metrics:
+  storage: INTERNAL_POSTGRES
+
 logging:
   level:
     org.springframework.transaction.interceptor: debug

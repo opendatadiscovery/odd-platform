@@ -2754,6 +2754,178 @@ components:
         - field
         - message
 
+    MetricSet:
+      type: object
+      properties:
+        metric_families:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricFamily'
+      required:
+        - metric_families
+
+    MetricFamily:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/MetricType'
+        unit:
+          type: string
+        description:
+          type: string
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
+      required:
+        - name
+        - type
+        - unit
+        - metrics
+
+    MetricType:
+      type: string
+      enum:
+        - GAUGE
+        - COUNTER
+        - HISTOGRAM
+        - GAUGE_HISTOGRAM
+        - SUMMARY
+
+    Metric:
+      type: object
+      properties:
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricLabel'
+        metric_point:
+          $ref: '#/components/schemas/MetricPoint'
+      required:
+        - metric_point
+
+    MetricLabel:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - name
+        - value
+
+    MetricPoint:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        gauge_value:
+          $ref: '#/components/schemas/GaugeValue'
+        counter_value:
+          $ref: '#/components/schemas/CounterValue'
+        histogram_value:
+          $ref: '#/components/schemas/HistogramValue'
+        summary_value:
+          $ref: '#/components/schemas/SummaryValue'
+
+    GaugeValue:
+      type: object
+      properties:
+        value:
+          type: number
+      required:
+        - value
+
+    CounterValue:
+      type: object
+      properties:
+        total:
+          type: number
+        created:
+          type: string
+          format: date-time
+        exemplar:
+          $ref: '#/components/schemas/Exemplar'
+      required:
+        - total
+
+    HistogramValue:
+      type: object
+      properties:
+        sum:
+          type: number
+        count:
+          type: integer
+          format: int64
+        created:
+          type: string
+          format: date-time
+        buckets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bucket'
+
+    SummaryValue:
+      type: object
+      properties:
+        sum:
+          type: number
+        count:
+          type: integer
+          format: int64
+        created:
+          type: string
+          format: date-time
+        quantile:
+          type: array
+          items:
+            $ref: '#/components/schemas/Quantile'
+
+    Exemplar:
+      type: object
+      properties:
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+        label:
+          type: array
+          items:
+            $ref: '#/components/schemas/Label'
+      required:
+        - value
+
+    Bucket:
+      type: object
+      properties:
+        upper_bound:
+          type: number
+        count:
+          type: integer
+          format: int64
+        exemplar:
+          $ref: '#/components/schemas/Exemplar'
+      required:
+        - count
+
+    Quantile:
+      type: object
+      properties:
+        quantile:
+          type: number
+        value:
+          type: number
+      required:
+        - quantile
+        - value
+
   parameters:
     PageParam:
       name: page
