@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { DataEntityRef } from 'generated-sources';
+import { type DataEntityRef } from 'generated-sources';
 import { EntityClassItem, EmptyContentPlaceholder } from 'components/shared';
 import { AlertIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
@@ -21,7 +21,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   isFetching,
   isNotFetched,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   return isNotFetched ? null : (
     <S.DataEntityListContainer item lg={3}>
@@ -33,7 +33,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
       <S.ListLinksContainer>
         {dataEntitiesList.map(item => (
           <li key={item.id}>
-            <S.ListLink to={dataEntityDetailsPath(item.id)} $hasAlerts={item.hasAlerts}>
+            <S.ListLink to={dataEntityOverviewPath(item.id)} $hasAlerts={item.hasAlerts}>
               <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
 

@@ -1,6 +1,5 @@
-import styled from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 import { Grid } from '@mui/material';
-import { CSSObject } from 'theme/interfaces';
 import { AlertIcon, ClearIcon } from 'components/shared/Icons';
 
 export const Container = styled(Grid)(({ theme }) => ({
@@ -14,11 +13,14 @@ export const Container = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(4),
 }));
 
-export const PendingContainer = styled(Grid)<CSSObject>(() => ({
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+export const PendingContainer = styled(Grid)(
+  () =>
+    ({
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    } as CSSObject)
+);
 
 export const RejectMsg = styled(Grid)(({ theme }) => ({
   alignItems: 'center',

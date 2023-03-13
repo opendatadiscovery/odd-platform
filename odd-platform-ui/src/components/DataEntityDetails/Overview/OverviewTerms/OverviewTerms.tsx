@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { Permission, TermRef } from 'generated-sources';
+import { Permission, type TermRef } from 'generated-sources';
 import { AppButton, TermItem } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import { WithPermissions } from 'components/shared/contexts';

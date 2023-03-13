@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   AppIconButton,
   AppMenuItem,
@@ -26,7 +26,7 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
   externalName,
 }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityId } = useAppParams();
   const { searchPath } = useAppPaths();
 
@@ -35,7 +35,7 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
   const handleEntityGroupDelete = React.useCallback(
     () =>
       dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })).then(() => {
-        history.push(searchPath(searchId));
+        navigate(searchPath(searchId));
       }),
     [deleteDataEntityGroup, dataEntityId]
   );

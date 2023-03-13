@@ -60,7 +60,7 @@ const AppInfoMenu: React.FC = () => {
         open={isMenuOpen}
         onClose={handleAppMenuClose}
       >
-        <Link to={{ pathname: gitbookLink }} target='_blank'>
+        <Link to={gitbookLink} target='_blank'>
           <S.MenuItem container onClick={handleAppMenuClose}>
             <S.Icon>
               <GitBookIcon />
@@ -68,7 +68,7 @@ const AppInfoMenu: React.FC = () => {
             <Typography variant='h3'>Documentation</Typography>
           </S.MenuItem>
         </Link>
-        <Link to={{ pathname: slackLink }} target='_blank'>
+        <Link to={slackLink} target='_blank'>
           <S.MenuItem container onClick={handleAppMenuClose}>
             <S.Icon>
               <SlackIcon />
@@ -77,7 +77,7 @@ const AppInfoMenu: React.FC = () => {
           </S.MenuItem>
         </Link>
         {version && (
-          <Link to={{ pathname: githubLink }} target='_blank'>
+          <Link to={githubLink} target='_blank'>
             <S.MenuItem container onClick={handleAppMenuClose}>
               <S.Icon>
                 <GitHubIcon />
@@ -100,7 +100,7 @@ const AppInfoMenu: React.FC = () => {
         {links.length > 0 && (
           <S.LinksContainer container>
             {links.map(link => (
-              <Link to={{ pathname: link.url }} target='_blank'>
+              <Link to={link.url} target='_blank'>
                 <S.MenuItem container onClick={handleAppMenuClose}>
                   <Typography variant='h3'>{link.title}</Typography>
                 </S.MenuItem>

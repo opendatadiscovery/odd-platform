@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { DataEntityClassNameEnum } from 'generated-sources';
+import { type DataEntityClassNameEnum } from 'generated-sources';
 import { Box } from '@mui/material';
 
 export const Content = styled(Box)<{

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Skeleton } from '@mui/material';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import { HintType } from 'components/shared/AppTabs/interfaces';
+import { type HintType } from 'components/shared/AppTabs/interfaces';
 import * as S from './AppTabLabelStyles';
 
 interface AppTabLabelProps {

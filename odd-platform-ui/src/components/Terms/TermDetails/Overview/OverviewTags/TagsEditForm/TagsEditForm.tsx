@@ -1,8 +1,8 @@
 import React from 'react';
 import { Autocomplete, Box, Typography } from '@mui/material';
-import { Tag } from 'generated-sources';
+import type { Tag } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';

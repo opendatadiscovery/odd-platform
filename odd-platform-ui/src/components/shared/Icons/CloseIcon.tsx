@@ -1,6 +1,6 @@
 import React from 'react';
 import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
-import { SvgIconProps } from '@mui/material/SvgIcon';
+import { type SvgIconProps } from '@mui/material/SvgIcon';
 
 const CloseIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
   <AppSvgIcon sx={sx} viewBox='0 0 14 14' {...props}>

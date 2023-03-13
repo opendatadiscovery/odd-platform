@@ -1,10 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import {
   DataEntityClassNameEnum,
-  DataEntityDetails,
-  DataQualityTest,
+  type DataEntityDetails,
+  type DataQualityTest,
 } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
@@ -30,7 +29,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   qualityTest,
   datasetsList,
 }) => {
-  const { dataEntityDetailsPath, dataEntityHistoryPath } = useAppPaths();
+  const { dataEntityOverviewPath, dataEntityHistoryPath } = useAppPaths();
   const { qualityTestFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const displayedEntitiesNumber = 10;
@@ -51,7 +50,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Typography>
           {datasetsList?.slice(0, displayedEntitiesNumber).map(dataset => (
             <AppButton
-              to={dataEntityDetailsPath(dataset.id)}
+              to={dataEntityOverviewPath(dataset.id)}
               key={dataset.id}
               sx={{ my: 0.25 }}
               size='medium'
@@ -81,7 +80,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
                 Suite
               </Typography>
               <AppButton
-                to={{ pathname: suiteUrl }}
+                to={suiteUrl}
                 sx={{ my: 0.25 }}
                 size='medium'
                 color='tertiary'
@@ -117,11 +116,13 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
               )}
           </LabeledInfoItem>
           <Grid container>
-            <Link to={dataEntityHistoryPath(qualityTest?.id)}>
-              <AppButton size='small' color='tertiary'>
-                History
-              </AppButton>
-            </Link>
+            <AppButton
+              size='small'
+              color='tertiary'
+              to={dataEntityHistoryPath(qualityTest?.id)}
+            >
+              History
+            </AppButton>
           </Grid>
         </S.Overview>
       </S.StatsContainer>

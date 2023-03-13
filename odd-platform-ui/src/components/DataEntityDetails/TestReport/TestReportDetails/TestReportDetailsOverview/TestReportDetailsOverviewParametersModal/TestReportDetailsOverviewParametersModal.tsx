@@ -1,7 +1,7 @@
 import React from 'react';
 import { DialogWrapper } from 'components/shared';
 import { Typography } from '@mui/material';
-import { DataQualityTestExpectation } from 'generated-sources';
+import type { DataQualityTestExpectation } from 'generated-sources';
 
 interface TestReportDetailsOverviewParametersModalProps {
   openBtnEl: JSX.Element;

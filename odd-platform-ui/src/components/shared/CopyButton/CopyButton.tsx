@@ -1,7 +1,7 @@
-import { CircularProgress, Theme } from '@mui/material';
+import { CircularProgress, type Theme } from '@mui/material';
 import React from 'react';
 import { AlertIcon, CopyIcon, SuccessIcon } from 'components/shared/Icons';
-import { SxProps } from '@mui/system';
+import { type SxProps } from '@mui/system';
 import AppButton from '../AppButton/AppButton';
 import AppIconButton from '../AppIconButton/AppIconButton';
 

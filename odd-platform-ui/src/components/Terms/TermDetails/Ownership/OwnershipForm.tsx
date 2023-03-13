@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { Ownership, OwnershipFormData, Permission } from 'generated-sources';
+import { type Ownership, type OwnershipFormData, Permission } from 'generated-sources';
 import {
   AppButton,
   DialogWrapper,

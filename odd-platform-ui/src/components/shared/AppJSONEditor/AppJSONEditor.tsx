@@ -1,4 +1,4 @@
-import React, { type FC } from 'react';
+import React from 'react';
 import {
   JSONEditor,
   type JSONEditorPropsOptional,
@@ -54,7 +54,7 @@ interface JSONEditorProps extends JSONEditorPropsOptional {
   schema: Record<string, unknown>;
 }
 
-const AppJSONEditor: FC<JSONEditorProps> = ({ onValidate, schema, ...props }) => {
+const AppJSONEditor: React.FC<JSONEditorProps> = ({ onValidate, schema, ...props }) => {
   const refContainer = React.useRef<HTMLDivElement>(null);
   const refEditor = React.useRef<JSONEditor | null>(null);
   const ajv = new Ajv2019({ allErrors: true });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { TermDetails, TermFormData } from 'generated-sources';
-import { useHistory } from 'react-router-dom';
+import type { TermDetails, TermFormData } from 'generated-sources';
+import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import {
   AppButton,
@@ -25,7 +25,7 @@ interface TermsFormDialogProps {
 
 const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { termId } = useAppParams();
   const { termDetailsOverviewPath } = useAppPaths();
 
@@ -66,12 +66,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const onSubmit = (data: TermFormData) => {
     const parsedData = { ...data };
     (term && term.id
-      ? dispatch(
-          updateTerm({
-            termId: term.id,
-            termFormData: parsedData,
-          })
-        )
+      ? dispatch(updateTerm({ termId: term.id, termFormData: parsedData }))
       : dispatch(createTerm({ termFormData: parsedData }))
     )
       .unwrap()
@@ -79,7 +74,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
         (response: TermDetails) => {
           setState({ ...initialState, isSuccessfulSubmit: true });
           clearState();
-          history.push(termDetailsOverviewPath(response.id));
+          navigate(termDetailsOverviewPath(response.id));
         },
         (response: Response) => {
           setState({

@@ -1,18 +1,18 @@
-import React, { HTMLAttributes } from 'react';
-import { Autocomplete, AutocompleteRenderOptionState, Grid } from '@mui/material';
+import React, { type HTMLAttributes } from 'react';
+import { Autocomplete, type AutocompleteRenderOptionState, Grid } from '@mui/material';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import {
+import type {
   CountableSearchFilter,
   MultipleFacetType,
   SearchFilter,
 } from 'generated-sources';
 import { AppInput } from 'components/shared';
 import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
-import { TermSearchOptionalFacetNames } from 'redux/interfaces';
+import type { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getTermSearchFacetsByType, getTermSearchId } from 'redux/selectors';
 import { changeTermSearchFacet } from 'redux/slices/termSearch.slice';

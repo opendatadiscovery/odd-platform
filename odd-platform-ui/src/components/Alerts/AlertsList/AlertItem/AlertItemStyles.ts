@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import styled, { CSSObject } from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 
 export const Container = styled(Grid)(({ theme }) => ({
   height: 'fit-content',

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
-import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
+import { useNavigate } from 'react-router-dom';
+import { AppErrorPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getResourcePermissions,
@@ -17,26 +17,16 @@ import TermDetailsHeader from './TermDetailsHeader/TermDetailsHeader';
 import TermDetailsSkeleton from './TermDetailsSkeleton/TermDetailsSkeleton';
 import TermDetailsTabs from './TermDetailsTabs/TermDetailsTabs';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
-
-// lazy components
-const Overview = React.lazy(
-  () => import('components/Terms/TermDetails/Overview/Overview')
-);
-const LinkedItemsList = React.lazy(
-  () => import('components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsList')
-);
+import TermDetailsRoutes from './TermDetailsRoutes/TermDetailsRoutes';
 
 const TermDetailsView: React.FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
   const { termSearchPath } = useAppPaths();
 
-  const {
-    isLoading: isTermDetailsFetching,
-    isLoaded: isTermDetailsFetched,
-    isNotLoaded: isTermDetailsNotFetched,
-  } = useAppSelector(getTermDetailsFetchingStatuses);
+  const { isLoading: isTermDetailsFetching, isNotLoaded: isTermDetailsNotFetched } =
+    useAppSelector(getTermDetailsFetchingStatuses);
   const termDetailsFetchingErrors = useAppSelector(getTermDetailsFetchingErrors);
 
   const termSearchId = useAppSelector(getTermSearchId);
@@ -58,14 +48,14 @@ const TermDetailsView: React.FC = () => {
   const handleTermDelete = React.useCallback(
     (id: number) => () =>
       dispatch(deleteTerm({ termId: id })).then(() =>
-        history.push(termSearchPath(termSearchId))
+        navigate(termSearchPath(termSearchId))
       ),
     [termSearchId]
   );
 
   return (
     <TermDetailsComponentWrapper>
-      {termDetails.id && !isTermDetailsFetching ? (
+      {termDetails.id && !isTermDetailsNotFetched ? (
         <>
           <WithPermissionsProvider
             allowedPermissions={[Permission.TERM_UPDATE, Permission.TERM_DELETE]}
@@ -80,6 +70,7 @@ const TermDetailsView: React.FC = () => {
             )}
           />
           <TermDetailsTabs />
+          <TermDetailsRoutes />
         </>
       ) : null}
       {isTermDetailsFetching ? (
@@ -87,14 +78,6 @@ const TermDetailsView: React.FC = () => {
           renderContent={({ randWidth }) => <TermDetailsSkeleton width={randWidth()} />}
         />
       ) : null}
-      {isTermDetailsFetched && (
-        <React.Suspense fallback={<AppLoadingPage />}>
-          <Switch>
-            <Route exact path='/terms/:termId/overview' component={Overview} />
-            <Route exact path='/terms/:termId/linked-items' component={LinkedItemsList} />
-          </Switch>
-        </React.Suspense>
-      )}
       <AppErrorPage
         showError={isTermDetailsNotFetched}
         error={termDetailsFetchingErrors}

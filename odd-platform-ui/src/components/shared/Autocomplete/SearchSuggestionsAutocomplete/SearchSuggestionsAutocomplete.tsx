@@ -53,7 +53,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
   searchQuery,
 }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);
   const { isLoading: isSuggestionsLoading } = useAppSelector(
@@ -137,7 +137,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
       </Box>
     );
 
-    const linkedItem = id ? <Link to={dataEntityDetailsPath(id)}>{item}</Link> : null;
+    const linkedItem = id ? <Link to={dataEntityOverviewPath(id)}>{item}</Link> : null;
 
     return (
       <li {...props} key={id}>

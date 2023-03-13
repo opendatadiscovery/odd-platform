@@ -1,12 +1,16 @@
 import React, { type HTMLAttributes } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { Autocomplete, AutocompleteRenderInputParams, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  type AutocompleteRenderInputParams,
+  Typography,
+} from '@mui/material';
 import { type ControllerRenderProps } from 'react-hook-form';
 import type { OwnershipFormData, Title } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
-  FilterOptionsState,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';

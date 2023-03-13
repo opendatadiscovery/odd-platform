@@ -1,10 +1,10 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { DataEntityRun } from 'generated-sources';
+import { type DataEntityRun } from 'generated-sources';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import TestRunStatusReasonModal from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import { useAppDateTime } from 'lib/hooks';
+import TestRunStatusReasonModal from '../TestRunStatusReasonModal/TestRunStatusReasonModal';
 import { Container, StatusReasonModalBtnContainer } from './TestRunItemStyles';
 import { ColContainer } from '../TestRunsHistoryStyles';
 

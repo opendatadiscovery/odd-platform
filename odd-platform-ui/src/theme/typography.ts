@@ -1,9 +1,9 @@
 import { palette } from 'theme/palette';
 import { breakpoints } from 'theme/breakpoints';
 import createTypography from '@mui/material/styles/createTypography';
-import { type Palette } from '@mui/material';
+import type { Palette } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { type CSSObject } from 'styled-components';
+import type { CSSObject } from 'styled-components';
 
 export const { pxToRem } = createTypography(palette as Palette, {});
 

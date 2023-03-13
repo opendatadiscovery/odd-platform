@@ -1,5 +1,8 @@
-import type { DataEntity as GeneratedDataEntity } from 'generated-sources';
-import { type DataEntityDetails, DataEntityClassNameEnum } from 'generated-sources';
+import {
+  DataEntityClassNameEnum,
+  type DataEntity as GeneratedDataEntity,
+  type DataEntityDetails,
+} from 'generated-sources';
 import type { SerializeDateToNumber } from 'redux/interfaces/common';
 
 export type DataEntity = SerializeDateToNumber<GeneratedDataEntity>;

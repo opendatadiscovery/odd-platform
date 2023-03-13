@@ -1,13 +1,18 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import { AppLoadingPage, AppToolbar } from 'components/shared';
+import { AppSuspenseWrapper, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
+import {
+  fetchActiveFeatures,
+  fetchAppInfo,
+  fetchAppLinks,
+  fetchDataEntitiesClassesAndTypes,
+  fetchIdentity,
+} from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { Permission } from 'generated-sources';
-import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Toaster } from 'react-hot-toast';
+import ManagementRoutes from './Management/ManagementRoutes/ManagementRoutes';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -24,48 +29,78 @@ const Activity = React.lazy(() => import('./Activity/Activity'));
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
+  const {
+    isPathEmbedded,
+    ManagementRoutes: ManagementRoutesEnum,
+    SearchRoutes,
+    basePath,
+    TermsRoutes,
+    DataEntityRoutes,
+    ActivityRoutes,
+    AlertsRoutes,
+    getNonExactPath,
+    getNonExactParamPath,
+  } = useAppPaths();
+
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
-  }, [dispatch]);
-
-  const { isPathEmbedded } = useAppPaths();
+    dispatch(fetchIdentity());
+    dispatch(fetchAppInfo());
+    dispatch(fetchActiveFeatures());
+    dispatch(fetchAppLinks());
+  }, []);
 
   return (
     <div className='App'>
       <Toaster position='bottom-right' toastOptions={{ custom: { duration: 6000 } }} />
       {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
-        <React.Suspense fallback={<AppLoadingPage />}>
-          <Switch>
-            <Route exact path='/' component={Overview} />
-            <Route path='/alerts/:viewType?' component={Alerts} />
+        <AppSuspenseWrapper>
+          <Routes>
+            <Route path={basePath} element={<Overview />} />
+            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />}>
+              <Route path={SearchRoutes.searchIdParam} />
+            </Route>
             <Route
-              path='/management/:viewType?'
-              render={() => (
-                <WithPermissionsProvider
-                  allowedPermissions={[Permission.OWNER_ASSOCIATION_MANAGE]}
-                  resourcePermissions={[]}
-                  Component={Management}
+              path={getNonExactPath(ManagementRoutesEnum.management)}
+              element={<Management />}
+            >
+              <Route
+                path={getNonExactParamPath(ManagementRoutesEnum.managementViewTypeParam)}
+                element={<ManagementRoutes />}
+              />
+            </Route>
+            <Route
+              path={getNonExactPath(TermsRoutes.termSearch)}
+              element={<TermSearch />}
+            >
+              <Route path={TermsRoutes.termSearchIdParam} />
+            </Route>
+            <Route path={getNonExactPath(AlertsRoutes.alerts)} element={<Alerts />}>
+              <Route path={AlertsRoutes.alertsViewTypeParam} />
+            </Route>
+            <Route
+              path={getNonExactPath(ActivityRoutes.activity)}
+              element={<Activity />}
+            />
+
+            <Route path={getNonExactPath(TermsRoutes.terms)} element={<TermDetails />}>
+              <Route path={getNonExactParamPath(TermsRoutes.termIdParam)}>
+                <Route path={TermsRoutes.termsViewTypeParam} />
+              </Route>
+            </Route>
+            <Route
+              path={getNonExactPath(DataEntityRoutes.dataentities)}
+              element={<DataEntityDetails />}
+            >
+              <Route path={getNonExactParamPath(DataEntityRoutes.dataEntityIdParam)}>
+                <Route
+                  path={getNonExactParamPath(DataEntityRoutes.dataEntityViewTypeParam)}
                 />
-              )}
-            />
-            <Route exact path='/termsearch/:termSearchId?' component={TermSearch} />
-            <Route
-              exact
-              path={['/search/:searchId?', '/embedded/search/:searchId?']}
-              component={Search}
-            />
-            <Route path='/terms/:termId/:viewType?' component={TermDetails} />
-            <Route
-              path={[
-                '/dataentities/:dataEntityId/:viewType?',
-                '/embedded/dataentities/:dataEntityId/:viewType?',
-              ]}
-              component={DataEntityDetails}
-            />
-            <Route path='/activity' component={Activity} />
-          </Switch>
-        </React.Suspense>
+              </Route>
+            </Route>
+          </Routes>
+        </AppSuspenseWrapper>
       </div>
     </div>
   );

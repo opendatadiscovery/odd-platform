@@ -1,10 +1,10 @@
 import React from 'react';
-import { Message } from 'redux/interfaces';
+import { type Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
 import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ThreadMessage from './ThreadMessage/ThreadMessage';
 import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
@@ -29,7 +29,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
   isRelatedMessagesLoading,
   isRelatedMessagesLoaded,
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityCollaborationPath } = useAppPaths();
 
   return (
@@ -49,7 +49,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
           size='medium'
           color='unfilled'
           icon={<ClearIcon viewBox='0 0 16 16' width={24} height={24} />}
-          onClick={() => history.push(dataEntityCollaborationPath(dataEntityId))}
+          onClick={() => navigate(dataEntityCollaborationPath(dataEntityId))}
         />
       </Grid>
       <MainThreadMessage mainMessage={mainMessage} />

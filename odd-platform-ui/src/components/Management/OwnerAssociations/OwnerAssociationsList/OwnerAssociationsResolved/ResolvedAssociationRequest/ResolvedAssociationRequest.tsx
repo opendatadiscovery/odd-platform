@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import type { OwnerAssociationRequest } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import RequestStatus from './RequestStatus/RequestStatus';
-import * as S from './AssociationRequestStyles';
+import * as S from '../../OwnerAssociationsSharedStyles';
 
 interface Props {
   ownerName: OwnerAssociationRequest['ownerName'];
@@ -25,7 +25,7 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
   const { associationRequestFormattedDateTime } = useAppDateTime();
 
   return (
-    <S.Container container>
+    <S.AssociationsItemContainer container>
       <Grid item lg={3}>
         <Typography variant='body1' noWrap title={username}>
           {username}
@@ -59,7 +59,7 @@ const ResolvedAssociationRequest: React.FC<Props> = ({
             associationRequestFormattedDateTime(statusUpdatedAt?.getTime())}
         </Typography>
       </Grid>
-    </S.Container>
+    </S.AssociationsItemContainer>
   );
 };
 

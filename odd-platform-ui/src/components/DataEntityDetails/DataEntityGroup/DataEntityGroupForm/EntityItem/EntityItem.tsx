@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppIconButton, EntityClassItem } from 'components/shared';
-import { DataEntityRef } from 'generated-sources';
+import { type DataEntityRef } from 'generated-sources';
 import { DeleteIcon } from 'components/shared/Icons';
 import { Container } from './EntityItemStyles';
 

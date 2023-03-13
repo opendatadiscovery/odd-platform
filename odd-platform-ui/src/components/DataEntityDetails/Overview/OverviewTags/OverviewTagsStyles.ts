@@ -1,4 +1,4 @@
-import styled, { CSSObject } from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 import { Box } from '@mui/material';
 
 export const CaptionContainer = styled('div')(({ theme }) => ({

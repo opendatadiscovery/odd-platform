@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SkeletonWrapper } from 'components/shared';
-import { ColContainer } from './LinkedItemsListSkeletonStyles';
+import { ColContainer } from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsListSkeleton/LinkedItemsListSkeletonStyles';
 
 const LinkedItemsListSkeleton: React.FC = () => (
   <SkeletonWrapper

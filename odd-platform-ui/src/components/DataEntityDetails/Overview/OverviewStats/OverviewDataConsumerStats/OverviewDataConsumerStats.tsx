@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { DataEntityClassNameEnum, DataEntityDetails } from 'generated-sources';
+import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
@@ -19,7 +19,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
   dataEntityName,
 }) => {
   const displayedEntitiesNumber = 10;
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   return (
     <Grid container>
@@ -44,7 +44,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
               color='tertiary'
               onClick={() => {}}
             >
-              <Link to={dataEntityDetailsPath(input.id)}>
+              <Link to={dataEntityOverviewPath(input.id)}>
                 {input.internalName || input.externalName}
               </Link>
             </AppButton>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { Role, RoleFormData } from 'generated-sources';
+import type { Role, RoleFormData } from 'generated-sources';
 import {
   AppButton,
   AppInput,

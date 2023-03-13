@@ -17,7 +17,13 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "prettier", "lodash", "import", "react-hooks"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "lodash",
+    "import",
+    "react-hooks"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -30,8 +36,16 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "moduleDirectory": ["node_modules", "src"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ],
+        "moduleDirectory": [
+          "node_modules",
+          "src"
+        ]
       }
     }
   },
@@ -53,7 +67,10 @@
     "prefer-const": "error",
     "prettier/prettier": "warn",
     "react/jsx-props-no-spreading": "off",
-    "lodash/import-scope": [2, "method"],
+    "lodash/import-scope": [
+      2,
+      "method"
+    ],
     "react/require-default-props": "off",
     "react/function-component-definition": [
       2,
@@ -69,7 +86,12 @@
         "allowExpressions": true
       }
     ],
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "no-param-reassign": "off",
     "@typescript-eslint/return-await": "off",
     "import/no-cycle": "error",
@@ -80,11 +102,15 @@
       {
         "prefer": "type-imports"
       }
-    ]
+    ],
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "overrides": [
     {
-      "files": ["**/*.tsx"],
+      "files": [
+        "**/*.tsx"
+      ],
       "rules": {
         "react/prop-types": "off"
       }

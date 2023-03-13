@@ -1,6 +1,6 @@
 import React from 'react';
-import { SxProps } from '@mui/system';
-import { Theme, Typography } from '@mui/material';
+import { type SxProps } from '@mui/system';
+import { type Theme, Typography } from '@mui/material';
 import { NoResultText, CreateNewOptionText } from './AutocompleteSuggestionStyles';
 
 interface AutocompleteSuggestionProps {

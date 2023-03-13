@@ -1,10 +1,10 @@
-import React, { SyntheticEvent } from 'react';
-import { TabsProps } from '@mui/material';
+import React, { type SyntheticEvent } from 'react';
+import { type TabsProps } from '@mui/material';
+import type { HintType, TabType } from 'components/shared/AppTabs/interfaces';
 import { Link } from 'react-router-dom';
-import { HintType, TabType } from 'components/shared/AppTabs/interfaces';
-import AppTab from 'components/shared/AppTabs/AppTab/AppTab';
-import AppLinkTab from 'components/shared/AppTabs/AppTab/AppLinkTab';
-import AppTabLabel from 'components/shared/AppTabs/AppTabLabel/AppTabLabel';
+import AppTab from './AppTab/AppTab';
+import AppLinkTab from './AppTab/AppLinkTab';
+import AppTabLabel from './AppTabLabel/AppTabLabel';
 import { TabsContainer } from './AppTabsStyles';
 
 export type AppTabItem<ValueT = number | string | boolean> = {
@@ -47,6 +47,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   React.useEffect(() => {
     setCurrent(selectedTabState);
   }, [selectedTab]);
+
   return (
     <TabsContainer
       $type={type}

@@ -128,7 +128,7 @@ const TestReportDetailsOverview: React.FC = () => {
               <Grid container sx={{ mt: 1 }}>
                 {qualityTest.linkedUrlList.map(({ name, url }) => (
                   <AppButton
-                    to={{ pathname: url }}
+                    to={url}
                     key={url}
                     sx={{ py: 0.25 }}
                     size='medium'

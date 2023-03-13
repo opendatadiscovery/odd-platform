@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { getByText, provideTheme } from 'lib/testHelpers';
-import EntityClassItem, { EntityClassItemProps } from '../EntityClassItem';
+import EntityClassItem, { type EntityClassItemProps } from '../EntityClassItem';
 
 describe('EntityClassItem', () => {
   const setupComponent = (props?: Partial<EntityClassItemProps>) =>

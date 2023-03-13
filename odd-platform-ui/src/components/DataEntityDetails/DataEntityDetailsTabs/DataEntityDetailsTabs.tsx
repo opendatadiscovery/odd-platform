@@ -2,8 +2,8 @@ import React from 'react';
 import { type AppTabItem, AppTabs } from 'components/shared';
 import { useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
 import {
-  getDataEntityDetails,
   getDataEntityAlertsCount,
+  getDataEntityDetails,
   getDatasetTestReportTotal,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
@@ -15,11 +15,12 @@ import {
 import { defaultLineageQuery } from '../Lineage/lineageLib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
-  const { dataEntityId, viewType } = useAppParams();
+  const { dataEntityId, dataEntityViewType } = useAppParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
   const {
+    DataEntityRoutes,
     dataEntityOverviewPath,
     datasetStructurePath,
     dataEntityLineagePath,
@@ -40,43 +41,41 @@ const DataEntityDetailsTabs: React.FC = () => {
     getIsDataEntityBelongsToClass(dataEntityId)
   );
 
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
-
-  React.useEffect(() => {
-    setTabs([
+  const tabs = React.useMemo<AppTabItem[]>(
+    () => [
       {
         name: 'Overview',
         link: dataEntityOverviewPath(dataEntityId),
-        value: 'overview',
+        value: DataEntityRoutes.overview,
       },
       {
         name: 'Structure',
         link: datasetStructurePath(dataEntityId),
         hidden: !isDataset,
-        value: 'structure',
+        value: DataEntityRoutes.structure,
       },
       {
         name: 'Lineage',
         link: dataEntityLineagePath(dataEntityId, lineageQueryString),
         hidden: isQualityTest,
-        value: 'lineage',
+        value: DataEntityRoutes.lineage,
       },
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
         hidden: !isDataset || !datasetQualityTestReportTotal,
-        value: 'test-reports',
+        value: DataEntityRoutes.testReports,
       },
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
         hidden: !isQualityTest && !isTransformer,
-        value: 'history',
+        value: DataEntityRoutes.history,
       },
       {
         name: 'Alerts',
         link: dataEntityAlertsPath(dataEntityId),
-        value: 'alerts',
+        value: DataEntityRoutes.alerts,
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
       },
@@ -84,7 +83,7 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: 'Linked items',
         link: dataEntityLinkedItemsPath(dataEntityId),
         hidden: !dataEntityDetails?.hasChildren,
-        value: 'linked-items',
+        value: DataEntityRoutes.linkedItems,
       },
       {
         name: 'Activity',
@@ -94,25 +93,29 @@ const DataEntityDetailsTabs: React.FC = () => {
       {
         name: 'Collaboration',
         link: dataEntityCollaborationPath(dataEntityId),
-        value: 'collaboration',
+        value: DataEntityRoutes.collaboration,
       },
-    ]);
-  }, [
-    dataEntityId,
-    isQualityTest,
-    isDataset,
-    dataEntityDetails,
-    openAlertsCount,
-    datasetQualityTestReportTotal,
-    lineageQueryString,
-    activityQueryString,
-  ]);
+    ],
+    [
+      dataEntityId,
+      activityQueryString,
+      dataEntityDetails,
+      openAlertsCount,
+      isDataset,
+      isQualityTest,
+      isTransformer,
+      datasetQualityTestReportTotal,
+      lineageQueryString,
+    ]
+  );
 
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+  const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
-    setSelectedTab(viewType ? tabs.findIndex(tab => tab.value === viewType) : 0);
-  }, [tabs, viewType]);
+    setSelectedTab(
+      dataEntityViewType ? tabs.findIndex(tab => tab.value === dataEntityViewType) : 0
+    );
+  }, [tabs, dataEntityViewType]);
 
   return (
     <>

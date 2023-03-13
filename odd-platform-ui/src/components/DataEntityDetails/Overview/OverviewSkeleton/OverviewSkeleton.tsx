@@ -1,6 +1,6 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
-import { Grid, GridSize } from '@mui/material';
+import { Grid, type GridSize } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SmallItem, LargeItem } from './OverviewSkeletonStyles';
 

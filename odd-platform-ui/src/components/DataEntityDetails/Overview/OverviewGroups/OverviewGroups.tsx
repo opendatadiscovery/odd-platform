@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { DataEntityRef, Permission } from 'generated-sources';
+import { type DataEntityRef, Permission } from 'generated-sources';
 import { AppButton } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import { WithPermissions } from 'components/shared/contexts';

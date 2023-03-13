@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { DataEntityRunStatus } from 'generated-sources';
+import { type DataEntityRunStatus } from 'generated-sources';
 import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,

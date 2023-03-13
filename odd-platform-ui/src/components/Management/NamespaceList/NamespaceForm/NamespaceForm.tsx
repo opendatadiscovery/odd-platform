@@ -1,12 +1,9 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Namespace, NamespaceFormData } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
+import type { Namespace, NamespaceFormData } from 'generated-sources';
 import { Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { AppButton, AppInput, DialogWrapper } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createNamespace, updateNamespace } from 'redux/thunks';
 import {

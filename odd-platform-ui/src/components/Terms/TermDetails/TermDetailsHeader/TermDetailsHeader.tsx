@@ -9,7 +9,7 @@ import {
   EntityTypeItem,
 } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
-import { Permission, TermDetails } from 'generated-sources';
+import { Permission, type TermDetails } from 'generated-sources';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
 import { useAppDateTime } from 'lib/hooks';
