@@ -19,13 +19,15 @@ In order for the ODDRN generators to be created correctly, the next data is need
 \
 We also recommend you indicate in the collector in the type connection- DNS in all collectors or the IP address also in all collectors, the choice of one type connection in the collectors is recommended for the correct work of the ODDRN generator
 
-#### To summarize our recommendation
+### To summarize our recommendation
 
 All collectors with a DNS type connection or all collectors with an IP address type connection are recommended, collectors with a different type of connection are recommended not to use.
 
+### Metadata path and visual representation of the work ODDRN-Generator&#x20;
+
 Let's see at circuitry, which will help you visually understand the work of the ODDRN-Generator and the system of the metadata path.
 
-<img src="../../.gitbook/assets/image (8).png" alt="" data-size="original">
+<img src="../../.gitbook/assets/image.png" alt="" data-size="original">
 
 We see two collectors, a data path, and also the information about collectors, which is transmitted directly to the ODD Platform.\
 "id" in "Collector GCP" will be the same with "dataset\_ids" in "Collector Tableau".\

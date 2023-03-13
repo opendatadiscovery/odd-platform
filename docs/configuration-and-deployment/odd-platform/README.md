@@ -343,7 +343,7 @@ settings:
 
 Review your application's scopes and permissions and click `Create`
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption><p>Reviewing scopes and permissions</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption><p>Reviewing scopes and permissions</p></figcaption></figure>
 
 Proceed with Slack instructions on how to install application into workspace and you should be good to go.
 
@@ -359,7 +359,7 @@ Following variables need to be defined:
 *   `datacollaboration.slack-oauth-token`: Slack application OAuth token used for communicating with Slack. Can be retrieved in the `OAuth & Permissions` section of a Slack application.\
 
 
-    <figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption><p>Retrieving OAuth Token</p></figcaption></figure>
+    <figure><img src="../../.gitbook/assets/image (2) (1).png" alt=""><figcaption><p>Retrieving OAuth Token</p></figcaption></figure>
 
 {% tabs %}
 {% tab title="YAML" %}
