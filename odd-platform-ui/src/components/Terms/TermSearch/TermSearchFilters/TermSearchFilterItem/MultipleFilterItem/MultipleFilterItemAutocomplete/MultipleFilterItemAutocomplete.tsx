@@ -2,6 +2,7 @@ import React, { type HTMLAttributes } from 'react';
 import { Autocomplete, type AutocompleteRenderOptionState, Grid } from '@mui/material';
 import {
   type AutocompleteInputChangeReason,
+  type FilterOptionsState,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
@@ -77,7 +78,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
   );
 
   const getFilterOptions = React.useCallback(
-    (_, params) =>
+    (_: any, params: FilterOptionsState<FilterOption>) =>
       filter(
         searchText
           ? facetOptions.filter(

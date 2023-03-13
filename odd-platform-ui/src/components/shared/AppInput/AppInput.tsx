@@ -17,31 +17,32 @@ interface AdornmentProps {
 }
 
 export interface AppInputProps
-  extends Pick<
-    TextFieldProps,
-    | 'onClick'
-    | 'onChange'
-    | 'onKeyDown'
-    | 'sx'
-    | 'placeholder'
-    | 'InputProps'
-    | 'value'
-    | 'disabled'
-    | 'error'
-    | 'helperText'
-    | 'label'
-    | 'defaultValue'
-    | 'ref'
-    | 'inputProps'
-    | 'required'
-    | 'type'
-    | 'maxRows'
-    | 'multiline'
-    | 'name'
-    | 'fullWidth'
-    | 'minRows'
-    | 'onFocus'
-  > {
+  extends React.PropsWithChildren,
+    Pick<
+      TextFieldProps,
+      | 'onClick'
+      | 'onChange'
+      | 'onKeyDown'
+      | 'sx'
+      | 'placeholder'
+      | 'InputProps'
+      | 'value'
+      | 'disabled'
+      | 'error'
+      | 'helperText'
+      | 'label'
+      | 'defaultValue'
+      | 'ref'
+      | 'inputProps'
+      | 'required'
+      | 'type'
+      | 'maxRows'
+      | 'multiline'
+      | 'name'
+      | 'fullWidth'
+      | 'minRows'
+      | 'onFocus'
+    > {
   size?: AppInputSizes;
   customStartAdornment?: AdornmentProps;
   customEndAdornment?: AdornmentProps;
