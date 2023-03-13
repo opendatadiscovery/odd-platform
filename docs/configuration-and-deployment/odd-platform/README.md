@@ -69,7 +69,7 @@ SPRING_DATASOURCE_PASSWORD={database_password}
 
 ## Security
 
-Please follow [enable-security](enable-security/ "mention") section for enabling security in ODD Platform.
+Please follow [enable-security](../enable-security/ "mention") section for enabling security in ODD Platform.
 
 ## Select session provider
 
@@ -306,11 +306,11 @@ At the moment ODD Platform supports only Slack as a target messenger. It uses Sl
 
 Go to the [Slack apps](https://api.slack.com/apps) website and click on `Create New App -> From an app manifest`
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>Creating an app</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (4).png" alt=""><figcaption><p>Creating an app</p></figcaption></figure>
 
 Select a workspace you want to add an application to and click `Next`
 
-<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption><p>Selecting a workspace to install application to</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (7).png" alt=""><figcaption><p>Selecting a workspace to install application to</p></figcaption></figure>
 
 Enter the following manifest into the YAML section, replace the `<ODD_PLATFORM_BASE_URL>` with URL of your ODD Platform deployment and click `Next`
 
@@ -339,11 +339,11 @@ settings:
   token_rotation_enabled: false
 ```
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption><p>Inserting a YAML manifest</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption><p>Inserting a YAML manifest</p></figcaption></figure>
 
 Review your application's scopes and permissions and click `Create`
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>Reviewing scopes and permissions</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption><p>Reviewing scopes and permissions</p></figcaption></figure>
 
 Proceed with Slack instructions on how to install application into workspace and you should be good to go.
 
@@ -355,10 +355,11 @@ Following variables need to be defined:
 * `datacollaboration.receive-event-advisory-lock-id`: PostgreSQL advisory lock id for a job, which translates events from messengers to messages. Defaults to `110`
 * `datacollaboration.sender-message-advisory-lock-id`: PostgreSQL advisory lock id for a job, which sends messages created in the platform to messengers. Defaults to `120`
 * `datacollaboration.message-partition-period`: time interval in days for a message table partition in PostgreSQL. Defaults to `30`
+* `datacollaboration.sending-messages-retry-count`: how many times the Platform will attempt to send a message to provider. Cannot be less than zero. Defaults to `3`
 *   `datacollaboration.slack-oauth-token`: Slack application OAuth token used for communicating with Slack. Can be retrieved in the `OAuth & Permissions` section of a Slack application.\
 
 
-    <figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption><p>Retrieving OAuth Token</p></figcaption></figure>
+    <figure><img src="../../.gitbook/assets/image (2) (1).png" alt=""><figcaption><p>Retrieving OAuth Token</p></figcaption></figure>
 
 {% tabs %}
 {% tab title="YAML" %}
@@ -367,6 +368,7 @@ datacollaboration:
   receive-event-advisory-lock-id: {receive_event_advisory_lock_id}
   sender-message-advisory-lock-id: {sender_message_advisory_lock_id}
   message-partition-period: {message_partition_period}
+  sending-messages-retry-count: {sending-messages-retry-count}
   enabled: true
   slack-oauth-token: {slack_oauth_token}
 
@@ -381,6 +383,7 @@ DATACOLLABORATION_ENABLED=true
 DATACOLLABORATION_RECEIVE_EVENT_ADVISORY_LOCK_ID={receive_event_advisory_lock_id}
 DATACOLLABORATION_SENDER_MESSAGE_ADVISORY_LOCK_ID={sender_message_advisory_lock_id}
 DATACOLLABORATION_MESSAGE_PARTITION_PERIOD={message_partition_period}
+DATACOLLABORATION_SENDING_MESSAGES_RETRY_COUNT={sending_messages_retry_count}
 DATACOLLABORATION_SLACK_OAUTH_TOKEN={slack_oauth_token}
 ODD_PLATFORM_BASE_URL={odd_platform_base_url}
 ```
