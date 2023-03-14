@@ -1,13 +1,13 @@
-import { buttonBaseClasses, Tab, tabClasses, TabProps, TabsProps } from '@mui/material';
-import { Theme } from '@mui/material/styles';
-import { TabType } from 'components/shared/AppTabs/interfaces';
-import React from 'react';
-import { LinkProps } from 'react-router-dom';
-import styled, { CSSObject } from 'styled-components';
-
-const LinkTab: React.ComponentType<
-  Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
-> = Tab as React.ComponentType<Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>>;
+import {
+  buttonBaseClasses,
+  Tab,
+  tabClasses,
+  type TabProps,
+  type TabsProps,
+} from '@mui/material';
+import { type Theme } from '@mui/material/styles';
+import { type TabType } from 'components/shared/AppTabs/interfaces';
+import styled, { type CSSObject } from 'styled-components';
 
 const getTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {
@@ -124,10 +124,12 @@ export const TabContainer = styled(Tab)<{
   tabStyles(theme, $type, $hidden, $orientation)
 );
 
-export const LinkTabContainer = styled(LinkTab)<{
-  $type: TabType;
-  $hidden?: boolean;
-  $orientation?: TabsProps['orientation'];
-}>(({ theme, $type, $hidden, $orientation }) =>
+export const LinkTabContainer = styled(Tab)<
+  {
+    $type: TabType;
+    $hidden?: boolean;
+    $orientation?: TabsProps['orientation'];
+  } & TabProps
+>(({ theme, $type, $hidden, $orientation }) =>
   tabStyles(theme, $type, $hidden, $orientation)
 );

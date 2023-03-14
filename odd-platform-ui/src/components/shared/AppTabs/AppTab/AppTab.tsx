@@ -1,6 +1,6 @@
 import React from 'react';
-import { TabProps, TabsProps } from '@mui/material';
-import { TabType } from 'components/shared/AppTabs/interfaces';
+import type { TabProps, TabsProps } from '@mui/material';
+import { type TabType } from 'components/shared/AppTabs/interfaces';
 import { TabContainer } from 'components/shared/AppTabs/AppTab/TabStyles';
 
 export interface AppTabProps extends TabProps {

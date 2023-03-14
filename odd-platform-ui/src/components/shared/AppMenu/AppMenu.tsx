@@ -1,5 +1,5 @@
 import React from 'react';
-import { MenuProps } from '@mui/material';
+import { type MenuProps } from '@mui/material';
 import { StyledAppMenu } from './AppMenuStyles';
 
 interface AppMenuProps extends MenuProps {

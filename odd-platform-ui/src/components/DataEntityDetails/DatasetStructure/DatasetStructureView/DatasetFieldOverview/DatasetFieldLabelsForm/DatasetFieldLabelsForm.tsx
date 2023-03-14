@@ -24,7 +24,7 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector(getDatasetFieldLabelsUpdatingStatus);
+  const { isLoading, isLoaded } = useAppSelector(getDatasetFieldLabelsUpdatingStatus);
 
   const methods = useForm<DatasetFieldLabelsFormData>({
     defaultValues: { labels: labels?.map(({ name, external }) => ({ name, external })) },
@@ -35,12 +35,6 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
     name: 'labels',
   });
 
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialFormState);
-
   const onOpen = (handleOpen: () => void) => () => {
     if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
     methods.reset({ labels: labels?.map(({ name, external }) => ({ name, external })) });
@@ -48,7 +42,6 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
   };
 
   const clearFormState = () => {
-    setFormState(initialFormState);
     methods.reset();
   };
 
@@ -60,18 +53,9 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
           labels: data.labels.map(label => label.name),
         },
       })
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update labels',
-        });
-      }
-    );
+    ).then(() => {
+      clearFormState();
+    });
   };
 
   const formTitle = (
@@ -122,8 +106,7 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      errorText={error}
+      handleCloseSubmittedForm={isLoaded}
       formSubmitHandler={methods.handleSubmit(handleFormSubmit)}
     />
   );

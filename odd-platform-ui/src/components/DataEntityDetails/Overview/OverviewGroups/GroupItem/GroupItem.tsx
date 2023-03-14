@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityRef, Permission } from 'generated-sources';
+import { type DataEntityRef, Permission } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
@@ -16,8 +16,8 @@ interface GroupItemProps {
 
 const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityDetailsPath } = useAppPaths();
-  const groupDetailsLink = dataEntityDetailsPath(group.id);
+  const { dataEntityOverviewPath } = useAppPaths();
+  const groupDetailsLink = dataEntityOverviewPath(group.id);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();

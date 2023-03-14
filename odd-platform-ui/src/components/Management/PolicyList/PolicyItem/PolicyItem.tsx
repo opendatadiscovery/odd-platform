@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { deletePolicy, deleteRole } from 'redux/thunks';
-import { Permission, Policy } from 'generated-sources';
+import { Permission, type Policy } from 'generated-sources';
 import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon, EditIcon } from 'components/shared/Icons';
-import { useAppPaths, usePermissions } from 'lib/hooks';
+import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import * as S from './PolicyItemStyles';
@@ -19,9 +19,6 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
   const { hasAccessTo } = usePermissions();
 
   const isAdministrator = name === 'Administrator';
-
-  const { policyDetailsPath } = useAppPaths();
-  const policyDetailsLink = policyDetailsPath(policyId);
 
   const handleDelete = React.useCallback(
     () => dispatch(deletePolicy({ policyId })),
@@ -39,7 +36,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
       <Grid item lg={1.74}>
         <S.ActionsContainer container item>
           <AppButton
-            to={policyDetailsLink}
+            to={`${policyId}`}
             size='medium'
             color='primaryLight'
             startIcon={

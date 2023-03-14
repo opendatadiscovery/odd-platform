@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppAvatar, AppButton, WithFeature } from 'components/shared';
-import { Message } from 'redux/interfaces';
+import { type Message } from 'redux/interfaces';
 import { Feature } from 'generated-sources';
 import * as S from './MainThreadMessageStyles';
 
@@ -33,7 +33,7 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
         <Grid container alignItems='center' justifyContent='flex-end' flexWrap='nowrap'>
           <WithFeature featureName={Feature.DATA_COLLABORATION}>
             <AppButton
-              to={{ pathname: url }}
+              to={url}
               linkTarget='_blank'
               size='medium'
               color='primaryLight'

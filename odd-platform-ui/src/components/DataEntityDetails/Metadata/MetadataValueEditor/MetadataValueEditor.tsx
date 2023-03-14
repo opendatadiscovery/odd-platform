@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControlLabel, Grid, RadioGroup, TextFieldProps } from '@mui/material';
+import { FormControlLabel, Grid, RadioGroup, type TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';

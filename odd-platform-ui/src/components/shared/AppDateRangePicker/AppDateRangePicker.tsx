@@ -1,6 +1,6 @@
 import React from 'react';
 import { addDays, endOfDay, startOfDay } from 'date-fns';
-import DatePicker, { DateObject } from 'react-multi-date-picker';
+import DatePicker, { type DateObject } from 'react-multi-date-picker';
 import AppDateRangePickerFooter from './AppDateRangePickerFooter/AppDateRangePickerFooter';
 import * as S from './AppDateRangePickerStyles';
 

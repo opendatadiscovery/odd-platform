@@ -1,4 +1,4 @@
-import { AlertStatus } from 'generated-sources';
+import { type AlertStatus } from 'generated-sources';
 import styled from 'styled-components';
 
 interface FilledContainerProps {

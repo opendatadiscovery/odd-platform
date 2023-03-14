@@ -11,8 +11,8 @@ import {
   SlackChannelsAutocomplete,
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { MessageRequest } from 'generated-sources';
-import { useHistory } from 'react-router-dom';
+import { type MessageRequest } from 'generated-sources';
+import { useNavigate } from 'react-router-dom';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
 
 interface CreateMessageFormProps {
@@ -25,10 +25,10 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dataEntityCollaborationPath } = useAppPaths();
 
-  const { isLoading: isMessageCreating } = useAppSelector(
+  const { isLoading: isMessageCreating, isLoaded: isMessageCreated } = useAppSelector(
     getMessageToSlackCreatingStatuses
   );
 
@@ -42,35 +42,19 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
     defaultValues: {},
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = React.useCallback(() => {
-    setState(initialState);
     reset();
-  }, [reset]);
+  }, []);
 
   const handleFormSubmit = (formData: MessageFormData) => {
     dispatch(
       createMessageToSlack({ messageRequest: { dataEntityId, ...formData } })
-    ).then(
-      resolved => {
-        if (resolved.meta.requestStatus === 'fulfilled') {
-          setState({ ...initialState, isSuccessfulSubmit: true });
-          clearState();
-          history.push(toCollaboration);
-        }
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to create message',
-        });
+    ).then(resolved => {
+      if (resolved.meta.requestStatus === 'fulfilled') {
+        clearState();
+        navigate(toCollaboration);
       }
-    );
+    });
   };
 
   const formTitle = (
@@ -139,9 +123,8 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isMessageCreated}
       isLoading={isMessageCreating}
-      errorText={error}
       clearState={clearState}
     />
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
-import { MetadataObject } from 'generated-sources';
+import { type MetadataObject } from 'generated-sources';
 import { AppButton, DialogWrapper } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks';
@@ -18,7 +18,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isMetadataCreating } = useAppSelector(
+  const { isLoading: isMetadataCreating, isLoaded: isMetadataCreated } = useAppSelector(
     getDataEntityMetadataCreatingStatuses
   );
 
@@ -27,15 +27,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
     defaultValues: { metadata: {} },
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     methods.reset();
   };
 
@@ -45,18 +37,9 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
         dataEntityId,
         metadataObject: [data.metadata],
       })
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to create metadata',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -95,9 +78,8 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isMetadataCreated}
       isLoading={isMetadataCreating}
-      errorText={error}
       clearState={clearState}
       formSubmitHandler={methods.handleSubmit(createMetadata)}
     />

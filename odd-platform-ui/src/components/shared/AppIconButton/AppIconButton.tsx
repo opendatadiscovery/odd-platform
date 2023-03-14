@@ -6,7 +6,6 @@ interface AppIconButtonProps extends Omit<IconButtonProps, 'color'> {
   size?: 'medium' | 'small';
   color: IconButtonColors;
   icon: React.ReactNode;
-  open?: boolean;
   ariaDescribedBy?: IconButtonProps['aria-describedby'];
   ariaControls?: IconButtonProps['aria-controls'];
   ariaHaspopup?: IconButtonProps['aria-haspopup'];
@@ -18,7 +17,6 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
   size = 'small',
   color,
   icon,
-  open,
   ariaDescribedBy,
   ariaControls,
   ariaExpanded,

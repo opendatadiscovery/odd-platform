@@ -1,16 +1,23 @@
 import React from 'react';
-import { Redirect, Route, type RouteProps } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-interface Props extends RouteProps {
+interface Props extends React.PropsWithChildren {
   isAllowedTo: boolean;
   redirectTo: string;
+  component?: React.FC;
 }
 
-const RestrictedRoute: React.FC<Props> = ({ redirectTo, isAllowedTo, ...props }) => {
-  const redirect = React.useMemo(() => <Redirect to={redirectTo} />, [redirectTo]);
-  const route = React.useMemo(() => <Route {...props} />, [props]);
+const RestrictedRoute: React.FC<Props> = ({
+  redirectTo,
+  isAllowedTo,
+  component: Component,
+  children,
+}) => {
+  if (!isAllowedTo) return <Navigate to={redirectTo} replace />;
 
-  return isAllowedTo ? route : redirect;
+  if (Component) return <Component />;
+
+  return <>{children}</>;
 };
 
 export default RestrictedRoute;

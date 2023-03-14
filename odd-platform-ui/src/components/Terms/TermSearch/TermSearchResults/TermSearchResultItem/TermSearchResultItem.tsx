@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Term } from 'generated-sources';
+import { type Term } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
   TermSearchNameContainer,

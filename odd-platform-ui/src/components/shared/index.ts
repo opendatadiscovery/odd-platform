@@ -63,3 +63,4 @@ export { default as AppSwitch } from './AppSwitch/AppSwitch';
 export { default as MetadataItem } from './MetadataItem/MetadataItem';
 export { default as AppErrorBlock } from './AppErrorBlock/AppErrorBlock';
 export { default as MetricFamily } from './MetricFamily/MetricFamily';
+export { default as AppSuspenseWrapper } from './AppSuspenseWrapper/AppSuspenseWrapper';

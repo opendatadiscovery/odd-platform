@@ -1,6 +1,6 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { Permission, Tag } from 'generated-sources';
+import { Permission, type Tag } from 'generated-sources';
 import { AppButton, TagItem } from 'components/shared';
 import { WithPermissions } from 'components/shared/contexts';
 import { AddIcon, EditIcon } from 'components/shared/Icons';

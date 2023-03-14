@@ -4,7 +4,7 @@ import { getGlobalPermissions } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import PermissionContext, { type PermissionContextProps } from './PermissionContext';
 
-interface PermissionProviderProps {
+interface PermissionProviderProps extends React.PropsWithChildren {
   allowedPermissions: Permission[];
   resourcePermissions: Permission[];
 }

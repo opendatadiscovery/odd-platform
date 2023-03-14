@@ -23,17 +23,13 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector(getDatasetFieldDescriptionUpdatingStatus);
+  const { isLoading, isLoaded } = useAppSelector(
+    getDatasetFieldDescriptionUpdatingStatus
+  );
 
   const methods = useForm<DatasetFieldDescriptionUpdateFormData>({
     defaultValues: { description },
   });
-
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialFormState);
 
   const onOpen = (handleOpen: () => void) => () => {
     if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
@@ -42,7 +38,6 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
   };
 
   const clearFormState = () => {
-    setFormState(initialFormState);
     methods.reset();
   };
 
@@ -54,18 +49,9 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
         datasetFieldId,
         datasetFieldDescriptionUpdateFormData,
       })
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update description',
-        });
-      }
-    );
+    ).then(() => {
+      clearFormState();
+    });
   };
 
   const formTitle = (
@@ -123,8 +109,7 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      errorText={error}
+      handleCloseSubmittedForm={isLoaded}
       formSubmitHandler={methods.handleSubmit(handleFormSubmit)}
     />
   );

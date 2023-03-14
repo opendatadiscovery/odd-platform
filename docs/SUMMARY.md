@@ -13,7 +13,8 @@
 ## Configuration and Deployment
 
 * [Try locally](configuration-and-deployment/trylocally.md)
-* [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
+* [Configure ODD Platform](configuration-and-deployment/odd-platform/README.md)
+  * [ODDRN-Generator](configuration-and-deployment/odd-platform/oddrn-generator.md)
 * [Enable security](configuration-and-deployment/enable-security/README.md)
   * [Authentication](configuration-and-deployment/enable-security/authentication/README.md)
     * [Disabled authentication](configuration-and-deployment/enable-security/authentication/disabled-authentication.md)

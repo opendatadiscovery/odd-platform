@@ -1,6 +1,5 @@
 import React from 'react';
 import { Group } from '@visx/group';
-import truncate from 'lodash/truncate';
 import type { NodeSize } from '../../../../lineageLib/interfaces';
 import * as S from './NodeTitleStyles';
 

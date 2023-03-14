@@ -1,4 +1,4 @@
-import { Grid, GridProps } from '@mui/material';
+import { Grid, type GridProps } from '@mui/material';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 

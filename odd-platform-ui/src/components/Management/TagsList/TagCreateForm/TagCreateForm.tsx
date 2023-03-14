@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import { TagFormData } from 'generated-sources';
+import type { TagFormData } from 'generated-sources';
 import { getTagCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTag } from 'redux/thunks/tags.thunks';
@@ -20,7 +20,8 @@ interface TagCreateFormData {
 
 const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isTagCreating } = useAppSelector(getTagCreatingStatuses);
+  const { isLoading: isTagCreating, isLoaded: isTagCreated } =
+    useAppSelector(getTagCreatingStatuses);
   const methods = useForm<TagCreateFormData>({
     defaultValues: {
       tags: [{ name: '', important: false }],
@@ -32,30 +33,14 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
     name: 'tags',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     methods.reset();
   };
 
   const handleCreate = async (data: TagCreateFormData) => {
-    dispatch(createTag({ tagFormData: data.tags })).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Tag already exists',
-        });
-      }
-    );
+    dispatch(createTag({ tagFormData: data.tags })).then(() => {
+      clearState();
+    });
   };
 
   const handleAppend = React.useCallback(() => {
@@ -122,9 +107,8 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isTagCreated}
       isLoading={isTagCreating}
-      errorText={error}
       clearState={clearState}
     />
   );

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import type { DataEntityDetails } from 'generated-sources';
-import { DataEntityClassNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { UpstreamIcon, DownstreamIcon } from 'components/shared/Icons';
 import { EntityClassItem, AppButton, EntitiesListModal } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
@@ -23,7 +22,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   dataEntityName,
 }) => {
   const displayedEntitiesNumber = 10;
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
 
   return (
     <Grid container>
@@ -52,7 +51,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         >
           {sources?.slice(0, displayedEntitiesNumber).map(source => (
             <AppButton
-              to={dataEntityDetailsPath(source.id)}
+              to={dataEntityOverviewPath(source.id)}
               key={source.id}
               size='medium'
               color='tertiary'
@@ -104,7 +103,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         >
           {targets?.slice(0, displayedEntitiesNumber).map(target => (
             <AppButton
-              to={dataEntityDetailsPath(target.id)}
+              to={dataEntityOverviewPath(target.id)}
               key={target.id}
               sx={{ my: 0.25 }}
               size='medium'

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Box } from '@mui/material';
-import { ToastType } from 'react-hot-toast';
+import { type ToastType } from 'react-hot-toast';
 
 export const Container = styled(Box)<{ $type: ToastType }>(({ theme, $type }) => ({
   width: '320px',

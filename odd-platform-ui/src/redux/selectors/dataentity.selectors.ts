@@ -12,6 +12,7 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import { emptyArr, emptyObj } from 'lib/constants';
+import { addDataEntityTermActType } from 'redux/actions';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
@@ -177,6 +178,10 @@ export const getDataEntityOwnerUpdatingStatuses = createStatusesSelector(
   actions.updateDataEntityOwnershipAction
 );
 
+export const getDataEntityOwnerCreatingStatuses = createStatusesSelector(
+  actions.createDataEntityOwnershipAction
+);
+
 export const getDataEntityGroupCreatingStatuses = createStatusesSelector(
   actions.createDataEntityGroupActionType
 );
@@ -195,4 +200,8 @@ export const getDataEntityAddToGroupStatuses = createStatusesSelector(
 
 export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
   actions.deleteDataEntityFromGroupActionType
+);
+
+export const getDataEntityAddTermStatuses = createStatusesSelector(
+  actions.addDataEntityTermActType
 );

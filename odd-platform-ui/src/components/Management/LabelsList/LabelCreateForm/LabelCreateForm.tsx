@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import { LabelFormData } from 'generated-sources';
+import type { LabelFormData } from 'generated-sources';
 import { getLabelCreatingStatuses } from 'redux/selectors';
 import { createLabel } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -20,7 +20,9 @@ interface LabelCreateFormData {
 
 const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isLabelCreating } = useAppSelector(getLabelCreatingStatuses);
+  const { isLoading: isLabelCreating, isLoaded: isLabelCreated } = useAppSelector(
+    getLabelCreatingStatuses
+  );
   const methods = useForm<LabelCreateFormData>({
     defaultValues: {
       labels: [
@@ -36,30 +38,14 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
     name: 'labels',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     methods.reset();
   };
 
   const handleCreate = async (data: LabelCreateFormData) => {
-    dispatch(createLabel({ labelFormData: data.labels })).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Label already exists',
-        });
-      }
-    );
+    dispatch(createLabel({ labelFormData: data.labels })).then(() => {
+      clearState();
+    });
   };
 
   const handleAppend = React.useCallback(() => {
@@ -126,9 +112,8 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isLabelCreated}
       isLoading={isLabelCreating}
-      errorText={error}
       clearState={clearState}
     />
   );

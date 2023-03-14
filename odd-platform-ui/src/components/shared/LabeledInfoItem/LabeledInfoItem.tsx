@@ -10,7 +10,7 @@ import {
   ValueContainer,
 } from './LabeledInfoItemStyles';
 
-interface LabeledInfoItemProps {
+interface LabeledInfoItemProps extends React.PropsWithChildren {
   inline?: boolean;
   label: string | React.ReactNode;
   variant?: TypographyProps['variant'];

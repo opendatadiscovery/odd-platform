@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -27,7 +27,10 @@ declare module 'styled-components' {
 
 const queryClient = new QueryClient({});
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!);
+
+root.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <StyledEngineProvider injectFirst>
@@ -45,6 +48,5 @@ ReactDOM.render(
         </MuiThemeProvider>
       </StyledEngineProvider>
     </Provider>
-  </QueryClientProvider>,
-  document.getElementById('root')
+  </QueryClientProvider>
 );

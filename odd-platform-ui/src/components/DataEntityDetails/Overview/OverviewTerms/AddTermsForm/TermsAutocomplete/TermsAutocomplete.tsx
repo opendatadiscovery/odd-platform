@@ -1,15 +1,15 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import { DataEntityTermFormData, TermRef } from 'generated-sources';
+import type { DataEntityTermFormData, TermRef } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
+  type FilterOptionsState,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
-
-import { ControllerRenderProps } from 'react-hook-form';
+import { type ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermsList } from 'redux/thunks';
 
@@ -56,7 +56,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       if (
         searchText !== '' &&

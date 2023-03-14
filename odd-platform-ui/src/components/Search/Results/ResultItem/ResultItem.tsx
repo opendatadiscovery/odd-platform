@@ -35,9 +35,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
   searchClassIdPredicate,
   showClassIcons,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
   const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = dataEntityDetailsPath(searchResult.id);
+  const detailsLink = dataEntityOverviewPath(searchResult.id);
 
   const searchQuery = useAppSelector(getSearchQuery);
 

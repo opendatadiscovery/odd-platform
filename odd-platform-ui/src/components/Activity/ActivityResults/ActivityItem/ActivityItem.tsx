@@ -29,11 +29,11 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   hideAllDetails,
   dataQA,
 }) => {
-  const { dataEntityDetailsPath } = useAppPaths();
+  const { dataEntityOverviewPath } = useAppPaths();
   const { activityFormattedDateTime } = useAppDateTime();
 
   const tagStateItem = React.useCallback(
-    (name, important) => (
+    (name: string, important: boolean | undefined) => (
       <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
     ),
     []
@@ -51,7 +51,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
     <S.Container container data-qa={dataQA}>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
         <Grid item display='flex' flexWrap='nowrap' alignItems='center'>
-          <Link to={dataEntityDetailsPath(activity.dataEntity.id)}>
+          <Link to={dataEntityOverviewPath(activity.dataEntity.id)}>
             <Typography variant='h3' sx={{ mr: 1, width: 'max-content' }}>
               {activity.dataEntity.externalName || activity.dataEntity.internalName}
             </Typography>

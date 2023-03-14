@@ -1,6 +1,6 @@
 import React from 'react';
-import { parse, stringify, type StringifyOptions } from 'query-string';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import queryStringPackage, { type StringifyOptions } from 'query-string';
 
 type QueryParams<Params extends Record<string, unknown>> = {
   [Key in keyof Params]: Params[Key];
@@ -20,7 +20,8 @@ interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
 const useQueryParams = <Params extends Record<string, unknown>>(
   defaultVal: Params
 ): UseQueryParamsReturn<Params> => {
-  const history = useHistory();
+  const { stringify, parse } = queryStringPackage;
+  const navigate = useNavigate();
   const location = useLocation();
 
   const queryStringOptions: StringifyOptions = {
@@ -52,9 +53,9 @@ const useQueryParams = <Params extends Record<string, unknown>>(
     value => {
       const newParams = typeof value === 'function' ? value(queryParams) : value;
       const newQueryStr = createQueryString(newParams);
-      history.replace(`${location.pathname}?${newQueryStr}`);
+      navigate(`${location.pathname}?${newQueryStr}`);
     },
-    [history, queryParams, location.pathname]
+    [queryParams, location.pathname]
   );
 
   return React.useMemo(

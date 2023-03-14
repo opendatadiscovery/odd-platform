@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { Role, RoleFormData } from 'generated-sources';
+import type { Role, RoleFormData } from 'generated-sources';
 import {
   AppButton,
   AppInput,
@@ -26,8 +26,12 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
 
   const isUser = name === 'User';
 
-  const { isLoading: isRoleCreating } = useAppSelector(getRoleCreatingStatuses);
-  const { isLoading: isRoleUpdating } = useAppSelector(getRoleUpdatingStatuses);
+  const { isLoading: isRoleCreating, isLoaded: isRoleCreated } = useAppSelector(
+    getRoleCreatingStatuses
+  );
+  const { isLoading: isRoleUpdating, isLoaded: isRoleUpdated } = useAppSelector(
+    getRoleUpdatingStatuses
+  );
 
   const getDefaultValues = React.useCallback(
     (): RoleFormData => ({ name: name || '', policies: policies || [] }),
@@ -45,16 +49,9 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
     name: 'policies',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = React.useCallback(() => {
-    setState(initialState);
     reset();
-  }, [setState, initialState]);
+  }, []);
 
   const updateState = () => reset({ name, policies });
 
@@ -62,21 +59,9 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
     (roleId
       ? dispatch(updateRole({ roleId, roleFormData }))
       : dispatch(createRole({ roleFormData }))
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error:
-            response.statusText || roleId
-              ? 'Unable to update role'
-              : 'Role already exists',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const handleRemove = React.useCallback(
@@ -165,9 +150,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={roleId ? isRoleUpdated : isRoleCreated}
       isLoading={roleId ? isRoleUpdating : isRoleCreating}
-      errorText={error}
       clearState={clearState}
     />
   );

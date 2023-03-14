@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, FormControlLabel, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { Tag, TagFormData } from 'generated-sources';
+import type { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTag } from 'redux/thunks';
-import { getTagDeletingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
+import { getTagCreatingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
 import { AppButton, AppCheckbox, AppInput, DialogWrapper } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 
@@ -16,37 +16,24 @@ interface TagEditFormProps {
 const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isTagUpdating } = useAppSelector(getTagUpdatingStatuses);
-  const { isLoading: isTagDeleting } = useAppSelector(getTagDeletingStatuses);
+  const { isLoading: isTagUpdating, isLoaded: isTagUpdated } =
+    useAppSelector(getTagUpdatingStatuses);
+  const { isLoading: isTagCreating, isLoaded: isTagCreated } =
+    useAppSelector(getTagCreatingStatuses);
 
   const { handleSubmit, control, reset, formState } = useForm<TagFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
 
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
   const handleUpdate = (tagFormData: TagFormData) => {
-    dispatch(updateTag({ tagId: tag.id, tagFormData })).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Tag already exists',
-        });
-      }
-    );
+    dispatch(updateTag({ tagId: tag.id, tagFormData })).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -116,9 +103,8 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isTagUpdating || isTagDeleting}
-      errorText={error}
+      handleCloseSubmittedForm={isTagUpdated || isTagCreated}
+      isLoading={isTagUpdating || isTagCreating}
       clearState={clearState}
     />
   );

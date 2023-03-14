@@ -3,7 +3,7 @@ import { type Feature } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getActiveFeatures } from 'redux/selectors';
 
-interface WithFeatureProps {
+interface WithFeatureProps extends React.PropsWithChildren {
   featureName: Feature;
   renderContent?: ({
     isFeatureEnabled,

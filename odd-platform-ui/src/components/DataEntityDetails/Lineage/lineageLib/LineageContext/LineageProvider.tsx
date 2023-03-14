@@ -17,7 +17,8 @@ type LineageProviderProps = Omit<
   | 'highLightedLinks'
   | 'setHighLightedLinks'
   | 'renderedLinks'
->;
+> &
+  React.PropsWithChildren;
 
 const LineageProvider: React.FC<LineageProviderProps> = ({ children }) => {
   const {

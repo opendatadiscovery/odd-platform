@@ -1,7 +1,6 @@
 import { Grid } from '@mui/material';
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
-import { AppErrorPage, AppLoadingPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, SkeletonWrapper } from 'components/shared';
 import { useAppParams } from 'lib/hooks';
 import {
   fetchDataEntityAlertsCounts,
@@ -24,28 +23,9 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import DataEntityDetailsHeader from './DataEntityDetailsHeader/DataEntityDetailsHeader';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
-import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
 import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
-
-// lazy components
-const Overview = React.lazy(() => import('./Overview/Overview'));
-const DatasetStructure = React.lazy(() => import('./DatasetStructure/DatasetStructure'));
-const Lineage = React.lazy(() => import('./Lineage/Lineage'));
-const TestReport = React.lazy(() => import('./TestReport/TestReport'));
-const TestReportDetails = React.lazy(
-  () => import('./TestReport/TestReportDetails/TestReportDetails')
-);
-const DataEntityAlerts = React.lazy(() => import('./DataEntityAlerts/DataEntityAlerts'));
-const QualityTestHistory = React.lazy(
-  () => import('./QualityTestRunsHistory/TestRunsHistory')
-);
-const DataEntityActivity = React.lazy(
-  () => import('./DataEntityActivity/DataEntityActivity')
-);
-const DataCollaboration = React.lazy(
-  () => import('./DataCollaboration/DataCollaboration')
-);
+import DataEntityDetailsRoutes from './DataEntityDetailsRoutes/DataEntityDetailsRoutes';
 
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -61,7 +41,6 @@ const DataEntityDetails: React.FC = () => {
   );
   const {
     isLoading: isDataEntityDetailsFetching,
-    isLoaded: isDataEntityDetailsFetched,
     isNotLoaded: isDataEntityDetailsNotFetched,
   } = useAppSelector(getDataEntityDetailsFetchingStatuses);
   const dataEntityDetailsFetchingError = useAppSelector(
@@ -130,120 +109,7 @@ const DataEntityDetails: React.FC = () => {
           )}
         />
       ) : null}
-      {isDataEntityDetailsFetched ? (
-        <React.Suspense fallback={<AppLoadingPage />}>
-          <Switch>
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/overview',
-                '/embedded/dataentities/:dataEntityId/overview',
-              ]}
-              component={Overview}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/structure/:versionId?',
-                '/embedded/dataentities/:dataEntityId/structure/:versionId?',
-              ]}
-              render={() => (
-                <WithPermissionsProvider
-                  allowedPermissions={[
-                    Permission.DATASET_FIELD_ENUMS_UPDATE,
-                    Permission.DATASET_FIELD_LABELS_UPDATE,
-                    Permission.DATASET_FIELD_DESCRIPTION_UPDATE,
-                  ]}
-                  resourcePermissions={resourcePermissions}
-                  Component={DatasetStructure}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/lineage',
-                '/embedded/dataentities/:dataEntityId/lineage',
-              ]}
-              component={Lineage}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-              ]}
-              component={TestReport}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
-              ]}
-              component={TestReportDetails}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/alerts',
-                '/embedded/dataentities/:dataEntityId/alerts',
-              ]}
-              render={() => (
-                <WithPermissionsProvider
-                  allowedPermissions={[
-                    Permission.DATA_ENTITY_ALERT_RESOLVE,
-                    Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE,
-                  ]}
-                  resourcePermissions={resourcePermissions}
-                  Component={DataEntityAlerts}
-                />
-              )}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/history',
-                '/embedded/dataentities/:dataEntityId/history',
-              ]}
-              component={QualityTestHistory}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/linked-items',
-                '/embedded/dataentities/:dataEntityId/linked-items',
-              ]}
-              component={LinkedItemsList}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/activity',
-                '/embedded/dataentities/:dataEntityId/activity',
-              ]}
-              component={DataEntityActivity}
-            />
-            <Route
-              exact
-              path={[
-                '/dataentities/:dataEntityId/collaboration',
-                '/dataentities/:dataEntityId/collaboration/createMessage',
-                '/dataentities/:dataEntityId/collaboration/:messageId',
-              ]}
-              component={DataCollaboration}
-            />
-            <Redirect
-              from='/dataentities/:dataEntityId'
-              to='/dataentities/:dataEntityId/overview'
-            />
-            <Redirect
-              from='/embedded/dataentities/:dataEntityId'
-              to='/embedded/dataentities/:dataEntityId/overview'
-            />
-          </Switch>
-        </React.Suspense>
-      ) : null}
+      <DataEntityDetailsRoutes />
       <AppErrorPage
         showError={isDataEntityDetailsNotFetched}
         error={dataEntityDetailsFetchingError}

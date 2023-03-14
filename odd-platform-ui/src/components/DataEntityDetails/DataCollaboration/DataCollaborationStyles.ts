@@ -1,7 +1,10 @@
-import styled from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 import { Grid } from '@mui/material';
 
-export const Container = styled(Grid)(({ theme }) => ({
-  position: 'relative',
-  flexWrap: 'nowrap',
-}));
+export const Container = styled(Grid)(
+  () =>
+    ({
+      position: 'relative',
+      flexWrap: 'nowrap',
+    } as CSSObject)
+);

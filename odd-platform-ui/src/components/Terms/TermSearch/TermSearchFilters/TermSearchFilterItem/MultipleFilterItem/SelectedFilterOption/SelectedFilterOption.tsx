@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { SearchFilter, SearchFilterState } from 'generated-sources';
-import { TermSearchOptionalFacetNames } from 'redux/interfaces';
+import type { SearchFilter, SearchFilterState } from 'generated-sources';
+import type { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { AppIconButton, TextFormatted } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';

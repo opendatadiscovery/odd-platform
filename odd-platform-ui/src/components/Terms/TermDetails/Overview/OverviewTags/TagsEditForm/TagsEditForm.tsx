@@ -1,8 +1,9 @@
 import React from 'react';
 import { Autocomplete, Box, Typography } from '@mui/material';
-import { Tag } from 'generated-sources';
+import type { Tag } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
+  type FilterOptionsState,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
@@ -32,7 +33,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
 
   const termDetailsTags = useAppSelector(state => getTermDetailsTags(state, termId));
 
-  const { isLoading: isTermTagsUpdating } = useAppSelector(
+  const { isLoading: isTermTagsUpdating, isLoaded: isTermTagsUpdated } = useAppSelector(
     getTermDetailsTagsUpdatingStatuses
   );
 
@@ -68,7 +69,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       if (
         searchText !== '' &&
@@ -127,14 +128,8 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     });
     handleOpen();
   };
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialFormState);
 
   const clearFormState = () => {
-    setFormState(initialFormState);
     methods.reset();
   };
 
@@ -146,18 +141,9 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
           tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
         },
       })
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update tags',
-        });
-      }
-    );
+    ).then(() => {
+      clearFormState();
+    });
   };
 
   const handleAutocompleteSelect = (
@@ -264,9 +250,8 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isTermTagsUpdated}
       isLoading={isTermTagsUpdating}
-      errorText={error}
       formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { SearchFilter } from 'generated-sources';
-import { OptionalFacetNames } from 'redux/interfaces';
+import type { SearchFilter } from 'generated-sources';
+import type { OptionalFacetNames } from 'redux/interfaces';
 import { AppMenuItem, AppSelect } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';

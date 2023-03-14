@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collector, Permission } from 'generated-sources';
+import { type Collector, Permission } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
 import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared';
 import { Typography } from '@mui/material';

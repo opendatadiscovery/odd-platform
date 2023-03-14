@@ -6,7 +6,7 @@ import type { DataSetStats, DataSetVersion } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { fetchDataSetStructure } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import DatasetStructureTypeCounts from './DatasetStructureTypeCounts/DatasetStructureTypeCounts';
 import { useStructureContext } from '../../StructureContext/StructureContext';
@@ -27,7 +27,7 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
   datasetVersions,
 }) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { datasetStructurePath } = useAppPaths();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
   const { searchQuery, setSearchQuery, handleSearch } = useStructureContext();
@@ -37,7 +37,7 @@ const DatasetStructureHeader: React.FC<DatasetStructureHeaderProps> = ({
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
     dispatch(fetchDataSetStructure({ dataEntityId, versionId: newVersionId }));
-    history.push(datasetStructurePath(dataEntityId, newVersionId));
+    navigate(datasetStructurePath(dataEntityId, newVersionId));
   };
 
   const handleKeyDown = React.useCallback(

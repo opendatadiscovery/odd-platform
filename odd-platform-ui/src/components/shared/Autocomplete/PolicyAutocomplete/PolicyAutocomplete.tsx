@@ -2,15 +2,15 @@ import React, { type HTMLAttributes } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   Autocomplete,
-  AutocompleteRenderInputParams,
-  Theme,
+  type AutocompleteRenderInputParams,
+  type Theme,
   Typography,
 } from '@mui/material';
 import type { Policy, RoleFormData } from 'generated-sources';
 import {
-  AutocompleteInputChangeReason,
+  type AutocompleteInputChangeReason,
   createFilterOptions,
-  FilterOptionsState,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'redux/lib/hooks';

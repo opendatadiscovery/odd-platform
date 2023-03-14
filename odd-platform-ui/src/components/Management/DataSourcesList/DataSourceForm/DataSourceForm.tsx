@@ -1,23 +1,28 @@
-import React, { ChangeEvent } from 'react';
+import React, { type ChangeEvent } from 'react';
 import capitalize from 'lodash/capitalize';
 import reduce from 'lodash/reduce';
 import { add, addSeconds, differenceInSeconds, intervalToDuration } from 'date-fns/esm';
 import { Controller, useForm } from 'react-hook-form';
-import { DataSource, DataSourceFormData } from 'generated-sources';
+import type { DataSource, DataSourceFormData } from 'generated-sources';
 import { registerDataSource, updateDataSource } from 'redux/thunks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
-import { getDatasourceCreatingStatuses } from 'redux/selectors';
+import {
+  getDatasourceCreatingStatuses,
+  getDatasourceUpdatingStatuses,
+} from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import {
+  AppButton,
+  AppCheckbox,
+  AppInput,
+  AppMenuItem,
+  AppRadio,
+  AppSelect,
+  DialogWrapper,
+  NamespaceAutocomplete,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
-import AppRadio from 'components/shared/AppRadio/AppRadio';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
-import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -33,9 +38,10 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isDataSourceCreating } = useAppSelector(
-    getDatasourceCreatingStatuses
-  );
+  const { isLoading: isDataSourceCreating, isLoaded: isDataSourceCreated } =
+    useAppSelector(getDatasourceCreatingStatuses);
+  const { isLoading: isDataSourceUpdating, isLoaded: isDataSourceUpdated } =
+    useAppSelector(getDatasourceUpdatingStatuses);
 
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
@@ -77,11 +83,6 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   }, [dataSource]);
 
   const isPullingOn = watch('active', false);
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
 
   type RadioType = 'URL' | 'ODDRN';
   const getDefaultRadioValues = (): RadioType =>
@@ -114,7 +115,6 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   );
 
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
@@ -140,18 +140,9 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           })
         )
       : dispatch(registerDataSource({ dataSourceFormData: parsedData }))
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to register datasource',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -356,9 +347,8 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isDataSourceCreating}
-      errorText={error}
+      handleCloseSubmittedForm={dataSource ? isDataSourceUpdated : isDataSourceCreated}
+      isLoading={dataSource ? isDataSourceUpdating : isDataSourceCreating}
       clearState={clearState}
     />
   );

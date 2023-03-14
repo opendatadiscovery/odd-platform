@@ -6,28 +6,59 @@ import {
 } from 'components/shared/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createDataEntitiesSearch, createTermSearch } from 'redux/thunks';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AppTabs, { type AppTabItem } from 'components/shared/AppTabs/AppTabs';
 
 const ToolbarTabs: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
-  const { activityPath, termSearchPath, searchPath } = useAppPaths();
 
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
+  const {
+    activityPath,
+    termSearchPath,
+    searchPath,
+    ManagementRoutes,
+    AlertsRoutes,
+    TermsRoutes,
+    SearchRoutes,
+    ActivityRoutes,
+    DataEntityRoutes,
+    updatePath,
+  } = useAppPaths();
 
-  React.useEffect(() => {
-    setTabs([
-      { name: 'Catalog', link: '/search', value: 'search' },
-      { name: 'Management', link: '/management', value: 'management' },
-      { name: 'Dictionary', link: '/termsearch', value: 'termsearch' },
-      { name: 'Alerts', link: '/alerts', value: 'alerts' },
-      { name: 'Activity', link: activityPath(activityQueryString), value: 'activity' },
-    ]);
-  }, [activityQueryString]);
+  const tabs = React.useMemo<AppTabItem[]>(
+    () => [
+      {
+        name: 'Catalog',
+        link: updatePath(SearchRoutes.search),
+        value: SearchRoutes.search,
+      },
+      {
+        name: 'Management',
+        link: updatePath(ManagementRoutes.management),
+        value: ManagementRoutes.management,
+      },
+      {
+        name: 'Dictionary',
+        link: updatePath(TermsRoutes.termSearch),
+        value: TermsRoutes.termSearch,
+      },
+      {
+        name: 'Alerts',
+        link: updatePath(AlertsRoutes.alerts),
+        value: AlertsRoutes.alerts,
+      },
+      {
+        name: 'Activity',
+        link: activityPath(activityQueryString),
+        value: ActivityRoutes.activity,
+      },
+    ],
+    [activityQueryString]
+  );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
@@ -36,7 +67,7 @@ const ToolbarTabs: React.FC = () => {
     tabs.forEach((tab, idx) => {
       if (
         location.pathname.includes(tab.value as string) &&
-        !location.pathname.includes('dataentities')
+        !location.pathname.includes(DataEntityRoutes.dataentities)
       )
         newTabIdx = idx;
     });
@@ -55,7 +86,7 @@ const ToolbarTabs: React.FC = () => {
           .unwrap()
           .then(termSearch => {
             const termSearchLink = termSearchPath(termSearch.searchId);
-            history.replace(termSearchLink);
+            navigate(termSearchLink);
           });
         return;
       }
@@ -65,11 +96,11 @@ const ToolbarTabs: React.FC = () => {
           .unwrap()
           .then(({ searchId }) => {
             const searchLink = searchPath(searchId);
-            history.replace(searchLink);
+            navigate(searchLink);
           });
       }
     },
-    [tabs, history]
+    [tabs]
   );
 
   return (

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { Owner, OwnerFormData } from 'generated-sources';
+import type { Owner, OwnerFormData } from 'generated-sources';
 import { AppButton, AppInput, DialogWrapper, TagItem } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
-import { getOwnerCreatingStatuses } from 'redux/selectors';
+import { getOwnerCreatingStatuses, getOwnerUpdatingStatuses } from 'redux/selectors';
 import RoleAutocomplete from 'components/shared/Autocomplete/RoleAutocomplete/RoleAutocomplete';
 
 interface OwnerFormProps {
@@ -18,7 +18,12 @@ interface OwnerFormProps {
 
 const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isOwnerCreating } = useAppSelector(getOwnerCreatingStatuses);
+  const { isLoading: isOwnerCreating, isLoaded: isOwnerCreated } = useAppSelector(
+    getOwnerCreatingStatuses
+  );
+  const { isLoading: isOwnerUpdating, isLoaded: isOwnerUpdated } = useAppSelector(
+    getOwnerUpdatingStatuses
+  );
 
   const getDefaultValues = React.useCallback(
     (): OwnerFormData => ({ name: name || '', roles: roles || [] }),
@@ -36,16 +41,9 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
     name: 'roles',
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = React.useCallback(() => {
-    setState(initialState);
     reset();
-  }, [setState, initialState]);
+  }, []);
 
   const updateState = () => reset({ name, roles });
 
@@ -53,21 +51,9 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
     (ownerId
       ? dispatch(updateOwner({ ownerId, ownerFormData }))
       : dispatch(createOwner({ ownerFormData }))
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error:
-            response.statusText || ownerId
-              ? 'Unable to update owner'
-              : 'Owner already exists',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const handleRemove = React.useCallback(
@@ -154,9 +140,8 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isOwnerCreating}
-      errorText={error}
+      handleCloseSubmittedForm={ownerId ? isOwnerUpdated : isOwnerCreated}
+      isLoading={ownerId ? isOwnerUpdating : isOwnerCreating}
       clearState={clearState}
     />
   );

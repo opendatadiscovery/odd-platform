@@ -55,7 +55,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     collapseBlock = (
       <AppIconButton
         color='primaryLight'
-        open={open}
         icon={
           open ? (
             <ChevronIcon width={10} height={5} transform='rotate(180)' />

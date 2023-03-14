@@ -3,8 +3,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { MainSearch, PageWithLeftSidebar } from 'components/shared';
-import { useHistory } from 'react-router-dom';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useNavigate } from 'react-router-dom';
+import { useAppParams } from 'lib/hooks';
 import {
   createDataEntitiesSearch,
   getDataEntitiesSearch,
@@ -26,8 +26,7 @@ import Results from './Results/Results';
 
 const Search: React.FC = () => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
-  const { searchPath } = useAppPaths();
+  const navigate = useNavigate();
   const { searchId: routerSearchId } = useAppParams();
 
   const searchId = useAppSelector(getSearchId);
@@ -43,8 +42,7 @@ const Search: React.FC = () => {
       dispatch(createDataEntitiesSearch({ searchFormData }))
         .unwrap()
         .then(search => {
-          const searchLink = searchPath(search.searchId);
-          history.replace(searchLink);
+          navigate(`${search.searchId}`);
         });
     }
   }, [routerSearchId, isSearchCreating]);

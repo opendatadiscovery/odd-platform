@@ -1,20 +1,21 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Collector, CollectorFormData } from 'generated-sources';
+import type { Collector, CollectorFormData } from 'generated-sources';
 import { registerCollector, updateCollector } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   getCollectorCreatingStatuses,
   getCollectorsUpdatingStatuses,
 } from 'redux/selectors';
 import { Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import {
+  AppButton,
+  AppInput,
+  NamespaceAutocomplete,
+  DialogWrapper,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
-import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface CollectorFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -26,8 +27,10 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isCollectorCreating } = useAppSelector(getCollectorCreatingStatuses);
-  const { isLoading: isCollectorUpdating } = useAppSelector(
+  const { isLoading: isCollectorCreating, isLoaded: isCollectorCreated } = useAppSelector(
+    getCollectorCreatingStatuses
+  );
+  const { isLoading: isCollectorUpdating, isLoaded: isCollectorUpdated } = useAppSelector(
     getCollectorsUpdatingStatuses
   );
   const getDefaultValues = React.useCallback(
@@ -55,14 +58,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
     reset(getDefaultValues());
   }, [collector]);
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
@@ -76,18 +72,9 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           })
         )
       : dispatch(registerCollector({ collectorFormData: parsedData }))
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to register collector',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const collectorFormTitle = (
@@ -175,9 +162,8 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       title={collectorFormTitle}
       renderContent={collectorFormContent}
       renderActions={collectorFormActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isCollectorCreating || isCollectorUpdating}
-      errorText={error}
+      handleCloseSubmittedForm={collector ? isCollectorUpdated : isCollectorCreated}
+      isLoading={collector ? isCollectorUpdating : isCollectorCreating}
       clearState={clearState}
     />
   );

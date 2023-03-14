@@ -1,5 +1,5 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import SvgIcon, { type SvgIconProps } from '@mui/material/SvgIcon';
 
 const SlackIcon: React.FC<SvgIconProps> = props => (
   <SvgIcon viewBox='0 0 24 24' {...props}>
