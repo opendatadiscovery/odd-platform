@@ -8,7 +8,6 @@
     "clean": "rm -rf ./src/generated-sources",
     "build": "npm run generate && tsc --noEmit && vite build",
     "test": "vitest",
-    "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "tsc": "tsc",
     "generate": "docker run -v `pwd`/..:/mnt -w /mnt --rm openapitools/openapi-generator-cli:v5.1.1 generate -c odd-platform-ui/openapi-config.yaml",
     "lint": "eslint --ext .tsx,.ts src/",
