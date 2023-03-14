@@ -42,12 +42,12 @@ public class ReactiveEnumValueRepositoryImpl
 
     @Override
     public Flux<EnumValueDto> getEnumState(final Collection<String> datasetFieldOddrns) {
-        return getEnumState(addSoftDeleteFilter(DATASET_FIELD.ODDRN.in(datasetFieldOddrns)));
+        return fetchEnumState(addSoftDeleteFilter(DATASET_FIELD.ODDRN.in(datasetFieldOddrns)));
     }
 
     @Override
     public Mono<EnumValueDto> getEnumState(final long datasetFieldId) {
-        return getEnumState(addSoftDeleteFilter(DATASET_FIELD.ID.eq(datasetFieldId))).last();
+        return fetchEnumState(addSoftDeleteFilter(DATASET_FIELD.ID.eq(datasetFieldId))).last();
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ReactiveEnumValueRepositoryImpl
         }).map(r -> r.into(EnumValuePojo.class));
     }
 
-    private Flux<EnumValueDto> getEnumState(final List<Condition> conditions) {
+    private Flux<EnumValueDto> fetchEnumState(final List<Condition> conditions) {
         final var query = DSL.select(DATASET_FIELD.ODDRN, DATASET_FIELD.ID)
             .select(ENUM_VALUE.fields())
             .from(DATASET_FIELD)

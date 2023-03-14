@@ -56,4 +56,4 @@ jobs:
           JAVA_OPTS: '-Xms2048m -Xmx2048m'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew -Penv=prod -p odd-platform-ui clean sonarqube --info
+        run: ./gradlew -p odd-platform-ui clean sonarqube --info
