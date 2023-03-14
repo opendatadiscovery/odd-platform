@@ -11,7 +11,10 @@ import {
 } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityOwnership, updateDataEntityOwnership } from 'redux/thunks';
-import { getDataEntityOwnerUpdatingStatuses } from 'redux/selectors';
+import {
+  getDataEntityOwnerCreatingStatuses,
+  getDataEntityOwnerUpdatingStatuses,
+} from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
 
 interface OwnershipFormProps {
@@ -27,6 +30,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
+  const { isLoading: isOwnershipCreating, isLoaded: isOwnershipCreated } = useAppSelector(
+    getDataEntityOwnerCreatingStatuses
+  );
   const { isLoading: isOwnershipUpdating, isLoaded: isOwnershipUpdated } = useAppSelector(
     getDataEntityOwnerUpdatingStatuses
   );
@@ -115,8 +121,10 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
-      handleCloseSubmittedForm={isOwnershipUpdated}
-      isLoading={isOwnershipUpdating}
+      handleCloseSubmittedForm={
+        dataEntityOwnership ? isOwnershipUpdated : isOwnershipCreated
+      }
+      isLoading={dataEntityOwnership ? isOwnershipUpdating : isOwnershipCreating}
       clearState={resetState}
       formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />
