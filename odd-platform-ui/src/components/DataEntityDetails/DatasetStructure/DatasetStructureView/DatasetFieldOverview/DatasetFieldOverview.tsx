@@ -118,7 +118,7 @@ const DatasetFieldOverview: React.FC = () => {
             <Grid container mt={1}>
               {field.labels &&
                 field.labels.map(({ name, external }) => (
-                  <LabelItem labelName={name} systemLabel={external} />
+                  <LabelItem key={name} labelName={name} systemLabel={external} />
                 ))}
             </Grid>
           ) : (
@@ -133,7 +133,9 @@ const DatasetFieldOverview: React.FC = () => {
         field.metadata?.length > 0 &&
         getOverviewSection(
           'Metadata',
-          field.metadata?.map(metadata => <MetadataItem metadata={metadata} />)
+          field.metadata?.map(metadata => (
+            <MetadataItem key={metadata.field.id} metadata={metadata} />
+          ))
         )}
       {isMetricsLoaded && metricSet?.metricFamilies?.length !== 0 && (
         <DatasetFieldMetrics

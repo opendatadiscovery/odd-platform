@@ -100,7 +100,7 @@ const AppInfoMenu: React.FC = () => {
         {links.length > 0 && (
           <S.LinksContainer container>
             {links.map(link => (
-              <Link to={link.url} target='_blank'>
+              <Link key={link.url} to={link.url} target='_blank'>
                 <S.MenuItem container onClick={handleAppMenuClose}>
                   <Typography variant='h3'>{link.title}</Typography>
                 </S.MenuItem>

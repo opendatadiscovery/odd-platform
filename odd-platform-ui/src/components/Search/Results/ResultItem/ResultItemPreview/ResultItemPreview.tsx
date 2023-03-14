@@ -59,7 +59,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
             {customMetadata.length ? (
               customMetadata
                 .slice(0, metadataNum)
-                .map(metadata => <MetadataItem metadata={metadata} />)
+                .map(metadata => (
+                  <MetadataItem key={metadata.field.id} metadata={metadata} />
+                ))
             ) : (
               <Typography variant='body1' color='texts.secondary'>
                 No custom metadata
@@ -78,7 +80,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
             {predefinedMetadata.length ? (
               predefinedMetadata
                 .slice(0, metadataNum)
-                .map(metadata => <MetadataItem metadata={metadata} />)
+                .map(metadata => (
+                  <MetadataItem key={metadata.field.id} metadata={metadata} />
+                ))
             ) : (
               <Typography variant='body1' color='texts.secondary'>
                 No predefined metadata

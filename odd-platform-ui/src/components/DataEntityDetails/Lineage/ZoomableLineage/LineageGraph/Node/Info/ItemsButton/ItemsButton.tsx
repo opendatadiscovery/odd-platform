@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 interface NodeListIconProps {
   text: string;
-  onClick?: React.MouseEventHandler<SVGTextElement> | undefined;
+  onClick?: React.MouseEventHandler<SVGTextElement>;
 }
 
 const StyledText = styled('text')(({ theme }) => ({
