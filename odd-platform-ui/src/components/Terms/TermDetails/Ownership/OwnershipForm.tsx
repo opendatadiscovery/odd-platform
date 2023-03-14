@@ -12,7 +12,10 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { createTermOwnership, updateTermOwnership } from 'redux/thunks';
-import { getTermDetailsOwnerUpdatingStatuses } from 'redux/selectors';
+import {
+  getTermDetailsOwnerCreatingStatuses,
+  getTermDetailsOwnerUpdatingStatuses,
+} from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
 
 interface OwnershipFormProps {
@@ -29,6 +32,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const { isLoading: isOwnerUpdating, isLoaded: isOwnerUpdated } = useAppSelector(
     getTermDetailsOwnerUpdatingStatuses
+  );
+  const { isLoading: isOwnerCreating, isLoaded: isOwnerCreated } = useAppSelector(
+    getTermDetailsOwnerCreatingStatuses
   );
 
   const methods = useForm<OwnershipFormData>({
@@ -115,8 +121,8 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
-      handleCloseSubmittedForm={isOwnerUpdated}
-      isLoading={isOwnerUpdating}
+      handleCloseSubmittedForm={termDetailsOwnership ? isOwnerUpdated : isOwnerCreated}
+      isLoading={termDetailsOwnership ? isOwnerUpdating : isOwnerCreating}
       clearState={resetState}
       formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />

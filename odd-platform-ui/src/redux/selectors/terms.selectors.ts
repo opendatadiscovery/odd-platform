@@ -28,6 +28,10 @@ export const getTermDetailsOwnerUpdatingStatuses = createStatusesSelector(
   actions.updateTermOwnershipAction
 );
 
+export const getTermDetailsOwnerCreatingStatuses = createStatusesSelector(
+  actions.createTermOwnershipAction
+);
+
 export const getTermDetailsFetchingStatuses = createStatusesSelector(
   actions.fetchTermDetailsActType
 );
