@@ -31,7 +31,7 @@ const DatasetFieldOverview: React.FC = () => {
 
   if (isEmpty(field)) return null;
 
-  const getOverviewSection = (title: string, data: unknown | undefined) =>
+  const getOverviewSection = (title: string, data: undefined | React.ReactNode) =>
     data ? (
       <S.SectionContainer container>
         <Typography variant='h3'>{title}</Typography>

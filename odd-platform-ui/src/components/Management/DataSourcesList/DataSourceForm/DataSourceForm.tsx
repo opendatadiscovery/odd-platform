@@ -6,7 +6,10 @@ import { Controller, useForm } from 'react-hook-form';
 import type { DataSource, DataSourceFormData } from 'generated-sources';
 import { registerDataSource, updateDataSource } from 'redux/thunks';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
-import { getDatasourceCreatingStatuses } from 'redux/selectors';
+import {
+  getDatasourceCreatingStatuses,
+  getDatasourceUpdatingStatuses,
+} from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   AppButton,
@@ -35,9 +38,10 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading: isDataSourceCreating } = useAppSelector(
-    getDatasourceCreatingStatuses
-  );
+  const { isLoading: isDataSourceCreating, isLoaded: isDataSourceCreated } =
+    useAppSelector(getDatasourceCreatingStatuses);
+  const { isLoading: isDataSourceUpdating, isLoaded: isDataSourceUpdated } =
+    useAppSelector(getDatasourceUpdatingStatuses);
 
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
@@ -79,11 +83,6 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   }, [dataSource]);
 
   const isPullingOn = watch('active', false);
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
 
   type RadioType = 'URL' | 'ODDRN';
   const getDefaultRadioValues = (): RadioType =>
@@ -116,7 +115,6 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   );
 
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
@@ -142,18 +140,9 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           })
         )
       : dispatch(registerDataSource({ dataSourceFormData: parsedData }))
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to register datasource',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -358,9 +347,8 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isDataSourceCreating}
-      errorText={error}
+      handleCloseSubmittedForm={dataSource ? isDataSourceUpdated : isDataSourceCreated}
+      isLoading={dataSource ? isDataSourceUpdating : isDataSourceCreating}
       clearState={clearState}
     />
   );

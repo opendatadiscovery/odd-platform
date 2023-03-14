@@ -27,7 +27,9 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const { dataEntityId } = useAppParams();
 
   const dataEntityTags = useAppSelector(getDataEntityTags(dataEntityId));
-  const { isLoading: isTagsUpdating } = useAppSelector(getDataEntityTagsUpdatingStatuses);
+  const { isLoading: isTagsUpdating, isLoaded: isTagsUpdated } = useAppSelector(
+    getDataEntityTagsUpdatingStatuses
+  );
 
   const methods = useForm<DataEntityTagsFormType>({
     defaultValues: { tagNameList: [{ name: '' }] },
@@ -47,14 +49,8 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     });
     handleOpen();
   };
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialFormState);
 
   const clearFormState = () => {
-    setFormState(initialFormState);
     methods.reset();
   };
 
@@ -66,18 +62,9 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
           tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
         },
       })
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update tags',
-        });
-      }
-    );
+    ).then(() => {
+      clearFormState();
+    });
   };
 
   const handleRemove = React.useCallback(
@@ -136,9 +123,8 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isTagsUpdated}
       isLoading={isTagsUpdating}
-      errorText={error}
       formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );

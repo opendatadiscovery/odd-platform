@@ -27,9 +27,8 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isDataEntityAddingToGroup } = useAppSelector(
-    getDataEntityAddToGroupStatuses
-  );
+  const { isLoading: isDataEntityAddingToGroup, isLoaded: isDataEntityAddedToGroup } =
+    useAppSelector(getDataEntityAddToGroupStatuses);
 
   const dataEntityGroupClassId = useAppSelector(getDataEntityClassesList).filter(
     entityClass => entityClass.name === 'DATA_ENTITY_GROUP'
@@ -42,16 +41,9 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
       defaultValues: {},
     });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = React.useCallback(() => {
-    setState(initialState);
     reset();
-  }, [setState, initialState, reset]);
+  }, []);
 
   const handleFormSubmit = async (data: AddDataEntityToGroupFormData) => {
     dispatch(
@@ -61,20 +53,9 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
           dataEntityGroupId: data.group.id,
         },
       })
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText
-            ? 'Unable to add data entity'
-            : 'Data entity already added',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const formTitle = (
@@ -129,9 +110,8 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isDataEntityAddedToGroup}
       isLoading={isDataEntityAddingToGroup}
-      errorText={error}
       clearState={clearState}
     />
   );

@@ -17,6 +17,10 @@ export const getDatasourceCreatingStatuses = createStatusesSelector(
   actions.registerDataSourceActionType
 );
 
+export const getDatasourceUpdatingStatuses = createStatusesSelector(
+  actions.updateDatasourceActionType
+);
+
 export const getDatasourceDeletingStatuses = createStatusesSelector(
   actions.deleteDatasourceActionType
 );

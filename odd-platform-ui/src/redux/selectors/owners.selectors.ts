@@ -8,7 +8,7 @@ import * as actions from 'redux/actions';
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
 export const getOwnerCreatingStatuses = createStatusesSelector(actions.createOwnerAction);
-
+export const getOwnerUpdatingStatuses = createStatusesSelector(actions.updateOwnerAction);
 export const getOwnerDeletingStatuses = createStatusesSelector(actions.deleteOwnerAction);
 
 export const getOwnerListFetchingStatuses = createStatusesSelector(

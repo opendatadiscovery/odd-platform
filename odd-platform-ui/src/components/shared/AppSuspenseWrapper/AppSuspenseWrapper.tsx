@@ -1,7 +1,7 @@
 import React from 'react';
 import AppLoadingPage from '../AppLoadingPage/AppLoadingPage';
 
-interface SuspenseWrapperProps {
+interface SuspenseWrapperProps extends React.PropsWithChildren {
   lazyComponent?: React.FC;
 }
 

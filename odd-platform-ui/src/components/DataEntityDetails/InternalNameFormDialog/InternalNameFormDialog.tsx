@@ -23,40 +23,24 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   const { dataEntityId } = useAppParams();
 
   const dataEntityInternalName = useAppSelector(getDataEntityInternalName(dataEntityId));
-  const { isLoading: isInternalNameUpdating } = useAppSelector(
-    getDataEntityInternalNameUpdatingStatuses
-  );
+  const { isLoading: isInternalNameUpdating, isLoaded: isInternalNameUpdated } =
+    useAppSelector(getDataEntityInternalNameUpdatingStatuses);
 
   const { handleSubmit, control, reset } = useForm<InternalNameFormData>({
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
 
   const clearState = () => {
-    setState(initialState);
     reset();
   };
 
   const onSubmit = (data: InternalNameFormData) => {
     dispatch(
       updateDataEntityInternalName({ dataEntityId, internalNameFormData: data })
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to add or edit custom name',
-        });
-      }
-    );
+    ).then(() => {
+      clearState();
+    });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -114,9 +98,8 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isInternalNameUpdated}
       isLoading={isInternalNameUpdating}
-      errorText={error}
       clearState={clearState}
     />
   );

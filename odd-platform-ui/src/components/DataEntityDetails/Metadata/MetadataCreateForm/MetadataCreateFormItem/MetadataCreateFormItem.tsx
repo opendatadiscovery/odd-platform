@@ -2,7 +2,10 @@ import React from 'react';
 import { Autocomplete, Box, type SelectChangeEvent, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
-import { createFilterOptions } from '@mui/material/useAutocomplete';
+import {
+  createFilterOptions,
+  type FilterOptionsState,
+} from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type MetadataField, MetadataFieldType } from 'generated-sources';
@@ -87,7 +90,7 @@ const MetadataCreateFormItem: React.FC = () => {
   );
 
   const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       // Suggest the creation of a new value
       if (

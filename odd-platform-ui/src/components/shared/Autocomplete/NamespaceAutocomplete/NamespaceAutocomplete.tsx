@@ -2,6 +2,7 @@ import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
 import {
   type AutocompleteInputChangeReason,
+  type FilterOptionsState,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
@@ -67,7 +68,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       // Suggest the creation of a new value
       if (

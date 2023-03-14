@@ -33,7 +33,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   const { activityFormattedDateTime } = useAppDateTime();
 
   const tagStateItem = React.useCallback(
-    (name, important) => (
+    (name: string, important: boolean | undefined) => (
       <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
     ),
     []

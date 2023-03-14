@@ -2,7 +2,7 @@ import React from 'react';
 import type { Permission } from 'generated-sources';
 import PermissionProvider from './PermissionProvider';
 
-interface WithPermissionsProviderProps {
+interface WithPermissionsProviderProps extends React.PropsWithChildren {
   allowedPermissions: Permission[];
   resourcePermissions: Permission[];
   Component?: React.FC;

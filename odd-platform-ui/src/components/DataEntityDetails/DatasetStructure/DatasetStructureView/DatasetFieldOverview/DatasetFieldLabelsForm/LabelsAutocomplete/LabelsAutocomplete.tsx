@@ -1,6 +1,9 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import type { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
+import type {
+  AutocompleteInputChangeReason,
+  FilterOptionsState,
+} from '@mui/material/useAutocomplete';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { fetchLabelsList as searchLabels } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -52,7 +55,7 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       if (
         searchText !== '' &&
