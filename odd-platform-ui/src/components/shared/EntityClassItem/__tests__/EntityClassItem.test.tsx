@@ -1,16 +1,11 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { getByText, provideTheme } from 'lib/testHelpers';
+import { getByText, render } from 'lib/testHelpers';
 import EntityClassItem, { type EntityClassItemProps } from '../EntityClassItem';
 
 describe('EntityClassItem', () => {
   const setupComponent = (props?: Partial<EntityClassItemProps>) =>
-    render(
-      provideTheme(
-        <EntityClassItem entityClassName={DataEntityClassNameEnum.SET} {...props} />
-      )
-    );
+    render(<EntityClassItem entityClassName={DataEntityClassNameEnum.SET} {...props} />);
 
   it('EntityClassItem should return right short text and color', () => {
     setupComponent({

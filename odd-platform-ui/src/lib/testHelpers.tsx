@@ -1,11 +1,18 @@
-import { act, fireEvent, screen } from '@testing-library/react';
-import React, { type ReactElement } from 'react';
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  type RenderOptions,
+  screen,
+  waitFor,
+} from '@testing-library/react';
+import React, { type PropsWithChildren, type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
-
-export const provideTheme = (component: ReactElement): ReactElement => (
-  <ThemeProvider theme={theme}>{component}</ThemeProvider>
-);
+import type fetchMock from 'fetch-mock';
+import { MemoryRouter, type MemoryRouterProps, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider, type UseQueryResult } from 'react-query';
 
 export const flushPromises = () => new Promise(jest.requireActual('timers').setImmediate);
 
@@ -55,3 +62,57 @@ export const getByText = (text: string) => screen.getByText(text);
 export const queryByText = (text: string) => screen.queryByText(text);
 export const getByTestID = (testID: string) => screen.getByTestId(testID);
 export const getAllByTestID = (testID: string) => screen.getAllByTestId(testID);
+
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  initialEntries?: MemoryRouterProps['initialEntries'];
+}
+
+interface WithRouteProps {
+  children: React.ReactNode;
+  path: string;
+}
+
+export const expectQueryWorks = async (
+  mock: fetchMock.FetchMockStatic,
+  result: { current: UseQueryResult<unknown, unknown> }
+) => {
+  await waitFor(() => expect(result.current.isFetched).toBeTruthy());
+  expect(mock.calls()).toHaveLength(1);
+  expect(result.current.data).toBeDefined();
+};
+
+export const WithRoute: React.FC<WithRouteProps> = ({ children, path }) => (
+  <Routes>
+    <Route path={path} element={children} />
+  </Routes>
+);
+
+export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+};
+
+const customRender = (
+  ui: ReactElement,
+  { initialEntries, ...renderOptions }: CustomRenderOptions = {}
+) => {
+  const AllProviders: React.FC<PropsWithChildren<unknown>> = ({ children }) => (
+    <TestQueryClientProvider>
+      <ThemeProvider theme={theme}>
+        <MemoryRouter initialEntries={initialEntries}>
+          <div>{children}</div>
+        </MemoryRouter>
+      </ThemeProvider>
+    </TestQueryClientProvider>
+  );
+  return render(ui, { wrapper: AllProviders, ...renderOptions });
+};
+
+const customRenderHook = (hook: () => UseQueryResult<unknown, unknown>) =>
+  renderHook(hook, { wrapper: TestQueryClientProvider });
+
+export { customRender as render, customRenderHook as renderQueryHook };

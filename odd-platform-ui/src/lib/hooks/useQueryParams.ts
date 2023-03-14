@@ -1,6 +1,6 @@
 import React from 'react';
-import { parse, stringify, type StringifyOptions } from 'query-string';
 import { useNavigate, useLocation } from 'react-router-dom';
+import queryStringPackage, { type StringifyOptions } from 'query-string';
 
 type QueryParams<Params extends Record<string, unknown>> = {
   [Key in keyof Params]: Params[Key];
@@ -20,6 +20,7 @@ interface UseQueryParamsReturn<Params extends Record<string, unknown>> {
 const useQueryParams = <Params extends Record<string, unknown>>(
   defaultVal: Params
 ): UseQueryParamsReturn<Params> => {
+  const { stringify, parse } = queryStringPackage;
   const navigate = useNavigate();
   const location = useLocation();
 
