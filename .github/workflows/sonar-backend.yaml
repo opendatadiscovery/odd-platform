@@ -54,7 +54,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Build with Gradle
+      - name: Build and analyze pull request target
+        if: ${{ github.event_name == 'pull_request_target' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          ./gradlew -x compileTestJava :odd-platform-api:sonarqube --info \
+            -PbundleUI=false \
+            -Psonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            -Psonar.pullrequest.branch=$HEAD_REF \
+            -Psonar.pullrequest.base=$BASE_REF
+
+      - name: Build main branch
+        if: ${{ github.event_name == 'push' }}
         env:
           GENERATE_SOURCEMAP: false
           CI: false
