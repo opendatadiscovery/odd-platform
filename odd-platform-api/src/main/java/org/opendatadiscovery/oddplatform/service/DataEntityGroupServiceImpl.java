@@ -21,7 +21,6 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -50,10 +49,10 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
     private final ActivityService activityService;
     private final DataEntityFilledService dataEntityFilledService;
     private final TagService tagService;
+    private final DataEntityStatisticsService dataEntityStatisticsService;
 
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
     private final ReactiveTermRepository reactiveTermRepository;
     private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
@@ -141,12 +140,12 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                 return reactiveGroupEntityRelationRepository.createRelationsReturning(pojo.getOddrn(), entityOddrns)
                     .ignoreElements().thenReturn(pojo);
             })
+            .flatMap(pojo -> dataEntityStatisticsService.updateStatistics(1L,
+                Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), 1L))).thenReturn(pojo))
             .flatMap(this::updateSearchVectors)
             .map(dataEntityMapper::mapRef)
             .flatMap(ref -> logDEGCreatedActivityEvent(ref).thenReturn(ref))
-            .flatMap(ref -> dataEntityFilledService.markEntityFilled(ref.getId(), MANUALLY_CREATED).thenReturn(ref))
-            .flatMap(ref -> dataEntityStatisticsRepository.updateCounts(1L, Map.of(DATA_ENTITY_GROUP, 1L))
-                .thenReturn(ref));
+            .flatMap(ref -> dataEntityFilledService.markEntityFilled(ref.getId(), MANUALLY_CREATED).thenReturn(ref));
     }
 
     private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
@@ -163,12 +162,21 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                 .createRelationsReturning(degPojo.getOddrn(), entityOddrns)
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
+            .flatMap(degPojo -> {
+                if (pojo.getTypeId().equals(degPojo.getTypeId())) {
+                    return Mono.just(degPojo);
+                }
+                return dataEntityStatisticsService.updateStatistics(0L,
+                        Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), -1L, degPojo.getTypeId(), 1L)))
+                    .thenReturn(degPojo);
+            })
             .map(dataEntityMapper::mapRef);
     }
 
     private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
         return Flux.zip(
-            dataEntityStatisticsRepository.updateCounts(-1L, Map.of(DATA_ENTITY_GROUP, -1L)),
+            dataEntityStatisticsService.updateStatistics(-1L,
+                Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), -1L))),
             reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
             reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
             tagService.deleteRelationsForDataEntity(pojo.getId()),

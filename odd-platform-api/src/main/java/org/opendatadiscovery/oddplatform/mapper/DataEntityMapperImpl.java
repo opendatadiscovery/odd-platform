@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
@@ -387,14 +389,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
                                             final Long filledEntitiesCount) {
-        final Map<Integer, Long> classesCount;
-        if (pojo.getDataEntityClassesCount() == null) {
-            classesCount = new HashMap<>();
-        } else {
-            classesCount = JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesCount().data(),
-                new TypeReference<>() {
-                });
-        }
+        final Map<Integer, Map<Integer, Long>> classesAndTypesCount =
+            Optional.ofNullable(pojo.getDataEntityClassesTypesCount())
+                .map(map -> JSONSerDeUtils.deserializeJson(map.data(),
+                    new TypeReference<Map<Integer, Map<Integer, Long>>>() {
+                    }))
+                .orElse(new HashMap<>());
+
         return new DataEntityUsageInfo()
             .totalCount(pojo.getTotalCount())
             .unfilledCount(pojo.getTotalCount() - filledEntitiesCount)
@@ -402,11 +403,31 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 Arrays.stream(DataEntityClassDto.values())
                     .filter(dto -> dto != DataEntityClassDto.DATA_QUALITY_TEST_RUN
                         && dto != DataEntityClassDto.DATA_TRANSFORMER_RUN)
-                    .map(dto -> new DataEntityClassUsageInfo()
-                        .entityClass(mapEntityClass(dto))
-                        .totalCount(classesCount.getOrDefault(dto.getId(), 0L)))
+                    .map(dto -> mapToEntityClassUsage(dto, classesAndTypesCount))
                     .toList()
             );
+    }
+
+    private DataEntityClassUsageInfo mapToEntityClassUsage(final DataEntityClassDto classDto,
+                                                           final Map<Integer, Map<Integer, Long>> infoMap) {
+        final DataEntityClassUsageInfo classUsageInfo = new DataEntityClassUsageInfo();
+        classUsageInfo.setEntityClass(mapEntityClass(classDto));
+        final Map<Integer, Long> typesInfo = infoMap.getOrDefault(classDto.getId(), Map.of());
+        Long classSum = 0L;
+        final List<DataEntityTypeUsageInfo> typeInfos = new ArrayList<>();
+        for (final Map.Entry<Integer, Long> entry : typesInfo.entrySet()) {
+            classSum += entry.getValue();
+            final DataEntityTypeUsageInfo typeUsageInfo = new DataEntityTypeUsageInfo();
+            final DataEntityTypeDto typeDto = DataEntityTypeDto.findById(entry.getKey())
+                .orElseThrow(
+                    () -> new IllegalArgumentException("Can't find type with id %d".formatted(entry.getKey())));
+            typeUsageInfo.setEntityType(mapType(typeDto));
+            typeUsageInfo.setTotalCount(entry.getValue());
+            typeInfos.add(typeUsageInfo);
+        }
+        classUsageInfo.setTotalCount(classSum);
+        classUsageInfo.setDataEntityTypesInfo(typeInfos);
+        return classUsageInfo;
     }
 
     private LinkedUrl mapLinkedUrl(final LinkedUrlAttribute linkedUrlAttribute) {
