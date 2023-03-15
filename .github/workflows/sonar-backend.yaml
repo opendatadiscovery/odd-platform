@@ -61,12 +61,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
           HEAD_REF: ${{ github.head_ref }}
           BASE_REF: ${{ github.base_ref }}
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
         run: |
           ./gradlew -x compileTestJava :odd-platform-api:sonarqube --info \
+            --no-daemon \
             -PbundleUI=false \
-            -Psonar.pullrequest.key=${{ github.event.pull_request.number }} \
-            -Psonar.pullrequest.branch=$HEAD_REF \
-            -Psonar.pullrequest.base=$BASE_REF
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            -Dsonar.pullrequest.branch=$HEAD_REF \
+            -Dsonar.pullrequest.base=$BASE_REF
 
       - name: Build main branch
         if: ${{ github.event_name == 'push' }}
@@ -75,4 +77,5 @@ jobs:
           CI: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew -x compileTestJava :odd-platform-api:sonarqube --info -PbundleUI=false
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+        run: ./gradlew -x compileTestJava :odd-platform-api:sonarqube --info -PbundleUI=false --no-daemon
