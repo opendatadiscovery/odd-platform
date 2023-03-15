@@ -34,26 +34,30 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
       </TruncateMarkup.Atom>
     );
 
-  const truncateButton = React.useCallback(
-    (showOrHide: boolean, listLength?: number, renderedListLength?: number) => (
-      <AppButton
-        size='medium'
-        color='tertiary'
-        onClick={() => setExpanded(prev => !prev)}
-      >
-        {!showOrHide && listLength && renderedListLength
-          ? `Show ${listLength - renderedListLength - 1} hidden`
-          : 'Hide'}
-      </AppButton>
-    ),
-    []
+  const truncateButton = (
+    showOrHide: boolean,
+    listLength?: number,
+    renderedListLength?: number
+  ) => (
+    <AppButton size='medium' color='tertiary' onClick={() => setExpanded(prev => !prev)}>
+      {!showOrHide && listLength && renderedListLength
+        ? `Show ${listLength - renderedListLength - 1} hidden`
+        : 'Hide'}
+    </AppButton>
   );
 
-  const ellipsis = (label: React.ReactPortal) => {
-    const labelsRendered = label.props.children;
+  const ellipsis = React.useCallback(
+    (label: React.ReactNode) => {
+      if (label && typeof label === 'object' && 'props' in label) {
+        const labelsRendered = label?.props?.children;
 
-    return truncateButton(expanded, typesCountList.length, labelsRendered.length);
-  };
+        return truncateButton(expanded, typesCountList.length, labelsRendered.length);
+      }
+
+      return undefined;
+    },
+    [expanded, typesCountList.length]
+  );
 
   return !expanded ? (
     <TruncateMarkup lines={1} ellipsis={ellipsis}>

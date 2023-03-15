@@ -153,6 +153,10 @@ export const getDataEntityOwnerUpdatingStatuses = createStatusesSelector(
   actions.updateDataEntityOwnershipAction
 );
 
+export const getDataEntityOwnerCreatingStatuses = createStatusesSelector(
+  actions.createDataEntityOwnershipAction
+);
+
 export const getDataEntityGroupCreatingStatuses = createStatusesSelector(
   actions.createDataEntityGroupActionType
 );
@@ -167,4 +171,8 @@ export const getDataEntityAddToGroupStatuses = createStatusesSelector(
 
 export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
   actions.deleteDataEntityFromGroupActionType
+);
+
+export const getDataEntityAddTermStatuses = createStatusesSelector(
+  actions.addDataEntityTermActType
 );

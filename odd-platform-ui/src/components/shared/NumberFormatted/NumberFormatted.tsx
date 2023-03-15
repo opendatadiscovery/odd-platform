@@ -12,9 +12,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
   sx,
   component = 'span',
 }) => {
-  let formattedNumber: number | string = 0;
-  if (value === undefined) formattedNumber = '';
-  if (value === null) formattedNumber = 'N/A';
+  let formattedNumber: number | string;
 
   const numVal = typeof value === 'string' ? parseInt(value, 10) : (value as number);
 
@@ -33,12 +31,17 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
       .slice()
       .reverse()
       .find(lookup => numVal >= lookup.value);
+
     return item
       ? (numVal / item.value).toFixed(precision).replace(rx, '$1') + item.symbol
       : '0';
   }, [value, precision]);
 
-  if (numVal) formattedNumber = formatNumber();
+  if (numVal || numVal === 0) {
+    formattedNumber = formatNumber();
+  } else {
+    formattedNumber = '';
+  }
 
   return (
     <Box

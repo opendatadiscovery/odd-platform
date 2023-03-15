@@ -50,12 +50,10 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
     getDataEntityTypesByClassName(DataEntityClassNameEnum.ENTITY_GROUP)
   );
 
-  const { isLoading: isDataEntityGroupCreating } = useAppSelector(
-    getDataEntityGroupCreatingStatuses
-  );
-  const { isLoading: isDataEntityGroupUpdating } = useAppSelector(
-    getDataEntityGroupUpdatingStatuses
-  );
+  const { isLoading: isDataEntityGroupCreating, isLoaded: isDataEntityGroupCreated } =
+    useAppSelector(getDataEntityGroupCreatingStatuses);
+  const { isLoading: isDataEntityGroupUpdating, isLoaded: isDataEntityGroupUpdated } =
+    useAppSelector(getDataEntityGroupUpdatingStatuses);
 
   const getDefaultValues = React.useCallback(
     (): DataEntityGroupFormData => ({
@@ -83,14 +81,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
     rules: { required: true },
   });
 
-  const initialState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
-    error: string;
-    isSuccessfulSubmit: boolean;
-  }>(initialState);
-
   const clearState = React.useCallback(() => {
-    setState(initialState);
     reset();
   }, []);
 
@@ -104,22 +95,10 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         : createDataEntityGroup({ dataEntityGroupFormData: data })
     )
       .unwrap()
-      .then(
-        response => {
-          setState({ ...initialState, isSuccessfulSubmit: true });
-          clearState();
-          navigate(dataEntityOverviewPath(response.id));
-        },
-        (response: Response) => {
-          setState({
-            ...initialState,
-            error:
-              response.statusText || dataEntityGroupDetails
-                ? 'Unable to update Data Entity Group'
-                : 'Data Entity Group already exists',
-          });
-        }
-      );
+      .then(response => {
+        clearState();
+        navigate(dataEntityOverviewPath(response.id));
+      });
   };
 
   const handleRemove = React.useCallback((index: number) => () => remove(index), []);
@@ -218,11 +197,10 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
       title={formTitle}
       renderContent={formContent}
       renderActions={formActionButtons}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
+      handleCloseSubmittedForm={isDataEntityGroupUpdated || isDataEntityGroupCreated}
       isLoading={
         dataEntityGroupDetails ? isDataEntityGroupUpdating : isDataEntityGroupCreating
       }
-      errorText={error}
       clearState={clearState}
     />
   );

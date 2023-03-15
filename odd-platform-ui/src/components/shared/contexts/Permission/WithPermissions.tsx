@@ -2,7 +2,7 @@ import React from 'react';
 import type { Permission } from 'generated-sources';
 import { usePermissions } from 'lib/hooks';
 
-interface WithPermissionsProps {
+interface WithPermissionsProps extends React.PropsWithChildren {
   permissionTo: Permission;
   extraCheck?: boolean;
   renderContent?: ({ isAllowedTo }: { isAllowedTo: boolean }) => JSX.Element | null;

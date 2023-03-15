@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-interface Props {
+interface Props extends React.PropsWithChildren {
   isAllowedTo: boolean;
   redirectTo: string;
   component?: React.FC;

@@ -38,33 +38,33 @@ const DataEntityUsageInfoView: React.FC<DataEntityUsageInfoViewProps> = ({
             <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
           </Box>
         </S.DataEntitiesTotalContainer>
-        <S.ListItemContainer>
-          {classesUsageInfo.map(({ entityClass, totalCount: classTotalCount }, index) => (
-            <S.ListItemWrapper
-              key={entityClass.id}
-              onClick={() => {
-                handleEntityClassClick({
-                  entityId: entityClass.id,
-                  entityName: entityClass.name,
-                });
-              }}
-            >
-              <S.ListItem $index={index}>
-                <EntityClassItem
-                  sx={{ ml: 0.5 }}
-                  key={entityClass.id}
-                  entityClassName={entityClass.name}
-                />
-                <Typography noWrap title={entityClass.name}>
-                  {entityClass && DataEntityClassLabelMap.get(entityClass.name)?.normal}
-                </Typography>
-              </S.ListItem>
-              <Typography variant='h4' noWrap>
-                {classTotalCount}
-              </Typography>
-            </S.ListItemWrapper>
-          ))}
-        </S.ListItemContainer>
+        {/* <S.ListItemContainer> */}
+        {/*   {classesUsageInfo.map(({ entityClass, totalCount: classTotalCount }, index) => ( */}
+        {/*     <S.ListItemWrapper */}
+        {/*       key={entityClass.id} */}
+        {/*       onClick={() => { */}
+        {/*         handleEntityClassClick({ */}
+        {/*           entityId: entityClass.id, */}
+        {/*           entityName: entityClass.name, */}
+        {/*         }); */}
+        {/*       }} */}
+        {/*     > */}
+        {/*       <S.ListItem $index={index}> */}
+        {/*         <EntityClassItem */}
+        {/*           sx={{ ml: 0.5 }} */}
+        {/*           key={entityClass.id} */}
+        {/*           entityClassName={entityClass.name} */}
+        {/*         /> */}
+        {/*         <Typography noWrap title={entityClass.name}> */}
+        {/*           {entityClass && DataEntityClassLabelMap.get(entityClass.name)?.normal} */}
+        {/*         </Typography> */}
+        {/*       </S.ListItem> */}
+        {/*       <Typography variant='h4' noWrap> */}
+        {/*         {classTotalCount} */}
+        {/*       </Typography> */}
+        {/*     </S.ListItemWrapper> */}
+        {/*   ))} */}
+        {/* </S.ListItemContainer> */}
       </S.DataEntitiesUsageContainer>
     </Grid>
   );

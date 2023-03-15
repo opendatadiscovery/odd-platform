@@ -1,6 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { getByTestID } from 'lib/testHelpers';
+import { getByTestID, render } from 'lib/testHelpers';
 import NumberFormatted, { type NumberFormattedProps } from '../NumberFormatted';
 
 describe('NumberFormatted', () => {
@@ -9,7 +8,7 @@ describe('NumberFormatted', () => {
 
   it('NumberFormatted should return formatted number from string', () => {
     setupComponent({ value: '1000000' });
-    expect(getByTestID('number-formatted-component').textContent).toBe('1000K');
+    expect(getByTestID('number-formatted-component').textContent).toBe('1M');
   });
 
   it('NumberFormatted should return formatted number from number', () => {
@@ -23,7 +22,12 @@ describe('NumberFormatted', () => {
   });
 
   it('NumberFormatted should return empty string with undefined value', () => {
-    setupComponent({ value: undefined });
+    setupComponent({ value: null });
     expect(getByTestID('number-formatted-component').textContent).toBe('');
+  });
+
+  it('NumberFormatted should return 0 with 0 value', () => {
+    setupComponent({ value: 0 });
+    expect(getByTestID('number-formatted-component').textContent).toBe('0');
   });
 });

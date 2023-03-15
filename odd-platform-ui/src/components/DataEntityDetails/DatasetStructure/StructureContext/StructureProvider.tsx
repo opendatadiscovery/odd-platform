@@ -8,7 +8,7 @@ import {
   StructureContextProvider,
 } from './StructureContext';
 
-interface StructureProviderProps {
+interface StructureProviderProps extends React.PropsWithChildren {
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: number;
 }

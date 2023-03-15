@@ -12,7 +12,10 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { createTermOwnership, updateTermOwnership } from 'redux/thunks';
-import { getTermDetailsOwnerUpdatingStatuses } from 'redux/selectors';
+import {
+  getTermDetailsOwnerCreatingStatuses,
+  getTermDetailsOwnerUpdatingStatuses,
+} from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
 
 interface OwnershipFormProps {
@@ -27,21 +30,21 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
-  const { isLoading: isOwnerUpdating } = useAppSelector(
+  const { isLoading: isOwnerUpdating, isLoaded: isOwnerUpdated } = useAppSelector(
     getTermDetailsOwnerUpdatingStatuses
+  );
+  const { isLoading: isOwnerCreating, isLoaded: isOwnerCreated } = useAppSelector(
+    getTermDetailsOwnerCreatingStatuses
   );
 
   const methods = useForm<OwnershipFormData>({
     mode: 'onChange',
     defaultValues: { ownerName: '', titleName: termDetailsOwnership?.title?.name || '' },
   });
-  const initialFormState = { error: '', isSuccessfulSubmit: false };
-  const [{ error, isSuccessfulSubmit }, setFormState] = React.useState(initialFormState);
 
   const resetState = React.useCallback(() => {
-    setFormState(initialFormState);
     methods.reset();
-  }, [setFormState]);
+  }, []);
 
   const ownershipUpdate = (data: OwnershipFormData) => {
     (termDetailsOwnership
@@ -53,18 +56,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           })
         )
       : dispatch(createTermOwnership({ termId, ownershipFormData: data }))
-    ).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        resetState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to update owner',
-        });
-      }
-    );
+    ).then(() => {
+      resetState();
+    });
   };
 
   const formTitle = (
@@ -127,9 +121,8 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       title={formTitle}
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
-      handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isOwnerUpdating}
-      errorText={error}
+      handleCloseSubmittedForm={termDetailsOwnership ? isOwnerUpdated : isOwnerCreated}
+      isLoading={termDetailsOwnership ? isOwnerUpdating : isOwnerCreating}
       clearState={resetState}
       formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />

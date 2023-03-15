@@ -28,6 +28,11 @@ export default defineConfig(({ mode }) => {
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
     build: { outDir: 'build/ui' },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/setupTests.ts',
+    },
   };
 
   return mode === 'development'

@@ -3,6 +3,7 @@ import { Autocomplete, Typography } from '@mui/material';
 import { type Tag } from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
+  type FilterOptionsState,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -61,7 +62,7 @@ const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       if (
         searchText !== '' &&
