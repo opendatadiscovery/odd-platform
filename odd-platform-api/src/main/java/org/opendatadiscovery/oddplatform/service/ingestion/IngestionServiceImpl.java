@@ -16,8 +16,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
@@ -128,7 +128,7 @@ public class IngestionServiceImpl implements IngestionService {
 
                 final Flux<DataEntityPojo> updated = dataEntityRepository.bulkUpdate(entitiesToUpdate);
 
-                final DataEntityClassesTotalDelta classesDelta =
+                final DataEntityTotalDelta totalDelta =
                     calculateTotalDeltaCount(pojosToCreate, entitiesToUpdate, existingPojoDict);
 
                 final Flux<EnrichedDataEntityIngestionDto> enrichedNewDtos = dataEntityRepository
@@ -138,7 +138,7 @@ public class IngestionServiceImpl implements IngestionService {
                 return updated.thenMany(enrichedNewDtos)
                     .collectList()
                     .map(newEntities -> buildIngestionRequest(newEntities, enrichedExistingDtos, taskRuns,
-                        specificAttributesDeltas, classesDelta));
+                        specificAttributesDeltas, totalDelta));
             });
     }
 
@@ -147,7 +147,7 @@ public class IngestionServiceImpl implements IngestionService {
         final List<EnrichedDataEntityIngestionDto> existingEntities,
         final List<IngestionTaskRun> taskRuns,
         final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas,
-        final DataEntityClassesTotalDelta entityClassesTotalDelta
+        final DataEntityTotalDelta entityTotalDelta
     ) {
         final List<LineagePojo> lineageRelations = Stream
             .concat(newEntities.stream(), existingEntities.stream())
@@ -183,7 +183,7 @@ public class IngestionServiceImpl implements IngestionService {
             .groupEntityRelations(groupEntityRelations)
             .groupParentGroupRelations(groupParentGroupRelations)
             .specificAttributesDeltas(specificAttributesDeltas)
-            .entityClassesTotalDelta(entityClassesTotalDelta)
+            .entityTotalDelta(entityTotalDelta)
             .build();
     }
 
@@ -270,40 +270,44 @@ public class IngestionServiceImpl implements IngestionService {
             || !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
 
-    private DataEntityClassesTotalDelta calculateTotalDeltaCount(final List<DataEntityPojo> newPojos,
-                                                                 final List<DataEntityPojo> entitiesToUpdate,
-                                                                 final Map<String, DataEntityPojo> existingPojoDict) {
-        final Map<DataEntityClassDto, Long> entityClassesDeltaMap = new HashMap<>();
+    private DataEntityTotalDelta calculateTotalDeltaCount(final List<DataEntityPojo> newPojos,
+                                                          final List<DataEntityPojo> entitiesToUpdate,
+                                                          final Map<String, DataEntityPojo> existingPojoDict) {
+        final Map<Integer, Map<Integer, Long>> entityDeltaMap = new HashMap<>();
+
         final List<DataEntityPojo> searchablePojos = newPojos.stream()
             .filter(pojo -> !pojo.getExcludeFromSearch())
             .toList();
         searchablePojos
-            .forEach(pojo -> calculateDeltaValues(pojo.getEntityClassIds(), entityClassesDeltaMap, 1L));
+            .forEach(pojo -> calculateDeltaValues(pojo.getEntityClassIds(), pojo.getTypeId(), entityDeltaMap, 1L));
 
         entitiesToUpdate.forEach(pojo -> {
             final DataEntityPojo previousVersion = existingPojoDict.get(pojo.getOddrn());
-            if (previousVersion.getEntityClassIds() != null && previousVersion.getEntityClassIds().length > 0) {
-                calculateDeltaValues(previousVersion.getEntityClassIds(), entityClassesDeltaMap, -1L);
+            if (classesAndTypeFilled(previousVersion)) {
+                calculateDeltaValues(previousVersion.getEntityClassIds(), previousVersion.getTypeId(), entityDeltaMap,
+                    -1L);
             }
-            calculateDeltaValues(pojo.getEntityClassIds(), entityClassesDeltaMap, 1L);
+            calculateDeltaValues(pojo.getEntityClassIds(), pojo.getTypeId(), entityDeltaMap, 1L);
         });
 
         final long hollowUpdatedEntitiesCount = entitiesToUpdate.stream()
             .filter(e -> existingPojoDict.get(e.getOddrn()).getHollow())
             .count();
 
-        return new DataEntityClassesTotalDelta(hollowUpdatedEntitiesCount + searchablePojos.size(),
-            entityClassesDeltaMap);
+        return new DataEntityTotalDelta(hollowUpdatedEntitiesCount + searchablePojos.size(), entityDeltaMap);
     }
 
     private void calculateDeltaValues(final Integer[] entityClassIds,
-                                      final Map<DataEntityClassDto, Long> entityClassesDeltaMap,
+                                      final Integer typeId,
+                                      final Map<Integer, Map<Integer, Long>> entityDeltaMap,
                                       final Long defaultValue) {
         Arrays.stream(entityClassIds).forEach(entityClassId -> {
-            final DataEntityClassDto entityClassDto = DataEntityClassDto.findById(entityClassId)
-                .orElseThrow(() -> new IllegalArgumentException("Can't find entity class with id "
-                    + entityClassId));
-            entityClassesDeltaMap.merge(entityClassDto, defaultValue, Long::sum);
+            final Map<Integer, Long> typesMap = entityDeltaMap.computeIfAbsent(entityClassId, HashMap::new);
+            typesMap.merge(typeId, defaultValue, Long::sum);
         });
+    }
+
+    private boolean classesAndTypeFilled(final DataEntityPojo pojo) {
+        return pojo.getEntityClassIds() != null && pojo.getEntityClassIds().length > 0 && pojo.getTypeId() != null;
     }
 }
