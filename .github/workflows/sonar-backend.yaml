@@ -1,4 +1,4 @@
-name: SonarCloud Scan for backend
+name: SonarCloud Scan [backend]
 on:
   push:
     branches:
@@ -10,7 +10,7 @@ on:
       - 'build.gradle'
 
 jobs:
-  images:
+  sonar-backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -81,4 +81,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew -x compileTestJava :odd-platform-api:sonarqube --info -PbundleUI=false --no-daemon
+        run: ./gradlew -x compileTestJava :odd-platform-api:sonarqube -PbundleUI=false --no-daemon
