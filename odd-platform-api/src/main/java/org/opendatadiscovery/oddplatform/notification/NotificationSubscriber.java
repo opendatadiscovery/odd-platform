@@ -134,23 +134,22 @@ public class NotificationSubscriber extends Thread {
 
         try (final PreparedStatement existsStatement = connection.prepareStatement(existsQuery)) {
             existsStatement.setString(1, walProperties.getPublicationName());
+            final ResultSet resultSet = existsStatement.executeQuery();
 
-            try (final ResultSet resultSet = existsStatement.executeQuery()) {
-                resultSet.next();
-                if (!resultSet.getBoolean(1)) {
-                    // PostgreSQL tables are always in a schema,
-                    // so we don't need to check targetTable.getSchema() for null
-                    final String tableName =
-                        String.format("%s.%s", targetTable.getSchema().getName(), targetTable.getName());
+            resultSet.next();
+            if (!resultSet.getBoolean(1)) {
+                // PostgreSQL tables are always in a schema,
+                // so we don't need to check targetTable.getSchema() for null
+                final String tableName =
+                    String.format("%s.%s", targetTable.getSchema().getName(), targetTable.getName());
 
-                    log.debug("Creating publication with name {} for table {}",
-                        walProperties.getPublicationName(), tableName);
+                log.debug("Creating publication with name {} for table {}",
+                    walProperties.getPublicationName(), tableName);
 
-                    try (final Statement publicationStatement = connection.createStatement()) {
-                        publicationStatement.execute(
-                            "CREATE PUBLICATION %s FOR TABLE %s".formatted(walProperties.getPublicationName(),
-                                tableName));
-                    }
+                try (final Statement publicationStatement = connection.createStatement()) {
+                    publicationStatement.execute(
+                        "CREATE PUBLICATION %s FOR TABLE %s".formatted(walProperties.getPublicationName(),
+                            tableName));
                 }
             }
         }
