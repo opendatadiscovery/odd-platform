@@ -68,7 +68,10 @@ jobs:
             -PbundleUI=false \
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
             -Dsonar.pullrequest.branch=$HEAD_REF \
-            -Dsonar.pullrequest.base=$BASE_REF
+            -Dsonar.pullrequest.base=$BASE_REF;
+          echo $HEAD_REF;
+          echo $BASE_REF;
+          echo ${{ github.event.pull_request.number }};
 
       - name: Build main branch
         if: ${{ github.event_name == 'push' }}
