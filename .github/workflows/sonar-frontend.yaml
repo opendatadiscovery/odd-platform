@@ -1,4 +1,4 @@
-name: SonarCloud Scan for frontend
+name: SonarCloud Scan [frontend]
 on:
   push:
     branches:
@@ -49,11 +49,33 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Build with Gradle
+      - name: Build and analyze pull request target
+        if: ${{ github.event_name == 'pull_request_target' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+        run: |
+          ./gradlew :odd-platform-ui:sonarqube \
+            --info \
+            --no-daemon \
+            --scan \
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            -Dsonar.pullrequest.branch=$HEAD_REF \
+            -Dsonar.pullrequest.base=$BASE_REF
+
+      - name: Build main branch
+        if: ${{ github.event_name == 'push' }}
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: '-Xms2048m -Xmx2048m'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew -Penv=prod -p odd-platform-ui clean sonarqube --info
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+        run: |
+          ./gradlew :odd-platform-ui:sonarqube \
+            --info \
+            --no-daemon \
+            --scan
