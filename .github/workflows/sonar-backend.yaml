@@ -15,7 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: unfor19/install-aws-cli-action@v1
 
