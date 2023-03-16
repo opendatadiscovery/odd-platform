@@ -1,12 +1,11 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import { EntityClassItem } from 'components/shared';
-import { DataEntityClassLabelMap } from 'redux/interfaces';
 import type { DataEntityUsageInfo } from 'generated-sources';
+import DataEntityUsageClassItem from './DataEntityUsageClassItem/DataEntityUsageClassItem';
 import * as S from './DataEntityUsageInfoViewStyles';
 import type {
   HandleEntityClassClickParams,
-  HandleEntityClassAndTypeClickParams,
+  HandleEntityClassTypeClickParams,
 } from '../DataEntitiesUsageInfo';
 
 interface DataEntityUsageInfoViewProps {
@@ -14,7 +13,7 @@ interface DataEntityUsageInfoViewProps {
   unfilledCount: DataEntityUsageInfo['unfilledCount'];
   classesUsageInfo: DataEntityUsageInfo['dataEntityClassesInfo'];
   handleEntityClassClick: (params: HandleEntityClassClickParams) => void;
-  handleEntityClassAndTypeClick: (params: HandleEntityClassAndTypeClickParams) => void;
+  handleEntityClassTypeClick: (params: HandleEntityClassTypeClickParams) => void;
 }
 
 const DataEntityUsageInfoView: React.FC<DataEntityUsageInfoViewProps> = ({
@@ -22,7 +21,7 @@ const DataEntityUsageInfoView: React.FC<DataEntityUsageInfoViewProps> = ({
   unfilledCount,
   classesUsageInfo,
   handleEntityClassClick,
-  handleEntityClassAndTypeClick,
+  handleEntityClassTypeClick,
 }) => {
   const a = 1;
 
@@ -38,33 +37,17 @@ const DataEntityUsageInfoView: React.FC<DataEntityUsageInfoViewProps> = ({
             <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
           </Box>
         </S.DataEntitiesTotalContainer>
-        {/* <S.ListItemContainer> */}
-        {/*   {classesUsageInfo.map(({ entityClass, totalCount: classTotalCount }, index) => ( */}
-        {/*     <S.ListItemWrapper */}
-        {/*       key={entityClass.id} */}
-        {/*       onClick={() => { */}
-        {/*         handleEntityClassClick({ */}
-        {/*           entityId: entityClass.id, */}
-        {/*           entityName: entityClass.name, */}
-        {/*         }); */}
-        {/*       }} */}
-        {/*     > */}
-        {/*       <S.ListItem $index={index}> */}
-        {/*         <EntityClassItem */}
-        {/*           sx={{ ml: 0.5 }} */}
-        {/*           key={entityClass.id} */}
-        {/*           entityClassName={entityClass.name} */}
-        {/*         /> */}
-        {/*         <Typography noWrap title={entityClass.name}> */}
-        {/*           {entityClass && DataEntityClassLabelMap.get(entityClass.name)?.normal} */}
-        {/*         </Typography> */}
-        {/*       </S.ListItem> */}
-        {/*       <Typography variant='h4' noWrap> */}
-        {/*         {classTotalCount} */}
-        {/*       </Typography> */}
-        {/*     </S.ListItemWrapper> */}
-        {/*   ))} */}
-        {/* </S.ListItemContainer> */}
+        <S.ListItemContainer>
+          {classesUsageInfo.map(({ entityClass, totalCount: classTotalCount }, index) => (
+            <DataEntityUsageClassItem
+              entityClass={entityClass}
+              classTotalCount={classTotalCount}
+              itemIdx={index}
+              handleEntityClassClick={handleEntityClassClick}
+              handleEntityClassTypeClick={handleEntityClassTypeClick}
+            />
+          ))}
+        </S.ListItemContainer>
       </S.DataEntitiesUsageContainer>
     </Grid>
   );

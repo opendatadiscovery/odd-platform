@@ -8,7 +8,7 @@ export interface HandleEntityClassClickParams {
   entityName: string;
 }
 
-export interface HandleEntityClassAndTypeClickParams {
+export interface HandleEntityClassTypeClickParams {
   entityClassId: number;
   entityClassTypeId: number;
   entityClassName: string;
@@ -29,13 +29,13 @@ const DataEntitiesUsageInfo: React.FC = () => {
     []
   );
 
-  const handleEntityClassAndTypeClick = React.useCallback(
+  const handleEntityClassTypeClick = React.useCallback(
     ({
       entityClassId,
       entityClassName,
       entityClassTypeName,
       entityClassTypeId,
-    }: HandleEntityClassAndTypeClickParams) => {
+    }: HandleEntityClassTypeClickParams) => {
       const selected = true;
       const entityClasses = [
         { entityId: entityClassId, entityName: entityClassName, selected },
@@ -57,7 +57,7 @@ const DataEntitiesUsageInfo: React.FC = () => {
       unfilledCount={usageInfo.unfilledCount}
       classesUsageInfo={usageInfo.dataEntityClassesInfo}
       handleEntityClassClick={handleEntityClassClick}
-      handleEntityClassAndTypeClick={handleEntityClassAndTypeClick}
+      handleEntityClassTypeClick={handleEntityClassTypeClick}
     />
   );
 };
