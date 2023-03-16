@@ -107,7 +107,7 @@ You'd need to install Python 3.8+ in order to run this.
 PLATFORM_HOST_URL=http://localhost:8080 APP_PATH=./docker/injector python docker/injector/inject.py
 ```
 
-Now you should have ODD Platform with demo metadata injected at your disposal at `http://localhost:8080`. If you want to reconfigure default settings, please take a look at [Configure ODD Platform](../../configuration-and-deployment/odd-platform/) page.
+Now you should have ODD Platform with demo metadata injected at your disposal at `http://localhost:8080`. If you want to reconfigure default settings, please take a look at [Configure ODD Platform](../../configuration-and-deployment/odd-platform.md) page.
 
 ### Run ODD Platform as a frontend engineer
 
