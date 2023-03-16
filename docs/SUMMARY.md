@@ -3,6 +3,7 @@
 * [Overview](README.md)
 * [Architecture](Architecture.md)
 * [Features](Features.md)
+* [ODDRN-Generator](oddrn-generator.md)
 * [Use cases](Use\_cases.md)
   * [Data compliance for Data Scientists](dc\_data\_compliance.md)
   * [Deprecation for Data Engineer \ Analyst](de\_deprecation.md)
