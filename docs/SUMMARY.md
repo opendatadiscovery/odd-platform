@@ -3,7 +3,6 @@
 * [Overview](README.md)
 * [Architecture](Architecture.md)
 * [Features](Features.md)
-* [ODDRN-Generator](oddrn-generator.md)
 * [Use cases](Use\_cases.md)
   * [Data compliance for Data Scientists](dc\_data\_compliance.md)
   * [Deprecation for Data Engineer \ Analyst](de\_deprecation.md)
@@ -14,8 +13,7 @@
 ## Configuration and Deployment
 
 * [Try locally](configuration-and-deployment/trylocally.md)
-* [Configure ODD Platform](configuration-and-deployment/odd-platform/README.md)
-  * [ODDRN-Generator](configuration-and-deployment/odd-platform/oddrn-generator.md)
+* [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
 * [Enable security](configuration-and-deployment/enable-security/README.md)
   * [Authentication](configuration-and-deployment/enable-security/authentication/README.md)
     * [Disabled authentication](configuration-and-deployment/enable-security/authentication/disabled-authentication.md)
