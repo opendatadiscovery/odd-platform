@@ -302,7 +302,7 @@ public class IngestionServiceImpl implements IngestionService {
                                       final Map<Integer, Map<Integer, Long>> entityDeltaMap,
                                       final Long defaultValue) {
         Arrays.stream(entityClassIds).forEach(entityClassId -> {
-            final Map<Integer, Long> typesMap = entityDeltaMap.computeIfAbsent(entityClassId, HashMap::new);
+            final Map<Integer, Long> typesMap = entityDeltaMap.computeIfAbsent(entityClassId, id -> new HashMap<>());
             typesMap.merge(typeId, defaultValue, Long::sum);
         });
     }

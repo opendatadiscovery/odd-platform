@@ -40,7 +40,8 @@ public class DataEntityStatisticsServiceImpl implements DataEntityStatisticsServ
         final Map<Integer, Map<Integer, Long>> resultedMap = new HashMap<>(existingStatistics);
 
         deltaMap.forEach((entityClassId, typesDeltaMap) -> {
-            final Map<Integer, Long> entityTypeStats = resultedMap.computeIfAbsent(entityClassId, HashMap::new);
+            final Map<Integer, Long> entityTypeStats =
+                resultedMap.computeIfAbsent(entityClassId, id -> new HashMap<>());
             typesDeltaMap.forEach((typeId, delta) -> entityTypeStats.merge(typeId, delta, Long::sum));
         });
         resultedMap.forEach((classId, typeMap) -> typeMap.values().removeIf(v -> v == 0));
