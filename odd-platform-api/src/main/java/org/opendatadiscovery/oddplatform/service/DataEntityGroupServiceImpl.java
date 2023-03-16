@@ -151,11 +151,12 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
     private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
                                           final DataEntityGroupFormData formData,
                                           final NamespacePojo namespace) {
+        final Integer previousTypeId = pojo.getTypeId();
         final List<String> entityOddrns =
             formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
         return Mono.just(formData)
             .map(fd -> dataEntityMapper.applyToPojo(fd, namespace, pojo))
-            .flatMap(reactiveDataEntityRepository::update)
+            .flatMap(reactiveDataEntityRepository::updateDEG)
             .flatMap(degPojo -> reactiveGroupEntityRelationRepository
                 .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
             .flatMap(degPojo -> reactiveGroupEntityRelationRepository
@@ -163,11 +164,11 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
             .flatMap(degPojo -> {
-                if (pojo.getTypeId().equals(degPojo.getTypeId())) {
+                if (previousTypeId.equals(degPojo.getTypeId())) {
                     return Mono.just(degPojo);
                 }
                 return dataEntityStatisticsService.updateStatistics(0L,
-                        Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), -1L, degPojo.getTypeId(), 1L)))
+                        Map.of(DATA_ENTITY_GROUP.getId(), Map.of(previousTypeId, -1L, degPojo.getTypeId(), 1L)))
                     .thenReturn(degPojo);
             })
             .map(dataEntityMapper::mapRef);
