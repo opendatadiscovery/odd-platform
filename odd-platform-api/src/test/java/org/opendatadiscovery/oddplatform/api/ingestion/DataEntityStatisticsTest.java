@@ -230,7 +230,6 @@ public class DataEntityStatisticsTest extends BaseIngestionTest {
         return result;
     }
 
-
     private DataEntityUsageInfo buildExpectedUsageInfo(final Map<Integer, Map<Integer, Long>> usages,
                                                        final long totalCount) {
         final DataEntityUsageInfo usageInfo = new DataEntityUsageInfo();
