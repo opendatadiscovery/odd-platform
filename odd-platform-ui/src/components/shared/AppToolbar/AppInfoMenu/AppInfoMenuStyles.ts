@@ -5,16 +5,17 @@ export const Icon = styled(Box)(({ theme }) => ({
   display: 'flex',
   borderRadius: theme.spacing(1),
   padding: theme.spacing(1),
-  backgroundColor: theme.palette.backgrounds.primary,
+  backgroundColor: theme.palette.backgrounds.secondary,
   marginRight: theme.spacing(2),
 }));
 
-export const MenuItem = styled(Grid)(({ theme }) => ({
+export const MenuItem = styled(Grid)<{ $last?: boolean }>(({ theme, $last }) => ({
   minWidth: '300px',
-  padding: theme.spacing(1.25, 1),
-  borderRadius: theme.spacing(0.5),
+  padding: theme.spacing(0.5),
+  borderRadius: theme.spacing(1),
   alignItems: 'center',
   flexWrap: 'nowrap',
+  marginBottom: theme.spacing($last ? 0 : 0.5),
   '&:hover': {
     backgroundColor: theme.palette.backgrounds.primary,
     [`${Icon}`]: { backgroundColor: theme.palette.backgrounds.secondary },

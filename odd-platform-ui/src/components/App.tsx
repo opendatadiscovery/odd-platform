@@ -5,8 +5,6 @@ import { AppSuspenseWrapper, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
   fetchActiveFeatures,
-  fetchAppInfo,
-  fetchAppLinks,
   fetchDataEntitiesClassesAndTypes,
   fetchIdentity,
   fetchTagsList,
@@ -46,9 +44,7 @@ const App: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
     dispatch(fetchIdentity());
-    dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
-    dispatch(fetchAppLinks());
     dispatch(fetchTagsList({ page: 1, size: 20 }));
   }, []);
 
