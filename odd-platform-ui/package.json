@@ -45,7 +45,7 @@
     "@reduxjs/toolkit": "^1.8.5",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
     "@uiw/react-md-editor": "^3.19.0",
-    "@visx/curve": "^2.1.0",
+    "@visx/curve": "^3.0.0",
     "@visx/event": "^2.6.0",
     "@visx/group": "^2.10.0",
     "@visx/marker": "^2.12.2",
