@@ -112,7 +112,7 @@
     "jsdom": "^21.1.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.8.4",
-    "typescript": "^4.8.2",
+    "typescript": "^5.0.2",
     "vite": "^4.1.4",
     "vite-plugin-checker": "^0.5.6",
     "vite-tsconfig-paths": "^4.0.5",
