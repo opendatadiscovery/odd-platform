@@ -41,7 +41,7 @@
     "@mui/lab": "^5.0.0-alpha.101",
     "@mui/material": "^5.8.5",
     "@mui/system": "^5.8.5",
-    "@mui/x-date-pickers": "^5.0.10",
+    "@mui/x-date-pickers": "^6.0.2",
     "@reduxjs/toolkit": "^1.8.5",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
     "@uiw/react-md-editor": "^3.19.0",
