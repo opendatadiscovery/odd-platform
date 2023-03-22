@@ -35,7 +35,6 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       lineHeight: theme.typography.body1.lineHeight,
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
-      overflow: 'hidden',
       ...breakpointDownLgBody2,
       ...($isOverflowed && {
         width: 'inherit',
