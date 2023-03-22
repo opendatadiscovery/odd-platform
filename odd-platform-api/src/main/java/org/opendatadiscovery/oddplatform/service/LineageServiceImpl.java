@@ -253,7 +253,7 @@ public class LineageServiceImpl implements LineageService {
     }
 
     private Mono<Tuple2<Map<String, DataEntityDimensionsDto>, Map<DataEntityDimensionsDto, List<String>>>>
-    getGroupsAndEntitiesMaps(final Set<String> oddrnsToFetch, final Map<String, List<String>> groupRelations) {
+        getGroupsAndEntitiesMaps(final Set<String> oddrnsToFetch, final Map<String, List<String>> groupRelations) {
         return getDataEntityWithDatasourceMap(SetUtils.union(oddrnsToFetch, groupRelations.keySet()))
             .map(dtoDict -> {
                 final Map<DataEntityDimensionsDto, List<String>> groupRepository =
