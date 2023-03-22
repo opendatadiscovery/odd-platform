@@ -17,7 +17,8 @@ const ZoomableDEGLineage: FC = () => {
 
     zoom.moveTo(moveToX, moveToY);
     zoom.zoomTo(zoomToX, zoomToY, scale);
-    zoom.setMaxZoom(maxScale);
+    // zoom.setMaxZoom(maxScale);
+    zoom.setMaxZoom(10);
     zoom.setMinZoom(minScale);
 
     return () => {

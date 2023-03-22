@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { useSetAtom } from 'jotai';
 import type { DataEntityGroupLineage } from '../interfaces';
 import { edgesAtom, graphHeightAtom, graphWidthAtom, nodesAtom } from '../atoms';
-import { layoutOptions } from '../constants';
+import { layoutOptions, NODE_WIDTH } from '../constants';
 
 const elk = new ELK();
 
@@ -21,7 +21,7 @@ export default function useDEGLineageLayout({
       rawNodes.map(node => ({
         ...node,
         id: node.id,
-        width: 150,
+        width: NODE_WIDTH,
         height: 70,
       })),
     [rawNodes]

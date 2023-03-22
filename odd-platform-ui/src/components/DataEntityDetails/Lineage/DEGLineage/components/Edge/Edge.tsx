@@ -47,12 +47,18 @@ const Edge: FC<EdgeProps> = ({ sections, isHighlighted }) => {
   return drawnPath ? (
     <Group>
       <MarkerArrow id='head' fill='#A8B0BD' size={6} orient='auto-start-reverse' />
+      <MarkerArrow
+        id='head-highlighted'
+        fill='#0080FF'
+        size={6}
+        orient='auto-start-reverse'
+      />
       <LinePath
         stroke={isHighlighted ? '#0080FF' : '#A8B0BD'}
         d={drawnPath}
-        strokeWidth='2'
+        strokeWidth={2}
         pointerEvents='none'
-        markerEnd='url(#head)'
+        markerEnd={`url(#head${isHighlighted ? '-highlighted' : ''})`}
       />
     </Group>
   ) : null;

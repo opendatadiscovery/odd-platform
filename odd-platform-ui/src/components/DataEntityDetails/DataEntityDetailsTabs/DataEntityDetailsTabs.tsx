@@ -12,7 +12,7 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/Activity/common';
-import { defaultLineageQuery } from '../Lineage/lineageLib/constants';
+import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { dataEntityId, dataEntityViewType } = useAppParams();
