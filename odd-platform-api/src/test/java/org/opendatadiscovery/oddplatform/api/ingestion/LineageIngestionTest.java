@@ -246,6 +246,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
      * [outputDataset], [separateDataset], [dataTransformer3] -> [inner DEG]
      *
      * <p>DataTransformer2 is not belong to DEG
+     *
      * <p>Inner DEG should not be shown in lineage
      */
     @Test
