@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageDto;
@@ -27,6 +29,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
@@ -60,14 +63,17 @@ public class LineageServiceImpl implements LineageService {
             .collectList()
             .flatMap(entitiesOddrns -> {
                 final Mono<Map<String, DataEntityDimensionsDto>> dict = getDataEntityWithDatasourceMap(entitiesOddrns);
-                final Mono<Map<String, List<String>>> groupRelations = groupEntityRelationRepository
-                    .fetchGroupRelationsBetweenEntities(entitiesOddrns);
                 final Mono<List<LineagePojo>> relations = lineageRepository.getLineageRelations(entitiesOddrns)
                     .collectList();
-                return Mono.zip(dict, groupRelations, relations);
+                return Mono.zip(dict, relations);
             })
-            .map(function((dict, groupRelations, relations) -> {
-                final Map<String, List<LineagePojo>> relationsMap = buildRelationsMap(relations);
+            .map(function((dict, relations) -> {
+                // Remove this when we will support inner DEGs for DEG lineage
+                final List<LineagePojo> filteredRelations = relations.stream()
+                    .filter(r -> !isDegODDRN(r.getChildOddrn(), dict) && !isDegODDRN(r.getParentOddrn(), dict))
+                    .toList();
+                dict.entrySet().removeIf(e -> isDEG(e.getValue().getDataEntity()));
+                final Map<String, List<LineagePojo>> relationsMap = buildRelationsMap(filteredRelations);
                 final Map<String, Set<LineagePojo>> establishedRelations =
                     establishDEGRelations(dict.keySet(), relationsMap);
                 final List<DataEntityLineageStreamDto> items = establishedRelations.entrySet().stream()
@@ -247,7 +253,7 @@ public class LineageServiceImpl implements LineageService {
     }
 
     private Mono<Tuple2<Map<String, DataEntityDimensionsDto>, Map<DataEntityDimensionsDto, List<String>>>>
-        getGroupsAndEntitiesMaps(final Set<String> oddrnsToFetch, final Map<String, List<String>> groupRelations) {
+    getGroupsAndEntitiesMaps(final Set<String> oddrnsToFetch, final Map<String, List<String>> groupRelations) {
         return getDataEntityWithDatasourceMap(SetUtils.union(oddrnsToFetch, groupRelations.keySet()))
             .map(dtoDict -> {
                 final Map<DataEntityDimensionsDto, List<String>> groupRepository =
@@ -293,5 +299,15 @@ public class LineageServiceImpl implements LineageService {
                 return v;
             }
         };
+    }
+
+    private boolean isDegODDRN(final String oddrn,
+                               final Map<String, DataEntityDimensionsDto> dictionary) {
+        return isDEG(dictionary.get(oddrn).getDataEntity());
+    }
+
+    private boolean isDEG(final DataEntityPojo pojo) {
+        return Arrays.stream(pojo.getEntityClassIds())
+            .anyMatch(classId -> DataEntityClassDto.DATA_ENTITY_GROUP.getId() == classId);
     }
 }

@@ -148,26 +148,6 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
-    public Mono<Map<String, List<String>>> fetchGroupRelationsBetweenEntities(final Collection<String> oddrns) {
-        if (CollectionUtils.isEmpty(oddrns)) {
-            return Mono.just(Map.of());
-        }
-        final var query = DSL
-            .select(
-                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
-                GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN
-            )
-            .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns)
-                .and(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(oddrns)));
-        return jooqReactiveOperations.flux(query)
-            .collect(Collectors.groupingBy(
-                r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
-                Collectors.mapping(r -> r.get(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), Collectors.toList())
-            ));
-    }
-
-    @Override
     public Flux<String> getDEGEntitiesOddrns(final long dataEntityGroupId) {
         final Name cteName = name("t");
         final Field<String> tDataEntityOddrn = field("t.data_entity_oddrn", String.class);

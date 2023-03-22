@@ -1,12 +1,10 @@
 package org.opendatadiscovery.oddplatform.api.ingestion;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
@@ -245,9 +243,10 @@ public class LineageIngestionTest extends BaseIngestionTest {
      *
      * <p>Ingests a simple graph of data entities inside DEG and checks that it was ingested correctly
      * ([inputDataset1] + [inputDataset2]) -> ([dataTransformer1] + [dataTransformer2]) ->
-     * [outputDataset], [separateDataset]
+     * [outputDataset], [separateDataset], [dataTransformer3] -> [inner DEG]
      *
      * <p>DataTransformer2 is not belong to DEG
+     * <p>Inner DEG should not be shown in lineage
      */
     @Test
     public void simpleDEGLineageIngestionTest() {
@@ -264,6 +263,9 @@ public class LineageIngestionTest extends BaseIngestionTest {
         final DataEntity separateDataset = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.TABLE)
             .dataset(new DataSet().rowsNumber(5_000L).fieldList(IngestionModelGenerator.generateDatasetFields(5)));
 
+        final DataEntity innerDEG = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.DAG)
+            .dataEntityGroup(new DataEntityGroup());
+
         final DataEntity dataTransformer1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
             .dataTransformer(new DataTransformer()
                 .inputs(List.of(inputDataset1.getOddrn(), inputDataset2.getOddrn()))
@@ -276,14 +278,20 @@ public class LineageIngestionTest extends BaseIngestionTest {
                 .outputs(List.of(outputDataset.getOddrn()))
             );
 
+        final DataEntity dataTransformer3 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.JOB)
+            .dataTransformer(new DataTransformer()
+                .outputs(List.of(innerDEG.getOddrn()))
+            );
+
         final DataEntity dataEntityGroup = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.DAG)
             .dataEntityGroup(new DataEntityGroup()
                 .entitiesList(List.of(inputDataset1.getOddrn(), inputDataset2.getOddrn(), outputDataset.getOddrn(),
-                    dataTransformer1.getOddrn(), separateDataset.getOddrn()))
+                    dataTransformer1.getOddrn(), separateDataset.getOddrn(), innerDEG.getOddrn(),
+                    dataTransformer3.getOddrn()))
             );
 
         final List<DataEntity> entitiesToIngest = List.of(inputDataset1, inputDataset2, outputDataset, separateDataset,
-            dataTransformer1, dataTransformer2, dataEntityGroup);
+            dataTransformer1, dataTransformer2, dataTransformer3, dataEntityGroup, innerDEG);
         final var dataEntityList = new DataEntityList()
             .dataSourceOddrn(createdDataSource.getOddrn())
             .items(entitiesToIngest);
@@ -341,6 +349,19 @@ public class LineageIngestionTest extends BaseIngestionTest {
             )
         ));
         items.add(secondLineage);
+
+        final DataEntityLineageStream thirdLineage = new DataEntityLineageStream();
+        thirdLineage.setGroups(List.of());
+        thirdLineage.setEdges(List.of());
+        final DataEntityLineageNode transformerNode = buildExpectedLineageNode(
+            ingestedEntities.get(dataTransformer3.getOddrn()),
+            dataTransformer3.getOddrn(),
+            dataTransformer3.getName(),
+            createdDataSource
+        );
+        thirdLineage.setNodes(List.of(transformerNode));
+        items.add(thirdLineage);
+
         expectedLineage.setItems(items);
 
         assertDEGLineage(ingestedEntities.get(dataEntityGroup.getOddrn()), expectedLineage);
