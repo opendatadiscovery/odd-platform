@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import React, { useLayoutEffect, useRef } from 'react';
 import { useSetAtom } from 'jotai/index';
+import { useQueryParams } from 'lib/hooks';
 import {
   edgesAtom,
   graphHeightAtom,
@@ -8,9 +9,13 @@ import {
   isLayoutedAtom,
   nodesAtom,
 } from '../lib/atoms';
-import type { Edge as EdgeType, Node as NodeType } from '../lib/interfaces';
+import type {
+  Edge as EdgeType,
+  Node as NodeType,
+  DEGLineageQueryParams,
+} from '../lib/interfaces';
 import Node from '../components/Node/Node';
-import { NODE_HEIGHT, NODE_WIDTH } from '../lib/constants';
+import { defaultDEGLineageQuery, NODE_HEIGHT, NODE_WIDTH } from '../lib/constants';
 import layoutDEGLineage from '../lib/layoutDEGLineage';
 
 interface DEGLineageLayouterProps {
@@ -19,6 +24,10 @@ interface DEGLineageLayouterProps {
 }
 
 const DEGLineageLayouter: FC<DEGLineageLayouterProps> = ({ nodes, edges }) => {
+  const {
+    queryParams: { full },
+  } = useQueryParams<DEGLineageQueryParams>(defaultDEGLineageQuery);
+
   const nodesRefsById = useRef<{ [nodeId: string]: HTMLDivElement | null }>({});
 
   const setNodes = useSetAtom(nodesAtom);
@@ -32,6 +41,7 @@ const DEGLineageLayouter: FC<DEGLineageLayouterProps> = ({ nodes, edges }) => {
       ...node,
       width: NODE_WIDTH,
       height: nodesRefsById.current[node.id]?.clientHeight || NODE_HEIGHT,
+      fullView: full,
     }));
 
     layoutDEGLineage({
@@ -50,6 +60,7 @@ const DEGLineageLayouter: FC<DEGLineageLayouterProps> = ({ nodes, edges }) => {
       {nodes.map(node => (
         <Node
           hidden
+          fullView={full}
           key={node.id}
           id={node.id}
           data={node.data}

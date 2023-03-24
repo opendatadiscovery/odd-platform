@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { useAppParams } from 'lib/hooks';
-import { useDataEntityGroupLineage } from 'lib/hooks/api';
+import { useDataEntityGroupLineage, useDataEntityLineage } from 'lib/hooks/api';
 import { useAtom } from 'jotai';
 import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared';
+import uniqBy from 'lodash/uniqBy';
+import DEGLineageControls from './components/DEGLineageControls/DEGLineageControls';
 import DEGLineageLayouter from './DEGLineageLayouter/DEGLineageLayouter';
 import { isLayoutedAtom } from './lib/atoms';
 import ZoomableDEGLineage from './ZoomableDEGLineage/ZoomableDEGLineage';
@@ -40,7 +42,12 @@ const DEGLineage: React.FC = () => {
           <DEGLineageLayouter nodes={rawNodes} edges={rawEdges} />
         </>
       )}
-      {isSuccess && isLayouted && <ZoomableDEGLineage />}
+      {isSuccess && isLayouted && (
+        <S.LineageViewContainer>
+          <DEGLineageControls />
+          <ZoomableDEGLineage />
+        </S.LineageViewContainer>
+      )}
     </S.Container>
   );
 };

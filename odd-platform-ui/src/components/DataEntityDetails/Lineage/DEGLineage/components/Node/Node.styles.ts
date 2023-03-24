@@ -39,12 +39,6 @@ export const TitleContainer = styled(Typography)(
     } as CSSObject)
 );
 
-export const CountsContainer = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  marginTop: theme.spacing(0.5),
-}));
-
 export const SourceContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',

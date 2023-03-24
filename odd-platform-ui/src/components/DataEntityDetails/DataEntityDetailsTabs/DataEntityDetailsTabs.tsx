@@ -13,10 +13,13 @@ import {
   defaultActivityQuery,
 } from 'components/shared/Activity/common';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
+import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { dataEntityId, dataEntityViewType } = useAppParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
+  const { defaultQueryString: degLineageQueryString } =
+    useQueryParams(defaultDEGLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
   const {
@@ -37,7 +40,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   const datasetQualityTestReportTotal = useAppSelector(
     getDatasetTestReportTotal(dataEntityId)
   );
-  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
+  const { isDataset, isQualityTest, isTransformer, isDEG } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
 
@@ -56,7 +59,10 @@ const DataEntityDetailsTabs: React.FC = () => {
       },
       {
         name: 'Lineage',
-        link: dataEntityLineagePath(dataEntityId, lineageQueryString),
+        link: dataEntityLineagePath(
+          dataEntityId,
+          isDEG ? degLineageQueryString : lineageQueryString
+        ),
         hidden: isQualityTest,
         value: DataEntityRoutes.lineage,
       },
@@ -105,6 +111,8 @@ const DataEntityDetailsTabs: React.FC = () => {
       isQualityTest,
       isTransformer,
       datasetQualityTestReportTotal,
+      isDEG,
+      degLineageQueryString,
       lineageQueryString,
     ]
   );

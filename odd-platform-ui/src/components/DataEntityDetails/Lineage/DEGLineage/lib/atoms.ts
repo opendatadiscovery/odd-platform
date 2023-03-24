@@ -7,3 +7,4 @@ export const edgesAtom = atom<Edge[]>([]);
 export const graphWidthAtom = atom(LAYER_WIDTH);
 export const graphHeightAtom = atom(LAYER_HEIGHT);
 export const isLayoutedAtom = atom(false);
+export const isFitClickedAtom = atom(false);

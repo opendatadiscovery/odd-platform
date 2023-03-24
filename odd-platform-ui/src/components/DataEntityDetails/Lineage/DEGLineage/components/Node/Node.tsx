@@ -2,9 +2,8 @@ import React, { forwardRef, memo, useCallback } from 'react';
 import { Typography } from '@mui/material';
 import { useAppPaths } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
-import { DownstreamArrow, UpstreamArrow } from 'components/shared/Icons';
 import { EntityClassItem, LabeledInfoItem } from 'components/shared';
-import EmptyIcon from 'components/shared/Icons/EmptyIcon';
+import { EmptyIcon } from 'components/shared/Icons';
 import * as S from './Node.styles';
 import type { Node as NodeType } from '../../lib/interfaces';
 
@@ -16,10 +15,14 @@ interface NodeProps {
   handleOnNodeMouseEnter?: (nodeId: string) => void;
   handleOnNodeMouseLeave?: () => void;
   hidden?: boolean;
+  fullView?: boolean;
 }
 
 const Node = forwardRef<HTMLDivElement, NodeProps>(
-  ({ x, y, id, handleOnNodeMouseEnter, handleOnNodeMouseLeave, data, hidden }, ref) => {
+  (
+    { x, y, id, handleOnNodeMouseEnter, handleOnNodeMouseLeave, data, hidden, fullView },
+    ref
+  ) => {
     const navigate = useNavigate();
     const { dataEntityLineagePath } = useAppPaths();
 
@@ -49,25 +52,16 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(
             <S.TitleContainer variant='h4' onClick={handleTitleClick}>
               {data?.internalName || data?.externalName}
             </S.TitleContainer>
-            <S.CountsContainer>
-              <UpstreamArrow width={8} height={10} />
-              <Typography variant='h5' sx={{ ml: 0.25, mr: 1 }}>
-                {data?.parentsCount}
-              </Typography>
-
-              <DownstreamArrow width={8} height={10} />
-              <Typography variant='h5' sx={{ ml: 0.25 }}>
-                {data?.childrenCount}
-              </Typography>
-            </S.CountsContainer>
-            <S.SourceContainer>
-              <LabeledInfoItem label='Space' inline labelWidth={2}>
-                {data?.dataSource?.namespace?.name}
-              </LabeledInfoItem>
-              <LabeledInfoItem label='Source' inline labelWidth={2}>
-                {data?.dataSource?.name}
-              </LabeledInfoItem>
-            </S.SourceContainer>
+            {fullView && (
+              <S.SourceContainer>
+                <LabeledInfoItem label='Space' inline labelWidth={2}>
+                  {data?.dataSource?.namespace?.name}
+                </LabeledInfoItem>
+                <LabeledInfoItem label='Source' inline labelWidth={2}>
+                  {data?.dataSource?.name}
+                </LabeledInfoItem>
+              </S.SourceContainer>
+            )}
           </>
         ) : (
           <>

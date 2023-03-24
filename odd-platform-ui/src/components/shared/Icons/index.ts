@@ -46,3 +46,4 @@ export { default as StrokedInfoIcon } from './StrokedInfoIcon';
 export { default as FeedbackIcon } from './FeedbackIcon';
 export { default as DownstreamArrow } from './DownstreamArrow';
 export { default as UpstreamArrow } from './UpstreamArrow';
+export { default as EmptyIcon } from './EmptyIcon';

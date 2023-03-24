@@ -21,6 +21,7 @@ const NodesRenderer: React.FC<NodesRendererProps> = ({
         x={node.x}
         y={node.y}
         data={node.data}
+        fullView={node.fullView}
         handleOnNodeMouseEnter={handleOnNodeMouseEnter}
         handleOnNodeMouseLeave={handleOnNodeMouseLeave}
       />
