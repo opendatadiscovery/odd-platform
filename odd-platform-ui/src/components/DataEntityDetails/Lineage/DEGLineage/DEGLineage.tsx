@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 import { useAppParams } from 'lib/hooks';
-import { useDataEntityGroupLineage, useDataEntityLineage } from 'lib/hooks/api';
+import { useDataEntityGroupLineage } from 'lib/hooks/api';
 import { useAtom } from 'jotai';
 import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared';
-import uniqBy from 'lodash/uniqBy';
 import DEGLineageControls from './components/DEGLineageControls/DEGLineageControls';
 import DEGLineageLayouter from './DEGLineageLayouter/DEGLineageLayouter';
 import { isLayoutedAtom } from './lib/atoms';

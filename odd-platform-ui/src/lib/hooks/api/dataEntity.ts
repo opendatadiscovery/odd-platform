@@ -1,4 +1,4 @@
-import { useQueries, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import { dataEntityApi } from 'lib/api';
 import { showServerErrorToast } from 'lib/errorHandling';
 import type {
@@ -6,7 +6,6 @@ import type {
   Edge,
   Node,
 } from 'components/DataEntityDetails/Lineage/DEGLineage/lib/interfaces';
-import { DataEntityClassNameEnum, DataEntityTypeNameEnum } from 'generated-sources';
 
 interface UseDataEntityMetricsProps {
   dataEntityId: number;
@@ -48,8 +47,6 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
                 externalName: node.externalName,
                 internalName: node.internalName,
                 dataSource: node.dataSource,
-                parentsCount: node.parentsCount,
-                childrenCount: node.childrenCount,
                 entityClasses: node.entityClasses,
               },
             }));
