@@ -8,32 +8,21 @@ const ZoomableDEGLineage: FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const zoomContainerRef = useRef<HTMLDivElement>(null);
 
-  const { maxScale, minScale, scale, moveToX, moveToY, zoomToY, zoomToX } =
-    useDEGZoomParams();
+  const { moveToX, moveToY, initialZoom } = useDEGZoomParams();
 
   useEffect(() => {
     if (!zoomContainerRef.current) return;
-    const zoom = panzoom(zoomContainerRef.current, { smoothScroll: false });
+    const zoom = panzoom(zoomContainerRef.current, {
+      smoothScroll: false,
+      initialZoom,
+    });
 
     zoom.moveTo(moveToX, moveToY);
-    zoom.zoomTo(zoomToX, zoomToY, scale);
-    // zoom.setMaxZoom(maxScale);
-    zoom.setMaxZoom(10);
-    zoom.setMinZoom(minScale);
 
     return () => {
       zoom.dispose();
     };
-  }, [
-    zoomContainerRef.current,
-    maxScale,
-    minScale,
-    scale,
-    moveToX,
-    moveToY,
-    zoomToY,
-    zoomToX,
-  ]);
+  }, [zoomContainerRef.current, moveToX, moveToY, initialZoom]);
 
   return (
     <S.Container
