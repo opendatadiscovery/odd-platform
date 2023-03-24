@@ -410,7 +410,7 @@ public class IngestionMapperImpl implements IngestionMapper {
                                                   final Set<DataEntityClassDto> expectedClasses) {
         return """
             Data entity with oddrn %s has %s type. One or several properties must be filled: [%s].
-            Received properties: [%s]. Please define missing fields and try again."""
+            Received properties: [%s]. Please define missing fields or remove redundant ones and try again."""
             .formatted(oddrn, type, entityClassesProperties(expectedClasses), entityClassesProperties(actualClasses));
     }
 

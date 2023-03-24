@@ -62,6 +62,9 @@ public class ControllerAdvice {
         final ErrorResponse error = new ErrorResponse();
         error.setMessage(e.getMessage());
         error.setCode(e.getCode().getValue());
+        if (e instanceof BadUserRequestException ex) {
+            error.setMessage(ex.getMessage());
+        }
         return error;
     }
 
