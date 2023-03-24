@@ -11,23 +11,29 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.DATASET_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.EXPECTATION;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.LINKED_URL_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.SUITE_NAME;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.SUITE_URL;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class DataQualityTestAttributes extends DataEntityAttributes {
-    @JsonProperty("suite_name")
+    @JsonProperty(SUITE_NAME)
     private String suiteName;
 
-    @JsonProperty("suite_url")
+    @JsonProperty(SUITE_URL)
     private String suiteUrl;
 
-    @JsonProperty("dataset_list")
+    @JsonProperty(DATASET_LIST)
     private Set<String> datasetOddrnList;
 
-    @JsonProperty("linked_url_list")
+    @JsonProperty(LINKED_URL_LIST)
     private List<LinkedUrlAttribute> linkedUrlList;
 
-    @JsonProperty("expectation")
+    @JsonProperty(EXPECTATION)
     private DataQualityTestExpectationAttributes expectation;
 
     @Override

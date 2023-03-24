@@ -81,4 +81,10 @@ public enum DataEntityClassDto {
             .map(StringUtils::capitalize)
             .collect(Collectors.joining(" "));
     }
+
+    public static Set<DataEntityClassDto> getClassesByType(final DataEntityTypeDto typeDto) {
+        return Arrays.stream(values())
+            .filter(classDto -> classDto.getTypes().contains(typeDto))
+            .collect(Collectors.toSet());
+    }
 }
