@@ -1,4 +1,4 @@
-import React, { type FC } from 'react';
+import React, { type FC, useCallback } from 'react';
 import { AppButton, AppTabs } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
 import { useQueryParams } from 'lib/hooks';
@@ -24,13 +24,18 @@ const DEGLineageControls: FC = () => {
     [setQueryParams, setIsLayouted]
   );
 
+  const handleFitClick = useCallback(() => {
+    setIsFitClicked(prev => !prev);
+    setQueryParams(prev => ({ ...prev, x: undefined, y: undefined, s: undefined }));
+  }, [setQueryParams, setIsFitClicked]);
+
   return (
     <S.ControlsContainer>
       <AppButton
         color='primaryLight'
         size='medium'
         startIcon={<TargetIcon />}
-        onClick={() => setIsFitClicked(prev => !prev)}
+        onClick={handleFitClick}
       >
         Fit
       </AppButton>

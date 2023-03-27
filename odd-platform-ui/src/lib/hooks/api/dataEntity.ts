@@ -36,9 +36,9 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
     ['dataEntityGroupLineage', dataEntityId],
     () => dataEntityApi.getDataEntityGroupsLineage({ dataEntityGroupId: dataEntityId }),
     {
-      staleTime: Infinity,
-      select: (data): DataEntityGroupLineage => {
-        const dataEntityGroupLineage = data.items.reduce(
+      refetchOnWindowFocus: false,
+      select: (data): DataEntityGroupLineage =>
+        data.items.reduce(
           (memo, lineage) => {
             const nodes = lineage.nodes.map<Node>(node => ({
               id: String(node.id),
@@ -63,10 +63,7 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
             };
           },
           { nodes: [], edges: [] } as DataEntityGroupLineage
-        );
-
-        return dataEntityGroupLineage;
-      },
+        ),
     }
   );
 }

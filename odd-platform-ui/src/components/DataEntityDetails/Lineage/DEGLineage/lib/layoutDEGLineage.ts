@@ -1,12 +1,6 @@
 import ELK from 'elkjs/lib/elk.bundled';
-import { useEffect, useMemo } from 'react';
-import { layoutOptions } from 'components/DataEntityDetails/Lineage/DEGLineage/lib/constants';
-import type {
-  Node,
-  Edge,
-} from 'components/DataEntityDetails/Lineage/DEGLineage/lib/interfaces';
-import { type SetStateAction, WritableAtom } from 'jotai';
-import { Setter } from 'jotai/vanilla/typeUtils';
+import { layoutOptions } from './constants';
+import type { Edge, Node } from './interfaces';
 
 interface Params {
   nodes: Node[];
@@ -16,7 +10,6 @@ interface Params {
   setEdges: (e: Edge[]) => void;
   setNodes: (n: Node[]) => void;
   setIsLayouted: (b: boolean) => void;
-  // setGraphWidth: Setter;
 }
 
 const elk = new ELK();

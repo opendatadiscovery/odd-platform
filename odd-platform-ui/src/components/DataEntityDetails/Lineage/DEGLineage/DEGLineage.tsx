@@ -12,18 +12,11 @@ import * as S from './DEGLineage.styles';
 const DEGLineage: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
-  // DEG data
   const { data, isLoading, isSuccess, isFetching } = useDataEntityGroupLineage({
     dataEntityId,
   });
   const rawNodes = useMemo(() => [...(data?.nodes || [])], [data?.nodes]);
   const rawEdges = useMemo(() => [...(data?.edges || [])], [data?.edges]);
-
-  // // large mock data
-  // const [downstream] = useDataEntityLineage({ dataEntityId });
-  // const { data, isLoading, isSuccess, isFetching } = downstream;
-  // const rawNodes = useMemo(() => uniqBy([...(data?.nodes || [])], 'id'), [data?.nodes]);
-  // const rawEdges = useMemo(() => [...(data?.edges || [])], [data?.edges]);
 
   const [isLayouted] = useAtom(isLayoutedAtom);
 

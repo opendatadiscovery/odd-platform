@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 
 export const Container = styled('div')(({ theme }) => ({
@@ -19,8 +19,11 @@ export const LoaderContainer = styled('div')(({ theme }) => ({
   justifyContent: 'center',
 }));
 
-export const LineageViewContainer = styled('div')(({ theme }) => ({
-  width: '100%',
-  height: '100%',
-  position: 'relative',
-}));
+export const LineageViewContainer = styled('div')(
+  () =>
+    ({
+      width: '100%',
+      height: '100%',
+      position: 'relative',
+    } as CSSObject)
+);

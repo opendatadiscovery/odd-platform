@@ -23,7 +23,7 @@ export interface DataEntityGroupLineage {
 
 export type DEGLineageQueryParams = {
   full: boolean; // full or compact view
-  x: number; // zoom x position
-  y: number; // zoom y position
-  s: number; // scale
+  x: number | undefined; // zoom x position
+  y: number | undefined; // zoom y position
+  s: number | undefined; // scale
 };
