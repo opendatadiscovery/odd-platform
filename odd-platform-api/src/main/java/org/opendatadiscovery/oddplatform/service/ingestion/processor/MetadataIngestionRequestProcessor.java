@@ -36,6 +36,7 @@ public class MetadataIngestionRequestProcessor implements IngestionRequestProces
         final List<MetadataInfo> metadataInfos = retrieveMetadataInfoFromDataStructure(request);
         final List<MetadataKey> metadataKeys = metadataInfos.stream()
             .map(MetadataInfo::key)
+            .distinct()
             .toList();
 
         final var existingMono = metadataFieldValueRepository.listByDataEntityIds(request.getAllIds())

@@ -54,6 +54,7 @@ public class DatasetFieldMetadataIngestionServiceImpl implements DatasetFieldMet
         final List<MetadataInfo> metadataInfos = retrieveMetadataInfoFromDatasetFields(request, fields);
         final List<MetadataKey> metadataKeys = metadataInfos.stream()
             .map(MetadataInfo::key)
+            .distinct()
             .toList();
         final List<Long> datasetFieldIds = fields.values().stream()
             .map(DatasetFieldPojo::getId)
