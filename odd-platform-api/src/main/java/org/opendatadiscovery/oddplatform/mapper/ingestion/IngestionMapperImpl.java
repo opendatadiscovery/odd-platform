@@ -28,6 +28,7 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.DataEntityClassTypeValidationException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataConsumer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityGroup;
@@ -81,17 +82,6 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
     private final DatasetFieldIngestionMapper datasetFieldIngestionMapper;
-
-    private static final Map<DataEntityClassDto, String> ENTITY_CLASS_PROPERTY = Map.of(
-        DATA_SET, "dataset",
-        DATA_TRANSFORMER, "data_transformer",
-        DATA_TRANSFORMER_RUN, "data_transformer_run",
-        DATA_CONSUMER, "data_consumer",
-        DATA_QUALITY_TEST, "data_quality_test",
-        DATA_QUALITY_TEST_RUN, "data_quality_test_run",
-        DATA_INPUT, "data_input",
-        DATA_ENTITY_GROUP, "data_entity_group"
-    );
 
     private static final List<Pair<Predicate<DataEntity>, DataEntityClassDto>> ENTITY_CLASS_DISCRIMINATOR = List.of(
         Pair.of(de -> de.getDataset() != null, DATA_SET),
@@ -392,30 +382,11 @@ public class IngestionMapperImpl implements IngestionMapper {
                                        final Set<DataEntityClassDto> entityClasses,
                                        final DataEntityTypeDto type) {
         final Set<DataEntityClassDto> expectedClasses = DataEntityClassDto.getClassesByType(type);
-        final boolean isProperlyFilledClasses;
-        if (CollectionUtils.isEmpty(entityClasses)) {
-            isProperlyFilledClasses = false;
-        } else {
-            isProperlyFilledClasses = expectedClasses.containsAll(entityClasses);
-        }
+        final boolean isProperlyFilledClasses = !CollectionUtils.isEmpty(entityClasses)
+            && expectedClasses.containsAll(entityClasses);
         if (!isProperlyFilledClasses) {
-            final String errorMessage = buildEntityClassesErrorMessage(oddrn, type, entityClasses, expectedClasses);
-            throw new BadUserRequestException(errorMessage);
+            throw new DataEntityClassTypeValidationException(oddrn, type, entityClasses, expectedClasses);
         }
-    }
-
-    private String buildEntityClassesErrorMessage(final String oddrn,
-                                                  final DataEntityTypeDto type,
-                                                  final Set<DataEntityClassDto> actualClasses,
-                                                  final Set<DataEntityClassDto> expectedClasses) {
-        return """
-            Data entity with oddrn %s has %s type. One or several properties must be filled: [%s].
-            Received properties: [%s]. Please define missing fields or remove redundant ones and try again."""
-            .formatted(oddrn, type, entityClassesProperties(expectedClasses), entityClassesProperties(actualClasses));
-    }
-
-    private String entityClassesProperties(final Set<DataEntityClassDto> classDtos) {
-        return classDtos.stream().map(ENTITY_CLASS_PROPERTY::get).collect(Collectors.joining(", "));
     }
 
     @Data
