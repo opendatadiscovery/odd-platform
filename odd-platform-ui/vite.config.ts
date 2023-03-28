@@ -70,6 +70,7 @@ export default defineConfig(({ mode }) => {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
+      sourcemap: mode === 'development' || 'hidden',
       rollupOptions: {
         maxParallelFileOps: Math.max(1, cpus().length - 1),
         output: {
