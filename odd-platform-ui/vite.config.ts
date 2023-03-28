@@ -30,7 +30,17 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build/ui',
       sourcemap: false,
-      rollupOptions: { cache: false, maxParallelFileOps: 2 },
+      rollupOptions: {
+        cache: false,
+        maxParallelFileOps: 2,
+        output: {
+          manualChunks: id => {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          },
+        },
+      },
     },
     test: {
       globals: true,
