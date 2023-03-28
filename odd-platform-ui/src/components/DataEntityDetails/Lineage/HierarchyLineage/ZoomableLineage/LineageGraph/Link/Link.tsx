@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { type TreeLinkDatum } from 'redux/interfaces';
 import { linkHorizontal } from 'd3-shape';
 import { MarkerArrow } from '@visx/marker';
 import { curveBasis } from '@visx/curve';
 import { LinePath } from '@visx/shape';
 import type { DefaultLinkObject } from 'd3';
-import LineageContext from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/LineageContext/LineageContext';
+import LineageContext from '../../../lineageLib/LineageContext/LineageContext';
 
 interface LinkProps {
   linkData: TreeLinkDatum;
@@ -27,6 +27,11 @@ const Link = React.memo<LinkProps>(({ linkData, reverse }) => {
 
   const drawPath = () => linkHorizontal()(coords) || undefined;
 
+  const headUrl = useMemo(
+    () => `url(#head${isHighlighted ? '-highlighted' : ''})`,
+    [isHighlighted]
+  );
+
   return (
     <>
       <MarkerArrow id='head' fill='#A8B0BD' size={6} orient='auto-start-reverse' />
@@ -41,8 +46,8 @@ const Link = React.memo<LinkProps>(({ linkData, reverse }) => {
         d={drawPath()}
         stroke={isHighlighted ? '#0080FF' : '#A8B0BD'}
         strokeWidth='2'
-        markerStart={reverse ? `url(#head${isHighlighted ? '-highlighted' : ''})` : ''}
-        markerEnd={reverse ? '' : `url(#head${isHighlighted ? '-highlighted' : ''})`}
+        markerStart={reverse ? headUrl : ''}
+        markerEnd={reverse ? '' : headUrl}
       />
     </>
   );

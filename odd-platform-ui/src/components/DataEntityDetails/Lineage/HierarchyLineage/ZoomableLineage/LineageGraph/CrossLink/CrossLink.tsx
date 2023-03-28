@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { DefaultLinkObject } from 'd3';
 import { linkHorizontal } from 'd3-shape';
 import { MarkerArrow } from '@visx/marker';
 import { LinePath } from '@visx/shape';
 import { curveBasis } from '@visx/curve';
 import { type TreeLinkDatum } from 'redux/interfaces';
-import LineageContext from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/LineageContext/LineageContext';
+import LineageContext from '../../../lineageLib/LineageContext/LineageContext';
 
 interface CrossLinkProps {
   linkData: TreeLinkDatum;
   reverse?: boolean;
 }
+
 const CrossLink: React.FC<CrossLinkProps> = ({ linkData, reverse }) => {
   const { nodeSize } = React.useContext(LineageContext);
 
@@ -27,6 +28,11 @@ const CrossLink: React.FC<CrossLinkProps> = ({ linkData, reverse }) => {
 
   const drawPath = () => linkHorizontal()(crossLinkCoords) || undefined;
 
+  const headUrl = useMemo(
+    () => `url(#crossHead${isHighlighted ? '-highlighted' : ''})`,
+    [isHighlighted]
+  );
+
   return (
     <>
       <MarkerArrow
@@ -42,10 +48,8 @@ const CrossLink: React.FC<CrossLinkProps> = ({ linkData, reverse }) => {
         strokeDasharray={10}
         stroke={isHighlighted ? '#66B3FF' : '#A8B0BD'}
         strokeWidth='2'
-        markerStart={
-          reverse ? `url(#crossHead${isHighlighted ? '-highlighted' : ''})` : ''
-        }
-        markerEnd={reverse ? '' : `url(#crossHead${isHighlighted ? '-highlighted' : ''})`}
+        markerStart={reverse ? headUrl : ''}
+        markerEnd={reverse ? '' : headUrl}
       />
     </>
   );

@@ -24,9 +24,15 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(
     ref
   ) => {
     const navigate = useNavigate();
-    const { dataEntityLineagePath } = useAppPaths();
+    const { dataEntityLineagePath, dataEntityOverviewPath } = useAppPaths();
 
-    const lineageLink = React.useMemo(() => dataEntityLineagePath(id), [id]);
+    const lineageLink = React.useMemo(
+      () =>
+        data?.entityClasses?.some(entityClass => entityClass.name === 'DATA_QUALITY_TEST')
+          ? dataEntityOverviewPath(id)
+          : dataEntityLineagePath(id),
+      [id, data?.entityClasses]
+    );
 
     const handleTitleClick = React.useCallback(() => {
       navigate(lineageLink);

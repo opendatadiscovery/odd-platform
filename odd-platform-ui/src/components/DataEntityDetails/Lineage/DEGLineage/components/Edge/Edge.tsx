@@ -26,7 +26,7 @@ const Edge: FC<EdgeProps> = ({ sections, isHighlighted }) => {
     const { bendPoints, startPoint, endPoint } = sections[0];
 
     if (bendPoints) {
-      const points = [startPoint, ...(bendPoints || []), endPoint];
+      const points = [startPoint, ...bendPoints, endPoint];
 
       const pathFn = line<Point>()
         .x(d => d.x)

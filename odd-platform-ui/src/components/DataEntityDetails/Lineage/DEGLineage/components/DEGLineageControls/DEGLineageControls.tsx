@@ -2,7 +2,7 @@ import React, { type FC, useCallback } from 'react';
 import { AppButton, AppTabs } from 'components/shared';
 import { TargetIcon } from 'components/shared/Icons';
 import { useQueryParams } from 'lib/hooks';
-import { useSetAtom } from 'jotai/index';
+import { useSetAtom } from 'jotai';
 import type { DEGLineageQueryParams } from '../../lib/interfaces';
 import { defaultDEGLineageQuery } from '../../lib/constants';
 import { isFitClickedAtom, isLayoutedAtom } from '../../lib/atoms';
@@ -18,7 +18,7 @@ const DEGLineageControls: FC = () => {
 
   const handleViewChange = React.useCallback(
     (newViewIndex: number) => {
-      setQueryParams(prev => ({ ...prev, full: !(newViewIndex > 0) }));
+      setQueryParams(prev => ({ ...prev, full: newViewIndex <= 0 }));
       setIsLayouted(false);
     },
     [setQueryParams, setIsLayouted]

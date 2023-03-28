@@ -36,7 +36,7 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
     ['dataEntityGroupLineage', dataEntityId],
     () => dataEntityApi.getDataEntityGroupsLineage({ dataEntityGroupId: dataEntityId }),
     {
-      refetchOnWindowFocus: false,
+      cacheTime: 0,
       select: (data): DataEntityGroupLineage =>
         data.items.reduce(
           (memo, lineage) => {

@@ -7,7 +7,7 @@ import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineag
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { LineageQueryParams } from '../../lineageLib/interfaces';
 import * as S from './LineageControlsStyles';
-import { defaultLineageQuery } from '../../lineageLib/constants';
+import { defaultLineageQuery, lineageDepth } from '../../lineageLib/constants';
 
 interface LineageControlsProps {
   handleCenterRoot: () => void;
@@ -46,7 +46,7 @@ const LineageControls = React.memo<LineageControlsProps>(
 
     const handleViewChange = React.useCallback(
       (newViewIndex: number) =>
-        setQueryParams(prev => ({ ...prev, full: !(newViewIndex > 0) })),
+        setQueryParams(prev => ({ ...prev, full: newViewIndex <= 0 })),
       [setQueryParams]
     );
 
@@ -110,10 +110,9 @@ const LineageControls = React.memo<LineageControlsProps>(
           value={d}
           onChange={handleDepthChange}
         >
-          {new Array(20).fill(0).map((_, i) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <option key={i + 1} value={i + 1}>
-              {i + 1}
+          {lineageDepth.map(depth => (
+            <option key={depth} value={depth}>
+              {depth}
             </option>
           ))}
         </AppSelect>

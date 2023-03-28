@@ -6,15 +6,15 @@ import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
 import { useAppPaths, useQueryParams } from 'lib/hooks';
 import { Group } from '@visx/group';
-import type { NodeSize } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
-import { getHighLightedLinks } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/helpers';
-import NodeTitle from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/NodeTitle/NodeTitle';
-import HiddenDependencies from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/HiddenDependencies/HiddenDependencies';
-import Info from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/Info';
-import Classes from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Classes/Classes';
-import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/NodeStyles';
-import LoadMoreButton from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/LoadMoreButton/LoadMoreButton';
-import { defaultLineageQuery } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/constants';
+import type { NodeSize } from '../../../lineageLib/interfaces';
+import { getHighLightedLinks } from '../../../lineageLib/helpers';
+import NodeTitle from './NodeTitle/NodeTitle';
+import HiddenDependencies from './HiddenDependencies/HiddenDependencies';
+import Info from './Info/Info';
+import Classes from './Classes/Classes';
+import * as S from './NodeStyles';
+import LoadMoreButton from './LoadMoreButton/LoadMoreButton';
+import { defaultLineageQuery } from '../../../lineageLib/constants';
 
 interface NodeProps {
   streamType: StreamType;
@@ -50,16 +50,21 @@ const Node = React.memo<NodeProps>(
       d: node.depth || 1,
     });
 
-    const lineageLink = React.useMemo(
-      () =>
-        parent && node.data.externalName
-          ? dataEntityLineagePath(
-              node.data.originalGroupId ? node.data.originalGroupId : node.data.id,
-              lineageQueryString
-            )
-          : '#',
-      [parent, node, lineageQueryString, dataEntityLineagePath]
-    );
+    const lineageLink = React.useMemo(() => {
+      const entityId = node.data.originalGroupId
+        ? node.data.originalGroupId
+        : node.data.id;
+
+      return parent && node.data.externalName
+        ? dataEntityLineagePath(entityId, lineageQueryString)
+        : '#';
+    }, [
+      parent,
+      node.data.originalGroupId,
+      node.data.id,
+      node.data.externalName,
+      lineageQueryString,
+    ]);
 
     const handleTitleClick = React.useCallback(() => {
       navigate(lineageLink);
