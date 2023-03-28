@@ -1,5 +1,5 @@
-// import ELK from 'elkjs/lib/elk.bundled';
-import ELK from 'elkjs/lib/elk-api';
+import ELK from 'elkjs/lib/elk.bundled';
+// import ELK from 'elkjs/lib/elk-api';
 import { layoutOptions } from './constants';
 import type { Edge, Node } from './interfaces';
 
@@ -22,11 +22,11 @@ export default function layoutDEGLineage({
   setGraphHeight,
   setEdges,
 }: Params) {
-  // const elk = new ELK();
+  const elk = new ELK();
 
-  const elk = new ELK({
-    workerUrl: './elk-worker.min.js',
-  });
+  // const elk = new ELK({
+  //   workerUrl: './elk-worker.min.js',
+  // });
 
   const graph = {
     id: 'root',
