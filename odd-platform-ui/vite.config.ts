@@ -3,9 +3,6 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 import dns from 'dns';
-import path from 'path';
-
-const resolvePath = (str: string) => path.resolve(__dirname, str);
 
 dns.setDefaultResultOrder('verbatim');
 
@@ -30,15 +27,7 @@ export default defineConfig(({ mode }) => {
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
-    build: {
-      outDir: 'build/ui',
-      rollupOptions: {
-        input: {
-          main: resolvePath('index.html'),
-          legacy: resolvePath('index.html'),
-        },
-      },
-    },
+    build: { outDir: 'build/ui' },
     test: {
       globals: true,
       environment: 'jsdom',
