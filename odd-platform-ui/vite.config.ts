@@ -4,6 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 import dns from 'dns';
 import { cpus } from 'os';
+import path from 'path';
 
 dns.setDefaultResultOrder('verbatim');
 
@@ -43,7 +44,7 @@ export default defineConfig(({ mode }) => {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
-      sourcemap: false,
+      sourcemap: mode === 'development' || 'hidden',
       rollupOptions: {
         cache: false,
         maxParallelFileOps: Math.max(1, cpus().length - 1),
@@ -52,6 +53,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules')) {
               return 'vendor';
             }
+          },
+          sourcemapIgnoreList: relativeSourcePath => {
+            const normalizedPath = path.normalize(relativeSourcePath);
+            return normalizedPath.includes('node_modules');
           },
         },
       },
