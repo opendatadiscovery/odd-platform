@@ -27,7 +27,11 @@ export default defineConfig(({ mode }) => {
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
-    build: { outDir: 'build/ui', sourcemap: false, rollupOptions: { cache: false } },
+    build: {
+      outDir: 'build/ui',
+      sourcemap: false,
+      rollupOptions: { cache: false, maxParallelFileOps: 2 },
+    },
     test: {
       globals: true,
       environment: 'jsdom',
