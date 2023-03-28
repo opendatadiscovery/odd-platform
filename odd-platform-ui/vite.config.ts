@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv, type UserConfigExport } from 'vite';
+import { defineConfig, loadEnv, type UserConfigExport, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
@@ -24,6 +24,25 @@ function differElkjsSourcemapsPlugins() {
   };
 }
 
+interface SourcemapExclude {
+  excludeNodeModules?: boolean;
+}
+
+function sourcemapExclude(opts?: SourcemapExclude): Plugin {
+  return {
+    name: 'sourcemap-exclude',
+    transform(code: string, id: string) {
+      if (opts?.excludeNodeModules && id.includes('node_modules')) {
+        return {
+          code,
+          // https://github.com/rollup/rollup/blob/master/docs/plugin-development/index.md#source-code-transformations
+          map: { mappings: '' },
+        };
+      }
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
@@ -41,7 +60,11 @@ export default defineConfig(({ mode }) => {
     },
   };
 
-  const defaultPlugins = [react(), tsconfigPaths(), differElkjsSourcemapsPlugins()];
+  const defaultPlugins = [
+    react(),
+    tsconfigPaths(),
+    sourcemapExclude({ excludeNodeModules: true }),
+  ];
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
