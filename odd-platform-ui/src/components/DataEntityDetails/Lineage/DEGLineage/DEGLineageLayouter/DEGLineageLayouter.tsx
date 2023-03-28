@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import React, { useLayoutEffect, useRef } from 'react';
-import { useSetAtom } from 'jotai/index';
+import { useSetAtom } from 'jotai';
 import { useQueryParams } from 'lib/hooks';
 import {
   edgesAtom,
