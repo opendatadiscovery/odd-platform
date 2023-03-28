@@ -144,7 +144,7 @@ public class LineageServiceImpl implements LineageService {
                 dtoRepository.get(r.getParentOddrn()).getDataEntity().getId(),
                 dtoRepository.get(r.getChildOddrn()).getDataEntity().getId()
             ))
-            .collect(toList());
+            .toList();
 
         final List<LineageNodeDto> nodes = relations.stream()
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
@@ -157,7 +157,7 @@ public class LineageServiceImpl implements LineageService {
                 final var parentsCount = parentsCountMap.getOrDefault(dto.getDataEntity().getOddrn(), 0);
                 return new LineageNodeDto(dto, childrenCount, parentsCount);
             })
-            .collect(toList());
+            .toList();
 
         final Map<Long, List<Long>> groupRelations = groupRepository.entrySet()
             .stream()
