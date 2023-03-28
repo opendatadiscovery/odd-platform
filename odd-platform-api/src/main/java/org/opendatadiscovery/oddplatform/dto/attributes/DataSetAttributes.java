@@ -6,17 +6,21 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.CONSUMERS_COUNT;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.FIELDS_COUNT;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.ROWS_COUNT;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class DataSetAttributes extends DataEntityAttributes {
-    @JsonProperty("rows_count")
+    @JsonProperty(ROWS_COUNT)
     private Long rowsCount;
 
-    @JsonProperty("fields_count")
+    @JsonProperty(FIELDS_COUNT)
     private Long fieldsCount;
 
-    @JsonProperty("consumers_count")
+    @JsonProperty(CONSUMERS_COUNT)
     private Long consumersCount;
 
     @Override

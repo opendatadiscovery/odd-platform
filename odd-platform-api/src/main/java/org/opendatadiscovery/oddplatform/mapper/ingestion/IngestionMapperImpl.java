@@ -27,6 +27,8 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
+import org.opendatadiscovery.oddplatform.exception.DataEntityClassTypeValidationException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataConsumer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityGroup;
@@ -52,6 +54,22 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_QUAL
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER_RUN;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataConsumer.INPUT_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataEntityGroup.ENTITIES_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataEntityGroup.GROUP_ODDRN;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataInput.OUTPUT_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.DATASET_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.EXPECTATION;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.LINKED_URL_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.SUITE_NAME;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataQualityTest.SUITE_URL;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataTransformer.SOURCE_CODE_URL;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataTransformer.SOURCE_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataTransformer.TARGET_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.CONSUMERS_COUNT;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.FIELDS_COUNT;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.PARENT_DATASET;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.ROWS_COUNT;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataConsumerIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityGroupDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataInputIngestionDto;
@@ -78,8 +96,9 @@ public class IngestionMapperImpl implements IngestionMapper {
 
     @Override
     public DataEntityIngestionDto createIngestionDto(final DataEntity dataEntity, final long dataSourceId) {
-        final Set<DataEntityClassDto> entityClasses = defineEntityClasses(dataEntity);
         final DataEntityTypeDto type = DataEntityTypeDto.valueOf(dataEntity.getType().getValue());
+        final Set<DataEntityClassDto> entityClasses = defineEntityClasses(dataEntity);
+        validateEntityClasses(dataEntity.getOddrn(), entityClasses, type);
 
         DataEntityIngestionDto.DataEntityIngestionDtoBuilder builder = DataEntityIngestionDto.builder()
             .name(dataEntity.getName())
@@ -92,7 +111,7 @@ public class IngestionMapperImpl implements IngestionMapper {
             .type(type)
             .specificAttributesJson(specificAttributesAsString(entityClasses, dataEntity));
 
-        if (dataEntity.getMetadata() != null && !dataEntity.getMetadata().isEmpty()) {
+        if (CollectionUtils.isNotEmpty(dataEntity.getMetadata())) {
             builder = builder.metadata(dataEntity.getMetadata().get(0).getMetadata());
         }
 
@@ -166,7 +185,11 @@ public class IngestionMapperImpl implements IngestionMapper {
     @Override
     public IngestionTaskRun mapTaskRun(final DataEntity dataEntity) {
         if (dataEntity.getDataTransformerRun() == null && dataEntity.getDataQualityTestRun() == null) {
-            throw new IllegalArgumentException("Data Entity doesn't have task run data");
+            throw new BadUserRequestException("""
+                Data Entity with oddrn %s has JOB_RUN type, but doesn't have task run data.
+                Please define data_transformer_run or data_quality_test_run properties.""".formatted(
+                dataEntity.getOddrn())
+            );
         }
 
         return dataEntity.getDataTransformerRun() != null
@@ -242,17 +265,10 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     private Set<DataEntityClassDto> defineEntityClasses(final DataEntity dataEntity) {
-        final Set<DataEntityClassDto> entityClasses = ENTITY_CLASS_DISCRIMINATOR.stream()
+        return ENTITY_CLASS_DISCRIMINATOR.stream()
             .map(disc -> disc.getLeft().test(dataEntity) ? disc.getRight() : null)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
-
-        if (entityClasses.isEmpty()) {
-            throw new IllegalArgumentException(
-                String.format("There's no supported class for entity %s", dataEntity.getOddrn()));
-        }
-
-        return entityClasses;
     }
 
     private String structureHash(final List<DataSetField> fields) {
@@ -312,37 +328,37 @@ public class IngestionMapperImpl implements IngestionMapper {
     ) {
         return switch (entityClass) {
             case DATA_SET -> Pair.of(entityClass, specAttrsMap(List.of(
-                Pair.of("rows_count", dataEntity.getDataset().getRowsNumber()),
-                Pair.of("fields_count", dataEntity.getDataset().getFieldList().size()),
-                Pair.of("parent_dataset", dataEntity.getDataset().getParentOddrn()),
-                Pair.of("consumers_count", 0)
+                Pair.of(ROWS_COUNT, dataEntity.getDataset().getRowsNumber()),
+                Pair.of(FIELDS_COUNT, dataEntity.getDataset().getFieldList().size()),
+                Pair.of(PARENT_DATASET, dataEntity.getDataset().getParentOddrn()),
+                Pair.of(CONSUMERS_COUNT, 0)
             )));
 
             case DATA_TRANSFORMER -> Pair.of(entityClass, specAttrsMap(List.of(
-                Pair.of("source_list", new HashSet<>(dataEntity.getDataTransformer().getInputs())),
-                Pair.of("target_list", new HashSet<>(dataEntity.getDataTransformer().getOutputs())),
-                Pair.of("source_code_url", dataEntity.getDataTransformer().getSourceCodeUrl())
+                Pair.of(SOURCE_LIST, new HashSet<>(dataEntity.getDataTransformer().getInputs())),
+                Pair.of(TARGET_LIST, new HashSet<>(dataEntity.getDataTransformer().getOutputs())),
+                Pair.of(SOURCE_CODE_URL, dataEntity.getDataTransformer().getSourceCodeUrl())
             )));
 
             case DATA_CONSUMER -> Pair.of(entityClass, specAttrsMap(List.of(
-                Pair.of("input_list", new HashSet<>(dataEntity.getDataConsumer().getInputs()))
+                Pair.of(INPUT_LIST, new HashSet<>(dataEntity.getDataConsumer().getInputs()))
             )));
 
             case DATA_QUALITY_TEST -> Pair.of(entityClass, specAttrsMap(List.of(
-                Pair.of("suite_name", dataEntity.getDataQualityTest().getSuiteName()),
-                Pair.of("suite_url", dataEntity.getDataQualityTest().getSuiteUrl()),
-                Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
-                Pair.of("dataset_list", new HashSet<>(dataEntity.getDataQualityTest().getDatasetList())),
-                Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
+                Pair.of(SUITE_NAME, dataEntity.getDataQualityTest().getSuiteName()),
+                Pair.of(SUITE_URL, dataEntity.getDataQualityTest().getSuiteUrl()),
+                Pair.of(LINKED_URL_LIST, dataEntity.getDataQualityTest().getLinkedUrlList()),
+                Pair.of(DATASET_LIST, new HashSet<>(dataEntity.getDataQualityTest().getDatasetList())),
+                Pair.of(EXPECTATION, dataEntity.getDataQualityTest().getExpectation())
             )));
 
             case DATA_ENTITY_GROUP -> Pair.of(entityClass, specAttrsMap(List.of(
-                Pair.of("entities_list", new HashSet<>(dataEntity.getDataEntityGroup().getEntitiesList())),
-                Pair.of("group_oddrn", dataEntity.getDataEntityGroup().getGroupOddrn())
+                Pair.of(ENTITIES_LIST, new HashSet<>(dataEntity.getDataEntityGroup().getEntitiesList())),
+                Pair.of(GROUP_ODDRN, dataEntity.getDataEntityGroup().getGroupOddrn())
             )));
 
             case DATA_INPUT -> Pair.of(entityClass, specAttrsMap(List.of(
-                Pair.of("output_list", new HashSet<>(dataEntity.getDataInput().getOutputs()))
+                Pair.of(OUTPUT_LIST, new HashSet<>(dataEntity.getDataInput().getOutputs()))
             )));
 
             default -> null;
@@ -360,6 +376,17 @@ public class IngestionMapperImpl implements IngestionMapper {
             .map(DataEntityIngestionDto::getDataEntityGroup)
             .map(group -> group.groupOddrn() != null)
             .orElse(false);
+    }
+
+    private void validateEntityClasses(final String oddrn,
+                                       final Set<DataEntityClassDto> entityClasses,
+                                       final DataEntityTypeDto type) {
+        final Set<DataEntityClassDto> expectedClasses = DataEntityClassDto.getClassesByType(type);
+        final boolean isProperlyFilledClasses = !CollectionUtils.isEmpty(entityClasses)
+            && expectedClasses.stream().anyMatch(entityClasses::contains);
+        if (!isProperlyFilledClasses) {
+            throw new DataEntityClassTypeValidationException(oddrn, type, entityClasses, expectedClasses);
+        }
     }
 
     @Data
