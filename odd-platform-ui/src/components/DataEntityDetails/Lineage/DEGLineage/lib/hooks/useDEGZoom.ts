@@ -57,7 +57,7 @@ export default function useDEGZoom() {
       LAYER_WIDTH > graphWidth &&
       graphWidth > graphHeight
     ) {
-      compScale = (LAYER_WIDTH * 0.9) / graphWidth;
+      compScale = (LAYER_WIDTH * 0.7) / graphWidth;
     }
 
     if (
