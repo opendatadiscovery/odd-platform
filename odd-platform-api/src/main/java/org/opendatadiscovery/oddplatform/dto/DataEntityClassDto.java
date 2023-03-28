@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Getter;
+import org.apache.commons.collections4.MultiMapUtils;
+import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.lang3.StringUtils;
 
 import static java.util.Collections.emptySet;
@@ -45,6 +47,14 @@ public enum DataEntityClassDto {
 
     private static final Map<Integer, DataEntityClassDto> MAP = Arrays.stream(DataEntityClassDto.values())
         .collect(Collectors.toMap(DataEntityClassDto::getId, identity()));
+
+    private static final SetValuedMap<DataEntityTypeDto, DataEntityClassDto> TYPE_CLASS_MAP = Arrays.stream(values())
+        .collect(
+            MultiMapUtils::newSetValuedHashMap,
+            (map, dto) -> dto.getTypes().forEach(typeDto -> map.put(typeDto, dto)),
+            SetValuedMap::putAll
+        );
+
     private final int id;
     private final Set<DataEntityTypeDto> types;
 
@@ -80,5 +90,9 @@ public enum DataEntityClassDto {
             .map(String::toLowerCase)
             .map(StringUtils::capitalize)
             .collect(Collectors.joining(" "));
+    }
+
+    public static Set<DataEntityClassDto> getClassesByType(final DataEntityTypeDto typeDto) {
+        return TYPE_CLASS_MAP.get(typeDto);
     }
 }
