@@ -3,8 +3,22 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 import dns from 'dns';
+import { cpus } from 'os';
 
 dns.setDefaultResultOrder('verbatim');
+
+function differMuiSourcemapsPlugins() {
+  const muiPackages = ['@mui/material', '@emotion/styled', '@emotion/react'];
+
+  return {
+    name: 'differ-mui-sourcemap',
+    transform(code: string, id: string) {
+      if (muiPackages.some(pkg => id.includes(pkg))) {
+        return { code, map: null };
+      }
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -23,7 +37,7 @@ export default defineConfig(({ mode }) => {
     },
   };
 
-  const defaultPlugins = [react(), tsconfigPaths()];
+  const defaultPlugins = [react(), tsconfigPaths(), differMuiSourcemapsPlugins()];
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
@@ -32,7 +46,7 @@ export default defineConfig(({ mode }) => {
       sourcemap: false,
       rollupOptions: {
         cache: false,
-        maxParallelFileOps: 2,
+        maxParallelFileOps: Math.max(1, cpus().length - 1),
         output: {
           manualChunks: id => {
             if (id.includes('node_modules')) {
