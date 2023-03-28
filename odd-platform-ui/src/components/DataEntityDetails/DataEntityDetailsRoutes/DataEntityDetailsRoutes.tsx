@@ -9,7 +9,7 @@ import { getResourcePermissions } from 'redux/selectors';
 
 const Overview = React.lazy(() => import('../Overview/Overview'));
 const DatasetStructure = React.lazy(() => import('../DatasetStructure/DatasetStructure'));
-const Lineage = React.lazy(() => import('../Lineage/Lineage'));
+// const Lineage = React.lazy(() => import('../Lineage/Lineage'));
 const TestReport = React.lazy(() => import('../TestReport/TestReport'));
 const TestReportDetails = React.lazy(
   () => import('../TestReport/TestReportDetails/TestReportDetails')
@@ -55,7 +55,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
           >
             <Route path={DataEntityRoutes.versionIdParam} />
           </Route>
-          <Route path={DataEntityRoutes.lineage} element={<Lineage />} />
+          {/* <Route path={DataEntityRoutes.lineage} element={<Lineage />} /> */}
           <Route
             path={getNonExactParamPath(DataEntityRoutes.testReports)}
             element={<TestReport />}
