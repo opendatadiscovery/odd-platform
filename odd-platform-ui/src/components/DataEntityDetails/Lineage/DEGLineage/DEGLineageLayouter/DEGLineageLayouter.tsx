@@ -16,7 +16,7 @@ import type {
 } from '../lib/interfaces';
 import Node from '../components/Node/Node';
 import { defaultDEGLineageQuery, NODE_HEIGHT, NODE_WIDTH } from '../lib/constants';
-import layoutDEGLineage from '../lib/layoutDEGLineage';
+// import layoutDEGLineage from '../lib/layoutDEGLineage';
 
 interface DEGLineageLayouterProps {
   nodes: NodeType[];
@@ -44,15 +44,15 @@ const DEGLineageLayouter: FC<DEGLineageLayouterProps> = ({ nodes, edges }) => {
       fullView: full,
     }));
 
-    layoutDEGLineage({
-      nodes: nodesWithSizes,
-      edges,
-      setGraphWidth,
-      setIsLayouted,
-      setEdges,
-      setGraphHeight,
-      setNodes,
-    });
+    // layoutDEGLineage({
+    //   nodes: nodesWithSizes,
+    //   edges,
+    //   setGraphWidth,
+    //   setIsLayouted,
+    //   setEdges,
+    //   setGraphHeight,
+    //   setNodes,
+    // });
   }, []);
 
   return (
