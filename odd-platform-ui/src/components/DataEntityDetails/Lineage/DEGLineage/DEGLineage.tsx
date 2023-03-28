@@ -3,10 +3,10 @@ import { useAppParams } from 'lib/hooks';
 import { useDataEntityGroupLineage } from 'lib/hooks/api';
 import { useAtom } from 'jotai';
 import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared';
-// import DEGLineageControls from './components/DEGLineageControls/DEGLineageControls';
-import DEGLineageLayouter from './DEGLineageLayouter/DEGLineageLayouter';
+import DEGLineageControls from './components/DEGLineageControls/DEGLineageControls';
+// import DEGLineageLayouter from './DEGLineageLayouter/DEGLineageLayouter';
 import { isLayoutedAtom } from './lib/atoms';
-// import ZoomableDEGLineage from './ZoomableDEGLineage/ZoomableDEGLineage';
+import ZoomableDEGLineage from './ZoomableDEGLineage/ZoomableDEGLineage';
 import * as S from './DEGLineage.styles';
 
 const DEGLineage: React.FC = () => {
@@ -26,20 +26,20 @@ const DEGLineage: React.FC = () => {
 
   return (
     <S.Container>
-      {(!isLayouted || isFetching || isLoading) && rawNodes.length !== 0 && (
-        <>
-          <S.LoaderContainer>
-            <AppCircularProgress size={16} text='Loading lineage' />
-          </S.LoaderContainer>
-          <DEGLineageLayouter nodes={rawNodes} edges={rawEdges} />
-        </>
-      )}
-      {/* {isSuccess && isLayouted && ( */}
-      {/*   <S.LineageViewContainer> */}
-      {/*     <DEGLineageControls /> */}
-      {/*     <ZoomableDEGLineage /> */}
-      {/*   </S.LineageViewContainer> */}
+      {/* {(!isLayouted || isFetching || isLoading) && rawNodes.length !== 0 && ( */}
+      {/*   <> */}
+      {/*     <S.LoaderContainer> */}
+      {/*       <AppCircularProgress size={16} text='Loading lineage' /> */}
+      {/*     </S.LoaderContainer> */}
+      {/*     <DEGLineageLayouter nodes={rawNodes} edges={rawEdges} /> */}
+      {/*   </> */}
       {/* )} */}
+      {isSuccess && isLayouted && (
+        <S.LineageViewContainer>
+          <DEGLineageControls />
+          <ZoomableDEGLineage />
+        </S.LineageViewContainer>
+      )}
     </S.Container>
   );
 };
