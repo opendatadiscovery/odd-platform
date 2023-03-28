@@ -1,4 +1,3 @@
-import type { LayoutOptions } from 'elkjs/lib/elk-api';
 import type { DEGLineageQueryParams } from './interfaces';
 
 export const LAYER_HEIGHT = 780;
@@ -9,7 +8,7 @@ export const NODE_HEIGHT = 300;
 export const MIN_ZOOM = 0.01;
 export const MAX_ZOOM = 2;
 
-export const layoutOptions: LayoutOptions = {
+export const layoutOptions: { [key: string]: string } = {
   'elk.algorithm': 'layered',
   'elk.direction': 'RIGHT',
   'elk.layered.spacing.edgeNodeBetweenLayers': '20',

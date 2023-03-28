@@ -1,4 +1,4 @@
-import ELK from 'elkjs/lib/elk.bundled';
+import ELK from 'elkjs/lib/elk-api';
 import { layoutOptions } from './constants';
 import type { Edge, Node } from './interfaces';
 
