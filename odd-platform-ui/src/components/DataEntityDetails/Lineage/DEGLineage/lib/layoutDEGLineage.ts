@@ -1,4 +1,5 @@
-import ELK from 'elkjs/lib/elk.bundled';
+// eslint-disable-next-line import/extensions
+import ELK from 'elkjs/lib/elk.bundled.js';
 // import ELK from 'elkjs/lib/elk-api';
 import { layoutOptions } from './constants';
 import type { Edge, Node } from './interfaces';
