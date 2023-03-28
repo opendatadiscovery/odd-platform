@@ -6,14 +6,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataEntityGroup.ENTITIES_LIST;
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataEntityGroup.GROUP_ODDRN;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class DataEntityGroupAttributes extends DataEntityAttributes {
-    @JsonProperty("group_oddrn")
+    @JsonProperty(GROUP_ODDRN)
     private String groupOddrn;
 
-    @JsonProperty("entities_list")
+    @JsonProperty(ENTITIES_LIST)
     private Set<String> entitiesOddrnList;
 
     @Override
