@@ -3,23 +3,11 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 import dns from 'dns';
-import { cpus } from 'os';
 import path from 'path';
 
+const resolvePath = (str: string) => path.resolve(__dirname, str);
+
 dns.setDefaultResultOrder('verbatim');
-
-function differMuiSourcemapsPlugins() {
-  const muiPackages = ['@mui/material', '@emotion/styled', '@emotion/react'];
-
-  return {
-    name: 'differ-mui-sourcemap',
-    transform(code: string, id: string) {
-      if (muiPackages.some(pkg => id.includes(pkg))) {
-        return { code, map: null };
-      }
-    },
-  };
-}
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -38,26 +26,16 @@ export default defineConfig(({ mode }) => {
     },
   };
 
-  const defaultPlugins = [react(), tsconfigPaths(), differMuiSourcemapsPlugins()];
+  const defaultPlugins = [react(), tsconfigPaths()];
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
-      sourcemap: mode === 'development' || 'hidden',
       rollupOptions: {
-        cache: false,
-        maxParallelFileOps: Math.max(1, cpus().length - 1),
-        output: {
-          manualChunks: id => {
-            if (id.includes('node_modules')) {
-              return 'vendor';
-            }
-          },
-          sourcemapIgnoreList: relativeSourcePath => {
-            const normalizedPath = path.normalize(relativeSourcePath);
-            return normalizedPath.includes('node_modules');
-          },
+        input: {
+          main: resolvePath('index.html'),
+          legacy: resolvePath('index.html'),
         },
       },
     },
