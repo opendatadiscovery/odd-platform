@@ -1,5 +1,5 @@
 import type { DataEntityLineageNode } from 'generated-sources';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk-api';
+import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 
 export type NodeData = Omit<
   DataEntityLineageNode,
