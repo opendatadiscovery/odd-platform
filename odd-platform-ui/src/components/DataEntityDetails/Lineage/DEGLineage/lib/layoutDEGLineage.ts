@@ -1,4 +1,4 @@
-// import ELK from 'elkjs/lib/elk.bundled';
+import ELK from 'elkjs/lib/elk.bundled';
 import { layoutOptions } from './constants';
 import type { Edge, Node } from './interfaces';
 
@@ -12,8 +12,6 @@ interface Params {
   setIsLayouted: (b: boolean) => void;
 }
 
-// const elk = new ELK();
-
 export default function layoutDEGLineage({
   nodes,
   edges,
@@ -23,6 +21,8 @@ export default function layoutDEGLineage({
   setGraphHeight,
   setEdges,
 }: Params) {
+  const elk = new ELK();
+
   const graph = {
     id: 'root',
     layoutOptions,
@@ -30,11 +30,11 @@ export default function layoutDEGLineage({
     edges,
   };
 
-  // elk.layout(graph).then(layoutedGraph => {
-  //   setGraphWidth(layoutedGraph.width || 0);
-  //   setGraphHeight(layoutedGraph.height || 0);
-  //   setEdges(layoutedGraph.edges || []);
-  //   setNodes(layoutedGraph.children || []);
-  //   setIsLayouted(true);
-  // });
+  elk.layout(graph).then(layoutedGraph => {
+    setGraphWidth(layoutedGraph.width || 0);
+    setGraphHeight(layoutedGraph.height || 0);
+    setEdges(layoutedGraph.edges || []);
+    setNodes(layoutedGraph.children || []);
+    setIsLayouted(true);
+  });
 }
