@@ -7,10 +7,10 @@ public class AttributeNames {
 
     @UtilityClass
     public static class Dataset {
-        public final String ROWS_COUNT = "rows_count";
-        public final String FIELDS_COUNT = "fields_count";
-        public final String CONSUMERS_COUNT = "consumers_count";
-        public final String PARENT_DATASET = "parent_dataset";
+        public static final String ROWS_COUNT = "rows_count";
+        public static final String FIELDS_COUNT = "fields_count";
+        public static final String CONSUMERS_COUNT = "consumers_count";
+        public static final String PARENT_DATASET = "parent_dataset";
     }
 
     @UtilityClass
@@ -40,8 +40,8 @@ public class AttributeNames {
 
     @UtilityClass
     public static class DataTransformer {
-        public final String SOURCE_LIST = "source_list";
-        public final String TARGET_LIST = "target_list";
-        public final String SOURCE_CODE_URL = "source_code_url";
+        public static final String SOURCE_LIST = "source_list";
+        public static final String TARGET_LIST = "target_list";
+        public static final String SOURCE_CODE_URL = "source_code_url";
     }
 }

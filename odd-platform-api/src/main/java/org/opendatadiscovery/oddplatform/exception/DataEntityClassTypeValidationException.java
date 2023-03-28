@@ -28,15 +28,15 @@ public class DataEntityClassTypeValidationException extends BadUserRequestExcept
     );
 
     private static final String MESSAGE = """
-        Data entity with oddrn %s has %s type. One or several properties must be filled: [%s].
-        Received properties: [%s]. Please define missing fields or remove redundant ones and try again.""";
+        Data entity with oddrn %s has %s type. One or several properties must be filled: [%s]. \
+        Received properties: [%s]. Please define missing fields and try again.""";
 
     public DataEntityClassTypeValidationException(final String oddrn, final DataEntityTypeDto type,
                                                   final Set<DataEntityClassDto> actualClasses,
                                                   final Set<DataEntityClassDto> expectedClasses) {
         super(MESSAGE, oddrn, type,
-            actualClasses.stream().map(ENTITY_CLASS_PROPERTY::get).collect(Collectors.joining(", ")),
-            expectedClasses.stream().map(ENTITY_CLASS_PROPERTY::get).collect(Collectors.joining(", "))
+            expectedClasses.stream().map(ENTITY_CLASS_PROPERTY::get).collect(Collectors.joining(", ")),
+            actualClasses.stream().map(ENTITY_CLASS_PROPERTY::get).collect(Collectors.joining(", "))
         );
     }
 }

@@ -383,7 +383,7 @@ public class IngestionMapperImpl implements IngestionMapper {
                                        final DataEntityTypeDto type) {
         final Set<DataEntityClassDto> expectedClasses = DataEntityClassDto.getClassesByType(type);
         final boolean isProperlyFilledClasses = !CollectionUtils.isEmpty(entityClasses)
-            && expectedClasses.containsAll(entityClasses);
+            && expectedClasses.stream().anyMatch(entityClasses::contains);
         if (!isProperlyFilledClasses) {
             throw new DataEntityClassTypeValidationException(oddrn, type, entityClasses, expectedClasses);
         }
