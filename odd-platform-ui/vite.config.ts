@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
-      sourcemap: false,
+      sourcemap: process.env.NODE_ENV !== 'production',
       commonjsOptions: {
         sourceMap: false,
       },
