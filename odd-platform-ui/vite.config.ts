@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => {
     tsconfigPaths(),
     sourcemapExclude({ excludeNodeModules: true }),
     splitVendorChunkPlugin(),
-    // visualizer({ open: true }) as PluginOption,
+    visualizer({ open: true }) as PluginOption,
   ];
 
   const defaultConfig: UserConfigExport = {
@@ -68,6 +68,7 @@ export default defineConfig(({ mode }) => {
       commonjsOptions: {
         sourceMap: false,
       },
+      minify: false,
       rollupOptions: {
         // maxParallelFileOps: Math.max(1, cpus().length - 1),
         output: {
