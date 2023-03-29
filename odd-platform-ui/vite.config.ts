@@ -4,8 +4,10 @@ import {
   type UserConfigExport,
   splitVendorChunkPlugin,
   type Plugin,
+  type PluginOption,
 } from 'vite';
 import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 import dns from 'dns';
@@ -55,6 +57,7 @@ export default defineConfig(({ mode }) => {
     tsconfigPaths(),
     sourcemapExclude({ excludeNodeModules: true }),
     splitVendorChunkPlugin(),
+    // visualizer({ open: true }) as PluginOption,
   ];
 
   const defaultConfig: UserConfigExport = {
@@ -62,18 +65,26 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build/ui',
       sourcemap: false,
+      commonjsOptions: {
+        sourceMap: false,
+      },
       rollupOptions: {
-        maxParallelFileOps: Math.max(1, cpus().length - 1),
+        // maxParallelFileOps: Math.max(1, cpus().length - 1),
         output: {
-          manualChunks: id => {
-            if (id.includes('node_modules')) {
-              return 'vendor';
-            }
+          manualChunks: {
+            jsoneditor: ['vanilla-jsoneditor'],
+            elkjs: ['elkjs'],
+            elkjsBundled: ['elkjs/lib/elk.bundled'],
           },
-          sourcemapIgnoreList: relativeSourcePath => {
-            const normalizedPath = path.normalize(relativeSourcePath);
-            return normalizedPath.includes('node_modules');
-          },
+          // manualChunks: id => {
+          //   if (id.includes('node_modules')) {
+          //     return 'vendor';
+          //   }
+          // },
+          // sourcemapIgnoreList: relativeSourcePath => {
+          //   const normalizedPath = path.normalize(relativeSourcePath);
+          //   return normalizedPath.includes('node_modules');
+          // },
         },
         cache: false,
       },
