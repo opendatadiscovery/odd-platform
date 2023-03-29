@@ -28,7 +28,7 @@ function sourcemapExclude(opts?: SourcemapExclude): Plugin {
         return {
           code,
           // https://github.com/rollup/rollup/blob/master/docs/plugin-development/index.md#source-code-transformations
-          map: { mappings: '' },
+          map: null,
         };
       }
     },
@@ -64,11 +64,10 @@ export default defineConfig(({ mode }) => {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
-      sourcemap: process.env.NODE_ENV !== 'production',
+      sourcemap: false,
       commonjsOptions: {
         sourceMap: false,
       },
-      minify: false,
       rollupOptions: {
         // maxParallelFileOps: Math.max(1, cpus().length - 1),
         output: {
@@ -82,10 +81,11 @@ export default defineConfig(({ mode }) => {
           //     return 'vendor';
           //   }
           // },
-          // sourcemapIgnoreList: relativeSourcePath => {
-          //   const normalizedPath = path.normalize(relativeSourcePath);
-          //   return normalizedPath.includes('node_modules');
-          // },
+          sourcemapIgnoreList: relativeSourcePath => {
+            const normalizedPath = path.normalize(relativeSourcePath);
+            return normalizedPath.includes('node_modules');
+          },
+          sourcemap: false,
         },
         cache: false,
       },
