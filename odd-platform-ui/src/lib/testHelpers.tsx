@@ -5,12 +5,10 @@ import {
   renderHook,
   type RenderOptions,
   screen,
-  waitFor,
 } from '@testing-library/react';
 import React, { type PropsWithChildren, type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
-import type fetchMock from 'fetch-mock';
 import { MemoryRouter, type MemoryRouterProps, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider, type UseQueryResult } from 'react-query';
 
@@ -71,15 +69,6 @@ interface WithRouteProps {
   children: React.ReactNode;
   path: string;
 }
-
-export const expectQueryWorks = async (
-  mock: fetchMock.FetchMockStatic,
-  result: { current: UseQueryResult<unknown, unknown> }
-) => {
-  await waitFor(() => expect(result.current.isFetched).toBeTruthy());
-  expect(mock.calls()).toHaveLength(1);
-  expect(result.current.data).toBeDefined();
-};
 
 export const WithRoute: React.FC<WithRouteProps> = ({ children, path }) => (
   <Routes>

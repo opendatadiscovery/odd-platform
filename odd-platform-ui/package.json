@@ -107,7 +107,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "fetch-mock": "^9.11.0",
     "husky": "^8.0.3",
     "jsdom": "^21.1.1",
     "lint-staged": "^13.0.3",
