@@ -30,11 +30,11 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build/ui',
     },
-    // test: {
-    //   globals: true,
-    //   environment: 'jsdom',
-    //   setupFiles: './src/setupTests.ts',
-    // },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/setupTests.ts',
+    },
   };
 
   return mode === 'development'
