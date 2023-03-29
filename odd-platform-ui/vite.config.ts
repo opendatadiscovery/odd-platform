@@ -1,28 +1,18 @@
-import { defineConfig, loadEnv, type UserConfigExport, type Plugin } from 'vite';
+import {
+  defineConfig,
+  loadEnv,
+  type UserConfigExport,
+  splitVendorChunkPlugin,
+  type Plugin,
+} from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import checker from 'vite-plugin-checker';
 import dns from 'dns';
-import { cpus } from 'os';
 import * as path from 'path';
+import { cpus } from 'os';
 
 dns.setDefaultResultOrder('verbatim');
-
-function differElkjsSourcemapsPlugins() {
-  const elkjsPackages = ['elkjs', 'elkjs/lib/elk.bundled', 'elkjs/lib/elk-api'];
-
-  return {
-    name: 'differ-elkjs-sourcemap',
-    transform(code: string, id: string) {
-      if (elkjsPackages.some(pkg => id.includes(pkg))) {
-        return {
-          code,
-          map: null,
-        };
-      }
-    },
-  };
-}
 
 interface SourcemapExclude {
   excludeNodeModules?: boolean;
@@ -64,13 +54,14 @@ export default defineConfig(({ mode }) => {
     react(),
     tsconfigPaths(),
     sourcemapExclude({ excludeNodeModules: true }),
+    splitVendorChunkPlugin(),
   ];
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
-      sourcemap: mode === 'development' || 'hidden',
+      sourcemap: false,
       rollupOptions: {
         maxParallelFileOps: Math.max(1, cpus().length - 1),
         output: {
