@@ -116,7 +116,8 @@
     "vite": "^4.2.1",
     "vite-plugin-checker": "^0.5.6",
     "vite-tsconfig-paths": "^4.0.5",
-    "vitest": "^0.29.2"
+    "vitest": "^0.29.2",
+    "web-worker": "^1.2.0"
   },
   "resolutions": {
     "minimist": "1.2.6"

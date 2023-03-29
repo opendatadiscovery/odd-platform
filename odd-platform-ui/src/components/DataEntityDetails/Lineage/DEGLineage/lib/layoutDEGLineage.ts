@@ -1,4 +1,6 @@
-import ELK from 'elkjs/lib/elk.bundled';
+// import ELK from 'elkjs/lib/elk.bundled';
+import ELK from 'elkjs/lib/elk-api';
+import { Worker } from 'elkjs/lib/elk-worker';
 import { layoutOptions } from './constants';
 import type { Edge, Node } from './interfaces';
 
@@ -21,11 +23,16 @@ export default function layoutDEGLineage({
   setGraphHeight,
   setEdges,
 }: Params) {
-  const elk = new ELK();
+  // const elk = new ELK();
 
-  // const elk = new ELK({
-  //   workerUrl: './elk-worker.min.js',
-  // });
+  const elk = new ELK({
+    workerFactory(url) {
+      // the value of 'url' is irrelevant here
+      // eslint-disable-next-line @typescript-eslint/no-var-requires,import/extensions,global-require
+      // const { Worker } = import('elkjs/lib/elk-worker.js'); // non-minified
+      return new Worker(url!);
+    },
+  });
 
   const graph = {
     id: 'root',
