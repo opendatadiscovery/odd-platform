@@ -6,25 +6,6 @@ import dns from 'dns';
 
 dns.setDefaultResultOrder('verbatim');
 
-// interface SourcemapExclude {
-//   excludeNodeModules?: boolean;
-// }
-
-// function sourcemapExclude(opts?: SourcemapExclude): Plugin {
-//   return {
-//     name: 'sourcemap-exclude',
-//     transform(code: string, id: string) {
-//       if (opts?.excludeNodeModules && id.includes('node_modules')) {
-//         return {
-//           code,
-//           // https://github.com/rollup/rollup/blob/master/docs/plugin-development/index.md#source-code-transformations
-//           map: null,
-//         };
-//       }
-//     },
-//   };
-// }
-
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
@@ -42,43 +23,12 @@ export default defineConfig(({ mode }) => {
     },
   };
 
-  const defaultPlugins = [
-    react(),
-    tsconfigPaths(),
-    // sourcemapExclude({ excludeNodeModules: true }),
-    // splitVendorChunkPlugin(),
-    // visualizer({ open: true }) as PluginOption,
-  ];
+  const defaultPlugins = [react(), tsconfigPaths()];
 
   const defaultConfig: UserConfigExport = {
     plugins: defaultPlugins,
     build: {
       outDir: 'build/ui',
-      // sourcemap: false,
-      // commonjsOptions: {
-      //   sourceMap: false,
-      // },
-      // rollupOptions: {
-      //   // maxParallelFileOps: Math.max(1, cpus().length - 1),
-      //   output: {
-      //     // manualChunks: {
-      //     //   jsoneditor: ['vanilla-jsoneditor'],
-      //     //   elkjs: ['elkjs'],
-      //     //   elkjsBundled: ['elkjs/lib/elk.bundled'],
-      //     // },
-      //     manualChunks: id => {
-      //       if (id.includes('node_modules')) {
-      //         return 'vendor';
-      //       }
-      //     },
-      //     // sourcemapIgnoreList: relativeSourcePath => {
-      //     //   const normalizedPath = path.normalize(relativeSourcePath);
-      //     //   return normalizedPath.includes('node_modules');
-      //     // },
-      //     sourcemap: false,
-      //   },
-      //   cache: false,
-      // },
     },
     // test: {
     //   globals: true,
