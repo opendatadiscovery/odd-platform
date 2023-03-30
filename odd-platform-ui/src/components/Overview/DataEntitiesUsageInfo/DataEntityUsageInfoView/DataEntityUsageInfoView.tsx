@@ -1,7 +1,7 @@
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import type { DataEntityUsageInfo } from 'generated-sources';
-import DataEntityUsageClassItem from './DataEntityUsageClassItem/DataEntityUsageClassItem';
+import DataEntityUsageInfoCard from './DataEntityUsageInfoCard/DataEntityUsageInfoCard';
 import * as S from './DataEntityUsageInfoViewStyles';
 import type {
   HandleEntityClassClickParams,
@@ -22,35 +22,32 @@ const DataEntityUsageInfoView: React.FC<DataEntityUsageInfoViewProps> = ({
   classesUsageInfo,
   handleEntityClassClick,
   handleEntityClassTypeClick,
-}) => {
-  const a = 1;
-
-  return (
-    <Grid container sx={{ mt: 8 }} wrap='nowrap'>
-      <S.DataEntitiesUsageContainer>
+}) => (
+  <Grid container sx={{ mt: 8 }} wrap='nowrap'>
+    <S.DataEntitiesUsageContainer>
+      <S.UsageInfoHeader>
         <S.DataEntitiesTotalContainer>
-          <Box>
-            <Typography variant='h4'>Total entities</Typography>
-            <Typography variant='h1'>{totalCount}</Typography>
-          </Box>
-          <Box>
-            <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
-          </Box>
+          <Typography variant='subtitle1'>Total entities</Typography>
+          <Typography variant='h3'>{totalCount}</Typography>
         </S.DataEntitiesTotalContainer>
-        <S.ListItemContainer>
-          {classesUsageInfo.map(({ entityClass, totalCount: classTotalCount }, index) => (
-            <DataEntityUsageClassItem
+        <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
+      </S.UsageInfoHeader>
+      <S.ListItemContainer>
+        {classesUsageInfo.map(
+          ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
+            <DataEntityUsageInfoCard
+              key={entityClass.id}
               entityClass={entityClass}
               classTotalCount={classTotalCount}
-              itemIdx={index}
+              dataEntityTypesInfo={dataEntityTypesInfo}
               handleEntityClassClick={handleEntityClassClick}
               handleEntityClassTypeClick={handleEntityClassTypeClick}
             />
-          ))}
-        </S.ListItemContainer>
-      </S.DataEntitiesUsageContainer>
-    </Grid>
-  );
-};
+          )
+        )}
+      </S.ListItemContainer>
+    </S.DataEntitiesUsageContainer>
+  </Grid>
+);
 
 export default DataEntityUsageInfoView;
