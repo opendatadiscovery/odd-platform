@@ -33,7 +33,7 @@ public class DatasetVersionHashCalculator {
                 .isNullable(BooleanUtils.toBoolean(f.getType().getIsNullable()))
                 .build())
             .sorted(Comparator.comparing(HashableDatasetField::getOddrn))
-            .collect(Collectors.toList());
+            .toList();
 
         return calculateHash(sortedFields);
     }
@@ -58,7 +58,7 @@ public class DatasetVersionHashCalculator {
                     .build();
             })
             .sorted(Comparator.comparing(HashableDatasetField::getOddrn))
-            .collect(Collectors.toList());
+            .toList();
 
         return calculateHash(sortedFields);
     }

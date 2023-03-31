@@ -142,7 +142,6 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
 
             if (fetchedVersion.getVersionHash() != null
                 && !fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
-
                 dto.setDatasetSchemaChanged(true);
                 versionsToCreate.add(incrementDatasetVersion(fetchedVersion, dto));
             }
