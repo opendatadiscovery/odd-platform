@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 public interface ReactiveDatasetVersionRepository extends ReactiveCRUDRepository<DatasetVersionPojo> {
     Mono<DatasetStructureDto> getDatasetVersion(final long datasetVersionId);
 
+    Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersions(final List<Long> datasetVersionIds);
+
     Mono<DatasetStructureDto> getLatestDatasetVersion(final long datasetId);
 
     Mono<List<DatasetVersionPojo>> getVersions(final String datasetOddrn);

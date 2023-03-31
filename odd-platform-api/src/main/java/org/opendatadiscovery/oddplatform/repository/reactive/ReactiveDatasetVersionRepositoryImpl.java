@@ -114,6 +114,20 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
+    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersions(final List<Long> datasetVersionIds) {
+        final String datasetVersionId = "datasetVersionId";
+        return jooqReactiveOperations.executeInPartitionReturning(datasetVersionIds, versions -> {
+            final var query = DSL.select(DATASET_VERSION.ID.as(datasetVersionId))
+                .select(DATASET_FIELD.fields())
+                .from(DATASET_VERSION)
+                .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+                .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+                .where(DATASET_VERSION.ID.in(datasetVersionIds));
+            return jooqReactiveOperations.flux(query);
+        }).collect(groupingBy(r -> r.get(datasetVersionId, Long.class), mapping(this::extractDatasetField, toList())));
+    }
+
+    @Override
     public Mono<DatasetStructureDto> getLatestDatasetVersion(final long datasetId) {
         final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
 

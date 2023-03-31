@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
@@ -16,6 +18,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.DatasetStructureService;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetFieldMetadataIngestionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -32,6 +35,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
     private final LabelIngestionService labelIngestionService;
     private final DatasetFieldMetadataIngestionService datasetFieldMetadataIngestionService;
     private final DatasetVersionMapper datasetVersionMapper;
+    private final DatasetVersionHashCalculator datasetVersionHashCalculator;
 
     @Override
     public Mono<Void> process(final IngestionRequest request) {
@@ -95,14 +99,38 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         return datasetVersionRepository
             .getLatestVersions(datasetIds)
             .collectList()
+            .flatMap(this::recalculateHashIfEmpty)
             .map(fetchedVersions -> extractVersionsToCreate(datasetDict, fetchedVersions))
             .flatMap(datasetVersions -> datasetStructureService.createDatasetStructure(datasetVersions, datasetFields));
     }
 
+    private Mono<List<DatasetVersionPojo>> recalculateHashIfEmpty(final List<DatasetVersionPojo> lastVersions) {
+        final List<DatasetVersionPojo> versionsWithoutHashes = lastVersions.stream()
+            .filter(lastVersion -> StringUtils.isEmpty(lastVersion.getVersionHash()))
+            .toList();
+        if (CollectionUtils.isEmpty(versionsWithoutHashes)) {
+            return Mono.just(lastVersions);
+        }
+        final List<Long> ids = versionsWithoutHashes.stream().map(DatasetVersionPojo::getId).toList();
+        return datasetVersionRepository.getDatasetVersions(ids)
+            .flatMapMany(versionsMap -> {
+                fillDatasetVersionHash(versionsWithoutHashes, versionsMap);
+                return datasetVersionRepository.bulkUpdate(versionsWithoutHashes);
+            }).collectList();
+    }
+
+    private void fillDatasetVersionHash(final List<DatasetVersionPojo> versionsWithoutHashes,
+                                        final Map<Long, List<DatasetFieldPojo>> versionFields) {
+        versionsWithoutHashes.forEach(version -> {
+            final List<DatasetFieldPojo> fields = versionFields.getOrDefault(version.getId(), List.of());
+            final String structureHash = datasetVersionHashCalculator.calculateStructureHashFromPojos(fields);
+            version.setVersionHash(structureHash);
+        });
+    }
+
     private List<DatasetVersionPojo> extractVersionsToCreate(
         final Map<String, EnrichedDataEntityIngestionDto> datasetDict,
-        final List<DatasetVersionPojo> fetchedVersions
-    ) {
+        final List<DatasetVersionPojo> fetchedVersions) {
         final List<DatasetVersionPojo> versionsToCreate = new ArrayList<>();
 
         for (final DatasetVersionPojo fetchedVersion : fetchedVersions) {
@@ -112,9 +140,10 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
                 continue;
             }
 
-            if (!fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
-                dto.setDatasetSchemaChanged(true);
+            if (fetchedVersion.getVersionHash() != null
+                && !fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
 
+                dto.setDatasetSchemaChanged(true);
                 versionsToCreate.add(incrementDatasetVersion(fetchedVersion, dto));
             }
         }
