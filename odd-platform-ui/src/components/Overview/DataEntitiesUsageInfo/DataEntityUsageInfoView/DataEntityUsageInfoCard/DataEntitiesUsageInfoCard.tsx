@@ -2,13 +2,13 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { DataEntityClassLabelMap, DataEntityClassTypeLabelMap } from 'redux/interfaces';
 import type { DataEntityClass, DataEntityClassUsageInfo } from 'generated-sources';
-import * as S from './DataEntityUsageInfoCard.styles';
+import * as S from './DataEntitiesUsageInfoCard.styles';
 import type {
   HandleEntityClassClickParams,
   HandleEntityClassTypeClickParams,
 } from '../../DataEntitiesUsageInfo';
 
-interface DataEntityUsageInfoCardProps {
+export interface DataEntityUsageInfoCardProps {
   entityClass: DataEntityClass;
   dataEntityTypesInfo: DataEntityClassUsageInfo['dataEntityTypesInfo'];
   handleEntityClassClick: (params: HandleEntityClassClickParams) => void;
@@ -16,7 +16,7 @@ interface DataEntityUsageInfoCardProps {
   classTotalCount: number;
 }
 
-const DataEntityUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
+const DataEntitiesUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
   entityClass,
   classTotalCount,
   dataEntityTypesInfo,
@@ -30,7 +30,10 @@ const DataEntityUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
 
   return (
     <S.Container>
-      <S.Header onClick={() => handleEntityClassClick(entityClassClickParams)}>
+      <S.Header
+        role='button'
+        onClick={() => handleEntityClassClick(entityClassClickParams)}
+      >
         <Typography noWrap variant='h4' color='texts.action'>
           {entityClass && DataEntityClassLabelMap.get(entityClass.name)?.normal}
         </Typography>
@@ -42,6 +45,7 @@ const DataEntityUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
         {dataEntityTypesInfo.map(({ entityType, totalCount }) => (
           <S.TypeItem
             key={entityType.id}
+            role='button'
             onClick={() =>
               handleEntityClassTypeClick({
                 entityClassId: entityClass.id,
@@ -64,4 +68,4 @@ const DataEntityUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
   );
 };
 
-export default DataEntityUsageInfoCard;
+export default DataEntitiesUsageInfoCard;

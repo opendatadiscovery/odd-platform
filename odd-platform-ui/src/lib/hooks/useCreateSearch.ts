@@ -1,23 +1,24 @@
-import React from 'react';
+import { useCallback } from 'react';
 import type { SearchFormData } from 'generated-sources';
 import { createDataEntitiesSearch } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useNavigate } from 'react-router-dom';
-import useAppPaths from 'lib/hooks/useAppPaths/useAppPaths';
+import useAppPaths from './useAppPaths/useAppPaths';
 
-const useCreateSearch = () => {
+export default function useCreateSearch() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { searchPath } = useAppPaths();
 
-  return React.useCallback((searchFormData: SearchFormData) => {
-    dispatch(createDataEntitiesSearch({ searchFormData }))
-      .unwrap()
-      .then(({ searchId }) => {
-        const searchLink = searchPath(searchId);
-        navigate(searchLink);
-      });
-  }, []);
-};
-
-export default useCreateSearch;
+  return useCallback(
+    (searchFormData: SearchFormData) => {
+      dispatch(createDataEntitiesSearch({ searchFormData }))
+        .unwrap()
+        .then(({ searchId }) => {
+          const searchLink = searchPath(searchId);
+          navigate(searchLink);
+        });
+    },
+    [dispatch, createDataEntitiesSearch, searchPath, navigate]
+  );
+}

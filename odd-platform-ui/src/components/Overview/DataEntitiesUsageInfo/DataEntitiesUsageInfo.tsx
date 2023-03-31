@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDataEntitiesUsage } from 'lib/hooks/api';
 import { useCreateSearch } from 'lib/hooks';
-import DataEntityUsageInfoView from './DataEntityUsageInfoView/DataEntityUsageInfoView';
+import DataEntitiesUsageInfoView from './DataEntityUsageInfoView/DataEntitiesUsageInfoView';
 
 export interface HandleEntityClassClickParams {
   entityId: number;
@@ -52,7 +52,7 @@ const DataEntitiesUsageInfo: React.FC = () => {
   if (isError || !usageInfo) return null;
 
   return (
-    <DataEntityUsageInfoView
+    <DataEntitiesUsageInfoView
       totalCount={usageInfo.totalCount}
       unfilledCount={usageInfo.unfilledCount}
       classesUsageInfo={usageInfo.dataEntityClassesInfo}

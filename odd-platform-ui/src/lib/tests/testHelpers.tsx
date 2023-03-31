@@ -3,10 +3,10 @@ import {
   fireEvent,
   render,
   renderHook,
-  type RenderOptions,
   screen,
   waitFor,
 } from '@testing-library/react';
+import type { ByRoleOptions, RenderOptions } from '@testing-library/react';
 import React, { type PropsWithChildren, type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
@@ -17,8 +17,11 @@ import {
   QueryClientProvider,
   type UseQueryResult,
 } from '@tanstack/react-query';
-
-export const flushPromises = () => new Promise(jest.requireActual('timers').setImmediate);
+import { Provider } from 'react-redux';
+import type { AnyAction, Store } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
+import type { RootState } from 'redux/interfaces';
+import rootReducer from 'redux/slices';
 
 export const clickByTestId = async (testId: string) => {
   const button = screen.getByTestId(testId);
@@ -29,6 +32,13 @@ export const clickByTestId = async (testId: string) => {
 
 export const clickByText = async (testId: string) => {
   const button = screen.getByText(testId);
+  await act(async () => {
+    await fireEvent.click(button);
+  });
+};
+
+export const clickByRole = async (role: string, opts?: ByRoleOptions) => {
+  const button = screen.getByRole(role, opts);
   await act(async () => {
     await fireEvent.click(button);
   });
@@ -64,10 +74,24 @@ export const setValueByTestId = async (testId: string, value: string) => {
 
 export const getByText = (text: string) => screen.getByText(text);
 export const queryByText = (text: string) => screen.queryByText(text);
-export const getByTestID = (testID: string) => screen.getByTestId(testID);
-export const getAllByTestID = (testID: string) => screen.getAllByTestId(testID);
+export const getByRole = (role: string) => screen.getByRole(role);
+export const queryByRole = (role: string) => screen.queryByRole(role);
+export const getByTestId = (testID: string) => screen.getByTestId(testID);
+export const queryByTestId = (testID: string) => screen.queryByTestId(testID);
+export const getAllByTestId = (testID: string) => screen.getAllByTestId(testID);
+export const getByTextContent = (text: string) =>
+  screen.getByText((content: string, node: Element | null) => {
+    if (!node) return false;
+
+    const hasText = (el: Element) => el.textContent === text;
+    const elementHasText = hasText(node);
+    const childrenWithoutText = Array.from(node.children).every(child => !hasText(child));
+    return elementHasText && childrenWithoutText;
+  });
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  preloadedState?: Partial<RootState>;
+  store?: Store<Partial<RootState>, AnyAction>;
   initialEntries?: MemoryRouterProps['initialEntries'];
 }
 
@@ -102,14 +126,24 @@ export const TestQueryClientProvider: React.FC<PropsWithChildren<unknown>> = ({
 
 const customRender = (
   ui: ReactElement,
-  { initialEntries, ...renderOptions }: CustomRenderOptions = {}
+  {
+    preloadedState,
+    initialEntries,
+    store = configureStore<RootState>({
+      reducer: rootReducer,
+      preloadedState,
+    }),
+    ...renderOptions
+  }: CustomRenderOptions = {}
 ) => {
   const AllProviders: React.FC<PropsWithChildren<unknown>> = ({ children }) => (
     <TestQueryClientProvider>
       <ThemeProvider theme={theme}>
-        <MemoryRouter initialEntries={initialEntries}>
-          <div>{children}</div>
-        </MemoryRouter>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={initialEntries}>
+            <div>{children}</div>
+          </MemoryRouter>
+        </Provider>
       </ThemeProvider>
     </TestQueryClientProvider>
   );
