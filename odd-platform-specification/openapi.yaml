@@ -52,7 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/IntegrationList'
+                $ref: './components.yaml/#/components/schemas/IntegrationPreviewList'
       tags:
         - integration
 
@@ -72,7 +72,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/IntegrationOverview'
+                $ref: './components.yaml/#/components/schemas/Integration'
       tags:
         - integration
 

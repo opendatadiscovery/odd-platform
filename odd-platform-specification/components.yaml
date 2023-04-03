@@ -11,33 +11,36 @@ components:
         - title
         - content
 
+    IntegrationCodeSnippetArgumentType:
+      type: string
+      enum:
+        - INTEGER
+        - STRING
+        - BOOLEAN
+        - FLOAT
+
+    IntegrationCodeSnippetArgument:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/IntegrationCodeSnippetArgumentType'
+      required:
+        - name
+        - type
+
     IntegrationCodeSnippet:
       type: object
       properties:
         template:
           type: string
+        arguments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationCodeSnippetArgument'
       required:
         - template
-
-    IntegrationCodeSnippetList:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/IntegrationCodeSnippet'
-      required:
-        - items
-
-    IntegrationTextBlockList:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/IntegrationTextBlock'
-      required:
-        - items
 
     IntegrationPreview:
       type: object
@@ -48,10 +51,13 @@ components:
           type: string
         description:
           type: string
+        installed:
+          type: boolean
       required:
         - id
         - name
         - description
+        - installed
 
     IntegrationPreviewList:
       type: object
@@ -68,13 +74,17 @@ components:
         - $ref: '#/components/schemas/IntegrationPreview'
         - type: object
           properties:
-            text_block_list:
-              $ref: '#/components/schemas/IntegrationTextBlockList'
-            code_snippet_list:
-              $ref: '#/components/schemas/IntegrationCodeSnippetList'
+            text_blocks:
+              type: array
+              items:
+                $ref: '#/components/schemas/IntegrationTextBlock'
+            code_snippets:
+              type: array
+              items:
+                $ref: '#/components/schemas/IntegrationCodeSnippet'
           required:
-            - text_block_list
-            - code_snippet_list
+            - text_blocks
+            - code_snippets
 
     Link:
       type: object
