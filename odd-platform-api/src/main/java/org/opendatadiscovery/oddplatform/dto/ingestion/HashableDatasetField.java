@@ -14,5 +14,4 @@ public class HashableDatasetField {
     private boolean isKey;
     private boolean isValue;
     private boolean isPrimaryKey;
-    private boolean isNullable;
 }

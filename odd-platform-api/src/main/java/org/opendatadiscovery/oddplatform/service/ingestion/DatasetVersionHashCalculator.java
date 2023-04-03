@@ -29,7 +29,6 @@ public class DatasetVersionHashCalculator {
                 .isKey(BooleanUtils.toBoolean(f.getIsKey()))
                 .isValue(BooleanUtils.toBoolean(f.getIsValue()))
                 .isPrimaryKey(BooleanUtils.toBoolean(f.getIsPrimaryKey()))
-                .isNullable(BooleanUtils.toBoolean(f.getType().getIsNullable()))
                 .build())
             .sorted(Comparator.comparing(HashableDatasetField::getOddrn))
             .toList();
@@ -53,7 +52,6 @@ public class DatasetVersionHashCalculator {
                     .isKey(BooleanUtils.toBoolean(f.getIsKey()))
                     .isValue(BooleanUtils.toBoolean(f.getIsValue()))
                     .isPrimaryKey(BooleanUtils.toBoolean(f.getIsPrimaryKey()))
-                    .isNullable(BooleanUtils.toBoolean(dataSetFieldType.getIsNullable()))
                     .build();
             })
             .sorted(Comparator.comparing(HashableDatasetField::getOddrn))
