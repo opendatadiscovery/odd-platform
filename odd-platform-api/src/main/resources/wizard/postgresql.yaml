@@ -1,0 +1,10 @@
+id: postgresql
+name: PostgreSQL
+synopsis: |
+  [Synopsis]: PostgreSQL integration
+description: |
+  This is a **markdown** text for PostgreSQL integration.
+
+  ```bash
+  docker run postgresql:13.2-alpine
+  ```
