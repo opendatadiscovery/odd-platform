@@ -21,6 +21,7 @@ import org.opendatadiscovery.oddplatform.service.ingestion.DatasetFieldMetadataI
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
@@ -105,27 +106,28 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
     }
 
     private Mono<List<DatasetVersionPojo>> recalculateHashIfEmpty(final List<DatasetVersionPojo> lastVersions) {
-        final List<DatasetVersionPojo> versionsWithoutHashes = lastVersions.stream()
-            .filter(lastVersion -> StringUtils.isEmpty(lastVersion.getVersionHash()))
-            .toList();
-        if (CollectionUtils.isEmpty(versionsWithoutHashes)) {
+        final Map<Boolean, List<DatasetVersionPojo>> partitionedPojos = lastVersions.stream()
+            .collect(Collectors.partitioningBy(pojo -> StringUtils.isEmpty(pojo.getVersionHash())));
+        final List<DatasetVersionPojo> versionsWithoutHash = partitionedPojos.get(true);
+        if (CollectionUtils.isEmpty(versionsWithoutHash)) {
             return Mono.just(lastVersions);
         }
-        final List<Long> ids = versionsWithoutHashes.stream().map(DatasetVersionPojo::getId).toList();
-        return datasetVersionRepository.getDatasetVersions(ids)
+        final List<Long> ids = versionsWithoutHash.stream().map(DatasetVersionPojo::getId).toList();
+        return datasetVersionRepository.getDatasetVersionsState(ids)
             .flatMapMany(versionsMap -> {
-                fillDatasetVersionHash(versionsWithoutHashes, versionsMap);
-                return datasetVersionRepository.bulkUpdate(versionsWithoutHashes);
+                fillDatasetVersionHash(versionsWithoutHash, versionsMap);
+                return datasetVersionRepository.bulkUpdate(versionsWithoutHash)
+                    .concatWith(Flux.fromIterable(partitionedPojos.getOrDefault(false, List.of())));
             }).collectList();
     }
 
     private void fillDatasetVersionHash(final List<DatasetVersionPojo> versionsWithoutHashes,
                                         final Map<Long, List<DatasetFieldPojo>> versionFields) {
-        versionsWithoutHashes.forEach(version -> {
+        for (final DatasetVersionPojo version : versionsWithoutHashes) {
             final List<DatasetFieldPojo> fields = versionFields.getOrDefault(version.getId(), List.of());
             final String structureHash = datasetVersionHashCalculator.calculateStructureHashFromPojos(fields);
             version.setVersionHash(structureHash);
-        });
+        }
     }
 
     private List<DatasetVersionPojo> extractVersionsToCreate(

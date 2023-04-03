@@ -114,7 +114,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersions(final List<Long> datasetVersionIds) {
+    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionsState(final List<Long> datasetVersionIds) {
         final String datasetVersionId = "datasetVersionId";
         return jooqReactiveOperations.executeInPartitionReturning(datasetVersionIds, versions -> {
             final var query = DSL.select(DATASET_VERSION.ID.as(datasetVersionId))
@@ -122,7 +122,7 @@ public class ReactiveDatasetVersionRepositoryImpl
                 .from(DATASET_VERSION)
                 .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
                 .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-                .where(DATASET_VERSION.ID.in(datasetVersionIds));
+                .where(DATASET_VERSION.ID.in(versions));
             return jooqReactiveOperations.flux(query);
         }).collect(groupingBy(r -> r.get(datasetVersionId, Long.class), mapping(this::extractDatasetField, toList())));
     }

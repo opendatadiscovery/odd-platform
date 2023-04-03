@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendatadiscovery.oddplatform.dto.ingestion.HashableDatasetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
@@ -17,8 +18,8 @@ public class DatasetVersionHashCalculator {
     private static final String ALGORITHM = "SHA-256";
 
     public String calculateStructureHash(final List<DataSetField> fields) {
-        if (fields == null) {
-            return null;
+        if (CollectionUtils.isEmpty(fields)) {
+            return "0";
         }
         final List<HashableDatasetField> sortedFields = fields.stream()
             .map(f -> HashableDatasetField.builder()
@@ -37,8 +38,8 @@ public class DatasetVersionHashCalculator {
     }
 
     public String calculateStructureHashFromPojos(final List<DatasetFieldPojo> fields) {
-        if (fields == null) {
-            return null;
+        if (CollectionUtils.isEmpty(fields)) {
+            return "0";
         }
         final List<HashableDatasetField> sortedFields = fields.stream()
             .map(f -> {
