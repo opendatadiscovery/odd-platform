@@ -1,5 +1,91 @@
 components:
   schemas:
+    IntegrationTextBlock:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+      required:
+        - title
+        - content
+
+    IntegrationCodeSnippetArgumentType:
+      type: string
+      enum:
+        - INTEGER
+        - STRING
+        - BOOLEAN
+        - FLOAT
+
+    IntegrationCodeSnippetArgument:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/IntegrationCodeSnippetArgumentType'
+      required:
+        - name
+        - type
+
+    IntegrationCodeSnippet:
+      type: object
+      properties:
+        template:
+          type: string
+        arguments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationCodeSnippetArgument'
+      required:
+        - template
+
+    IntegrationPreview:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        installed:
+          type: boolean
+      required:
+        - id
+        - name
+        - description
+        - installed
+
+    IntegrationPreviewList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Integration'
+      required:
+        - items
+
+    Integration:
+      allOf:
+        - $ref: '#/components/schemas/IntegrationPreview'
+        - type: object
+          properties:
+            text_blocks:
+              type: array
+              items:
+                $ref: '#/components/schemas/IntegrationTextBlock'
+            code_snippets:
+              type: array
+              items:
+                $ref: '#/components/schemas/IntegrationCodeSnippet'
+          required:
+            - text_blocks
+            - code_snippets
+
     Link:
       type: object
       properties:
