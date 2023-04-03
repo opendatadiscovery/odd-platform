@@ -16,10 +16,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatasetVersionHashCalculator {
     private static final String ALGORITHM = "SHA-256";
+    private static final String EMPTY_FIELDS_HASH = "0";
 
     public String calculateStructureHash(final List<DataSetField> fields) {
         if (CollectionUtils.isEmpty(fields)) {
-            return "0";
+            return EMPTY_FIELDS_HASH;
         }
         final List<HashableDatasetField> sortedFields = fields.stream()
             .map(f -> HashableDatasetField.builder()
@@ -39,7 +40,7 @@ public class DatasetVersionHashCalculator {
 
     public String calculateStructureHashFromPojos(final List<DatasetFieldPojo> fields) {
         if (CollectionUtils.isEmpty(fields)) {
-            return "0";
+            return EMPTY_FIELDS_HASH;
         }
         final List<HashableDatasetField> sortedFields = fields.stream()
             .map(f -> {
