@@ -1,7 +1,5 @@
 import type rootReducer from 'redux/slices';
 import type { store } from 'redux/store';
-import type { ActionType } from 'typesafe-actions';
-import type * as actions from 'redux/actions';
 
 export * from './state';
 export * from './loader';
@@ -19,5 +17,3 @@ export * from './dataCollaboration';
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
-
-export type Action = ActionType<typeof actions>;

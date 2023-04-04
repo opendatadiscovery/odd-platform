@@ -1,10 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,14 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
@@ -36,12 +29,11 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataInput;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
@@ -82,6 +74,7 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
     private final DatasetFieldIngestionMapper datasetFieldIngestionMapper;
+    private final DatasetVersionHashCalculator datasetVersionHashCalculator;
 
     private static final List<Pair<Predicate<DataEntity>, DataEntityClassDto>> ENTITY_CLASS_DISCRIMINATOR = List.of(
         Pair.of(de -> de.getDataset() != null, DATA_SET),
@@ -228,10 +221,11 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     private DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
+        final String structureHash = datasetVersionHashCalculator.calculateStructureHash(dataEntity.getFieldList());
         return new DataSetIngestionDto(
             dataEntity.getParentOddrn(),
             datasetFieldIngestionMapper.mapFields(dataEntity.getFieldList()),
-            structureHash(dataEntity.getFieldList()),
+            structureHash,
             dataEntity.getRowsNumber()
         );
     }
@@ -269,42 +263,6 @@ public class IngestionMapperImpl implements IngestionMapper {
             .map(disc -> disc.getLeft().test(dataEntity) ? disc.getRight() : null)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
-    }
-
-    private String structureHash(final List<DataSetField> fields) {
-        if (fields == null) {
-            return null;
-        }
-
-        final MessageDigest md = createSHA256MessageDigest();
-
-        final List<HashableDatasetField> sortedFields = fields.stream()
-            .map(f -> HashableDatasetField.builder()
-                .name(f.getName())
-                .oddrn(f.getOddrn())
-                .parentFieldOddrn(f.getParentFieldOddrn())
-                .type(f.getType())
-                .isKey(BooleanUtils.toBoolean(f.getIsKey()))
-                .isValue(BooleanUtils.toBoolean(f.getIsValue()))
-                .build())
-            .sorted(Comparator.comparing(HashableDatasetField::getOddrn))
-            .collect(Collectors.toList());
-
-        final StringBuilder sb = new StringBuilder();
-
-        for (final byte b : md.digest(JSONSerDeUtils.serializeJson(sortedFields).getBytes())) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return sb.toString();
-    }
-
-    private MessageDigest createSHA256MessageDigest() {
-        try {
-            return MessageDigest.getInstance("SHA-256");
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private String specificAttributesAsString(final Collection<DataEntityClassDto> entityClasses,
@@ -387,17 +345,5 @@ public class IngestionMapperImpl implements IngestionMapper {
         if (!isProperlyFilledClasses) {
             throw new DataEntityClassTypeValidationException(oddrn, type, entityClasses, expectedClasses);
         }
-    }
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    static class HashableDatasetField {
-        private String oddrn;
-        private String name;
-        private String parentFieldOddrn;
-        private DataSetFieldType type;
-        private boolean isKey;
-        private boolean isValue;
     }
 }

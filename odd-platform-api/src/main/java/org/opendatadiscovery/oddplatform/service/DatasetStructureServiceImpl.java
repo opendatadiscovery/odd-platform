@@ -87,7 +87,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
 
                         return Pair.of(e.getKey(), new DatasetStructureDelta(
                             vidToFields.get(v.get(0).getId()),
-                            vidToFields.get(v.get(1).getId())
+                            vidToFields.getOrDefault(v.get(1).getId(), List.of())
                         ));
                     })
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight)));
