@@ -80,10 +80,10 @@ const DatasetStructure: React.FC = () => {
       {showStructure && (
         <DatasetStructureProvider
           datasetStructureRoot={datasetStructureRoot}
-          datasetRowsCount={datasetStats.rowsCount}
+          datasetRowsCount={datasetStats?.rowsCount}
         >
           <DatasetStructureView
-            fieldsCount={datasetStats.fieldsCount}
+            fieldsCount={datasetStats?.fieldsCount}
             typesCount={typesCount}
             datasetVersions={datasetVersions}
             datasetStructureVersion={datasetStructureVersion}
