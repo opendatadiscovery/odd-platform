@@ -1505,6 +1505,72 @@ components:
       required:
         - description
 
+    DataSetVersionDiffList:
+      type: object
+      properties:
+        field_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSetVersionDiff'
+      required:
+        - field_list
+
+    DataSetVersionDiff:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataSetVersionDiffStatus'
+        first_state:
+          $ref: '#/components/schemas/DataSetVersionDiffState'
+        second_state:
+          $ref: '#/components/schemas/DataSetVersionDiffState'
+      required:
+        - status
+
+    DataSetVersionDiffState:
+      type: object
+      properties:
+        version_id:
+          type: integer
+          format: int64
+        field_state:
+          $ref: '#/components/schemas/DataSetFieldDiffState'
+      required:
+        - version_id
+        - field
+
+    DataSetFieldDiffState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        parent_field_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        is_key:
+          type: boolean
+        is_value:
+          type: boolean
+        is_primary_key:
+          type: boolean
+      required:
+        - id
+        - name
+        - type
+
+    DataSetVersionDiffStatus:
+      type: string
+      enum:
+        - CREATED
+        - DELETED
+        - UPDATED
+        - NO_CHANGES
+
     EnumValueList:
       type: object
       properties:

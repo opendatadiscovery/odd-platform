@@ -1596,6 +1596,35 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/structure/diff:
+    get:
+      summary: Get DataSet structure diff
+      description: Gets difference between two dataset structure versions
+      operationId: getDataSetStructureDiff
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: first_version_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: second_version_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetVersionDiffList'
+      tags:
+        - dataSet
+
   /api/datasets/{data_entity_id}/sla:
     get:
       summary: Get Dataset's SLA
