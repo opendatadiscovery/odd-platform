@@ -1520,24 +1520,13 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/DataSetVersionDiffStatus'
-        first_state:
-          $ref: '#/components/schemas/DataSetVersionDiffState'
-        second_state:
-          $ref: '#/components/schemas/DataSetVersionDiffState'
+        states:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataSetFieldDiffState'
       required:
         - status
-
-    DataSetVersionDiffState:
-      type: object
-      properties:
-        version_id:
-          type: integer
-          format: int64
-        field_state:
-          $ref: '#/components/schemas/DataSetFieldDiffState'
-      required:
-        - version_id
-        - field
+        - states
 
     DataSetFieldDiffState:
       type: object
