@@ -132,7 +132,7 @@ export const getDataEntityExternalDescription = (dataEntityId: number) =>
 export const getDatasetVersions = (dataEntityId: number) =>
   createSelector(
     dataEntitiesState,
-    dataEntities => dataEntities.byId[dataEntityId]?.versionList
+    dataEntities => dataEntities.byId[dataEntityId]?.versionList || emptyArr
   );
 
 export const getDatasetStats = (dataEntityId: number) =>

@@ -53,7 +53,7 @@ const DataEntityDetailsTabs: React.FC = () => {
       },
       {
         name: 'Structure',
-        link: datasetStructurePath(dataEntityId),
+        link: datasetStructurePath(DataEntityRoutes.overview, dataEntityId),
         hidden: !isDataset,
         value: DataEntityRoutes.structure,
       },

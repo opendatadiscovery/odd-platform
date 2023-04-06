@@ -10,7 +10,11 @@ import React, { type PropsWithChildren, type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
 import { MemoryRouter, type MemoryRouterProps, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider, type UseQueryResult } from 'react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 
 export const flushPromises = () => new Promise(jest.requireActual('timers').setImmediate);
 

@@ -17,6 +17,7 @@ export const useAppParams = (): AppRouteParams => {
     associationsViewType,
     searchId,
     policyId,
+    structureViewType,
   } = useParams<keyof RouteParams>() as RouteParams;
 
   return {
@@ -30,6 +31,7 @@ export const useAppParams = (): AppRouteParams => {
     termsViewType,
     managementViewType,
     associationsViewType,
+    structureViewType,
     versionId: parseInt(versionId, 10),
     searchId,
     messageId,

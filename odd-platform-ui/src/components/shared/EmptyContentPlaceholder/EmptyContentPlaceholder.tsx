@@ -1,35 +1,32 @@
 import React from 'react';
-import { type Theme, Typography } from '@mui/material';
-import EmptyIcon from 'components/shared/Icons/EmptyIcon';
-import { type SxProps } from '@mui/system';
+import { Grid, Typography } from '@mui/material';
+import { toolbarHeight } from 'lib/constants';
+import { NoDataIcon } from 'components/shared/Icons';
 
 interface EmptyContentPlaceholderProps {
   text?: string;
   isContentLoaded?: boolean;
   isContentEmpty?: boolean;
-  sx?: SxProps<Theme>;
+  offsetTop?: number;
 }
 
 const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
-  text = 'No content',
+  text = 'No information to display',
   isContentLoaded = true,
   isContentEmpty = true,
-  sx,
+  offsetTop = 32,
 }) =>
   isContentLoaded && isContentEmpty ? (
-    <Typography
-      variant='subtitle2'
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        alignSelf: 'flex-start',
-        mt: 2,
-        ...sx,
-      }}
-    >
-      <EmptyIcon sx={{ mr: 0.5 }} />
-      {text}
-    </Typography>
+    <Grid container height={`calc(100vh - ${toolbarHeight}px - ${offsetTop}px)`}>
+      <Grid container alignItems='center' justifyContent='center' flexDirection='column'>
+        <Grid item>
+          <NoDataIcon width={70} height={70} />
+        </Grid>
+        <Grid item alignItems='center'>
+          <Typography variant='h2'>{text}</Typography>
+        </Grid>
+      </Grid>
+    </Grid>
   ) : null;
 
 export default EmptyContentPlaceholder;
