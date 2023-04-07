@@ -31,6 +31,7 @@ const ManagementTabs: React.FC = () => {
       },
       { name: 'Roles', link: ManagementRoutes.roles },
       { name: 'Policies', link: ManagementRoutes.policies },
+      { name: 'Integrations', link: ManagementRoutes.integrations },
     ],
     [hideAssociations]
   );

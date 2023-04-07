@@ -19,6 +19,7 @@ const PolicyList = React.lazy(() => import('../PolicyList/PolicyList'));
 const PolicyDetails = React.lazy(
   () => import('../PolicyList/PolicyDetails/PolicyDetails')
 );
+const Integrations = React.lazy(() => import('../Integrations/Integrations'));
 
 const ManagementRoutes: React.FC = () => {
   const { ManagementRoutes: ManagementRoutesEnum, getNonExactParamPath } = useAppPaths();
@@ -164,6 +165,14 @@ const ManagementRoutes: React.FC = () => {
             />
           }
         />
+        <Route
+          path={getNonExactParamPath(ManagementRoutesEnum.integrations)}
+          element={<Integrations />}
+        >
+          <Route path={ManagementRoutesEnum.integrationIdParam}>
+            <Route path={ManagementRoutesEnum.integrationViewTypeParam} />
+          </Route>
+        </Route>
         <Route
           path='/'
           element={<Navigate to={ManagementRoutesEnum.namespaces} replace />}
