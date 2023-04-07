@@ -25,7 +25,9 @@ declare module 'styled-components' {
   interface DefaultTheme extends Theme {}
 }
 
-const queryClient = new QueryClient({});
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
+});
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
