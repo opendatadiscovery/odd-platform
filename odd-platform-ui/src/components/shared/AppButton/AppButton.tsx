@@ -76,7 +76,6 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
         $color={color}
         ref={ref || buttonRef}
         disableRipple
-        $isOverflowed={isOverflowed}
       >
         {isLoading ? <Loader /> : children}
       </StyledAppButton>
