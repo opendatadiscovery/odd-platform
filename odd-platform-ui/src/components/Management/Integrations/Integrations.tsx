@@ -12,6 +12,8 @@ import { useIntegrationPreviews } from 'lib/hooks/api';
 import { useDebouncedCallback } from 'use-debounce';
 import type { ErrorState } from 'redux/interfaces';
 import isEmpty from 'lodash/isEmpty';
+import type { IntegrationPreview } from 'generated-sources';
+import IntegrationPreviewItem from './IntegrationPreviewItem/IntegrationPreviewItem';
 
 const Integrations: FC = () => {
   const [query, setQuery] = useState('');
@@ -25,10 +27,39 @@ const Integrations: FC = () => {
     []
   );
 
-  const filteredIntegrations = useMemo(
-    () => data?.items.filter(integration => integration.name.includes(query)),
-    [query, data?.items]
-  );
+  // const filteredIntegrations = useMemo(
+  //   () => data?.items.filter(integration => integration.name.includes(query)),
+  //   [query, data?.items]
+  // );
+
+  const filteredIntegrations: IntegrationPreview[] = [
+    { id: '1', name: 'Snowflake', installed: false, description: 'snowflake source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
+  ];
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
@@ -58,7 +89,18 @@ const Integrations: FC = () => {
       </Grid>
       {isLoading ? <AppLoadingPage /> : null}
 
-      {!isEmpty(filteredIntegrations) && <div>integrations list</div>}
+      {!isEmpty(filteredIntegrations) && (
+        <Grid container columnGap={2} rowGap={4}>
+          {filteredIntegrations.map(({ id, name, description, installed }) => (
+            <IntegrationPreviewItem
+              key={id}
+              name={name}
+              description={description}
+              installed={installed}
+            />
+          ))}
+        </Grid>
+      )}
 
       <AppErrorPage showError={isError} error={error as ErrorState} offsetTop={120} />
       <EmptyContentPlaceholder
