@@ -10,7 +10,11 @@ export const Container = styled('div')(({ theme }) => ({
   width: '180px',
   height: '220px',
 
-  '&:hover': { borderColor: theme.palette.border.tertiary, boxShadow: theme.shadows[8] },
+  '&:hover': {
+    borderColor: theme.palette.border.tertiary,
+    boxShadow: theme.shadows[8],
+    cursor: 'pointer',
+  },
   '&:active': { borderColor: theme.palette.border.element, boxShadow: theme.shadows[8] },
 }));
 

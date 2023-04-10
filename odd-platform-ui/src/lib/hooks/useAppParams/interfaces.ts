@@ -94,7 +94,7 @@ interface ManagementRouteParams extends ManagementRouteViewTypes {
 
 interface AppManagementRouteParams extends ManagementRouteViewTypes {
   [ManagementRoutes.policyId]: number;
-  [ManagementRoutes.integrationId]: number;
+  [ManagementRoutes.integrationId]: string;
 }
 
 export type RouteParams = DataEntityRouteParams &

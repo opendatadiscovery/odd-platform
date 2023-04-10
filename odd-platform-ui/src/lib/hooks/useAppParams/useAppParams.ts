@@ -36,7 +36,7 @@ export const useAppParams = (): AppRouteParams => {
     searchId,
     messageId,
     policyId: parseInt(policyId, 10),
-    integrationId: parseInt(integrationId, 10),
+    integrationId,
     integrationViewType,
   };
 };

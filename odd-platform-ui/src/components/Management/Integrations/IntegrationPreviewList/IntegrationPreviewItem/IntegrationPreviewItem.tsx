@@ -7,20 +7,24 @@ import { useAppPaths } from 'lib/hooks';
 import * as S from './IntegrationPreviewItem.styles';
 
 interface IntegrationPreviewItemProps {
+  id: IntegrationPreview['id'];
   name: IntegrationPreview['name'];
   description: IntegrationPreview['description'];
   installed: IntegrationPreview['installed'];
 }
 
 const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
+  id,
   name,
   description,
   installed,
 }) => {
   const navigate = useNavigate();
-  const { datasetStructurePath } = useAppPaths();
+  const { integrationPath } = useAppPaths();
 
-  const handleOnItemClick = useCallback(() => {}, []);
+  const handleOnItemClick = useCallback(() => {
+    navigate(integrationPath(id));
+  }, [id]);
 
   return (
     <S.Container onClick={handleOnItemClick}>

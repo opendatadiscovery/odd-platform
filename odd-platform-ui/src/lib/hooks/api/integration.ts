@@ -3,7 +3,7 @@ import { integrationApi } from 'lib/api';
 import type { IntegrationApiGetIntegrationRequest } from 'generated-sources';
 
 export function useIntegrationPreviews() {
-  return useQuery(['integrationPreviews'], () => integrationApi.getIntegrations());
+  return useQuery(['integrationPreviews'], () => integrationApi.getIntegrationPreviews());
 }
 
 export function useIntegration({ integrationId }: IntegrationApiGetIntegrationRequest) {

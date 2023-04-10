@@ -31,6 +31,12 @@ const useAppPaths = () => {
   const activityPath = (query?: string) =>
     updatePath(`${ActivityRoutes.activity}${query ? `?${query}` : ''}`);
 
+  // Management
+  const integrationPath = (integrationId: string) =>
+    updatePath(
+      `${ManagementRoutes.management}/${ManagementRoutes.integrations}/${integrationId}`
+    );
+
   return React.useMemo(
     () => ({
       isPathEmbedded,
@@ -47,6 +53,7 @@ const useAppPaths = () => {
       getNonExactParamPath,
       searchPath,
       activityPath,
+      integrationPath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

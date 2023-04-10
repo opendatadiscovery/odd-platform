@@ -168,11 +168,7 @@ const ManagementRoutes: React.FC = () => {
         <Route
           path={getNonExactParamPath(ManagementRoutesEnum.integrations)}
           element={<Integrations />}
-        >
-          <Route path={ManagementRoutesEnum.integrationIdParam}>
-            <Route path={ManagementRoutesEnum.integrationViewTypeParam} />
-          </Route>
-        </Route>
+        />
         <Route
           path='/'
           element={<Navigate to={ManagementRoutesEnum.namespaces} replace />}
