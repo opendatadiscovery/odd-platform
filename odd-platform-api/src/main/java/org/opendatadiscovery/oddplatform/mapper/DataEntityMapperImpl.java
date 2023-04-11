@@ -389,12 +389,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
                                             final Long filledEntitiesCount) {
-        final Map<Integer, Map<Integer, Long>> classesAndTypesCount =
-            Optional.ofNullable(pojo.getDataEntityClassesTypesCount())
-                .map(map -> JSONSerDeUtils.deserializeJson(map.data(),
-                    new TypeReference<Map<Integer, Map<Integer, Long>>>() {
-                    }))
-                .orElse(new HashMap<>());
+        final Map<Integer, Map<Integer, Long>> classesAndTypesCount = pojo.getDataEntityClassesTypesCount() != null
+            ? JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesTypesCount().data(), new TypeReference<>() {})
+            : new HashMap<>();
 
         return new DataEntityUsageInfo()
             .totalCount(pojo.getTotalCount())

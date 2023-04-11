@@ -22,9 +22,9 @@ public class DataEntityStatisticsServiceImpl implements DataEntityStatisticsServ
         return dataEntityStatisticsRepository.getStatistics()
             .flatMap(existing -> {
                 final Map<Integer, Map<Integer, Long>> updatedCounts = getUpdatedCounts(existing, entityDelta);
-                final Long newTotalCount = Optional.ofNullable(existing.getTotalCount())
-                    .map(count -> count + totalDelta)
-                    .orElse(totalDelta);
+                final long newTotalCount = existing.getTotalCount() != null
+                    ? existing.getTotalCount() + totalDelta
+                    : totalDelta;
                 return dataEntityStatisticsRepository.updateCounts(newTotalCount, updatedCounts);
             });
     }
