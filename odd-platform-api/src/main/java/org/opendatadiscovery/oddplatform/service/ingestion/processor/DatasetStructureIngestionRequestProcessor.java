@@ -102,7 +102,15 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
             .collectList()
             .flatMap(this::recalculateHashIfEmpty)
             .map(fetchedVersions -> extractVersionsToCreate(datasetDict, fetchedVersions))
-            .flatMap(datasetVersions -> datasetStructureService.createDatasetStructure(datasetVersions, datasetFields));
+            .flatMap(datasetVersions -> {
+                final Set<String> changedDatasetOddrns = datasetVersions.stream()
+                    .map(DatasetVersionPojo::getDatasetOddrn)
+                    .collect(Collectors.toSet());
+                final Map<String, List<DatasetFieldPojo>> changedDatasetFields = datasetFields.entrySet().stream()
+                    .filter(e -> changedDatasetOddrns.contains(e.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                return datasetStructureService.createDatasetStructure(datasetVersions, changedDatasetFields);
+            });
     }
 
     private Mono<List<DatasetVersionPojo>> recalculateHashIfEmpty(final List<DatasetVersionPojo> lastVersions) {
@@ -112,8 +120,8 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         if (CollectionUtils.isEmpty(versionsWithoutHash)) {
             return Mono.just(lastVersions);
         }
-        final List<Long> ids = versionsWithoutHash.stream().map(DatasetVersionPojo::getId).toList();
-        return datasetVersionRepository.getDatasetVersionsState(ids)
+        final Set<Long> ids = versionsWithoutHash.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());
+        return datasetVersionRepository.getDatasetVersionFields(ids)
             .flatMapMany(versionsMap -> {
                 fillDatasetVersionHash(versionsWithoutHash, versionsMap);
                 return datasetVersionRepository.bulkUpdate(versionsWithoutHash)

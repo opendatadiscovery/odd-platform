@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
+import org.opendatadiscovery.oddplatform.dto.dataset.DatasetVersionFields;
 import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldMetadataValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -116,17 +118,16 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionsState(final List<Long> datasetVersionIds) {
-        final String datasetVersionId = "datasetVersionId";
-        return jooqReactiveOperations.executeInPartitionReturning(datasetVersionIds, versions -> {
-            final var query = DSL.select(DATASET_VERSION.ID.as(datasetVersionId))
-                .select(DATASET_FIELD.fields())
-                .from(DATASET_VERSION)
-                .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
-                .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-                .where(DATASET_VERSION.ID.in(versions));
-            return jooqReactiveOperations.flux(query);
-        }).collect(groupingBy(r -> r.get(datasetVersionId, Long.class), mapping(this::extractDatasetField, toList())));
+    public Mono<List<DatasetVersionFields>> getDatasetVersionWithFields(final List<Long> datasetVersionIds) {
+        final String fieldsAlias = "fields";
+        final var query = DSL.select(DATASET_VERSION.fields())
+            .select(jsonArrayAgg(field(DATASET_FIELD.asterisk().toString())).as(fieldsAlias))
+            .from(DATASET_VERSION)
+            .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .where(DATASET_VERSION.ID.in(datasetVersionIds))
+            .groupBy(DATASET_VERSION.fields());
+        return jooqReactiveOperations.flux(query).map(r -> mapToDatasetVersionFields(r, fieldsAlias)).collectList();
     }
 
     @Override
@@ -237,16 +238,15 @@ public class ReactiveDatasetVersionRepositoryImpl
 
     @Override
     public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionFields(final Set<Long> dataVersionPojoIds) {
-        final SelectConditionStep<Record> vidToFieldsSelect = DSL.select(DATASET_STRUCTURE.DATASET_VERSION_ID)
-            .select(DATASET_FIELD.asterisk())
-            .from(DATASET_FIELD)
-            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(dataVersionPojoIds));
-
-        return jooqReactiveOperations.flux(vidToFieldsSelect)
-            .collect(groupingBy(
-                r -> r.get(DATASET_STRUCTURE.DATASET_VERSION_ID),
-                mapping(this::extractDatasetField, toList())));
+        return jooqReactiveOperations.executeInPartitionReturning(new ArrayList<>(dataVersionPojoIds), versions -> {
+            final var vidToFieldsSelect = DSL.select(DATASET_STRUCTURE.DATASET_VERSION_ID)
+                .select(DATASET_FIELD.asterisk())
+                .from(DATASET_FIELD)
+                .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+                .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(versions));
+            return jooqReactiveOperations.flux(vidToFieldsSelect);
+        }).collect(
+            groupingBy(r -> r.get(DATASET_STRUCTURE.DATASET_VERSION_ID), mapping(this::extractDatasetField, toList())));
     }
 
     private DatasetVersionPojo extractDatasetVersion(final Record datasetVersionRecord) {
@@ -268,6 +268,15 @@ public class ReactiveDatasetVersionRepositoryImpl
             .metadata(extractMetadata(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
             .build();
+    }
+
+    private DatasetVersionFields mapToDatasetVersionFields(final Record record,
+                                                           final String fieldsAlias) {
+        final DatasetVersionPojo version = jooqRecordHelper
+            .extractRelation(record, DATASET_VERSION, DatasetVersionPojo.class);
+        final Set<DatasetFieldPojo> fields = jooqRecordHelper
+            .extractAggRelation(record, fieldsAlias, DatasetFieldPojo.class);
+        return new DatasetVersionFields(version, fields);
     }
 
     private List<LabelDto> extractLabels(final Record record) {
