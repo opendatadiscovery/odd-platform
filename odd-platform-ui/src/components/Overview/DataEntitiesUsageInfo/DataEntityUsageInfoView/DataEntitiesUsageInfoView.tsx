@@ -53,7 +53,7 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
                 )
               )}
           </S.ListItemContainer>
-          <S.ListItemContainer role='list'>
+          <S.ListItemContainer>
             {classesUsageInfo
               .slice(3)
               .map(

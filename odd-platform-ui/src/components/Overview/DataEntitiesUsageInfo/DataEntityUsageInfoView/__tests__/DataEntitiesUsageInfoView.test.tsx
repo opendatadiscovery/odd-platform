@@ -30,7 +30,7 @@ const setupComponent = (props: Partial<DataEntitiesUsageInfoViewProps> = {}) =>
 describe('DataEntitiesUsageInfoView', () => {
   it('render with mocked props', () => {
     setupComponent();
-    expect(getByTextContent('Total entities:1')).toBeTruthy();
+    expect(getByTextContent('Total entities: 1')).toBeTruthy();
     expect(getByText('5 unfilled entities')).toBeTruthy();
     expect(getByRole('list')).toBeVisible();
   });

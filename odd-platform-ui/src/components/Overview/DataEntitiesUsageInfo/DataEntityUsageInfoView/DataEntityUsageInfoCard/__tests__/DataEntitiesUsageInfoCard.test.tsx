@@ -27,7 +27,7 @@ describe('DataEntitiesUsageInfoCard', () => {
 
   it('render', () => {
     setupComponent();
-    expect(getByTextContent('Dataset200')).toBeTruthy();
+    expect(getByTextContent('Datasets200')).toBeTruthy();
     expect(getByTextContent('Dag300')).toBeTruthy();
   });
 
