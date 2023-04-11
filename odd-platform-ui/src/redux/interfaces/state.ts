@@ -2,7 +2,6 @@ import type { EntityState } from '@reduxjs/toolkit';
 import type {
   ActivityCountInfo,
   AlertTotals,
-  AppInfo,
   AssociatedOwner,
   Collector,
   DataEntity as GeneratedDataEntity,
@@ -35,7 +34,6 @@ import type {
   Term,
   TermDetails,
   TermRef,
-  Link,
   ActivityType,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
