@@ -1,16 +1,5 @@
 components:
   schemas:
-    IntegrationTextBlock:
-      type: object
-      properties:
-        title:
-          type: string
-        content:
-          type: string
-      required:
-        - title
-        - content
-
     IntegrationCodeSnippetArgumentType:
       type: string
       enum:
@@ -41,6 +30,22 @@ components:
             $ref: '#/components/schemas/IntegrationCodeSnippetArgument'
       required:
         - template
+
+    IntegrationContentBlock:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        code_snippets:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationCodeSnippet'
+      required:
+        - title
+        - content
+        - code_snippets
 
     IntegrationPreview:
       type: object
@@ -74,17 +79,12 @@ components:
         - $ref: '#/components/schemas/IntegrationPreview'
         - type: object
           properties:
-            text_blocks:
+            content_blocks:
               type: array
               items:
-                $ref: '#/components/schemas/IntegrationTextBlock'
-            code_snippets:
-              type: array
-              items:
-                $ref: '#/components/schemas/IntegrationCodeSnippet'
+                $ref: '#/components/schemas/IntegrationContentBlock'
           required:
-            - text_blocks
-            - code_snippets
+            - content_blocks
 
     Link:
       type: object
