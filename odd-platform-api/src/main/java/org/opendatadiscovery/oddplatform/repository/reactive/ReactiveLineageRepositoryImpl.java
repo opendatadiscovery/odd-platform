@@ -91,7 +91,8 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
     public Flux<LineagePojo> getLineageRelations(final List<String> oddrns) {
         final var query = DSL.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
             .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns)));
+            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns))
+                .or(LINEAGE.CHILD_ODDRN.in(oddrns).and(LINEAGE.PARENT_ODDRN.in(oddrns))));
         return jooqReactiveOperations.flux(query).map(r -> r.into(LineagePojo.class));
     }
 
