@@ -45,7 +45,7 @@ paths:
   /api/integrations:
     get:
       summary: Get available integrations' list for an integration wizard
-      operationId: getIntegrations
+      operationId: getIntegrationPreviews
       responses:
         '200':
           description: OK

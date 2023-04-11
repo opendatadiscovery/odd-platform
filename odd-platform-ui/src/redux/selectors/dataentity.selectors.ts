@@ -12,7 +12,6 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import { emptyArr, emptyObj } from 'lib/constants';
-import { addDataEntityTermActType } from 'redux/actions';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
@@ -44,7 +43,11 @@ export const getIsDataEntityBelongsToClass = (dataEntityId: number | string) =>
       dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)) ??
       false;
 
-    return { isDataset, isQualityTest, isTransformer };
+    const isDEG =
+      dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.ENTITY_GROUP)) ??
+      false;
+
+    return { isDataset, isQualityTest, isTransformer, isDEG };
   });
 
 export const getDataEntityClassesList = createSelector(

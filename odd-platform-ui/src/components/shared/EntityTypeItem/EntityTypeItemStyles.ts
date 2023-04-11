@@ -6,4 +6,5 @@ export const Content = styled(Typography)(({ theme }) => ({
   padding: theme.spacing(0.25, 0.5),
   borderRadius: '4px',
   backgroundColor: theme.palette.backgrounds.primary,
+  whiteSpace: 'nowrap',
 }));

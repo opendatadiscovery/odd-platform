@@ -70,7 +70,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/Integration'
+            $ref: '#/components/schemas/IntegrationPreview'
       required:
         - items
 
