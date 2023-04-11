@@ -39,7 +39,11 @@ export const getIsDataEntityBelongsToClass = (dataEntityId: number | string) =>
       dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)) ??
       false;
 
-    return { isDataset, isQualityTest, isTransformer };
+    const isDEG =
+      dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.ENTITY_GROUP)) ??
+      false;
+
+    return { isDataset, isQualityTest, isTransformer, isDEG };
   });
 
 export const getDataEntityClassesList = createSelector(

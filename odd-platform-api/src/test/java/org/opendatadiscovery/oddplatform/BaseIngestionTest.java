@@ -45,10 +45,17 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
             .oddrn(UUID.randomUUID().toString())
             .active(true)
             .namespaceName(UUID.randomUUID().toString());
+        return ingestDataSource(form);
+    }
 
+    protected DataSource createDataSource(final DataSourceFormData dataSource) {
+        return ingestDataSource(dataSource);
+    }
+
+    private DataSource ingestDataSource(final DataSourceFormData dataSource) {
         return webTestClient.post()
             .uri("/api/datasources")
-            .body(Mono.just(form), DataSourceFormData.class)
+            .body(Mono.just(dataSource), DataSourceFormData.class)
             .exchange()
             .returnResult(DataSource.class)
             .getResponseBody()

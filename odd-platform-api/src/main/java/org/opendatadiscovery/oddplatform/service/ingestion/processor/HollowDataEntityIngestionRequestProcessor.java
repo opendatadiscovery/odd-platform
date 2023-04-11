@@ -30,6 +30,11 @@ public class HollowDataEntityIngestionRequestProcessor implements IngestionReque
         return CollectionUtils.isNotEmpty(extractHollowCandidates(request));
     }
 
+    @Override
+    public IngestionProcessingPhase getPhase() {
+        return IngestionProcessingPhase.INITIAL;
+    }
+
     private Set<String> extractHollowCandidates(final IngestionRequest request) {
         final Set<String> existingEntitiesOddrns = request.getAllEntities()
             .stream()
