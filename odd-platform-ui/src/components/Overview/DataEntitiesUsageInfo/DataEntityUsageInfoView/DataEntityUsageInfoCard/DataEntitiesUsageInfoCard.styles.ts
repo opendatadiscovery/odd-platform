@@ -1,16 +1,30 @@
+import type { CSSObject } from 'styled-components';
 import styled from 'styled-components';
 
-export const Container = styled('div')(({ theme }) => ({
+export const Wrapper = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  padding: theme.spacing(1),
-  flexGrow: 1,
+  flexWrap: 'nowrap',
+  padding: theme.spacing(0.5),
+  paddingBottom: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  '&:last-child': { border: 'none', marginBottom: 0 },
 }));
 
+export const Container = styled('div')(
+  () =>
+    ({
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+    } as CSSObject)
+);
+
 export const Header = styled('div')(({ theme }) => ({
-  padding: theme.spacing(1),
+  padding: theme.spacing(0.5, 1),
   display: 'flex',
-  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'center',
   cursor: 'pointer',
   borderRadius: '4px',
   h2: { lineHeight: theme.spacing(4) },
@@ -18,18 +32,39 @@ export const Header = styled('div')(({ theme }) => ({
   '&:active': { backgroundColor: theme.palette.backgrounds.primary },
 }));
 
+export const ClassLabelContainer = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(0.25),
+  width: '12%',
+  minWidth: 'fit-content',
+}));
+
 export const TypeListContainer = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  '& > *': { marginBottom: theme.spacing(0.25) },
+  flexWrap: 'wrap',
+  marginLeft: theme.spacing(0.5),
 }));
 
 export const TypeItem = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  padding: theme.spacing(0.5, 1),
+  padding: theme.spacing(0.5),
+  marginRight: theme.spacing(1),
   borderRadius: '4px',
   cursor: 'pointer',
+  position: 'relative',
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   '&:active': { backgroundColor: theme.palette.backgrounds.secondary },
+
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    width: '4px',
+    height: '4px',
+    borderRadius: '50%',
+    backgroundColor: theme.palette.backgrounds.secondary,
+    right: '-6px',
+    top: '42%',
+  },
+
+  '&:last-child': { '&::after': { display: 'none' } },
 }));

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntityUsageInfo } from 'generated-sources';
 import isEmpty from 'lodash/isEmpty';
+import * as S from './DataEntitiesUsageInfoView.styles';
 import DataEntitiesUsageInfoCard from './DataEntityUsageInfoCard/DataEntitiesUsageInfoCard';
-import * as S from './DataEntitiesUsageInfoViewStyles';
 import type {
   HandleEntityClassClickParams,
   HandleEntityClassTypeClickParams,
@@ -26,28 +26,50 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
 }) => (
   <Grid container sx={{ mt: 8 }} wrap='nowrap'>
     <S.DataEntitiesUsageContainer>
-      <S.UsageInfoHeader role='heading'>
-        <S.DataEntitiesTotalContainer>
-          <Typography variant='subtitle1'>Total entities:</Typography>
-          <Typography variant='h3'>{totalCount}</Typography>
-        </S.DataEntitiesTotalContainer>
-        <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
-      </S.UsageInfoHeader>
+      <S.DataEntitiesTotalContainer role='heading'>
+        <Box>
+          <Typography variant='h4'>Total entities: </Typography>
+          <Typography variant='h1'>{totalCount}</Typography>
+        </Box>
+        <Box>
+          <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
+        </Box>
+      </S.DataEntitiesTotalContainer>
       {!isEmpty(classesUsageInfo) && (
-        <S.ListItemContainer role='list'>
-          {classesUsageInfo.map(
-            ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
-              <DataEntitiesUsageInfoCard
-                key={entityClass.id}
-                entityClass={entityClass}
-                classTotalCount={classTotalCount}
-                dataEntityTypesInfo={dataEntityTypesInfo}
-                handleEntityClassClick={handleEntityClassClick}
-                handleEntityClassTypeClick={handleEntityClassTypeClick}
-              />
-            )
-          )}
-        </S.ListItemContainer>
+        <>
+          <S.ListItemContainer role='list'>
+            {classesUsageInfo
+              .slice(0, 3)
+              .map(
+                ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
+                  <DataEntitiesUsageInfoCard
+                    key={entityClass.id}
+                    entityClass={entityClass}
+                    classTotalCount={classTotalCount}
+                    dataEntityTypesInfo={dataEntityTypesInfo}
+                    handleEntityClassClick={handleEntityClassClick}
+                    handleEntityClassTypeClick={handleEntityClassTypeClick}
+                  />
+                )
+              )}
+          </S.ListItemContainer>
+          <S.ListItemContainer role='list'>
+            {classesUsageInfo
+              .slice(3)
+              .map(
+                ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
+                  <DataEntitiesUsageInfoCard
+                    key={entityClass.id}
+                    entityClass={entityClass}
+                    classTotalCount={classTotalCount}
+                    dataEntityTypesInfo={dataEntityTypesInfo}
+                    handleEntityClassClick={handleEntityClassClick}
+                    handleEntityClassTypeClick={handleEntityClassTypeClick}
+                  />
+                )
+              )}
+          </S.ListItemContainer>
+        </>
       )}
     </S.DataEntitiesUsageContainer>
   </Grid>

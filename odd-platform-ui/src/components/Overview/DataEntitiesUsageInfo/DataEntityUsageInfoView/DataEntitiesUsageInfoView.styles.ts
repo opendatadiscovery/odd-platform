@@ -6,38 +6,43 @@ export const DataEntitiesUsageContainer = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
   width: '100%',
   display: 'flex',
-  flexDirection: 'column',
 }));
 
-export const UsageInfoHeader = styled('div')(({ theme }) => ({
-  padding: theme.spacing(2, 1.5),
+export const UsageInfoStats = styled('div')(({ theme }) => ({
+  padding: theme.spacing(2.5),
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  borderBottom: `1px solid ${theme.palette.divider}`,
+  flexDirection: 'column',
+  borderRight: `1px solid ${theme.palette.divider}`,
 }));
 
 export const DataEntitiesTotalContainer = styled('div')(({ theme }) => ({
+  padding: theme.spacing(3),
   display: 'flex',
-  alignItems: 'center',
-  '& > *': { marginRight: theme.spacing(0.75) },
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  width: '45%',
+  borderRight: `1px solid ${theme.palette.divider}`,
+  h1: {
+    color: theme.palette.texts.primary,
+    fontSize: theme.typography.totalCountTitle.fontSize,
+    lineHeight: theme.typography.totalCountTitle.lineHeight,
+    marginBottom: theme.spacing(5),
+    marginTop: theme.spacing(1.5),
+  },
 }));
 
 export const UnfilledEntities = styled('span')(({ theme }) => ({
   backgroundColor: theme.palette.reportStatus.BROKEN.background,
   border: `1px solid ${theme.palette.reportStatus.BROKEN.border}`,
-  padding: theme.spacing(0.25, 1),
+  padding: theme.spacing(0.5, 1),
   borderRadius: theme.spacing(1.8),
   color: theme.palette.info.main,
-  fontSize: theme.typography.body2.fontSize,
 }));
 
 export const ListItemContainer = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexWrap: 'nowrap',
+  padding: theme.spacing(1.5),
+  flexDirection: 'column',
   width: '100%',
-  '& > *': {
-    borderRight: `1px solid ${theme.palette.divider}`,
-    '&:last-child': { border: 'none' },
-  },
+  justifyContent: 'space-between',
 }));
