@@ -1,36 +1,27 @@
 import React, { type FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppSuspenseWrapper } from 'components/shared';
-import { useAppPaths } from 'lib/hooks';
-import type { Integration } from 'generated-sources';
-
-const IntegrationOverview = React.lazy(
-  () => import('../IntegrationOverview/IntegrationOverview')
-);
-const IntegrationConfigure = React.lazy(
-  () => import('../IntegrationConfigure/IntegrationConfigure')
-);
+import type { Integration } from 'lib/interfaces';
+import IntegrationContent from '../IntegrationContent/IntegrationContent';
 
 interface IntegrationRoutesProps {
-  textBlocks: Integration['textBlocks'];
-  codeSnippets: Integration['codeSnippets'];
+  contentByTitle: Integration['contentByTitle'];
 }
 
-const IntegrationRoutes: FC<IntegrationRoutesProps> = ({ textBlocks, codeSnippets }) => {
-  const { ManagementRoutes } = useAppPaths();
+const IntegrationRoutes: FC<IntegrationRoutesProps> = ({ contentByTitle }) => {
+  const firstPath = Object.keys(contentByTitle)[0];
 
   return (
     <AppSuspenseWrapper>
       <Routes>
-        <Route
-          path={ManagementRoutes.overview}
-          element={<IntegrationOverview textBlocks={textBlocks} />}
-        />
-        <Route
-          path={ManagementRoutes.configure}
-          element={<IntegrationConfigure codeSnippets={codeSnippets} />}
-        />
-        <Route path='/' element={<Navigate to={ManagementRoutes.overview} replace />} />
+        {Object.entries(contentByTitle).map(([title, integrationContent]) => (
+          <Route
+            key={title}
+            path={title}
+            element={<IntegrationContent integrationContent={integrationContent} />}
+          />
+        ))}
+        <Route path='/' element={<Navigate to={firstPath} replace />} />
       </Routes>
     </AppSuspenseWrapper>
   );

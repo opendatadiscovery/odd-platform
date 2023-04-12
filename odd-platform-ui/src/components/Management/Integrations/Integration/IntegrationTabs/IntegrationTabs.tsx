@@ -1,27 +1,26 @@
 import React from 'react';
 import { type AppTabItem, AppTabs } from 'components/shared';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import { Grid } from '@mui/material';
+import capitalize from 'lodash/capitalize';
 
-const IntegrationTabs: React.FC = () => {
+interface IntegrationTabsProps {
+  titles: string[];
+}
+
+const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles }) => {
   const { integrationViewType } = useAppParams();
-  const { ManagementRoutes } = useAppPaths();
 
   const [selectedTab, setSelectedTab] = React.useState(0);
 
   const tabs = React.useMemo<AppTabItem[]>(
-    () => [
-      { name: 'Overview', link: ManagementRoutes.overview },
-      { name: 'Configure', link: ManagementRoutes.configure },
-    ],
-    []
+    () => titles.map(title => ({ name: capitalize(title), link: title })),
+    [titles]
   );
 
   React.useEffect(() => {
     setSelectedTab(
-      integrationViewType
-        ? tabs.findIndex(tab => tab.name.toLowerCase() === integrationViewType)
-        : 0
+      integrationViewType ? tabs.findIndex(tab => tab.link === integrationViewType) : 0
     );
   }, [integrationViewType]);
 
