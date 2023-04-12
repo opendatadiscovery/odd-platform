@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.integration.dto;
 
-public enum IntegrationCodeSnippetArgumentType {
+public enum IntegrationCodeSnippetArgumentTypeEnum {
     INTEGER,
     STRING,
     BOOLEAN,

@@ -2,22 +2,27 @@ package org.opendatadiscovery.oddplatform.integration.serde;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippet;
-import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgument;
-import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentType;
-import org.opendatadiscovery.oddplatform.integration.dto.IntegrationContentBlock;
+import org.apache.commons.lang3.ObjectUtils;
+import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentDto;
+import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentTypeEnum;
+import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetDto;
+import org.opendatadiscovery.oddplatform.integration.dto.IntegrationContentBlockDto;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationOverviewDto;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationPreviewDto;
 
 public class IntegrationDeserializer extends StdDeserializer<IntegrationOverviewDto> {
+    public IntegrationDeserializer() {
+        this(null);
+    }
+
     protected IntegrationDeserializer(final Class<?> vc) {
         super(vc);
     }
@@ -27,40 +32,45 @@ public class IntegrationDeserializer extends StdDeserializer<IntegrationOverview
         final JsonParser p,
         final DeserializationContext ctx
     ) throws IOException, JacksonException {
-        final TreeNode integrationNode = p.getCodec().readTree(p);
+        final ObjectNode integrationNode = p.getCodec().readTree(p);
 
-        final String id = integrationNode.get("id").asToken().asString();
-        final String name = integrationNode.get("name").asToken().asString();
-        final String description = integrationNode.get("description").asToken().asString();
+        final String id = integrationNode.get("id").asText();
+        final String name = integrationNode.get("name").asText();
+        final String description = integrationNode.get("description").asText();
 
         final IntegrationPreviewDto integrationPreviewDto = new IntegrationPreviewDto(id, name, description);
-        final List<IntegrationContentBlock> integrationContentBlocks = new ArrayList<>();
+        final List<IntegrationContentBlockDto> integrationContentBlockDtos = new ArrayList<>();
 
-        for (final JsonNode block : (ArrayNode) integrationNode.get("blocks")) {
+        for (final JsonNode block : integrationNode.get("blocks")) {
             final String blockTitle = block.get("title").asText();
             final String blockContent = block.get("content").asText();
+            final JsonNode blockSnippets = block.get("snippets");
 
-            final List<IntegrationCodeSnippet> snippets = new ArrayList<>();
+            final List<IntegrationCodeSnippetDto> snippets = new ArrayList<>();
 
-            for (final JsonNode snippet : block.get("snippets")) {
+            for (final JsonNode snippet : ObjectUtils.defaultIfNull(blockSnippets, Collections.<JsonNode>emptyList())) {
                 final String snippetTemplate = snippet.get("template").asText();
 
-                final List<IntegrationCodeSnippetArgument> arguments = new ArrayList<>();
-                for (final JsonNode argument : snippet.get("arguments")) {
+                final List<IntegrationCodeSnippetArgumentDto> arguments = new ArrayList<>();
+                for (final JsonNode argument : ObjectUtils.defaultIfNull(snippet.get("arguments"),
+                    Collections.<JsonNode>emptyList())) {
+                    final String argParameter = argument.get("parameter").asText();
                     final String argName = argument.get("name").asText();
                     final String type = argument.get("type").asText();
-                    arguments.add(new IntegrationCodeSnippetArgument(
+
+                    arguments.add(new IntegrationCodeSnippetArgumentDto(
+                        argParameter,
                         argName,
-                        IntegrationCodeSnippetArgumentType.valueOf(type.toUpperCase())
+                        IntegrationCodeSnippetArgumentTypeEnum.valueOf(type.toUpperCase())
                     ));
                 }
 
-                snippets.add(new IntegrationCodeSnippet(snippetTemplate, arguments));
+                snippets.add(new IntegrationCodeSnippetDto(snippetTemplate, arguments));
             }
 
-            integrationContentBlocks.add(new IntegrationContentBlock(blockTitle, blockContent, snippets));
+            integrationContentBlockDtos.add(new IntegrationContentBlockDto(blockTitle, blockContent, snippets));
         }
 
-        return new IntegrationOverviewDto(integrationPreviewDto, integrationContentBlocks);
+        return new IntegrationOverviewDto(integrationPreviewDto, integrationContentBlockDtos);
     }
 }

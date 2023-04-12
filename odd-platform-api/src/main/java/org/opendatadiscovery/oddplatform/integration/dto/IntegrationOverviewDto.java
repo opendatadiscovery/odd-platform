@@ -6,5 +6,5 @@ import org.opendatadiscovery.oddplatform.integration.serde.IntegrationDeserializ
 
 @JsonDeserialize(using = IntegrationDeserializer.class)
 public record IntegrationOverviewDto(IntegrationPreviewDto integration,
-                                     List<IntegrationContentBlock> contentBlocks) {
+                                     List<IntegrationContentBlockDto> contentBlocks) {
 }
