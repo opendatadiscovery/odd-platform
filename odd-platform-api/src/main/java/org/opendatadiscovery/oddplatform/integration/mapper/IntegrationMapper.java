@@ -3,19 +3,19 @@ package org.opendatadiscovery.oddplatform.integration.mapper;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.opendatadiscovery.oddplatform.api.contract.model.Integration;
-import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationList;
-import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationOverview;
-import org.opendatadiscovery.oddplatform.integration.IntegrationDto;
-import org.opendatadiscovery.oddplatform.integration.IntegrationOverviewDto;
+import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationPreview;
+import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationPreviewList;
+import org.opendatadiscovery.oddplatform.integration.dto.IntegrationOverviewDto;
+import org.opendatadiscovery.oddplatform.integration.dto.IntegrationPreviewDto;
 import org.opendatadiscovery.oddplatform.mapper.MapperConfig;
 
 @Mapper(config = MapperConfig.class)
 public interface IntegrationMapper {
-    Integration map(final IntegrationDto dto);
+    Integration map(final IntegrationOverviewDto dto);
 
-    IntegrationOverview map(final IntegrationOverviewDto dto);
+    IntegrationPreview map(final IntegrationPreviewDto dto);
 
-    default IntegrationList map(final List<IntegrationDto> dtos) {
-        return new IntegrationList().items(dtos.stream().map(this::map).toList());
+    default IntegrationPreviewList map(final List<IntegrationPreviewDto> dtos) {
+        return new IntegrationPreviewList().items(dtos.stream().map(this::map).toList());
     }
 }

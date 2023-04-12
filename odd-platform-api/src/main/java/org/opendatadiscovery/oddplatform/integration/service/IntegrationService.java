@@ -1,11 +1,11 @@
 package org.opendatadiscovery.oddplatform.integration.service;
 
-import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationList;
-import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationOverview;
+import org.opendatadiscovery.oddplatform.api.contract.model.Integration;
+import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationPreviewList;
 import reactor.core.publisher.Mono;
 
 public interface IntegrationService {
-    Mono<IntegrationOverview> get(final String id);
+    Mono<Integration> get(final String id);
 
-    Mono<IntegrationList> list();
+    Mono<IntegrationPreviewList> listPreviews();
 }

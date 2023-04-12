@@ -2,8 +2,8 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.IntegrationApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationList;
-import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationOverview;
+import org.opendatadiscovery.oddplatform.api.contract.model.Integration;
+import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationPreviewList;
 import org.opendatadiscovery.oddplatform.integration.service.IntegrationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,14 +16,13 @@ public class IntegrationController implements IntegrationApi {
     private final IntegrationService integrationService;
 
     @Override
-    public Mono<ResponseEntity<IntegrationList>> getIntegrations(final ServerWebExchange exchange) {
-        return integrationService.list().map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Integration>> getIntegration(final String integrationId,
+                                                            final ServerWebExchange exchange) {
+        return integrationService.get(integrationId).map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<IntegrationOverview>> getIntegration(final String integrationId,
-                                                                    final ServerWebExchange exchange) {
-        // TODO: 200 when empty?
-        return integrationService.get(integrationId).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<IntegrationPreviewList>> getIntegrationPreviews(final ServerWebExchange exchange) {
+        return integrationService.listPreviews().map(ResponseEntity::ok);
     }
 }
