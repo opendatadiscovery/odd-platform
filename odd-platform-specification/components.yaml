@@ -11,11 +11,14 @@ components:
     IntegrationCodeSnippetArgument:
       type: object
       properties:
+        parameter:
+          type: string
         name:
           type: string
         type:
           $ref: '#/components/schemas/IntegrationCodeSnippetArgumentType'
       required:
+        - parameter
         - name
         - type
 
