@@ -7,8 +7,8 @@ export const Container = styled('div')(({ theme }) => ({
   borderColor: theme.palette.border.primary,
   position: 'relative',
   borderRadius: '8px',
-  width: '180px',
-  height: '220px',
+  width: '184px',
+  boxSizing: 'content-box',
 
   '&:hover': {
     borderColor: theme.palette.border.tertiary,
@@ -18,11 +18,13 @@ export const Container = styled('div')(({ theme }) => ({
   '&:active': { borderColor: theme.palette.border.element, boxShadow: theme.shadows[8] },
 }));
 
+const logoContainerHeight = 144;
+
 export const LogoContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  height: '144px',
+  height: `${logoContainerHeight}px`,
   borderTopLeftRadius: '8px',
   borderTopRightRadius: '8px',
   backgroundColor: theme.palette.backgrounds.tertiary,
@@ -31,8 +33,10 @@ export const LogoContainer = styled('div')(({ theme }) => ({
 export const TextContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  flexGrow: 1,
+  justifyContent: 'center',
   alignItems: 'center',
-  padding: theme.spacing(2, 0),
+  padding: theme.spacing(2, 1),
 }));
 
 export const IntegratedContainer = styled('div')(({ theme }) => ({
@@ -41,7 +45,7 @@ export const IntegratedContainer = styled('div')(({ theme }) => ({
   width: 'fit-content',
   position: 'absolute',
   left: '25%',
-  top: '60%',
+  top: `${logoContainerHeight - 14}px`,
   padding: theme.spacing(0.5, 1),
   borderRadius: '16px',
   backgroundColor: theme.palette.button.secondarySuccess.hover.background,

@@ -105,7 +105,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
       >
         Reconfigure
       </AppButton>
-      <Markdown value={templateWithArguments} disableCopy={false} />
+      <Markdown value={templateWithArguments} />
     </Grid>
   );
 };

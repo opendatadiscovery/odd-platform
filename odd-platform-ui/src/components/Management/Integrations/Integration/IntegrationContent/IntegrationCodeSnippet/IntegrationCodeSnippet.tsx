@@ -9,7 +9,7 @@ interface IntegrationCodeSnippetProps {
 
 const IntegrationCodeSnippet: FC<IntegrationCodeSnippetProps> = ({ snippet }) => (
   <Grid container mb={1}>
-    <Markdown value={snippet.template} disableCopy={false} />
+    <Markdown value={snippet.template} />
   </Grid>
 );
 

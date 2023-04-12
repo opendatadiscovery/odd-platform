@@ -25,9 +25,9 @@ const Integration: FC = () => {
     return <AppLoadingPage />;
   }
 
-  // if (isError) {
-  //   return <AppErrorPage showError={isError} error={error} />;
-  // }
+  if (isError) {
+    return <AppErrorPage showError={isError} error={error} />;
+  }
 
   if (!integration) {
     return <EmptyContentPlaceholder />;

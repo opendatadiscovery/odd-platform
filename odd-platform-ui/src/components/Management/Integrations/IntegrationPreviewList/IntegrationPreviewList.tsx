@@ -9,10 +9,8 @@ import {
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
 import { useIntegrationPreviews } from 'lib/hooks/api';
-import { useDebouncedCallback } from 'use-debounce';
 import type { ErrorState } from 'redux/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import type { IntegrationPreview } from 'generated-sources';
 import IntegrationPreviewItem from './IntegrationPreviewItem/IntegrationPreviewItem';
 
 const IntegrationPreviewList: FC = () => {
@@ -21,21 +19,12 @@ const IntegrationPreviewList: FC = () => {
   const { data, isError, isSuccess, error, isLoading } = useIntegrationPreviews();
 
   const handleInputChange = useCallback(
-    useDebouncedCallback((e: ChangeEvent<HTMLInputElement>) => {
-      setQuery(e.target.value);
-    }, 500),
+    (e: ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
     []
   );
 
-  // const filteredIntegrations = useMemo(
-  //   () => data?.items.filter(integration => integration.name.includes(query)),
-  //   [query, data?.items]
-  // );
-
-  const filteredIntegrations: IntegrationPreview[] = [
-    { id: '1', name: 'Snowflake', installed: false, description: 'snowflake source' },
-    { id: '2', name: 'Postgress', installed: true, description: 'postgress source' },
-  ];
+  const filteredIntegrations =
+    data?.items.filter(integration => integration.name.includes(query)) || [];
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
@@ -82,7 +71,7 @@ const IntegrationPreviewList: FC = () => {
       <AppErrorPage showError={isError} error={error as ErrorState} offsetTop={120} />
       <EmptyContentPlaceholder
         isContentLoaded={isSuccess}
-        isContentEmpty={!filteredIntegrations?.length}
+        isContentEmpty={!filteredIntegrations.length}
       />
     </Grid>
   );

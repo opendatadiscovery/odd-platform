@@ -30,8 +30,12 @@ const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
     <S.Container onClick={handleOnItemClick}>
       <S.LogoContainer />
       <S.TextContainer>
-        <Typography variant='h3'>{name}</Typography>
-        <Typography variant='body1'>{description}</Typography>
+        <Typography title={name} variant='h3' textAlign='center'>
+          {name}
+        </Typography>
+        <Typography title={description} variant='body1' textAlign='center'>
+          {description}
+        </Typography>
       </S.TextContainer>
       {installed && (
         <S.IntegratedContainer>
