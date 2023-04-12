@@ -1,0 +1,51 @@
+id: postgresql
+name: PostgreSQL
+description: |
+  [Description]: PostgreSQL integration
+blocks:
+  - title: Overview
+    content: |+
+      The PostgreSQL integration enables data discovery and observability for PostgreSQL database
+  - title: Configure
+    content: |+
+      It is recommended to create a separate PostgreSQL user with access policy to the information_schema only:
+      ````sql
+      CREATE USER <username> WITH PASSWORD '<password>';
+      GRANT USAGE ON SCHEMA information_schema TO <username>;
+      GRANT SELECT ON ALL TABLES IN SCHEMA information_schema TO <username>;
+      ````
+    snippets:
+      - template: |+
+          ````yaml
+          platform_host_url: http://localhost:8080
+          default_pulling_interval: 10
+          token: ""
+          plugins:
+            - type: postgresql
+              name: {{ plugin_name }}
+              description: {{ plugin_description }}
+              database: {{ plugin_database }}
+              host: {{ plugin_host }}
+              port: {{ plugin_port }}
+              user: {{ plugin_user }}
+              password: {{ plugin_user }} password
+          ````
+        arguments:
+          - parameter: plugin_name
+            name: Plugin
+            type: STRING
+          - parameter: plugin_description
+            name: Description
+            type: STRING
+          - parameter: plugin_database
+            name: Database
+            type: STRING
+          - parameter: plugin_host
+            name: Host
+            type: STRING
+          - parameter: plugin_port
+            name: Port
+            type: INTEGER
+          - parameter: plugin_user
+            name: User
+            type: STRING
