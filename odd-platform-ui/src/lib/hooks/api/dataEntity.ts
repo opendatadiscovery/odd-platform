@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
 import { dataEntityApi } from 'lib/api';
 import { showServerErrorToast } from 'lib/errorHandling';
+import { useQuery } from '@tanstack/react-query';
 import type {
   DataEntityGroupLineage,
   Edge,
@@ -66,4 +66,8 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
         ),
     }
   );
+}
+
+export function useDataEntitiesUsage() {
+  return useQuery(['dataEntitiesUsage'], () => dataEntityApi.getDataEntitiesUsage());
 }

@@ -2,7 +2,6 @@ import type { EntityState } from '@reduxjs/toolkit';
 import type {
   ActivityCountInfo,
   AlertTotals,
-  AppInfo,
   AssociatedOwner,
   Collector,
   DataEntity as GeneratedDataEntity,
@@ -11,7 +10,6 @@ import type {
   DataEntityRun,
   DataEntitySearchHighlight,
   DataEntityType,
-  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetSLAReport,
@@ -36,7 +34,6 @@ import type {
   Term,
   TermDetails,
   TermRef,
-  Link,
   ActivityType,
 } from 'generated-sources';
 // eslint-disable-next-line lodash/import-scope
@@ -156,7 +153,6 @@ export interface DataEntitiesState {
     entityTypes: Dictionary<DataEntityType>;
     entityClasses: Dictionary<DataEntityClass>;
   };
-  dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
 export interface DataEntitySearchState {
@@ -193,9 +189,7 @@ export interface OwnerAssociationState {
 }
 
 export interface AppInfoState {
-  appInfo: AppInfo;
   activeFeatures: Feature[];
-  links: Link[];
 }
 
 export interface TermsState {

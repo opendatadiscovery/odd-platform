@@ -327,6 +327,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityClassUsageInfo'
+      required:
+        - total_count
+        - unfilled_count
+        - data_entity_classes_info
 
     DataEntityClassUsageInfo:
       type: object
@@ -336,6 +340,26 @@ components:
         total_count:
           type: integer
           format: int64
+        data_entity_types_info:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityTypeUsageInfo'
+      required:
+        - entity_class
+        - total_count
+        - data_entity_types_info
+
+    DataEntityTypeUsageInfo:
+      type: object
+      properties:
+        entity_type:
+          $ref: '#/components/schemas/DataEntityType'
+        total_count:
+          type: integer
+          format: int64
+      required:
+        - entity_type
+        - total_count
 
     DataEntityClassAndTypeDictionary:
       type: object

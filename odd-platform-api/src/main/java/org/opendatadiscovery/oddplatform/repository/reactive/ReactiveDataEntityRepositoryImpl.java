@@ -103,6 +103,19 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<DataEntityPojo> updateDEG(final DataEntityPojo dataEntityPojo) {
+        final var query = DSL.update(DATA_ENTITY)
+            .set(DATA_ENTITY.TYPE_ID, dataEntityPojo.getTypeId())
+            .set(DATA_ENTITY.NAMESPACE_ID, dataEntityPojo.getNamespaceId())
+            .set(DATA_ENTITY.INTERNAL_NAME, dataEntityPojo.getInternalName())
+            .set(DATA_ENTITY.UPDATED_AT, dataEntityPojo.getUpdatedAt())
+            .where(DATA_ENTITY.ID.eq(dataEntityPojo.getId()))
+            .returning();
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(DataEntityPojo.class));
+    }
+
+    @Override
     public Mono<Boolean> exists(final long dataEntityId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId))));

@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<DataEntityPojo> {
     Flux<DataEntityPojo> get(final List<Long> ids);
 
+    Mono<DataEntityPojo> updateDEG(final DataEntityPojo dataEntityPojo);
+
     Mono<Boolean> exists(final long dataEntityId);
 
     Mono<Boolean> existsByDataSourceId(final long dataSourceId);

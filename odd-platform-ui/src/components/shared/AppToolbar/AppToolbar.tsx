@@ -59,7 +59,6 @@ const AppToolbar: React.FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <AppInfoMenu />
-              <S.UserAvatar stroke='currentColor' />
               <S.UserName>{owner?.name || identity?.username}</S.UserName>
               <AppIconButton
                 icon={<DropdownIcon />}

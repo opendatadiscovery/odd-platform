@@ -1,5 +1,5 @@
 import React from 'react';
-import { getByText, render } from 'lib/testHelpers';
+import { getByText, render } from 'lib/tests/testHelpers';
 import BooleanFormatted, { type BooleanFormattedProps } from '../BooleanFormatted';
 
 describe('BooleanFormatted', () => {
