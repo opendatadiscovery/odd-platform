@@ -11,7 +11,7 @@ interface CopyButtonProps {
   popupText?: string;
   stringToCopy: string;
   msDelay?: number;
-  sx?: SxProps<Theme> | undefined;
+  sx?: SxProps<Theme>;
 }
 
 const CopyButton: React.FC<CopyButtonProps> = ({

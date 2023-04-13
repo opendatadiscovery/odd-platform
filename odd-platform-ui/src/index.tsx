@@ -16,6 +16,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 
 import { CssBaseline } from '@mui/material';
 import { store } from 'redux/store';
+import { showServerErrorToast } from 'lib/errorHandling';
 import theme from './theme/mui.theme';
 
 import App from './components/App';
@@ -25,7 +26,15 @@ declare module 'styled-components' {
   interface DefaultTheme extends Theme {}
 }
 
-const queryClient = new QueryClient({});
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      onError(e) {
+        showServerErrorToast(e as Response);
+      },
+    },
+  },
+});
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

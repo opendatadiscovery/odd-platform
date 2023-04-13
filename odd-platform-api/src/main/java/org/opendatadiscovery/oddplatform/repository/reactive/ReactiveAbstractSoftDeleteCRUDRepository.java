@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -14,6 +15,7 @@ import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -58,6 +60,10 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
 
     @Override
     public Flux<P> delete(final Collection<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Flux.just();
+        }
+
         final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
         final UpdateResultStep<R> query = DSL.update(recordTable)
             .set(updatedFieldsMap)
@@ -99,7 +105,7 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
 
     protected Map<Field<?>, Object> getDeleteChangedFields() {
         final Map<Field<?>, Object> updatedFieldsMap = new HashMap<>();
-        updatedFieldsMap.put(deletedAtField, LocalDateTime.now());
+        updatedFieldsMap.put(deletedAtField, DateTimeUtil.generateNow());
         return updatedFieldsMap;
     }
 

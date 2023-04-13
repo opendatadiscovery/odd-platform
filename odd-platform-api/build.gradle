@@ -3,14 +3,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.2.1'
     id 'checkstyle'
-    id "de.undercouch.download" version "4.1.2" apply false
     id "org.sonarqube" version "3.3"
     id "org.opendatadiscovery.internal.plugin.jooq-generate"
     id "com.google.protobuf" version "0.9.2"
-}
-
-if (env == 'dev') {
-    apply plugin: "de.undercouch.download"
 }
 
 group = 'org.opendatadiscovery'
@@ -124,29 +119,11 @@ jib {
         image = 'opendatadiscovery/odd-platform'
         tags = ['latest', project.version]
     }
-    if (env == "dev") {
-        extraDirectories {
-            paths {
-                path {
-                    from = file('build/otlp/')
-                    into = '/app/otlp/'
-                }
-            }
-        }
-        container {
-            creationTime = 'USE_CURRENT_TIMESTAMP'
-            appRoot = '/app'
-            jvmFlags = ['-javaagent:/app/otlp/opentelemetry-javaagent.jar']
-            ports = ['8080']
-            workingDirectory = '/app'
-        }
-    } else {
-        container {
-            creationTime = 'USE_CURRENT_TIMESTAMP'
-            appRoot = '/app'
-            ports = ['8080']
-            workingDirectory = '/app'
-        }
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        appRoot = '/app'
+        ports = ['8080']
+        workingDirectory = '/app'
     }
     allowInsecureRegistries = false
 }
@@ -170,17 +147,7 @@ compileJava.dependsOn jooqDockerGenerate
 test {
     useJUnitPlatform()
     testLogging.showStandardStreams = true
-    maxParallelForks 4
-}
-
-if (env == "dev") {
-    task downloadOtlp(type: Download) {
-        src "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar"
-        dest "${buildDir}/otlp/opentelemetry-javaagent.jar"
-        overwrite true
-    }
-
-    jib.dependsOn downloadOtlp
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 }
 
 sonarqube {

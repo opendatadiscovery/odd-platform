@@ -6,7 +6,7 @@ import {
   type DataSetFieldType,
   DataSetFieldTypeTypeEnum,
   type DateTimeFieldStat,
-  type EnumValue,
+  type EnumValueList,
   type NumberFieldStat,
   type StringFieldStat,
   type IntegerFieldStat,
@@ -68,7 +68,7 @@ export interface DataSetStructureResponse {
 
 export interface DataSetFieldEnumsResponse {
   datasetFieldId: number;
-  enumValueList: EnumValue[] | undefined;
+  enumValueList: EnumValueList;
 }
 
 export interface DatasetStructureIds {

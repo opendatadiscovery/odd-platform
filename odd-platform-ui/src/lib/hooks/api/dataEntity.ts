@@ -67,3 +67,7 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
     }
   );
 }
+
+export function useDataEntitiesUsage() {
+  return useQuery(['dataEntitiesUsage'], () => dataEntityApi.getDataEntitiesUsage());
+}

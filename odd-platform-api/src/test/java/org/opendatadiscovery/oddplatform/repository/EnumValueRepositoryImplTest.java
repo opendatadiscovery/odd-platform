@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
+import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
@@ -47,14 +48,17 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
         final var softDeletedPojo = new EnumValuePojo()
             .setName("deletedPojo")
             .setDatasetFieldId(mainDatasetFieldId)
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setDeletedAt(LocalDateTime.now());
 
         final var otherDatasetPojo = new EnumValuePojo()
             .setName("otherDatasetPojo")
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setDatasetFieldId(otherDatasetFieldId);
 
         final var returnablePojo = new EnumValuePojo()
             .setName("returnablePojo")
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setDatasetFieldId(mainDatasetFieldId);
 
         enumValueRepository.bulkCreate(List.of(softDeletedPojo, otherDatasetPojo, returnablePojo)).blockLast();
@@ -77,11 +81,13 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
         final var pojoToSoftDelete = new EnumValuePojo()
             .setId(4L)
             .setName("pojoToSoftDelete")
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setDatasetFieldId(datasetFieldId);
 
         final var pojoToKeep = new EnumValuePojo()
             .setId(5L)
             .setName("pojoToKeep")
+            .setOrigin(EnumValueOrigin.INTERNAL.getCode())
             .setDatasetFieldId(datasetFieldId);
 
         reactiveDatasetFieldRepository.bulkCreate(List.of(new DatasetFieldPojo().setId(datasetFieldId)))
@@ -89,7 +95,7 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
 
         enumValueRepository.bulkCreate(List.of(pojoToSoftDelete, pojoToKeep)).blockLast();
 
-        enumValueRepository.softDeleteOutdatedEnumValuesExcept(datasetFieldId, List.of(pojoToKeep.getId()))
+        enumValueRepository.softDeleteExcept(datasetFieldId, List.of(pojoToKeep.getId()))
             .as(StepVerifier::create)
             .assertNext(r -> {
                 assertThat(r.getId()).isEqualTo(pojoToSoftDelete.getId());

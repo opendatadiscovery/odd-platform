@@ -70,7 +70,7 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
         {namespace}
       </Typography>
       {terms.map(term => (
-        <S.ArrayItemWrapper $typeOfChange={term.typeOfChange}>
+        <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
           <Box sx={{ p: 0.5 }}>{term.name}</Box>
         </S.ArrayItemWrapper>
       ))}
