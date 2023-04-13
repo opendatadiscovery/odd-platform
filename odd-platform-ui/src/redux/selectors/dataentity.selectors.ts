@@ -1,17 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { DataEntitiesState, RootState } from 'redux/interfaces';
-import type {
-  DataEntityClass,
-  DataEntityClassUsageInfo,
-  DataEntityType,
-} from 'generated-sources';
+import type { DataEntityClass, DataEntityType } from 'generated-sources';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {
   createErrorSelector,
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
-import { emptyArr, emptyObj } from 'lib/constants';
+import { emptyObj } from 'lib/constants';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
@@ -43,7 +39,11 @@ export const getIsDataEntityBelongsToClass = (dataEntityId: number | string) =>
       dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)) ??
       false;
 
-    return { isDataset, isQualityTest, isTransformer };
+    const isDEG =
+      dataEntityClasses?.some(isClassesEquals(DataEntityClassNameEnum.ENTITY_GROUP)) ??
+      false;
+
+    return { isDataset, isQualityTest, isTransformer, isDEG };
   });
 
 export const getDataEntityClassesList = createSelector(
@@ -75,22 +75,6 @@ export const getMyEntitiesUpstream = createSelector(
 export const getPopularEntities = createSelector(
   dataEntitiesState,
   dataEntities => dataEntities.popular
-);
-
-export const getDataEntitiesUsageTotalCount = createSelector(
-  dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageInfo.totalCount || 0
-);
-
-export const getDataEntitiesUsageUnfilledCount = createSelector(
-  dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageInfo.unfilledCount || 0
-);
-
-export const getDataEntityClassesUsageInfo = createSelector(
-  dataEntitiesState,
-  (dataEntities): DataEntityClassUsageInfo[] =>
-    dataEntities.dataEntityUsageInfo.dataEntityClassesInfo || emptyArr
 );
 
 // details
@@ -152,10 +136,6 @@ export const getMyDownstreamFetchingStatuses = createStatusesSelector(
 
 export const getPopularDataEntitiesFetchingStatuses = createStatusesSelector(
   actions.fetchPopularDataEntitiesActionType
-);
-
-export const getDataEntityUsageInfoFetchingStatuses = createStatusesSelector(
-  actions.fetchDataEntitiesUsageActionType
 );
 
 export const getDataEntityDetailsFetchingStatuses = createStatusesSelector(

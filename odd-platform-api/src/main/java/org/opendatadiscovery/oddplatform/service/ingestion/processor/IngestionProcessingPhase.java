@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum IngestionProcessingPhase {
-    MAIN(1),
-    FINALIZING(2);
+    INITIAL(1),
+    MAIN(2),
+    FINALIZING(3);
 
     @Getter
     private final int order;

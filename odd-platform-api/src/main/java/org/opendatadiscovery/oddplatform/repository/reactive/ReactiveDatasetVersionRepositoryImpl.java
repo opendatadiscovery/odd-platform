@@ -4,10 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -107,10 +109,24 @@ public class ReactiveDatasetVersionRepositoryImpl
                 .findFirst()
                 .map(e -> Mono.just(DatasetStructureDto.builder()
                     .datasetVersion(e.getKey())
-                    .datasetFields(e.getValue())
+                    .datasetFields(isNullList(e.getValue()) ? List.of() : e.getValue())
                     .build()))
                 .orElse(Mono.empty())
             );
+    }
+
+    @Override
+    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionsState(final List<Long> datasetVersionIds) {
+        final String datasetVersionId = "datasetVersionId";
+        return jooqReactiveOperations.executeInPartitionReturning(datasetVersionIds, versions -> {
+            final var query = DSL.select(DATASET_VERSION.ID.as(datasetVersionId))
+                .select(DATASET_FIELD.fields())
+                .from(DATASET_VERSION)
+                .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+                .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+                .where(DATASET_VERSION.ID.in(versions));
+            return jooqReactiveOperations.flux(query);
+        }).collect(groupingBy(r -> r.get(datasetVersionId, Long.class), mapping(this::extractDatasetField, toList())));
     }
 
     @Override
@@ -152,13 +168,12 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         return jooqReactiveOperations
             .flux(selectHavingStep)
-            .collect(groupingBy(this::extractDatasetVersion,
-                mapping(this::extractDatasetFieldDto, toList())))
+            .collect(groupingBy(this::extractDatasetVersion, mapping(this::extractDatasetFieldDto, toList())))
             .flatMap(m -> m.entrySet().stream()
                 .findFirst()
                 .map(e -> Mono.just(DatasetStructureDto.builder()
                     .datasetVersion(e.getKey())
-                    .datasetFields(e.getValue())
+                    .datasetFields(isNullList(e.getValue()) ? List.of() : e.getValue())
                     .build()))
                 .orElse(Mono.empty())
             );
@@ -243,8 +258,12 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     private DatasetFieldDto extractDatasetFieldDto(final Record datasetVersionRecord) {
+        final DatasetFieldPojo datasetFieldPojo = extractDatasetField(datasetVersionRecord);
+        if (datasetFieldPojo == null) {
+            return null;
+        }
         return DatasetFieldDto.builder()
-            .datasetFieldPojo(extractDatasetField(datasetVersionRecord))
+            .datasetFieldPojo(datasetFieldPojo)
             .labels(extractLabels(datasetVersionRecord))
             .metadata(extractMetadata(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
@@ -279,5 +298,10 @@ public class ReactiveDatasetVersionRepositoryImpl
         return metadataFields.stream()
             .map(pojo -> new DatasetFieldMetadataDto(pojo, values.get(pojo.getId())))
             .toList();
+    }
+
+    private boolean isNullList(final List<DatasetFieldDto> list) {
+        return CollectionUtils.isNotEmpty(list)
+            && list.stream().allMatch(Objects::isNull);
     }
 }

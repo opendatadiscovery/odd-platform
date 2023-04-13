@@ -1,20 +1,25 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageDto;
@@ -24,6 +29,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
@@ -62,12 +68,16 @@ public class LineageServiceImpl implements LineageService {
                 return Mono.zip(dict, relations);
             })
             .map(function((dict, relations) -> {
-                final List<Set<String>> oddrnRelations = relations.stream()
-                    .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
+                // Remove this when we will support inner DEGs for DEG lineage
+                final List<LineagePojo> filteredRelations = relations.stream()
+                    .filter(r -> !isDegODDRN(r.getChildOddrn(), dict) && !isDegODDRN(r.getParentOddrn(), dict))
                     .toList();
-                final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
-                final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
-                    .map(combinedOddrns -> getLineageStream(combinedOddrns, dict, relations))
+                dict.entrySet().removeIf(e -> isDEG(e.getValue().getDataEntity()));
+                final Map<String, List<LineagePojo>> relationsMap = buildRelationsMap(filteredRelations);
+                final Map<String, Set<LineagePojo>> establishedRelations =
+                    establishDEGRelations(dict.keySet(), relationsMap);
+                final List<DataEntityLineageStreamDto> items = establishedRelations.entrySet().stream()
+                    .map(oddrnRelations -> getLineageStream(oddrnRelations.getKey(), oddrnRelations.getValue(), dict))
                     .toList();
                 return new DataEntityGroupLineageDto(items);
             }))
@@ -134,7 +144,7 @@ public class LineageServiceImpl implements LineageService {
                 dtoRepository.get(r.getParentOddrn()).getDataEntity().getId(),
                 dtoRepository.get(r.getChildOddrn()).getDataEntity().getId()
             ))
-            .collect(toList());
+            .toList();
 
         final List<LineageNodeDto> nodes = relations.stream()
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
@@ -147,7 +157,7 @@ public class LineageServiceImpl implements LineageService {
                 final var parentsCount = parentsCountMap.getOrDefault(dto.getDataEntity().getOddrn(), 0);
                 return new LineageNodeDto(dto, childrenCount, parentsCount);
             })
-            .collect(toList());
+            .toList();
 
         final Map<Long, List<Long>> groupRelations = groupRepository.entrySet()
             .stream()
@@ -168,43 +178,58 @@ public class LineageServiceImpl implements LineageService {
         return new DataEntityLineageStreamDto(nodes, edges, groupRepository.keySet(), groupRelations);
     }
 
-    private DataEntityLineageStreamDto getLineageStream(
-        final Set<String> combinedOddrns,
-        final Map<String, DataEntityDimensionsDto> dtoDict,
-        final List<LineagePojo> lineageRelations
-    ) {
-        final List<LineageNodeDto> nodes = combinedOddrns.stream()
-            .map(key -> new LineageNodeDto(dtoDict.get(key), null, null))
+    private DataEntityLineageStreamDto getLineageStream(final String entityOddrn,
+                                                        final Set<LineagePojo> entityRelations,
+                                                        final Map<String, DataEntityDimensionsDto> dtoDict) {
+        final List<Pair<Long, Long>> edges = entityRelations.stream()
+            .map(r -> Pair.of(
+                dtoDict.get(r.getParentOddrn()).getDataEntity().getId(),
+                dtoDict.get(r.getChildOddrn()).getDataEntity().getId()
+            ))
             .toList();
-        final List<Pair<Long, Long>> edges = combinedOddrns.stream()
-            .flatMap(oddrn -> lineageRelations.stream()
-                .filter(r -> r.getChildOddrn().equals(oddrn))
-                .map(r -> Pair.of(
-                    dtoDict.get(r.getParentOddrn()).getDataEntity().getId(),
-                    dtoDict.get(r.getChildOddrn()).getDataEntity().getId()
-                ))).toList();
-        return new DataEntityLineageStreamDto(nodes, edges, null, null);
+
+        final Stream<String> relationsOddrns = entityRelations.stream()
+            .flatMap(pojo -> Stream.of(pojo.getChildOddrn(), pojo.getParentOddrn()));
+        final List<LineageNodeDto> nodes = Stream.concat(relationsOddrns, Stream.of(entityOddrn))
+            .distinct()
+            .map(oddrn -> new LineageNodeDto(dtoDict.get(oddrn), null, null))
+            .toList();
+        return new DataEntityLineageStreamDto(nodes, edges, List.of(), Map.of());
     }
 
-    private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
-        final List<Set<String>> result = new ArrayList<>();
-        oddrnRelations.forEach(relations -> {
-            final Set<String> combinedRelations = result.stream()
-                .filter(rel -> rel.stream().anyMatch(relations::contains))
-                .findFirst()
-                .orElseGet(() -> {
-                    final Set<String> newRelationSet = new HashSet<>();
-                    result.add(newRelationSet);
-                    return newRelationSet;
+    private Map<String, Set<LineagePojo>> establishDEGRelations(final Set<String> degOddrns,
+                                                                final Map<String, List<LineagePojo>> relationsMap) {
+        final Set<String> participatedOddrns = new HashSet<>();
+        final Map<String, Set<LineagePojo>> result = new HashMap<>();
+        degOddrns.stream()
+            .filter(oddrn -> !participatedOddrns.contains(oddrn))
+            .forEach(oddrn -> {
+                final Set<LineagePojo> oddrnRelations =
+                    getRelationsForEntities(new HashSet<>(), Set.of(oddrn), new HashSet<>(), relationsMap);
+                oddrnRelations.forEach(pojo -> {
+                    participatedOddrns.add(pojo.getChildOddrn());
+                    participatedOddrns.add(pojo.getParentOddrn());
                 });
-            combinedRelations.addAll(relations);
-        });
+                result.put(oddrn, oddrnRelations);
+            });
+        return result;
+    }
 
-        if (result.size() == oddrnRelations.size()) {
-            return result;
-        } else {
-            return combineOddrnsInDEGLineage(result);
+    private Set<LineagePojo> getRelationsForEntities(final Set<String> handledOddrns,
+                                                     final Set<String> oddrnsToHandle,
+                                                     final Set<LineagePojo> establishedRelations,
+                                                     final Map<String, List<LineagePojo>> relationsMap) {
+        if (CollectionUtils.isEmpty(oddrnsToHandle)) {
+            return establishedRelations;
         }
+        oddrnsToHandle.stream()
+            .flatMap(entityOddrn -> relationsMap.getOrDefault(entityOddrn, List.of()).stream())
+            .forEach(establishedRelations::add);
+        final Set<String> establishedRelationOddrns = establishedRelations.stream()
+            .flatMap(r -> Stream.of(r.getChildOddrn(), r.getParentOddrn()))
+            .collect(Collectors.toSet());
+        final Set<String> newOddrns = SetUtils.difference(establishedRelationOddrns, handledOddrns).toSet();
+        return getRelationsForEntities(establishedRelationOddrns, newOddrns, establishedRelations, relationsMap);
     }
 
     private Mono<Map<String, DataEntityDimensionsDto>> getDataEntityWithDatasourceMap(final Collection<String> oddrns) {
@@ -252,5 +277,37 @@ public class LineageServiceImpl implements LineageService {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    private Map<String, List<LineagePojo>> buildRelationsMap(final List<LineagePojo> relations) {
+        final Map<String, List<LineagePojo>> relationsMap = new HashMap<>();
+        relations.forEach(pojo -> {
+            relationsMap.compute(pojo.getParentOddrn(), compute(pojo));
+            relationsMap.compute(pojo.getChildOddrn(), compute(pojo));
+        });
+        return relationsMap;
+    }
+
+    private BiFunction<String, List<LineagePojo>, List<LineagePojo>> compute(final LineagePojo pojo) {
+        return (k, v) -> {
+            if (v == null) {
+                final List<LineagePojo> pojos = new ArrayList<>();
+                pojos.add(pojo);
+                return pojos;
+            } else {
+                v.add(pojo);
+                return v;
+            }
+        };
+    }
+
+    private boolean isDegODDRN(final String oddrn,
+                               final Map<String, DataEntityDimensionsDto> dictionary) {
+        return isDEG(dictionary.get(oddrn).getDataEntity());
+    }
+
+    private boolean isDEG(final DataEntityPojo pojo) {
+        return Arrays.stream(pojo.getEntityClassIds())
+            .anyMatch(classId -> DataEntityClassDto.DATA_ENTITY_GROUP.getId() == classId);
     }
 }

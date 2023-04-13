@@ -6,17 +6,16 @@ import {
   InformationIcon,
   SlackIcon,
 } from 'components/shared/Icons';
-import { useAppSelector } from 'redux/lib/hooks';
-import { getAppLinks, getVersion } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
+import { useAppInfo, useAppLinks } from 'lib/hooks/api';
 import * as S from './AppInfoMenuStyles';
 
 const AppInfoMenu: React.FC = () => {
-  const version = useAppSelector(getVersion);
-  const links = useAppSelector(getAppLinks);
+  const { data: version } = useAppInfo();
+  const { data: links } = useAppLinks();
 
   const gitbookLink = 'https://docs.opendatadiscovery.org/';
   const slackLink = 'https://go.opendatadiscovery.org/slack';
@@ -35,23 +34,57 @@ const AppInfoMenu: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const projectVersion = React.useMemo(() => {
+    if (!version) return null;
+
+    return (
+      <Link to={githubLink} target='_blank'>
+        <S.MenuItem container>
+          <S.Icon>
+            <GitHubIcon />
+          </S.Icon>
+          <Grid container flexDirection='column'>
+            <Typography variant='h4'>{version}</Typography>
+            <Typography variant='subtitle1'>ODD Platform version</Typography>
+          </Grid>
+        </S.MenuItem>
+      </Link>
+    );
+  }, [version]);
+
+  const projectLinks = React.useMemo(() => {
+    if (!links || links.length === 0) return null;
+
+    return (
+      <S.LinksContainer container>
+        {links.map(link => (
+          <Link key={link.url} to={link.url} target='_blank'>
+            <S.MenuItem container>
+              <Typography variant='h4'>{link.title}</Typography>
+            </S.MenuItem>
+          </Link>
+        ))}
+      </S.LinksContainer>
+    );
+  }, [links]);
+
   return (
     <Grid>
       <Grid item>
         <AppIconButton
-          sx={{ mr: 2 }}
-          icon={<InformationIcon width={20} height={20} />}
+          sx={{ mr: 1 }}
+          icon={<InformationIcon width={16} height={16} />}
           color='unfilled'
           edge='end'
           aria-label='app info menu'
           aria-controls={menuId}
           aria-haspopup='true'
-          onClick={handleAppMenuOpen}
           onMouseEnter={handleAppMenuOpen}
         />
       </Grid>
       <AppMenu
-        MenuListProps={{ sx: { px: 1, py: 2 } }}
+        PaperProps={{ sx: { borderRadius: 2 }, onMouseLeave: handleAppMenuClose }}
+        MenuListProps={{ sx: { p: 1 } }}
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
@@ -61,53 +94,31 @@ const AppInfoMenu: React.FC = () => {
         onClose={handleAppMenuClose}
       >
         <Link to={gitbookLink} target='_blank'>
-          <S.MenuItem container onClick={handleAppMenuClose}>
+          <S.MenuItem container>
             <S.Icon>
               <GitBookIcon />
             </S.Icon>
-            <Typography variant='h3'>Documentation</Typography>
+            <Typography variant='h4'>Documentation</Typography>
           </S.MenuItem>
         </Link>
         <Link to={slackLink} target='_blank'>
-          <S.MenuItem container onClick={handleAppMenuClose}>
+          <S.MenuItem container>
             <S.Icon>
               <SlackIcon />
             </S.Icon>
-            <Typography variant='h3'>Slack</Typography>
+            <Typography variant='h4'>Slack</Typography>
           </S.MenuItem>
         </Link>
-        {version && (
-          <Link to={githubLink} target='_blank'>
-            <S.MenuItem container onClick={handleAppMenuClose}>
-              <S.Icon>
-                <GitHubIcon />
-              </S.Icon>
-              <Grid container flexDirection='column'>
-                <Typography variant='h3'>{version}</Typography>
-                <Typography variant='subtitle1'>ODD Platform version</Typography>
-              </Grid>
-            </S.MenuItem>
-          </Link>
-        )}
-        <Link to={{ pathname: reviewLink }} target='_blank'>
-          <S.MenuItem container onClick={handleAppMenuClose}>
+        {projectVersion}
+        <Link to={reviewLink} target='_blank'>
+          <S.MenuItem container $last>
             <S.Icon>
               <FeedbackIcon />
             </S.Icon>
-            <Typography variant='h3'>Leave a feedback</Typography>
+            <Typography variant='h4'>Leave a feedback</Typography>
           </S.MenuItem>
         </Link>
-        {links.length > 0 && (
-          <S.LinksContainer container>
-            {links.map(link => (
-              <Link key={link.url} to={link.url} target='_blank'>
-                <S.MenuItem container onClick={handleAppMenuClose}>
-                  <Typography variant='h3'>{link.title}</Typography>
-                </S.MenuItem>
-              </Link>
-            ))}
-          </S.LinksContainer>
-        )}
+        {projectLinks}
       </AppMenu>
     </Grid>
   );

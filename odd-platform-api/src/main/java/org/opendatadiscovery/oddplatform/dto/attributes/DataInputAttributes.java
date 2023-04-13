@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataInput.OUTPUT_LIST;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 public class DataInputAttributes extends DataEntityAttributes {
-    @JsonProperty("output_list")
+    @JsonProperty(OUTPUT_LIST)
     private Set<String> outputListOddrn;
 
     @Override

@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,15 +59,14 @@ public class ReactiveMetadataFieldRepositoryImpl
         if (keys.isEmpty()) {
             return Flux.just();
         }
-
-        final Condition condition = keys.stream()
-            .map(t -> METADATA_FIELD.NAME.eq(t.fieldName()).and(METADATA_FIELD.TYPE.eq(t.fieldType().toString())))
-            .reduce(Condition::or)
-            .orElseThrow();
-
-        return jooqReactiveOperations
-            .flux(DSL.selectFrom(METADATA_FIELD).where(addSoftDeleteFilter(condition)))
-            .map(this::recordToPojo);
+        return jooqReactiveOperations.executeInPartitionReturning(new ArrayList<>(keys), chunk -> {
+            final Condition condition = chunk.stream()
+                .map(t -> METADATA_FIELD.NAME.eq(t.fieldName()).and(METADATA_FIELD.TYPE.eq(t.fieldType().toString())))
+                .reduce(Condition::or)
+                .orElseThrow();
+            return jooqReactiveOperations
+                .flux(DSL.selectFrom(METADATA_FIELD).where(addSoftDeleteFilter(condition)));
+        }).map(this::recordToPojo);
     }
 
     @Override

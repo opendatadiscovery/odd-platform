@@ -62,6 +62,8 @@ public class ControllerAdvice {
         final ErrorResponse error = new ErrorResponse();
         error.setMessage(e.getMessage());
         error.setCode(e.getCode().getValue());
+        error.setResolvable(e.getCode().isResolvable());
+        error.setRetryable(e.getCode().isRetryable());
         return error;
     }
 
