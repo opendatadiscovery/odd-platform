@@ -133,20 +133,22 @@ const DatasetStructureHeader: FC = () => {
           onChange={handleRevisionChange}
           fullWidth={false}
         >
-          {[...(datasetVersions || [])].sort().map(rev => (
-            <AppMenuItem key={rev.id} value={rev.id}>
-              <Grid container flexWrap='nowrap'>
-                <Typography variant='body1' mr={1}>
-                  {`Rev. ${rev.version}`}
-                </Typography>
-                <Typography variant='body1' color='texts.hint'>
-                  {`(${datasetStructureVersionFormattedDateTime(
-                    rev.createdAt.getTime()
-                  )})`}
-                </Typography>
-              </Grid>
-            </AppMenuItem>
-          ))}
+          {[...(datasetVersions || [])]
+            .sort((a, b) => a.version - b.version)
+            .map(rev => (
+              <AppMenuItem key={rev.id} value={rev.id}>
+                <Grid container flexWrap='nowrap'>
+                  <Typography variant='body1' mr={1}>
+                    {`Rev. ${rev.version}`}
+                  </Typography>
+                  <Typography variant='body1' color='texts.hint'>
+                    {`(${datasetStructureVersionFormattedDateTime(
+                      rev.createdAt.getTime()
+                    )})`}
+                  </Typography>
+                </Grid>
+              </AppMenuItem>
+            ))}
         </AppSelect>
         <AppButton
           size='medium'

@@ -1,12 +1,14 @@
 import styled, { type CSSObject } from 'styled-components';
 import type { DataSetVersionDiffStatus } from 'generated-sources';
 
-export const Container = styled('div')(
-  () =>
+export const Container = styled('div')<{ $nesting: number }>(
+  ({ $nesting }) =>
     ({
       display: 'flex',
-      width: '100%',
+      width: `calc(100% - ${$nesting * 16}px)`,
       flexWrap: 'nowrap',
+      paddingLeft: `${$nesting * 16}px`,
+      marginBottom: '4px',
     } as CSSObject)
 );
 

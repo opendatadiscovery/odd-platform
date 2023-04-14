@@ -29,6 +29,8 @@ declare module 'styled-components' {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
       onError(e) {
         showServerErrorToast(e as Response);
       },

@@ -54,6 +54,10 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
     [setShowOnlyChanges]
   );
 
+  const sortedDatasetVersions = [...(datasetVersions || [])].sort(
+    (a, b) => a.version - b.version
+  );
+
   return (
     <Grid container flexDirection='column' mt={1}>
       <Grid container justifyContent='space-between' alignItems='center' sx={{ py: 0.5 }}>
@@ -91,7 +95,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
             onChange={handleFirstRevisionChange}
             fullWidth={false}
           >
-            {[...(datasetVersions || [])].sort().map(rev => (
+            {sortedDatasetVersions.map(rev => (
               <AppMenuItem
                 key={rev.id}
                 value={rev.id}
@@ -121,7 +125,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
             onChange={handleSecondRevisionChange}
             fullWidth={false}
           >
-            {[...(datasetVersions || [])].sort().map(rev => (
+            {sortedDatasetVersions.map(rev => (
               <AppMenuItem
                 key={rev.id}
                 value={rev.id}

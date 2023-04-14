@@ -1,16 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { datasetApiClient } from 'lib/api';
+import { makeCompareFieldsTree } from './helpers';
 
 interface UseDatasetStructureCompareProps {
   dataEntityId: number;
   firstVersionId: number;
   secondVersionId: number;
+  showChangesOnly?: boolean;
 }
 
 export function useDatasetStructureCompare({
   dataEntityId,
   firstVersionId,
   secondVersionId,
+  showChangesOnly,
 }: UseDatasetStructureCompareProps) {
   return useQuery(
     ['datasetStructureCompare', dataEntityId, firstVersionId, secondVersionId],
@@ -20,6 +23,16 @@ export function useDatasetStructureCompare({
         firstVersionId,
         secondVersionId,
       }),
-    { retry: false, refetchOnWindowFocus: false }
+    {
+      select: data => {
+        const dataList = data.fieldList;
+
+        if (showChangesOnly) {
+          return dataList.filter(item => item.status !== 'NO_CHANGES');
+        }
+
+        return makeCompareFieldsTree({ data: dataList, firstVersionId, secondVersionId });
+      },
+    }
   );
 }

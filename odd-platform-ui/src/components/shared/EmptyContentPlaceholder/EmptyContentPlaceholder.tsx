@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { toolbarHeight } from 'lib/constants';
 import { NoDataIcon } from 'components/shared/Icons';
 
 interface EmptyContentPlaceholderProps {
@@ -8,6 +7,7 @@ interface EmptyContentPlaceholderProps {
   isContentLoaded?: boolean;
   isContentEmpty?: boolean;
   offsetTop?: number;
+  fullPage?: boolean;
 }
 
 const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
@@ -15,9 +15,10 @@ const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
   isContentLoaded = true,
   isContentEmpty = true,
   offsetTop = 32,
+  fullPage = true,
 }) =>
   isContentLoaded && isContentEmpty ? (
-    <Grid container height={`calc(100vh - ${toolbarHeight}px - ${offsetTop}px)`}>
+    <Grid container sx={{ height: fullPage ? `calc(100vh - ${offsetTop}px)` : 'auto' }}>
       <Grid container alignItems='center' justifyContent='center' flexDirection='column'>
         <Grid item>
           <NoDataIcon width={70} height={70} />

@@ -37,7 +37,7 @@ public interface DatasetFieldApiMapper {
         if (pojo != null && StringUtils.isNotEmpty(pojo.getParentFieldOddrn())) {
             final DatasetFieldPojo parentField = versionPojos.get(pojo.getParentFieldOddrn());
             if (parentField != null) {
-                diffState.setId(parentField.getId());
+                diffState.setParentFieldId(parentField.getId());
             }
         }
     }

@@ -5,6 +5,8 @@ import { getDatasetVersions } from 'redux/selectors';
 import { useDatasetStructureCompare } from 'lib/hooks/api';
 import { AppErrorPage, AppLoadingPage, EmptyContentPlaceholder } from 'components/shared';
 import type { ErrorState } from 'redux/interfaces';
+import { useAtom } from 'jotai';
+import { showOnlyChangesAtom } from './lib/atoms';
 import DatasetStructureCompareList from './DatasetStructureCompareList/DatasetStructureCompareList';
 import type { StructureCompareQueryParams } from './lib/interfaces';
 import DatasetStructureCompareHeader from './DatasetStructureCompareHeader/DatasetStructureCompareHeader';
@@ -12,6 +14,7 @@ import { defaultStructureCompareQuery } from './lib/constants';
 
 const DatasetStructureCompare: FC = () => {
   const { dataEntityId } = useAppParams();
+  const [showChangesOnly] = useAtom(showOnlyChangesAtom);
 
   const {
     queryParams: { firstVersionId, secondVersionId },
@@ -23,19 +26,20 @@ const DatasetStructureCompare: FC = () => {
     dataEntityId,
     firstVersionId: +firstVersionId,
     secondVersionId: +secondVersionId,
+    showChangesOnly,
   });
 
   return (
     <>
       <DatasetStructureCompareHeader datasetVersions={datasetVersions} />
-      {isSuccess && data?.fieldList.length > 0 && (
-        <DatasetStructureCompareList compareList={data?.fieldList} />
+      {isSuccess && data?.length > 0 && (
+        <DatasetStructureCompareList compareList={data} />
       )}
       {isLoading && <AppLoadingPage />}
       <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
       <EmptyContentPlaceholder
         isContentLoaded={isSuccess}
-        isContentEmpty={!data?.fieldList.length}
+        isContentEmpty={!data?.length}
         offsetTop={210}
       />
     </>
