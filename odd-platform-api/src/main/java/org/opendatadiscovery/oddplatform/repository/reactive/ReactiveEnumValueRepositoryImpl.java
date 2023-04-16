@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -42,7 +44,12 @@ public class ReactiveEnumValueRepositoryImpl
 
     @Override
     public Flux<EnumValueDto> getEnumState(final Collection<String> datasetFieldOddrns) {
-        return fetchEnumState(addSoftDeleteFilter(DATASET_FIELD.ODDRN.in(datasetFieldOddrns)));
+        final List<Flux<EnumValueDto>> collect = ListUtils.partition(new ArrayList<>(datasetFieldOddrns), 100)
+            .stream()
+            .map(dsf -> fetchEnumState(addSoftDeleteFilter(DATASET_FIELD.ODDRN.in(dsf))))
+            .toList();
+
+        return Flux.merge(collect);
     }
 
     @Override
