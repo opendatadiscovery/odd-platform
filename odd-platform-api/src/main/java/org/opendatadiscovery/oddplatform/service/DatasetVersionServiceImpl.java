@@ -1,9 +1,12 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -76,15 +79,18 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
         final DataSetVersionDiffList diffList = new DataSetVersionDiffList();
         final Map<String, DatasetFieldPojo> firstVersionFields = versionToFieldsMap.get(firstVersionId);
         final Map<String, DatasetFieldPojo> secondVersionFields = versionToFieldsMap.get(secondVersionId);
+        final Set<String> parentOddrnChangedPojos =
+            getParentOddrnChangedPojos(firstVersionFields, secondVersionFields, new HashSet<>());
 
         firstVersionFields.forEach((oddrn, firstVersionPojo) -> {
             final DatasetFieldPojo secondVersionPojo = secondVersionFields.get(oddrn);
             final Map<Long, DatasetFieldPojo> versionDiffFields = new HashMap<>();
             versionDiffFields.put(firstVersionId, firstVersionPojo);
             versionDiffFields.put(secondVersionId, secondVersionPojo);
-            final DataSetVersionDiff diff =
-                calculateVersionDiff(versionDiffFields, maxVersionId, minVersionId, versionToFieldsMap);
-            diffList.addFieldListItem(diff);
+            final List<DataSetVersionDiff> diff =
+                calculateVersionDiff(versionDiffFields, maxVersionId, minVersionId, versionToFieldsMap,
+                    parentOddrnChangedPojos);
+            diffList.getFieldList().addAll(diff);
         });
         secondVersionFields.entrySet().stream()
             .filter(e -> !firstVersionFields.containsKey(e.getKey()))
@@ -92,33 +98,95 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
                 final Map<Long, DatasetFieldPojo> versionDiffFields = new HashMap<>();
                 versionDiffFields.put(firstVersionId, null);
                 versionDiffFields.put(secondVersionId, e.getValue());
-                final DataSetVersionDiff diff =
-                    calculateVersionDiff(versionDiffFields, maxVersionId, minVersionId, versionToFieldsMap);
-                diffList.addFieldListItem(diff);
+                final List<DataSetVersionDiff> diff =
+                    calculateVersionDiff(versionDiffFields, maxVersionId, minVersionId, versionToFieldsMap,
+                        parentOddrnChangedPojos);
+                diffList.getFieldList().addAll(diff);
             });
         return diffList;
     }
 
-    private DataSetVersionDiff calculateVersionDiff(final Map<Long, DatasetFieldPojo> versionToPojo,
-                                                    final long maxVersionId,
-                                                    final long minVersionId,
-                                                    final Map<Long, Map<String, DatasetFieldPojo>> versionToFieldsMap) {
-        final DataSetVersionDiff dataSetVersionDiff = new DataSetVersionDiff();
-        final DataSetVersionDiffStatus status = calculateStatus(versionToPojo, maxVersionId, minVersionId);
-        dataSetVersionDiff.setStatus(status);
-        versionToPojo.forEach((versionId, fieldPojo) -> {
-            final DataSetFieldDiffState fieldState = fieldPojo != null
-                ? datasetFieldApiMapper.mapDiffWithParents(fieldPojo, versionToFieldsMap.get(versionId)) : null;
-            dataSetVersionDiff.putStatesItem(versionId.toString(), fieldState);
+    private List<DataSetVersionDiff> calculateVersionDiff(final Map<Long, DatasetFieldPojo> versionToPojo,
+                                                          final long maxVersionId,
+                                                          final long minVersionId,
+                                                          final Map<Long, Map<String, DatasetFieldPojo>> versionFields,
+                                                          final Set<String> parentOddrnChangedPojos) {
+        final List<DataSetVersionDiff> result = new ArrayList<>();
+        final DatasetFieldPojo maxFieldPojo = versionToPojo.get(maxVersionId);
+        final DatasetFieldPojo minFieldPojo = versionToPojo.get(minVersionId);
+        if (maxFieldPojo != null && parentOddrnChangedPojos.contains(maxFieldPojo.getOddrn())
+            || minFieldPojo != null && parentOddrnChangedPojos.contains(minFieldPojo.getOddrn())) {
+            final DataSetVersionDiff minVersionDiff = new DataSetVersionDiff();
+            minVersionDiff.setStatus(DataSetVersionDiffStatus.DELETED);
+            final DataSetFieldDiffState minFieldState = datasetFieldApiMapper
+                .mapDiffWithParents(minFieldPojo, versionFields.get(minVersionId));
+            minVersionDiff.putStatesItem(String.valueOf(minVersionId), minFieldState);
+            minVersionDiff.putStatesItem(String.valueOf(maxVersionId), null);
+            result.add(minVersionDiff);
+
+            final DataSetVersionDiff maxVersionDiff = new DataSetVersionDiff();
+            maxVersionDiff.setStatus(DataSetVersionDiffStatus.CREATED);
+            final DataSetFieldDiffState maxFieldState = datasetFieldApiMapper
+                .mapDiffWithParents(maxFieldPojo, versionFields.get(maxVersionId));
+            maxVersionDiff.putStatesItem(String.valueOf(minVersionId), null);
+            maxVersionDiff.putStatesItem(String.valueOf(maxVersionId), maxFieldState);
+            result.add(maxVersionDiff);
+        } else {
+            final DataSetVersionDiff dataSetVersionDiff = new DataSetVersionDiff();
+            final DataSetVersionDiffStatus status = calculateStatus(versionToPojo, maxFieldPojo, minFieldPojo);
+            dataSetVersionDiff.setStatus(status);
+            versionToPojo.forEach((versionId, fieldPojo) -> {
+                final DataSetFieldDiffState fieldState = fieldPojo != null
+                    ? datasetFieldApiMapper.mapDiffWithParents(fieldPojo, versionFields.get(versionId)) : null;
+                dataSetVersionDiff.putStatesItem(versionId.toString(), fieldState);
+            });
+            result.add(dataSetVersionDiff);
+        }
+        return result;
+    }
+
+    private Set<String> getParentOddrnChangedPojos(final Map<String, DatasetFieldPojo> firstVersionFields,
+                                                   final Map<String, DatasetFieldPojo> secondVersionFields,
+                                                   final Set<String> changedPojoOddrns) {
+        final int size = changedPojoOddrns.size();
+        firstVersionFields.forEach((oddrn, firstPojo) -> {
+            if (changedPojoOddrns.contains(firstPojo.getParentFieldOddrn())) {
+                changedPojoOddrns.add(firstPojo.getOddrn());
+                return;
+            }
+            final DatasetFieldPojo secondPojo = secondVersionFields.get(oddrn);
+            if (secondPojo == null) {
+                return;
+            }
+            final boolean parentFieldChanged = parentFieldChanged(firstPojo, secondPojo);
+            if (parentFieldChanged) {
+                changedPojoOddrns.add(firstPojo.getOddrn());
+            }
         });
-        return dataSetVersionDiff;
+        final int updatedSize = changedPojoOddrns.size();
+        if (size == updatedSize) {
+            return changedPojoOddrns;
+        } else {
+            return getParentOddrnChangedPojos(firstVersionFields, secondVersionFields, changedPojoOddrns);
+        }
+    }
+
+    private boolean parentFieldChanged(final DatasetFieldPojo maxFieldPojo,
+                                       final DatasetFieldPojo minFieldPojo) {
+        if (maxFieldPojo == null || minFieldPojo == null) {
+            return false;
+        }
+        final String maxParentFieldOddrn = maxFieldPojo.getParentFieldOddrn();
+        final String minParentFieldOddrn = minFieldPojo.getParentFieldOddrn();
+        return (maxParentFieldOddrn == null && minParentFieldOddrn != null)
+            || (maxParentFieldOddrn != null && minParentFieldOddrn == null)
+            || (maxParentFieldOddrn != null && minParentFieldOddrn != null
+            && !maxParentFieldOddrn.equals(minParentFieldOddrn));
     }
 
     private DataSetVersionDiffStatus calculateStatus(final Map<Long, DatasetFieldPojo> versionToPojo,
-                                                     final long maxVersionId,
-                                                     final long minVersionId) {
-        final DatasetFieldPojo maxFieldPojo = versionToPojo.get(maxVersionId);
-        final DatasetFieldPojo minFieldPojo = versionToPojo.get(minVersionId);
+                                                     final DatasetFieldPojo maxFieldPojo,
+                                                     final DatasetFieldPojo minFieldPojo) {
         if (maxFieldPojo == null && minFieldPojo == null) {
             throw new RuntimeException("Couldn't calculate status. One of the fields must be presented");
         }

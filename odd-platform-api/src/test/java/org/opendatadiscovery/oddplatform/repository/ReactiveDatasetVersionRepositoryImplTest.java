@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jooq.JSONB;
@@ -16,7 +17,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -232,7 +232,12 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
             .assertNext(map -> {
                 assertThat(map).isNotNull();
                 assertThat(map).hasSize(1);
-                assertThat(map.get(datasetVersionPojo.getId())).containsExactlyElementsOf(datasetFieldPojos);
+                assertThat(map.get(datasetVersionPojo.getId()))
+                    .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder()
+                        .withIgnoredFields("id")
+                        .withIgnoreAllOverriddenEquals(false)
+                        .build())
+                    .containsExactlyElementsOf(datasetFieldPojos);
             })
             .verifyComplete();
     }
