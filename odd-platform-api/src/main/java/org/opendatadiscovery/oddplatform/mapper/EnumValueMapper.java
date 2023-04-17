@@ -23,6 +23,9 @@ public interface EnumValueMapper {
     )
     EnumValuePojo mapInternalToPojo(final EnumValueFormData form, final long datasetFieldId);
 
+    @Mapping(target = "id", ignore = true)
+    EnumValuePojo copyNewWithoutId(final EnumValuePojo old);
+
     default EnumValue mapToEnum(final EnumValuePojo pojo) {
         if (pojo == null) {
             return null;

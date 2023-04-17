@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescript
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
+import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -28,16 +30,20 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatist
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
+import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -60,6 +66,9 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final ReactiveLabelRepository reactiveLabelRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final DataEntityFilledService dataEntityFilledService;
+    private final DatasetVersionHashCalculator datasetVersionHashCalculator;
+    private final ReactiveEnumValueRepository enumValueRepository;
+    private final EnumValueMapper enumValueMapper;
 
     @Override
     @ReactiveTransactional
@@ -103,31 +112,21 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         if (fields.isEmpty()) {
             return Mono.just(List.of());
         }
+        final List<String> oddrns = fields.stream().map(DatasetFieldPojo::getOddrn).toList();
 
-        return reactiveDatasetFieldRepository.getExistingFieldsByOddrnAndType(fields)
+        return reactiveDatasetFieldRepository.getLastVersionDatasetFieldsByOddrns(oddrns)
+            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()))
             .flatMap(existingFieldsMap -> {
-                final List<DatasetFieldPojo> fieldsToCreate = fields.stream()
-                    .filter(f -> !existingFieldsMap.containsKey(f.getOddrn()))
-                    .toList();
+                final DatasetFieldIngestionDto fieldIngestionDto =
+                    buildDatasetFieldIngestionDto(fields, existingFieldsMap);
+                final List<DatasetFieldPojo> pojosToCreate = extractPojosToCreate(fieldIngestionDto);
+                final List<DatasetFieldPojo> pojosToUpdate = extractPojosToUpdate(fieldIngestionDto);
 
-                final List<DatasetFieldPojo> fieldsToUpdate = fields.stream()
-                    .filter(f -> existingFieldsMap.containsKey(f.getOddrn()))
-                    .map(newField -> {
-                        final DatasetFieldPojo previousVersion = existingFieldsMap.get(newField.getOddrn());
-                        final DatasetFieldPojo copyNew = datasetFieldApiMapper.copy(newField);
-                        copyNew.setId(previousVersion.getId());
-                        copyNew.setInternalDescription(previousVersion.getInternalDescription());
-
-                        if (copyNew.getStats() == null || copyNew.getStats().data().equals("{}")) {
-                            copyNew.setStats(previousVersion.getStats());
-                        }
-
-                        return copyNew;
-                    })
-                    .toList();
-
-                return reactiveDatasetFieldRepository.bulkCreate(fieldsToCreate)
-                    .concatWith(reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate))
+                return reactiveDatasetFieldRepository.bulkCreate(pojosToCreate)
+                    .collectList()
+                    .flatMapMany(createdFields ->
+                        copyRelationsForNewDatasetFields(createdFields, fieldIngestionDto.fieldsToCreate()))
+                    .concatWith(reactiveDatasetFieldRepository.bulkUpdate(pojosToUpdate))
                     .collectList();
             });
     }
@@ -147,7 +146,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .collect(toSet());
 
         return reactiveDatasetFieldRepository
-            .getExistingFieldsByOddrn(statistics.keySet())
+            .getLastVersionDatasetFieldsByOddrns(new ArrayList<>(statistics.keySet()))
             .collectList()
             .flatMap(existingFields -> Mono.zipDelayError(
                 updateFieldsStatistics(statistics, existingFields),
@@ -261,5 +260,113 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         });
 
         return result;
+    }
+
+    private List<DatasetFieldPojo> extractPojosToCreate(final DatasetFieldIngestionDto fieldIngestionDto) {
+        return fieldIngestionDto.fieldsToCreate().values().stream()
+            .map(pair -> getDatasetFieldUpdatedCopy(pair, false))
+            .toList();
+    }
+
+    private List<DatasetFieldPojo> extractPojosToUpdate(final DatasetFieldIngestionDto fieldIngestionDto) {
+        return fieldIngestionDto.fieldsToUpdate().stream()
+            .map(pair -> getDatasetFieldUpdatedCopy(pair, true))
+            .toList();
+    }
+
+    private DatasetFieldPojo getDatasetFieldUpdatedCopy(final DatasetFieldPair pair,
+                                                        final boolean updateExisting) {
+        final DatasetFieldPojo copyNew = datasetFieldApiMapper.copyWithoutId(pair.versionToIngest());
+        if (pair.lastExistingVersion() != null) {
+            if (updateExisting) {
+                copyNew.setId(pair.lastExistingVersion().getId());
+            }
+            copyNew.setInternalDescription(pair.lastExistingVersion().getInternalDescription());
+            if (copyNew.getStats() == null || copyNew.getStats().data().equals("{}")) {
+                copyNew.setStats(pair.lastExistingVersion().getStats());
+            }
+        }
+        return copyNew;
+    }
+
+    private Flux<DatasetFieldPojo> copyRelationsForNewDatasetFields(final List<DatasetFieldPojo> createdPojos,
+                                                                    final Map<String, DatasetFieldPair> toCreate) {
+        final Map<Long, Long> lastVersionToNewVersion = getLastVersionToNewVersionIdMap(createdPojos, toCreate);
+        if (lastVersionToNewVersion.isEmpty()) {
+            return Flux.fromIterable(createdPojos);
+        }
+        final Flux<LabelToDatasetFieldPojo> copyLabels = copyInternalLabelsToNewFieldVersion(lastVersionToNewVersion);
+        final Flux<EnumValuePojo> copyEnumValues = copyInternalEnumValuesToNewFieldVersion(lastVersionToNewVersion);
+        return copyLabels
+            .thenMany(copyEnumValues)
+            .thenMany(Flux.fromIterable(createdPojos));
+    }
+
+    private Map<Long, Long> getLastVersionToNewVersionIdMap(final List<DatasetFieldPojo> createdPojos,
+                                                            final Map<String, DatasetFieldPair> toCreate) {
+        final Map<Long, Long> lastVersionToNewVersion = new HashMap<>();
+        for (final DatasetFieldPojo createdPojo : createdPojos) {
+            final DatasetFieldPair datasetFieldPair = toCreate.get(createdPojo.getOddrn());
+            if (datasetFieldPair == null) {
+                throw new RuntimeException("Something went wrong at fields persistence");
+            }
+            if (datasetFieldPair.lastExistingVersion() != null) {
+                lastVersionToNewVersion.put(datasetFieldPair.lastExistingVersion().getId(), createdPojo.getId());
+            }
+        }
+        return lastVersionToNewVersion;
+    }
+
+    private Flux<LabelToDatasetFieldPojo> copyInternalLabelsToNewFieldVersion(
+        final Map<Long, Long> lastVersionToNewVersion) {
+        return reactiveLabelRepository.listLabelRelations(lastVersionToNewVersion.keySet(), LabelOrigin.INTERNAL)
+            .map(relation -> new LabelToDatasetFieldPojo()
+                .setLabelId(relation.getLabelId())
+                .setOrigin(relation.getOrigin())
+                .setDatasetFieldId(lastVersionToNewVersion.get(relation.getDatasetFieldId())))
+            .collectList()
+            .flatMapMany(reactiveLabelRepository::createRelations);
+    }
+
+    private Flux<EnumValuePojo> copyInternalEnumValuesToNewFieldVersion(final Map<Long, Long> lastVersionToNewVersion) {
+        return enumValueRepository.getEnumValuesByDatasetFieldIds(lastVersionToNewVersion.keySet(),
+                EnumValueOrigin.INTERNAL)
+            .map(enumValuePojo -> {
+                final EnumValuePojo copyNew = enumValueMapper.copyNewWithoutId(enumValuePojo);
+                copyNew.setDatasetFieldId(lastVersionToNewVersion.get(enumValuePojo.getDatasetFieldId()));
+                return copyNew;
+            })
+            .collectList()
+            .flatMapMany(enumValueRepository::bulkCreate);
+    }
+
+    private DatasetFieldIngestionDto buildDatasetFieldIngestionDto(final List<DatasetFieldPojo> fieldsToIngest,
+                                                                   final Map<String, DatasetFieldPojo> existingFields) {
+        final Map<String, DatasetFieldPair> fieldsToCreate = new HashMap<>();
+        final List<DatasetFieldPair> fieldsToUpdate = new ArrayList<>();
+        fieldsToIngest.forEach(fieldPojo -> {
+            final DatasetFieldPojo existingField = existingFields.get(fieldPojo.getOddrn());
+            if (existingField == null) {
+                fieldsToCreate.put(fieldPojo.getOddrn(), new DatasetFieldPair(null, fieldPojo));
+                return;
+            }
+            final String newVersionHash =
+                datasetVersionHashCalculator.calculateStructureHashFromPojos(List.of(fieldPojo));
+            final String existingVersionHash =
+                datasetVersionHashCalculator.calculateStructureHashFromPojos(List.of(existingField));
+            if (newVersionHash.equals(existingVersionHash)) {
+                fieldsToUpdate.add(new DatasetFieldPair(existingField, fieldPojo));
+            } else {
+                fieldsToCreate.put(fieldPojo.getOddrn(), new DatasetFieldPair(existingField, fieldPojo));
+            }
+        });
+        return new DatasetFieldIngestionDto(fieldsToCreate, fieldsToUpdate);
+    }
+
+    record DatasetFieldIngestionDto(Map<String, DatasetFieldPair> fieldsToCreate,
+                                    List<DatasetFieldPair> fieldsToUpdate) {
+    }
+
+    record DatasetFieldPair(DatasetFieldPojo lastExistingVersion, DatasetFieldPojo versionToIngest) {
     }
 }

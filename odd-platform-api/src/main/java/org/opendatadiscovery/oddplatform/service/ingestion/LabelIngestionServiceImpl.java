@@ -40,19 +40,20 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .toList();
 
-        final List<DatasetFieldPojo> pojos = datasetEntities.stream()
+        final List<String> oddrns = datasetEntities.stream()
             .map(DataEntityIngestionDto::getDataSet)
             .filter(ds -> CollectionUtils.isNotEmpty(ds.fieldList()))
             .flatMap(ds -> ds.fieldList().stream())
-            .map(DatasetFieldIngestionDto::field)
+            .map(dto -> dto.field().getOddrn())
             .toList();
 
-        if (CollectionUtils.isEmpty(pojos)) {
+        if (CollectionUtils.isEmpty(oddrns)) {
             return Mono.empty();
         }
 
-        final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo =
-            datasetFieldRepository.getExistingFieldsByOddrnAndType(pojos);
+        final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo = datasetFieldRepository
+            .getLastVersionDatasetFieldsByOddrns(oddrns)
+            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
 
         final Set<String> externalLabelNames = getLabelNames(datasetEntities);
 

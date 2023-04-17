@@ -15,7 +15,9 @@ import org.opendatadiscovery.oddplatform.dto.EnumValueDto;
 import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 @Slf4j
 public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionService {
     private final ReactiveEnumValueRepository enumValueRepository;
+    private final ReactiveDatasetFieldRepository datasetFieldRepository;
 
     @Override
     public Mono<Void> ingestEnumValues(final IngestionRequest request) {
@@ -40,7 +43,13 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
             .flatMap(entity -> entity.getDataSet().fieldList().stream())
             .collect(toMap(field -> field.field().getOddrn(), identity()));
 
-        return enumValueRepository.getEnumState(requestState.keySet())
+        final Mono<List<Long>> datasetFieldIds = datasetFieldRepository
+            .getLastVersionDatasetFieldsByOddrns(new ArrayList<>(requestState.keySet()))
+            .map(DatasetFieldPojo::getId)
+            .collectList();
+
+        return datasetFieldIds
+            .flatMapMany(enumValueRepository::getEnumState)
             .collectMap(EnumValueDto::fieldOddrn)
             .map(existingState -> prepareAccumulator(requestState, existingState))
             .flatMap(acc -> acc.apply(enumValueRepository));

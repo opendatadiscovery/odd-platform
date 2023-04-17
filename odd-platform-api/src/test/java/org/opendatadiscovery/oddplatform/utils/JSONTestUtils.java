@@ -14,7 +14,7 @@ public class JSONTestUtils {
 
     public static String createJson(final Object o) {
         try {
-            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(o);
+            return OBJECT_MAPPER.writeValueAsString(o);
         } catch (final JsonProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
