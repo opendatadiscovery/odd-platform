@@ -22,22 +22,15 @@ const DatasetStructureCompareList: FC<DatasetStructureCompareListProps> = ({
 
   const data = virtualizer.getVirtualItems();
 
-  const initialStateOpen = useCallback(
-    (nesting: number) =>
-      (data.length < 5 && nesting < 2) || (data.length < 20 && nesting < 1),
-    [data.length]
-  );
-
   const renderCompareItem = useCallback(
     (fieldDiff: DataSetVersionDiff, nesting: number) => (
       <DatasetStructureCompareListItem
         fieldDiff={fieldDiff}
         nesting={nesting}
-        initialStateOpen={initialStateOpen(nesting)}
         renderCompareItem={renderCompareItem}
       />
     ),
-    [initialStateOpen]
+    []
   );
 
   return (

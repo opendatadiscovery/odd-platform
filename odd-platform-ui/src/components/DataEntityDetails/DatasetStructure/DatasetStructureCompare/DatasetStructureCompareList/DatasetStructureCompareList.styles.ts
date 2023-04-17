@@ -4,6 +4,7 @@ export const Scrollable = styled('div')(({ theme }) => ({
   height: 'calc(100vh - 270px)',
   width: '100%',
   overflowY: 'auto',
+  overflowX: 'hidden',
   contain: 'strict',
   marginTop: theme.spacing(1),
 }));

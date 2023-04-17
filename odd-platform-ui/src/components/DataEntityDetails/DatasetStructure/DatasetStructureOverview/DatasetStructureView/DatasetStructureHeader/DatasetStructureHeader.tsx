@@ -34,6 +34,10 @@ const DatasetStructureHeader: FC = () => {
 
   const [typesExpanded, setTypesExpanded] = useState(false);
 
+  const sortedVersions = [...(datasetVersions || [])].sort(
+    (a, b) => a.version - b.version
+  );
+
   const handleRevisionChange = useCallback(
     (event: SelectChangeEvent<unknown>) => {
       const newVersionId = event.target.value as number;
@@ -60,8 +64,8 @@ const DatasetStructureHeader: FC = () => {
   );
 
   const handleCompareClick = useCallback(() => {
-    const firstVersionId = datasetVersions[0].id;
-    const secondVersionId = datasetVersions[datasetVersions.length - 1].id;
+    const firstVersionId = sortedVersions[0].id;
+    const secondVersionId = sortedVersions[sortedVersions.length - 1].id;
     navigate(datasetStructureComparePath(dataEntityId, firstVersionId, secondVersionId));
   }, [dataEntityId]);
 
@@ -133,22 +137,20 @@ const DatasetStructureHeader: FC = () => {
           onChange={handleRevisionChange}
           fullWidth={false}
         >
-          {[...(datasetVersions || [])]
-            .sort((a, b) => a.version - b.version)
-            .map(rev => (
-              <AppMenuItem key={rev.id} value={rev.id}>
-                <Grid container flexWrap='nowrap'>
-                  <Typography variant='body1' mr={1}>
-                    {`Rev. ${rev.version}`}
-                  </Typography>
-                  <Typography variant='body1' color='texts.hint'>
-                    {`(${datasetStructureVersionFormattedDateTime(
-                      rev.createdAt.getTime()
-                    )})`}
-                  </Typography>
-                </Grid>
-              </AppMenuItem>
-            ))}
+          {sortedVersions.map(rev => (
+            <AppMenuItem key={rev.id} value={rev.id}>
+              <Grid container flexWrap='nowrap'>
+                <Typography variant='body1' mr={1}>
+                  {`Rev. ${rev.version}`}
+                </Typography>
+                <Typography variant='body1' color='texts.hint'>
+                  {`(${datasetStructureVersionFormattedDateTime(
+                    rev.createdAt.getTime()
+                  )})`}
+                </Typography>
+              </Grid>
+            </AppMenuItem>
+          ))}
         </AppSelect>
         <AppButton
           size='medium'

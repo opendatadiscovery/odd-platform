@@ -9,7 +9,7 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import type { EnumValue, EnumValueList } from 'generated-sources';
+import type { EnumValueList } from 'generated-sources';
 import { emptyArr } from 'lib/constants';
 
 export const getDataSetStructureFetchingStatus = createStatusesSelector(
