@@ -76,12 +76,11 @@ public class EnumValuesIngestionServiceImpl implements EnumValuesIngestionServic
                     .toList();
 
                 accumulator.addToCreate(enumValues);
-                continue;
+            } else {
+                accumulator.addToDelete(forDelete(curEnumValues, reqEnumValues));
+                accumulator.addToCreate(forCreate(curEnumValues, reqEnumValues));
+                accumulator.addToUpdate(forUpdate(curEnumValues, reqEnumValues));
             }
-
-            accumulator.addToDelete(forDelete(curEnumValues, reqEnumValues));
-            accumulator.addToCreate(forCreate(curEnumValues, reqEnumValues));
-            accumulator.addToUpdate(forUpdate(curEnumValues, reqEnumValues));
         }
 
         return accumulator;

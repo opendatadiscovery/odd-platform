@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.jooq.Condition;
@@ -33,7 +32,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 
 @Repository
-@Slf4j
 public class ReactiveEnumValueRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<EnumValueRecord, EnumValuePojo>
     implements ReactiveEnumValueRepository {
