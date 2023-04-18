@@ -177,7 +177,12 @@ const AlertItem: React.FC<AlertItemProps> = ({
       <Collapse in={showHistory} timeout={0} unmountOnExit>
         <Grid container flexDirection='column' flexWrap='nowrap' sx={{ ml: 0.5, mt: 2 }}>
           {alertChunkList?.map(alertChunk => (
-            <Grid container flexWrap='nowrap' sx={{ py: 0.75 }}>
+            <Grid
+              key={alertChunk.description}
+              container
+              flexWrap='nowrap'
+              sx={{ py: 0.75 }}
+            >
               {alertChunk.createdAt && (
                 <Typography whiteSpace='nowrap' variant='subtitle1'>
                   {alertFormattedDateTime(alertChunk.createdAt)}

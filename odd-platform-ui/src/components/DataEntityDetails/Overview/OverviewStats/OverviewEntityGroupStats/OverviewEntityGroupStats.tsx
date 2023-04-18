@@ -49,7 +49,6 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           {entities?.slice(0, 5).map(entity => (
             <S.EntityLink key={entity.id} to={dataEntityOverviewPath(entity.id)}>
               <AppButton
-                key={entity.id}
                 size='medium'
                 color='tertiary'
                 sx={{
@@ -99,9 +98,11 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {entityGroups?.slice(0, 5).map(entityGroup => (
-            <S.EntityLink to={dataEntityOverviewPath(entityGroup.id)}>
+            <S.EntityLink
+              key={entityGroup.id}
+              to={dataEntityOverviewPath(entityGroup.id)}
+            >
               <AppButton
-                key={entityGroup.id}
                 size='medium'
                 color='tertiary'
                 sx={{

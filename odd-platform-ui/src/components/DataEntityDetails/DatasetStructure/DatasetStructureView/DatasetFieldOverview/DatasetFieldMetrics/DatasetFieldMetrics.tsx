@@ -22,7 +22,7 @@ const DatasetFieldMetrics: React.FC<DatasetFieldMetricsProps> = ({
       ) : (
         <>
           {metricFamilies?.map(family => (
-            <MetricFamily family={family} />
+            <MetricFamily key={family.name} family={family} />
           ))}
         </>
       )}

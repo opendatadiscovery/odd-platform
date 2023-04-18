@@ -52,7 +52,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
 
     return field.enumValueCount ? (
       <Grid container mt={1}>
-        {datasetFieldEnums.map(({ name, description, id }) => (
+        {datasetFieldEnums?.items?.map(({ name, description, id }) => (
           <LabeledInfoItem key={id} inline label={name} labelWidth={4}>
             {description}
           </LabeledInfoItem>
@@ -63,7 +63,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
         Enums are not created yet
       </Typography>
     );
-  }, [error, field.enumValueCount, datasetFieldEnums]);
+  }, [error, field.enumValueCount, datasetFieldEnums?.items]);
 
   return showEnums ? (
     <S.SectionContainer container>
@@ -73,10 +73,11 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
           permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
           renderContent={({ isAllowedTo: editEnums }) => (
             <DatasetFieldEnumsForm
+              isExternal={datasetFieldEnums?.external}
               datasetFieldId={field.id}
               datasetFieldName={field.name}
               datasetFieldType={field.type.type}
-              defaultEnums={datasetFieldEnums}
+              defaultEnums={datasetFieldEnums?.items}
               btnCreateEl={
                 <AppButton
                   disabled={!editEnums}
