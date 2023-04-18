@@ -18,7 +18,7 @@ const SELECTORS = {
   calendar3dayButton: `[type="button"]:has-text('3 Day')`,
   calendarDoneButton: `[type="button"]:has-text('Done')`,
   calendar: `.rmdp-container`,
-  noContent: `text=No content`,
+  noContent: `text=No information to display`,
 };
 export default class ActivityPage extends BasePage {
   get datasourceSelect() {
