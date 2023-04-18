@@ -150,7 +150,7 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
      * @param secondVersionFields dataset fields for the second version
      * @param changedPojoOddrns Dataset field oddrns, which we detected in previous iteration
      * @return dataset field oddrns, which parent field oddrn was changed and all field oddrns,
-     * which are hierarchically below
+     * which are hierarchically below.
      */
     private Set<String> getParentOddrnChangedPojos(final Map<String, DatasetFieldPojo> firstVersionFields,
                                                    final Map<String, DatasetFieldPojo> secondVersionFields,
