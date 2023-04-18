@@ -24,7 +24,8 @@ public interface DatasetFieldApiMapper {
     @Mapping(source = "datasetFieldPojo.stats", target = "stats", qualifiedByName = "deserializeStats")
     DataSetField mapDto(final DatasetFieldDto datasetFieldDto);
 
-    DatasetFieldPojo copy(final DatasetFieldPojo pojo);
+    @Mapping(target = "id", ignore = true)
+    DatasetFieldPojo copyWithoutId(final DatasetFieldPojo pojo);
 
     @Mapping(source = "pojo.type", target = "type", qualifiedByName = "deserializeType")
     DataSetFieldDiffState mapDiffWithParents(final DatasetFieldPojo pojo,

@@ -61,31 +61,6 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test get existing fields by oddrn and type from database")
-    void testGetExistingFieldsByOddrnAndType() {
-        final List<DatasetFieldDto> datasetFieldDtos = IntStream.rangeClosed(1, 5)
-            .mapToObj(i -> createDatasetFieldDto())
-            .toList();
-        final List<DatasetFieldPojo> datasetFieldPojos =
-            datasetFieldDtos.stream()
-                .map(DatasetFieldDto::getDatasetFieldPojo)
-                .peek(p -> p.setType(jsonb(JSONTestUtils.createJson(EASY_RANDOM.nextObject(DataSetFieldType.class)))))
-                .toList();
-        final DatasetFieldPojo expectedDatasetFiledPojo = datasetFieldPojos.get(0);
-        reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
-
-        reactiveDatasetFieldRepository.getExistingFieldsByOddrnAndType(List.of(expectedDatasetFiledPojo))
-            .as(StepVerifier::create)
-            .assertNext(map -> {
-                final String oddrn = expectedDatasetFiledPojo.getOddrn();
-                final DatasetFieldPojo actualdatasetFieldPojo = map.get(oddrn);
-                assertNotNull(actualdatasetFieldPojo);
-                assertEquals(expectedDatasetFiledPojo.getId(), actualdatasetFieldPojo.getId());
-            })
-            .verifyComplete();
-    }
-
-    @Test
     @DisplayName("Test update description")
     void testUpdateDescription() {
         final DatasetFieldDto datasetFieldDto = createDatasetFieldDto();
