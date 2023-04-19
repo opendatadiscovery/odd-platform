@@ -8,8 +8,8 @@ import {
   DialogWrapper,
   PolicyAutocomplete,
   TagItem,
-} from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createRole, updateRole } from 'redux/thunks';
 import { getRoleCreatingStatuses, getRoleUpdatingStatuses } from 'redux/selectors';

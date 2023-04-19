@@ -12,7 +12,7 @@ import {
   getDatasetVersionId,
   getDatasetVersions,
 } from 'redux/selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { useAppParams } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';

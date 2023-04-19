@@ -6,7 +6,7 @@ import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,
 } from 'redux/selectors';
-import { AppButton, NumberFormatted } from 'components/shared';
+import { AppButton, NumberFormatted } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import omit from 'lodash/omit';
 import { useAppSelector } from 'redux/lib/hooks';

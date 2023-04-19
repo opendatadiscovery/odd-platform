@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { type DataEntityRef, Permission } from 'generated-sources';
-import { AppButton } from 'components/shared';
-import { AddIcon } from 'components/shared/Icons';
+import { AppButton } from 'components/shared/elements';
+import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import AddDataEntityToGroupForm from './AddDataEntityToGroupForm/AddDataEntityToGroupForm';
 import GroupItem from './GroupItem/GroupItem';

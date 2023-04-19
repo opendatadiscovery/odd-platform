@@ -1,13 +1,17 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton } from 'components/shared';
+import { AppButton } from 'components/shared/elements';
 import { ActivityEventType } from 'generated-sources';
-import { MultipleFilter, CalendarFilter, SingleFilter } from 'components/shared/Activity';
+import {
+  MultipleFilter,
+  CalendarFilter,
+  SingleFilter,
+} from 'components/shared/elements/Activity';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
-} from 'components/shared/Activity/common';
+} from 'components/shared/elements/Activity/common';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {

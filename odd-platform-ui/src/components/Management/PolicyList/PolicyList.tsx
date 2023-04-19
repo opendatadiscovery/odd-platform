@@ -9,13 +9,13 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchPolicyList } from 'redux/thunks';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
   AppButton,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';

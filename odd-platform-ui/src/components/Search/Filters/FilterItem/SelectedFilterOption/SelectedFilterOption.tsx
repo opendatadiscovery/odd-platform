@@ -1,9 +1,9 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import type { SearchFilter, SearchFilterState } from 'generated-sources';
-import { TextFormatted, AppIconButton } from 'components/shared';
+import { TextFormatted, AppIconButton } from 'components/shared/elements';
 import type { OptionalFacetNames } from 'redux/interfaces';
-import { ClearIcon } from 'components/shared/Icons';
+import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import * as S from './SelectedFilterOptionStyles';

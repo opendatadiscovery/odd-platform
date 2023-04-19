@@ -9,7 +9,7 @@ import {
   getTagListFetchingStatuses,
   getTagsList,
 } from 'redux/selectors';
-import { MainSearch, SkeletonWrapper } from 'components/shared';
+import { MainSearch, SkeletonWrapper } from 'components/shared/elements';
 import { fetchDataEntitiesUsageInfo, fetchTagsList } from 'redux/thunks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';

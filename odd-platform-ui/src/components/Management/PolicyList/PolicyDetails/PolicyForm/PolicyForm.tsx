@@ -4,8 +4,13 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { createPolicy, updatePolicy } from 'redux/thunks';
-import { AppButton, AppIconButton, AppInput, AppJSONEditor } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import {
+  AppButton,
+  AppIconButton,
+  AppInput,
+  AppJSONEditor,
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
 import { Link, useNavigate } from 'react-router-dom';
 

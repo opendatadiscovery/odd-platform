@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { SkeletonWrapper } from 'components/shared';
+import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {

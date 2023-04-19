@@ -1,7 +1,7 @@
 import React from 'react';
 import type { SearchFormData, Tag } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
-import { TagItem } from 'components/shared';
+import { TagItem } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';

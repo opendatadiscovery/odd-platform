@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { EmptyContentPlaceholder } from 'components/shared/elements';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import {

@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { AppButton } from 'components/shared';
+import { AppButton } from 'components/shared/elements';
 
 export const Button = styled(AppButton)<{ $showBtn?: boolean }>(({ $showBtn }) => ({
   opacity: $showBtn ? 1 : 0,

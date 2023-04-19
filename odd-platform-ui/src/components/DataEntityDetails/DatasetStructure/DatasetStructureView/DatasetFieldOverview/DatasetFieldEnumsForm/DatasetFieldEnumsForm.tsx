@@ -9,8 +9,8 @@ import type {
 import { getDatasetFieldEnumsCreatingStatus } from 'redux/selectors';
 import { createDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { AppButton, DialogWrapper } from 'components/shared';
-import { AddIcon } from 'components/shared/Icons';
+import { AppButton, DialogWrapper } from 'components/shared/elements';
+import { AddIcon } from 'components/shared/icons';
 import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 
 interface DataSetFieldEnumsFormProps {

@@ -8,7 +8,7 @@ import {
   LabeledInfoItem,
   OwnerAutocomplete,
   OwnerTitleAutocomplete,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { createTermOwnership, updateTermOwnership } from 'redux/thunks';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { type AppTabItem, AppTabs } from 'components/shared';
+import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAtom } from 'jotai';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';

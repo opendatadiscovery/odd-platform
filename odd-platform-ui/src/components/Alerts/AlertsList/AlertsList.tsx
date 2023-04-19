@@ -15,7 +15,7 @@ import {
   getMyDependentsAlertListFetchingStatus,
   getAlerts,
 } from 'redux/selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { Grid } from '@mui/material';
 import { type AsyncThunk } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';

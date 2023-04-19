@@ -8,7 +8,7 @@ import {
 } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
-import { SkeletonWrapper, TestRunStatusItem } from 'components/shared';
+import { SkeletonWrapper, TestRunStatusItem } from 'components/shared/elements';
 import TestRunStatusReasonModal from '../../../QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
 import * as S from './TestReportDetailsHistoryStyles';

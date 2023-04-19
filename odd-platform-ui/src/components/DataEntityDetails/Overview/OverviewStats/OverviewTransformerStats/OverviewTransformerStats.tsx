@@ -1,8 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
-import { UpstreamIcon, DownstreamIcon } from 'components/shared/Icons';
-import { EntityClassItem, AppButton, EntitiesListModal } from 'components/shared';
+import { UpstreamIcon, DownstreamIcon } from 'components/shared/icons';
+import {
+  EntityClassItem,
+  AppButton,
+  EntitiesListModal,
+} from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import { StatIconContainer } from './OverviewTransformerStatsStyles';
 

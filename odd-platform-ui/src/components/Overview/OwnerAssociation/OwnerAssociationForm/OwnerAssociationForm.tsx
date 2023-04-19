@@ -11,8 +11,8 @@ import type {
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import type { Owner, OwnerFormData } from 'generated-sources';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
-import { ClearIcon, UserSyncIcon } from 'components/shared/Icons';
-import { AppButton, AppInput, AutocompleteSuggestion } from 'components/shared';
+import { ClearIcon, UserSyncIcon } from 'components/shared/icons';
+import { AppButton, AppInput, AutocompleteSuggestion } from 'components/shared/elements';
 import {
   createOwnerAssociationRequest,
   fetchIdentity,

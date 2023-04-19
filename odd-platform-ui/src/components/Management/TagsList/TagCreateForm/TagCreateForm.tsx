@@ -5,9 +5,9 @@ import type { TagFormData } from 'generated-sources';
 import { getTagCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTag } from 'redux/thunks/tags.thunks';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
+import AddIcon from 'components/shared/icons/AddIcon';
+import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
 
 interface TagCreateFormProps {

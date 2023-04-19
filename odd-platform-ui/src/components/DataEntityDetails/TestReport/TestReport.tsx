@@ -11,7 +11,7 @@ import {
 import { fetchDataSetQualityTestList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
-import { AppErrorPage, AppPaper, TestRunStatusItem } from 'components/shared';
+import { AppErrorPage, AppPaper, TestRunStatusItem } from 'components/shared/elements';
 import omit from 'lodash/omit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import TestReportItem from './TestReportItem/TestReportItem';

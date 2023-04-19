@@ -77,18 +77,24 @@ interface ManagementRouteViewTypes {
     | ManagementRoutes.labels
     | ManagementRoutes.associations
     | ManagementRoutes.roles
-    | ManagementRoutes.policies;
+    | ManagementRoutes.policies
+    | ManagementRoutes.integrations;
   [ManagementRoutes.associationsViewType]:
     | ManagementRoutes.associationsNew
     | ManagementRoutes.associationsResolved;
+  [ManagementRoutes.integrationViewType]:
+    | ManagementRoutes.overview
+    | ManagementRoutes.configure;
 }
 
 interface ManagementRouteParams extends ManagementRouteViewTypes {
   [ManagementRoutes.policyId]: string;
+  [ManagementRoutes.integrationId]: string;
 }
 
 interface AppManagementRouteParams extends ManagementRouteViewTypes {
   [ManagementRoutes.policyId]: number;
+  [ManagementRoutes.integrationId]: string;
 }
 
 export type RouteParams = DataEntityRouteParams &

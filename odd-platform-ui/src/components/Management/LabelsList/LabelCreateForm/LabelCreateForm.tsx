@@ -5,9 +5,9 @@ import type { LabelFormData } from 'generated-sources';
 import { getLabelCreatingStatuses } from 'redux/selectors';
 import { createLabel } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
+import AddIcon from 'components/shared/icons/AddIcon';
+import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
 import LabelCreateFormItem from './LabelCreateFormItem/LabelCreateFormItem';
 
 interface LabelCreateFormProps {

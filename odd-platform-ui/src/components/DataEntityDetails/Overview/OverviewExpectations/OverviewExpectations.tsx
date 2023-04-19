@@ -1,8 +1,8 @@
 import React from 'react';
 import type { DataQualityTestExpectation, LinkedUrl } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { AppButton } from 'components/shared';
-import { DropdownIcon } from 'components/shared/Icons';
+import { AppButton } from 'components/shared/elements';
+import { DropdownIcon } from 'components/shared/icons';
 import * as S from './OverviewExpectationsStyles';
 
 interface OverviewExpectationsProps {

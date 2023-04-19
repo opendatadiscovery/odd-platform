@@ -13,8 +13,8 @@ import {
   AppInput,
   NamespaceAutocomplete,
   DialogWrapper,
-} from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
 
 interface CollectorFormDialogProps {

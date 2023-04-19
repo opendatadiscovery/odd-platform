@@ -11,7 +11,7 @@ import {
   EntitiesListModal,
   EntityClassItem,
   LabeledInfoItem,
-} from 'components/shared';
+} from 'components/shared/elements';
 import * as S from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps {

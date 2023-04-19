@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import { EntityClassItem } from 'components/shared';
+import { EntityClassItem } from 'components/shared/elements';
 import { DataEntityClassLabelMap } from 'redux/interfaces';
 import { type DataEntityClassUsageInfo } from 'generated-sources';
 import * as S from './DataEntitiesUsageInfoStyles';

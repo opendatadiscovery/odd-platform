@@ -1,7 +1,7 @@
 import React from 'react';
 import type { MetricFamily as MetricFamilyType } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { AppCircularProgress, MetricFamily } from 'components/shared';
+import { AppCircularProgress, MetricFamily } from 'components/shared/elements';
 import * as S from '../DatasetFieldOverviewStyles';
 
 interface DatasetFieldMetricsProps {

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useAppParams } from 'lib/hooks';
 import { useDataEntityGroupLineage } from 'lib/hooks/api';
 import { useAtom } from 'jotai';
-import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared';
+import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared/elements';
 import DEGLineageControls from './components/DEGLineageControls/DEGLineageControls';
 import DEGLineageLayouter from './DEGLineageLayouter/DEGLineageLayouter';
 import { isLayoutedAtom } from './lib/atoms';

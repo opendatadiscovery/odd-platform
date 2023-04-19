@@ -1,6 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppCircularProgress, MetadataItem, NumberFormatted } from 'components/shared';
+import {
+  AppCircularProgress,
+  MetadataItem,
+  NumberFormatted,
+} from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {

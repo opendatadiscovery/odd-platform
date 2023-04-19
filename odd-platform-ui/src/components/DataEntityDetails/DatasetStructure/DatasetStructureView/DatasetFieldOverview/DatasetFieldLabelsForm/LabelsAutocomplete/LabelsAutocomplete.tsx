@@ -9,8 +9,8 @@ import { fetchLabelsList as searchLabels } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import type { Label } from 'generated-sources';
-import { AppInput, AutocompleteSuggestion } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import type { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;

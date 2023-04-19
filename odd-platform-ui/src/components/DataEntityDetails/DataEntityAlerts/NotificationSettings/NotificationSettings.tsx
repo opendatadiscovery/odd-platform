@@ -10,7 +10,11 @@ import {
 import { useForm } from 'react-hook-form';
 import { fetchDataEntityAlertsConfig, updateDataEntityAlertsConfig } from 'redux/thunks';
 import { Grid, Typography } from '@mui/material';
-import { AppButton, AppCircularProgress, DialogWrapper } from 'components/shared';
+import {
+  AppButton,
+  AppCircularProgress,
+  DialogWrapper,
+} from 'components/shared/elements';
 import type { SerializeDateToNumber } from 'redux/interfaces';
 import AlertTypeRange from './AlertTypeRange/AlertTypeRange';
 

@@ -13,7 +13,7 @@ import {
   LabeledInfoItem,
   LabelItem,
   TagItem,
-} from 'components/shared';
+} from 'components/shared/elements';
 import type { SearchHighlightsTitlesKey } from 'lib/constants';
 import { searchHighlightsTitlesMap } from 'lib/constants';
 import { getMetadataValue, sliceStringByWidth } from 'lib/helpers';

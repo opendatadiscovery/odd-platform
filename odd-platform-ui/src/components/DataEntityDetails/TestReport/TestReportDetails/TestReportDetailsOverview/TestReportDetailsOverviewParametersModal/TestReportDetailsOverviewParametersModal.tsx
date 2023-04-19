@@ -1,5 +1,5 @@
 import React from 'react';
-import { DialogWrapper } from 'components/shared';
+import { DialogWrapper } from 'components/shared/elements';
 import { Typography } from '@mui/material';
 import type { DataQualityTestExpectation } from 'generated-sources';
 

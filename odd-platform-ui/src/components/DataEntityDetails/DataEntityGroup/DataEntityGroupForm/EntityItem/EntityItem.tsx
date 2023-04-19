@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppIconButton, EntityClassItem } from 'components/shared';
+import { AppIconButton, EntityClassItem } from 'components/shared/elements';
 import { type DataEntityRef } from 'generated-sources';
-import { DeleteIcon } from 'components/shared/Icons';
+import { DeleteIcon } from 'components/shared/icons';
 import { Container } from './EntityItemStyles';
 
 interface TagItemProps {

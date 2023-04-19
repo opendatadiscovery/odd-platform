@@ -10,14 +10,14 @@ import {
   getActivityCountsFetchingStatuses,
   getActivityPageInfoByType,
 } from 'redux/selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { fetchActivityCounts, fetchActivityList } from 'redux/thunks';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
-} from 'components/shared/Activity/common';
-import { ActivityResultsList } from 'components/shared/Activity';
+} from 'components/shared/elements/Activity/common';
+import { ActivityResultsList } from 'components/shared/elements/Activity';
 import ActivityItem from './ActivityItem/ActivityItem';
 import ActivityTabs from './ActivityTabs/ActivityTabs';
 

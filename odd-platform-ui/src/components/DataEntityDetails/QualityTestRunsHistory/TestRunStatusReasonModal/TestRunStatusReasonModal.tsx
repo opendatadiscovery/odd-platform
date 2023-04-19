@@ -7,7 +7,7 @@ import {
   DialogWrapper,
   LabeledInfoItem,
   TestRunStatusItem,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { StatsContainer, StatusReasonContainer } from './TestRunStatusReasonModalStyles';
 

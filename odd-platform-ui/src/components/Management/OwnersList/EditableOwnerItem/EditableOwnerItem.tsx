@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Owner, Permission } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared';
-import { DeleteIcon, EditIcon } from 'components/shared/Icons';
+import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { deleteOwner } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TruncateMarkup from 'react-truncate-markup';

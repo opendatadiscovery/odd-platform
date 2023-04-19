@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppButton, AppCheckbox, AppSelect, AppTabs } from 'components/shared';
-import { TargetIcon } from 'components/shared/Icons';
+import { AppButton, AppCheckbox, AppSelect, AppTabs } from 'components/shared/elements';
+import { TargetIcon } from 'components/shared/icons';
 import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
 import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';

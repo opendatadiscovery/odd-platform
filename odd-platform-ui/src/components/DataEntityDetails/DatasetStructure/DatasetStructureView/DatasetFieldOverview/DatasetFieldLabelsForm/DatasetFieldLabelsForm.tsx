@@ -4,7 +4,7 @@ import { getDatasetFieldLabelsUpdatingStatus } from 'redux/selectors';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import type { DataSetField, Label } from 'generated-sources';
-import { AppButton, DialogWrapper, LabelItem } from 'components/shared';
+import { AppButton, DialogWrapper, LabelItem } from 'components/shared/elements';
 import { updateDataSetFieldLabels } from 'redux/thunks';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 

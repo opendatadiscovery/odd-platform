@@ -22,8 +22,8 @@ import {
   DownstreamIcon,
   StarIcon,
   UpstreamIcon,
-} from 'components/shared/Icons';
-import { SkeletonWrapper } from 'components/shared';
+} from 'components/shared/icons';
+import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';

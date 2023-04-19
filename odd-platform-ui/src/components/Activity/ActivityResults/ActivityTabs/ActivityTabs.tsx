@@ -1,11 +1,11 @@
 import React from 'react';
-import { type AppTabItem, AppTabs } from 'components/shared';
+import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { type ActivityCountInfo, ActivityType } from 'generated-sources';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
-} from 'components/shared/Activity/common';
+} from 'components/shared/elements/Activity/common';
 
 interface ActivityTabsProps {
   counts: ActivityCountInfo;

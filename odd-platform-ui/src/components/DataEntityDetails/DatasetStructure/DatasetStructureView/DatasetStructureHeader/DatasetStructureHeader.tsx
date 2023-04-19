@@ -1,7 +1,12 @@
 import React from 'react';
 import { Grid, Typography, type SelectChangeEvent } from '@mui/material';
-import { ClearIcon, ColumnsIcon, SearchIcon } from 'components/shared/Icons';
-import { AppInput, AppMenuItem, AppSelect, NumberFormatted } from 'components/shared';
+import { ClearIcon, ColumnsIcon, SearchIcon } from 'components/shared/icons';
+import {
+  AppInput,
+  AppMenuItem,
+  AppSelect,
+  NumberFormatted,
+} from 'components/shared/elements';
 import type { DataSetStats, DataSetVersion } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import { fetchDataSetStructure } from 'redux/thunks';
