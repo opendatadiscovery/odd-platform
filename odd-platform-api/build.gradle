@@ -49,6 +49,7 @@ dependencies {
     implementation libs.snappy.java
 
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0'
+    implementation 'org.opendatadiscovery:integration-manifests:0.0.1'
 
     compileOnly libs.lombok
 

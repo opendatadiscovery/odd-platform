@@ -3,6 +3,7 @@ configure([project(':odd-platform-api-contract'), project(':odd-platform-api')])
 
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 }
 

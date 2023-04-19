@@ -3,42 +3,53 @@ package org.opendatadiscovery.oddplatform.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationOverviewDto;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import static java.util.function.Function.identity;
 
 @UtilityClass
+@Slf4j
 public class IntegrationRegistryFactory {
-    private static final String CLASSPATH_RESOURCE_LOCATION = "wizard";
+    private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
+    private static final String CLASSPATH_RESOURCE_LOCATION = "classpath*:META-INF/wizard/*.yaml";
     private static final ObjectMapper YAML_OBJ_MAPPER = new ObjectMapper(new YAMLFactory());
 
     @SneakyThrows
     public static IntegrationRegistry createResourceFilesIntegrationRegistry() {
-        final ClassPathResource classPathResource = new ClassPathResource(CLASSPATH_RESOURCE_LOCATION);
+        final Map<String, IntegrationOverviewDto> registry = readManifests()
+            .stream()
+            .collect(Collectors.toMap(o -> o.integration().id(), identity()));
 
-        final List<IntegrationOverviewDto> integrationDtos;
+        return new ResourceFilesIntegrationRegistry(registry);
+    }
 
-        try (final Stream<Path> stream = Files.walk(classPathResource.getFile().toPath())) {
-            integrationDtos = stream.filter(Files::isRegularFile)
-                .map(path -> {
-                    try {
-                        return YAML_OBJ_MAPPER.readValue(path.toFile(), IntegrationOverviewDto.class);
-                    } catch (final IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+    private static List<IntegrationOverviewDto> readManifests() {
+        try {
+            return Arrays.stream(RESOURCE_PATTERN_RESOLVER.getResources(CLASSPATH_RESOURCE_LOCATION))
+                .filter(Resource::isReadable)
+                .map(IntegrationRegistryFactory::readManifest)
                 .toList();
+        } catch (final IOException e) {
+            throw new IllegalStateException("Couldn't read wizard manifests", e);
         }
+    }
 
-        return new ResourceFilesIntegrationRegistry(
-            integrationDtos.stream().collect(Collectors.toMap(o -> o.integration().id(), identity())));
+    private static IntegrationOverviewDto readManifest(final Resource resource) {
+        try {
+            return YAML_OBJ_MAPPER.readValue(resource.getInputStream(), IntegrationOverviewDto.class);
+        } catch (final IOException e) {
+            throw new IllegalStateException("Couldn't read wizard manifest: %s".formatted(resource.getFilename()), e);
+        }
     }
 }
