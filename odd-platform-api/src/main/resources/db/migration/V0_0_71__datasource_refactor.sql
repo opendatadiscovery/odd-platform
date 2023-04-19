@@ -18,3 +18,6 @@ ALTER TABLE data_source
 
 ALTER TABLE data_source
     DROP COLUMN IF EXISTS connection_url;
+
+ALTER TABLE data_source
+    DROP COLUMN IF EXISTS pulling_interval;

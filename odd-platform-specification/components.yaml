@@ -995,10 +995,6 @@ components:
           type: string
         description:
           type: string
-        pulling_interval:
-          type: integer
-          format: int32
-          description: Pulling interval in seconds
       required:
         - id
         - token
