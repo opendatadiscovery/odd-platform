@@ -1,59 +1,65 @@
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
-import { EntityClassItem } from 'components/shared/elements';
-import { DataEntityClassLabelMap } from 'redux/interfaces';
-import { type DataEntityClassUsageInfo } from 'generated-sources';
-import * as S from './DataEntitiesUsageInfoStyles';
+import { useDataEntitiesUsage } from 'lib/hooks/api';
+import { useCreateSearch } from 'lib/hooks';
+import DataEntitiesUsageInfoView from './DataEntityUsageInfoView/DataEntitiesUsageInfoView';
 
-interface DataEntitiesUsageInfoProps {
-  dataEntityUsageTotalCount: number;
-  dataEntityUsageUnfilledCount: number;
-  dataEntityClassesUsageInfo: DataEntityClassUsageInfo[];
-  isUsageInfoNotFetched: boolean;
+export interface HandleEntityClassClickParams {
+  entityId: number;
+  entityName: string;
 }
 
-const DataEntitiesUsageInfo: React.FC<DataEntitiesUsageInfoProps> = ({
-  dataEntityUsageTotalCount,
-  dataEntityClassesUsageInfo,
-  dataEntityUsageUnfilledCount,
-  isUsageInfoNotFetched,
-}) =>
-  isUsageInfoNotFetched ? null : (
-    <Grid container sx={{ mt: 8 }} wrap='nowrap'>
-      <S.DataEntitiesUsageContainer>
-        <S.DataEntitiesTotalContainer>
-          <Box>
-            <Typography variant='h4'>Total entities</Typography>
-            <Typography variant='h1'>{dataEntityUsageTotalCount}</Typography>
-          </Box>
-          <Box>
-            <S.UnfilledEntities>
-              {dataEntityUsageUnfilledCount} unfilled entities
-            </S.UnfilledEntities>
-          </Box>
-        </S.DataEntitiesTotalContainer>
-        <S.ListItemContainer>
-          {dataEntityClassesUsageInfo?.map((item, index) => (
-            <S.ListItemWrapper key={item?.entityClass?.id}>
-              <S.ListItem $index={index}>
-                <EntityClassItem
-                  sx={{ ml: 0.5 }}
-                  key={item?.entityClass?.id}
-                  entityClassName={item?.entityClass?.name}
-                />
-                <Typography noWrap title={item?.entityClass?.name}>
-                  {item.entityClass &&
-                    DataEntityClassLabelMap.get(item.entityClass.name)?.normal}
-                </Typography>
-              </S.ListItem>
-              <Typography variant='h4' noWrap>
-                {item.totalCount}
-              </Typography>
-            </S.ListItemWrapper>
-          ))}
-        </S.ListItemContainer>
-      </S.DataEntitiesUsageContainer>
-    </Grid>
+export interface HandleEntityClassTypeClickParams {
+  entityClassId: number;
+  entityClassTypeId: number;
+  entityClassName: string;
+  entityClassTypeName: string;
+}
+
+const DataEntitiesUsageInfo: React.FC = () => {
+  const createSearch = useCreateSearch();
+  const { data: usageInfo, isError } = useDataEntitiesUsage();
+
+  const handleEntityClassClick = React.useCallback(
+    ({ entityId, entityName }: HandleEntityClassClickParams) => {
+      const searchFormData = {
+        filters: { entityClasses: [{ entityId, entityName, selected: true }] },
+      };
+      createSearch(searchFormData);
+    },
+    []
   );
+
+  const handleEntityClassTypeClick = React.useCallback(
+    ({
+      entityClassId,
+      entityClassName,
+      entityClassTypeName,
+      entityClassTypeId,
+    }: HandleEntityClassTypeClickParams) => {
+      const selected = true;
+      const entityClasses = [
+        { entityId: entityClassId, entityName: entityClassName, selected },
+      ];
+      const types = [
+        { entityId: entityClassTypeId, entityName: entityClassTypeName, selected },
+      ];
+      const searchFormData = { filters: { entityClasses, types } };
+      createSearch(searchFormData);
+    },
+    []
+  );
+
+  if (isError || !usageInfo) return null;
+
+  return (
+    <DataEntitiesUsageInfoView
+      totalCount={usageInfo.totalCount}
+      unfilledCount={usageInfo.unfilledCount}
+      classesUsageInfo={usageInfo.dataEntityClassesInfo}
+      handleEntityClassClick={handleEntityClassClick}
+      handleEntityClassTypeClick={handleEntityClassTypeClick}
+    />
+  );
+};
 
 export default DataEntitiesUsageInfo;

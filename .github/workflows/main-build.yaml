@@ -47,7 +47,7 @@ jobs:
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-        run: ./gradlew test jib --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} --scan -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
+        run: ./gradlew test jib --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} --scan -Pversion=ci-${GITHUB_SHA::6}
   update_tag:
     needs: ['images']
     runs-on: ubuntu-latest

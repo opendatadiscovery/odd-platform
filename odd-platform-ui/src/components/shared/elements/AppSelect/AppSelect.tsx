@@ -5,28 +5,7 @@ import { type SxProps } from '@mui/system';
 import type { AppSelectSizes } from 'components/shared/elements/AppSelect/AppSelectStyles';
 import * as S from 'components/shared/elements/AppSelect/AppSelectStyles';
 
-interface AppSelectProps
-  extends Pick<
-    SelectProps,
-    | 'onChange'
-    | 'sx'
-    | 'value'
-    | 'label'
-    | 'defaultValue'
-    | 'type'
-    | 'name'
-    | 'fullWidth'
-    | 'onSelect'
-    | 'id'
-    | 'disabled'
-    | 'notched'
-    | 'placeholder'
-    | 'native'
-    | 'children'
-    | 'onOpen'
-    | 'ref'
-    | 'inputProps'
-  > {
+interface AppSelectProps extends SelectProps {
   size?: AppSelectSizes;
   containerSx?: SxProps<Theme>;
   maxMenuHeight?: number;

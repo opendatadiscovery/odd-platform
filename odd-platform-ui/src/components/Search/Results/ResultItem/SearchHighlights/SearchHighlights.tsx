@@ -89,6 +89,7 @@ const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => 
             ([key, val]) =>
               val && (
                 <LabeledInfoItem
+                  key={key}
                   sx={{ mt: 0.25 }}
                   inline
                   label={getTitle(key as SearchHighlightsTitlesKey)}

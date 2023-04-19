@@ -20,6 +20,9 @@ interface DataEntityViewTypes {
   [DataEntityRoutes.testReportViewType]:
     | DataEntityRoutes.overview
     | DataEntityRoutes.history;
+  [DataEntityRoutes.structureViewType]:
+    | DataEntityRoutes.overview
+    | DataEntityRoutes.structureCompare;
 }
 
 interface DataEntityRouteParams extends DataEntityViewTypes {

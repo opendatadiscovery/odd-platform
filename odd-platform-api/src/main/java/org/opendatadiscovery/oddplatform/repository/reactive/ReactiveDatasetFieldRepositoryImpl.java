@@ -1,19 +1,16 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Field;
+import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
@@ -29,9 +26,10 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static java.util.function.Function.identity;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.partitionBy;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
@@ -65,36 +63,26 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    public Mono<Map<String, DatasetFieldPojo>> getExistingFieldsByOddrnAndType(final List<DatasetFieldPojo> fields) {
-        final Map<String, DatasetFieldPojo> fieldMap =
-            fields.stream().collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
+    public Flux<DatasetFieldPojo> getLastVersionDatasetFieldsByOddrns(final List<String> oddrns) {
+        return jooqReactiveOperations.executeInPartitionReturning(oddrns, partitionedOddrns -> {
+            final String version = "version";
+            final String maxVersion = "max_version";
+            final Name cteName = name("cte");
 
-        final Set<String> oddrns = fields.stream().map(DatasetFieldPojo::getOddrn).collect(Collectors.toSet());
+            final var cte = cteName.as(DSL.select(DATASET_FIELD.fields())
+                .select(DATASET_VERSION.VERSION.as(version))
+                .select(DSL.max(DATASET_VERSION.VERSION).over(partitionBy(DATASET_FIELD.ODDRN)).as(maxVersion))
+                .from(DATASET_FIELD)
+                .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+                .join(DATASET_VERSION).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+                .where(DATASET_FIELD.ODDRN.in(partitionedOddrns)));
 
-        final SelectConditionStep<DatasetFieldRecord> selectConditionStep = DSL
-            .selectFrom(DATASET_FIELD)
-            .where(DATASET_FIELD.ODDRN.in(oddrns));
-
-        return jooqReactiveOperations.flux(selectConditionStep)
-            .map(r -> r.into(DatasetFieldPojo.class))
-            .filter(fromDatabase -> {
-                final DatasetFieldPojo fromIngestion = fieldMap.get(fromDatabase.getOddrn());
-                if (fromIngestion == null) {
-                    throw new IllegalStateException("Unexpected behaviour while mapping dataset fields");
-                }
-
-                return fromDatabase.getType().equals(fromIngestion.getType());
-            })
-            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
-    }
-
-    @Override
-    public Flux<DatasetFieldPojo> getExistingFieldsByOddrn(final Collection<String> oddrns) {
-        final SelectConditionStep<DatasetFieldRecord> selectConditionStep = DSL
-            .selectFrom(DATASET_FIELD)
-            .where(DATASET_FIELD.ODDRN.in(oddrns));
-
-        return jooqReactiveOperations.flux(selectConditionStep).map(r -> r.into(DatasetFieldPojo.class));
+            final var query = DSL.with(cte)
+                .select(cte.fields())
+                .from(cte.getName())
+                .where(cte.field(version, Long.class).eq(cte.field(maxVersion, Long.class)));
+            return jooqReactiveOperations.flux(query);
+        }).map(r -> r.into(DatasetFieldPojo.class));
     }
 
     @Override

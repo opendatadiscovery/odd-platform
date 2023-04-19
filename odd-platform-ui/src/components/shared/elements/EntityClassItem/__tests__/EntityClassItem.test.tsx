@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { getByText, render } from 'lib/testHelpers';
+import { getByText, render } from 'lib/tests/testHelpers';
 import EntityClassItem, {
   type EntityClassItemProps,
 } from 'components/shared/elements/EntityClassItem/EntityClassItem';

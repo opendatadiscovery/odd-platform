@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { getByText } from 'lib/testHelpers';
+import { getByText } from 'lib/tests/testHelpers';
 import TextFormatted, {
   type TextFormattedProps,
 } from 'components/shared/elements/TextFormatted/TextFormatted';

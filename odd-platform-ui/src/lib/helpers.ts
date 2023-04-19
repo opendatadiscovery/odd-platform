@@ -1,6 +1,6 @@
 import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
-import { type EventType } from 'lib/interfaces';
+import type { EventType } from 'lib/interfaces';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 import {

@@ -3,10 +3,8 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.jooq.Field;
 import org.jooq.JSONB;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
@@ -27,28 +25,26 @@ public class ReactiveDataEntityStatisticsRepositoryImpl implements ReactiveDataE
     }
 
     @Override
-    public Mono<DataEntityStatisticsPojo> updateCounts(final Long delta,
-                                                       final Map<DataEntityClassDto, Long> classesDelta) {
-        final String jsonUpdate = classesDelta.entrySet().stream()
-            .map(es -> buildJsonFieldUpdateString(es.getKey().getId(), es.getValue()))
-            .collect(Collectors.joining(","));
+    public Mono<DataEntityStatisticsPojo> updateCounts(final Long newTotal,
+                                                       final Map<Integer, Map<Integer, Long>> newEntityMap) {
         final var query = DSL.update(DATA_ENTITY_STATISTICS)
-            .set(DATA_ENTITY_STATISTICS.TOTAL_COUNT, DATA_ENTITY_STATISTICS.TOTAL_COUNT.plus(delta))
-            .set(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT,
-                field(jsonBuildObjectString(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT, jsonUpdate), JSONB.class))
+            .set(DATA_ENTITY_STATISTICS.TOTAL_COUNT, newTotal)
+            .set(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_TYPES_COUNT,
+                field(jsonBuildObjectString(newEntityMap), JSONB.class))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityStatisticsPojo.class));
     }
 
-    private String jsonBuildObjectString(final Field<?> fieldToUpdate,
-                                         final String newJson) {
-        return "COALESCE(%s, '{}'::jsonb) || json_build_object(%s)::jsonb".formatted(fieldToUpdate, newJson);
-    }
-
-    private String buildJsonFieldUpdateString(final int dataEntityClassId,
-                                              final Long delta) {
-        return "%d, (COALESCE(data_entity_classes_count ->> '%d', '0')::int %s %d)"
-            .formatted(dataEntityClassId, dataEntityClassId, delta < 0 ? "-" : "+", Math.abs(delta));
+    private String jsonBuildObjectString(final Map<Integer, Map<Integer, Long>> newEntityMap) {
+        final String classesInfo = newEntityMap.entrySet().stream()
+            .map(entry -> {
+                final String typesCount = entry.getValue().entrySet().stream()
+                    .map(e -> "%d, %d".formatted(e.getKey(), e.getValue()))
+                    .collect(Collectors.joining(","));
+                return "%d, json_build_object(%s)".formatted(entry.getKey(), typesCount);
+            })
+            .collect(Collectors.joining(","));
+        return "json_build_object(%s)::jsonb".formatted(classesInfo);
     }
 }

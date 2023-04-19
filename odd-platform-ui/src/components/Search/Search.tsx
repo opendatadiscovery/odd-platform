@@ -3,13 +3,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { MainSearch, PageWithLeftSidebar } from 'components/shared/elements';
-import { useNavigate } from 'react-router-dom';
-import { useAppParams } from 'lib/hooks';
-import {
-  createDataEntitiesSearch,
-  getDataEntitiesSearch,
-  updateDataEntitiesSearch,
-} from 'redux/thunks';
+import { useAppParams, useCreateSearch } from 'lib/hooks';
+import { getDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
 import {
   getSearchCreatingStatuses,
   getSearchFacetsData,
@@ -26,8 +21,8 @@ import Results from './Results/Results';
 
 const Search: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { searchId: routerSearchId } = useAppParams();
+  const createSearch = useCreateSearch();
 
   const searchId = useAppSelector(getSearchId);
   const searchQuery = useAppSelector(getSearchQuery);
@@ -39,11 +34,7 @@ const Search: React.FC = () => {
   React.useEffect(() => {
     if (!routerSearchId && !isSearchCreating && !searchId) {
       const searchFormData = { query: '', pageSize: 30, filters: {} };
-      dispatch(createDataEntitiesSearch({ searchFormData }))
-        .unwrap()
-        .then(search => {
-          navigate(`${search.searchId}`);
-        });
+      createSearch(searchFormData);
     }
   }, [routerSearchId, isSearchCreating]);
 

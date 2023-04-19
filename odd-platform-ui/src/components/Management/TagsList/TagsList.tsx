@@ -135,7 +135,9 @@ const TagsListView: React.FC = () => {
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isTagsFetching && !tagsList.length ? <EmptyContentPlaceholder /> : null}
+      {!isTagsFetching && !tagsList.length ? (
+        <EmptyContentPlaceholder offsetTop={190} />
+      ) : null}
     </Grid>
   );
 };

@@ -416,6 +416,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityClassUsageInfo'
+      required:
+        - total_count
+        - unfilled_count
+        - data_entity_classes_info
 
     DataEntityClassUsageInfo:
       type: object
@@ -425,6 +429,26 @@ components:
         total_count:
           type: integer
           format: int64
+        data_entity_types_info:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityTypeUsageInfo'
+      required:
+        - entity_class
+        - total_count
+        - data_entity_types_info
+
+    DataEntityTypeUsageInfo:
+      type: object
+      properties:
+        entity_type:
+          $ref: '#/components/schemas/DataEntityType'
+        total_count:
+          type: integer
+          format: int64
+      required:
+        - entity_type
+        - total_count
 
     DataEntityClassAndTypeDictionary:
       type: object
@@ -1594,13 +1618,72 @@ components:
       required:
         - description
 
+    DataSetVersionDiffList:
+      type: object
+      properties:
+        field_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSetVersionDiff'
+      required:
+        - field_list
+
+    DataSetVersionDiff:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataSetVersionDiffStatus'
+        states:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/DataSetFieldDiffState'
+      required:
+        - status
+        - states
+
+    DataSetFieldDiffState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        parent_field_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        is_key:
+          type: boolean
+        is_value:
+          type: boolean
+        is_primary_key:
+          type: boolean
+      required:
+        - id
+        - name
+        - type
+
+    DataSetVersionDiffStatus:
+      type: string
+      enum:
+        - CREATED
+        - DELETED
+        - UPDATED
+        - NO_CHANGES
+
     EnumValueList:
       type: object
       properties:
+        external:
+          type: boolean
         items:
           type: array
           items:
             $ref: '#/components/schemas/EnumValue'
+      required:
+        - external
 
     EnumValue:
       description: DatasetField enum value
@@ -1613,6 +1696,8 @@ components:
           type: string
         description:
           type: string
+        modifiable:
+          type: boolean
       required:
         - id
         - name

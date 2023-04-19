@@ -135,7 +135,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
       {state.entities.map(
         item =>
           item.id && (
-            <S.ArrayItemWrapper $typeOfChange={item.typeOfChange}>
+            <S.ArrayItemWrapper key={item.id} $typeOfChange={item.typeOfChange}>
               <Link to={dataEntityOverviewPath(item.id)}>
                 <AppButton
                   size='medium'

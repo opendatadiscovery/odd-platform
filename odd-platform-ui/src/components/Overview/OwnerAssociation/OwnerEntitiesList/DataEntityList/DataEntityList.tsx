@@ -55,7 +55,9 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
           </li>
         ))}
 
-        {!isFetching && !dataEntitiesList.length ? <EmptyContentPlaceholder /> : null}
+        {!isFetching && !dataEntitiesList.length ? (
+          <EmptyContentPlaceholder fullPage={false} />
+        ) : null}
       </S.ListLinksContainer>
     </S.DataEntityListContainer>
   );

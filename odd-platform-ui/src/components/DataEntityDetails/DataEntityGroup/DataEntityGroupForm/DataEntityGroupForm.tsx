@@ -55,7 +55,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
   const { isLoading: isDataEntityGroupUpdating, isLoaded: isDataEntityGroupUpdated } =
     useAppSelector(getDataEntityGroupUpdatingStatuses);
 
-  const getDefaultValues = React.useCallback(
+  const defaultValues = React.useMemo(
     (): DataEntityGroupFormData => ({
       name:
         dataEntityGroupDetails?.internalName ||
@@ -68,12 +68,11 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
     [dataEntityGroupDetails]
   );
 
-  const { handleSubmit, control, reset, formState, watch } =
-    useForm<DataEntityGroupFormData>({
-      mode: 'onChange',
-      reValidateMode: 'onChange',
-      defaultValues: getDefaultValues(),
-    });
+  const { handleSubmit, control, reset, formState } = useForm<DataEntityGroupFormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues,
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -139,7 +138,12 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         control={control}
         rules={{ required: true, validate: val => !isEmpty(val) }}
         render={({ field }) => (
-          <AppSelect {...field} label='Type' sx={{ mt: 1.5 }} value={watch('type')}>
+          <AppSelect
+            {...field}
+            label='Type'
+            sx={{ mt: 1.5 }}
+            renderValue={value => (value as DataEntityType).name}
+          >
             {types
               ?.filter(
                 // filtration needs to avoid user create ml_experiment from ui

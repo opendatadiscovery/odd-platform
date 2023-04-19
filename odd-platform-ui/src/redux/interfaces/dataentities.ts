@@ -1,4 +1,5 @@
 import {
+  DataEntityTypeNameEnum,
   DataEntityClassNameEnum,
   type DataEntity as GeneratedDataEntity,
   type DataEntityDetails,
@@ -55,4 +56,54 @@ export const DataEntityClassLabelMap: Map<
       plural: 'Transformer Runs',
     },
   ],
+]);
+
+export const DataEntityClassTypeLabelMap: Map<
+  DataEntityTypeNameEnum,
+  { normal: string; plural: string }
+> = new Map([
+  [DataEntityTypeNameEnum.TABLE, { normal: 'Table', plural: 'Tables' }],
+  [DataEntityTypeNameEnum.FILE, { normal: 'File', plural: 'Files' }],
+  [
+    DataEntityTypeNameEnum.FEATURE_GROUP,
+    { normal: 'Feature group', plural: 'Feature groups' },
+  ],
+  [DataEntityTypeNameEnum.KAFKA_TOPIC, { normal: 'Kafka topic', plural: 'Kafka topics' }],
+  [DataEntityTypeNameEnum.JOB, { normal: 'Job', plural: 'Jobs' }],
+  [DataEntityTypeNameEnum.JOB_RUN, { normal: 'Job run', plural: 'Job runs' }],
+  [
+    DataEntityTypeNameEnum.ML_EXPERIMENT,
+    { normal: 'ML experiment', plural: 'ML experiments' },
+  ],
+  [
+    DataEntityTypeNameEnum.ML_MODEL_TRAINING,
+    { normal: 'ML model training', plural: 'ML models training' },
+  ],
+  [
+    DataEntityTypeNameEnum.ML_MODEL_INSTANCE,
+    { normal: 'ML model instance', plural: 'ML model instances' },
+  ],
+  [
+    DataEntityTypeNameEnum.ML_MODEL_ARTIFACT,
+    { normal: 'ML model artifact', plural: 'ML model artifacts' },
+  ],
+  [DataEntityTypeNameEnum.DASHBOARD, { normal: 'Dashboard', plural: 'Dashboards' }],
+  [DataEntityTypeNameEnum.VIEW, { normal: 'View', plural: 'Views' }],
+  [DataEntityTypeNameEnum.DAG, { normal: 'Dag', plural: 'Dags' }],
+  [DataEntityTypeNameEnum.GRAPH_NODE, { normal: 'Graph node', plural: 'Graph nodes' }],
+  [DataEntityTypeNameEnum.API_CALL, { normal: 'Api call', plural: 'Api calls' }],
+  [
+    DataEntityTypeNameEnum.MICROSERVICE,
+    { normal: 'Microservice', plural: 'Microservices' },
+  ],
+  [
+    DataEntityTypeNameEnum.DATABASE_SERVICE,
+    { normal: 'Database service', plural: 'Database services' },
+  ],
+  [DataEntityTypeNameEnum.API_SERVICE, { normal: 'API service', plural: 'API services' }],
+  [
+    DataEntityTypeNameEnum.KAFKA_SERVICE,
+    { normal: 'Kafka service', plural: 'Kafka services' },
+  ],
+  [DataEntityTypeNameEnum.DOMAIN, { normal: 'Domain', plural: 'Domains' }],
 ]);

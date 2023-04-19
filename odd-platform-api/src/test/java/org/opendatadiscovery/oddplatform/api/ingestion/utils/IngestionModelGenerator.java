@@ -13,13 +13,13 @@ import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public class IngestionModelGenerator {
@@ -51,13 +51,19 @@ public class IngestionModelGenerator {
     }
 
     public static List<DataSetField> generateDatasetFields(final int size) {
-        return EASY_RANDOM.objects(DataSetField.class, size).toList();
+        return EASY_RANDOM.objects(DataSetField.class, size)
+            .peek(df -> df.setEnumValues(null))
+            .toList();
     }
 
     public static DataSetFieldStat generateDataSetFieldStat(final List<String> labels) {
         return EASY_RANDOM
             .nextObject(DataSetFieldStat.class)
             .tags(labels.stream().map(l -> new Tag().name(l)).toList());
+    }
+
+    public static List<DataSetFieldEnumValue> generateDataSetFieldEnumValues(final int size) {
+        return EASY_RANDOM.objects(DataSetFieldEnumValue.class, size).toList();
     }
 
     public static DatasetStatisticsList generateDatasetStatisticsList(

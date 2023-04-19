@@ -1,25 +1,25 @@
 import React from 'react';
-import { useAppPaths, useQueryParams } from 'lib/hooks';
+import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { createDataEntitiesSearch, createTermSearch } from 'redux/thunks';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { createTermSearch } from 'redux/thunks';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
 
 const ToolbarTabs: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const createSearch = useCreateSearch();
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const {
     activityPath,
     termSearchPath,
-    searchPath,
     ManagementRoutes,
     AlertsRoutes,
     TermsRoutes,
@@ -92,12 +92,7 @@ const ToolbarTabs: React.FC = () => {
       }
 
       if (tabs[idx].name === 'Catalog') {
-        dispatch(createDataEntitiesSearch({ searchFormData: initialParams }))
-          .unwrap()
-          .then(({ searchId }) => {
-            const searchLink = searchPath(searchId);
-            navigate(searchLink);
-          });
+        createSearch(initialParams);
       }
     },
     [tabs]

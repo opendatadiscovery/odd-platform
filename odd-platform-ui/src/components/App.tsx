@@ -5,10 +5,9 @@ import { AppSuspenseWrapper, AppToolbar } from 'components/shared/elements';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
   fetchActiveFeatures,
-  fetchAppInfo,
-  fetchAppLinks,
   fetchDataEntitiesClassesAndTypes,
   fetchIdentity,
+  fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Toaster } from 'react-hot-toast';
@@ -45,9 +44,8 @@ const App: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
     dispatch(fetchIdentity());
-    dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
-    dispatch(fetchAppLinks());
+    dispatch(fetchTagsList({ page: 1, size: 20 }));
   }, []);
 
   return (

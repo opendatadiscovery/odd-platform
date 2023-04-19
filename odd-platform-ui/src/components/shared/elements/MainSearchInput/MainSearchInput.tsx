@@ -1,8 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { createDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks';
+import { updateDataEntitiesSearch } from 'redux/thunks';
+import { useCreateSearch } from 'lib/hooks';
 import { getSearchId, getSearchQuery } from 'redux/selectors';
 import { Box } from '@mui/material';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
@@ -20,8 +19,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
   mainSearch,
 }) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { searchPath } = useAppPaths();
+  const createSearch = useCreateSearch();
 
   const storedSearchId = useAppSelector(getSearchId);
   const searchQuery = useAppSelector(getSearchQuery);
@@ -34,18 +32,12 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     return clearSearchQuery();
   }, [mainSearch]);
 
-  const createSearch = React.useCallback((query: string) => {
+  const handleCreateSearch = React.useCallback((query: string) => {
     const searchFormData = { query, pageSize: 30, filters: {} };
-
-    dispatch(createDataEntitiesSearch({ searchFormData }))
-      .unwrap()
-      .then(({ searchId }) => {
-        const searchLink = searchPath(searchId);
-        navigate(searchLink);
-      });
+    createSearch(searchFormData);
   }, []);
 
-  const updateSearch = React.useCallback(
+  const handleUpdateSearch = React.useCallback(
     (query: string) => {
       const searchFormData = { query, pageSize: 30, filters: {} };
       dispatch(updateDataEntitiesSearch({ searchId: storedSearchId, searchFormData }));
@@ -57,13 +49,13 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     (event: React.KeyboardEvent) => (query: string) => {
       if (event.key === 'Enter') {
         if (mainSearch) {
-          createSearch(query);
+          handleCreateSearch(query);
           return;
         }
-        updateSearch(query);
+        handleUpdateSearch(query);
       }
     },
-    [updateSearch, createSearch, mainSearch]
+    [handleUpdateSearch, handleCreateSearch, mainSearch]
   );
 
   const defaultPlaceholder =
@@ -77,7 +69,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
           size: 'large',
           placeholder: placeholder || defaultPlaceholder,
           showSearchAdornment: true,
-          searchAdornmentHandler: mainSearch ? createSearch : updateSearch,
+          searchAdornmentHandler: mainSearch ? handleCreateSearch : handleUpdateSearch,
           onKeyDownHandler: handleKeyDown,
         }}
         disableSuggestions={disableSuggestions}

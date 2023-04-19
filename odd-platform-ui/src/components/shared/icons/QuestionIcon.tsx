@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import type { Theme } from '@mui/material';
 
 const styles = ({ theme }: { theme?: Theme }) => ({
-  color: theme?.palette.texts.hint,
+  color: theme?.palette.texts.info,
   display: 'flex',
   '&:hover': { color: theme?.palette.texts.secondary },
 });

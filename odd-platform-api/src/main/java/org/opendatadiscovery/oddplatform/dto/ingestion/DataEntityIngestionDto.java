@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 
 @Data
@@ -57,7 +58,9 @@ public class DataEntityIngestionDto {
     public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {
     }
 
-    public record DatasetFieldIngestionDto(DatasetFieldPojo field, List<String> labels,
+    public record DatasetFieldIngestionDto(DatasetFieldPojo field,
+                                           List<String> labels,
+                                           List<DataSetFieldEnumValue> enumValues,
                                            Map<String, Object> metadata) {
     }
 }

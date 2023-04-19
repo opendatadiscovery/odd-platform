@@ -55,6 +55,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
           <Grid container flexWrap='nowrap'>
             {emptyLabelsMetric.metricPoint.histogramValue?.buckets?.map((bucket, idx) => (
               <Grid
+                key={bucket.count}
                 display='flex'
                 flexDirection='column'
                 mr={1}
@@ -78,6 +79,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
           <Grid container flexWrap='nowrap'>
             {emptyLabelsMetric.metricPoint.summaryValue?.quantile?.map(quantile => (
               <Grid
+                key={quantile.quantile}
                 display='flex'
                 flexDirection='column'
                 mr={1}
@@ -133,7 +135,14 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
         {metric.metricPoint.histogramValue?.buckets?.map((bucket, idx) => (
-          <Grid display='flex' flexDirection='column' mr={1} alignItems='center' p={0.5}>
+          <Grid
+            key={bucket.count}
+            display='flex'
+            flexDirection='column'
+            mr={1}
+            alignItems='center'
+            p={0.5}
+          >
             <Typography borderBottom='1px solid #EBECF0' variant='h4'>
               {`${idx === 0 ? '<' : ''} ${bucket.upperBound}`}
             </Typography>
@@ -153,7 +162,14 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
         {metric.metricPoint.summaryValue?.quantile?.map(quantile => (
-          <Grid display='flex' flexDirection='column' mr={1} alignItems='center' p={0.5}>
+          <Grid
+            key={quantile.quantile}
+            display='flex'
+            flexDirection='column'
+            mr={1}
+            alignItems='center'
+            p={0.5}
+          >
             <Typography borderBottom='1px solid #EBECF0' variant='h4'>
               {`${quantile.quantile * 100}%`}
             </Typography>

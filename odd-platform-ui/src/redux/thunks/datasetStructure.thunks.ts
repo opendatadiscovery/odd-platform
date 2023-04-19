@@ -1,7 +1,7 @@
 import type {
   DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
-  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
   DataSetFieldDescription,
+  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
   Label,
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetApiGetDataSetStructureLatestRequest,
@@ -99,11 +99,9 @@ export const fetchDataSetFieldEnum = handleResponseAsyncThunk<
 >(
   actions.fetchDataSetFieldEnumActionType,
   async ({ datasetFieldId }) => {
-    const { items } = await datasetFieldApiClient.getEnumValues({
-      datasetFieldId,
-    });
+    const enumValueList = await datasetFieldApiClient.getEnumValues({ datasetFieldId });
 
-    return { datasetFieldId, enumValueList: items };
+    return { datasetFieldId, enumValueList };
   },
   {}
 );
@@ -114,12 +112,12 @@ export const createDataSetFieldEnum = handleResponseAsyncThunk<
 >(
   actions.createDataSetFieldEnumActionType,
   async ({ datasetFieldId, bulkEnumValueFormData }) => {
-    const { items } = await datasetFieldApiClient.createEnumValue({
+    const enumValueList = await datasetFieldApiClient.createEnumValue({
       datasetFieldId,
       bulkEnumValueFormData,
     });
 
-    return { datasetFieldId, enumValueList: items };
+    return { datasetFieldId, enumValueList };
   },
   {
     setSuccessOptions: ({ datasetFieldId }) => ({

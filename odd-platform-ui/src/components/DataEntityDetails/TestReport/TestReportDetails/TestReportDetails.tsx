@@ -111,7 +111,6 @@ const TestReportDetails: React.FC = () => {
                 path={DataEntityRoutes.history}
                 element={<TestReportDetailsHistory />}
               />
-              element
               <Route path='' element={<Navigate to={DataEntityRoutes.overview} />} />
             </Route>
           </Routes>
