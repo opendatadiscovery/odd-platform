@@ -75,7 +75,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
             }
             label={
               <Typography variant='body1' color='texts.info'>
-                Show only changes
+                Show changes only
               </Typography>
             }
           />

@@ -1,6 +1,6 @@
 import React, { type FC, useMemo } from 'react';
 import { useQueryParams } from 'lib/hooks';
-import { Collapse, Grid, Typography } from '@mui/material';
+import { Collapse, Typography } from '@mui/material';
 import { AppIconButton } from 'components/shared';
 import { ChevronIcon } from 'components/shared/Icons';
 import type { DataSetVersionDiff } from 'lib/interfaces';
@@ -13,12 +13,14 @@ import * as S from './DatasetStructureCompareListItem.styles';
 
 interface DatasetStructureCompareListItemProps {
   fieldDiff: DataSetVersionDiff;
+  isNested?: boolean;
   nesting: number;
   renderCompareItem: (fieldDiff: DataSetVersionDiff, nesting: number) => JSX.Element;
 }
 
 const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> = ({
   fieldDiff,
+  isNested,
   nesting,
   renderCompareItem,
 }) => {
@@ -37,19 +39,23 @@ const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> 
 
   const collapseBlock = useMemo(
     () =>
-      fieldDiff.childFields?.length ? (
-        <Grid sx={{ p: 0.5, display: 'flex', alignSelf: 'center' }}>
+      isNested ? (
+        <S.CollapseContainer $visibility={!!fieldDiff.childFields?.length}>
           <AppIconButton
             aria-label='expand row'
             color='tertiary'
             icon={
-              <ChevronIcon width={10} height={5} transform={open ? 'rotate(180)' : ''} />
+              <ChevronIcon
+                width={10}
+                height={5}
+                transform={open ? 'rotate(0)' : 'rotate(-90)'}
+              />
             }
             onClick={() => setOpen(!open)}
           />
-        </Grid>
-      ) : undefined,
-    [fieldDiff.childFields?.length, open]
+        </S.CollapseContainer>
+      ) : null,
+    [fieldDiff.childFields?.length, open, isNested]
   );
 
   const getFieldContent = (state: DataSetFieldDiffState, isFrom: boolean) =>

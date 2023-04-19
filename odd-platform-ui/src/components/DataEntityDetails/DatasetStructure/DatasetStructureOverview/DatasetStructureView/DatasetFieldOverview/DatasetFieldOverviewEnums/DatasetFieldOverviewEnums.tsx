@@ -68,7 +68,9 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
   return showEnums ? (
     <S.SectionContainer container>
       <Grid container justifyContent='space-between'>
-        <Typography variant='h3'>Enums</Typography>
+        <Typography variant='h5' color='texts.hint'>
+          ENUMS
+        </Typography>
         <WithPermissions
           permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
           renderContent={({ isAllowedTo: editEnums }) => (

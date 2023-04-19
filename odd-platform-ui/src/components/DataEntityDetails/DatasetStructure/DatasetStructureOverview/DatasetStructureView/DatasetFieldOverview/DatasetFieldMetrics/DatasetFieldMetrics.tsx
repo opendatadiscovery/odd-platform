@@ -14,7 +14,9 @@ const DatasetFieldMetrics: React.FC<DatasetFieldMetricsProps> = ({
   isLoading,
 }) => (
   <S.SectionContainer container>
-    <Typography variant='h3'>Metrics</Typography>
+    <Typography variant='h5' color='texts.hint'>
+      METRICS
+    </Typography>
     <Grid container flexDirection='column' alignItems='flex-start'>
       {isLoading ? (
         <Grid container justifyContent='center'>

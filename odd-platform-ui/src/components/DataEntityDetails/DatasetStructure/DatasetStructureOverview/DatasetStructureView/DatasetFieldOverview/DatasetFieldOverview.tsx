@@ -34,7 +34,9 @@ const DatasetFieldOverview: React.FC = () => {
   const getOverviewSection = (title: string, data: undefined | React.ReactNode) =>
     data ? (
       <S.SectionContainer container>
-        <Typography variant='h3'>{title}</Typography>
+        <Typography variant='h5' color='texts.hint'>
+          {title}
+        </Typography>
         <Typography mt={1} variant='subtitle1'>
           {data}
         </Typography>
@@ -56,11 +58,13 @@ const DatasetFieldOverview: React.FC = () => {
           <DatasetFieldStats datasetField={field} rowsCount={datasetFieldRowsCount} />
         )}
       </Grid>
-      {getOverviewSection('Default value', field.defaultValue)}
-      {getOverviewSection('External description', field.externalDescription)}
+      {getOverviewSection('DEFAULT VALUE', field.defaultValue)}
+      {getOverviewSection('EXTERNAL DESCRIPTION', field.externalDescription)}
       <S.SectionContainer container>
         <Grid container justifyContent='space-between'>
-          <Typography variant='h3'>Internal description</Typography>
+          <Typography variant='h5' color='texts.hint'>
+            INTERNAL DESCRIPTION
+          </Typography>
           <WithPermissions
             permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}
             renderContent={({ isAllowedTo: editDescription }) => (
@@ -88,7 +92,9 @@ const DatasetFieldOverview: React.FC = () => {
       </S.SectionContainer>
       <S.SectionContainer container>
         <Grid container justifyContent='space-between'>
-          <Typography variant='h3'>Labels</Typography>
+          <Typography variant='h5' color='texts.hint'>
+            LABELS
+          </Typography>
           <WithPermissions
             permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
             renderContent={({ isAllowedTo: editLabels }) => (
@@ -132,7 +138,7 @@ const DatasetFieldOverview: React.FC = () => {
       {field.metadata &&
         field.metadata?.length > 0 &&
         getOverviewSection(
-          'Metadata',
+          'METADATA',
           field.metadata?.map(metadata => (
             <MetadataItem key={metadata.field.id} metadata={metadata} />
           ))

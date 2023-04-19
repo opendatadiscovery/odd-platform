@@ -24,14 +24,14 @@ export function useDatasetStructureCompare({
         secondVersionId,
       }),
     {
-      select: data => {
-        const dataList = data.fieldList;
+      select: ({ fieldList: data }) => {
+        const args = { data, firstVersionId, secondVersionId, showChangesOnly };
 
-        if (showChangesOnly) {
-          return dataList.filter(item => item.status !== 'NO_CHANGES');
-        }
+        const structureDiffList = makeCompareFieldsTree(args);
 
-        return makeCompareFieldsTree({ data: dataList, firstVersionId, secondVersionId });
+        const isNested = structureDiffList.some(diff => diff.childFields?.length);
+
+        return { isNested, structureDiffList };
       },
     }
   );

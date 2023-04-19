@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { useMemo } from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { type DataSetField } from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
@@ -48,25 +48,25 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 
   const childFields = isComplexField(datasetField.type.type) ? datasetStructure : [];
 
-  const nestedOffset = Math.min(nesting, 10) * 32;
-
-  let collapseBlock;
-  if (childFields?.length) {
-    collapseBlock = (
-      <AppIconButton
-        color='primaryLight'
-        icon={
-          open ? (
-            <ChevronIcon width={10} height={5} transform='rotate(180)' />
-          ) : (
-            <ChevronIcon width={10} height={5} />
-          )
-        }
-        aria-label='expand row'
-        onClick={() => setOpen(!open)}
-      />
-    );
-  }
+  const collapseBlock = useMemo(
+    () => (
+      <S.CollapseContainer $visibility={!!childFields?.length}>
+        <AppIconButton
+          color='tertiary'
+          icon={
+            <ChevronIcon
+              width={10}
+              height={5}
+              transform={open ? 'rotate(0)' : 'rotate(-90)'}
+            />
+          }
+          aria-label='expand row'
+          onClick={() => setOpen(!open)}
+        />
+      </S.CollapseContainer>
+    ),
+    [open, childFields?.length]
+  );
 
   const handleRowClick = React.useCallback(() => {
     setSelectedFieldId(datasetField.id);
@@ -80,17 +80,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       <S.RowContainer
         onClick={handleRowClick}
         container
-        $offset={nestedOffset}
+        $nesting={nesting}
         $rowHeight={rowHeight}
         $isRowSelected={isRowSelected}
       >
-        <Grid container item sx={{ px: 1, py: 1.25 }} flexWrap='nowrap'>
-          <S.RowInfoWrapper container $padOffset={nestedOffset} item>
-            {collapseBlock && (
-              <Grid sx={{ p: 0.5, display: 'flex', alignSelf: 'center' }}>
-                {collapseBlock}
-              </Grid>
-            )}
+        <Grid container item sx={{ pr: 1, py: 1.25 }} flexWrap='nowrap'>
+          <S.RowInfoWrapper container $nesting={nesting} item>
+            {collapseBlock}
             <Grid container justifyContent='space-between' py={0.25} flexWrap='nowrap'>
               <Grid display='flex' minWidth={0} flexWrap='nowrap' alignItems='center'>
                 <Typography variant='h4' noWrap title={datasetField.name}>
@@ -138,4 +134,4 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   );
 };
 
-export default memo(DatasetStructureItem);
+export default DatasetStructureItem;

@@ -1,7 +1,6 @@
 import styled, { type CSSObject } from 'styled-components';
 import type { DataSetVersionDiffStatus } from 'generated-sources';
-
-const nestingFactor = 24;
+import { nestingFactor } from '../../../shared/constants';
 
 const getBgColor = (status: DataSetVersionDiffStatus) => {
   if (status === 'CREATED') return '#E8FCEF';
@@ -44,6 +43,15 @@ export const Container = styled('div')(
     } as CSSObject)
 );
 
+export const CollapseContainer = styled('div')<{ $visibility: boolean }>(
+  ({ $visibility, theme }) => ({
+    padding: theme.spacing(0.5, 0),
+    display: 'flex',
+    alignSelf: 'center',
+    visibility: $visibility ? 'visible' : 'hidden',
+  })
+);
+
 export const FieldWrapper = styled('div')<{
   $nesting: number;
 }>(({ $nesting }) => ({
@@ -58,6 +66,7 @@ export const FieldContentWrapper = styled('div')<{
   display: 'flex',
   width: '100%',
   justifyContent: 'space-between',
+  alignItems: 'center',
   marginLeft: theme.spacing($isFrom ? 0 : 1),
   marginRight: theme.spacing($isFrom ? 1 : 0),
 }));
@@ -65,6 +74,7 @@ export const FieldContentWrapper = styled('div')<{
 export const FieldNameWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'nowrap',
+  alignItems: 'center',
   minWidth: 0,
 
   '& > *': { marginRight: theme.spacing(1) },

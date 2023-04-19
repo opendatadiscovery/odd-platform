@@ -16,17 +16,16 @@ function buildChild({
   const child: DataSetVersionDiff = { ...currentChild, childFields: [] };
 
   const childFields = data.filter(item => {
-    if (item.states[firstVersionId] && child.states[firstVersionId]) {
-      return (
-        item.states[firstVersionId]?.parentFieldId === child.states[firstVersionId]?.id
-      );
-    }
+    const firstItemState = item.states[firstVersionId];
+    const secondItemState = item.states[secondVersionId];
+    const firstChildState = child.states[firstVersionId];
+    const secondChildState = child.states[secondVersionId];
 
-    if (item.states[secondVersionId] && child.states[secondVersionId]) {
-      return (
-        item.states[secondVersionId]?.parentFieldId === child.states[secondVersionId]?.id
-      );
-    }
+    if (firstItemState && firstChildState)
+      return firstItemState?.parentFieldId === firstChildState?.id;
+
+    if (secondItemState && secondChildState)
+      return secondItemState?.parentFieldId === secondChildState?.id;
 
     return false;
   });
@@ -45,31 +44,40 @@ interface MakeTreeArgs {
   data: DataSetVersionDiff[];
   firstVersionId: number;
   secondVersionId: number;
+  showChangesOnly?: boolean;
 }
 
 export function makeCompareFieldsTree({
   data,
   firstVersionId,
   secondVersionId,
+  showChangesOnly,
 }: MakeTreeArgs) {
-  return data
-    .filter(item => {
-      if (item.states[firstVersionId]) {
-        return !item.states[firstVersionId]?.parentFieldId;
-      }
+  const excludeChildren = (item: DataSetVersionDiff) => {
+    const firstState = item.states[firstVersionId];
+    const secondState = item.states[secondVersionId];
 
-      if (item.states[secondVersionId]) {
-        return !item.states[secondVersionId]?.parentFieldId;
-      }
+    if (firstState) return !firstState?.parentFieldId;
+    if (secondState) return !secondState?.parentFieldId;
 
-      return false;
+    return false;
+  };
+
+  const excludeNoChangedDiffs = (item: DataSetVersionDiff) => {
+    if (item.childFields?.some(child => child.status !== 'NO_CHANGES')) {
+      return true;
+    }
+    return item.status !== 'NO_CHANGES';
+  };
+
+  const nestedData = data.filter(excludeChildren).map(root =>
+    buildChild({
+      data,
+      currentChild: root,
+      firstVersionId,
+      secondVersionId,
     })
-    .map(root =>
-      buildChild({
-        data,
-        currentChild: root,
-        firstVersionId,
-        secondVersionId,
-      })
-    );
+  );
+
+  return showChangesOnly ? nestedData.filter(excludeNoChangedDiffs) : nestedData;
 }

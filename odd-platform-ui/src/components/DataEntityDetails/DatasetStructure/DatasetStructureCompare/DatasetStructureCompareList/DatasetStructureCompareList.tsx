@@ -7,10 +7,12 @@ import * as S from './DatasetStructureCompareList.styles';
 
 interface DatasetStructureCompareListProps {
   compareList: DataSetVersionDiff[];
+  isNested?: boolean;
 }
 
 const DatasetStructureCompareList: FC<DatasetStructureCompareListProps> = ({
   compareList,
+  isNested,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const virtualizer = useVirtualizer({
@@ -26,11 +28,12 @@ const DatasetStructureCompareList: FC<DatasetStructureCompareListProps> = ({
     (fieldDiff: DataSetVersionDiff, nesting: number) => (
       <DatasetStructureCompareListItem
         fieldDiff={fieldDiff}
+        isNested={isNested}
         nesting={nesting}
         renderCompareItem={renderCompareItem}
       />
     ),
-    []
+    [isNested]
   );
 
   return (

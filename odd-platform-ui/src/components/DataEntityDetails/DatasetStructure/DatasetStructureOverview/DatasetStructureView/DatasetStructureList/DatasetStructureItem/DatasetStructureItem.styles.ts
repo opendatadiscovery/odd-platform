@@ -1,16 +1,21 @@
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { AppButton } from 'components/shared';
+import { nestingFactor } from '../../../../shared/constants';
 
-export const Button = styled(AppButton)<{ $showBtn?: boolean }>(({ $showBtn }) => ({
-  opacity: $showBtn ? 1 : 0,
-}));
+export const CollapseContainer = styled('div')<{ $visibility: boolean }>(
+  ({ $visibility, theme }) => ({
+    padding: theme.spacing(0.5, 1),
+    display: 'flex',
+    alignSelf: 'center',
+    visibility: $visibility ? 'visible' : 'hidden',
+  })
+);
 
 export const RowContainer = styled(Grid)<{
-  $offset: number;
+  $nesting: number;
   $rowHeight?: string | number;
   $isRowSelected: boolean;
-}>(({ theme, $offset, $rowHeight, $isRowSelected }) => ({
+}>(({ theme, $nesting, $rowHeight, $isRowSelected }) => ({
   flexWrap: 'nowrap',
   position: 'relative',
   backgroundColor: theme.palette.backgrounds[$isRowSelected ? 'primary' : 'default'],
@@ -24,9 +29,9 @@ export const RowContainer = styled(Grid)<{
     display: 'block',
     position: 'absolute',
     content: '""',
-    width: `calc(100% - ${$offset}px)`,
+    width: `calc(100% - ${$nesting * nestingFactor}px)`,
     borderBottom: `1px solid ${theme.palette.backgrounds.primary}`,
-    marginLeft: `${$offset}px`,
+    marginLeft: `${$nesting * nestingFactor}px`,
     top: $rowHeight,
     zIndex: 1,
     '&:last-child': {
@@ -36,9 +41,9 @@ export const RowContainer = styled(Grid)<{
 }));
 
 export const RowInfoWrapper = styled(Grid)<{
-  $padOffset: number;
-}>(({ $padOffset }) => ({
+  $nesting: number;
+}>(({ $nesting }) => ({
   flexWrap: 'nowrap',
   alignItems: 'baseline',
-  paddingLeft: `${$padOffset}px`,
+  paddingLeft: `${$nesting * nestingFactor}px`,
 }));

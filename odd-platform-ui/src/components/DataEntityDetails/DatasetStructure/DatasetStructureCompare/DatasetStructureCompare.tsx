@@ -32,14 +32,17 @@ const DatasetStructureCompare: FC = () => {
   return (
     <>
       <DatasetStructureCompareHeader datasetVersions={datasetVersions} />
-      {isSuccess && data?.length > 0 && (
-        <DatasetStructureCompareList compareList={data} />
+      {isSuccess && data?.structureDiffList.length > 0 && (
+        <DatasetStructureCompareList
+          compareList={data?.structureDiffList}
+          isNested={data?.isNested}
+        />
       )}
       {isLoading && <AppLoadingPage />}
       <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
       <EmptyContentPlaceholder
         isContentLoaded={isSuccess}
-        isContentEmpty={!data?.length}
+        isContentEmpty={!data?.structureDiffList.length}
         offsetTop={210}
       />
     </>
