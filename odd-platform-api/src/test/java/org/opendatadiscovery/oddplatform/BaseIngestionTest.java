@@ -43,7 +43,6 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
         final DataSourceFormData form = new DataSourceFormData()
             .name(UUID.randomUUID().toString())
             .oddrn(UUID.randomUUID().toString())
-            .active(true)
             .namespaceName(UUID.randomUUID().toString());
         return ingestDataSource(form);
     }

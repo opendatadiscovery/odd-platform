@@ -7,9 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
@@ -96,10 +98,15 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
 
     private List<DataSourcePojo> mapDataSources(final DataSourceList dataSourceList, final CollectorDto c) {
         return dataSourceList.getItems().stream()
-            .map(ds -> dataSourceIngestionMapper.mapIngestionModel(ds,
-                MappingUtils.extractFieldFromNullableObject(c.namespace(), NamespacePojo::getId),
-                c.collectorPojo().getId()
-            ))
+            .map(ds -> {
+                if (StringUtils.isEmpty(ds.getOddrn())) {
+                    throw new BadUserRequestException("ODDRN must be filled for all data sources");
+                }
+                return dataSourceIngestionMapper.mapIngestionModel(ds,
+                    MappingUtils.extractFieldFromNullableObject(c.namespace(), NamespacePojo::getId),
+                    c.collectorPojo().getId()
+                );
+            })
             .toList();
     }
 
