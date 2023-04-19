@@ -115,8 +115,8 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
         if (CollectionUtils.isEmpty(versionsWithoutHash)) {
             return Mono.just(lastVersions);
         }
-        final List<Long> ids = versionsWithoutHash.stream().map(DatasetVersionPojo::getId).toList();
-        return datasetVersionRepository.getDatasetVersionsState(ids)
+        final Set<Long> ids = versionsWithoutHash.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());
+        return datasetVersionRepository.getDatasetVersionFields(ids)
             .flatMapMany(versionsMap -> {
                 fillDatasetVersionHash(versionsWithoutHash, versionsMap);
                 return datasetVersionRepository.bulkUpdate(versionsWithoutHash)

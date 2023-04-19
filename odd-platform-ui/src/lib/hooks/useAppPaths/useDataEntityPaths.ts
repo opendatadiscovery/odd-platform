@@ -45,12 +45,28 @@ export const useDataEntityPaths = () => {
   ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.linkedItems)}`;
 
   const datasetStructurePath = (
+    viewType: string = DataEntityRoutes.testReportViewTypeParam,
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     versionId?: number
   ) =>
-    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.structure)}${
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.structure)}/${viewType}${
       versionId ? `/${versionId}` : ''
     }`;
+
+  const datasetStructureComparePath = (
+    entityId: DataEntityId = DataEntityRoutes.dataEntityId,
+    firstVersionId?: number,
+    secondVersionId?: number
+  ) => {
+    const query =
+      firstVersionId && secondVersionId
+        ? `?firstVersionId=${firstVersionId}&secondVersionId=${secondVersionId}`
+        : '';
+
+    return `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.structure)}/${
+      DataEntityRoutes.structureCompare
+    }${query || ''}`;
+  };
 
   const dataEntityCollaborationPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
@@ -109,5 +125,6 @@ export const useDataEntityPaths = () => {
     dataEntityCollaborationPath,
     dataEntityAlertsPath,
     dataEntityLinkedItemsPath,
+    datasetStructureComparePath,
   };
 };

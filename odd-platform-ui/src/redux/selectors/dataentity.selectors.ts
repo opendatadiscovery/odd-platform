@@ -7,7 +7,7 @@ import {
   createErrorSelector,
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
-import { emptyObj } from 'lib/constants';
+import { emptyArr, emptyObj } from 'lib/constants';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
@@ -112,7 +112,7 @@ export const getDataEntityExternalDescription = (dataEntityId: number) =>
 export const getDatasetVersions = (dataEntityId: number) =>
   createSelector(
     dataEntitiesState,
-    dataEntities => dataEntities.byId[dataEntityId]?.versionList
+    dataEntities => dataEntities.byId[dataEntityId]?.versionList || emptyArr
   );
 
 export const getDatasetStats = (dataEntityId: number) =>

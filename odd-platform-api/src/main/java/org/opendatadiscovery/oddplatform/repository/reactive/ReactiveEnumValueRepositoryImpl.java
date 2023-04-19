@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.jooq.Condition;
@@ -17,6 +16,7 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.EnumValueDto;
+import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.EnumValueRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -32,7 +32,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 
 @Repository
-@Slf4j
 public class ReactiveEnumValueRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<EnumValueRecord, EnumValuePojo>
     implements ReactiveEnumValueRepository {
@@ -43,10 +42,10 @@ public class ReactiveEnumValueRepositoryImpl
     }
 
     @Override
-    public Flux<EnumValueDto> getEnumState(final Collection<String> datasetFieldOddrns) {
-        final List<Flux<EnumValueDto>> collect = ListUtils.partition(new ArrayList<>(datasetFieldOddrns), 100)
+    public Flux<EnumValueDto> getEnumState(final Collection<Long> datasetFieldIds) {
+        final List<Flux<EnumValueDto>> collect = ListUtils.partition(new ArrayList<>(datasetFieldIds), 100)
             .stream()
-            .map(dsf -> fetchEnumState(addSoftDeleteFilter(DATASET_FIELD.ODDRN.in(dsf))))
+            .map(dsf -> fetchEnumState(addSoftDeleteFilter(DATASET_FIELD.ID.in(dsf))))
             .toList();
 
         return Flux.merge(collect);
@@ -62,6 +61,21 @@ public class ReactiveEnumValueRepositoryImpl
         final var query = DSL
             .selectFrom(ENUM_VALUE)
             .where(addSoftDeleteFilter(ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId)));
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(EnumValuePojo.class));
+    }
+
+    @Override
+    public Flux<EnumValuePojo> getEnumValuesByDatasetFieldIds(final Collection<Long> datasetFieldIds,
+                                                              final EnumValueOrigin origin) {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(ENUM_VALUE.DATASET_FIELD_ID.in(datasetFieldIds));
+        if (origin != null) {
+            conditions.add(ENUM_VALUE.ORIGIN.eq(origin.getCode()));
+        }
+        final var query = DSL
+            .selectFrom(ENUM_VALUE)
+            .where(addSoftDeleteFilter(conditions));
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(EnumValuePojo.class));
     }

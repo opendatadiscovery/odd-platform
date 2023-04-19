@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { dataEntityApi } from 'lib/api';
 import { showServerErrorToast } from 'lib/errorHandling';
-import { useQuery } from '@tanstack/react-query';
 import type {
   DataEntityGroupLineage,
   Edge,

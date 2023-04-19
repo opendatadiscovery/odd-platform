@@ -74,7 +74,6 @@ const ActivityResults: React.FC = () => {
         error={activitiesError}
       />
       <EmptyContentPlaceholder
-        sx={{ m: 0 }}
         isContentLoaded={
           isActivitiesFetched && !isActivitiesFetching && !isActivitiesNotFetched
         }
