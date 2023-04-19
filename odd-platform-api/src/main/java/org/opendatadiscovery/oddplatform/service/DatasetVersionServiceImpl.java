@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDiffState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersionDiff;
@@ -146,9 +147,9 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
     }
 
     /**
-     * @param firstVersionFields dataset fields for the first version
+     * @param firstVersionFields  dataset fields for the first version
      * @param secondVersionFields dataset fields for the second version
-     * @param changedPojoOddrns Dataset field oddrns, which we detected in previous iteration
+     * @param changedPojoOddrns   Dataset field oddrns, which we detected in previous iteration
      * @return dataset field oddrns, which parent field oddrn was changed and all field oddrns,
      * which are hierarchically below.
      */
@@ -185,10 +186,7 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
         }
         final String maxParentFieldOddrn = maxFieldPojo.getParentFieldOddrn();
         final String minParentFieldOddrn = minFieldPojo.getParentFieldOddrn();
-        return (maxParentFieldOddrn == null && minParentFieldOddrn != null)
-            || (maxParentFieldOddrn != null && minParentFieldOddrn == null)
-            || (maxParentFieldOddrn != null && minParentFieldOddrn != null
-            && !maxParentFieldOddrn.equals(minParentFieldOddrn));
+        return !StringUtils.equals(maxParentFieldOddrn, minParentFieldOddrn);
     }
 
     private DataSetVersionDiffStatus calculateStatus(final DatasetFieldPojo maxFieldPojo,
