@@ -5,13 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
@@ -84,8 +84,9 @@ import reactor.util.function.Tuples;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.ArrayUtils.contains;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.CUSTOM_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_DESCRIPTION;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_METADATA;
@@ -169,7 +170,6 @@ public class DataEntityServiceImpl implements DataEntityService {
                 return enrichDataEntityDetails(details);
             })
             .flatMap(this::incrementViewCount)
-            .flatMap(this::enrichDatasetTargetCount)
             .map(dataEntityMapper::mapDtoDetails);
     }
 
@@ -428,7 +428,7 @@ public class DataEntityServiceImpl implements DataEntityService {
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
         return pojo.getManuallyCreated()
-            && ArrayUtils.contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
+            && contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
     }
 
     private Mono<DataEntityDetailsDto> incrementViewCount(final DataEntityDetailsDto dto) {
@@ -474,12 +474,13 @@ public class DataEntityServiceImpl implements DataEntityService {
         final Mono<Map<String, DataEntityTaskRunPojo>> lastTaskRuns = getLastRunsForQualityTests(dtos);
         final Mono<Map<String, Set<DataEntityPojo>>> children = getDEGEntities(dtos);
         final Mono<Map<String, Long>> degChildrenCount = getDEGChildrenCount(dtos);
+        final Mono<Map<String, Long>> consumersCount = getConsumersCount(dtos);
 
-        return Mono.zip(dependencies, lastTaskRuns, children, degChildrenCount)
-            .map(function((dependenciesMap, lastTaskRunsMap, childrenMap, degChildrenCountMap) -> {
+        return Mono.zip(dependencies, lastTaskRuns, children, degChildrenCount, consumersCount)
+            .map(function((dependenciesMap, lastTaskRunsMap, childrenMap, degChildrenCountMap, consumersMap) -> {
                 dtos.forEach(
                     dto -> enrichEntityClassDetails(dto, dependenciesMap, lastTaskRunsMap, childrenMap,
-                        degChildrenCountMap));
+                        degChildrenCountMap, consumersMap));
                 return dtos;
             }));
     }
@@ -488,7 +489,8 @@ public class DataEntityServiceImpl implements DataEntityService {
                                           final Map<String, DataEntityPojo> depsRepository,
                                           final Map<String, DataEntityTaskRunPojo> lastRuns,
                                           final Map<String, Set<DataEntityPojo>> childrenMap,
-                                          final Map<String, Long> degChildrenCount) {
+                                          final Map<String, Long> degChildrenCount,
+                                          final Map<String, Long> consumersMap) {
         final Function<Collection<String>, Collection<DataEntityPojo>> fetcher = oddrns -> oddrns.stream()
             .map(depsRepository::get)
             .filter(Objects::nonNull)
@@ -499,10 +501,11 @@ public class DataEntityServiceImpl implements DataEntityService {
             switch (t) {
                 case DATA_SET -> {
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
+                    final Long consumersCount = Optional.ofNullable(consumersMap.get(oddrn)).orElse(0L);
                     dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
                         dsa.getRowsCount(),
                         dsa.getFieldsCount(),
-                        dsa.getConsumersCount()
+                        consumersCount
                     ));
                 }
                 case DATA_TRANSFORMER -> {
@@ -541,7 +544,7 @@ public class DataEntityServiceImpl implements DataEntityService {
             }
         });
 
-        if (ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DATA_ENTITY_GROUP.getId())) {
+        if (contains(dto.getDataEntity().getEntityClassIds(), DATA_ENTITY_GROUP.getId())) {
             final Set<DataEntityPojo> entityList = childrenMap.getOrDefault(oddrn, Set.of());
             final Long childrenCount = degChildrenCount.getOrDefault(oddrn, 0L);
             dto.setGroupsDto(new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
@@ -582,24 +585,10 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     private Mono<List<DatasetVersionPojo>> getDatasetVersions(final DataEntityDetailsDto dto) {
-        if (!ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET.getId())) {
+        if (!contains(dto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET.getId())) {
             return Mono.just(List.of());
         }
         return reactiveDatasetVersionRepository.getVersions(dto.getDataEntity().getOddrn());
-    }
-
-    private Mono<DataEntityDetailsDto> enrichDatasetTargetCount(final DataEntityDetailsDto detailsDto) {
-        if (ArrayUtils.contains(detailsDto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET)) {
-            return reactiveLineageRepository.getTargetsCount(detailsDto.getDataEntity().getId())
-                .switchIfEmpty(Mono.just(0L))
-                .map(count -> {
-                    final DataSetDetailsDto oldDetails = detailsDto.getDataSetDetailsDto();
-                    detailsDto.setDataSetDetailsDto(
-                        new DataSetDetailsDto(oldDetails.rowsCount(), oldDetails.fieldsCount(), count));
-                    return detailsDto;
-                });
-        }
-        return Mono.just(detailsDto);
     }
 
     private Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<DataEntityDimensionsDto> dtos) {
@@ -618,10 +607,22 @@ public class DataEntityServiceImpl implements DataEntityService {
         return reactiveDataEntityRepository.getChildrenCount(degOddrns);
     }
 
+    private Mono<Map<String, Long>> getConsumersCount(final Collection<DataEntityDimensionsDto> dtos) {
+        final Set<String> datasetOddrns = dtos.stream()
+            .filter(dto -> contains(dto.getDataEntity().getEntityClassIds(), DATA_SET.getId()))
+            .map(dto -> dto.getDataEntity().getOddrn())
+            .collect(Collectors.toSet());
+
+        if (CollectionUtils.isEmpty(datasetOddrns)) {
+            return Mono.just(Map.of());
+        }
+        return reactiveLineageRepository.getTargetsCount(datasetOddrns);
+    }
+
     private Set<String> entityClassOddrns(final Collection<DataEntityDimensionsDto> dimensions,
                                           final DataEntityClassDto entityClassDto) {
         return dimensions.stream()
-            .filter(dto -> ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), entityClassDto.getId()))
+            .filter(dto -> contains(dto.getDataEntity().getEntityClassIds(), entityClassDto.getId()))
             .map(dto -> dto.getDataEntity().getOddrn())
             .collect(Collectors.toSet());
     }

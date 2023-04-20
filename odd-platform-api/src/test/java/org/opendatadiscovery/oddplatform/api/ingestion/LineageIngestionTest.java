@@ -72,6 +72,9 @@ public class LineageIngestionTest extends BaseIngestionTest {
                 .outputs(List.of(outputDataset1.getOddrn(), outputDataset2.getOddrn()))
             );
 
+        final Map<String, Long> consumersCountMap = Map.of(inputDataset1.getOddrn(), 1L, inputDataset2.getOddrn(), 1L,
+            middlewareDataset.getOddrn(), 1L, outputDataset1.getOddrn(), 0L, outputDataset2.getOddrn(), 0L);
+
         final Map<String, DataEntity> itemsMap = Stream.of(
             inputDataset1, inputDataset2, middlewareDataset,
             dataTransformer1, dataTransformer2, outputDataset1, outputDataset2
@@ -95,7 +98,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
 
             if (dataEntity.getDataset() != null) {
                 expectedDetails.setStats(new DataSetStats()
-                    .consumersCount(0L)
+                    .consumersCount(consumersCountMap.get(oddrn))
                     .fieldsCount((long) dataEntity.getDataset().getFieldList().size())
                     .rowsCount(dataEntity.getDataset().getRowsNumber()));
 
