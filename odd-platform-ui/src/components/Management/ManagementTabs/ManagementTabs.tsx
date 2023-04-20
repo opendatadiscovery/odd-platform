@@ -20,6 +20,7 @@ const ManagementTabs: React.FC = () => {
     () => [
       { name: 'Namespaces', link: ManagementRoutes.namespaces },
       { name: 'Datasources', link: ManagementRoutes.datasources },
+      { name: 'Integrations', link: ManagementRoutes.integrations },
       { name: 'Collectors', link: ManagementRoutes.collectors },
       { name: 'Owners', link: ManagementRoutes.owners },
       { name: 'Tags', link: ManagementRoutes.tags },
@@ -31,7 +32,6 @@ const ManagementTabs: React.FC = () => {
       },
       { name: 'Roles', link: ManagementRoutes.roles },
       { name: 'Policies', link: ManagementRoutes.policies },
-      { name: 'Integrations', link: ManagementRoutes.integrations },
     ],
     [hideAssociations]
   );
