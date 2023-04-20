@@ -96,9 +96,9 @@ class LineageRepositoryTest extends BaseIntegrationTest {
             .setEstablisherOddrn(RandomStringUtils.randomAlphabetic(5));
         dataEntityRepository.create(pojo).block();
         lineageRepository.bulkCreate(List.of(firstLineagePojo, secondLineagePojo, notCountedLineagePojo)).blockLast();
-        lineageRepository.getTargetsCount(parentId)
+        lineageRepository.getTargetsCount(Set.of(parentOddrn))
             .as(StepVerifier::create)
-            .assertNext(r -> assertThat(r).isEqualTo(2L))
+            .assertNext(r -> assertThat(r.get(parentOddrn)).isEqualTo(2L))
             .verifyComplete();
     }
 
