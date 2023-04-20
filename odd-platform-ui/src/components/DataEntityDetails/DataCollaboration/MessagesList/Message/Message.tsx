@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Message as MessageModel } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import { AppAvatar, AppButton, WithFeature } from 'components/shared';
+import { AppAvatar, AppButton, WithFeature } from 'components/shared/elements';
 import { Feature } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import * as S from './MessageStyles';

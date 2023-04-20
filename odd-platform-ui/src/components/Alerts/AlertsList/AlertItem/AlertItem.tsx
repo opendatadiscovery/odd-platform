@@ -5,8 +5,8 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { GearIcon, UserIcon } from 'components/shared/Icons';
-import { AlertStatusItem, AppButton, EntityClassItem } from 'components/shared';
+import { GearIcon, UserIcon } from 'components/shared/icons';
+import { AlertStatusItem, AppButton, EntityClassItem } from 'components/shared/elements';
 import { alertTitlesMap } from 'lib/constants';
 import { getGlobalPermissions } from 'redux/selectors';
 import * as S from './AlertItemStyles';
@@ -177,7 +177,12 @@ const AlertItem: React.FC<AlertItemProps> = ({
       <Collapse in={showHistory} timeout={0} unmountOnExit>
         <Grid container flexDirection='column' flexWrap='nowrap' sx={{ ml: 0.5, mt: 2 }}>
           {alertChunkList?.map(alertChunk => (
-            <Grid container flexWrap='nowrap' sx={{ py: 0.75 }}>
+            <Grid
+              key={alertChunk.description}
+              container
+              flexWrap='nowrap'
+              sx={{ py: 0.75 }}
+            >
               {alertChunk.createdAt && (
                 <Typography whiteSpace='nowrap' variant='subtitle1'>
                   {alertFormattedDateTime(alertChunk.createdAt)}

@@ -1,7 +1,12 @@
 import React from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, Grid, Typography } from '@mui/material';
-import { AppButton, AppMenuItem, AppSelect, LabeledInfoItem } from 'components/shared';
+import {
+  AppButton,
+  AppMenuItem,
+  AppSelect,
+  LabeledInfoItem,
+} from 'components/shared/elements';
 import type { DataQualityTestExpectation } from 'generated-sources';
 import { DataQualityTestSeverity, Permission } from 'generated-sources';
 import {

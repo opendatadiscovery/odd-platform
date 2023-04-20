@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import { type DataEntityRef } from 'generated-sources';
-import { EntityClassItem, EmptyContentPlaceholder } from 'components/shared';
-import { AlertIcon } from 'components/shared/Icons';
+import { EntityClassItem, EmptyContentPlaceholder } from 'components/shared/elements';
+import { AlertIcon } from 'components/shared/icons';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './DataEntityListStyles';
 
@@ -55,7 +55,9 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
           </li>
         ))}
 
-        {!isFetching && !dataEntitiesList.length ? <EmptyContentPlaceholder /> : null}
+        {!isFetching && !dataEntitiesList.length ? (
+          <EmptyContentPlaceholder fullPage={false} />
+        ) : null}
       </S.ListLinksContainer>
     </S.DataEntityListContainer>
   );

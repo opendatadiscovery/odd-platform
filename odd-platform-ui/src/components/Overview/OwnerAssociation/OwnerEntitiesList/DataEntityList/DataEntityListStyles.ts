@@ -7,9 +7,9 @@ export const ListLinksContainer = styled('ul')(({ theme }) => ({
   flexDirection: 'column',
   padding: 0,
   listStyle: 'none',
-  '& li': {
-    marginBottom: theme.spacing(1),
-  },
+  height: '100%',
+  justifyContent: 'center',
+  '& li': { marginBottom: theme.spacing(1) },
 }));
 
 export const ListLink = styled(Link)<{ $hasAlerts?: boolean }>(
@@ -64,4 +64,6 @@ export const DataEntityListContainer = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(1.5),
   border: `1px solid ${theme.palette.backgrounds.secondary}`,
   borderRadius: theme.spacing(1),
+  display: 'flex',
+  flexDirection: 'column',
 }));

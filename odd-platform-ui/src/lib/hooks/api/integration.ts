@@ -3,12 +3,17 @@ import { integrationApi } from 'lib/api';
 import type {
   IntegrationApiGetIntegrationRequest,
   Integration as GeneratedIntegration,
+  IntegrationPreview as GeneratedIntegrationPreview,
 } from 'generated-sources';
 import type { ErrorState } from 'redux/interfaces';
-import type { Integration } from 'lib/interfaces';
+import type { Integration, IntegrationId, IntegrationPreview } from 'lib/interfaces';
 
 export function useIntegrationPreviews() {
-  return useQuery(['integrationPreviews'], () => integrationApi.getIntegrationPreviews());
+  return useQuery<
+    { items: GeneratedIntegrationPreview[] },
+    ErrorState,
+    { items: IntegrationPreview[] }
+  >(['integrationPreviews'], () => integrationApi.getIntegrationPreviews());
 }
 
 export function useIntegration({ integrationId }: IntegrationApiGetIntegrationRequest) {
@@ -33,7 +38,7 @@ export function useIntegration({ integrationId }: IntegrationApiGetIntegrationRe
           {}
         );
 
-        return { id, name, description, installed, contentByTitle };
+        return { id: id as IntegrationId, name, description, installed, contentByTitle };
       },
     }
   );

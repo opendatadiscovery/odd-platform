@@ -22,8 +22,12 @@ import {
 import { fetchDataEntitySearchResults } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import type { SearchClass } from 'redux/interfaces';
-import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
-import { AddIcon } from 'components/shared/Icons';
+import {
+  AppButton,
+  AppErrorPage,
+  EmptyContentPlaceholder,
+} from 'components/shared/elements';
+import { AddIcon } from 'components/shared/icons';
 import findKey from 'lodash/findKey';
 import { WithPermissions } from 'components/shared/contexts';
 import omit from 'lodash/omit';

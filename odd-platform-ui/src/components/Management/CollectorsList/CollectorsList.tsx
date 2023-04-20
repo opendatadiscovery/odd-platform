@@ -10,13 +10,13 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchCollectorsList } from 'redux/thunks';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
   AppButton,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import CollectorForm from './CollectorForm/CollectorForm';

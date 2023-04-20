@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import { AddIcon, EditIcon } from 'components/shared/Icons';
-import { AppButton } from 'components/shared';
+import { AddIcon, EditIcon } from 'components/shared/icons';
+import { AppButton } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';

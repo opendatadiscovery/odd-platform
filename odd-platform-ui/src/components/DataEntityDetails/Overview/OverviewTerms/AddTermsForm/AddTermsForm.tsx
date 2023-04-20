@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { DialogWrapper, AppButton } from 'components/shared';
+import { DialogWrapper, AppButton } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { addDataEntityTerm } from 'redux/thunks';
 import { getDataEntityAddTermStatuses } from 'redux/selectors';

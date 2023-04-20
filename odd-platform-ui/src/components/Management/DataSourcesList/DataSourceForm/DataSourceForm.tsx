@@ -20,8 +20,8 @@ import {
   AppSelect,
   DialogWrapper,
   NamespaceAutocomplete,
-} from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
 
 interface DataSourceFormDialogProps {

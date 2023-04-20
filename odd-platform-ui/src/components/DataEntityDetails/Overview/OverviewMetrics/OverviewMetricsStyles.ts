@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { AppButton, AppPaper } from 'components/shared';
+import { AppButton, AppPaper } from 'components/shared/elements';
 
 export const Container = styled(AppPaper)<{
   $open: boolean;

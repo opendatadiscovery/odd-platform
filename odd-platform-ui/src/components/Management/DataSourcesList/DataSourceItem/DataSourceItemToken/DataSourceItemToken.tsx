@@ -1,7 +1,7 @@
 import React from 'react';
 import { type DataSource, Permission } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
-import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared';
+import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared/elements';
 import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';

@@ -6,8 +6,8 @@ import {
   ConfirmationDialog,
   LabeledInfoItem,
   LabelItem,
-} from 'components/shared';
-import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { deleteDataEntityOwnership } from 'redux/thunks';
 import { getDataEntityOwnership } from 'redux/selectors';

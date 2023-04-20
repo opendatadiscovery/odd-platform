@@ -1,8 +1,8 @@
 import React from 'react';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { AppButton } from 'components/shared';
-import { AddIcon } from 'components/shared/Icons';
+import { AppButton } from 'components/shared/elements';
+import { AddIcon } from 'components/shared/icons';
 import { Grid } from '@mui/material';
 import TermsForm from '../TermForm/TermsForm';
 import TermSearchInput from '../TermSearchInput/TermSearchInput';

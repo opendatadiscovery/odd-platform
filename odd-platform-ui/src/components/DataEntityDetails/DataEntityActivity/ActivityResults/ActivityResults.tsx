@@ -10,12 +10,12 @@ import {
 } from 'redux/selectors';
 import { useAppParams, useQueryParams } from 'lib/hooks';
 import { fetchDataEntityActivityList } from 'redux/thunks';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import {
   type ActivityQuery,
   defaultActivityQuery,
-} from 'components/shared/Activity/common';
-import { ActivityResultsList } from 'components/shared/Activity';
+} from 'components/shared/elements/Activity/common';
+import { ActivityResultsList } from 'components/shared/elements/Activity';
 import ActivityItem from './ActivityItem/ActivityItem';
 
 const ActivityResults: React.FC = () => {
@@ -74,7 +74,6 @@ const ActivityResults: React.FC = () => {
         error={activitiesError}
       />
       <EmptyContentPlaceholder
-        sx={{ m: 0 }}
         isContentLoaded={
           isActivitiesFetched && !isActivitiesFetching && !isActivitiesNotFetched
         }

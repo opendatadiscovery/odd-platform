@@ -1,5 +1,5 @@
 import React from 'react';
-import { type AppTabItem, AppTabs } from 'components/shared';
+import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import { Grid } from '@mui/material';

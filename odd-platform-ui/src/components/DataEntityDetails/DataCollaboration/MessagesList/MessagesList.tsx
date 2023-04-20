@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { type MessagesByDate } from 'redux/interfaces';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { EmptyContentPlaceholder } from 'components/shared/elements';
 import Message from './Message/Message';
 import * as S from './MessagesListStyles';
 import MessageSkeleton from './Message/MessageSkeleton';

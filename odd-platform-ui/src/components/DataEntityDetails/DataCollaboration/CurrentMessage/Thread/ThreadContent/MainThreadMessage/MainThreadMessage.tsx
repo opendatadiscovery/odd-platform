@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppAvatar, AppButton, WithFeature } from 'components/shared';
+import { AppAvatar, AppButton, WithFeature } from 'components/shared/elements';
 import { type Message } from 'redux/interfaces';
 import { Feature } from 'generated-sources';
 import * as S from './MainThreadMessageStyles';

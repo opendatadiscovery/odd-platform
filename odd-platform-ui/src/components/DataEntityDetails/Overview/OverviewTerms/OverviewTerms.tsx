@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { Permission, type TermRef } from 'generated-sources';
-import { AppButton, TermItem } from 'components/shared';
-import { AddIcon } from 'components/shared/Icons';
+import { AppButton, TermItem } from 'components/shared/elements';
+import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
 import AddTermsForm from './AddTermsForm/AddTermsForm';

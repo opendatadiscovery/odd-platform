@@ -1,6 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppCircularProgress, MetadataItem, NumberFormatted } from 'components/shared';
+import {
+  AppCircularProgress,
+  MetadataItem,
+  NumberFormatted,
+} from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import {
@@ -59,7 +63,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
             {customMetadata.length ? (
               customMetadata
                 .slice(0, metadataNum)
-                .map(metadata => <MetadataItem metadata={metadata} />)
+                .map(metadata => (
+                  <MetadataItem key={metadata.field.id} metadata={metadata} />
+                ))
             ) : (
               <Typography variant='body1' color='texts.secondary'>
                 No custom metadata
@@ -78,7 +84,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({ dataEntityId }) =
             {predefinedMetadata.length ? (
               predefinedMetadata
                 .slice(0, metadataNum)
-                .map(metadata => <MetadataItem metadata={metadata} />)
+                .map(metadata => (
+                  <MetadataItem key={metadata.field.id} metadata={metadata} />
+                ))
             ) : (
               <Typography variant='body1' color='texts.secondary'>
                 No predefined metadata

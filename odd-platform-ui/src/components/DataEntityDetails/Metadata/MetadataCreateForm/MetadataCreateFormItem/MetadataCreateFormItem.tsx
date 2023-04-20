@@ -9,7 +9,7 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type MetadataField, MetadataFieldType } from 'generated-sources';
-import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
+import { ClearIcon, DropdownIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { searchMetadata } from 'redux/thunks';
 import {
@@ -17,7 +17,7 @@ import {
   AppMenuItem,
   AppSelect,
   AutocompleteSuggestion,
-} from 'components/shared';
+} from 'components/shared/elements';
 import MetadataValueEditField from '../../MetadataValueEditor/MetadataValueEditor';
 
 const MetadataCreateFormItem: React.FC = () => {

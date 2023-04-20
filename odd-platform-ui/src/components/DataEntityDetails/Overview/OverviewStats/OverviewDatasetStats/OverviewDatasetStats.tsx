@@ -1,11 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import RowsIcon from 'components/shared/Icons/RowsIcon';
-import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
-import UserIcon from 'components/shared/Icons/UserIcon';
+import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
+import NumberFormatted from 'components/shared/elements/NumberFormatted/NumberFormatted';
+import RowsIcon from 'components/shared/icons/RowsIcon';
+import ColumnsIcon from 'components/shared/icons/ColumnsIcon';
+import UserIcon from 'components/shared/icons/UserIcon';
 import { StatLabel } from './OverviewDatasetStatsStyles';
 
 interface OverviewDatasetStatsProps {

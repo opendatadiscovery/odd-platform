@@ -4,8 +4,8 @@ import {
   getDatasetSLAReport,
   getDatasetSLAReportFetchingStatuses,
 } from 'redux/selectors';
-import { AppTooltip, CopyButton } from 'components/shared';
-import { InformationIcon } from 'components/shared/Icons';
+import { AppTooltip, CopyButton } from 'components/shared/elements';
+import { InformationIcon } from 'components/shared/icons';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { useAppSelector } from 'redux/lib/hooks';
 import { SLAColour } from 'generated-sources';

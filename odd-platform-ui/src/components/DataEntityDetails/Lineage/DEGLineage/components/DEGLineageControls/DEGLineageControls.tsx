@@ -1,6 +1,6 @@
 import React, { type FC, useCallback } from 'react';
-import { AppButton, AppTabs } from 'components/shared';
-import { TargetIcon } from 'components/shared/Icons';
+import { AppButton, AppTabs } from 'components/shared/elements';
+import { TargetIcon } from 'components/shared/icons';
 import { useQueryParams } from 'lib/hooks';
 import { useSetAtom } from 'jotai';
 import type { DEGLineageQueryParams } from '../../lib/interfaces';

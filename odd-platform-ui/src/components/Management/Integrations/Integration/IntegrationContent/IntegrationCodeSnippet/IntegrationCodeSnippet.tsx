@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
-import { Markdown } from 'components/shared';
+import { Markdown } from 'components/shared/elements';
 import { Grid } from '@mui/material';
 
 interface IntegrationCodeSnippetProps {

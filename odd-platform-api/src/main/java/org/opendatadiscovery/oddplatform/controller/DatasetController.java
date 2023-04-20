@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.controller;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSetApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersionDiffList;
 import org.opendatadiscovery.oddplatform.service.DatasetVersionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,15 @@ public class DatasetController implements DataSetApi {
     ) {
         return datasetVersionService
             .getLatestDatasetVersion(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataSetVersionDiffList>> getDataSetStructureDiff(final Long dataEntityId,
+                                                                                final Long firstVersionId,
+                                                                                final Long secondVersionId,
+                                                                                final ServerWebExchange exchange) {
+        return datasetVersionService.getDatasetVersionDiff(dataEntityId, firstVersionId, secondVersionId)
             .map(ResponseEntity::ok);
     }
 }

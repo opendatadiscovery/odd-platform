@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { Permission, type Tag } from 'generated-sources';
-import { AddIcon, EditIcon } from 'components/shared/Icons';
-import { AppButton, TagItem } from 'components/shared';
+import { AddIcon, EditIcon } from 'components/shared/icons';
+import { AppButton, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer } from './OverviewTagsStyles';

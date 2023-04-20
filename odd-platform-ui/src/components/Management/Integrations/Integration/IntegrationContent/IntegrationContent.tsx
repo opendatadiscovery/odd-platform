@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 import { Grid } from '@mui/material';
 import type { IntegrationContent as IntegrationContentType } from 'lib/interfaces';
-import { Markdown } from 'components/shared';
+import { Markdown } from 'components/shared/elements';
 import IntegrationCodeSnippetWithForm from './IntegrationCodeSnippetWithForm/IntegrationCodeSnippetWithForm';
 import IntegrationCodeSnippet from './IntegrationCodeSnippet/IntegrationCodeSnippet';
 

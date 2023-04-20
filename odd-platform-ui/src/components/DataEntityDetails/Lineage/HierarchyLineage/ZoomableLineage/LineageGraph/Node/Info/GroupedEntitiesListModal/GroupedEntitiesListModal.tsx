@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataEntityLineageNode } from 'generated-sources';
-import { DialogWrapper, AppButton, EntityClassItem } from 'components/shared';
+import { DialogWrapper, AppButton, EntityClassItem } from 'components/shared/elements';
 import { Link } from 'react-router-dom';
 import {
   fetchDataEntityDownstreamLineage,

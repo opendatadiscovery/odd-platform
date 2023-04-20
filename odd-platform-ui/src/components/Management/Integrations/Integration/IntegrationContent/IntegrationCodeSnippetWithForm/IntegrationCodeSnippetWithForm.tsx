@@ -2,8 +2,8 @@ import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
 import { FormControlLabel, Grid } from '@mui/material';
-import { AppButton, AppCheckbox, AppInput, Markdown } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppButton, AppCheckbox, AppInput, Markdown } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
 
 interface IntegrationCodeSnippetWithFormProps {

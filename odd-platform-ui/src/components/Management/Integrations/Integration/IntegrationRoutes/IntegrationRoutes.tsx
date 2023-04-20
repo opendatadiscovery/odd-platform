@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppSuspenseWrapper } from 'components/shared';
+import { AppSuspenseWrapper } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
 import IntegrationContent from '../IntegrationContent/IntegrationContent';
 

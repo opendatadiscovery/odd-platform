@@ -9,12 +9,12 @@ import {
 } from 'redux/selectors/dataEntityRun.selector';
 import { useAppParams } from 'lib/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
 import { Grid, Typography } from '@mui/material';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/elements/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
+import SkeletonWrapper from 'components/shared/elements/SkeletonWrapper/SkeletonWrapper';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
 import TestRunItem from './TestRunItem/TestRunItem';

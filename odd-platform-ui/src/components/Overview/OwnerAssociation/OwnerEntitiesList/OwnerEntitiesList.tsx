@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  getIdentity,
   getIsOwnerEntitiesFetching,
   getMyDataEntitiesFetchingStatuses,
   getMyDownstreamFetchingStatuses,
@@ -22,8 +21,8 @@ import {
   DownstreamIcon,
   StarIcon,
   UpstreamIcon,
-} from 'components/shared/Icons';
-import { SkeletonWrapper } from 'components/shared';
+} from 'components/shared/icons';
+import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';
@@ -32,7 +31,6 @@ import DataEntityList from './DataEntityList/DataEntityList';
 const OwnerEntitiesList: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const identity = useAppSelector(getIdentity);
   const myEntities = useAppSelector(getMyEntities);
   const myEntitiesDownstream = useAppSelector(getMyEntitiesDownstream);
   const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
@@ -55,13 +53,12 @@ const OwnerEntitiesList: React.FC = () => {
   const isOwnerEntitiesListFetching = useAppSelector(getIsOwnerEntitiesFetching);
 
   React.useEffect(() => {
-    if (!identity) return;
     const params = { page: 1, size: 5 };
     dispatch(fetchMyDataEntitiesList(params));
     dispatch(fetchMyUpstreamDataEntitiesList(params));
     dispatch(fetchMyDownstreamDataEntitiesList(params));
     dispatch(fetchPopularDataEntitiesList(params));
-  }, [identity]);
+  }, []);
 
   return (
     <>

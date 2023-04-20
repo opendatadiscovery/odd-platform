@@ -6,13 +6,13 @@ import {
   EntityClassItem,
   NumberFormatted,
   TruncatedCell,
-} from 'components/shared';
+} from 'components/shared/elements';
 import {
   ColumnsIcon,
   InformationIcon,
   QuestionIcon,
   RowsIcon,
-} from 'components/shared/Icons';
+} from 'components/shared/icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';

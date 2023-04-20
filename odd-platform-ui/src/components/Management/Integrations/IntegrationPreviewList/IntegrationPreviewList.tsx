@@ -6,8 +6,8 @@ import {
   AppLoadingPage,
   EmptyContentPlaceholder,
   NumberFormatted,
-} from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { useIntegrationPreviews } from 'lib/hooks/api';
 import type { ErrorState } from 'redux/interfaces';
 import isEmpty from 'lodash/isEmpty';

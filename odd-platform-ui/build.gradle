@@ -33,9 +33,7 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
 
         property "sonar.sources", "."
-
         property "sonar.exclusions", "**/__test?__/**"
-
         property "sonar.sourceEncoding", "UTF-8"
     }
 }

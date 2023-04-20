@@ -8,7 +8,11 @@ import {
   getDataEntityAlertsFetchingError,
   getDataEntityAlertsPageInfo,
 } from 'redux/selectors/alert.selectors';
-import { AppButton, AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import {
+  AppButton,
+  AppErrorPage,
+  EmptyContentPlaceholder,
+} from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { fetchDataEntityAlerts } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';

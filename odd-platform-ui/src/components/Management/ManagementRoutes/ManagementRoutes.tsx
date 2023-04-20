@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared';
+import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements';
 import { useAppPaths, usePermissions } from 'lib/hooks';
 
 const NamespaceList = React.lazy(() => import('../NamespaceList/NamespaceList'));

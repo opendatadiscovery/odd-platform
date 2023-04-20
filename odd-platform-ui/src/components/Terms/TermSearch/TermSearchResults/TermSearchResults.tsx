@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
-import { EmptyContentPlaceholder } from 'components/shared';
+import { EmptyContentPlaceholder } from 'components/shared/elements';
 import {
   getTermDeletingStatuses,
   getTermSearchCreateStatuses,

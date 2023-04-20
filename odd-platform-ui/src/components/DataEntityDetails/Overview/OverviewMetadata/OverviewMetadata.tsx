@@ -1,7 +1,7 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { AddIcon } from 'components/shared/Icons';
-import { AppButton } from 'components/shared';
+import { AddIcon } from 'components/shared/icons';
+import { AppButton } from 'components/shared/elements';
 import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,

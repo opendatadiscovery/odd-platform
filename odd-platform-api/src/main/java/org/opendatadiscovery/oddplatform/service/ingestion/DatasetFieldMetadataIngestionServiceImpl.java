@@ -10,7 +10,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
-import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataInfo;
@@ -39,12 +38,14 @@ public class DatasetFieldMetadataIngestionServiceImpl implements DatasetFieldMet
     @Override
     @ReactiveTransactional
     public Mono<Void> ingestMetadata(final IngestionRequest request) {
-        final List<DatasetFieldPojo> pojos = getDatasetFieldPojos(request);
-        if (CollectionUtils.isEmpty(pojos)) {
+        final List<String> oddrns = getDatasetFieldPojoOddrns(request);
+        if (CollectionUtils.isEmpty(oddrns)) {
             return Mono.empty();
         }
-        final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo =
-            datasetFieldRepository.getExistingFieldsByOddrnAndType(pojos);
+
+        final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo = datasetFieldRepository
+            .getLastVersionDatasetFieldsByOddrns(oddrns)
+            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
 
         return datasetFieldOddrnToPojo.flatMap(fields -> ingestMetadataForFields(request, fields));
     }
@@ -99,11 +100,11 @@ public class DatasetFieldMetadataIngestionServiceImpl implements DatasetFieldMet
             }));
     }
 
-    private List<DatasetFieldPojo> getDatasetFieldPojos(final IngestionRequest request) {
+    private List<String> getDatasetFieldPojoOddrns(final IngestionRequest request) {
         return request.getAllEntities().stream()
             .filter(e -> e.getDataSet() != null && CollectionUtils.isNotEmpty(e.getDataSet().fieldList()))
             .flatMap(e -> e.getDataSet().fieldList().stream())
-            .map(DataEntityIngestionDto.DatasetFieldIngestionDto::field)
+            .map(dto -> dto.field().getOddrn())
             .toList();
     }
 

@@ -7,8 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTotalDelta;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
@@ -19,7 +19,7 @@ public class IngestionRequest {
     private final List<EnrichedDataEntityIngestionDto> newEntities;
     private final List<EnrichedDataEntityIngestionDto> existingEntities;
     private final List<EnrichedDataEntityIngestionDto> allEntities;
-    private final DataEntityClassesTotalDelta entityClassesTotalDelta;
+    private final DataEntityTotalDelta entityTotalDelta;
 
     private final List<IngestionTaskRun> taskRuns;
     private final List<LineagePojo> lineageRelations;
@@ -41,7 +41,7 @@ public class IngestionRequest {
                             final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas,
                             final List<GroupEntityRelationsPojo> groupEntityRelations,
                             final List<GroupParentGroupRelationsPojo> groupParentGroupRelations,
-                            final DataEntityClassesTotalDelta entityClassesTotalDelta) {
+                            final DataEntityTotalDelta entityTotalDelta) {
         this.newEntities = newEntities;
         this.existingEntities = existingEntities;
         this.allEntities = Stream.concat(newEntities.stream(), existingEntities.stream()).collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class IngestionRequest {
         this.specificAttributesDeltas = specificAttributesDeltas;
         this.groupEntityRelations = groupEntityRelations;
         this.groupParentGroupRelations = groupParentGroupRelations;
-        this.entityClassesTotalDelta = entityClassesTotalDelta;
+        this.entityTotalDelta = entityTotalDelta;
 
         this.existingIds = extractIds(existingEntities);
         this.newIds = extractIds(newEntities);

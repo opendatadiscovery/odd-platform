@@ -1,14 +1,14 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
   AppButton,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
   SkeletonWrapper,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { Grid, Typography } from '@mui/material';
 import {
   getNamespaceCreatingStatuses,

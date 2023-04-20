@@ -1,7 +1,7 @@
 import React from 'react';
 import { Group } from '@visx/group';
 import type { DataEntityLineageNode, DataSource } from 'generated-sources';
-import { TruncatedSVGText } from 'components/shared';
+import { TruncatedSVGText } from 'components/shared/elements';
 import type { StreamType } from 'redux/interfaces';
 import type { NodeSize } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
 import {

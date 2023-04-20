@@ -7,8 +7,8 @@ import {
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppInput from 'components/shared/AppInput/AppInput';
+import ClearIcon from 'components/shared/icons/ClearIcon';
+import AppInput from 'components/shared/elements/AppInput/AppInput';
 import { type ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermsList } from 'redux/thunks';

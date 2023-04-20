@@ -9,7 +9,7 @@ import {
   getResourcePermissions,
 } from 'redux/selectors';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
-import { SkeletonWrapper } from 'components/shared';
+import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';

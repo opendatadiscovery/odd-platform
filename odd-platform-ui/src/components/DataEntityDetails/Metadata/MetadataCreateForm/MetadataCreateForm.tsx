@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
 import { type MetadataObject } from 'generated-sources';
-import { AppButton, DialogWrapper } from 'components/shared';
+import { AppButton, DialogWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks';
 import { getDataEntityMetadataCreatingStatuses } from 'redux/selectors';

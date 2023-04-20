@@ -1,7 +1,11 @@
 import React, { type FC, useMemo } from 'react';
 import { useAppParams } from 'lib/hooks';
 import { useIntegration } from 'lib/hooks/api';
-import { AppErrorPage, AppLoadingPage, EmptyContentPlaceholder } from 'components/shared';
+import {
+  AppErrorPage,
+  AppLoadingPage,
+  EmptyContentPlaceholder,
+} from 'components/shared/elements';
 import IntegrationHeader from './IntegrationHeader/IntegrationHeader';
 import IntegrationTabs from './IntegrationTabs/IntegrationTabs';
 import IntegrationRoutes from './IntegrationRoutes/IntegrationRoutes';
@@ -35,7 +39,11 @@ const Integration: FC = () => {
 
   return (
     <>
-      <IntegrationHeader name={integration.name} description={integration.description} />
+      <IntegrationHeader
+        id={integration.id}
+        name={integration.name}
+        description={integration.description}
+      />
       <IntegrationTabs titles={titles} />
       <IntegrationRoutes contentByTitle={integration.contentByTitle} />
     </>

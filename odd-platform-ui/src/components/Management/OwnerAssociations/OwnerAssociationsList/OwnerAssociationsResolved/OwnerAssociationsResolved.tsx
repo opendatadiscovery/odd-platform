@@ -9,7 +9,7 @@ import {
   getResolvedAssociationRequestsList,
   getResolvedOwnerAssociationRequestsPageInfo,
 } from 'redux/selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
 import ResolvedAssociationRequest from './ResolvedAssociationRequest/ResolvedAssociationRequest';

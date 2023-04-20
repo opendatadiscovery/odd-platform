@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
-import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
+import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
+import TriangularUnionIcon from 'components/shared/icons/TriangularUnionIcon';
+import EntitiesListModal from 'components/shared/elements/EntitiesListModal/EntitiesListModal';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './OverviewEntityGroupStatsStyles';
 
@@ -49,7 +49,6 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           {entities?.slice(0, 5).map(entity => (
             <S.EntityLink key={entity.id} to={dataEntityOverviewPath(entity.id)}>
               <AppButton
-                key={entity.id}
                 size='medium'
                 color='tertiary'
                 sx={{
@@ -99,9 +98,11 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {entityGroups?.slice(0, 5).map(entityGroup => (
-            <S.EntityLink to={dataEntityOverviewPath(entityGroup.id)}>
+            <S.EntityLink
+              key={entityGroup.id}
+              to={dataEntityOverviewPath(entityGroup.id)}
+            >
               <AppButton
-                key={entityGroup.id}
                 size='medium'
                 color='tertiary'
                 sx={{

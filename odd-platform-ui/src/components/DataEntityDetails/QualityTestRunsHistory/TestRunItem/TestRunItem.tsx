@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { type DataEntityRun } from 'generated-sources';
-import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
-import AppButton from 'components/shared/AppButton/AppButton';
+import TestRunStatusItem from 'components/shared/elements/TestRunStatusItem/TestRunStatusItem';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
 import { useAppDateTime } from 'lib/hooks';
 import TestRunStatusReasonModal from '../TestRunStatusReasonModal/TestRunStatusReasonModal';
 import { Container, StatusReasonModalBtnContainer } from './TestRunItemStyles';

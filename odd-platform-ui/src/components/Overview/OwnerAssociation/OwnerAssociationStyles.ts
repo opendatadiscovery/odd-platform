@@ -1,6 +1,6 @@
 import styled, { type CSSObject } from 'styled-components';
 import { Grid } from '@mui/material';
-import { AlertIcon, ClearIcon } from 'components/shared/Icons';
+import { AlertIcon, ClearIcon } from 'components/shared/icons';
 
 export const Container = styled(Grid)(({ theme }) => ({
   marginTop: theme.spacing(4),

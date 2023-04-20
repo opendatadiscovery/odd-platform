@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppSuspenseWrapper } from 'components/shared';
+import { AppSuspenseWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppParams, useAppPaths } from 'lib/hooks';
@@ -40,20 +40,12 @@ const DataEntityDetailsRoutes: React.FC = () => {
         <Route path={DataEntityRoutes.dataEntityViewTypeParam}>
           <Route path={DataEntityRoutes.overview} element={<Overview />} />
           <Route
-            path={DataEntityRoutes.structure}
-            element={
-              <WithPermissionsProvider
-                allowedPermissions={[
-                  Permission.DATASET_FIELD_ENUMS_UPDATE,
-                  Permission.DATASET_FIELD_LABELS_UPDATE,
-                  Permission.DATASET_FIELD_DESCRIPTION_UPDATE,
-                ]}
-                resourcePermissions={resourcePermissions}
-                Component={DatasetStructure}
-              />
-            }
+            path={getNonExactParamPath(DataEntityRoutes.structure)}
+            element={<DatasetStructure />}
           >
-            <Route path={DataEntityRoutes.versionIdParam} />
+            <Route path={getNonExactParamPath(DataEntityRoutes.structureViewTypeParam)}>
+              <Route path={DataEntityRoutes.versionIdParam} />
+            </Route>
           </Route>
           <Route path={DataEntityRoutes.lineage} element={<Lineage />} />
           <Route

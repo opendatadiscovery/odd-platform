@@ -83,7 +83,7 @@ const updateDataSetFieldEnums = (
       ...state.fieldById,
       [datasetFieldId]: {
         ...state.fieldById[datasetFieldId],
-        enumValueCount: enumValueList?.length,
+        enumValueCount: enumValueList.items?.length,
       },
     },
   };

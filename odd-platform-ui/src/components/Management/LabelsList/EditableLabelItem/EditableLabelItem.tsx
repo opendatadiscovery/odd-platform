@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Label, Permission } from 'generated-sources';
-import { DeleteIcon, EditIcon } from 'components/shared/Icons';
-import { AppButton, ConfirmationDialog } from 'components/shared';
+import { DeleteIcon, EditIcon } from 'components/shared/icons';
+import { AppButton, ConfirmationDialog } from 'components/shared/elements';
 import { deleteLabel } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';

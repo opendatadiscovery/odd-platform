@@ -9,8 +9,8 @@ import {
   BooleanFormatted,
   ConfirmationDialog,
   LabeledInfoItem,
-} from 'components/shared';
-import { DeleteIcon, EditIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';

@@ -7,7 +7,7 @@ import {
   type MetadataFieldValueUpdateFormData,
   Permission,
 } from 'generated-sources';
-import { DeleteIcon, DropdownIcon, EditIcon } from 'components/shared/Icons';
+import { DeleteIcon, DropdownIcon, EditIcon } from 'components/shared/icons';
 import {
   AppButton,
   AppIconButton,
@@ -15,7 +15,7 @@ import {
   ConfirmationDialog,
   CopyButton,
   TextFormatted,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { getMetadataValue, stringFormatted } from 'lib/helpers';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {

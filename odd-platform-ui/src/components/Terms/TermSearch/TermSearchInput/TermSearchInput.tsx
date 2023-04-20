@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppInput } from 'components/shared';
-import { ClearIcon, SearchIcon } from 'components/shared/Icons';
+import { AppInput } from 'components/shared/elements';
+import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import { getTermSearchId, getTermSearchQuery } from 'redux/selectors';
 import { updateTermSearch } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';

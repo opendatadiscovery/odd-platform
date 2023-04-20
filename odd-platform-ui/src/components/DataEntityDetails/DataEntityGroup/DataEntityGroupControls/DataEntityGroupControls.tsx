@@ -6,8 +6,8 @@ import {
   AppMenuItem,
   AppPopover,
   ConfirmationDialog,
-} from 'components/shared';
-import { KebabIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { KebabIcon } from 'components/shared/icons';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { deleteDataEntityGroup } from 'redux/thunks';
 import { getSearchId } from 'redux/selectors';

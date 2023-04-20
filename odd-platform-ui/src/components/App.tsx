@@ -1,20 +1,19 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import { AppSuspenseWrapper, AppToolbar } from 'components/shared';
+import { AppSuspenseWrapper, AppToolbar } from 'components/shared/elements';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
   fetchActiveFeatures,
-  fetchAppInfo,
-  fetchAppLinks,
   fetchDataEntitiesClassesAndTypes,
   fetchIdentity,
+  fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Toaster } from 'react-hot-toast';
 import ManagementRoutes from './Management/ManagementRoutes/ManagementRoutes';
 
-// lazy components
+// lazy elements
 const Management = React.lazy(() => import('./Management/Management'));
 const DataEntityDetails = React.lazy(
   () => import('./DataEntityDetails/DataEntityDetails')
@@ -45,9 +44,8 @@ const App: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes());
     dispatch(fetchIdentity());
-    dispatch(fetchAppInfo());
     dispatch(fetchActiveFeatures());
-    dispatch(fetchAppLinks());
+    dispatch(fetchTagsList({ page: 1, size: 20 }));
   }, []);
 
   return (

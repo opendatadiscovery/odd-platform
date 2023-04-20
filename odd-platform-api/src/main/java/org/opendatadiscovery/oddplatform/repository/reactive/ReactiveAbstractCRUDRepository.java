@@ -26,6 +26,7 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import reactor.core.publisher.Flux;
@@ -115,7 +116,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             return Flux.just();
         }
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<R> records = pojos.stream()
             .map(e -> createRecord(e, now))
@@ -131,7 +132,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             return Flux.just();
         }
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<R> records = pojos.stream()
             .map(e -> createRecord(e, now))

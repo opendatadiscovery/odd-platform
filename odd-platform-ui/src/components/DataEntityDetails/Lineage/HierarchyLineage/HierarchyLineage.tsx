@@ -8,7 +8,7 @@ import {
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
 import { useAppParams, useQueryParams } from 'lib/hooks';
-import { AppCircularProgress, AppErrorPage } from 'components/shared';
+import { AppCircularProgress, AppErrorPage } from 'components/shared/elements';
 import { Zoom } from '@visx/zoom';
 import {
   fetchDataEntityDownstreamLineage,

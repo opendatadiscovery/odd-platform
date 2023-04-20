@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import React from 'react';
-import { AppErrorPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
 import { useAppParams } from 'lib/hooks';
 import {
   fetchDataEntityAlertsCounts,

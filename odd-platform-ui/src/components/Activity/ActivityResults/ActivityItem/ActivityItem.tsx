@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { EntityClassItem, LabelItem, TagItem } from 'components/shared';
-import { GearIcon, UserIcon } from 'components/shared/Icons';
+import { EntityClassItem, LabelItem, TagItem } from 'components/shared/elements';
+import { GearIcon, UserIcon } from 'components/shared/icons';
 import { Link } from 'react-router-dom';
 import { ActivityEventType } from 'generated-sources';
 import {
@@ -13,7 +13,7 @@ import {
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
-} from 'components/shared/Activity';
+} from 'components/shared/elements/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
 import * as S from './ActivityItemStyles';
