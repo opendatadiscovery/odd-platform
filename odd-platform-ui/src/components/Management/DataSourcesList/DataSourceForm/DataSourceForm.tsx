@@ -1,11 +1,8 @@
-import React, { type ChangeEvent } from 'react';
-import capitalize from 'lodash/capitalize';
-import reduce from 'lodash/reduce';
-import { add, addSeconds, differenceInSeconds, intervalToDuration } from 'date-fns/esm';
+import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { DataSource, DataSourceFormData } from 'generated-sources';
 import { registerDataSource, updateDataSource } from 'redux/thunks';
-import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import {
   getDatasourceCreatingStatuses,
   getDatasourceUpdatingStatuses,
@@ -13,16 +10,12 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   AppButton,
-  AppCheckbox,
   AppInput,
-  AppMenuItem,
-  AppRadio,
-  AppSelect,
   DialogWrapper,
   NamespaceAutocomplete,
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
+import { Asterisk } from './DataSourceFormStyles';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -44,35 +37,22 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
     useAppSelector(getDatasourceUpdatingStatuses);
 
   const getDefaultValues = React.useCallback(
-    (): DataSourceFormDataValues => ({
+    (): DataSourceFormData => ({
       name: dataSource?.name || '',
       oddrn: dataSource?.oddrn || '',
       namespaceName: dataSource?.namespace?.name || '',
-      connectionUrl: dataSource?.connectionUrl || '',
       description: dataSource?.description || '',
-      active: !!dataSource?.active || false,
-      pullingInterval: dataSource?.pullingInterval
-        ? reduce(
-            intervalToDuration({
-              start: Date.now(),
-              end: addSeconds(Date.now(), dataSource?.pullingInterval),
-            }),
-            (result, value, format) => (value && value > 0 ? { format, value } : result),
-            { format: 'minutes', value: 1 }
-          )
-        : { format: 'minutes', value: 1 },
     }),
     [dataSource]
   );
 
   const {
-    watch,
     handleSubmit,
     control,
     reset,
     setValue,
     formState: { isValid },
-  } = useForm<DataSourceFormDataValues>({
+  } = useForm<DataSourceFormData>({
     mode: 'all',
     reValidateMode: 'onChange',
     defaultValues: getDefaultValues(),
@@ -82,64 +62,19 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
     reset(getDefaultValues());
   }, [dataSource]);
 
-  const isPullingOn = watch('active', false);
-
-  type RadioType = 'URL' | 'ODDRN';
-  const getDefaultRadioValues = (): RadioType =>
-    dataSource?.connectionUrl ? 'URL' : 'ODDRN';
-  const [radioValue, setRadioValue] = React.useState<RadioType>(getDefaultRadioValues());
-  const isODDRN = () => radioValue === 'ODDRN';
-
-  const handleRadioChange = (event: ChangeEvent<HTMLInputElement>, value: string) => {
-    setRadioValue(value as RadioType);
-    setValue('connectionUrl', '');
-    setValue('oddrn', '');
-  };
-
-  const receiveDataCheckbox = (
-    <Controller
-      defaultValue={false}
-      name='active'
-      control={control}
-      render={({ field }) => (
-        <FormControlLabel
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...field}
-          sx={{ ml: -0.25, mt: 1.5 }}
-          checked={field.value}
-          control={<AppCheckbox sx={{ mr: 1 }} />}
-          label='Receive data from current datasource'
-        />
-      )}
-    />
-  );
-
   const clearState = () => {
     reset();
   };
 
-  const onSubmit = (data: DataSourceFormDataValues) => {
-    const parsedData = {
-      ...data,
-      active: data.active,
-      pullingInterval:
-        data.active && data.pullingInterval?.value
-          ? differenceInSeconds(
-              add(Date.now(), {
-                [data.pullingInterval.format]: data.pullingInterval.value,
-              }),
-              Date.now()
-            )
-          : dataSource?.pullingInterval,
-    };
+  const onSubmit = (data: DataSourceFormData) => {
     (dataSource
       ? dispatch(
           updateDataSource({
             dataSourceId: dataSource.id,
-            dataSourceUpdateFormData: parsedData,
+            dataSourceUpdateFormData: data,
           })
         )
-      : dispatch(registerDataSource({ dataSourceFormData: parsedData }))
+      : dispatch(registerDataSource({ dataSourceFormData: data }))
     ).then(() => {
       clearState();
     });
@@ -180,123 +115,31 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           />
         )}
       />
-      <RadioGroup
-        defaultValue={radioValue}
-        value={radioValue}
-        onChange={handleRadioChange}
-        sx={{ mt: 1, ml: 0.5 }}
-      >
-        <Grid container>
-          <FormControlLabel
-            disabled={!!dataSource}
-            value='ODDRN'
-            control={<AppRadio />}
+      <Controller
+        name='oddrn'
+        shouldUnregister
+        control={control}
+        rules={{
+          required: true,
+          validate: value => !!value?.trim(),
+        }}
+        render={({ field }) => (
+          <AppInput
+            {...field}
+            sx={{ mt: 1.5 }}
             label='ODDRN'
-          />
-          <FormControlLabel
-            disabled={!!dataSource}
-            value='URL'
-            control={<AppRadio />}
-            label='URL'
-          />
-        </Grid>
-      </RadioGroup>
-      {isODDRN() ? (
-        <>
-          <Controller
-            name='oddrn'
-            shouldUnregister
-            control={control}
-            rules={{
-              required: true,
-              validate: value => !!value?.trim(),
+            placeholder='e.g. //kafka/'
+            required
+            disabled={!!dataSource?.oddrn}
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
-            render={({ field }) => (
-              <AppInput
-                {...field}
-                sx={{ mt: 1.5 }}
-                label='ODDRN'
-                placeholder='e.g. //kafka/'
-                required
-                disabled={!!dataSource?.oddrn}
-                customEndAdornment={{
-                  variant: 'clear',
-                  showAdornment: !!field.value,
-                  onCLick: () => field.onChange(''),
-                  icon: <ClearIcon />,
-                }}
-              />
-            )}
           />
-          {receiveDataCheckbox}
-        </>
-      ) : (
-        <>
-          <Controller
-            name='connectionUrl'
-            shouldUnregister
-            control={control}
-            rules={{
-              required: true,
-              validate: value => !!value?.trim(),
-            }}
-            render={({ field }) => (
-              <AppInput
-                {...field}
-                sx={{ mt: 1.25 }}
-                label='URL'
-                placeholder='e.g. https://github.com/link/example'
-                required
-                customEndAdornment={{
-                  variant: 'clear',
-                  showAdornment: !!field.value,
-                  onCLick: () => field.onChange(''),
-                  icon: <ClearIcon />,
-                }}
-              />
-            )}
-          />
-          {receiveDataCheckbox}
-          {isPullingOn && (
-            <Grid container sx={{ mt: 1.5 }}>
-              <Grid item xs={6} md={4} sx={{ mr: 1 }}>
-                <Controller
-                  name='pullingInterval.format'
-                  control={control}
-                  render={({ field }) => (
-                    <AppSelect
-                      {...field}
-                      label='Pulling Interval'
-                      containerSx={{ mt: 0 }}
-                    >
-                      {['minutes', 'hours', 'days', 'weeks'].map(value => (
-                        <AppMenuItem key={value} value={value}>
-                          {capitalize(value)}
-                        </AppMenuItem>
-                      ))}
-                    </AppSelect>
-                  )}
-                />
-              </Grid>
-              <Grid item xs={6} md={4}>
-                <Controller
-                  name='pullingInterval.value'
-                  control={control}
-                  render={({ field }) => (
-                    <AppInput
-                      {...field}
-                      label='Value'
-                      placeholder='e.g. 1'
-                      type='number'
-                      inputProps={{ min: 1 }}
-                    />
-                  )}
-                />
-              </Grid>
-            </Grid>
-          )}
-        </>
-      )}
+        )}
+      />
       <Controller
         control={control}
         name='namespaceName'

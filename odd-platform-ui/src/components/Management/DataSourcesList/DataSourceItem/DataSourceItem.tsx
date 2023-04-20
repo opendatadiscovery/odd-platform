@@ -1,12 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
 import { type DataSource, Permission } from 'generated-sources';
 import { deleteDataSource } from 'redux/thunks';
 import {
   AppButton,
   AppTooltip,
-  BooleanFormatted,
   ConfirmationDialog,
   LabeledInfoItem,
 } from 'components/shared';
@@ -71,7 +69,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
             />
           </WithPermissions>
         </S.ActionsContainer>
-        <S.DescriptionContainer item sm={6} container>
+        <S.DescriptionContainer item container>
           <LabeledInfoItem
             variant='body2'
             inline
@@ -98,28 +96,6 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
               <DataSourceItemToken dataSource={dataSource} />
             </LabeledInfoItem>
           )}
-        </S.DescriptionContainer>
-
-        <S.DescriptionContainer item sm={6} container>
-          <LabeledInfoItem
-            variant='body2'
-            inline
-            label='Receive Data'
-            valueColor={dataSource.active ? 'green' : ''}
-            labelWidth={4}
-          >
-            <BooleanFormatted value={dataSource.active} />
-          </LabeledInfoItem>
-          <LabeledInfoItem variant='body2' inline label='Pulling Interval' labelWidth={4}>
-            {dataSource.active && dataSource.pullingInterval
-              ? formatDistanceToNowStrict(
-                  addSeconds(Date.now(), dataSource.pullingInterval)
-                )
-              : null}
-          </LabeledInfoItem>
-          <LabeledInfoItem variant='body2' inline label='Connection Url' labelWidth={4}>
-            {dataSource.connectionUrl}
-          </LabeledInfoItem>
         </S.DescriptionContainer>
       </Grid>
     </S.Container>
