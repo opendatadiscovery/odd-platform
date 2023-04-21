@@ -995,20 +995,11 @@ components:
           type: string
         description:
           type: string
-        connection_url:
-          type: string
-        active:
-          type: boolean
-        pulling_interval:
-          type: integer
-          format: int32
-          description: Pulling interval in seconds
       required:
         - id
         - token
         - oddrn
         - name
-        - active
 
     DataSourceList:
       type: object
@@ -1034,14 +1025,6 @@ components:
           type: string
         description:
           type: string
-        connection_url:
-          type: string
-        active:
-          type: boolean
-        pulling_interval:
-          type: integer
-          format: int32
-          description: Pulling interval in seconds
       required:
         - name
 
@@ -1050,18 +1033,10 @@ components:
       properties:
         description:
           type: string
-        active:
-          type: boolean
         name:
           type: string
         namespace_name:
           type: string
-        connection_url:
-          type: string
-        pulling_interval:
-          type: integer
-          format: int32
-          description: Pulling interval in seconds
 
     Token:
       type: object

@@ -337,7 +337,6 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
         return new DataSourcePojo()
             .setName(name)
             .setDescription(UUID.randomUUID().toString())
-            .setActive(true)
             .setOddrn(UUID.randomUUID().toString())
             .setNamespaceId(namespaceId)
             .setTokenId(tokenId);
