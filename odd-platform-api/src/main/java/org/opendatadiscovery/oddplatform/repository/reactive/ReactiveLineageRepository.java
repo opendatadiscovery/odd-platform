@@ -16,7 +16,7 @@ public interface ReactiveLineageRepository extends ReactiveCRUDRepository<Lineag
 
     Flux<LineagePojo> batchInsertLineages(final List<LineagePojo> pojos);
 
-    Mono<Long> getTargetsCount(final long dataEntityId);
+    Mono<Map<String, Long>> getTargetsCount(final Set<String> oddrns);
 
     Flux<LineagePojo> getLineageRelations(final List<String> oddrns);
 

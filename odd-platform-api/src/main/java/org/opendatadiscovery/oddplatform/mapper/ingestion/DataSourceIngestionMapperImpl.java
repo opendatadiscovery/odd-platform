@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
-import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.springframework.stereotype.Component;
@@ -12,9 +11,8 @@ public class DataSourceIngestionMapperImpl implements DataSourceIngestionMapper 
                                             final Long namespaceId,
                                             final Long collectorId) {
         return new DataSourcePojo()
-            .setOddrn(ds.getOddrn())
+            .setOddrn(ds.getOddrn().trim())
             .setName(ds.getName())
-            .setActive(true)
             .setDescription(ds.getDescription())
             .setNamespaceId(namespaceId)
             .setCollectorId(collectorId);

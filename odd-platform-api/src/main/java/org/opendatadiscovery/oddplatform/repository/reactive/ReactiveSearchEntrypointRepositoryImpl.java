@@ -105,8 +105,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     public Mono<Integer> updateDataSourceVectorsForDataEntities(final List<Long> dataEntityIds) {
         final Field<Long> dataEntityIdField = field("data_entity_id", Long.class);
 
-        final List<Field<?>> vectorFields = List.of(
-            Tables.DATA_SOURCE.NAME, Tables.DATA_SOURCE.CONNECTION_URL, Tables.DATA_SOURCE.ODDRN);
+        final List<Field<?>> vectorFields = List.of(Tables.DATA_SOURCE.NAME, Tables.DATA_SOURCE.ODDRN);
 
         final SelectConditionStep<Record> vectorSelect = DSL
             .select(DATA_ENTITY.ID.as(dataEntityIdField))
@@ -229,7 +228,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     public Mono<Integer> updateChangedDataSourceVector(final long dataSourceId) {
         final Field<Long> deId = field("data_entity_id", Long.class);
 
-        final List<Field<?>> dsVectorFields = List.of(DATA_SOURCE.NAME, DATA_SOURCE.CONNECTION_URL, DATA_SOURCE.ODDRN);
+        final List<Field<?>> dsVectorFields = List.of(DATA_SOURCE.NAME, DATA_SOURCE.ODDRN);
 
         final SelectConditionStep<Record> dsSelect = DSL
             .select(DATA_ENTITY.ID.as(deId))

@@ -25,9 +25,11 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.one;
 import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
@@ -59,12 +61,14 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
     }
 
     @Override
-    public Mono<Long> getTargetsCount(final long dataEntityId) {
-        final var query = DSL.selectCount()
+    public Mono<Map<String, Long>> getTargetsCount(final Set<String> oddrns) {
+        final var query = DSL.select(LINEAGE.PARENT_ODDRN)
+            .select(count(one()).cast(Long.class))
             .from(LINEAGE)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(LINEAGE.PARENT_ODDRN))
-            .where(DATA_ENTITY.ID.eq(dataEntityId));
-        return jooqReactiveOperations.mono(query).map(r -> r.into(Long.class));
+            .where(LINEAGE.PARENT_ODDRN.in(oddrns))
+            .groupBy(LINEAGE.PARENT_ODDRN);
+        return jooqReactiveOperations.flux(query)
+            .collectMap(r -> r.get(0, String.class), r -> r.get(1, Long.class));
     }
 
     @Override

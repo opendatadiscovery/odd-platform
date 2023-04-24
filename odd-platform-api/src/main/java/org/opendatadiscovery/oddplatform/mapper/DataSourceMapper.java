@@ -33,6 +33,7 @@ public interface DataSourceMapper {
             .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
     }
 
+    @Mapping(target = "oddrn", expression = "java(form.getOddrn().trim())")
     DataSourcePojo mapForm(final DataSourceFormData form);
 
     default DataSourcePojo mapForm(final DataSourceFormData form,

@@ -45,11 +45,6 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     @ReactiveTransactional
     public Mono<DataSource> create(final DataSourceFormData form) {
-        if (StringUtils.isNotEmpty(form.getConnectionUrl()) && StringUtils.isNotEmpty(form.getOddrn())) {
-            return Mono.error(
-                new BadUserRequestException("Can't create data source with both URL and ODDRN defined"));
-        }
-
         final Mono<TokenDto> token = tokenGenerator.generateToken().flatMap(tokenRepository::create);
 
         if (StringUtils.isNotEmpty(form.getNamespaceName())) {
@@ -115,6 +110,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     private Mono<DataSourceDto> createDataSource(final DataSourceFormData form,
                                                  final TokenDto token,
                                                  final NamespacePojo namespace) {
+        if (StringUtils.isEmpty(form.getOddrn())) {
+            throw new BadUserRequestException("ODDRN must be filled for data source");
+        }
         return Mono.just(dataSourceMapper.mapForm(form, namespace, token))
             .flatMap(dataSourceRepository::create)
             .map(ds -> new DataSourceDto(ds, namespace, token));
