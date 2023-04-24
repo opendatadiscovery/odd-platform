@@ -35,7 +35,6 @@ public class FTSConstants {
         Map.entry(DATA_ENTITY.EXTERNAL_DESCRIPTION, "B"),
         Map.entry(DATA_SOURCE.NAME, "B"),
         Map.entry(DATA_SOURCE.ODDRN, "D"),
-        Map.entry(DATA_SOURCE.CONNECTION_URL, "D"),
         Map.entry(NAMESPACE.NAME, "B"),
         Map.entry(TAG.NAME, "B"),
         Map.entry(METADATA_FIELD.NAME, "C"),

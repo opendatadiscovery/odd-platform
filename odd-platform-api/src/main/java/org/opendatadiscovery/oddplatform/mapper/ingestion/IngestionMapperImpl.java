@@ -288,8 +288,7 @@ public class IngestionMapperImpl implements IngestionMapper {
             case DATA_SET -> Pair.of(entityClass, specAttrsMap(List.of(
                 Pair.of(ROWS_COUNT, dataEntity.getDataset().getRowsNumber()),
                 Pair.of(FIELDS_COUNT, dataEntity.getDataset().getFieldList().size()),
-                Pair.of(PARENT_DATASET, dataEntity.getDataset().getParentOddrn()),
-                Pair.of(CONSUMERS_COUNT, 0)
+                Pair.of(PARENT_DATASET, dataEntity.getDataset().getParentOddrn())
             )));
 
             case DATA_TRANSFORMER -> Pair.of(entityClass, specAttrsMap(List.of(

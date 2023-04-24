@@ -33,10 +33,6 @@ export const getDatasetFieldLabelsUpdatingStatus = createStatusesSelector(
   actions.updateDataSetFieldLabelsActionType
 );
 
-export const getDatasetFieldEnumsFetchingStatus = createStatusesSelector(
-  actions.fetchDataSetFieldEnumActionType
-);
-
 export const getDatasetFieldEnumsFetchingError = createErrorSelector(
   actions.fetchDataSetFieldEnumActionType
 );

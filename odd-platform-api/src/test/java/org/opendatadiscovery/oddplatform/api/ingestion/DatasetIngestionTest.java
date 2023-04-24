@@ -217,7 +217,7 @@ public class DatasetIngestionTest extends BaseIngestionTest {
 
             if (dataEntity.getDataset() != null) {
                 expectedDetails.setStats(new DataSetStats()
-                    .consumersCount(0L)
+                    .consumersCount(1L)
                     .fieldsCount((long) dataEntity.getDataset().getFieldList().size())
                     .rowsCount(dataEntity.getDataset().getRowsNumber()));
 
