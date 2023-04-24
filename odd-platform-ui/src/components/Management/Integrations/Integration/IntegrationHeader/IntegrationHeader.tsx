@@ -25,6 +25,7 @@ const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }
         </Grid>
       </Grid>
       <Button
+        sx={{ flexShrink: 0 }}
         text='Back to integrations'
         to={`../../${ManagementRoutes.integrations}`}
         size='m'

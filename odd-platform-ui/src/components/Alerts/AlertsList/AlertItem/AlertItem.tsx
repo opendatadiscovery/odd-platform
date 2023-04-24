@@ -6,7 +6,7 @@ import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { GearIcon, UserIcon } from 'components/shared/icons';
-import { AlertStatusItem, AppButton, EntityClassItem } from 'components/shared/elements';
+import { AlertStatusItem, Button, EntityClassItem } from 'components/shared/elements';
 import { alertTitlesMap } from 'lib/constants';
 import { getGlobalPermissions } from 'redux/selectors';
 import * as S from './AlertItemStyles';
@@ -115,14 +115,12 @@ const AlertItem: React.FC<AlertItemProps> = ({
       <Grid display='flex' container alignItems='center' flexWrap='nowrap'>
         {dataEntity && (
           <>
-            <AppButton
+            <Button
+              text={dataEntity.externalName || dataEntity.internalName}
               to={dataEntityOverviewPath(dataEntity.id)}
-              size='medium'
-              color='tertiary'
-              truncate
-            >
-              {dataEntity.externalName || dataEntity.internalName}
-            </AppButton>
+              size='sm'
+              color='link'
+            />
             {dataEntity?.entityClasses?.map(entityClass => (
               <EntityClassItem
                 sx={{ ml: 0.5 }}
@@ -133,7 +131,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
           </>
         )}
       </Grid>
-      <Grid sx={{ ml: 0.5, mt: 0.5 }} container flexWrap='nowrap'>
+      <Grid sx={{ mt: 0.5 }} container flexWrap='nowrap'>
         <Grid container flexWrap='nowrap' lg={8}>
           <Grid container flexDirection='column'>
             <Typography variant='h4'>{alertTitlesMap.get(type)}</Typography>
@@ -144,14 +142,13 @@ const AlertItem: React.FC<AlertItemProps> = ({
                 </Typography>
               )}
               {alertChunkList && alertChunkList?.length > 0 && (
-                <AppButton
+                <Button
+                  text={`${showHistory ? 'Hide' : 'Show'} history`}
                   sx={{ ml: 1 }}
-                  size='medium'
-                  color='tertiary'
+                  size='sm'
+                  color='link'
                   onClick={() => setShowHistory(prev => !prev)}
-                >
-                  {`${showHistory ? 'Hide' : 'Show'} history`}
-                </AppButton>
+                />
               )}
             </Grid>
           </Grid>
@@ -160,16 +157,15 @@ const AlertItem: React.FC<AlertItemProps> = ({
           {resolvedInfo}
           <AlertStatusItem status={alertStatus} />
           <Grid display='flex' flexDirection='column' alignItems='center' sx={{ ml: 2 }}>
-            <AppButton
-              sx={{ minWidth: '66px !important', minHeight: '24px' }}
-              size='medium'
-              color='primaryLight'
+            <Button
+              text={alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
+              sx={{ minWidth: '72px !important', minHeight: '24px' }}
+              size='m'
+              color='secondary'
               onClick={handleResolve}
               disabled={disableResolve}
               isLoading={isUpdating}
-            >
-              {alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
-            </AppButton>
+            />
             {disableResolve && <Typography variant='caption'>No access!</Typography>}
           </Grid>
         </S.Wrapper>

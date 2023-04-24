@@ -7,6 +7,7 @@ import {
   Loader,
   Icon,
   StyledLink,
+  Text,
 } from './Button.styles';
 
 export interface Props
@@ -38,7 +39,7 @@ export const Button: React.FC<Props> = ({
   ...props
 }) => {
   const content = useMemo(() => {
-    if (isLoading) return <Loader />;
+    if (isLoading) return <Loader $color={color} />;
     if (icon) return <Icon $size={size}>{icon}</Icon>;
 
     return (
@@ -48,7 +49,7 @@ export const Button: React.FC<Props> = ({
             {startIcon}
           </Icon>
         ) : null}
-        {text || null}
+        {text ? <Text>{text}</Text> : null}
         {endIcon ? (
           <Icon $end={!!endIcon} $size={size}>
             {endIcon}

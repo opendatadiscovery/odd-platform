@@ -31,7 +31,8 @@ export const StyledButton = styled('button')<ButtonProps>(
       alignItems: 'center',
       fontFamily: 'inherit',
       border: 'none',
-      whiteSpace: 'nowrap',
+      minWidth: 0,
+
       ...breakpointDownLgBody2,
 
       color: theme.palette.newButton[$color].normal.color,
@@ -104,6 +105,14 @@ export const StyledButton = styled('button')<ButtonProps>(
       padding: theme.spacing(0, 0.5),
     };
 
+    const linkSm = {
+      height: '20px',
+      fontWeight: theme.typography.body1.fontWeight,
+      fontSize: theme.typography.body1.fontSize,
+      lineHeight: theme.typography.body1.lineHeight,
+      padding: theme.spacing(0),
+    };
+
     const getStyles = () => {
       if (isColor('main') && $size === 'lg') return mainLg;
       if (isColor('main') && $size === 'm') return mainM;
@@ -137,6 +146,7 @@ export const StyledButton = styled('button')<ButtonProps>(
       }
 
       if (isColor('tertiary') && $size === 'lg') return tertiaryLg;
+      if (isColor('link') && $size === 'sm') return linkSm;
     };
 
     return { ...getStyles(), ...common } as CSSObject;
@@ -148,10 +158,14 @@ export const StyledLink = styled(Link)<{
 }>(({ $disabled }) => ({
   display: 'flex',
   height: 'fit-content',
-  // minWidth: 0,
-  // flex: '0 1 fit-content',
-  // inlineSize: 'inherit',
+  minWidth: 0,
   pointerEvents: $disabled ? 'none' : undefined,
+}));
+
+export const Text = styled('div')(() => ({
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }));
 
 export const Icon = styled('span')<{
@@ -170,13 +184,13 @@ export const Icon = styled('span')<{
 
 const loaderDotSize = 4;
 
-export const Loader = styled('div')(({ theme }) => ({
+export const Loader = styled('div')<{ $color: ButtonColor }>(({ theme, $color }) => ({
   position: 'relative',
   width: `${loaderDotSize}px`,
   height: `${loaderDotSize}px`,
   borderRadius: '50%',
   animation: `dotFlashing 1s infinite linear alternate`,
-  animationDelay: '.5s',
+  animationDelay: '.2s',
   '&::before, &::after': {
     content: '""',
     display: 'inline-block',
@@ -200,7 +214,7 @@ export const Loader = styled('div')(({ theme }) => ({
     animationDelay: '1s',
   },
   '@keyframes dotFlashing': {
-    '0%': { backgroundColor: theme.palette.button.animationParas.end },
-    '50%, 100%': { backgroundColor: theme.palette.button.animationParas.start },
+    '0%': { backgroundColor: theme.palette.newButton[$color].loaderBg?.end },
+    '50%, 100%': { backgroundColor: theme.palette.newButton[$color].loaderBg?.start },
   },
 }));
