@@ -1,7 +1,7 @@
 import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
-import { FormControlLabel, Grid } from '@mui/material';
+import { FormControlLabel, Grid, Typography } from '@mui/material';
 import { AppButton, AppCheckbox, AppInput, Markdown } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
@@ -28,8 +28,8 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
   }, []);
 
   return showForm ? (
-    <Grid container mb={1} justifyContent='center'>
-      <Grid container flexDirection='column' width='30%'>
+    <Grid container mb={1}>
+      <Grid container flexDirection='column' width='45%'>
         <form id='parameters-form' onSubmit={handleSubmit(handleParamsFormSubmit)}>
           {snippet.arguments?.map(arg => {
             if (arg.type === 'BOOLEAN') {
@@ -65,19 +65,25 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                   },
                 }}
                 render={({ field }) => (
-                  <AppInput
-                    {...field}
-                    sx={{ mb: 1.5 }}
-                    type={arg.type === 'STRING' ? 'string' : 'number'}
-                    label={arg.name}
-                    placeholder={`Enter ${arg.name} ...`}
-                    customEndAdornment={{
-                      variant: 'clear',
-                      showAdornment: !!field.value,
-                      onCLick: () => field.onChange(''),
-                      icon: <ClearIcon />,
-                    }}
-                  />
+                  <Grid container flexWrap='nowrap' alignItems='center' sx={{ mb: 1 }}>
+                    <Grid item lg={4}>
+                      <Typography variant='body1'>{arg.name}</Typography>
+                    </Grid>
+                    <Grid item lg={8}>
+                      <AppInput
+                        {...field}
+                        type={arg.type === 'STRING' ? 'string' : 'number'}
+                        // label={arg.name}
+                        placeholder={`Enter ${arg.name} ...`}
+                        customEndAdornment={{
+                          variant: 'clear',
+                          showAdornment: !!field.value,
+                          onCLick: () => field.onChange(''),
+                          icon: <ClearIcon />,
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
                 )}
               />
             );
