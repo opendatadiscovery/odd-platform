@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.integration.serde;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,7 +7,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.ObjectUtils;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentDto;
@@ -31,7 +29,7 @@ public class IntegrationDeserializer extends StdDeserializer<IntegrationOverview
     public IntegrationOverviewDto deserialize(
         final JsonParser p,
         final DeserializationContext ctx
-    ) throws IOException, JacksonException {
+    ) throws IOException {
         final ObjectNode integrationNode = p.getCodec().readTree(p);
 
         final String id = integrationNode.get("id").asText();
@@ -48,12 +46,13 @@ public class IntegrationDeserializer extends StdDeserializer<IntegrationOverview
 
             final List<IntegrationCodeSnippetDto> snippets = new ArrayList<>();
 
-            for (final JsonNode snippet : ObjectUtils.defaultIfNull(blockSnippets, Collections.<JsonNode>emptyList())) {
+            for (final JsonNode snippet : ObjectUtils.defaultIfNull(blockSnippets, List.<JsonNode>of())) {
                 final String snippetTemplate = snippet.get("template").asText();
 
                 final List<IntegrationCodeSnippetArgumentDto> arguments = new ArrayList<>();
-                for (final JsonNode argument : ObjectUtils.defaultIfNull(snippet.get("arguments"),
-                    Collections.<JsonNode>emptyList())) {
+                final Iterable<JsonNode> snippetArgs = ObjectUtils.defaultIfNull(snippet.get("arguments"), List.of());
+
+                for (final JsonNode argument : snippetArgs) {
                     final String argParameter = argument.get("parameter").asText();
                     final String argName = argument.get("name").asText();
                     final String type = argument.get("type").asText();
