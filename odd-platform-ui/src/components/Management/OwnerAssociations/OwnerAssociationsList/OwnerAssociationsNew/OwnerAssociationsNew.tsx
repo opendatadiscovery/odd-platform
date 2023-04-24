@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useAtom } from 'jotai';
-import { EmptyContentPlaceholder, AppErrorPage } from 'components/shared';
+import { EmptyContentPlaceholder, AppErrorPage } from 'components/shared/elements';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';

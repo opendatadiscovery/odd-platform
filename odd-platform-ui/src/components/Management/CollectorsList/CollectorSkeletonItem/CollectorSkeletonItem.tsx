@@ -2,7 +2,7 @@ import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
-import { SkeletonWrapper } from 'components/shared';
+import { SkeletonWrapper } from 'components/shared/elements';
 import * as S from '../CollectorItem/CollectorItemStyles';
 
 interface SkeletonProps {

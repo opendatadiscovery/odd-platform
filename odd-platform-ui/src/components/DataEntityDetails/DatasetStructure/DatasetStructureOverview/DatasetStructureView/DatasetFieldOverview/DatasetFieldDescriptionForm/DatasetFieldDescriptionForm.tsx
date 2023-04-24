@@ -7,8 +7,8 @@ import type {
   DataSetField,
   DatasetFieldDescriptionUpdateFormData,
 } from 'generated-sources';
-import { AppButton, AppInput, DialogWrapper } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppButton, AppInput, DialogWrapper } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { updateDataSetFieldDescription } from 'redux/thunks';
 
 interface DatasetFieldDescriptionFormProps {

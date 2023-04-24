@@ -2,8 +2,8 @@ import React, { forwardRef, memo, useCallback } from 'react';
 import { Typography } from '@mui/material';
 import { useAppPaths } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
-import { EntityClassItem, LabeledInfoItem } from 'components/shared';
-import { EmptyIcon } from 'components/shared/Icons';
+import { EntityClassItem, LabeledInfoItem } from 'components/shared/elements';
+import { EmptyIcon } from 'components/shared/icons';
 import * as S from './Node.styles';
 import type { Node as NodeType } from '../../lib/interfaces';
 

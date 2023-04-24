@@ -31,6 +31,7 @@ dependencies {
     implementation libs.jackson.datatype.jsr310
     implementation libs.jackson.databind.nullable
     implementation libs.jackson.annotations
+    implementation libs.jackson.yaml
     implementation libs.jetbrains.annotations
     implementation libs.mapstruct
     implementation libs.slack.api

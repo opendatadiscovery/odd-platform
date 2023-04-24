@@ -4,6 +4,7 @@ reactor-extra = '3.4.8'
 micrometer-registry-prometheus = '1.9.0'
 ingestion-contract-server = '0.1.22'
 oddrn-generator-java = '0.1.10'
+odd-integration-manifests = '0.0.2'
 apache-collections = '4.4'
 apache-lang = '3.12.0'
 r2dbc-spi = '1.0.0.RELEASE'
@@ -18,6 +19,7 @@ javax-annotation = '1.3.2'
 jackson-annotations = '2.13.2'
 jackson-datatype-jsr310 = '2.13.3'
 jackson-databind-nullable = '0.2.2'
+jackson-yaml = '2.13.0'
 jetbrains-annotations = '23.0.0'
 swagger-annotations = '1.5.23'
 springfox-core = '3.0.0'
@@ -57,6 +59,7 @@ reactor-extra = { module = 'io.projectreactor.addons:reactor-extra', version.ref
 micrometer-registry-prometheus = { module = 'io.micrometer:micrometer-registry-prometheus', version.ref = 'micrometer-registry-prometheus' }
 ingestion-contract-server = { module = 'org.opendatadiscovery:ingestion-contract-server', version.ref = 'ingestion-contract-server' }
 oddrn-generator-java = { module = 'org.opendatadiscovery:oddrn-generator-java', version.ref = 'oddrn-generator-java' }
+odd-integration-manifests = { module = 'org.opendatadiscovery:integration-manifests', version.ref = 'odd-integration-manifests' }
 apache-collections = { module = 'org.apache.commons:commons-collections4', version.ref = 'apache-collections' }
 apache-lang = { module = 'org.apache.commons:commons-lang3', version.ref = 'apache-lang' }
 r2dbc-spi = { module = 'io.r2dbc:r2dbc-spi', version.ref = 'r2dbc-spi' }
@@ -71,6 +74,7 @@ javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.r
 jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = 'jackson-datatype-jsr310' }
 jackson-databind-nullable = { module = 'org.openapitools:jackson-databind-nullable', version.ref = 'jackson-databind-nullable' }
 jackson-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations', version.ref = 'jackson-annotations' }
+jackson-yaml = { module = 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml', version.ref = 'jackson-yaml' }
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
 swagger-annotations = { module = 'io.swagger:swagger-annotations', version.ref = 'swagger-annotations' }
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
@@ -123,7 +127,8 @@ spring-redis-session = [
 ]
 internal = [
     'ingestion-contract-server',
-    'oddrn-generator-java'
+    'oddrn-generator-java',
+    'odd-integration-manifests'
 ]
 apache-commons = [
     'apache-collections',

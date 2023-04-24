@@ -1,11 +1,11 @@
 import React from 'react';
 import { FormControlLabel } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
+import AppInput from 'components/shared/elements/AppInput/AppInput';
 
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
+import ClearIcon from 'components/shared/icons/ClearIcon';
+import AppCheckbox from 'components/shared/elements/AppCheckbox/AppCheckbox';
 import { TagItemBtnsContainer } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { type Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import { AppIconButton, EmptyContentPlaceholder } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppIconButton, EmptyContentPlaceholder } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { useAppPaths } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';

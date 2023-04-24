@@ -6,8 +6,8 @@ import {
   OwnerAssociationRequestStatus,
   Permission,
 } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared';
-import { AcceptIcon, RejectIcon } from 'components/shared/Icons';
+import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { AcceptIcon, RejectIcon } from 'components/shared/icons';
 import { updateOwnerAssociationRequest } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { usePermissions } from 'lib/hooks';

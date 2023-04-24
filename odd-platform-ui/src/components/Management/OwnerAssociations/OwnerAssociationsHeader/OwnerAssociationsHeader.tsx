@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { useAtom } from 'jotai';
-import { AppInput, NumberFormatted } from 'components/shared';
-import { ClearIcon, SearchIcon } from 'components/shared/Icons';
+import { AppInput, NumberFormatted } from 'components/shared/elements';
+import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';

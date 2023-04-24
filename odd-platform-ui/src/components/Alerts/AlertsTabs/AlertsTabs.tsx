@@ -1,5 +1,5 @@
 import React from 'react';
-import { type AppTabItem, AppTabs } from 'components/shared';
+import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';

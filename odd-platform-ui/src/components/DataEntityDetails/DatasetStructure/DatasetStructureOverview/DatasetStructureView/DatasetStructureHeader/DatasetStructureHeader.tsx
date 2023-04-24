@@ -5,14 +5,14 @@ import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
 import type { SelectChangeEvent } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
 import { fetchDataSetStructure } from 'redux/thunks';
-import { ClearIcon, ColumnsIcon, SearchIcon } from 'components/shared/Icons';
+import { ClearIcon, ColumnsIcon, SearchIcon } from 'components/shared/icons';
 import {
   AppButton,
   AppInput,
   AppMenuItem,
   AppSelect,
   NumberFormatted,
-} from 'components/shared';
+} from 'components/shared/elements';
 import useStructure from '../../lib/useStructure';
 import DatasetStructureTypeCounts from './DatasetStructureTypeCounts/DatasetStructureTypeCounts';
 

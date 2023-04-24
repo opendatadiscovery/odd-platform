@@ -6,10 +6,10 @@ import {
   EntityTypeItem,
   LabelItem,
   WithFeature,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { type DataEntityDetails, Feature, Permission } from 'generated-sources';
-import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/Icons';
+import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';

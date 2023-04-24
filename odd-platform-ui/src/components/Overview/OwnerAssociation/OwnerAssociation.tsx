@@ -8,8 +8,8 @@ import {
 } from 'redux/selectors';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { WaitIcon } from 'components/shared/Icons';
-import { AppIconButton } from 'components/shared';
+import { WaitIcon } from 'components/shared/icons';
+import { AppIconButton } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import OwnerAssociationForm from './OwnerAssociationForm/OwnerAssociationForm';
 import OwnerEntitiesList from './OwnerEntitiesList/OwnerEntitiesList';

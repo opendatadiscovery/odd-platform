@@ -3,7 +3,7 @@ import {
   ActivityCreatedIcon,
   ActivityDeletedIcon,
   ActivityUpdatedIcon,
-} from 'components/shared/Icons';
+} from 'components/shared/icons';
 import { type EventType } from 'lib/interfaces';
 
 const useActivityHeaderIcon = (eventType: EventType): JSX.Element =>

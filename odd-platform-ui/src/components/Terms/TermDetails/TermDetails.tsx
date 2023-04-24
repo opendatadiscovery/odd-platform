@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppErrorPage, SkeletonWrapper } from 'components/shared';
+import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getResourcePermissions,

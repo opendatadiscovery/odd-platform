@@ -1,5 +1,5 @@
 import React from 'react';
-import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
+import * as S from 'components/shared/elements/StyledComponents/PageWithLeftSidebar';
 import ActivityResults from './ActivityResults/ActivityResults';
 import Filters from './Filters/Filters';
 

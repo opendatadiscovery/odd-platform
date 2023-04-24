@@ -3,7 +3,11 @@ import { useAppParams, useQueryParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetVersions } from 'redux/selectors';
 import { useDatasetStructureCompare } from 'lib/hooks/api';
-import { AppErrorPage, AppLoadingPage, EmptyContentPlaceholder } from 'components/shared';
+import {
+  AppErrorPage,
+  AppLoadingPage,
+  EmptyContentPlaceholder,
+} from 'components/shared/elements';
 import type { ErrorState } from 'redux/interfaces';
 import { useAtom } from 'jotai';
 import { showOnlyChangesAtom } from './lib/atoms';

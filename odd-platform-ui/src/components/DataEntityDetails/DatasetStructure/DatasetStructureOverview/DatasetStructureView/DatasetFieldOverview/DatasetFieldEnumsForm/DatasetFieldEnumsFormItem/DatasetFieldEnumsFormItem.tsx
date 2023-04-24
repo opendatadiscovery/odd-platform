@@ -1,8 +1,8 @@
 import type { HTMLInputTypeAttribute } from 'react';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { AppButton, AppInput } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppButton, AppInput } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import * as S from './DatasetFieldEnumsFormItem.styles';
 

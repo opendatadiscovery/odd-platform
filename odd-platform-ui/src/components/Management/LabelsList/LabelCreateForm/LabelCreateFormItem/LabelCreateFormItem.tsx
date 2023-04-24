@@ -1,9 +1,9 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
+import AppInput from 'components/shared/elements/AppInput/AppInput';
 
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import ClearIcon from 'components/shared/icons/ClearIcon';
 import * as S from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import type { SearchClass, SearchTotalsByName } from 'redux/interfaces';
-import { type AppTabItem, AppTabs } from 'components/shared';
+import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import SearchTabsSkeleton from './SearchTabsSkeleton/SearchTabsSkeleton';
 
 interface SearchResultsTabsProps {

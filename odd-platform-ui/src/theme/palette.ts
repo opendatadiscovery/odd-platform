@@ -67,6 +67,7 @@ export const palette = createPalette({
   border: {
     primary: colors.black10,
     secondary: colors.black20,
+    tertiary: colors.black30,
     element: colors.blue50,
   },
   common: { black: colors.black, white: colors.white },

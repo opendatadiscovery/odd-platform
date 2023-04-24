@@ -7,8 +7,8 @@ import {
   AppInput,
   AppMenuItem,
   AppErrorPage,
-} from 'components/shared';
-import { ClearIcon, SearchIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import { useDebouncedCallback } from 'use-debounce';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';

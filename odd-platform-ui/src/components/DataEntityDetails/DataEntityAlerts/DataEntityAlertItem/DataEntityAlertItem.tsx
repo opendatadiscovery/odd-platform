@@ -5,9 +5,9 @@ import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { AlertStatusItem, AppButton } from 'components/shared';
+import { AlertStatusItem, AppButton } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
-import { GearIcon, UserIcon } from 'components/shared/Icons';
+import { GearIcon, UserIcon } from 'components/shared/icons';
 import { alertTitlesMap } from 'lib/constants';
 import * as S from './DataEntityAlertItemStyles';
 

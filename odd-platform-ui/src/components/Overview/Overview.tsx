@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import React from 'react';
 import { getIdentityFetchingStatuses, getTagListFetchingStatuses } from 'redux/selectors';
-import { MainSearch, SkeletonWrapper } from 'components/shared';
+import { MainSearch, SkeletonWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';

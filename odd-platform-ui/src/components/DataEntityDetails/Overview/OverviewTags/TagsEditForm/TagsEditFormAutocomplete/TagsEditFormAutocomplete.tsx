@@ -8,8 +8,8 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import { AppInput, AutocompleteSuggestion } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { fetchTagsList as searchTags } from 'redux/thunks';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { OptionsContainer } from '../TagsEditFormStyles';

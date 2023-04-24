@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AppCircularProgress } from 'components/shared';
+import { AppCircularProgress } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './CurrentMessageStyles';
 

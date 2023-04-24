@@ -11,7 +11,7 @@ import {
   getDatasetStructureTypeStats,
   getDatasetVersions,
 } from 'redux/selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared';
+import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useNavigate } from 'react-router-dom';

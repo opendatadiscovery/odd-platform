@@ -1,8 +1,8 @@
 import React, { type FC, useMemo } from 'react';
 import { useQueryParams } from 'lib/hooks';
 import { Collapse, Typography } from '@mui/material';
-import { AppIconButton } from 'components/shared';
-import { ChevronIcon } from 'components/shared/Icons';
+import { AppIconButton } from 'components/shared/elements';
+import { ChevronIcon } from 'components/shared/icons';
 import type { DataSetVersionDiff } from 'lib/interfaces';
 import type { DataSetFieldDiffState } from 'generated-sources';
 import type { StructureCompareQueryParams } from '../../lib/interfaces';

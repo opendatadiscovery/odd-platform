@@ -3,7 +3,7 @@ import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import TruncateMarkup from 'react-truncate-markup';
-import { AppButton } from 'components/shared';
+import { AppButton } from 'components/shared/elements';
 import { Grid } from '@mui/material';
 import DatasetStructureTypeCountLabel from './DatasetStructureTypeCountLabel/DatasetStructureTypeCountLabel';
 

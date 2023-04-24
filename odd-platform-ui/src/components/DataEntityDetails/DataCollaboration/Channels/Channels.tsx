@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppParams } from 'lib/hooks';
-import { DataEntityChannelsAutocomplete } from 'components/shared';
+import { DataEntityChannelsAutocomplete } from 'components/shared/elements';
 import * as S from './ChannelsStyles';
 
 interface ChannelsProps {

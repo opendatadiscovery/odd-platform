@@ -1,5 +1,5 @@
 import React, { type FC } from 'react';
-import { AppSuspenseWrapper } from 'components/shared';
+import { AppSuspenseWrapper } from 'components/shared/elements';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';

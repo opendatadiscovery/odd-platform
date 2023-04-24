@@ -1,5 +1,5 @@
 import React from 'react';
-import { TagItem } from 'components/shared';
+import { TagItem } from 'components/shared/elements';
 import { useCreateSearch } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getTagListFetchingStatuses, getTagsList } from 'redux/selectors';

@@ -6,7 +6,7 @@ import {
   type AppTabItem,
   AppTabs,
   AppTooltip,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
@@ -14,7 +14,7 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 
-// lazy components
+// lazy elements
 const TestReportDetailsOverview = React.lazy(
   () => import('./TestReportDetailsOverview/TestReportDetailsOverview')
 );

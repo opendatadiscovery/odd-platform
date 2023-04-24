@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataEntityRunStatus } from 'generated-sources';
-import { TestRunStatusIcon } from 'components/shared';
+import { TestRunStatusIcon } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
 import { Container } from './TestitemStyles';
 

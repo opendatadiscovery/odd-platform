@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { AppSuspenseWrapper } from 'components/shared';
+import { AppSuspenseWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppParams, useAppPaths } from 'lib/hooks';

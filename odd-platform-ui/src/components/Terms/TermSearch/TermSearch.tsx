@@ -3,7 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { useNavigate } from 'react-router-dom';
-import { PageWithLeftSidebar } from 'components/shared';
+import { PageWithLeftSidebar } from 'components/shared/elements';
 import { useAppParams } from 'lib/hooks';
 import {
   getTermSearchCreateStatuses,

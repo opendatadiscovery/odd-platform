@@ -9,8 +9,8 @@ import {
   AppInput,
   DialogWrapper,
   SlackChannelsAutocomplete,
-} from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { type MessageRequest } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';

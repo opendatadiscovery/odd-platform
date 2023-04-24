@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import AppPaper from 'components/shared/AppPaper/AppPaper';
+import AppPaper from 'components/shared/elements/AppPaper/AppPaper';
 import styled from 'styled-components';
 
 export const ActionsContainer = styled(Grid)(() => ({

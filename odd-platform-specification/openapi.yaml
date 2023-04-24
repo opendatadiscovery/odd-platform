@@ -39,8 +39,43 @@ tags:
   - name: role
   - name: permission
   - name: links
+  - name: integration
 
 paths:
+  /api/integrations:
+    get:
+      summary: Get available integrations' list for an integration wizard
+      operationId: getIntegrationPreviews
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/IntegrationPreviewList'
+      tags:
+        - integration
+
+  /api/integrations/{integration_id}:
+    get:
+      summary: Get an overview of specific integration
+      operationId: getIntegration
+      parameters:
+        - name: integration_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Integration'
+      tags:
+        - integration
+
   /api/links:
     get:
       summary: Additional links

@@ -2,8 +2,12 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Collector, Permission } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
-import { AppButton, ConfirmationDialog, LabeledInfoItem } from 'components/shared';
-import { DeleteIcon, EditIcon } from 'components/shared/Icons';
+import {
+  AppButton,
+  ConfirmationDialog,
+  LabeledInfoItem,
+} from 'components/shared/elements';
+import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import CollectorFormDialog from '../CollectorForm/CollectorForm';

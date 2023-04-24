@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { CopyButton, LabeledInfoItem } from 'components/shared';
+import { CopyButton, LabeledInfoItem } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';

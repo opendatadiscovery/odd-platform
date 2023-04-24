@@ -54,6 +54,7 @@ interface TextType {
 interface Border {
   primary: string;
   secondary: string;
+  tertiary: string;
   element: string;
 }
 

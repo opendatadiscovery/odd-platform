@@ -5,8 +5,13 @@ import type { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTag } from 'redux/thunks';
 import { getTagCreatingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
-import { AppButton, AppCheckbox, AppInput, DialogWrapper } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import {
+  AppButton,
+  AppCheckbox,
+  AppInput,
+  DialogWrapper,
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 
 interface TagEditFormProps {
   editBtn: JSX.Element;

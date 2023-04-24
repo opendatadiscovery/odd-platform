@@ -1,16 +1,20 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton } from 'components/shared';
+import { AppButton } from 'components/shared/elements';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
 import { ActivityEventType } from 'generated-sources';
 import { useQueryParams } from 'lib/hooks';
-import { SingleFilter, MultipleFilter, CalendarFilter } from 'components/shared/Activity';
+import {
+  SingleFilter,
+  MultipleFilter,
+  CalendarFilter,
+} from 'components/shared/elements/Activity';
 import {
   type ActivityQuery,
   defaultActivityQuery,
-} from 'components/shared/Activity/common';
+} from 'components/shared/elements/Activity/common';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {

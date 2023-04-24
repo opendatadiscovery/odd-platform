@@ -2,12 +2,12 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import type { Owner, OwnerFormData } from 'generated-sources';
-import { AppButton, AppInput, DialogWrapper, TagItem } from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+import { AppButton, AppInput, DialogWrapper, TagItem } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 import { getOwnerCreatingStatuses, getOwnerUpdatingStatuses } from 'redux/selectors';
-import RoleAutocomplete from 'components/shared/Autocomplete/RoleAutocomplete/RoleAutocomplete';
+import RoleAutocomplete from 'components/shared/elements/Autocomplete/RoleAutocomplete/RoleAutocomplete';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;

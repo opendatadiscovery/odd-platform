@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useDataEntityMetrics } from 'lib/hooks/api';
 import { useAppParams } from 'lib/hooks';
-import { AppCircularProgress, MetricFamily } from 'components/shared';
+import { AppCircularProgress, MetricFamily } from 'components/shared/elements';
 import * as S from './OverviewMetricsStyles';
 
 interface OverviewMetricsProps {

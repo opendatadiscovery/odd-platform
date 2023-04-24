@@ -1,6 +1,6 @@
 import React from 'react';
 import toast, { type ToastType } from 'react-hot-toast';
-import AppToast from '../components/shared/AppToast/AppToast';
+import AppToast from '../components/shared/elements/AppToast/AppToast';
 
 export interface AppError {
   status: number;

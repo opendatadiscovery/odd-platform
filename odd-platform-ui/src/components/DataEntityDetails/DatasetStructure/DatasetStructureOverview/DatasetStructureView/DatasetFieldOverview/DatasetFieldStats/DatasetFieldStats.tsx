@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataSetFormattedStats, DataSetFormattedStatsKeys } from 'redux/interfaces';
 import { DatasetStatsLabelMap } from 'redux/interfaces';
-import { LabeledInfoItem, NumberFormatted } from 'components/shared';
+import { LabeledInfoItem, NumberFormatted } from 'components/shared/elements';
 import type { DataSetField, DataSetStats } from 'generated-sources';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import round from 'lodash/round';

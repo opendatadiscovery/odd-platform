@@ -1,4 +1,4 @@
-import AppPaper from 'components/shared/AppPaper/AppPaper';
+import AppPaper from 'components/shared/elements/AppPaper/AppPaper';
 import styled from 'styled-components';
 
 export const SectionContainer = styled(AppPaper)(({ theme }) => ({

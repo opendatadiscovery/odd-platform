@@ -7,11 +7,11 @@ import {
   AppPopover,
   ConfirmationDialog,
   EntityTypeItem,
-} from 'components/shared';
+} from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission, type TermDetails } from 'generated-sources';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
-import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/Icons';
+import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
 
 interface TermDetailsHeaderProps {

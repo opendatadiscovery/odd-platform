@@ -8,11 +8,11 @@ import {
   getLabelUpdatingStatuses,
 } from 'redux/selectors/labels.selectors';
 import { updateLabel } from 'redux/thunks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
+import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
+import AppInput from 'components/shared/elements/AppInput/AppInput';
 
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import ClearIcon from 'components/shared/icons/ClearIcon';
 
 interface LabelEditFormProps {
   editBtn: JSX.Element;

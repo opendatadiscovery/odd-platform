@@ -1,5 +1,94 @@
 components:
   schemas:
+    IntegrationCodeSnippetArgumentType:
+      type: string
+      enum:
+        - INTEGER
+        - STRING
+        - BOOLEAN
+        - FLOAT
+
+    IntegrationCodeSnippetArgument:
+      type: object
+      properties:
+        parameter:
+          type: string
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/IntegrationCodeSnippetArgumentType'
+      required:
+        - parameter
+        - name
+        - type
+
+    IntegrationCodeSnippet:
+      type: object
+      properties:
+        template:
+          type: string
+        arguments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationCodeSnippetArgument'
+      required:
+        - template
+
+    IntegrationContentBlock:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        code_snippets:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationCodeSnippet'
+      required:
+        - title
+        - content
+        - code_snippets
+
+    IntegrationPreview:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        installed:
+          type: boolean
+      required:
+        - id
+        - name
+        - description
+        - installed
+
+    IntegrationPreviewList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationPreview'
+      required:
+        - items
+
+    Integration:
+      allOf:
+        - $ref: '#/components/schemas/IntegrationPreview'
+        - type: object
+          properties:
+            content_blocks:
+              type: array
+              items:
+                $ref: '#/components/schemas/IntegrationContentBlock'
+          required:
+            - content_blocks
+
     Link:
       type: object
       properties:

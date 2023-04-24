@@ -11,8 +11,8 @@ import type {
   MultipleFacetType,
   SearchFilter,
 } from 'generated-sources';
-import { AppInput } from 'components/shared';
-import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
+import { AppInput } from 'components/shared/elements';
+import { ClearIcon, DropdownIcon } from 'components/shared/icons';
 import type { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getTermSearchFacetsByType, getTermSearchId } from 'redux/selectors';

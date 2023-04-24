@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { GearIcon, UserIcon } from 'components/shared/Icons';
+import { GearIcon, UserIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
-import { LabelItem, TagItem } from 'components/shared';
+import { LabelItem, TagItem } from 'components/shared/elements';
 import {
   ActivityFieldHeader,
   AlertActivityField,
@@ -12,9 +12,9 @@ import {
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
-} from 'components/shared/Activity';
+} from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
-import { type ActivityItemProps } from 'components/shared/Activity/common';
+import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
 import * as S from './ActivityItemStyles';
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {

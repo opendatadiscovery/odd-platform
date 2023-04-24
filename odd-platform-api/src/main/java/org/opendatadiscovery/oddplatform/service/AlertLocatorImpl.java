@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
@@ -51,7 +52,7 @@ public class AlertLocatorImpl implements AlertLocator {
             return Stream.empty();
         }
 
-        final Map<DatasetFieldKey, DatasetFieldPojo> latestVersionFields = delta.getLatest()
+        final Map<DatasetFieldKey, DatasetFieldPojo> latestVersionFields = ListUtils.emptyIfNull(delta.getLatest())
             .stream()
             .collect(Collectors.toMap(f -> new DatasetFieldKey(f.getOddrn(), f.getType().data()), identity()));
 

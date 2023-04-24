@@ -73,6 +73,13 @@ export enum ManagementRoutes {
   createPolicy = 'createPolicy',
   policyId = 'policyId',
   policyIdParam = ':policyId',
+  integrations = 'integrations',
+  integrationId = 'integrationId',
+  integrationIdParam = ':integrationId',
+  integrationViewType = 'integrationViewType',
+  integrationViewTypeParam = ':integrationViewType',
+  overview = 'overview',
+  configure = 'configure',
 }
 
 export enum TermsRoutes {

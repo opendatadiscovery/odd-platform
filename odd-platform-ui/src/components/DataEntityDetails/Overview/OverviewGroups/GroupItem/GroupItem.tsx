@@ -5,8 +5,8 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { AppIconButton } from 'components/shared';
-import { CloseIcon } from 'components/shared/Icons';
+import { AppIconButton } from 'components/shared/elements';
+import { CloseIcon } from 'components/shared/icons';
 import * as S from './GroupItemStyles';
 
 interface GroupItemProps {

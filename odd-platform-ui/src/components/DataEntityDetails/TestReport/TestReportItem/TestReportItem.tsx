@@ -1,8 +1,8 @@
 import React from 'react';
 import type { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { TestRunStatusItem, AppIconButton } from 'components/shared';
-import { MinusIcon, PlusIcon } from 'components/shared/Icons';
+import { TestRunStatusItem, AppIconButton } from 'components/shared/elements';
+import { MinusIcon, PlusIcon } from 'components/shared/icons';
 import { Link } from 'react-router-dom';
 import type { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import { useAppPaths } from 'lib/hooks';

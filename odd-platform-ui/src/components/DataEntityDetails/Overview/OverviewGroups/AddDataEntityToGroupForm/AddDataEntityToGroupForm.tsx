@@ -2,15 +2,15 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { type DataEntityRef } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
+import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
+import AppButton from 'components/shared/elements/AppButton/AppButton';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityAddToGroupStatuses,
   getDataEntityClassesList,
 } from 'redux/selectors';
 import { addDataEntityToGroup } from 'redux/thunks';
-import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+import SearchSuggestionsAutocomplete from 'components/shared/elements/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 
 interface AddDataEntityToGroupFormProps {
   btnCreateEl: JSX.Element;

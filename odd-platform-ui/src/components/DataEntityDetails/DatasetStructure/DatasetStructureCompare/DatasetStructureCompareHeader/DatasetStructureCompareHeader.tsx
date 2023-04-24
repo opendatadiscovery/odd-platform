@@ -1,7 +1,12 @@
 import React, { type FC, useCallback } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
-import { AppButton, AppCheckbox, AppMenuItem, AppSelect } from 'components/shared';
+import {
+  AppButton,
+  AppCheckbox,
+  AppMenuItem,
+  AppSelect,
+} from 'components/shared/elements';
 import { useAppDateTime, useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import type { DataSetVersion } from 'generated-sources';

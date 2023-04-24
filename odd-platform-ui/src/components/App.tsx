@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import { AppSuspenseWrapper, AppToolbar } from 'components/shared';
+import { AppSuspenseWrapper, AppToolbar } from 'components/shared/elements';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
   fetchActiveFeatures,
@@ -13,7 +13,7 @@ import { useAppPaths } from 'lib/hooks';
 import { Toaster } from 'react-hot-toast';
 import ManagementRoutes from './Management/ManagementRoutes/ManagementRoutes';
 
-// lazy components
+// lazy elements
 const Management = React.lazy(() => import('./Management/Management'));
 const DataEntityDetails = React.lazy(
   () => import('./DataEntityDetails/DataEntityDetails')

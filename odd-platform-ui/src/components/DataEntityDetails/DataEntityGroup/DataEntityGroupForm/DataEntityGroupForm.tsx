@@ -16,8 +16,8 @@ import {
   DialogWrapper,
   NamespaceAutocomplete,
   SearchSuggestionsAutocomplete,
-} from 'components/shared';
-import { ClearIcon } from 'components/shared/Icons';
+} from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
