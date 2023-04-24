@@ -89,7 +89,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
           form='parameters-form'
           color='primary'
           disabled={!formState.isValid}
-          sx={{ width: 'fit-content', mt: 1.5 }}
+          sx={{ width: 'fit-content', mb: 1.5 }}
         >
           Configure
         </AppButton>
