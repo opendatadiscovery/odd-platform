@@ -8,9 +8,7 @@ import {
   getLabelUpdatingStatuses,
 } from 'redux/selectors/labels.selectors';
 import { updateLabel } from 'redux/thunks';
-import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
+import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
 
 import ClearIcon from 'components/shared/icons/ClearIcon';
 
@@ -77,16 +75,15 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
+      size='lg'
       type='submit'
       form='label-edit-form'
-      color='primary'
+      color='main'
       fullWidth
       disabled={!formState.isValid}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

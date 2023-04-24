@@ -5,9 +5,8 @@ import type { TagFormData } from 'generated-sources';
 import { getTagCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTag } from 'redux/thunks/tags.thunks';
-import AddIcon from 'components/shared/icons/AddIcon';
-import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
+import { AddIcon } from 'components/shared/icons';
+import { DialogWrapper, Button } from 'components/shared/elements';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
 
 interface TagCreateFormProps {
@@ -72,30 +71,28 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
             fieldsLength={fields.length}
           />
         ))}
-        <AppButton
-          size='medium'
-          color='primaryLight'
+        <Button
+          text='Add'
+          size='m'
+          color='secondary'
           startIcon={<AddIcon />}
           onClick={handleAppend}
-        >
-          Create tag
-        </AppButton>
+        />
       </form>
     </FormProvider>
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Create'
+      size='lg'
       type='submit'
       form='tag-create-form'
-      color='primary'
+      color='main'
       fullWidth
       disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}
-    >
-      Create
-    </AppButton>
+    />
   );
 
   return (

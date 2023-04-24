@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { deletePolicy, deleteRole } from 'redux/thunks';
 import { Permission, type Policy } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -35,17 +35,18 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
       <Grid item container lg={6.73} flexWrap='nowrap' />
       <Grid item lg={1.74}>
         <S.ActionsContainer container item>
-          <AppButton
+          <Button
+            text={
+              isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE) ? 'View' : 'Edit'
+            }
             to={`${policyId}`}
-            size='medium'
-            color='primaryLight'
+            size='m'
+            color='secondary'
             startIcon={
               hasAccessTo(Permission.POLICY_UPDATE) && !isAdministrator && <EditIcon />
             }
             sx={{ mr: 1 }}
-          >
-            {isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE) ? 'View' : 'Edit'}
-          </AppButton>
+          />
           <WithPermissions
             permissionTo={Permission.POLICY_DELETE}
             extraCheck={!isAdministrator}
@@ -56,9 +57,12 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
               actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
+                <Button
+                  text='Delete'
+                  size='m'
+                  color='secondary'
+                  startIcon={<DeleteIcon />}
+                />
               }
             />
           </WithPermissions>

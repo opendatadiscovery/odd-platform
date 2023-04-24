@@ -1,7 +1,7 @@
 import React from 'react';
 import { type Collector, Permission } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
-import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared/elements';
+import { Button, ConfirmationDialog, CopyButton } from 'components/shared/elements';
 import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
@@ -39,11 +39,7 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
               </Typography>
             }
             onConfirm={onTokenRegenerate}
-            actionBtn={
-              <AppButton size='medium' color='primaryLight'>
-                Regenerate
-              </AppButton>
-            }
+            actionBtn={<Button text='Regenerate' size='m' color='secondary' />}
           />
         </WithPermissions>
       ) : (

@@ -12,7 +12,7 @@ import {
 import { fetchLabelsList } from 'redux/thunks';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -100,9 +100,12 @@ const LabelsListView: React.FC = () => {
         <WithPermissions permissionTo={Permission.LABEL_CREATE}>
           <LabelCreateForm
             btnCreateEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Create label
-              </AppButton>
+              <Button
+                text='Create label'
+                size='m'
+                color='secondary'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>

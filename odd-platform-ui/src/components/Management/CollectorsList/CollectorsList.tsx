@@ -12,7 +12,7 @@ import { fetchCollectorsList } from 'redux/thunks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -101,9 +101,12 @@ const CollectorsListView: React.FC = () => {
         <WithPermissions permissionTo={Permission.COLLECTOR_CREATE}>
           <CollectorForm
             btnCreateEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Add collector
-              </AppButton>
+              <Button
+                text='Add collector'
+                size='m'
+                color='secondary'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import type { Owner, OwnerFormData } from 'generated-sources';
-import { AppButton, AppInput, DialogWrapper, TagItem } from 'components/shared/elements';
+import { Button, AppInput, DialogWrapper, TagItem } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
@@ -110,16 +110,15 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text={ownerId ? 'Save' : 'Add new owner'}
+      size='lg'
       type='submit'
       form='owner-create-form'
-      color='primary'
+      color='main'
       fullWidth
       disabled={!formState.isValid}
-    >
-      {ownerId ? 'Save' : 'Add new owner'}
-    </AppButton>
+    />
   );
 
   const handleOnOpen = React.useCallback(

@@ -18,14 +18,14 @@ const colors = {
   black5: '#F4F5F7',
   black3: '#F7F7F7',
 
-  blue65: '#0059B2',
-  blue60: '#0066CC',
-  blue50: '#0080FF',
-  blue40: '#3399FF',
-  blue30: '#66B3FF',
-  blue20: '#99CCFF',
-  blue10: '#CCE6FF',
-  blue5: '#E5F2FF',
+  blue65: '#0035A8',
+  blue60: '#0044D6',
+  blue50: '#0A58FF',
+  blue40: '#3877FF',
+  blue30: '#528EFF',
+  blue20: '#80AEFF',
+  blue10: '#B3D1FF',
+  blue5: '#E5EEFF',
 
   orange50: '#FFAA00',
   orange40: '#FFBB33',
@@ -128,6 +128,49 @@ export const palette = createPalette({
     YELLOW: colors.orange50,
     GREEN: colors.green50,
     RED: colors.red50,
+  },
+  newButton: {
+    main: {
+      normal: { background: colors.blue50, color: colors.white },
+      hover: { background: colors.blue60, color: colors.white },
+      active: { background: colors.blue65, color: colors.white },
+      disabled: { background: colors.blue20, color: colors.white },
+      loaderBg: { start: colors.blue5, end: colors.blue30 },
+    },
+    secondary: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: { background: colors.blue10, color: colors.blue60 },
+      active: { background: colors.blue20, color: colors.blue60 },
+      disabled: { background: colors.blue5, color: colors.blue20 },
+      loaderBg: { start: colors.blue30, end: colors.blue50 },
+    },
+    secondarySuccess: {
+      normal: { background: colors.green5, color: colors.green60 },
+      hover: { background: colors.green10, color: colors.green60 },
+      active: { background: colors.green20, color: colors.green60 },
+      disabled: { background: colors.green5, color: colors.green20 },
+    },
+    secondaryWarning: {
+      normal: { background: colors.red5, color: colors.red60 },
+      hover: { background: colors.red10, color: colors.red60 },
+      active: { background: colors.red20, color: colors.red60 },
+      disabled: { background: colors.red5, color: colors.red20 },
+    },
+    tertiary: {
+      normal: { background: colors.transparent, color: colors.blue50 },
+      hover: { background: colors.blue5, color: colors.blue60 },
+      active: { background: colors.blue10, color: colors.blue65 },
+    },
+    expand: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: { background: colors.blue10, color: colors.blue60 },
+      active: { background: colors.blue50, color: colors.white },
+    },
+    link: {
+      normal: { background: colors.transparent, color: colors.blue50 },
+      hover: { background: colors.transparent, color: colors.blue60 },
+      active: { background: colors.transparent, color: colors.blue65 },
+    },
   },
   button: {
     primary: {

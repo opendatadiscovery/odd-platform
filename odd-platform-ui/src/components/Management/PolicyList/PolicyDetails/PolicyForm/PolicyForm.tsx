@@ -4,15 +4,10 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { createPolicy, updatePolicy } from 'redux/thunks';
-import {
-  AppButton,
-  AppIconButton,
-  AppInput,
-  AppJSONEditor,
-} from 'components/shared/elements';
+import { Button, AppInput, AppJSONEditor } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -73,14 +68,13 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
             ? `${isAdministrator || !canUpdatePolicy ? 'View' : 'Edit'} policy ${name}`
             : 'Create policy'}
         </Typography>
-        <Link to={toPolicies}>
-          <AppIconButton
-            sx={{ ml: 2 }}
-            size='medium'
-            color='primaryLight'
-            icon={<ClearIcon />}
-          />
-        </Link>
+        <Button
+          to={toPolicies}
+          sx={{ ml: 2 }}
+          size='m'
+          color='secondary'
+          icon={<ClearIcon />}
+        />
       </Grid>
       <form id='policy-form' onSubmit={handleSubmit(handleFormSubmit)}>
         <Controller
@@ -123,17 +117,16 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         />
       </form>
       {canUpdatePolicy && !isAdministrator && (
-        <AppButton
-          size='large'
+        <Button
+          text={policyId ? 'Save changes' : 'Create'}
+          size='lg'
           type='submit'
           form='policy-form'
-          color='primary'
+          color='main'
           fullWidth
           sx={{ mt: 3, width: 'fit-content' }}
           disabled={!(formState.isValid && isValid && !isAdministrator)}
-        >
-          {policyId ? 'Save changes' : 'Create'}
-        </AppButton>
+        />
       )}
     </Grid>
   );

@@ -12,8 +12,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
   AppInput,
+  Button,
   EmptyContentPlaceholder,
   NumberFormatted,
 } from 'components/shared/elements';
@@ -103,9 +103,12 @@ const DataSourcesListView: React.FC = () => {
         <WithPermissions permissionTo={Permission.DATA_SOURCE_CREATE}>
           <DataSourceForm
             btnCreateEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Add datasource
-              </AppButton>
+              <Button
+                size='m'
+                color='secondary'
+                startIcon={<AddIcon />}
+                text='Add datasource'
+              />
             }
           />
         </WithPermissions>

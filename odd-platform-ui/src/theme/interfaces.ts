@@ -12,6 +12,7 @@ import type { TypographyStyle } from '@mui/material';
 import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 import type { ToastType } from 'react-hot-toast';
 import type { DatasetFieldKey } from 'lib/interfaces';
+import type { ButtonColor } from 'components/shared/elements/Button/Button.styles';
 
 // helpers interfaces
 export type CSSObject = Partial<CSSStyleDeclaration>;
@@ -74,6 +75,10 @@ interface ButtonType {
   animationParas: { start: string; end: string };
 }
 
+type ButtonAnimationParams = { loaderBg?: { start: string; end: string } };
+
+type NewButtonType = Record<ButtonColor, ItemCondition & ButtonAnimationParams>;
+
 interface BackgroundType extends TypeBackground {
   primary: string;
   secondary: string;
@@ -111,6 +116,7 @@ declare module '@mui/material/styles' {
     runStatus: RunStatus;
     associationRequestStatus: AssociationRequestStatus;
     button: ButtonType;
+    newButton: NewButtonType;
     tag: TagType;
     structureLabel: StructureLabelType;
     alert: AlertType;
@@ -131,6 +137,7 @@ declare module '@mui/material/styles' {
     runStatus?: RunStatus;
     associationRequestStatus?: AssociationRequestStatus;
     button?: ButtonType;
+    newButton: NewButtonType;
     tag?: TagType;
     structureLabel?: StructureLabelType;
     alert?: AlertType;

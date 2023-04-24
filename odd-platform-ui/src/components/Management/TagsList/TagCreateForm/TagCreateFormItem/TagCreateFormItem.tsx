@@ -1,11 +1,8 @@
 import React from 'react';
 import { FormControlLabel } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/icons/ClearIcon';
-import AppCheckbox from 'components/shared/elements/AppCheckbox/AppCheckbox';
+import { Button, AppInput, AppCheckbox } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import { TagItemBtnsContainer } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps {
@@ -49,7 +46,6 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
           defaultValue={false}
           render={({ field }) => (
             <FormControlLabel
-              // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
               sx={{ ml: -0.25 }}
               checked={field.value}
@@ -59,9 +55,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
           )}
         />
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton size='small' color='dropdown' onClick={onItemRemove}>
-            Delete
-          </AppButton>
+          <Button text='Delete' size='lg' color='tertiary' onClick={onItemRemove} />
         )}
       </TagItemBtnsContainer>
     </>

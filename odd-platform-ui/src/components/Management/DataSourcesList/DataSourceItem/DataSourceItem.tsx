@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { type DataSource, Permission } from 'generated-sources';
 import { deleteDataSource } from 'redux/thunks';
 import {
-  AppButton,
+  Button,
   AppTooltip,
   ConfirmationDialog,
   LabeledInfoItem,
@@ -40,14 +40,13 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
             <DataSourceFormDialog
               dataSource={dataSource}
               btnCreateEl={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
+                <Button
+                  text='Edit'
+                  size='m'
+                  color='secondary'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
-                >
-                  Edit
-                </AppButton>
+                />
               }
             />
           </WithPermissions>
@@ -62,9 +61,12 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
               }
               onConfirm={onDelete}
               actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
+                <Button
+                  text='Delete'
+                  size='m'
+                  color='secondary'
+                  startIcon={<DeleteIcon />}
+                />
               }
             />
           </WithPermissions>

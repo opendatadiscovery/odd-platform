@@ -2,6 +2,7 @@ import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
 export const ActionsContainer = styled(Grid)(() => ({
+  display: 'flex',
   opacity: 0,
 }));
 

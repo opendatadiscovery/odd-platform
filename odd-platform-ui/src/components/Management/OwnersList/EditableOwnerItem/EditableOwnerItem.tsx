@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Owner, Permission } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { deleteOwner } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -53,14 +53,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             name={name}
             roles={roles}
             btnCreateEl={
-              <AppButton
-                color='primaryLight'
-                size='medium'
-                startIcon={<EditIcon />}
-                sx={{ mr: 0.5 }}
-              >
-                Edit
-              </AppButton>
+              <Button text='Edit' color='secondary' size='m' startIcon={<EditIcon />} />
             }
           />
         </WithPermissions>
@@ -71,14 +64,13 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
             onConfirm={handleDelete}
             actionBtn={
-              <AppButton
-                size='medium'
-                color='primaryLight'
+              <Button
+                text='Delete'
+                size='m'
+                color='secondary'
                 startIcon={<DeleteIcon />}
                 sx={{ ml: 1 }}
-              >
-                Delete
-              </AppButton>
+              />
             }
           />
         </WithPermissions>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { deleteTag } from 'redux/thunks';
 import { Permission, type Tag } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
@@ -37,14 +37,13 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
             <TagEditForm
               tag={tag}
               editBtn={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
+                <Button
+                  text='Edit'
+                  size='m'
+                  color='secondary'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
-                >
-                  Edit
-                </AppButton>
+                />
               }
             />
           </WithPermissions>
@@ -55,9 +54,12 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
               actionText={<>&quot;{tag.name}&quot; will be deleted permanently.</>}
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
+                <Button
+                  text='Delete'
+                  size='m'
+                  color='secondary'
+                  startIcon={<DeleteIcon />}
+                />
               }
             />
           </WithPermissions>
