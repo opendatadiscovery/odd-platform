@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 public interface OwnershipService {
     Mono<Ownership> create(final long dataEntityId, final OwnershipFormData formData);
 
-    Mono<Void> delete(final long ownershipId);
+    Mono<Void> delete(final long ownershipId, final Boolean propagate);
 
     Mono<Ownership> update(final long ownershipId, final OwnershipUpdateFormData formData);
 }

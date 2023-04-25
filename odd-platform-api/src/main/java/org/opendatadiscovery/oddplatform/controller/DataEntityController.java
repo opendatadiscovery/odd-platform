@@ -164,8 +164,9 @@ public class DataEntityController implements DataEntityApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteOwnership(final Long dataEntityId,
                                                       final Long ownershipId,
+                                                      final Boolean propagate,
                                                       final ServerWebExchange exchange) {
-        return ownershipService.delete(ownershipId)
+        return ownershipService.delete(ownershipId, propagate)
             .map(m -> ResponseEntity.noContent().build());
     }
 
