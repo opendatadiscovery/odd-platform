@@ -103,8 +103,7 @@ const CollectorsListView: React.FC = () => {
             btnCreateEl={
               <Button
                 text='Add collector'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
             }

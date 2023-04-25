@@ -121,10 +121,9 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
   const formActionButtons = () => (
     <Button
       text={roleId ? 'Save' : 'Create role'}
-      size='lg'
       type='submit'
       form='role-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
       isLoading={roleId ? isRoleUpdating : isRoleCreating}

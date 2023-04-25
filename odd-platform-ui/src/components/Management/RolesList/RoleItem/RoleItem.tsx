@@ -60,8 +60,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
               openBtn={
                 <Button
                   text='Edit'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
                 />
@@ -80,8 +79,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
               actionBtn={
                 <Button
                   text='Delete'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />
               }

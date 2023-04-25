@@ -53,7 +53,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             name={name}
             roles={roles}
             btnCreateEl={
-              <Button text='Edit' color='secondary' size='m' startIcon={<EditIcon />} />
+              <Button text='Edit' buttonType='secondary-m' startIcon={<EditIcon />} />
             }
           />
         </WithPermissions>
@@ -66,8 +66,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             actionBtn={
               <Button
                 text='Delete'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<DeleteIcon />}
                 sx={{ ml: 1 }}
               />

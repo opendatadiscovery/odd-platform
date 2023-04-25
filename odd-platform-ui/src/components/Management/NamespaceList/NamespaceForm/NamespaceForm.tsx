@@ -81,10 +81,9 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
   const formActionButtons = () => (
     <Button
       text='Save'
-      size='lg'
       type='submit'
       form='namespace-edit-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
     />

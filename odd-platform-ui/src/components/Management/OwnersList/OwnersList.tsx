@@ -103,8 +103,7 @@ const OwnersList: React.FC = () => {
             btnCreateEl={
               <Button
                 text='Create Owner'
-                color='secondary'
-                size='m'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
             }

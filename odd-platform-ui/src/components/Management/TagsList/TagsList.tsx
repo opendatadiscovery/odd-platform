@@ -103,8 +103,7 @@ const TagsListView: React.FC = () => {
             btnCreateEl={
               <Button
                 text='Create tag'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
             }

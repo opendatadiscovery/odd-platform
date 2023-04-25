@@ -39,7 +39,7 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
               </Typography>
             }
             onConfirm={onTokenRegenerate}
-            actionBtn={<Button text='Regenerate' size='m' color='secondary' />}
+            actionBtn={<Button text='Regenerate' buttonType='secondary-m' />}
           />
         </WithPermissions>
       ) : (

@@ -62,15 +62,15 @@ const ActiveAssociationRequest: React.FC<Props> = ({
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={3}>
+      <Grid item lg={2.5}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <Grid item lg={3}>
+      <Grid item lg={2.5}>
         {provider}
       </Grid>
-      <S.AssociationsItemActionsContainer container item lg={2}>
+      <S.AssociationsItemActionsContainer container item lg={3}>
         <ConfirmationDialog
           actionTitle='Are you sure you want to accept association request?'
           actionName='Accept'
@@ -79,8 +79,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
           actionBtn={
             <Button
               text='Accept'
-              size='m'
-              color='secondarySuccess'
+              buttonType='secondarySuccess-m'
               startIcon={<AcceptIcon />}
               disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
             />
@@ -95,8 +94,7 @@ const ActiveAssociationRequest: React.FC<Props> = ({
             <Button
               sx={{ ml: 1 }}
               text='Reject'
-              size='m'
-              color='secondaryWarning'
+              buttonType='secondaryWarning-m'
               startIcon={<RejectIcon />}
               disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
             />

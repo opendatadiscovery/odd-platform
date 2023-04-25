@@ -12,7 +12,10 @@ import type { TypographyStyle } from '@mui/material';
 import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 import type { ToastType } from 'react-hot-toast';
 import type { DatasetFieldKey } from 'lib/interfaces';
-import type { ButtonColor } from 'components/shared/elements/Button/Button.styles';
+import type {
+  ButtonColor,
+  ButtonFont,
+} from 'components/shared/elements/Button/interfaces';
 
 // helpers interfaces
 export type CSSObject = Partial<CSSStyleDeclaration>;
@@ -77,7 +80,7 @@ interface ButtonType {
 
 type ButtonAnimationParams = { loaderBg?: { start: string; end: string } };
 
-type NewButtonType = Record<ButtonColor, ItemCondition & ButtonAnimationParams>;
+type ButtonColorType = Record<ButtonColor, ItemCondition & ButtonAnimationParams>;
 
 interface BackgroundType extends TypeBackground {
   primary: string;
@@ -116,7 +119,7 @@ declare module '@mui/material/styles' {
     runStatus: RunStatus;
     associationRequestStatus: AssociationRequestStatus;
     button: ButtonType;
-    newButton: NewButtonType;
+    newButton: ButtonColorType;
     tag: TagType;
     structureLabel: StructureLabelType;
     alert: AlertType;
@@ -137,7 +140,7 @@ declare module '@mui/material/styles' {
     runStatus?: RunStatus;
     associationRequestStatus?: AssociationRequestStatus;
     button?: ButtonType;
-    newButton: NewButtonType;
+    newButton: ButtonColorType;
     tag?: TagType;
     structureLabel?: StructureLabelType;
     alert?: AlertType;
@@ -155,18 +158,18 @@ declare module '@mui/material/styles' {
 
 // typography interfaces
 declare module '@mui/material/styles/createTypography' {
-  interface Typography {
+  interface Typography extends Record<ButtonFont, TypographyStyle> {
     errorCode: TypographyStyle;
     totalCountTitle: TypographyStyle;
   }
 
-  interface TypographyOptions {
+  interface TypographyOptions extends Record<ButtonFont, TypographyStyle> {
     errorCode?: TypographyStyleOptions;
     totalCountTitle?: TypographyStyleOptions;
   }
 }
 declare module '@mui/material/Typography/Typography' {
-  interface TypographyPropsVariantOverrides {
+  interface TypographyPropsVariantOverrides extends Record<ButtonFont, true> {
     errorCode: true;
     totalCountTitle: true;
   }

@@ -77,8 +77,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
         ))}
         <Button
           text='Add'
-          size='m'
-          color='secondary'
+          buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
         />
@@ -89,10 +88,9 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
   const formActionButtons = () => (
     <Button
       text='Create'
-      size='lg'
       type='submit'
       form='label-create-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}

@@ -118,8 +118,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
             <Button
               text={dataEntity.externalName || dataEntity.internalName}
               to={dataEntityOverviewPath(dataEntity.id)}
-              size='sm'
-              color='link'
+              buttonType='link-m'
             />
             {dataEntity?.entityClasses?.map(entityClass => (
               <EntityClassItem
@@ -145,8 +144,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
                 <Button
                   text={`${showHistory ? 'Hide' : 'Show'} history`}
                   sx={{ ml: 1 }}
-                  size='sm'
-                  color='link'
+                  buttonType='link-m'
                   onClick={() => setShowHistory(prev => !prev)}
                 />
               )}
@@ -160,8 +158,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
             <Button
               text={alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
               sx={{ minWidth: '72px !important', minHeight: '24px' }}
-              size='m'
-              color='secondary'
+              buttonType='secondary-m'
               onClick={handleResolve}
               disabled={disableResolve}
               isLoading={isUpdating}

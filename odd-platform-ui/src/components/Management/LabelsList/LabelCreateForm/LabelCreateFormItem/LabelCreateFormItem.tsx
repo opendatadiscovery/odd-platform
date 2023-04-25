@@ -40,7 +40,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       />
       <S.LabelItemButtons sx={{ mt: 1, mb: 1.5 }}>
         {fieldsLength && fieldsLength > 1 && (
-          <Button text='Delete' size='lg' color='tertiary' onClick={onItemRemove} />
+          <Button text='Delete' buttonType='secondary-sm' onClick={onItemRemove} />
         )}
       </S.LabelItemButtons>
     </>

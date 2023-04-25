@@ -172,10 +172,9 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   const formActionButtons = () => (
     <Button
       text='Save'
-      size='lg'
       type='submit'
       form='datasource-create-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!isValid}
     />

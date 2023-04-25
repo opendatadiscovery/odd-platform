@@ -123,8 +123,7 @@ const NamespaceList: React.FC = () => {
             btnEl={
               <Button
                 text='Create namespace'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
             }

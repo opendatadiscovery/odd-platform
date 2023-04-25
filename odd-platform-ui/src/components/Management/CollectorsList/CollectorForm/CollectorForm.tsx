@@ -144,10 +144,9 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   const collectorFormActionButtons = () => (
     <Button
       text='Save'
-      size='lg'
       type='submit'
       form='collector-create-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!isValid}
     />

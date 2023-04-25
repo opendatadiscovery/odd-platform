@@ -71,8 +71,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
         <Button
           to={toPolicies}
           sx={{ ml: 2 }}
-          size='m'
-          color='secondary'
+          buttonType='secondary-m-icon'
           icon={<ClearIcon />}
         />
       </Grid>
@@ -119,10 +118,9 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
       {canUpdatePolicy && !isAdministrator && (
         <Button
           text={policyId ? 'Save changes' : 'Create'}
-          size='lg'
           type='submit'
           form='policy-form'
-          color='main'
+          buttonType='main-lg'
           fullWidth
           sx={{ mt: 3, width: 'fit-content' }}
           disabled={!(formState.isValid && isValid && !isAdministrator)}

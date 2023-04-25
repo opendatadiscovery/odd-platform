@@ -28,8 +28,7 @@ const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }
         sx={{ flexShrink: 0 }}
         text='Back to integrations'
         to={`../../${ManagementRoutes.integrations}`}
-        size='m'
-        color='secondary'
+        buttonType='secondary-m'
       />
     </Grid>
   );

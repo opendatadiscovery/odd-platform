@@ -55,7 +55,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
           )}
         />
         {fieldsLength && fieldsLength > 1 && (
-          <Button text='Delete' size='lg' color='tertiary' onClick={onItemRemove} />
+          <Button text='Delete' buttonType='secondary-sm' onClick={onItemRemove} />
         )}
       </TagItemBtnsContainer>
     </>

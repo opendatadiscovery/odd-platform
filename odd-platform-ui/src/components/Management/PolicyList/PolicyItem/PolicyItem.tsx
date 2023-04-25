@@ -40,8 +40,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
               isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE) ? 'View' : 'Edit'
             }
             to={`${policyId}`}
-            size='m'
-            color='secondary'
+            buttonType='secondary-m'
             startIcon={
               hasAccessTo(Permission.POLICY_UPDATE) && !isAdministrator && <EditIcon />
             }
@@ -59,8 +58,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
               actionBtn={
                 <Button
                   text='Delete'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />
               }

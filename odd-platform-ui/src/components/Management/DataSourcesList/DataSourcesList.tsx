@@ -104,8 +104,7 @@ const DataSourcesListView: React.FC = () => {
           <DataSourceForm
             btnCreateEl={
               <Button
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
                 text='Add datasource'
               />

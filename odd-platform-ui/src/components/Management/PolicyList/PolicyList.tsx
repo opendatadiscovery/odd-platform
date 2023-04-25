@@ -104,8 +104,7 @@ const PolicyList: React.FC = () => {
           <Button
             text='Create policy'
             to={ManagementRoutes.createPolicy}
-            size='m'
-            color='secondary'
+            buttonType='secondary-m'
             startIcon={<AddIcon />}
           />
         </WithPermissions>

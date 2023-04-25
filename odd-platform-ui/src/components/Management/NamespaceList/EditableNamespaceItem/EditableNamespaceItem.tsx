@@ -35,8 +35,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
             btnEl={
               <Button
                 text='Edit'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<EditIcon />}
                 sx={{ mr: 0.5 }}
               />
@@ -50,12 +49,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
             actionText={<>&quot;{namespace.name}&quot; will be deleted permanently.</>}
             onConfirm={handleDelete}
             actionBtn={
-              <Button
-                text='Delete'
-                size='m'
-                color='secondary'
-                startIcon={<DeleteIcon />}
-              />
+              <Button text='Delete' buttonType='secondary-m' startIcon={<DeleteIcon />} />
             }
           />
         </WithPermissions>

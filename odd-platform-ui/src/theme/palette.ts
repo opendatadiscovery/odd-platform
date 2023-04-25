@@ -160,6 +160,7 @@ export const palette = createPalette({
       normal: { background: colors.transparent, color: colors.blue50 },
       hover: { background: colors.blue5, color: colors.blue60 },
       active: { background: colors.blue10, color: colors.blue65 },
+      disabled: { background: colors.transparent, color: colors.blue10 },
     },
     expand: {
       normal: { background: colors.blue5, color: colors.blue60 },
@@ -170,6 +171,7 @@ export const palette = createPalette({
       normal: { background: colors.transparent, color: colors.blue50 },
       hover: { background: colors.transparent, color: colors.blue60 },
       active: { background: colors.transparent, color: colors.blue65 },
+      disabled: { background: colors.transparent, color: colors.blue10 },
     },
   },
   button: {

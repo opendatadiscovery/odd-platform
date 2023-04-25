@@ -37,8 +37,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
               btnCreateEl={
                 <Button
                   text='Edit'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
                 />
@@ -58,8 +57,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
               actionBtn={
                 <Button
                   text='Delete'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />
               }

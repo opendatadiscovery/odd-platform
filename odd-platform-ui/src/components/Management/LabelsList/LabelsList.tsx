@@ -102,8 +102,7 @@ const LabelsListView: React.FC = () => {
             btnCreateEl={
               <Button
                 text='Create label'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
             }

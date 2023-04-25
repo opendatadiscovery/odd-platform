@@ -84,10 +84,9 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
   const formActionButtons = () => (
     <Button
       text='Save'
-      size='lg'
       type='submit'
       form='tag-edit-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
     />

@@ -104,8 +104,7 @@ const RolesList: React.FC = () => {
             openBtn={
               <Button
                 text='Create role'
-                size='m'
-                color='secondary'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
             }

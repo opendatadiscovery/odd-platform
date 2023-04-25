@@ -1,19 +1,11 @@
 import React, { useMemo } from 'react';
 import type { SxProps, Theme } from '@mui/system';
-import {
-  type ButtonColor,
-  type ButtonSize,
-  StyledButton,
-  Loader,
-  Icon,
-  StyledLink,
-  Text,
-} from './Button.styles';
+import { StyledButton, Loader, Icon, StyledLink, Text } from './Button.styles';
+import type { ButtonColor, ButtonSize, Button as ButtonType } from './interfaces';
 
 export interface Props
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
-  color: ButtonColor;
-  size: ButtonSize;
+  buttonType: ButtonType;
   to?: string | object;
   sx?: SxProps<Theme>;
   isLoading?: boolean;
@@ -29,8 +21,7 @@ export const Button: React.FC<Props> = ({
   type = 'button',
   text,
   sx,
-  size,
-  color,
+  buttonType,
   isLoading,
   startIcon,
   icon,
@@ -38,6 +29,8 @@ export const Button: React.FC<Props> = ({
   fullWidth,
   ...props
 }) => {
+  const [color, size] = buttonType.split('-') as [ButtonColor, ButtonSize];
+
   const content = useMemo(() => {
     if (isLoading) return <Loader $color={color} />;
     if (icon) return <Icon $size={size}>{icon}</Icon>;

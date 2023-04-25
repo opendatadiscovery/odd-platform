@@ -77,10 +77,9 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
   const formActionButtons = () => (
     <Button
       text='Save'
-      size='lg'
       type='submit'
       form='label-edit-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
     />

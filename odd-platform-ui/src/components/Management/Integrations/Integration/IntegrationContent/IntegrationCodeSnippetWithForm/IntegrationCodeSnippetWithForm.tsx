@@ -91,10 +91,9 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
         </form>
         <Button
           text='Configure'
-          size='lg'
           type='submit'
           form='parameters-form'
-          color='main'
+          buttonType='main-lg'
           disabled={!formState.isValid}
           sx={{ width: 'fit-content', mb: 1.5 }}
         />
@@ -104,8 +103,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
     <Grid container mb={1} justifyContent='flex-end'>
       <Button
         text='Reconfigure'
-        size='lg'
-        color='main'
+        buttonType='main-lg'
         onClick={() => setShowForm(true)}
         sx={{ mb: 1, justifySelf: 'flex-end' }}
       />

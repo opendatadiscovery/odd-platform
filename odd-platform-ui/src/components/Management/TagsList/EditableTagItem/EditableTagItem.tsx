@@ -39,8 +39,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
               editBtn={
                 <Button
                   text='Edit'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
                 />
@@ -56,8 +55,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
               actionBtn={
                 <Button
                   text='Delete'
-                  size='m'
-                  color='secondary'
+                  buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />
               }

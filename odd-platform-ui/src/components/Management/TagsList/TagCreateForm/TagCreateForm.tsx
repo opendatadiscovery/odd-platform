@@ -73,8 +73,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
         ))}
         <Button
           text='Add'
-          size='m'
-          color='secondary'
+          buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
         />
@@ -85,10 +84,9 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
   const formActionButtons = () => (
     <Button
       text='Create'
-      size='lg'
+      buttonType='main-lg'
       type='submit'
       form='tag-create-form'
-      color='main'
       fullWidth
       disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}

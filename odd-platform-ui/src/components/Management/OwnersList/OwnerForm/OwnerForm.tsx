@@ -112,10 +112,9 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
   const formActionButtons = () => (
     <Button
       text={ownerId ? 'Save' : 'Add new owner'}
-      size='lg'
       type='submit'
       form='owner-create-form'
-      color='main'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
     />

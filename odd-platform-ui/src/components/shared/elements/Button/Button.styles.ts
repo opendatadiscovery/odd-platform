@@ -1,17 +1,15 @@
-import { styled, type CSSObject } from '@mui/material';
-import { breakpointDownLgBody2 } from 'theme/typography';
+import { styled } from '@mui/material';
 import { Link } from 'react-router-dom';
-
-export type ButtonSize = 'sm' | 'm' | 'lg';
-
-export type ButtonColor =
-  | 'main'
-  | 'secondary'
-  | 'secondarySuccess'
-  | 'secondaryWarning'
-  | 'tertiary'
-  | 'link'
-  | 'expand';
+import type { CSSProperties } from 'react';
+import { mapKeysToValue } from 'lib/helpers';
+import {
+  type ButtonColor,
+  type ButtonSize,
+  type Button,
+  ButtonSizeEnum,
+  ButtonColorEnum,
+} from './interfaces';
+import { getButtonFontType, getButtonType } from './helpers';
 
 interface ButtonProps {
   $color: ButtonColor;
@@ -21,8 +19,9 @@ interface ButtonProps {
 }
 
 export const StyledButton = styled('button')<ButtonProps>(
-  ({ theme, $color, $fullWidth, $size, $iconButton }) => {
-    const isColor = (color: ButtonColor) => $color === color;
+  ({ theme, $color, $size, $iconButton, $fullWidth }) => {
+    const btnType = getButtonType($color, $size, $iconButton);
+    const btnFontType = getButtonFontType($color, $size);
 
     const common = {
       width: $fullWidth ? '100%' : 'auto',
@@ -33,10 +32,12 @@ export const StyledButton = styled('button')<ButtonProps>(
       border: 'none',
       minWidth: 0,
 
-      ...breakpointDownLgBody2,
-
       color: theme.palette.newButton[$color].normal.color,
       backgroundColor: theme.palette.newButton[$color].normal.background,
+
+      fontWeight: theme.typography[btnFontType].fontWeight,
+      fontSize: theme.typography[btnFontType].fontSize,
+      lineHeight: theme.typography[btnFontType].lineHeight,
 
       '&:hover': {
         cursor: 'pointer',
@@ -54,102 +55,65 @@ export const StyledButton = styled('button')<ButtonProps>(
       },
     };
 
-    const mainLg = {
-      height: '32px',
-      fontWeight: theme.typography.h4.fontWeight,
-      fontSize: theme.typography.h4.fontSize,
-      lineHeight: theme.typography.h4.lineHeight,
-      borderRadius: '4px',
-      padding: theme.spacing(0.75, 1),
+    const stylesByButtonType: Record<Button, CSSProperties> = {
+      ...mapKeysToValue(
+        [
+          getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.m),
+          getButtonType(ButtonColorEnum.secondarySuccess, ButtonSizeEnum.m),
+          getButtonType(ButtonColorEnum.secondaryWarning, ButtonSizeEnum.m),
+        ],
+        {
+          height: '24px',
+          borderRadius: '16px',
+          padding: theme.spacing(0.25, 1.5),
+        }
+      ),
+      [getButtonType(ButtonColorEnum.main, ButtonSizeEnum.lg)]: {
+        height: '32px',
+        borderRadius: '4px',
+        padding: theme.spacing(0.75, 1),
+      },
+      [getButtonType(ButtonColorEnum.main, ButtonSizeEnum.m)]: {
+        height: '24px',
+        borderRadius: '4px',
+        padding: theme.spacing(0.5, 1),
+      },
+      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.lg)]: {
+        height: '32px',
+        borderRadius: '16px',
+        padding: theme.spacing(0.75, 1.5),
+      },
+      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.sm)]: {
+        height: '16px',
+        borderRadius: '2px',
+        padding: theme.spacing(0, 0.25),
+      },
+      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.m, true)]: {
+        height: '24px',
+        borderRadius: '16px',
+        padding: theme.spacing(0.5),
+      },
+      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.sm, true)]: {
+        height: '16px',
+        borderRadius: '8px',
+      },
+      [getButtonType(ButtonColorEnum.tertiary, ButtonSizeEnum.m)]: {
+        height: '20px',
+        borderRadius: '4px',
+        padding: theme.spacing(0, 0.5),
+      },
+      [getButtonType(ButtonColorEnum.tertiary, ButtonSizeEnum.m, true)]: {
+        height: '20px',
+        borderRadius: '4px',
+        padding: theme.spacing(0.25),
+      },
+      [getButtonType(ButtonColorEnum.link, ButtonSizeEnum.m)]: {
+        height: '20px',
+        padding: theme.spacing(0),
+      },
     };
 
-    const mainM = {
-      height: '24px',
-      fontWeight: theme.typography.h5.fontWeight,
-      fontSize: theme.typography.h5.fontSize,
-      lineHeight: theme.typography.h5.lineHeight,
-      borderRadius: '4px',
-      padding: theme.spacing(0.5, 1),
-    };
-
-    const secondaryLg = {
-      height: '32px',
-      fontWeight: theme.typography.h4.fontWeight,
-      fontSize: theme.typography.h4.fontSize,
-      lineHeight: theme.typography.h4.lineHeight,
-      borderRadius: '16px',
-      padding: theme.spacing(0.75, 1.5),
-    };
-
-    const secondaryM = {
-      height: '24px',
-      fontWeight: theme.typography.body1.fontWeight,
-      fontSize: theme.typography.body1.fontSize,
-      lineHeight: theme.typography.body1.lineHeight,
-      borderRadius: '16px',
-      padding: theme.spacing(0.25, 1.5),
-    };
-
-    const secondaryIconM = {
-      height: '24px',
-      borderRadius: '16px',
-      padding: theme.spacing(0.5),
-    };
-
-    const tertiaryLg = {
-      height: '20px',
-      fontWeight: theme.typography.body1.fontWeight,
-      fontSize: theme.typography.body1.fontSize,
-      lineHeight: theme.typography.body1.lineHeight,
-      borderRadius: '4px',
-      padding: theme.spacing(0, 0.5),
-    };
-
-    const linkSm = {
-      height: '20px',
-      fontWeight: theme.typography.body1.fontWeight,
-      fontSize: theme.typography.body1.fontSize,
-      lineHeight: theme.typography.body1.lineHeight,
-      padding: theme.spacing(0),
-    };
-
-    const getStyles = () => {
-      if (isColor('main') && $size === 'lg') return mainLg;
-      if (isColor('main') && $size === 'm') return mainM;
-
-      if (
-        $size === 'lg' &&
-        (isColor('secondary') ||
-          isColor('secondaryWarning') ||
-          isColor('secondarySuccess'))
-      ) {
-        return secondaryLg;
-      }
-
-      if (
-        $iconButton &&
-        $size === 'm' &&
-        (isColor('secondary') ||
-          isColor('secondaryWarning') ||
-          isColor('secondarySuccess'))
-      ) {
-        return secondaryIconM;
-      }
-
-      if (
-        $size === 'm' &&
-        (isColor('secondary') ||
-          isColor('secondaryWarning') ||
-          isColor('secondarySuccess'))
-      ) {
-        return secondaryM;
-      }
-
-      if (isColor('tertiary') && $size === 'lg') return tertiaryLg;
-      if (isColor('link') && $size === 'sm') return linkSm;
-    };
-
-    return { ...getStyles(), ...common } as CSSObject;
+    return { ...common, ...stylesByButtonType[btnType] };
   }
 );
 

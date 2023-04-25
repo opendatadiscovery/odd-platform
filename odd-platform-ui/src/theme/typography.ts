@@ -1,11 +1,19 @@
 import { palette } from 'theme/palette';
 import { breakpoints } from 'theme/breakpoints';
-import createTypography from '@mui/material/styles/createTypography';
+import createTypography, {
+  type TypographyOptions,
+} from '@mui/material/styles/createTypography';
 import type { Palette } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import type { CSSObject } from 'styled-components';
+import { mapKeysToValue } from 'lib/helpers';
+import { getButtonFontType } from 'components/shared/elements/Button/helpers';
+import {
+  ButtonColorEnum,
+  ButtonSizeEnum,
+} from 'components/shared/elements/Button/interfaces';
 
-export const { pxToRem } = createTypography(palette as Palette, {});
+export const { pxToRem } = createTypography(palette as Palette, {} as TypographyOptions);
 
 export const breakpointDownLgBody1: CSSObject = {
   [createTheme({ breakpoints }).breakpoints.down('lg')]: {
@@ -96,5 +104,44 @@ export const typography = createTypography(palette as Palette, {
     fontSize: pxToRem(40),
     lineHeight: pxToRem(36),
     fontWeight: 500,
+  },
+  ...mapKeysToValue(
+    [
+      getButtonFontType(ButtonColorEnum.main, ButtonSizeEnum.lg),
+      getButtonFontType(ButtonColorEnum.secondary, ButtonSizeEnum.lg),
+    ],
+    {
+      fontSize: pxToRem(14),
+      lineHeight: pxToRem(20),
+      fontWeight: 500,
+      ...breakpointDownLgBody2,
+    }
+  ),
+  [getButtonFontType(ButtonColorEnum.main, ButtonSizeEnum.m)]: {
+    fontSize: pxToRem(12),
+    lineHeight: pxToRem(16),
+    fontWeight: 500,
+  },
+  ...mapKeysToValue(
+    [
+      getButtonFontType(ButtonColorEnum.secondary, ButtonSizeEnum.m),
+      getButtonFontType(ButtonColorEnum.secondarySuccess, ButtonSizeEnum.m),
+      getButtonFontType(ButtonColorEnum.secondaryWarning, ButtonSizeEnum.m),
+      getButtonFontType(ButtonColorEnum.tertiary, ButtonSizeEnum.m),
+      getButtonFontType(ButtonColorEnum.link, ButtonSizeEnum.m),
+    ],
+    {
+      fontSize: pxToRem(14),
+      lineHeight: pxToRem(20),
+      fontWeight: 400,
+      ...breakpointDownLgBody2,
+    }
+  ),
+  [getButtonFontType(ButtonColorEnum.secondary, ButtonSizeEnum.sm)]: {
+    fontSize: pxToRem(12),
+    lineHeight: pxToRem(16),
+    fontWeight: 400,
+    color: palette.texts.primary,
+    ...breakpointDownLgBody2,
   },
 });
