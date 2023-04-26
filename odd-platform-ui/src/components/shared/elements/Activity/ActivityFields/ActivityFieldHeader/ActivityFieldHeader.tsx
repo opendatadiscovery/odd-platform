@@ -2,8 +2,8 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import type { EventType } from 'lib/interfaces';
 import { useActivityHeaderIcon } from 'lib/hooks';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeaderStyles';
+import Button from 'components/shared/elements/Button/Button';
 
 interface ActivityFieldHeaderProps {
   startText: string;
@@ -40,14 +40,12 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
       </Typography>
       <Typography variant='h4'>{eventType}</Typography>
       {showDetailsBtn && (
-        <AppButton
-          size='small'
-          color='tertiary'
+        <Button
+          text={isDetailsOpen ? 'Hide details' : `Show details`}
+          buttonType='tertiary-m'
           onClick={detailsBtnOnClick}
           sx={{ position: 'inherit' }}
-        >
-          {isDetailsOpen ? 'Hide details' : `Show details`}
-        </AppButton>
+        />
       )}
     </S.FieldHeader>
   );

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
 import * as S from 'components/shared/elements/ConfirmationDialog/ConfirmationDialogStyles';
+import Button from 'components/shared/elements/Button/Button';
 
 interface ConfirmationDialogProps {
   actionBtn: JSX.Element;
@@ -40,16 +40,14 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   const formActionButtons = ({ handleClose }: { handleClose: () => void }) => (
     <S.Actions>
-      <AppButton
-        size='large'
-        color='primary'
+      <Button
+        text={actionName}
+        buttonType='main-lg'
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
           onClose(handleClose, onConfirm)();
         }}
-      >
-        {actionName}
-      </AppButton>
+      />
     </S.Actions>
   );
 

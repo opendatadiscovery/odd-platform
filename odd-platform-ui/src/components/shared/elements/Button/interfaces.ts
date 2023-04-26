@@ -11,6 +11,7 @@ export enum ButtonColorEnum {
   secondaryWarning = 'secondaryWarning',
   tertiary = 'tertiary',
   link = 'link',
+  linkGray = 'linkGray',
   expand = 'expand',
 }
 
@@ -26,12 +27,14 @@ type TextButton =
   | `${ButtonColorEnum.secondaryWarning}-${ButtonSizeEnum.m}`
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.sm}`
   | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.m}`
-  | `${ButtonColorEnum.link}-${ButtonSizeEnum.m}`;
+  | `${ButtonColorEnum.link}-${ButtonSizeEnum.m}`
+  | `${ButtonColorEnum.linkGray}-${ButtonSizeEnum.m}`;
 
 type IconButton =
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.m}-icon`
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.sm}-icon`
-  | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.m}-icon`;
+  | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.m}-icon`
+  | `${ButtonColorEnum.expand}-${ButtonSizeEnum.sm}-icon`;
 
 export type Button = TextButton | IconButton;
 

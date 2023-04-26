@@ -1,3 +1,4 @@
+import type { HTMLAttributeAnchorTarget } from 'react';
 import React, { useMemo } from 'react';
 import type { SxProps, Theme } from '@mui/system';
 import { StyledButton, Loader, Icon, StyledLink, Text } from './Button.styles';
@@ -14,9 +15,10 @@ export interface Props
   icon?: React.ReactNode;
   endIcon?: React.ReactNode;
   text?: string;
+  target?: HTMLAttributeAnchorTarget;
 }
 
-export const Button: React.FC<Props> = ({
+const Button: React.FC<Props> = ({
   to,
   type = 'button',
   text,
@@ -27,6 +29,7 @@ export const Button: React.FC<Props> = ({
   icon,
   endIcon,
   fullWidth,
+  target,
   ...props
 }) => {
   const [color, size] = buttonType.split('-') as [ButtonColor, ButtonSize];
@@ -50,11 +53,11 @@ export const Button: React.FC<Props> = ({
         ) : null}
       </>
     );
-  }, [isLoading, startIcon, endIcon, text]);
+  }, [isLoading, startIcon, endIcon, text, icon]);
 
   if (to) {
     return (
-      <StyledLink sx={sx} to={to} $disabled={props.disabled}>
+      <StyledLink sx={sx} to={to} target={target} $disabled={props.disabled}>
         <StyledButton
           $iconButton={!!icon}
           $size={size}

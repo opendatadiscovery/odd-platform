@@ -3,13 +3,12 @@ import { breakpoints } from 'theme/breakpoints';
 import createTypography, {
   type TypographyOptions,
 } from '@mui/material/styles/createTypography';
-import type { Palette } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import type { CSSObject } from 'styled-components';
 import { mapKeysToValue } from 'lib/helpers';
 import { getButtonFontType } from 'components/shared/elements/Button/helpers';
 
-export const { pxToRem } = createTypography(palette as Palette, {} as TypographyOptions);
+export const { pxToRem } = createTypography(palette, {} as TypographyOptions);
 
 export const breakpointDownLgBody1: CSSObject = {
   [createTheme({ breakpoints }).breakpoints.down('lg')]: {
@@ -25,7 +24,7 @@ export const breakpointDownLgBody2: CSSObject = {
   },
 };
 
-export const typography = createTypography(palette as Palette, {
+export const typography = createTypography(palette, {
   h1: {
     fontSize: pxToRem(20),
     lineHeight: pxToRem(32),
@@ -122,6 +121,7 @@ export const typography = createTypography(palette as Palette, {
       getButtonFontType('secondaryWarning', 'm'),
       getButtonFontType('tertiary', 'm'),
       getButtonFontType('link', 'm'),
+      getButtonFontType('linkGray', 'm'),
     ],
     {
       fontSize: pxToRem(14),
@@ -130,11 +130,14 @@ export const typography = createTypography(palette as Palette, {
       ...breakpointDownLgBody2,
     }
   ),
-  [getButtonFontType('secondary', 'sm')]: {
-    fontSize: pxToRem(12),
-    lineHeight: pxToRem(16),
-    fontWeight: 400,
-    color: palette.texts.primary,
-    ...breakpointDownLgBody2,
-  },
+  ...mapKeysToValue(
+    [getButtonFontType('secondary', 'sm'), getButtonFontType('expand', 'sm')],
+    {
+      fontSize: pxToRem(12),
+      lineHeight: pxToRem(16),
+      fontWeight: 400,
+      color: palette.texts.primary,
+      ...breakpointDownLgBody2,
+    }
+  ),
 });

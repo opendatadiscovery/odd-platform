@@ -173,6 +173,12 @@ export const palette = createPalette({
       active: { background: colors.transparent, color: colors.blue65 },
       disabled: { background: colors.transparent, color: colors.blue10 },
     },
+    linkGray: {
+      normal: { background: colors.transparent, color: colors.black50 },
+      hover: { background: colors.transparent, color: colors.black70 },
+      active: { background: colors.transparent, color: colors.black90 },
+      disabled: { background: colors.transparent, color: colors.black15 },
+    },
   },
   button: {
     primary: {

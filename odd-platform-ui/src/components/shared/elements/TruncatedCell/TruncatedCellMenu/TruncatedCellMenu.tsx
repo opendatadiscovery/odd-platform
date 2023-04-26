@@ -3,10 +3,10 @@ import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import type { DataEntityRef, LinkedUrl } from 'generated-sources';
 import MoreIcon from 'components/shared/icons/MoreIcon';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import { type Values } from 'components/shared/elements/TruncatedCell/TruncatedCell';
+import Button from 'components/shared/elements/Button/Button';
 
 interface TruncatedCellMenuProps {
   dataList: DataEntityRef[] | string[] | LinkedUrl[] | undefined;
@@ -32,17 +32,15 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
 
   return (
     <>
-      <AppIconButton
+      <Button
         sx={{ height: 'auto !important' }}
-        color='expand'
-        icon={<MoreIcon />}
+        buttonType='expand-sm-icon'
+        icon={<MoreIcon width={13} height={4} />}
         id='menu-open-btn'
-        edge='end'
-        ariaControls={open ? `menu-${menuId}` : undefined}
-        ariaExpanded={open ? 'true' : undefined}
-        ariaHaspopup='true'
+        aria-controls={open ? `menu-${menuId}` : undefined}
+        aria-expanded={open ? 'true' : undefined}
+        aria-haspopup='true'
         onClick={handleMenuOpen}
-        height={20}
       />
       <AppMenu
         anchorEl={anchorEl}

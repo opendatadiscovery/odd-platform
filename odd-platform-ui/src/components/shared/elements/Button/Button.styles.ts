@@ -107,6 +107,16 @@ export const StyledButton = styled('button')<ButtonProps>(
         height: '20px',
         padding: theme.spacing(0),
       },
+      [getButtonType('linkGray', 'm', true)]: {
+        height: '16px',
+        padding: theme.spacing(0),
+      },
+
+      [getButtonType('expand', 'sm', true)]: {
+        height: '16px',
+        borderRadius: '2px',
+        padding: theme.spacing(0.75, 0.5),
+      },
     };
 
     return { ...common, ...stylesByButtonType[btnType] };
