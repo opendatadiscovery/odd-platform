@@ -2,13 +2,7 @@ import { styled } from '@mui/material';
 import { Link } from 'react-router-dom';
 import type { CSSProperties } from 'react';
 import { mapKeysToValue } from 'lib/helpers';
-import {
-  type ButtonColor,
-  type ButtonSize,
-  type Button,
-  ButtonSizeEnum,
-  ButtonColorEnum,
-} from './interfaces';
+import { type ButtonColor, type ButtonSize, type Button } from './interfaces';
 import { getButtonFontType, getButtonType } from './helpers';
 
 interface ButtonProps {
@@ -56,11 +50,26 @@ export const StyledButton = styled('button')<ButtonProps>(
     };
 
     const stylesByButtonType: Record<Button, CSSProperties> = {
+      [getButtonType('main', 'lg')]: {
+        height: '32px',
+        borderRadius: '4px',
+        padding: theme.spacing(0.75, 1),
+      },
+      [getButtonType('main', 'm')]: {
+        height: '24px',
+        borderRadius: '4px',
+        padding: theme.spacing(0.5, 1),
+      },
+      [getButtonType('secondary', 'lg')]: {
+        height: '32px',
+        borderRadius: '16px',
+        padding: theme.spacing(0.75, 1.5),
+      },
       ...mapKeysToValue(
         [
-          getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.m),
-          getButtonType(ButtonColorEnum.secondarySuccess, ButtonSizeEnum.m),
-          getButtonType(ButtonColorEnum.secondaryWarning, ButtonSizeEnum.m),
+          getButtonType('secondary', 'm'),
+          getButtonType('secondarySuccess', 'm'),
+          getButtonType('secondaryWarning', 'm'),
         ],
         {
           height: '24px',
@@ -68,46 +77,33 @@ export const StyledButton = styled('button')<ButtonProps>(
           padding: theme.spacing(0.25, 1.5),
         }
       ),
-      [getButtonType(ButtonColorEnum.main, ButtonSizeEnum.lg)]: {
-        height: '32px',
-        borderRadius: '4px',
-        padding: theme.spacing(0.75, 1),
-      },
-      [getButtonType(ButtonColorEnum.main, ButtonSizeEnum.m)]: {
-        height: '24px',
-        borderRadius: '4px',
-        padding: theme.spacing(0.5, 1),
-      },
-      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.lg)]: {
-        height: '32px',
-        borderRadius: '16px',
-        padding: theme.spacing(0.75, 1.5),
-      },
-      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.sm)]: {
+      [getButtonType('secondary', 'sm')]: {
         height: '16px',
         borderRadius: '2px',
         padding: theme.spacing(0, 0.25),
       },
-      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.m, true)]: {
+      [getButtonType('secondary', 'm', true)]: {
         height: '24px',
         borderRadius: '16px',
         padding: theme.spacing(0.5),
       },
-      [getButtonType(ButtonColorEnum.secondary, ButtonSizeEnum.sm, true)]: {
+      [getButtonType('secondary', 'sm', true)]: {
         height: '16px',
         borderRadius: '8px',
       },
-      [getButtonType(ButtonColorEnum.tertiary, ButtonSizeEnum.m)]: {
+
+      [getButtonType('tertiary', 'm')]: {
         height: '20px',
         borderRadius: '4px',
         padding: theme.spacing(0, 0.5),
       },
-      [getButtonType(ButtonColorEnum.tertiary, ButtonSizeEnum.m, true)]: {
+      [getButtonType('tertiary', 'm', true)]: {
         height: '20px',
         borderRadius: '4px',
         padding: theme.spacing(0.25),
       },
-      [getButtonType(ButtonColorEnum.link, ButtonSizeEnum.m)]: {
+
+      [getButtonType('link', 'm')]: {
         height: '20px',
         padding: theme.spacing(0),
       },

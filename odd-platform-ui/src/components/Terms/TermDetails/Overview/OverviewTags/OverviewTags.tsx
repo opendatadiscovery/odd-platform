@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { Permission, type Tag } from 'generated-sources';
 import { AddIcon, EditIcon } from 'components/shared/icons';
-import { AppButton, TagItem } from 'components/shared/elements';
+import { Button, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer } from './OverviewTagsStyles';
@@ -30,14 +30,12 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
         <WithPermissions permissionTo={Permission.TERM_TAGS_UPDATE}>
           <TagsEditForm
             btnEditEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
+              <Button
+                text={tags?.length ? 'Edit tags' : 'Add tags'}
+                buttonType='secondary-m'
                 onClick={() => {}}
                 startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
-              >
-                {tags?.length ? 'Edit' : 'Add'} tags
-              </AppButton>
+              />
             }
           />
         </WithPermissions>
@@ -72,14 +70,12 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
                       ))
                   : null}
               </Collapse>
-              <AppButton
-                size='small'
-                color='tertiary'
+              <Button
+                text={viewAll ? 'Hide' : `View All (${tags?.length})`}
+                buttonType='tertiary-m'
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
-              >
-                {viewAll ? 'Hide' : `View All (${tags?.length})`}
-              </AppButton>
+              />
             </>
           ) : null}
         </Box>
@@ -95,11 +91,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           <Typography variant='subtitle2'>Not created.</Typography>
           <WithPermissions permissionTo={Permission.TERM_TAGS_UPDATE}>
             <TagsEditForm
-              btnEditEl={
-                <AppButton size='small' color='tertiary'>
-                  Add tags
-                </AppButton>
-              }
+              btnEditEl={<Button text='Add tags' buttonType='tertiary-m' />}
             />
           </WithPermissions>
         </Grid>

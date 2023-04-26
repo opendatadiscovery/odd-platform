@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import {
-  AppButton,
+  Button,
   AppIconButton,
   ConfirmationDialog,
   LabeledInfoItem,
@@ -92,14 +92,12 @@ const OverviewGeneral: React.FC = () => {
             <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_CREATE}>
               <OwnershipForm
                 ownerEditBtn={
-                  <AppButton
+                  <Button
+                    text='Add Owner'
                     sx={{ mt: 0.25 }}
-                    size='medium'
-                    color='tertiary'
+                    buttonType='tertiary-m'
                     startIcon={<AddIcon />}
-                  >
-                    Add Owner
-                  </AppButton>
+                  />
                 }
               />
             </WithPermissions>

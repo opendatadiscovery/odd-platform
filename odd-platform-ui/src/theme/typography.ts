@@ -8,10 +8,6 @@ import { createTheme } from '@mui/material/styles';
 import type { CSSObject } from 'styled-components';
 import { mapKeysToValue } from 'lib/helpers';
 import { getButtonFontType } from 'components/shared/elements/Button/helpers';
-import {
-  ButtonColorEnum,
-  ButtonSizeEnum,
-} from 'components/shared/elements/Button/interfaces';
 
 export const { pxToRem } = createTypography(palette as Palette, {} as TypographyOptions);
 
@@ -106,10 +102,7 @@ export const typography = createTypography(palette as Palette, {
     fontWeight: 500,
   },
   ...mapKeysToValue(
-    [
-      getButtonFontType(ButtonColorEnum.main, ButtonSizeEnum.lg),
-      getButtonFontType(ButtonColorEnum.secondary, ButtonSizeEnum.lg),
-    ],
+    [getButtonFontType('main', 'lg'), getButtonFontType('secondary', 'lg')],
     {
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),
@@ -117,18 +110,18 @@ export const typography = createTypography(palette as Palette, {
       ...breakpointDownLgBody2,
     }
   ),
-  [getButtonFontType(ButtonColorEnum.main, ButtonSizeEnum.m)]: {
+  [getButtonFontType('main', 'm')]: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
     fontWeight: 500,
   },
   ...mapKeysToValue(
     [
-      getButtonFontType(ButtonColorEnum.secondary, ButtonSizeEnum.m),
-      getButtonFontType(ButtonColorEnum.secondarySuccess, ButtonSizeEnum.m),
-      getButtonFontType(ButtonColorEnum.secondaryWarning, ButtonSizeEnum.m),
-      getButtonFontType(ButtonColorEnum.tertiary, ButtonSizeEnum.m),
-      getButtonFontType(ButtonColorEnum.link, ButtonSizeEnum.m),
+      getButtonFontType('secondary', 'm'),
+      getButtonFontType('secondarySuccess', 'm'),
+      getButtonFontType('secondaryWarning', 'm'),
+      getButtonFontType('tertiary', 'm'),
+      getButtonFontType('link', 'm'),
     ],
     {
       fontSize: pxToRem(14),
@@ -137,7 +130,7 @@ export const typography = createTypography(palette as Palette, {
       ...breakpointDownLgBody2,
     }
   ),
-  [getButtonFontType(ButtonColorEnum.secondary, ButtonSizeEnum.sm)]: {
+  [getButtonFontType('secondary', 'sm')]: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
     fontWeight: 400,
