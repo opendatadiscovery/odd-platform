@@ -1,12 +1,7 @@
 import React, { type FC, useCallback } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
-import {
-  AppButton,
-  AppCheckbox,
-  AppMenuItem,
-  AppSelect,
-} from 'components/shared/elements';
+import { Button, AppCheckbox, AppMenuItem, AppSelect } from 'components/shared/elements';
 import { useAppDateTime, useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import type { DataSetVersion } from 'generated-sources';
@@ -85,9 +80,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
             }
           />
         </Box>
-        <AppButton size='medium' color='primaryLight' onClick={handleCloseClick}>
-          Close
-        </AppButton>
+        <Button text='Close' buttonType='secondary-m' onClick={handleCloseClick} />
       </Grid>
       <Grid container mt={2}>
         <Grid item container xs={6} alignItems='center'>

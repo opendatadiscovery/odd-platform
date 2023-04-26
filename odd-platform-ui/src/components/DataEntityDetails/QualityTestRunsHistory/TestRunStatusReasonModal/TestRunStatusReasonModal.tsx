@@ -1,9 +1,8 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import type { DataEntityRun } from 'generated-sources';
 import {
-  AppButton,
+  Button,
   DialogWrapper,
   LabeledInfoItem,
   TestRunStatusItem,
@@ -32,11 +31,11 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
       <Typography variant='h3' component='span'>
         {dataQATestName}
       </Typography>
-      <Link to={dataEntityOverviewPath(dataQATestId)}>
-        <AppButton size='small' color='tertiary'>
-          Go to page
-        </AppButton>
-      </Link>
+      <Button
+        to={dataEntityOverviewPath(dataQATestId)}
+        text='Go to page'
+        buttonType='tertiary-m'
+      />
     </Grid>
   );
 

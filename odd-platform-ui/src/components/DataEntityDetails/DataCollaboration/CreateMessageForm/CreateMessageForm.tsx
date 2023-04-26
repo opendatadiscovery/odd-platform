@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { createMessageToSlack } from 'redux/thunks';
 import {
-  AppButton,
+  Button,
   AppInput,
   DialogWrapper,
   SlackChannelsAutocomplete,
@@ -96,17 +96,15 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Send message'
+      buttonType='main-lg'
       type='submit'
       form='message-to-slack-form'
-      color='primary'
       fullWidth
       disabled={!formState.isValid}
       isLoading={isMessageCreating}
-    >
-      Send message
-    </AppButton>
+    />
   );
 
   return (

@@ -7,7 +7,7 @@ import type {
   DataSetField,
   DatasetFieldDescriptionUpdateFormData,
 } from 'generated-sources';
-import { AppButton, AppInput, DialogWrapper } from 'components/shared/elements';
+import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { updateDataSetFieldDescription } from 'redux/thunks';
 
@@ -89,16 +89,14 @@ const DatasetFieldDescriptionForm: React.FC<DatasetFieldDescriptionFormProps> = 
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
+      buttonType='main-lg'
       type='submit'
       form='dataset-field-description-form'
-      color='primary'
       fullWidth
       isLoading={isLoading}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

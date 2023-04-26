@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Message as MessageModel } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
-import { AppAvatar, AppButton, WithFeature } from 'components/shared/elements';
+import { AppAvatar, Button, WithFeature } from 'components/shared/elements';
 import { Feature } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import * as S from './MessageStyles';
@@ -53,15 +53,13 @@ const Message: React.FC<MessageProps> = ({
         <Grid container alignItems='center' justifyContent='flex-end' flexWrap='nowrap'>
           <S.SlackButtonContainer $active={isActive}>
             <WithFeature featureName={Feature.DATA_COLLABORATION}>
-              <AppButton
+              <Button
+                text='Open in Slack'
                 to={url}
-                linkTarget='_blank'
-                size='medium'
-                color='primaryLight'
+                target='_blank'
+                buttonType='secondary-m'
                 sx={{ mr: 2 }}
-              >
-                Open in Slack
-              </AppButton>
+              />
             </WithFeature>
           </S.SlackButtonContainer>
           <Typography variant='body1' color='texts.hint'>

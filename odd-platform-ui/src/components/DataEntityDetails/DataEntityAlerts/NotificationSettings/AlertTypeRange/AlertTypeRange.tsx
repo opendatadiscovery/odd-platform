@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
-import { AppButton, AppRadio, AppSwitch } from 'components/shared/elements';
+import { Button, AppRadio, AppSwitch } from 'components/shared/elements';
 import { useController, type UseControllerProps } from 'react-hook-form';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityAlertConfig } from 'redux/selectors';
@@ -117,14 +117,12 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
           {showEndTime && (
             <Grid container flexWrap='nowrap' alignItems='center'>
               <Typography variant='caption'>{`${rangeToEnableNotification} to turn on`}</Typography>
-              <AppButton
+              <Button
+                text='Edit'
                 sx={{ ml: 0.5 }}
-                size='medium'
-                color='tertiary'
+                buttonType='tertiary-m'
                 onClick={() => setIsValueUpdated(prev => !prev)}
-              >
-                Edit
-              </AppButton>
+              />
             </Grid>
           )}
         </Grid>

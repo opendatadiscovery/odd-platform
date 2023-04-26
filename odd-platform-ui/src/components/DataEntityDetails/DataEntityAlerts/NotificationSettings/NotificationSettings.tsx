@@ -10,11 +10,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { fetchDataEntityAlertsConfig, updateDataEntityAlertsConfig } from 'redux/thunks';
 import { Grid, Typography } from '@mui/material';
-import {
-  AppButton,
-  AppCircularProgress,
-  DialogWrapper,
-} from 'components/shared/elements';
+import { Button, AppCircularProgress, DialogWrapper } from 'components/shared/elements';
 import type { SerializeDateToNumber } from 'redux/interfaces';
 import AlertTypeRange from './AlertTypeRange/AlertTypeRange';
 
@@ -111,15 +107,13 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl
     );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Apply'
+      buttonType='main-lg'
       type='submit'
       form='notification-settings-update-form'
-      color='primary'
       fullWidth
-    >
-      Apply
-    </AppButton>
+    />
   );
 
   return (
