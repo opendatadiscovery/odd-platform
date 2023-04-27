@@ -1,7 +1,7 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { Permission, type Tag } from 'generated-sources';
-import { AppButton, TagItem } from 'components/shared/elements';
+import { Button, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
@@ -30,13 +30,11 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
         <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>
           <TagsEditForm
             btnEditEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
+              <Button
+                text={tags?.length ? 'Edit tags' : 'Add tags'}
+                buttonType='secondary-m'
                 startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
-              >
-                {tags?.length ? 'Edit' : 'Add'} tags
-              </AppButton>
+              />
             }
           />
         </WithPermissions>
@@ -73,14 +71,12 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
                       ))
                   : null}
               </Collapse>
-              <AppButton
-                size='small'
-                color='tertiary'
+              <Button
+                text={viewAll ? 'Hide' : `View All (${tags?.length})`}
+                buttonType='tertiary-m'
                 sx={{ ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
-              >
-                {viewAll ? 'Hide' : `View All (${tags?.length})`}
-              </AppButton>
+              />
             </Grid>
           ) : null}
         </TagsContainer>
@@ -96,11 +92,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           <Typography variant='subtitle2'>Not created.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>
             <TagsEditForm
-              btnEditEl={
-                <AppButton size='small' color='tertiary'>
-                  Add tags
-                </AppButton>
-              }
+              btnEditEl={<Button text='Add tags' buttonType='tertiary-m' />}
             />
           </WithPermissions>
         </Grid>
