@@ -7,9 +7,9 @@ import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import { useAppPaths } from 'lib/hooks';
 import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/ToolbarTabs';
-import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
 import Button from 'components/shared/elements/Button/Button';
+import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
 
 const AppToolbar: React.FC = () => {
   const { basePath } = useAppPaths();
