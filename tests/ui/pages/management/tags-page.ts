@@ -5,7 +5,7 @@ import DeleteTagModal from '../modals/delete-tag-modal';
 import ManagementPage from './management-page';
 
 const SELECTORS = {
-  createTag: `button > div:has-text("Create Tag")`,
+  createTag: `button div:has-text("Create Tag")`,
   tagLineRoot: '.infinite-scroll-component',
   tagLineItem: 'p[title]',
   tagLineItemName: '.MuiTypography-body1.MuiTypography-noWrap',
