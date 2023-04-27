@@ -27,6 +27,7 @@ type TextButton =
   | `${ButtonColorEnum.secondaryWarning}-${ButtonSizeEnum.m}`
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.sm}`
   | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.m}`
+  | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.sm}`
   | `${ButtonColorEnum.link}-${ButtonSizeEnum.m}`
   | `${ButtonColorEnum.linkGray}-${ButtonSizeEnum.m}`;
 

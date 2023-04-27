@@ -109,13 +109,9 @@ export const typography = createTypography(palette, {
       ...breakpointDownLgBody2,
     }
   ),
-  [getButtonFontType('main', 'm')]: {
-    fontSize: pxToRem(12),
-    lineHeight: pxToRem(16),
-    fontWeight: 500,
-  },
   ...mapKeysToValue(
     [
+      getButtonFontType('main', 'm'),
       getButtonFontType('secondary', 'm'),
       getButtonFontType('secondarySuccess', 'm'),
       getButtonFontType('secondaryWarning', 'm'),
@@ -131,7 +127,11 @@ export const typography = createTypography(palette, {
     }
   ),
   ...mapKeysToValue(
-    [getButtonFontType('secondary', 'sm'), getButtonFontType('expand', 'sm')],
+    [
+      getButtonFontType('secondary', 'sm'),
+      getButtonFontType('tertiary', 'sm'),
+      getButtonFontType('expand', 'sm'),
+    ],
     {
       fontSize: pxToRem(12),
       lineHeight: pxToRem(16),

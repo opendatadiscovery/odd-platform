@@ -26,8 +26,8 @@ export const StyledButton = styled('button')<ButtonProps>(
       border: 'none',
       minWidth: 0,
 
-      color: theme.palette.newButton[$color].normal.color,
-      backgroundColor: theme.palette.newButton[$color].normal.background,
+      color: theme.palette.button[$color].normal.color,
+      backgroundColor: theme.palette.button[$color].normal.background,
 
       fontWeight: theme.typography[btnFontType].fontWeight,
       fontSize: theme.typography[btnFontType].fontSize,
@@ -35,17 +35,17 @@ export const StyledButton = styled('button')<ButtonProps>(
 
       '&:hover': {
         cursor: 'pointer',
-        color: theme.palette.newButton[$color].hover.color,
-        backgroundColor: theme.palette.newButton[$color].hover.background,
+        color: theme.palette.button[$color].hover.color,
+        backgroundColor: theme.palette.button[$color].hover.background,
       },
       '&:active': {
-        color: theme.palette.newButton[$color].active.color,
-        backgroundColor: theme.palette.newButton[$color].active.background,
+        color: theme.palette.button[$color].active.color,
+        backgroundColor: theme.palette.button[$color].active.background,
       },
       '&:disabled': {
         cursor: 'auto',
-        color: theme.palette.newButton[$color].disabled?.color,
-        backgroundColor: theme.palette.newButton[$color].disabled?.background,
+        color: theme.palette.button[$color].disabled?.color,
+        backgroundColor: theme.palette.button[$color].disabled?.background,
       },
     };
 
@@ -97,6 +97,11 @@ export const StyledButton = styled('button')<ButtonProps>(
         borderRadius: '4px',
         padding: theme.spacing(0, 0.5),
       },
+      [getButtonType('tertiary', 'sm')]: {
+        height: '16px',
+        borderRadius: '2px',
+        padding: theme.spacing(0, 0.25),
+      },
       [getButtonType('tertiary', 'm', true)]: {
         height: '20px',
         borderRadius: '4px',
@@ -129,6 +134,7 @@ export const StyledLink = styled(Link)<{
   display: 'flex',
   height: 'fit-content',
   minWidth: 0,
+  maxWidth: 'inherit',
   pointerEvents: $disabled ? 'none' : undefined,
 }));
 
@@ -184,7 +190,7 @@ export const Loader = styled('div')<{ $color: ButtonColor }>(({ theme, $color })
     animationDelay: '1s',
   },
   '@keyframes dotFlashing': {
-    '0%': { backgroundColor: theme.palette.newButton[$color].loaderBg?.end },
-    '50%, 100%': { backgroundColor: theme.palette.newButton[$color].loaderBg?.start },
+    '0%': { backgroundColor: theme.palette.button[$color].loaderBg?.end },
+    '50%, 100%': { backgroundColor: theme.palette.button[$color].loaderBg?.start },
   },
 }));

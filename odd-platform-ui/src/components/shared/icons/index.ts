@@ -49,3 +49,4 @@ export { default as UpstreamArrow } from './UpstreamArrow';
 export { default as EmptyIcon } from './EmptyIcon';
 export { default as IntegratedIcon } from './IntegratedIcon';
 export { default as NoDataIcon } from './NoDataIcon';
+export { default as TriangularUnionIcon } from './TriangularUnionIcon';

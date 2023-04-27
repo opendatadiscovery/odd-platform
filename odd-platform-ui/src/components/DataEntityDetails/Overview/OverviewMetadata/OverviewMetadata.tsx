@@ -140,7 +140,7 @@ const OverviewMetadata: React.FC = () => {
                         <Button
                           text='Add Metadata'
                           sx={{ ml: 0.5 }}
-                          buttonType='tertiary-m'
+                          buttonType='tertiary-sm'
                         />
                       }
                     />

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { TestRunStatusItem, AppIconButton } from 'components/shared/elements';
+import { TestRunStatusItem, Button } from 'components/shared/elements';
 import { MinusIcon, PlusIcon } from 'components/shared/icons';
 import { Link } from 'react-router-dom';
 import type { DataSetQualityTestsStatusCount } from 'redux/interfaces';
@@ -32,9 +32,13 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   }, [dataQATestList]);
 
   const collapseBtn = (
-    <AppIconButton
-      sx={{ mr: 1 }}
-      color='collapse'
+    <Button
+      sx={{
+        mr: 1,
+        backgroundColor: open ? '#091E42' : '#7A869A',
+        '&:hover': { backgroundColor: open ? '#091E42' : '#7A869A' },
+      }}
+      buttonType='secondary-sm'
       icon={open ? <MinusIcon width={6} height={6} /> : <PlusIcon width={6} height={6} />}
       aria-label='expand row'
       onClick={() => setOpen(!open)}
@@ -44,7 +48,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   return (
     <Grid container direction='column' wrap='nowrap'>
       <S.TestReportBySuitNameHeader container wrap='nowrap'>
-        <Grid item>{collapseBtn}</Grid>
+        {collapseBtn}
         <Grid
           item
           container

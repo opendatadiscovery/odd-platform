@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { AddIcon, EditIcon } from 'components/shared/icons';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
@@ -68,15 +68,13 @@ const OverviewDescription: React.FC = () => {
           <Typography variant='h4'>Custom</Typography>
           {editMode ? null : (
             <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-              <AppButton
+              <Button
+                text={`${DEInternalDescription ? 'Edit' : 'Add'} description`}
                 data-qa='add_description'
                 onClick={onEditClick}
-                size='medium'
-                color='primaryLight'
+                buttonType='secondary-m'
                 startIcon={DEInternalDescription ? <EditIcon /> : <AddIcon />}
-              >
-                {DEInternalDescription ? 'Edit' : 'Add'} description
-              </AppButton>
+              />
             </WithPermissions>
           )}
         </S.CaptionContainer>
@@ -89,21 +87,17 @@ const OverviewDescription: React.FC = () => {
               preview='edit'
             />
             <S.FormActions>
-              <AppButton
+              <Button
+                text='Save'
                 onClick={handleDescriptionUpdate}
-                size='small'
-                color='primary'
+                buttonType='main-m'
                 sx={{ mr: 1 }}
-              >
-                Save
-              </AppButton>
-              <AppButton
+              />
+              <Button
+                text='Cancel'
                 onClick={() => setEditMode(false)}
-                size='small'
-                color='primaryLight'
-              >
-                Cancel
-              </AppButton>
+                buttonType='secondary-m'
+              />
               <Typography variant='subtitle2' color='error'>
                 {error}
               </Typography>
@@ -124,9 +118,11 @@ const OverviewDescription: React.FC = () => {
               >
                 <Typography variant='subtitle2'>Not created.</Typography>
                 <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-                  <AppButton onClick={onEditClick} size='small' color='tertiary'>
-                    Add Description
-                  </AppButton>
+                  <Button
+                    text='Add Description'
+                    onClick={onEditClick}
+                    buttonType='tertiary-sm'
+                  />
                 </WithPermissions>
               </Grid>
             )}

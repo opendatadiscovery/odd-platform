@@ -11,14 +11,11 @@ import type {
 import type { TypographyStyle } from '@mui/material';
 import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 import type { ToastType } from 'react-hot-toast';
-import type { DatasetFieldKey } from 'lib/interfaces';
+import type { DatasetFieldKey as DatasetFieldKeyType } from 'lib/interfaces';
 import type {
   ButtonColor,
   ButtonFont,
 } from 'components/shared/elements/Button/interfaces';
-
-// helpers interfaces
-export type CSSObject = Partial<CSSStyleDeclaration>;
 
 // palette interfaces
 interface ItemColors {
@@ -37,7 +34,7 @@ interface ItemCondition {
 
 type EntityClasses = Record<DataEntityClassNameEnum, string>;
 
-type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
+type StructureLabel = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
 type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
@@ -62,43 +59,28 @@ interface Border {
   element: string;
 }
 
-interface ButtonType {
-  primary: ItemCondition;
-  primaryLight: ItemCondition;
-  secondary: ItemCondition;
-  secondarySuccess: ItemCondition;
-  secondaryWarn: ItemCondition;
-  tertiary: ItemCondition;
-  dropdown: ItemCondition;
-  expand: ItemCondition;
-  expandText: ItemCondition;
-  unfilled: ItemCondition;
-  collapse: ItemCondition;
-  valueCount: ItemCondition;
-  animationParas: { start: string; end: string };
-}
-
 type ButtonAnimationParams = { loaderBg?: { start: string; end: string } };
 
-type ButtonColorType = Record<ButtonColor, ItemCondition & ButtonAnimationParams>;
+type Button = Record<ButtonColor, ItemCondition & ButtonAnimationParams>;
 
-interface BackgroundType extends TypeBackground {
+interface Background extends TypeBackground {
   primary: string;
   secondary: string;
   tertiary: string;
   darken: string;
+  element: string;
 }
 
-interface TagType {
+interface Tag {
   main: ItemCondition;
   important: ItemCondition;
 }
 
-type AlertType = Record<AlertStatus, ItemColors>;
+type Alert = Record<AlertStatus, ItemColors>;
 
-type DatasetFieldKeyType = Record<DatasetFieldKey, ItemColors>;
+type DatasetFieldKey = Record<DatasetFieldKeyType, ItemColors>;
 
-interface ActivityEventType {
+interface ActivityEvent {
   created: string;
   updated: string;
   deleted: string;
@@ -118,16 +100,15 @@ declare module '@mui/material/styles' {
     reportStatus: ReportStatus;
     runStatus: RunStatus;
     associationRequestStatus: AssociationRequestStatus;
-    button: ButtonType;
-    newButton: ButtonColorType;
-    tag: TagType;
-    structureLabel: StructureLabelType;
-    alert: AlertType;
-    datasetFieldKey: DatasetFieldKeyType;
-    backgrounds: Partial<BackgroundType>;
+    button: Button;
+    tag: Tag;
+    structureLabel: StructureLabel;
+    alert: Alert;
+    datasetFieldKey: DatasetFieldKey;
+    backgrounds: Partial<Background>;
     texts: TextType;
     textField: ItemCondition;
-    activityEvent: ActivityEventType;
+    activityEvent: ActivityEvent;
     slaStatus: SLAStatus;
     border: Border;
     toast: Toast;
@@ -139,16 +120,15 @@ declare module '@mui/material/styles' {
     reportStatus?: ReportStatus;
     runStatus?: RunStatus;
     associationRequestStatus?: AssociationRequestStatus;
-    button?: ButtonType;
-    newButton: ButtonColorType;
-    tag?: TagType;
-    structureLabel?: StructureLabelType;
-    alert?: AlertType;
-    datasetFieldKey?: DatasetFieldKeyType;
-    backgrounds?: Partial<BackgroundType>;
+    button?: Button;
+    tag?: Tag;
+    structureLabel?: StructureLabel;
+    alert?: Alert;
+    datasetFieldKey?: DatasetFieldKey;
+    backgrounds?: Partial<Background>;
     texts?: TextType;
     textField?: ItemCondition;
-    activityEvent?: ActivityEventType;
+    activityEvent?: ActivityEvent;
     slaStatus: SLAStatus;
     border: Border;
     toast: Toast;

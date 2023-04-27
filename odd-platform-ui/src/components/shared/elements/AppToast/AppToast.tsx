@@ -4,8 +4,8 @@ import { Typography } from '@mui/material';
 import AlertIcon from 'components/shared/icons/AlertIcon';
 import ClearIcon from 'components/shared/icons/ClearIcon';
 import InfoIcon from 'components/shared/icons/InfoIcon';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
-import * as S from 'components/shared/elements/AppToast/AppToastStyles';
+import Button from 'components/shared/elements/Button/Button';
+import * as S from './AppToastStyles';
 
 interface AppToastProps {
   type: ToastType;
@@ -29,10 +29,9 @@ const AppToast: React.FC<AppToastProps> = ({ type, onClose, message }) => {
       >
         {message}
       </Typography>
-      <AppIconButton
+      <Button
         sx={{ py: '4px !important' }}
-        size='small'
-        color='unfilled'
+        buttonType='linkGray-m'
         icon={<ClearIcon />}
         onClick={onClose}
       />

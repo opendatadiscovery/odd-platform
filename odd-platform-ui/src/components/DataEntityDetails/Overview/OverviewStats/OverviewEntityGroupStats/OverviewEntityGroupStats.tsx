@@ -1,10 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
-import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
-import TriangularUnionIcon from 'components/shared/icons/TriangularUnionIcon';
-import EntitiesListModal from 'components/shared/elements/EntitiesListModal/EntitiesListModal';
+import { Button, EntitiesListModal, EntityClassItem } from 'components/shared/elements';
+import { TriangularUnionIcon } from 'components/shared/icons';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './OverviewEntityGroupStatsStyles';
 
@@ -47,21 +45,13 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {entities?.slice(0, 5).map(entity => (
-            <S.EntityLink key={entity.id} to={dataEntityOverviewPath(entity.id)}>
-              <AppButton
-                size='medium'
-                color='tertiary'
-                sx={{
-                  my: 0.25,
-                  width: 'inherit',
-                  justifyContent: 'flex-start',
-                }}
-              >
-                <S.TruncatedText>
-                  {entity.internalName || entity.externalName}
-                </S.TruncatedText>
-              </AppButton>
-            </S.EntityLink>
+            <Button
+              text={entity.internalName || entity.externalName}
+              key={entity.id}
+              to={dataEntityOverviewPath(entity.id)}
+              buttonType='link-m'
+              sx={{ my: 0.25 }}
+            />
           ))}
           {entities && entities?.length > 5 ? (
             <EntitiesListModal
@@ -69,9 +59,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
               labelFor='Entities'
               dataEntityName={dataEntityGroupName}
               openBtnEl={
-                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
-                  Show All
-                </AppButton>
+                <Button text='Show All' buttonType='tertiary-m' sx={{ my: 0.25 }} />
               }
             />
           ) : null}
@@ -98,24 +86,13 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           sx={{ mt: 1 }}
         >
           {entityGroups?.slice(0, 5).map(entityGroup => (
-            <S.EntityLink
+            <Button
+              text={entityGroup.internalName || entityGroup.externalName}
               key={entityGroup.id}
               to={dataEntityOverviewPath(entityGroup.id)}
-            >
-              <AppButton
-                size='medium'
-                color='tertiary'
-                sx={{
-                  my: 0.25,
-                  width: 'inherit',
-                  justifyContent: 'flex-start',
-                }}
-              >
-                <S.TruncatedText>
-                  {entityGroup.internalName || entityGroup.externalName}
-                </S.TruncatedText>
-              </AppButton>
-            </S.EntityLink>
+              buttonType='link-m'
+              sx={{ my: 0.25 }}
+            />
           ))}
           {entityGroups && entityGroups?.length > 5 ? (
             <EntitiesListModal
@@ -123,9 +100,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
               labelFor='Upper groups'
               dataEntityName={dataEntityGroupName}
               openBtnEl={
-                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
-                  Show All
-                </AppButton>
+                <Button text='Show All' buttonType='tertiary-m' sx={{ my: 0.25 }} />
               }
             />
           ) : null}

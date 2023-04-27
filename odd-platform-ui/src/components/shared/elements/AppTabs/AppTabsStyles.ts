@@ -49,7 +49,7 @@ export const TabsContainer = styled(Tabs)<{ $type: TabType }>(({ theme, $type })
         display: $type === 'primary' ? 'block' : 'none',
         height: '1px',
         borderRadius: '1px',
-        backgroundColor: theme.palette.button.secondary.hover.background,
+        backgroundColor: theme.palette.border.element,
       },
       [`& .${tabsClasses.flexContainerVertical}`]: {
         alignItems: 'flex-start',

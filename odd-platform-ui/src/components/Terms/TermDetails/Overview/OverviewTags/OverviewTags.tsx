@@ -91,7 +91,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           <Typography variant='subtitle2'>Not created.</Typography>
           <WithPermissions permissionTo={Permission.TERM_TAGS_UPDATE}>
             <TagsEditForm
-              btnEditEl={<Button text='Add tags' buttonType='tertiary-m' />}
+              btnEditEl={<Button text='Add tags' buttonType='tertiary-sm' />}
             />
           </WithPermissions>
         </Grid>
