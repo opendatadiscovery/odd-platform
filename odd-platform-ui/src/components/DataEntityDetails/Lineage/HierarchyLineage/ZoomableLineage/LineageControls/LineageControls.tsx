@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppCheckbox, AppSelect, AppTabs, Button } from 'components/shared/elements';
+import { Checkbox, AppSelect, AppTabs, Button } from 'components/shared/elements';
 import { TargetIcon } from 'components/shared/icons';
 import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
@@ -55,7 +55,7 @@ const LineageControls = React.memo<LineageControlsProps>(
         <FormControlLabel
           sx={{ mr: 0 }}
           control={
-            <AppCheckbox
+            <Checkbox
               value={eag}
               checked={eag}
               onChange={handleExpandGroupsChange}
@@ -71,7 +71,7 @@ const LineageControls = React.memo<LineageControlsProps>(
         <FormControlLabel
           sx={{ mr: 0 }}
           control={
-            <AppCheckbox
+            <Checkbox
               value={fn}
               checked={fn}
               onChange={handleFullNamesChange}

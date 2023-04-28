@@ -57,7 +57,6 @@ export const ownersSlice = createSlice({
         return {
           ...state,
           ownershipDataEntity: {
-            ...state.ownershipDataEntity,
             ...(dataEntityOwnership && {
               [dataEntityId]: {
                 byId: dataEntityOwnership.reduce(

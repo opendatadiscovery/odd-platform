@@ -1,8 +1,9 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { FormControlLabel, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { type Ownership, type OwnershipFormData, Permission } from 'generated-sources';
 import {
+  Checkbox,
   Button,
   DialogWrapper,
   LabeledInfoItem,
@@ -21,12 +22,14 @@ interface OwnershipFormProps {
   dataEntityId: number;
   dataEntityOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
+  isDEG: boolean;
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
   dataEntityId,
   dataEntityOwnership,
   ownerEditBtn,
+  isDEG,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -39,23 +42,30 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const methods = useForm<OwnershipFormData>({
     mode: 'onChange',
-    defaultValues: { ownerName: '', titleName: dataEntityOwnership?.title?.name || '' },
+    defaultValues: {
+      ownerName: '',
+      titleName: dataEntityOwnership?.title?.name || '',
+      propagate: false,
+    },
   });
 
   const resetState = React.useCallback(() => {
     methods.reset();
   }, []);
 
-  const ownershipUpdate = (data: OwnershipFormData) => {
+  const ownershipUpdate = ({ ownerName, titleName, propagate }: OwnershipFormData) => {
+    const ownershipUpdateFormData = { titleName, propagate };
+    const ownershipFormData = { ownerName, titleName, propagate };
+
     (dataEntityOwnership
       ? dispatch(
           updateDataEntityOwnership({
             dataEntityId,
             ownershipId: dataEntityOwnership.id,
-            ownershipUpdateFormData: { titleName: data.titleName },
+            ownershipUpdateFormData,
           })
         )
-      : dispatch(createDataEntityOwnership({ dataEntityId, ownershipFormData: data }))
+      : dispatch(createDataEntityOwnership({ dataEntityId, ownershipFormData }))
     ).then(() => {
       resetState();
     });
@@ -96,6 +106,22 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         rules={{ required: true, validate: value => !!value?.trim() }}
         render={({ field }) => <OwnerTitleAutocomplete field={field} />}
       />
+      {isDEG && (
+        <Controller
+          name='propagate'
+          control={methods.control}
+          defaultValue={false}
+          render={({ field }) => (
+            <FormControlLabel
+              {...field}
+              sx={{ ml: -0.25, mt: 1 }}
+              checked={field.value}
+              control={<Checkbox sx={{ mr: 1 }} />}
+              label='Propogate owner to the whole group'
+            />
+          )}
+        />
+      )}
     </form>
   );
 
