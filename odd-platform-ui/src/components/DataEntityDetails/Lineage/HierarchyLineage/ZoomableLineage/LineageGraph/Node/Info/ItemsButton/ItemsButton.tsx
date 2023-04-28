@@ -8,7 +8,7 @@ interface NodeListIconProps {
 
 const StyledText = styled('text')(({ theme }) => ({
   cursor: 'pointer',
-  fill: theme.palette.button.dropdown.normal.color,
+  fill: theme.palette.texts.hint,
   fontWeight: theme.typography.body1.fontWeight,
   lineHeight: theme.typography.body1.lineHeight,
   '&:hover': { fill: theme.palette.button.tertiary.normal.color },

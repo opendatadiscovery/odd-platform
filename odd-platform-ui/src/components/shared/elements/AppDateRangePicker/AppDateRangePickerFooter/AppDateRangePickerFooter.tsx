@@ -1,6 +1,6 @@
 import React from 'react';
-import { Grid } from '@mui/material';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
+import { Box, Grid } from '@mui/material';
+import Button from 'components/shared/elements/Button/Button';
 
 interface AppDateRangePickerFooterProps {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -24,27 +24,24 @@ const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
     alignItems='center'
     flexWrap='nowrap'
   >
-    <Grid>
+    <Box display='flex' flexWrap='nowrap'>
       {ranges.map(range => (
-        <AppButton
-          key={range.label}
-          sx={{ mr: 0.5 }}
-          color='secondary'
-          size='medium'
-          onClick={() => setRange(range.value)}
-        >
-          {range.label}
-        </AppButton>
+        <Box key={range.label} sx={{ mr: 0.5, px: 1.5, py: 0.25 }}>
+          <Button
+            text={range.label}
+            key={range.label}
+            buttonType='link-m'
+            onClick={() => setRange(range.value)}
+          />
+        </Box>
       ))}
-    </Grid>
-    <AppButton
-      color='primary'
-      size='large'
+    </Box>
+    <Button
+      text='Done'
+      buttonType='main-lg'
       onClick={onClickDoneBtn}
       disabled={!isRangeCorrect}
-    >
-      Done
-    </AppButton>
+    />
   </Grid>
 );
 

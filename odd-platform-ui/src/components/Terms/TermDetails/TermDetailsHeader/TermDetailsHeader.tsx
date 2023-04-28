@@ -1,8 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  AppButton,
-  AppIconButton,
+  Button,
   AppMenuItem,
   AppPopover,
   ConfirmationDialog,
@@ -53,24 +52,21 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
         <WithPermissions permissionTo={Permission.TERM_UPDATE}>
           <TermsForm
             btnCreateEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
+              <Button
+                text='Edit'
+                buttonType='secondary-m'
                 startIcon={<EditIcon />}
                 sx={{ ml: 1 }}
-              >
-                Edit
-              </AppButton>
+              />
             }
           />
         </WithPermissions>
         <WithPermissions permissionTo={Permission.TERM_DELETE}>
           <AppPopover
             renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-              <AppIconButton
-                ariaDescribedBy={ariaDescribedBy}
-                size='medium'
-                color='primaryLight'
+              <Button
+                aria-describedby={ariaDescribedBy}
+                buttonType='secondary-m'
                 icon={<KebabIcon />}
                 onClick={onClick}
                 sx={{ ml: 1 }}

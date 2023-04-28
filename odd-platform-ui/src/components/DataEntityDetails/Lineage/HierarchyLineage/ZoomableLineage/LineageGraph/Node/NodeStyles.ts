@@ -11,7 +11,7 @@ export const NodeContainer = styled('g')(({ theme }) => ({
 
 export const RootNodeRect = styled('rect')<{ $parent: boolean }>(
   ({ theme, $parent }) => ({
-    stroke: theme.palette.button.primary.normal.border,
+    stroke: theme.palette.border.element,
     strokeWidth: $parent ? 0 : 1,
     rx: 8,
   })

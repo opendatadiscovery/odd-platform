@@ -10,7 +10,7 @@ export const OwnerItem = styled('span')(({ theme }) => ({
   borderColor: 'transparent',
   padding: theme.spacing(0.5),
   '&:hover': {
-    borderColor: theme.palette.button?.primaryLight.hover.border,
+    borderColor: theme.palette.border.element,
     [`${OwnerActionBtns}`]: { opacity: 1 },
   },
 }));

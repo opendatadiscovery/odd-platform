@@ -24,8 +24,8 @@ import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import type { AppInputProps } from 'components/shared/elements/AppInput/AppInput';
 import AppInput from 'components/shared/elements/AppInput/AppInput';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
+import Button from 'components/shared/elements/Button/Button';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
@@ -186,15 +186,13 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
         customEndAdornment={customEndAdornment}
       />
       {addEntities && (
-        <AppButton
-          sx={{ mt: 2, ml: 0.5 }}
-          size='large'
-          color='primaryLight'
+        <Button
+          text='Add'
+          sx={{ mt: 2, ml: 0.5, flexShrink: 0 }}
+          buttonType='secondary-lg'
           onClick={handleAddEntity}
           disabled={selectedOption === null}
-        >
-          Add
-        </AppButton>
+        />
       )}
     </Grid>
   );

@@ -5,11 +5,11 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/icons';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import { useAppPaths } from 'lib/hooks';
 import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/ToolbarTabs';
-import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
+import Button from 'components/shared/elements/Button/Button';
+import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
 
 const AppToolbar: React.FC = () => {
   const { basePath } = useAppPaths();
@@ -60,10 +60,9 @@ const AppToolbar: React.FC = () => {
             <S.SectionDesktop item>
               <AppInfoMenu />
               <S.UserName>{owner?.name || identity?.username}</S.UserName>
-              <AppIconButton
+              <Button
+                buttonType='linkGray-m'
                 icon={<DropdownIcon />}
-                color='unfilled'
-                edge='end'
                 aria-label='account of current user'
                 aria-controls={menuId}
                 aria-haspopup='true'

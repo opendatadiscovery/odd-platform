@@ -1,7 +1,7 @@
 import React from 'react';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { Grid } from '@mui/material';
 import TermsForm from '../TermForm/TermsForm';
@@ -13,9 +13,7 @@ const TermSearchHeader: React.FC = () => (
     <WithPermissions permissionTo={Permission.TERM_CREATE}>
       <TermsForm
         btnCreateEl={
-          <AppButton size='large' color='primary' startIcon={<AddIcon />}>
-            Add term
-          </AppButton>
+          <Button text='Add term' buttonType='main-lg' startIcon={<AddIcon />} />
         }
       />
     </WithPermissions>

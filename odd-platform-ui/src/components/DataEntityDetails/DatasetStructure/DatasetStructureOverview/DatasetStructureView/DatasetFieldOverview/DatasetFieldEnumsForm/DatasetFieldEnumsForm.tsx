@@ -9,7 +9,7 @@ import type {
 import { getDatasetFieldEnumsCreatingStatus } from 'redux/selectors';
 import { createDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { AppButton, DialogWrapper } from 'components/shared/elements';
+import { Button, DialogWrapper } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 
@@ -120,14 +120,12 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
         </Typography>
       </Grid>
       {!isExternal && (
-        <AppButton
-          size='medium'
-          color='primaryLight'
+        <Button
+          text='Add value'
+          buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
-        >
-          Add value
-        </AppButton>
+        />
       )}
     </Grid>
   );
@@ -154,20 +152,16 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
 
   const formActionButtons = (handleClose: () => void) => (
     <Grid container justifyContent='flex-start'>
-      <AppButton
-        size='large'
+      <Button
+        text='Save'
+        buttonType='main-lg'
         type='submit'
         form='dataset-field-enums-form'
-        color='primary'
         disabled={!methods.formState.isValid || !isFormEditable}
         isLoading={isEnumsCreating}
         sx={{ mr: 1, minWidth: '64px !important' }}
-      >
-        Save
-      </AppButton>
-      <AppButton size='large' color='primaryLight' onClick={handleClose}>
-        Cancel
-      </AppButton>
+      />
+      <Button text='Cancel' buttonType='secondary-lg' onClick={handleClose} />
     </Grid>
   );
 

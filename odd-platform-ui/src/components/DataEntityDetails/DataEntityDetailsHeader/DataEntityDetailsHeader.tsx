@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  AppButton,
+  Button,
   EntityClassItem,
   EntityTypeItem,
   LabelItem,
@@ -80,15 +80,13 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
             <InternalNameFormDialog
               btnCreateEl={
-                <AppButton
+                <Button
+                  text={internalName ? 'Edit' : 'Add business name'}
                   data-qa='add_business_name'
-                  size='small'
-                  color='tertiary'
+                  buttonType='tertiary-m'
                   sx={{ ml: 1 }}
                   startIcon={internalName ? <EditIcon /> : <AddIcon />}
-                >
-                  {internalName ? 'Edit' : 'Add business name'}
-                </AppButton>
+                />
               }
             />
           </WithPermissions>
@@ -113,14 +111,12 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             <CreateMessageForm
               dataEntityId={dataEntityId}
               btnCreateEl={
-                <AppButton
-                  size='large'
-                  color='primaryLight'
+                <Button
+                  text='Share'
+                  buttonType='secondary-lg'
                   startIcon={<SlackIcon />}
                   sx={{ ml: 2 }}
-                >
-                  Share
-                </AppButton>
+                />
               }
             />
           </WithFeature>

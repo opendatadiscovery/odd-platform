@@ -2,9 +2,9 @@ import { Grid } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  AppIconButton,
   AppMenuItem,
   AppPopover,
+  Button,
   ConfirmationDialog,
 } from 'components/shared/elements';
 import { KebabIcon } from 'components/shared/icons';
@@ -48,12 +48,11 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
           alignItems: 'flex-start',
         }}
         renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-          <AppIconButton
-            sx={{ ml: 2 }}
-            ariaDescribedBy={ariaDescribedBy}
-            size='medium'
-            color='primaryLight'
+          <Button
+            aria-describedby={ariaDescribedBy}
+            buttonType='secondary-m'
             icon={<KebabIcon />}
+            sx={{ ml: 2 }}
             onClick={onClick}
           />
         )}

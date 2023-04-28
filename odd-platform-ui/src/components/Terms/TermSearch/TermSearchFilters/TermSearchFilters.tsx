@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton, AppCircularProgress } from 'components/shared/elements';
+import { Button, AppCircularProgress } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getNamespaceList, getTermSearchUpdateStatuses } from 'redux/selectors';
 import { fetchNamespaceList } from 'redux/thunks';
@@ -23,13 +23,11 @@ const TermSearchFilters: React.FC = () => {
     <S.TermSearchFiltersContainer>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h4'>Filters</Typography>
-        <AppButton
-          color='tertiary'
-          size='medium'
+        <Button
+          text='Clear All'
+          buttonType='tertiary-m'
           onClick={() => dispatch(clearTermSearchFacets())}
-        >
-          Clear All
-        </AppButton>
+        />
       </Grid>
       <S.TermSearchListContainer>
         <MultipleFilterItem key='tg' facetName='tags' name='Tag' />

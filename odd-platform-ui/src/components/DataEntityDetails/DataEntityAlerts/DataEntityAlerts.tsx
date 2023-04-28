@@ -9,7 +9,7 @@ import {
   getDataEntityAlertsPageInfo,
 } from 'redux/selectors/alert.selectors';
 import {
-  AppButton,
+  Button,
   AppErrorPage,
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
@@ -51,11 +51,7 @@ const DataEntityAlerts: React.FC = () => {
       <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
         <Grid container justifyContent='flex-end' sx={{ py: 0.75 }}>
           <NotificationSettings
-            btnCreateEl={
-              <AppButton size='medium' color='tertiary'>
-                Notification settings
-              </AppButton>
-            }
+            btnCreateEl={<Button text='Notification settings' buttonType='tertiary-m' />}
           />
         </Grid>
       </WithPermissions>

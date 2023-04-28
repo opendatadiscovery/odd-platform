@@ -1,7 +1,7 @@
 import React, { type FC, useMemo } from 'react';
 import { useQueryParams } from 'lib/hooks';
 import { Collapse, Typography } from '@mui/material';
-import { AppIconButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { ChevronIcon } from 'components/shared/icons';
 import type { DataSetVersionDiff } from 'lib/interfaces';
 import type { DataSetFieldDiffState } from 'generated-sources';
@@ -41,9 +41,10 @@ const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> 
     () =>
       isNested ? (
         <S.CollapseContainer $visibility={!!fieldDiff.childFields?.length}>
-          <AppIconButton
+          <Button
             aria-label='expand row'
-            color='tertiary'
+            buttonType='tertiary-m'
+            sx={{ width: '20px' }}
             icon={
               <ChevronIcon
                 width={10}

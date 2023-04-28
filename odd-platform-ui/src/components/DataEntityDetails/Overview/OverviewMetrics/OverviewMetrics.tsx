@@ -67,9 +67,11 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
               <MetricFamily key={family.name} family={family} />
             ))}
             {showBtn && (
-              <S.ViewButton size='small' color='tertiary' onClick={handleOnClick}>
-                {open ? 'Hide' : `View All`}
-              </S.ViewButton>
+              <S.ViewButton
+                text={open ? 'Hide' : `View All`}
+                buttonType='tertiary-m'
+                onClick={handleOnClick}
+              />
             )}
           </>
         )}

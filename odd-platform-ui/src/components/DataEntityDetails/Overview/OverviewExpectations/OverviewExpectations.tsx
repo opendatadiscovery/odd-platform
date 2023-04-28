@@ -1,7 +1,7 @@
 import React from 'react';
 import type { DataQualityTestExpectation, LinkedUrl } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { DropdownIcon } from 'components/shared/icons';
 import * as S from './OverviewExpectationsStyles';
 
@@ -25,15 +25,13 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
         {stringifyParams}
       </S.Params>
       {isExpandable && (
-        <AppButton
-          size='medium'
-          color='tertiary'
+        <Button
+          text={isExpanded ? 'Hide' : `Show All`}
+          buttonType='tertiary-m'
           sx={{ mt: 1.25 }}
           onClick={() => setIsExpanded(!isExpanded)}
           endIcon={<DropdownIcon transform={isExpanded ? 'rotate(180)' : 'rotate(0)'} />}
-        >
-          {isExpanded ? 'Hide' : `Show All`}
-        </AppButton>
+        />
       )}
       {linkedUrlList && linkedUrlList?.length > 0 && (
         <>
@@ -41,17 +39,14 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
           <Typography variant='h4'>Links</Typography>
           <Grid container flexDirection='column'>
             {linkedUrlList?.map(({ name, url }) => (
-              <AppButton
+              <Button
+                text={name}
                 to={url}
                 key={url}
                 sx={{ my: 0.25 }}
-                size='medium'
-                color='tertiary'
-                linkTarget='_blank'
-                truncate
-              >
-                {name}
-              </AppButton>
+                buttonType='link-m'
+                target='_blank'
+              />
             ))}
           </Grid>
         </>

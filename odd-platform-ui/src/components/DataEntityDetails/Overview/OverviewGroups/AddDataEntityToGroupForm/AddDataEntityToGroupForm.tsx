@@ -2,15 +2,17 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { type DataEntityRef } from 'generated-sources';
-import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
+import {
+  DialogWrapper,
+  Button,
+  SearchSuggestionsAutocomplete,
+} from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityAddToGroupStatuses,
   getDataEntityClassesList,
 } from 'redux/selectors';
 import { addDataEntityToGroup } from 'redux/thunks';
-import SearchSuggestionsAutocomplete from 'components/shared/elements/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 
 interface AddDataEntityToGroupFormProps {
   btnCreateEl: JSX.Element;
@@ -84,16 +86,14 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Add'
+      buttonType='main-lg'
       type='submit'
       form='add-entity-to-group-form'
-      color='primary'
       fullWidth
       disabled={!formState.isValid}
-    >
-      Add
-    </AppButton>
+    />
   );
 
   return (

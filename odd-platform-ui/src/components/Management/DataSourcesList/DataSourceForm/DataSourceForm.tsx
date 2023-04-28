@@ -9,8 +9,8 @@ import {
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  AppButton,
   AppInput,
+  Button,
   DialogWrapper,
   NamespaceAutocomplete,
 } from 'components/shared/elements';
@@ -170,16 +170,14 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
       type='submit'
       form='datasource-create-form'
-      color='primary'
+      buttonType='main-lg'
       fullWidth
       disabled={!isValid}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

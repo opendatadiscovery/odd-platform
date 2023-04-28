@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppButton, AppCheckbox, AppSelect, AppTabs } from 'components/shared/elements';
+import { AppCheckbox, AppSelect, AppTabs, Button } from 'components/shared/elements';
 import { TargetIcon } from 'components/shared/icons';
 import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
@@ -84,15 +84,12 @@ const LineageControls = React.memo<LineageControlsProps>(
             </Typography>
           }
         />
-        <AppButton
-          color='primaryLight'
-          size='medium'
+        <Button
+          text='Main'
+          buttonType='secondary-m'
           startIcon={<TargetIcon />}
           onClick={handleCenterRoot}
-        >
-          Main
-        </AppButton>
-
+        />
         <AppTabs
           type='secondarySmall'
           orientation='horizontal'

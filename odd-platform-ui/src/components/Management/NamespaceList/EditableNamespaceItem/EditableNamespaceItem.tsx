@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Namespace, Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { deleteNamespace } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
@@ -33,14 +33,12 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
           <NamespaceForm
             namespace={namespace}
             btnEl={
-              <AppButton
-                size='medium'
-                color='primaryLight'
+              <Button
+                text='Edit'
+                buttonType='secondary-m'
                 startIcon={<EditIcon />}
                 sx={{ mr: 0.5 }}
-              >
-                Edit
-              </AppButton>
+              />
             }
           />
         </WithPermissions>
@@ -51,9 +49,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
             actionText={<>&quot;{namespace.name}&quot; will be deleted permanently.</>}
             onConfirm={handleDelete}
             actionBtn={
-              <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                Delete
-              </AppButton>
+              <Button text='Delete' buttonType='secondary-m' startIcon={<DeleteIcon />} />
             }
           />
         </WithPermissions>

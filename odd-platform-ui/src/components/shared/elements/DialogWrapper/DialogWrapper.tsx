@@ -1,8 +1,8 @@
 import React from 'react';
 import { type DialogProps } from '@mui/material';
 import ClearIcon from 'components/shared/icons/ClearIcon';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import * as S from 'components/shared/elements/DialogWrapper/DialogWrapperStyles';
+import Button from 'components/shared/elements/Button/Button';
 
 interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   renderOpenBtn(openBtnProps: {
@@ -93,10 +93,9 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           <S.Progress color='primary' $isLoading={isLoading} />
           <S.Title $isLoading={isLoading} id='max-width-dialog-title'>
             {title}
-            <AppIconButton
+            <Button
               sx={{ ml: 1 }}
-              size='small'
-              color='unfilled'
+              buttonType='linkGray-m'
               icon={<ClearIcon />}
               onClick={handleClose}
             />

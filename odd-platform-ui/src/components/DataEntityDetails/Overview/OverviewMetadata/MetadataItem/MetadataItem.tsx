@@ -9,9 +9,8 @@ import {
 } from 'generated-sources';
 import { DeleteIcon, DropdownIcon, EditIcon } from 'components/shared/icons';
 import {
-  AppButton,
-  AppIconButton,
   AppTooltip,
+  Button,
   ConfirmationDialog,
   CopyButton,
   TextFormatted,
@@ -105,17 +104,13 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                 size='small'
               />
               <S.FormActionBtns>
-                <AppButton type='submit' size='small' color='primary'>
-                  Save
-                </AppButton>
-                <AppButton
+                <Button text='Save' type='submit' buttonType='main-m' />
+                <Button
+                  text='Cancel'
                   onClick={() => setEditMode(false)}
                   type='button'
-                  size='small'
-                  color='tertiary'
-                >
-                  Cancel
-                </AppButton>
+                  buttonType='secondary-m'
+                />
               </S.FormActionBtns>
             </S.EditForm>
           </FormProvider>
@@ -124,17 +119,15 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
             <S.ValueLeftContainer>
               <S.Value $isOpened={isExpanded}>{metadataVal}</S.Value>
               {isExpandable && (
-                <AppButton
-                  size='medium'
-                  color='tertiary'
+                <Button
+                  text={isExpanded ? 'Hide' : `Show All`}
+                  buttonType='tertiary-m'
                   sx={{ mt: 1.25 }}
                   onClick={() => setIsExpanded(!isExpanded)}
                   endIcon={
                     <DropdownIcon transform={isExpanded ? 'rotate(180)' : 'rotate(0)'} />
                   }
-                >
-                  {isExpanded ? 'Hide' : `Show All`}
-                </AppButton>
+                />
               )}
             </S.ValueLeftContainer>
             {isCustom ? (
@@ -142,9 +135,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE}
                 >
-                  <AppIconButton
-                    size='small'
-                    color='tertiary'
+                  <Button
+                    buttonType='tertiary-m'
                     icon={<EditIcon />}
                     onClick={() => {
                       setEditMode(true);
@@ -167,9 +159,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                     }
                     onConfirm={handleDelete}
                     actionBtn={
-                      <AppIconButton
-                        size='small'
-                        color='tertiary'
+                      <Button
+                        buttonType='tertiary-m'
                         icon={<DeleteIcon />}
                         sx={{ ml: 0.5 }}
                       />

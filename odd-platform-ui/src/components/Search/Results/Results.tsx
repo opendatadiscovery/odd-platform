@@ -23,7 +23,7 @@ import { fetchDataEntitySearchResults } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import type { SearchClass } from 'redux/interfaces';
 import {
-  AppButton,
+  Button,
   AppErrorPage,
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
@@ -124,14 +124,12 @@ const Results: React.FC = () => {
         {showDEGBtn && (
           <DataEntityGroupForm
             btnCreateEl={
-              <AppButton
+              <Button
+                text='Add group'
                 sx={{ mt: 2 }}
-                size='medium'
-                color='primaryLight'
+                buttonType='secondary-m'
                 startIcon={<AddIcon />}
-              >
-                Add group
-              </AppButton>
+              />
             }
           />
         )}

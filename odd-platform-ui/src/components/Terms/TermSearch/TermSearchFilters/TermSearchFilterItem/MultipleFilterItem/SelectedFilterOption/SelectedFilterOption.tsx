@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import type { SearchFilter, SearchFilterState } from 'generated-sources';
 import type { TermSearchOptionalFacetNames } from 'redux/interfaces';
-import { AppIconButton, TextFormatted } from 'components/shared/elements';
+import { Button, TextFormatted } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { changeTermSearchFacet } from 'redux/slices/termSearch.slice';
@@ -34,10 +34,9 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({ filter, facetName }) 
       <Typography noWrap title={filterName}>
         <TextFormatted value={filterName} />
       </Typography>
-      <AppIconButton
+      <Button
         sx={{ ml: 0.5 }}
-        size='small'
-        color='unfilled'
+        buttonType='linkGray-m'
         icon={<ClearIcon />}
         onClick={onRemoveClick}
       />

@@ -1,11 +1,14 @@
 import { palette } from 'theme/palette';
 import { breakpoints } from 'theme/breakpoints';
-import createTypography from '@mui/material/styles/createTypography';
-import type { Palette } from '@mui/material';
+import createTypography, {
+  type TypographyOptions,
+} from '@mui/material/styles/createTypography';
 import { createTheme } from '@mui/material/styles';
 import type { CSSObject } from 'styled-components';
+import { mapKeysToValue } from 'lib/helpers';
+import { getButtonFontType } from 'components/shared/elements/Button/helpers';
 
-export const { pxToRem } = createTypography(palette as Palette, {});
+export const { pxToRem } = createTypography(palette, {} as TypographyOptions);
 
 export const breakpointDownLgBody1: CSSObject = {
   [createTheme({ breakpoints }).breakpoints.down('lg')]: {
@@ -21,7 +24,7 @@ export const breakpointDownLgBody2: CSSObject = {
   },
 };
 
-export const typography = createTypography(palette as Palette, {
+export const typography = createTypography(palette, {
   h1: {
     fontSize: pxToRem(20),
     lineHeight: pxToRem(32),
@@ -97,4 +100,44 @@ export const typography = createTypography(palette as Palette, {
     lineHeight: pxToRem(36),
     fontWeight: 500,
   },
+  ...mapKeysToValue(
+    [getButtonFontType('main', 'lg'), getButtonFontType('secondary', 'lg')],
+    {
+      fontSize: pxToRem(14),
+      lineHeight: pxToRem(20),
+      fontWeight: 500,
+      ...breakpointDownLgBody2,
+    }
+  ),
+  ...mapKeysToValue(
+    [
+      getButtonFontType('main', 'm'),
+      getButtonFontType('secondary', 'm'),
+      getButtonFontType('secondarySuccess', 'm'),
+      getButtonFontType('secondaryWarning', 'm'),
+      getButtonFontType('tertiary', 'm'),
+      getButtonFontType('link', 'm'),
+      getButtonFontType('linkGray', 'm'),
+    ],
+    {
+      fontSize: pxToRem(14),
+      lineHeight: pxToRem(20),
+      fontWeight: 400,
+      ...breakpointDownLgBody2,
+    }
+  ),
+  ...mapKeysToValue(
+    [
+      getButtonFontType('secondary', 'sm'),
+      getButtonFontType('tertiary', 'sm'),
+      getButtonFontType('expand', 'sm'),
+    ],
+    {
+      fontSize: pxToRem(12),
+      lineHeight: pxToRem(16),
+      fontWeight: 400,
+      color: palette.texts.primary,
+      ...breakpointDownLgBody2,
+    }
+  ),
 });

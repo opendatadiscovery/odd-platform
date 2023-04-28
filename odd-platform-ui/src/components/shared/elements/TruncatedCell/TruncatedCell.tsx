@@ -1,10 +1,10 @@
 import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
 import type { DataEntityRef, LinkedUrl } from 'generated-sources';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
 import { useAppPaths } from 'lib/hooks';
 import TruncatedCellMenu from 'components/shared/elements/TruncatedCell/TruncatedCellMenu/TruncatedCellMenu';
 import * as S from 'components/shared/elements/TruncatedCell/TruncatedCellStyles';
+import Button from 'components/shared/elements/Button/Button';
 
 interface TruncatedCellProps {
   externalEntityId: number;
@@ -25,9 +25,9 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
 
   const getValues = React.useCallback(
     (item: DataEntityRef | LinkedUrl | string): Values => {
-      let key = '';
-      let linkTo = '';
-      let linkContent: string | undefined = '';
+      let key;
+      let linkTo;
+      let linkContent: string | undefined;
 
       if (typeof item === 'string') {
         key = item;
@@ -53,18 +53,16 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
 
     return (
       <TruncateMarkup.Atom key={key}>
-        <AppButton
+        <Button
+          text={linkContent}
           onClick={e => {
             e.stopPropagation();
           }}
           to={linkTo}
-          linkTarget='_blank'
-          color='primaryLight'
-          size='small'
+          target='_blank'
+          buttonType='secondary-sm'
           fullWidth={linkContent ? linkContent.length > 30 : false}
-        >
-          <S.LinkContent noWrap>{linkContent}</S.LinkContent>
-        </AppButton>
+        />
       </TruncateMarkup.Atom>
     );
   };

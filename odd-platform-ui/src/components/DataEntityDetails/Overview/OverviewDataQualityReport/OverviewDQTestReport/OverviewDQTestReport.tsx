@@ -1,12 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import { type DataEntityRunStatus } from 'generated-sources';
 import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,
 } from 'redux/selectors';
-import { AppButton, NumberFormatted } from 'components/shared/elements';
+import { Button, NumberFormatted } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import omit from 'lodash/omit';
 import { useAppSelector } from 'redux/lib/hooks';
@@ -72,9 +71,11 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
               <Typography variant='h4'>Test report</Typography>
             </Grid>
             <Grid item>
-              <AppButton size='small' color='tertiary'>
-                <Link to={dataEntityTestReportPath(dataEntityId)}>See all</Link>
-              </AppButton>
+              <Button
+                text='See all'
+                to={dataEntityTestReportPath(dataEntityId)}
+                buttonType='tertiary-m'
+              />
             </Grid>
           </Grid>
           <Grid item container sx={{ mt: 1.25 }} justifyContent='space-between'>

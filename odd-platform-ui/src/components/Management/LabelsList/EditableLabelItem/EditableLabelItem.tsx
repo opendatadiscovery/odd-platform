@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Label, Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { deleteLabel } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
@@ -34,14 +34,12 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
             <LabelEditForm
               label={label}
               editBtn={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
+                <Button
+                  text='Edit'
+                  buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
-                >
-                  Edit
-                </AppButton>
+                />
               }
             />
           </WithPermissions>
@@ -52,9 +50,11 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
               actionText={<>&quot;{label.name}&quot; will be deleted permanently.</>}
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
+                <Button
+                  text='Delete'
+                  buttonType='secondary-m'
+                  startIcon={<DeleteIcon />}
+                />
               }
             />
           </WithPermissions>

@@ -5,12 +5,7 @@ import type { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTag } from 'redux/thunks';
 import { getTagCreatingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
-import {
-  AppButton,
-  AppCheckbox,
-  AppInput,
-  DialogWrapper,
-} from 'components/shared/elements';
+import { AppCheckbox, AppInput, Button, DialogWrapper } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 
 interface TagEditFormProps {
@@ -87,16 +82,14 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
       type='submit'
       form='tag-edit-form'
-      color='primary'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

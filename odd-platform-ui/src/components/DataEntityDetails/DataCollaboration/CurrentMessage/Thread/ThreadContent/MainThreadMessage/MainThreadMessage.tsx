@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppAvatar, AppButton, WithFeature } from 'components/shared/elements';
+import { AppAvatar, Button, WithFeature } from 'components/shared/elements';
 import { type Message } from 'redux/interfaces';
 import { Feature } from 'generated-sources';
 import * as S from './MainThreadMessageStyles';
@@ -32,15 +32,13 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
         </Grid>
         <Grid container alignItems='center' justifyContent='flex-end' flexWrap='nowrap'>
           <WithFeature featureName={Feature.DATA_COLLABORATION}>
-            <AppButton
+            <Button
+              text='Open in Slack'
               to={url}
-              linkTarget='_blank'
-              size='medium'
-              color='primaryLight'
+              target='_blank'
+              buttonType='secondary-m'
               sx={{ mr: 2 }}
-            >
-              Open in Slack
-            </AppButton>
+            />
           </WithFeature>
         </Grid>
       </Grid>
@@ -48,25 +46,21 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
         <Typography variant='body1'>
           {isExpanded ? text : truncatedText}
           {isExpandable && !isExpanded && (
-            <AppButton
-              size='medium'
-              color='tertiary'
+            <Button
+              text='Show more'
+              buttonType='tertiary-m'
               sx={{ ml: 0.5 }}
               onClick={() => setIsExpanded(!isExpanded)}
-            >
-              Show more
-            </AppButton>
+            />
           )}
         </Typography>
         {isExpandable && isExpanded && (
-          <AppButton
-            size='medium'
-            color='tertiary'
+          <Button
+            text='Hide'
+            buttonType='tertiary-m'
             sx={{ width: 'fit-content', mt: 0.5 }}
             onClick={() => setIsExpanded(!isExpanded)}
-          >
-            Hide
-          </AppButton>
+          />
         )}
       </S.TextContainer>
     </S.MainMessageContainer>
