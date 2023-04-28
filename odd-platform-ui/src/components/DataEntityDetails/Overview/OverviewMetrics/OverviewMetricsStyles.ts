@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { AppButton, AppPaper } from 'components/shared/elements';
+import { Button, AppPaper } from 'components/shared/elements';
 
 export const Container = styled(AppPaper)<{
   $open: boolean;
@@ -23,7 +23,8 @@ export const Container = styled(AppPaper)<{
       'linear-gradient(to bottom,rgba(255,255,255,0) 0,rgba(255,255,255,0) -130%, #fff 60%);',
   },
 }));
-export const ViewButton = styled(AppButton)(({ theme }) => ({
+
+export const ViewButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(0.75),
   width: 'fit-content',
   position: 'absolute',

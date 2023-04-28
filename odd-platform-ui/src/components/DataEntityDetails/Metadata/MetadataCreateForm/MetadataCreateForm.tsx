@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
 import { type MetadataObject } from 'generated-sources';
-import { AppButton, DialogWrapper } from 'components/shared/elements';
+import { Button, DialogWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks';
 import { getDataEntityMetadataCreatingStatuses } from 'redux/selectors';
@@ -57,16 +57,14 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Add'
+      buttonType='main-lg'
       type='submit'
       form='metadata-create-form'
-      color='primary'
       fullWidth
       disabled={!methods.formState.isValid}
-    >
-      Add
-    </AppButton>
+    />
   );
 
   return (

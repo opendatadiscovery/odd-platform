@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { DialogWrapper, AppButton } from 'components/shared/elements';
+import { DialogWrapper, Button } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { addDataEntityTerm } from 'redux/thunks';
 import { getDataEntityAddTermStatuses } from 'redux/selectors';
@@ -89,16 +89,14 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
   );
 
   const termFormActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Add term'
+      buttonType='main-lg'
       type='submit'
       form='add-term-form'
-      color='primary'
       fullWidth
       disabled={!formState.isValid}
-    >
-      Add term
-    </AppButton>
+    />
   );
 
   return (

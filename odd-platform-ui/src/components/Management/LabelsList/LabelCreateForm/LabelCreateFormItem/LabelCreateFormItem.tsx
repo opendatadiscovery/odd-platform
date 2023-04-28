@@ -1,9 +1,7 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/icons/ClearIcon';
+import { Button, AppInput } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 import * as S from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps {
@@ -42,9 +40,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       />
       <S.LabelItemButtons sx={{ mt: 1, mb: 1.5 }}>
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton size='small' color='dropdown' onClick={onItemRemove}>
-            Delete
-          </AppButton>
+          <Button text='Delete' buttonType='secondary-sm' onClick={onItemRemove} />
         )}
       </S.LabelItemButtons>
     </>

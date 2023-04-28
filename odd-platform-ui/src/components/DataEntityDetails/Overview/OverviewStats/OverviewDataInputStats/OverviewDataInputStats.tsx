@@ -1,10 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
-import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
+import { Button, EntitiesListModal, EntityClassItem } from 'components/shared/elements';
 import { Grid, Typography } from '@mui/material';
-import EntitiesListModal from 'components/shared/elements/EntitiesListModal/EntitiesListModal';
 import { useAppPaths } from 'lib/hooks';
 
 interface OverviewDataInputStatsProps {
@@ -37,17 +34,13 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
         </Grid>
         <Grid item container xs={12} direction='column' alignItems='flex-start'>
           {outputs?.slice(0, displayedEntitiesNumber).map(output => (
-            <AppButton
+            <Button
+              text={output.internalName || output.externalName}
+              to={dataEntityOverviewPath(output.id)}
               key={output.id}
               sx={{ my: 0.25 }}
-              size='small'
-              color='tertiary'
-              onClick={() => {}}
-            >
-              <Link to={dataEntityOverviewPath(output.id)}>
-                {output.internalName || output.externalName}
-              </Link>
-            </AppButton>
+              buttonType='tertiary-m'
+            />
           ))}
           {unknownOutputsCount ? (
             <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
@@ -61,9 +54,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
               labelFor='Outputs'
               dataEntityName={dataEntityName}
               openBtnEl={
-                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
-                  Show All
-                </AppButton>
+                <Button text='Show All' buttonType='tertiary-m' sx={{ my: 0.25 }} />
               }
             />
           ) : null}

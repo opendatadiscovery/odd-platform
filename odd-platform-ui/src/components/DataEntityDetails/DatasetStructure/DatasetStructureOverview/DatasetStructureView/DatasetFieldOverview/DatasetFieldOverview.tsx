@@ -3,7 +3,7 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { AddIcon, EditIcon } from 'components/shared/icons';
-import { AppButton, LabelItem, MetadataItem } from 'components/shared/elements';
+import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
@@ -72,15 +72,15 @@ const DatasetFieldOverview: React.FC = () => {
                 datasetFieldId={field.id}
                 description={field.internalDescription}
                 btnCreateEl={
-                  <AppButton
+                  <Button
+                    text={
+                      field.internalDescription ? 'Edit description' : 'Add description'
+                    }
                     disabled={!editDescription}
-                    size='medium'
-                    color='primaryLight'
+                    buttonType='secondary-m'
                     startIcon={field.internalDescription ? <EditIcon /> : <AddIcon />}
                     sx={{ mr: 1 }}
-                  >
-                    {field.internalDescription ? 'Edit' : 'Add'} description
-                  </AppButton>
+                  />
                 }
               />
             )}
@@ -102,18 +102,20 @@ const DatasetFieldOverview: React.FC = () => {
                 datasetFieldId={field.id}
                 labels={field.labels}
                 btnCreateEl={
-                  <AppButton
+                  <Button
+                    text={
+                      field.labels && field.labels?.length > 0
+                        ? 'Edit labels'
+                        : 'Add labels'
+                    }
                     data-qa='edit_labels'
                     disabled={!editLabels}
-                    size='medium'
-                    color='primaryLight'
+                    buttonType='secondary-m'
                     startIcon={
                       field.labels && field.labels.length > 0 ? <EditIcon /> : <AddIcon />
                     }
                     sx={{ mr: 1 }}
-                  >
-                    {field.labels && field.labels?.length > 0 ? 'Edit' : 'Add'} labels
-                  </AppButton>
+                  />
                 }
               />
             )}

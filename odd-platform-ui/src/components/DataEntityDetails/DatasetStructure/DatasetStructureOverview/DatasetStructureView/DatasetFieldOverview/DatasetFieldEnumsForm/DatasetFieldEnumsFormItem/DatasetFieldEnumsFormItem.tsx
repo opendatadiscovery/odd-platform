@@ -1,7 +1,7 @@
 import type { HTMLInputTypeAttribute } from 'react';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { AppButton, AppInput } from 'components/shared/elements';
+import { Button, AppInput } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import * as S from './DatasetFieldEnumsFormItem.styles';
@@ -88,9 +88,12 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
         )}
       />
       {!isKeyEditable && (
-        <AppButton size='small' color='dropdown' onClick={onItemRemove}>
-          Delete
-        </AppButton>
+        <Button
+          text='Delete'
+          buttonType='secondary-sm'
+          onClick={onItemRemove}
+          sx={{ flexShrink: 0 }}
+        />
       )}
     </S.Container>
   );

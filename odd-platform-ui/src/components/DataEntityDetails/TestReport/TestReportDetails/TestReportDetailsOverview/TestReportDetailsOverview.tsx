@@ -2,7 +2,7 @@ import React from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, Grid, Typography } from '@mui/material';
 import {
-  AppButton,
+  Button,
   AppMenuItem,
   AppSelect,
   LabeledInfoItem,
@@ -115,11 +115,7 @@ const TestReportDetailsOverview: React.FC = () => {
               {showSeeMore && (
                 <Box sx={{ px: 1.5, py: 0.25 }}>
                   <TestReportDetailsOverviewExpectationsModal
-                    openBtnEl={
-                      <AppButton size='medium' color='tertiary'>
-                        See more
-                      </AppButton>
-                    }
+                    openBtnEl={<Button text='See more' buttonType='tertiary-m' />}
                     expectations={qualityTest?.expectation as DataQualityTestExpectation}
                   />
                 </Box>
@@ -132,17 +128,14 @@ const TestReportDetailsOverview: React.FC = () => {
               <Typography variant='h4'>Links</Typography>
               <Grid container sx={{ mt: 1 }}>
                 {qualityTest.linkedUrlList.map(({ name, url }) => (
-                  <AppButton
+                  <Button
+                    text={name}
                     to={url}
                     key={url}
                     sx={{ py: 0.25 }}
-                    size='medium'
-                    color='tertiary'
-                    linkTarget='_blank'
-                    truncate
-                  >
-                    {name}
-                  </AppButton>
+                    buttonType='tertiary-m'
+                    target='_blank'
+                  />
                 ))}
               </Grid>
             </Grid>

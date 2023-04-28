@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { Namespace, NamespaceFormData } from 'generated-sources';
 import { Typography } from '@mui/material';
-import { AppButton, AppInput, DialogWrapper } from 'components/shared/elements';
+import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createNamespace, updateNamespace } from 'redux/thunks';
@@ -79,16 +79,14 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
       type='submit'
       form='namespace-edit-form'
-      color='primary'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

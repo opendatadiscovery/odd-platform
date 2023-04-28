@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppIconButton, EntityClassItem } from 'components/shared/elements';
+import { Button, EntityClassItem } from 'components/shared/elements';
 import { type DataEntityRef } from 'generated-sources';
 import { DeleteIcon } from 'components/shared/icons';
 import { Container } from './EntityItemStyles';
@@ -24,9 +24,8 @@ const EntityItem: React.FC<TagItemProps> = ({ onRemoveClick = () => {}, entity }
         />
       ))}
     </Grid>
-    <AppIconButton
-      size='small'
-      color='tertiary'
+    <Button
+      buttonType='tertiary-m'
       icon={<DeleteIcon />}
       sx={{ ml: 0.5 }}
       onClick={onRemoveClick}

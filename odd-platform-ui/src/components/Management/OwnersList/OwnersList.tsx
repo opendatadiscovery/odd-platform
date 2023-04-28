@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -101,9 +101,11 @@ const OwnersList: React.FC = () => {
         <WithPermissions permissionTo={Permission.OWNER_CREATE}>
           <OwnerForm
             btnCreateEl={
-              <AppButton color='primaryLight' size='medium' startIcon={<AddIcon />}>
-                Create Owner
-              </AppButton>
+              <Button
+                text='Create Owner'
+                buttonType='secondary-m'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>

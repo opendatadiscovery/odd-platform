@@ -18,14 +18,14 @@ const colors = {
   black5: '#F4F5F7',
   black3: '#F7F7F7',
 
-  blue65: '#0059B2',
-  blue60: '#0066CC',
-  blue50: '#0080FF',
-  blue40: '#3399FF',
-  blue30: '#66B3FF',
-  blue20: '#99CCFF',
-  blue10: '#CCE6FF',
-  blue5: '#E5F2FF',
+  blue65: '#0035A8',
+  blue60: '#0044D6',
+  blue50: '#0A58FF',
+  blue40: '#3877FF',
+  blue30: '#528EFF',
+  blue20: '#80AEFF',
+  blue10: '#B3D1FF',
+  blue5: '#E5EEFF',
 
   orange50: '#FFAA00',
   orange40: '#FFBB33',
@@ -87,6 +87,7 @@ export const palette = createPalette({
     secondary: colors.black10,
     tertiary: colors.black3,
     darken: colors.black90,
+    element: colors.blue50,
     default: colors.white,
   },
   info: {
@@ -130,78 +131,19 @@ export const palette = createPalette({
     RED: colors.red50,
   },
   button: {
-    primary: {
-      normal: {
-        background: colors.blue50,
-        color: colors.white,
-        border: colors.blue50,
-      },
+    main: {
+      normal: { background: colors.blue50, color: colors.white },
       hover: { background: colors.blue60, color: colors.white },
       active: { background: colors.blue65, color: colors.white },
       disabled: { background: colors.blue20, color: colors.white },
-    },
-    primaryLight: {
-      normal: { background: colors.blue5, color: colors.blue60 },
-      hover: {
-        background: colors.blue10,
-        color: colors.blue60,
-        border: colors.blue10,
-      },
-      active: { background: colors.blue20, color: colors.blue60 },
-      disabled: { background: colors.blue5, color: colors.blue20 },
+      loaderBg: { start: colors.blue5, end: colors.blue30 },
     },
     secondary: {
-      normal: { background: colors.white, color: colors.blue60 },
-      hover: { background: colors.blue50, color: colors.white },
-      active: { background: colors.blue60, color: colors.white },
-      disabled: { background: colors.white, color: colors.blue20 },
-    },
-    tertiary: {
-      normal: { background: colors.transparent, color: colors.blue60 },
-      hover: { background: colors.blue5, color: colors.blue60 },
-      active: { background: colors.blue10, color: colors.blue65 },
-    },
-    dropdown: {
-      normal: { background: colors.transparent, color: colors.blue50 },
-      hover: { background: colors.transparent, color: colors.blue60 },
-      active: { background: colors.transparent, color: colors.blue65 },
-    },
-    expand: {
-      normal: { background: colors.blue5, color: colors.blue60 },
-      hover: { background: colors.blue10, color: colors.blue60 },
-      active: { background: colors.blue50, color: colors.white },
-    },
-    expandText: {
       normal: { background: colors.blue5, color: colors.blue60 },
       hover: { background: colors.blue10, color: colors.blue60 },
       active: { background: colors.blue20, color: colors.blue60 },
-    },
-    unfilled: {
-      normal: { background: colors.transparent, color: colors.black30 },
-      hover: { background: colors.transparent, color: colors.black70 },
-      active: { background: colors.transparent, color: colors.black90 },
-    },
-    collapse: {
-      normal: {
-        background: colors.black20,
-        color: colors.white,
-        border: colors.black90,
-      },
-      hover: {
-        background: colors.black20,
-        color: colors.white,
-        border: colors.black90,
-      },
-      active: {
-        background: colors.black20,
-        color: colors.white,
-        border: colors.black90,
-      },
-    },
-    valueCount: {
-      normal: { background: colors.black10, color: colors.black50 },
-      hover: { background: colors.black15, color: colors.black70 },
-      active: { background: colors.black15, color: colors.black90 },
+      disabled: { background: colors.blue5, color: colors.blue20 },
+      loaderBg: { start: colors.blue30, end: colors.blue50 },
     },
     secondarySuccess: {
       normal: { background: colors.green5, color: colors.green60 },
@@ -209,13 +151,35 @@ export const palette = createPalette({
       active: { background: colors.green20, color: colors.green60 },
       disabled: { background: colors.green5, color: colors.green20 },
     },
-    secondaryWarn: {
+    secondaryWarning: {
       normal: { background: colors.red5, color: colors.red60 },
       hover: { background: colors.red10, color: colors.red60 },
       active: { background: colors.red20, color: colors.red60 },
       disabled: { background: colors.red5, color: colors.red20 },
     },
-    animationParas: { start: colors.blue30, end: colors.blue5 },
+    tertiary: {
+      normal: { background: colors.transparent, color: colors.blue50 },
+      hover: { background: colors.blue5, color: colors.blue60 },
+      active: { background: colors.blue10, color: colors.blue65 },
+      disabled: { background: colors.transparent, color: colors.blue10 },
+    },
+    expand: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: { background: colors.blue10, color: colors.blue60 },
+      active: { background: colors.blue50, color: colors.white },
+    },
+    link: {
+      normal: { background: colors.transparent, color: colors.blue50 },
+      hover: { background: colors.transparent, color: colors.blue60 },
+      active: { background: colors.transparent, color: colors.blue65 },
+      disabled: { background: colors.transparent, color: colors.blue10 },
+    },
+    linkGray: {
+      normal: { background: colors.transparent, color: colors.black50 },
+      hover: { background: colors.transparent, color: colors.black70 },
+      active: { background: colors.transparent, color: colors.black90 },
+      disabled: { background: colors.transparent, color: colors.black15 },
+    },
   },
   tag: {
     main: {

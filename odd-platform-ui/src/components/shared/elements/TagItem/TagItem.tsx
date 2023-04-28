@@ -2,9 +2,9 @@ import React from 'react';
 import { type Theme } from '@mui/material';
 import ClearIcon from 'components/shared/icons/ClearIcon';
 import SystemIcon from 'components/shared/icons/SystemIcon';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import { type SxProps } from '@mui/system';
-import * as S from 'components/shared/elements/TagItem/TagItemStyles';
+import Button from 'components/shared/elements/Button/Button';
+import * as S from './TagItemStyles';
 
 interface TagItemProps {
   label: string | React.ReactElement;
@@ -38,12 +38,11 @@ const TagItem: React.FC<TagItemProps> = ({
     {systemTag && <SystemIcon />}
     {label}
     {removable && !systemTag && (
-      <AppIconButton
-        size='small'
-        color='unfilled'
+      <Button
+        buttonType='linkGray-m'
         icon={<ClearIcon />}
-        onClick={onRemoveClick}
         sx={{ ml: 0.25 }}
+        onClick={onRemoveClick}
       />
     )}
   </S.Container>

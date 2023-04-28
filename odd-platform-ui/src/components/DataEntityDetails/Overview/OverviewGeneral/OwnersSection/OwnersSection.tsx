@@ -1,8 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  AppButton,
-  AppIconButton,
+  Button,
   ConfirmationDialog,
   LabeledInfoItem,
   LabelItem,
@@ -40,9 +39,8 @@ const OwnersSection: React.FC = () => {
                     dataEntityId={dataEntityId}
                     dataEntityOwnership={ownershipItem}
                     ownerEditBtn={
-                      <AppIconButton
-                        size='small'
-                        color='tertiary'
+                      <Button
+                        buttonType='tertiary-m'
                         icon={<EditIcon />}
                         sx={{ ml: 1 }}
                       />
@@ -61,9 +59,8 @@ const OwnersSection: React.FC = () => {
                     }
                     onConfirm={handleOwnershipDelete(ownershipItem.id)}
                     actionBtn={
-                      <AppIconButton
-                        size='small'
-                        color='tertiary'
+                      <Button
+                        buttonType='tertiary-m'
                         icon={<DeleteIcon />}
                         sx={{ ml: 0.5 }}
                       />
@@ -80,15 +77,13 @@ const OwnersSection: React.FC = () => {
           <OwnershipForm
             dataEntityId={dataEntityId}
             ownerEditBtn={
-              <AppButton
+              <Button
+                text='Add Owner'
                 data-qa='add_owner'
                 sx={{ mt: 0.25 }}
-                size='medium'
-                color='tertiary'
+                buttonType='tertiary-m'
                 startIcon={<AddIcon />}
-              >
-                Add Owner
-              </AppButton>
+              />
             }
           />
         </WithPermissions>

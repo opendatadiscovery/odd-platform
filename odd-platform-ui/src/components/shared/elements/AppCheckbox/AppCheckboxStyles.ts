@@ -10,6 +10,6 @@ export const StyledAppCheckbox = styled(Checkbox)(({ theme }) => ({
     },
   },
   [`&.${checkboxClasses.checked}`]: {
-    color: theme.palette.button.primary.normal.background,
+    color: theme.palette.backgrounds.element,
   },
 }));

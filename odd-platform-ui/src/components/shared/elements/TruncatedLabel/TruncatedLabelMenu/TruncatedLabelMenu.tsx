@@ -2,8 +2,8 @@ import React from 'react';
 import type { Label } from 'generated-sources';
 import { MoreIcon } from 'components/shared/icons';
 import LabelItem from 'components/shared/elements/LabelItem/LabelItem';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import AppPopover from 'components/shared/elements/AppPopover/AppPopover';
+import Button from 'components/shared/elements/Button/Button';
 
 interface TruncatedLabelMenuProps {
   labelList?: Label[];
@@ -13,10 +13,10 @@ const TruncatedLabelMenu: React.FC<TruncatedLabelMenuProps> = ({ labelList }) =>
   <AppPopover
     childrenSx={{ width: '280px' }}
     renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-      <AppIconButton
+      <Button
         sx={{ ml: 0.5 }}
-        ariaDescribedBy={ariaDescribedBy}
-        color='expand'
+        aria-describedby={ariaDescribedBy}
+        buttonType='expand-sm-icon'
         icon={<MoreIcon />}
         onClick={onClick}
       />

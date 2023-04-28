@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton, IntegrationLogo } from 'components/shared/elements';
+import { Button, IntegrationLogo } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
 import { useAppPaths } from 'lib/hooks';
 
@@ -24,14 +24,12 @@ const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }
           </Typography>
         </Grid>
       </Grid>
-      <AppButton
+      <Button
+        sx={{ flexShrink: 0 }}
+        text='Back to integrations'
         to={`../../${ManagementRoutes.integrations}`}
-        size='medium'
-        color='primaryLight'
-        sx={{ justifySelf: 'flex-end' }}
-      >
-        Back to integrations
-      </AppButton>
+        buttonType='secondary-m'
+      />
     </Grid>
   );
 };

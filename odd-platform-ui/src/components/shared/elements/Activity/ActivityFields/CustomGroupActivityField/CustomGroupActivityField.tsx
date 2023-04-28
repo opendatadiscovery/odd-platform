@@ -3,9 +3,8 @@ import { Box, Grid, Typography } from '@mui/material';
 import { type CustomGroupActivityState } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
+import Button from 'components/shared/elements/Button/Button';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';
@@ -136,18 +135,15 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
         item =>
           item.id && (
             <S.ArrayItemWrapper key={item.id} $typeOfChange={item.typeOfChange}>
-              <Link to={dataEntityOverviewPath(item.id)}>
-                <AppButton
-                  size='medium'
-                  color='tertiary'
-                  sx={{
-                    mb: item.typeOfChange ? 0 : 0.5,
-                    backgroundColor: item.typeOfChange ? 'inherit !important' : '',
-                  }}
-                >
-                  <Box>{item.name}</Box>
-                </AppButton>
-              </Link>
+              <Button
+                text={item.name}
+                to={dataEntityOverviewPath(item.id)}
+                buttonType='tertiary-m'
+                sx={{
+                  mb: item.typeOfChange ? 0 : 0.5,
+                  backgroundColor: item.typeOfChange ? 'inherit !important' : '',
+                }}
+              />
             </S.ArrayItemWrapper>
           )
       )}

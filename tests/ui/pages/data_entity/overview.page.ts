@@ -14,7 +14,7 @@ const SELECTORS = {
   saveButton: `[type="submit"]`,
   addCustomDescription: `[data-qa="add_description"]`,
   customDescriptionInput: `textarea`,
-  saveDescriptionButton: `button:text-is('Save')`,
+  saveDescriptionButton: `button:has-text("Save")`,
   addCustomMetadataButton: `[data-qa="add_metadata"]`,
   inputCustomMetadata: `[data-qa="add_custom_metadata_input"]`,
   customMetadataDropdownList: `[role="listbox"]`,

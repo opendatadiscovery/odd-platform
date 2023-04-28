@@ -1,11 +1,12 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid, List, ListSubheader, Typography } from '@mui/material';
-import { AppButton, SkeletonWrapper } from 'components/shared/elements/index';
+import { SkeletonWrapper } from 'components/shared/elements/index';
 import type { ActivitiesState } from 'redux/interfaces';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
-import ActivityResultsItemSkeleton from 'components/shared/elements/Activity/ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
-import * as S from 'components/shared/elements/Activity/ActivityResultsList/ActivityResultsListStyles';
+import Button from 'components/shared/elements/Button/Button';
+import ActivityResultsItemSkeleton from '../ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
+import * as S from './ActivityResultsListStyles';
 
 interface ActivityResultsListProps {
   activitiesLength: number;
@@ -66,13 +67,11 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
                       <Typography variant='subtitle2' sx={{ py: 1 }}>
                         {activityDate}
                       </Typography>
-                      <AppButton
-                        size='small'
-                        color='tertiary'
+                      <Button
+                        text='Hide all details'
+                        buttonType='tertiary-m'
                         onClick={() => setHideAllDetails(!hideAllDetails)}
-                      >
-                        Hide all details
-                      </AppButton>
+                      />
                     </Grid>
                   </ListSubheader>
                   {activities.map(activity => (

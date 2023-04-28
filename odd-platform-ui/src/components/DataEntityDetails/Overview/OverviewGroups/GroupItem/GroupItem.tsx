@@ -5,7 +5,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { AppIconButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { CloseIcon } from 'components/shared/icons';
 import * as S from './GroupItemStyles';
 
@@ -37,9 +37,8 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
         <S.ActionsContainer>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_FROM_GROUP}>
             {group.manuallyCreated && (
-              <AppIconButton
-                size='small'
-                color='unfilled'
+              <Button
+                buttonType='linkGray-m'
                 icon={<CloseIcon />}
                 onClick={handleDelete}
                 sx={{ ml: 0.25 }}

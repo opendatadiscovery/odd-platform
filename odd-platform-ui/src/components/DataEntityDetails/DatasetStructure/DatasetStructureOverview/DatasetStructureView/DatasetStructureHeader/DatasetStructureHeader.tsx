@@ -7,7 +7,7 @@ import { Grid, Typography } from '@mui/material';
 import { fetchDataSetStructure } from 'redux/thunks';
 import { ClearIcon, ColumnsIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   AppMenuItem,
   AppSelect,
@@ -152,15 +152,13 @@ const DatasetStructureHeader: FC = () => {
             </AppMenuItem>
           ))}
         </AppSelect>
-        <AppButton
-          size='medium'
-          color='primaryLight'
+        <Button
+          text='Revision compare'
+          buttonType='secondary-m'
           sx={{ ml: 1 }}
           onClick={handleCompareClick}
           disabled={datasetVersions.length < 2}
-        >
-          Revision compare
-        </AppButton>
+        />
       </Grid>
     </Grid>
   );

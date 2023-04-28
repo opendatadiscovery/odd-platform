@@ -1,8 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import {
-  AppButton,
-  AppIconButton,
+  Button,
   ConfirmationDialog,
   LabeledInfoItem,
   LabelItem,
@@ -56,9 +55,8 @@ const OverviewGeneral: React.FC = () => {
                     <OwnershipForm
                       termDetailsOwnership={ownershipItem}
                       ownerEditBtn={
-                        <AppIconButton
-                          size='small'
-                          color='tertiary'
+                        <Button
+                          buttonType='tertiary-m'
                           icon={<EditIcon />}
                           sx={{ ml: 1 }}
                         />
@@ -77,9 +75,8 @@ const OverviewGeneral: React.FC = () => {
                       }
                       onConfirm={handleOwnershipDelete(ownershipItem.id)}
                       actionBtn={
-                        <AppIconButton
-                          size='small'
-                          color='tertiary'
+                        <Button
+                          buttonType='tertiary-m'
                           icon={<DeleteIcon />}
                           sx={{ ml: 0.5 }}
                         />
@@ -92,14 +89,12 @@ const OverviewGeneral: React.FC = () => {
             <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_CREATE}>
               <OwnershipForm
                 ownerEditBtn={
-                  <AppButton
+                  <Button
+                    text='Add Owner'
                     sx={{ mt: 0.25 }}
-                    size='medium'
-                    color='tertiary'
+                    buttonType='tertiary-m'
                     startIcon={<AddIcon />}
-                  >
-                    Add Owner
-                  </AppButton>
+                  />
                 }
               />
             </WithPermissions>

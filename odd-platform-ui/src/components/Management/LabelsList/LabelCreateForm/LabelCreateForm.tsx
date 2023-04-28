@@ -5,9 +5,8 @@ import type { LabelFormData } from 'generated-sources';
 import { getLabelCreatingStatuses } from 'redux/selectors';
 import { createLabel } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import AddIcon from 'components/shared/icons/AddIcon';
-import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
+import { AddIcon } from 'components/shared/icons';
+import { DialogWrapper, Button } from 'components/shared/elements';
 import LabelCreateFormItem from './LabelCreateFormItem/LabelCreateFormItem';
 
 interface LabelCreateFormProps {
@@ -76,31 +75,26 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
             onItemRemove={handleRemove(index)}
           />
         ))}
-        <AppButton
-          size='medium'
-          form='tag-create-form'
-          color='primaryLight'
+        <Button
+          text='Add'
+          buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
-        >
-          Create label
-        </AppButton>
+        />
       </form>
     </FormProvider>
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Create'
       type='submit'
       form='label-create-form'
-      color='primary'
+      buttonType='main-lg'
       fullWidth
       disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}
-    >
-      Create
-    </AppButton>
+    />
   );
 
   return (

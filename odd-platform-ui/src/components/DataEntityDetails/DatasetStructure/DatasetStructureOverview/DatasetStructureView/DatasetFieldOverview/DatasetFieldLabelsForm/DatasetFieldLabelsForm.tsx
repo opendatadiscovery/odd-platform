@@ -4,7 +4,7 @@ import { getDatasetFieldLabelsUpdatingStatus } from 'redux/selectors';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import type { DataSetField, Label } from 'generated-sources';
-import { AppButton, DialogWrapper, LabelItem } from 'components/shared/elements';
+import { Button, DialogWrapper, LabelItem } from 'components/shared/elements';
 import { updateDataSetFieldLabels } from 'redux/thunks';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 
@@ -86,16 +86,14 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
+      buttonType='main-lg'
       type='submit'
       form='dataset-field-labels-form'
-      color='primary'
       fullWidth
       isLoading={isLoading}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

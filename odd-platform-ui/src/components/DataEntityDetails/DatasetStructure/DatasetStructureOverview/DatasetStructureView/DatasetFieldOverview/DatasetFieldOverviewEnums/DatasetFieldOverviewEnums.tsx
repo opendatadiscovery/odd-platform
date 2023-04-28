@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { WithPermissions } from 'components/shared/contexts';
 import type { DataSetField } from 'generated-sources';
 import { Permission } from 'generated-sources';
-import { AppButton, LabeledInfoItem } from 'components/shared/elements';
+import { Button, LabeledInfoItem } from 'components/shared/elements';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import { fetchDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -81,15 +81,13 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
               datasetFieldType={field.type.type}
               defaultEnums={datasetFieldEnums?.items}
               btnCreateEl={
-                <AppButton
+                <Button
                   disabled={!editEnums}
-                  size='medium'
-                  color='primaryLight'
+                  text={field.enumValueCount ? 'Edit enums' : 'Add enums'}
+                  buttonType='secondary-m'
                   startIcon={field.enumValueCount ? <EditIcon /> : <AddIcon />}
                   sx={{ mr: 1 }}
-                >
-                  {field.enumValueCount ? 'Edit' : 'Add'} enums
-                </AppButton>
+                />
               }
             />
           )}

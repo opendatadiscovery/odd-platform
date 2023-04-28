@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  AppButton,
+  Button,
   AppCircularProgress,
   type AppTabItem,
   AppTabs,
@@ -63,21 +63,19 @@ const TestReportDetails: React.FC = () => {
   return (
     <Grid container sx={{ p: 2 }}>
       <Grid container alignItems='center' wrap='nowrap'>
-        <Grid container>
+        <Grid container maxWidth='80%'>
           <AppTooltip title={qualityTest?.internalName || qualityTest?.externalName}>
             <Typography noWrap variant='h2'>
               {qualityTest?.internalName || qualityTest?.externalName}
             </Typography>
           </AppTooltip>
         </Grid>
-        <AppButton
+        <Button
+          text='Go to page'
           to={dataEntityOverviewPath(dataQATestId)}
-          size='small'
-          color='tertiary'
-          sx={{ ml: 2, width: 'auto' }}
-        >
-          Go to page
-        </AppButton>
+          buttonType='tertiary-m'
+          sx={{ ml: 2, flexShrink: 0 }}
+        />
       </Grid>
       <Grid
         container

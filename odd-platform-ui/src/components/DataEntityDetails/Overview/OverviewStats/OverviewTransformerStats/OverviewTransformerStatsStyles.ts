@@ -3,5 +3,5 @@ import { Box } from '@mui/material';
 
 export const StatIconContainer = styled(Box)(({ theme }) => ({
   fontSize: theme.typography.h5.fontSize,
-  color: theme.palette.button?.primaryLight.normal.color,
+  color: theme.palette.texts.action,
 }));

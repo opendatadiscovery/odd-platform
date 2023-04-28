@@ -2,11 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Collector, Permission } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
-import {
-  AppButton,
-  ConfirmationDialog,
-  LabeledInfoItem,
-} from 'components/shared/elements';
+import { Button, ConfirmationDialog, LabeledInfoItem } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
@@ -39,14 +35,12 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
             <CollectorFormDialog
               collector={collector}
               btnCreateEl={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
+                <Button
+                  text='Edit'
+                  buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
-                >
-                  Edit
-                </AppButton>
+                />
               }
             />
           </WithPermissions>
@@ -61,9 +55,11 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
               }
               onConfirm={onDelete}
               actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
+                <Button
+                  text='Delete'
+                  buttonType='secondary-m'
+                  startIcon={<DeleteIcon />}
+                />
               }
             />
           </WithPermissions>

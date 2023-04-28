@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataEntityLineageNode } from 'generated-sources';
-import { DialogWrapper, AppButton, EntityClassItem } from 'components/shared/elements';
+import { Button, DialogWrapper, EntityClassItem } from 'components/shared/elements';
 import { Link } from 'react-router-dom';
 import {
   fetchDataEntityDownstreamLineage,
@@ -100,9 +100,11 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
             />
           ))}
         </Grid>
-        <AppButton color='primaryLight' size='medium' onClick={handleLoadMore(item.id)}>
-          Load more
-        </AppButton>
+        <Button
+          text='Load more'
+          buttonType='secondary-m'
+          onClick={handleLoadMore(item.id)}
+        />
       </S.ListItemContainer>
     </Link>
   );
@@ -110,14 +112,12 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   const modalTitle = (
     <Grid container justifyContent='space-between' alignItems='center'>
       <Typography variant='h4'>{`Entities list of ${dataEntityName}`}</Typography>
-      <AppButton
+      <Button
+        text='Show all entities'
         sx={{ mr: 1 }}
-        color='primaryLight'
-        size='medium'
+        buttonType='secondary-m'
         onClick={handleExpandButton}
-      >
-        Show all entities
-      </AppButton>
+      />
     </Grid>
   );
 

@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import type { Role, RoleFormData } from 'generated-sources';
 import {
-  AppButton,
+  Button,
   AppInput,
   DialogWrapper,
   PolicyAutocomplete,
@@ -119,17 +119,15 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text={roleId ? 'Save' : 'Create role'}
       type='submit'
       form='role-form'
-      color='primary'
+      buttonType='main-lg'
       fullWidth
       disabled={!formState.isValid}
       isLoading={roleId ? isRoleUpdating : isRoleCreating}
-    >
-      {roleId ? 'Save' : 'Create role'}
-    </AppButton>
+    />
   );
 
   const handleOnOpen = React.useCallback(

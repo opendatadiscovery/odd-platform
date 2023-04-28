@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
@@ -51,9 +51,7 @@ const Filters: React.FC = () => {
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h4'>Filters</Typography>
-        <AppButton color='tertiary' size='medium' onClick={handleClearAll}>
-          Clear All
-        </AppButton>
+        <Button text='Clear All' buttonType='tertiary-m' onClick={handleClearAll} />
       </Grid>
       <S.ListContainer>
         <CalendarFilter />

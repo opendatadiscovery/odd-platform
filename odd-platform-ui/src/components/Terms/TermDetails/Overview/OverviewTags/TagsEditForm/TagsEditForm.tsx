@@ -13,7 +13,7 @@ import {
   DialogWrapper,
   TagItem,
   AutocompleteSuggestion,
-  AppButton,
+  Button,
   AppInput,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
@@ -231,15 +231,13 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
+      buttonType='main-lg'
       type='submit'
       form='tags-create-form'
-      color='primary'
       fullWidth
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

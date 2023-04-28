@@ -2,7 +2,7 @@ import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
 import { FormControlLabel, Grid, Typography } from '@mui/material';
-import { AppButton, AppCheckbox, AppInput, Markdown } from 'components/shared/elements';
+import { Button, AppCheckbox, AppInput, Markdown } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
 
@@ -89,28 +89,24 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
             );
           })}
         </form>
-        <AppButton
-          size='large'
+        <Button
+          text='Configure'
           type='submit'
           form='parameters-form'
-          color='primary'
+          buttonType='main-lg'
           disabled={!formState.isValid}
           sx={{ width: 'fit-content', mb: 1.5 }}
-        >
-          Configure
-        </AppButton>
+        />
       </Grid>
     </Grid>
   ) : (
     <Grid container mb={1} justifyContent='flex-end'>
-      <AppButton
-        size='large'
-        color='primary'
+      <Button
+        text='Reconfigure'
+        buttonType='main-lg'
         onClick={() => setShowForm(true)}
         sx={{ mb: 1, justifySelf: 'flex-end' }}
-      >
-        Reconfigure
-      </AppButton>
+      />
       <Markdown value={templateWithArguments} />
     </Grid>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { type DataSource, Permission } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
-import { AppButton, ConfirmationDialog, CopyButton } from 'components/shared/elements';
+import { Button, ConfirmationDialog, CopyButton } from 'components/shared/elements';
 import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
@@ -39,11 +39,7 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({ dataSource }) => {
               </Typography>
             }
             onConfirm={onTokenRegenerate}
-            actionBtn={
-              <AppButton size='medium' color='primaryLight'>
-                Regenerate
-              </AppButton>
-            }
+            actionBtn={<Button text='Regenerate' buttonType='secondary-m' />}
           />
         </WithPermissions>
       ) : (

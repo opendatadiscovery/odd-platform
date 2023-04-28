@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import type { SearchFilter, SearchFilterState } from 'generated-sources';
-import { TextFormatted, AppIconButton } from 'components/shared/elements';
+import { TextFormatted, Button } from 'components/shared/elements';
 import type { OptionalFacetNames } from 'redux/interfaces';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -35,10 +35,9 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({ filter, facetName }) 
       <Typography noWrap title={filterName}>
         <TextFormatted value={filterName} />
       </Typography>
-      <AppIconButton
+      <Button
         sx={{ ml: 0.5 }}
-        size='small'
-        color='unfilled'
+        buttonType='linkGray-m'
         icon={<ClearIcon />}
         onClick={onRemoveClick}
       />

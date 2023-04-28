@@ -4,7 +4,7 @@ import type { TermDetails, TermFormData } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import {
-  AppButton,
+  Button,
   AppInput,
   DialogWrapper,
   NamespaceAutocomplete,
@@ -75,7 +75,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormTitle = (
     <Typography variant='h4' component='span'>
-      {term ? 'Edit ' : 'Add '}
+      {term.id ? 'Edit ' : 'Add '}
       term
     </Typography>
   );
@@ -97,7 +97,6 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
         render={({ field }) => (
           <AppInput
             {...field}
-            sx={{ mt: 1.5 }}
             label='Name'
             placeholder='Start enter the name'
             customEndAdornment={{
@@ -146,17 +145,14 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   );
 
   const termFormActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text={term ? 'Save term' : 'Add term'}
+      buttonType='main-lg'
       type='submit'
       form='term-create-form'
-      color='primary'
       fullWidth
       disabled={!formState.isValid}
-    >
-      {term ? 'Save ' : 'Add '}
-      term
-    </AppButton>
+    />
   );
 
   return (

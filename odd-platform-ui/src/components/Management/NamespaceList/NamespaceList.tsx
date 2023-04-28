@@ -3,7 +3,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -121,9 +121,11 @@ const NamespaceList: React.FC = () => {
         <WithPermissions permissionTo={Permission.NAMESPACE_CREATE}>
           <NamespaceForm
             btnEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Create namespace
-              </AppButton>
+              <Button
+                text='Create namespace'
+                buttonType='secondary-m'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>

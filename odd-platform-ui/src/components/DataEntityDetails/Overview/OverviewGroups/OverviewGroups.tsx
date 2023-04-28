@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { type DataEntityRef, Permission } from 'generated-sources';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import AddDataEntityToGroupForm from './AddDataEntityToGroupForm/AddDataEntityToGroupForm';
@@ -28,9 +28,11 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
           <AddDataEntityToGroupForm
             dataEntityId={dataEntityId}
             btnCreateEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Add to group
-              </AppButton>
+              <Button
+                text='Add to group'
+                buttonType='secondary-m'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>
@@ -58,14 +60,12 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
                       />
                     ))}
               </Collapse>
-              <AppButton
-                size='small'
-                color='tertiary'
+              <Button
+                text={viewAll ? 'Hide' : `View All (${dataEntityGroups?.length})`}
+                buttonType='tertiary-m'
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
-              >
-                {viewAll ? 'Hide' : `View All (${dataEntityGroups?.length})`}
-              </AppButton>
+              />
             </>
           )}
         </Box>
@@ -82,11 +82,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
             <AddDataEntityToGroupForm
               dataEntityId={dataEntityId}
-              btnCreateEl={
-                <AppButton size='small' color='tertiary'>
-                  Add to group
-                </AppButton>
-              }
+              btnCreateEl={<Button text='Add to group' buttonType='tertiary-sm' />}
             />
           </WithPermissions>
         </Grid>

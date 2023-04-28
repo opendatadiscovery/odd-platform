@@ -12,9 +12,9 @@ const SELECTORS = {
   closeDialogButton: 'div[role="dialog"] h2 >> [type="button"]',
   addTag: '[type="submit"]',
   importantTag: '[type="checkbox"]',
-  addOneMoreTag: 'div[role="dialog"] button:has-text("Create tag")',
+  addOneMoreTag: 'div[role="dialog"] button:has-text("Add")',
   tagLineRoot: '.infinite-scroll-component',
-  deleteTagButton: '[type="button"]:has-text("Delete")',
+  deleteTagButton: '[type="button"] div:has-text("Delete")',
 };
 export default class AddTagModal extends BaseModal {
   constructor(pages: Pages) {
