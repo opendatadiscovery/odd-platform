@@ -13,22 +13,27 @@ export const dataEntityGroupLinkedListSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchDataEntityGroupLinkedList.fulfilled, (state, { payload }) => {
-      const { dataEntityGroupId, linkedItemsList, pageInfo } = payload;
-      return {
-        ...state,
-        linkedItemsIdsByDataEntityGroupId: linkedItemsList.reduce(
-          (
-            memo: DataEntityGroupLinkedListState['linkedItemsIdsByDataEntityGroupId'],
-            linkedItem
-          ) => ({
-            ...memo,
-            [dataEntityGroupId]: [...(memo?.[dataEntityGroupId] || []), linkedItem.id],
-          }),
-          { ...state, pageInfo }
-        ),
-      };
-    });
+    builder.addCase(
+      fetchDataEntityGroupLinkedList.fulfilled,
+      (state, { payload }): DataEntityGroupLinkedListState => {
+        const { dataEntityGroupId, linkedItemsList, pageInfo } = payload;
+
+        const linkedItemsIdsByDataEntityGroupId = {
+          ...state.linkedItemsIdsByDataEntityGroupId,
+          linkedItemsIdsByDataEntityGroupId: linkedItemsList.reduce<{
+            [dataEntityGroupId: string]: number[];
+          }>(
+            (memo, linkedItem) => ({
+              ...memo,
+              [dataEntityGroupId]: [...(memo?.[dataEntityGroupId] || []), linkedItem.id],
+            }),
+            { ...state.linkedItemsIdsByDataEntityGroupId }
+          ),
+        };
+
+        return { ...linkedItemsIdsByDataEntityGroupId, pageInfo };
+      }
+    );
   },
 });
 
