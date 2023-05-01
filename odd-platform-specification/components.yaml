@@ -2141,6 +2141,66 @@ components:
           type: string
           format: date-time
 
+    DataEntityAttachments:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityFile'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLink'
+
+    DataEntityFile:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    DataEntityLink:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        url:
+          type: string
+
+    DataEntityFilesFormData:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            type: string
+            format: binary
+
+    DataEntityLinkListFormData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLinkFormData'
+
+    DataEntityLinkFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+      required:
+        - name
+        - url
+
     AppInfo:
       type: object
       properties:

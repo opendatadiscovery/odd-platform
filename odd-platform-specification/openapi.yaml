@@ -40,6 +40,7 @@ tags:
   - name: permission
   - name: links
   - name: integration
+  - name: dataEntityAttachment
 
 paths:
   /api/integrations:
@@ -1573,6 +1574,153 @@ paths:
                 $ref: './components.yaml/#/components/schemas/MetricSet'
       tags:
         - dataEntity
+
+  /api/dataentities/{data_entity_id}/attachments:
+    get:
+      summary: Get data entity attachments
+      operationId: getAttachments
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityAttachments'
+      tags:
+        - dataEntityAttachment
+
+  /api/dataentities/{data_entity_id}/files:
+    post:
+      summary: Save files for data entity
+      operationId: saveFiles
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityFilesFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/DataEntityFile'
+      tags:
+        - dataEntityAttachment
+
+  /api/dataentities/{data_entity_id}/files/{file_id}:
+    get:
+      summary: Download file
+      operationId: downloadFile
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      tags:
+        - dataEntityAttachment
+    delete:
+      summary: Delete file
+      operationId: deleteFile
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntityAttachment
+
+  /api/dataentities/{data_entity_id}/links:
+    post:
+      summary: Save links for data entity
+      operationId: saveLinks
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityLinkListFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/DataEntityLink'
+      tags:
+        - dataEntityAttachment
+
+  /api/dataentities/{data_entity_id}/links/{link_id}:
+    put:
+      summary: Update link
+      operationId: updateLink
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: link_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityLinkFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityLink'
+      tags:
+        - dataEntityAttachment
+    delete:
+      summary: Delete link
+      operationId: deleteLink
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: link_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntityAttachment
 
   /api/messages/{message_id}/url:
     get:

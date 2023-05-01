@@ -1,0 +1,4 @@
+{{#isFormParam}}
+    {{^isFile}}@ApiParam(value = "{{{description}}}"{{#required}}, required = true{{/required}}{{#allowableValues}}, allowableValues = "{{#values}}{{{.}}}{{^-last}}, {{/-last}}{{#-last}}{{/-last}}{{/values}}"{{/allowableValues}}{{^isContainer}}{{#defaultValue}}, defaultValue = "{{{.}}}"{{/defaultValue}}{{/isContainer}}) {{#useBeanValidation}}@Valid{{/useBeanValidation}} @RequestPart(value = "{{baseName}}"{{#required}}, required = true{{/required}}{{^required}}, required = false{{/required}}) {{{dataType}}} {{paramName}}{{/isFile}}
+    {{#isFile}}@ApiParam(value = "{{{description}}}") {{#useBeanValidation}}@Valid{{/useBeanValidation}} @RequestPart(value = "{{baseName}}"{{#required}}, required = true{{/required}}{{^required}}, required = false{{/required}}) {{#reactive}}Flux<Part>{{/reactive}}{{^reactive}}{{#isArray}}List<{{/isArray}}MultipartFile{{#isArray}}>{{/isArray}}{{/reactive}} {{baseName}}{{/isFile}}
+{{/isFormParam}}
