@@ -12,6 +12,7 @@ interface UseCollapseProps {
   initialCollapsed?: boolean;
   initialMaxHeight?: number;
   transitionDuration?: number;
+  maxHeightReduceRatio?: number;
 }
 
 interface CollapsibleContentProps {
@@ -21,45 +22,71 @@ interface CollapsibleContentProps {
 interface UseCollapseReturn {
   contentRef: RefObject<HTMLDivElement>;
   isCollapsed: boolean;
+  isCollapsible: boolean;
   toggleCollapse: () => void;
+  updateCollapse: () => void;
+  setCollapse: (collapse: boolean) => void;
   collapsibleContentProps: CollapsibleContentProps;
 }
 
 const useCollapse = ({
-  initialCollapsed = true,
+  initialCollapsed = false,
   initialMaxHeight = 200,
   transitionDuration = 300,
+  maxHeightReduceRatio = 0.85,
 }: UseCollapseProps): UseCollapseReturn => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
+  const [isCollapsible, setIsCollapsible] = useState(false);
+  const [isUpdated, setIsUpdated] = useState(false);
 
   useEffect(() => {
     if (
       contentRef.current?.offsetHeight &&
-      contentRef.current.offsetHeight > initialMaxHeight
+      contentRef.current.offsetHeight * maxHeightReduceRatio > initialMaxHeight
     ) {
       setIsCollapsed(true);
+      setIsCollapsible(true);
     } else {
       setIsCollapsed(false);
+      setIsCollapsible(false);
     }
-  }, [contentRef, initialMaxHeight]);
+  }, [contentRef.current, initialMaxHeight, isUpdated]);
 
   const toggleCollapse = useCallback(() => {
     setIsCollapsed(prev => !prev);
   }, []);
 
-  const collapsibleContentProps = useMemo(
+  const setCollapse = useCallback((collapse: boolean) => {
+    setIsCollapsed(collapse);
+    setIsCollapsible(collapse);
+  }, []);
+
+  const updateCollapse = useCallback(() => {
+    setIsUpdated(prev => !prev);
+  }, []);
+
+  const collapsibleContentProps = useMemo<CollapsibleContentProps>(
     () => ({
       style: {
         maxHeight: isCollapsed ? `${initialMaxHeight}px` : 'none',
         overflow: 'hidden',
         transition: `max-height ${transitionDuration}ms ease-in-out`,
+        boxSizing: 'content-box',
       },
     }),
     [isCollapsed, initialMaxHeight, transitionDuration]
   );
 
-  return { contentRef, isCollapsed, toggleCollapse, collapsibleContentProps };
+  return {
+    contentRef,
+    isCollapsed,
+    toggleCollapse,
+    updateCollapse,
+    setCollapse,
+    collapsibleContentProps,
+    isCollapsible,
+  };
 };
 
 export default useCollapse;

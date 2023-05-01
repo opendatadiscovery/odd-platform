@@ -180,6 +180,11 @@ export const palette = createPalette({
       active: { background: colors.transparent, color: colors.black90 },
       disabled: { background: colors.transparent, color: colors.black15 },
     },
+    service: {
+      normal: { background: colors.transparent, color: colors.black70 },
+      hover: { background: colors.transparent, color: colors.black80 },
+      active: { background: colors.transparent, color: colors.black90 },
+    },
   },
   tag: {
     main: {

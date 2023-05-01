@@ -13,6 +13,7 @@ export enum ButtonColorEnum {
   link = 'link',
   linkGray = 'linkGray',
   expand = 'expand',
+  service = 'service',
 }
 
 export type ButtonSize = `${ButtonSizeEnum}`;
@@ -29,7 +30,8 @@ type TextButton =
   | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.m}`
   | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.sm}`
   | `${ButtonColorEnum.link}-${ButtonSizeEnum.m}`
-  | `${ButtonColorEnum.linkGray}-${ButtonSizeEnum.m}`;
+  | `${ButtonColorEnum.linkGray}-${ButtonSizeEnum.m}`
+  | `${ButtonColorEnum.service}-${ButtonSizeEnum.m}`;
 
 type IconButton =
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.m}-icon`

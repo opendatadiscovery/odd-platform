@@ -46,7 +46,7 @@ const OverviewMetrics: React.FC<OverviewMetricsProps> = ({ showOverview }) => {
 
   return (
     <>
-      <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
+      <Typography variant='h2' sx={{ mt: 3, mb: 1 }}>
         Metrics
       </Typography>
       <S.Container

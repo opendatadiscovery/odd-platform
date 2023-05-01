@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React from 'react';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -50,21 +50,13 @@ const Overview: React.FC = () => {
               <OverviewStats />
             </SectionContainer>
             {hasDataQualityTestExpectations(dataEntityDetails?.expectation) && (
-              <>
-                <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
-                  Expectations
-                </Typography>
-                <SectionContainer square elevation={0}>
-                  <OverviewExpectations
-                    parameters={dataEntityDetails.expectation}
-                    linkedUrlList={dataEntityDetails.linkedUrlList}
-                  />
-                </SectionContainer>
-              </>
+              <SectionContainer square elevation={0}>
+                <OverviewExpectations
+                  parameters={dataEntityDetails.expectation}
+                  linkedUrlList={dataEntityDetails.linkedUrlList}
+                />
+              </SectionContainer>
             )}
-            <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
-              Metadata
-            </Typography>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[
@@ -77,9 +69,7 @@ const Overview: React.FC = () => {
               />
             </SectionContainer>
             <OverviewMetrics showOverview={isDataset} />
-            <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
-              About
-            </Typography>
+
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}

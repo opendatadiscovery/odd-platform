@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import { AddIcon, EditIcon } from 'components/shared/icons';
+import { AddIcon, ChevronIcon, EditIcon } from 'components/shared/icons';
 import { Button } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useCollapse } from 'lib/hooks';
 import {
   getDataEntityExternalDescription,
   getDataEntityInternalDescription,
@@ -25,15 +25,26 @@ const OverviewDescription: React.FC = () => {
     getDataEntityExternalDescription(dataEntityId)
   );
 
-  const [editMode, setEditMode] = React.useState(false);
-  const [error, setError] = React.useState('');
-  const [internalDescription, setInternalDescription] = React.useState<
-    string | undefined
-  >(DEInternalDescription || '');
+  const [editMode, setEditMode] = useState(false);
+  const [error, setError] = useState('');
+  const [internalDescription, setInternalDescription] = useState<string | undefined>(
+    DEInternalDescription || ''
+  );
 
-  const onEditClick = React.useCallback(() => setEditMode(true), [setEditMode]);
+  const {
+    contentRef,
+    collapsibleContentProps,
+    toggleCollapse,
+    updateCollapse,
+    isCollapsed,
+    isCollapsible,
+  } = useCollapse({ initialMaxHeight: 260 });
 
-  const handleDescriptionUpdate = React.useCallback(() => {
+  const onEditClick = useCallback(() => {
+    setEditMode(true);
+  }, []);
+
+  const handleDescriptionUpdate = useCallback(() => {
     dispatch(
       updateDataEntityInternalDescription({
         dataEntityId,
@@ -43,6 +54,7 @@ const OverviewDescription: React.FC = () => {
       () => {
         setError('');
         setEditMode(false);
+        updateCollapse();
       },
       (response: Response) => {
         setError(response.statusText || 'Unable to update description');
@@ -56,87 +68,102 @@ const OverviewDescription: React.FC = () => {
     }
   };
 
-  React.useEffect(
+  useEffect(
     () => setInternalDescription(DEInternalDescription),
     [DEInternalDescription, editMode]
   );
 
   return (
     <>
-      <div data-color-mode='light'>
+      <div ref={contentRef} {...collapsibleContentProps}>
         <S.CaptionContainer>
-          <Typography variant='h4'>Custom</Typography>
-          {editMode ? null : (
-            <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-              <Button
-                text={`${DEInternalDescription ? 'Edit' : 'Add'} description`}
-                data-qa='add_description'
-                onClick={onEditClick}
-                buttonType='secondary-m'
-                startIcon={DEInternalDescription ? <EditIcon /> : <AddIcon />}
-              />
-            </WithPermissions>
-          )}
-        </S.CaptionContainer>
-        {editMode ? (
-          <Box onKeyDown={saveMarkDownOnEnter}>
-            <MDEditor
-              height={200}
-              value={internalDescription}
-              onChange={setInternalDescription}
-              preview='edit'
+          <Typography variant='h2'>About</Typography>
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
+            <Button
+              text={`${DEInternalDescription ? 'Edit' : 'Add'} info`}
+              data-qa='add_description'
+              onClick={onEditClick}
+              buttonType='secondary-lg'
+              startIcon={DEInternalDescription ? <EditIcon /> : <AddIcon />}
             />
-            <S.FormActions>
-              <Button
-                text='Save'
-                onClick={handleDescriptionUpdate}
-                buttonType='main-m'
-                sx={{ mr: 1 }}
-              />
-              <Button
-                text='Cancel'
-                onClick={() => setEditMode(false)}
-                buttonType='secondary-m'
-              />
-              <Typography variant='subtitle2' color='error'>
-                {error}
-              </Typography>
-            </S.FormActions>
-          </Box>
-        ) : (
-          <div>
-            {DEInternalDescription ? (
-              <MDEditor.Markdown source={internalDescription} />
-            ) : (
-              <Grid
-                item
-                xs={12}
-                container
-                alignItems='center'
-                justifyContent='flex-start'
-                wrap='nowrap'
-              >
-                <Typography variant='subtitle2'>Not created.</Typography>
-                <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-                  <Button
-                    text='Add Description'
-                    onClick={onEditClick}
-                    buttonType='tertiary-sm'
-                  />
-                </WithPermissions>
-              </Grid>
-            )}
-          </div>
-        )}
-      </div>
-      {DEExternalDescription ? (
+          </WithPermissions>
+        </S.CaptionContainer>
         <div data-color-mode='light'>
-          <Typography variant='h4'>Pre-defined</Typography>
-          <Typography variant='subtitle1'>
-            <MDEditor.Markdown source={DEExternalDescription} />
-          </Typography>
+          {editMode ? (
+            <Box onKeyDown={saveMarkDownOnEnter}>
+              <MDEditor
+                height={200}
+                value={internalDescription}
+                onChange={setInternalDescription}
+                preview='edit'
+              />
+              <S.FormActions>
+                <Button
+                  text='Save'
+                  onClick={handleDescriptionUpdate}
+                  buttonType='main-m'
+                  sx={{ mr: 1 }}
+                />
+                <Button
+                  text='Cancel'
+                  onClick={() => setEditMode(false)}
+                  buttonType='secondary-m'
+                />
+                <Typography variant='subtitle2' color='error'>
+                  {error}
+                </Typography>
+              </S.FormActions>
+            </Box>
+          ) : (
+            <div>
+              {DEInternalDescription ? (
+                <MDEditor.Markdown source={internalDescription} />
+              ) : (
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  alignItems='center'
+                  justifyContent='flex-start'
+                  wrap='nowrap'
+                >
+                  <Typography variant='subtitle2'>Not created.</Typography>
+                  <WithPermissions
+                    permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}
+                  >
+                    <Button
+                      text='Add Description'
+                      onClick={onEditClick}
+                      buttonType='tertiary-sm'
+                    />
+                  </WithPermissions>
+                </Grid>
+              )}
+            </div>
+          )}
         </div>
-      ) : null}
+        {DEExternalDescription ? (
+          <S.ExternalContainer data-color-mode='light'>
+            <MDEditor.Markdown source={DEExternalDescription} />
+          </S.ExternalContainer>
+        ) : null}
+      </div>
+      {isCollapsible && (
+        <S.CollapseContainer container>
+          <Button
+            text={isCollapsed ? 'Show hidden' : `Hide`}
+            endIcon={
+              <ChevronIcon
+                width={10}
+                height={5}
+                transform={isCollapsed ? 'rotate(0)' : 'rotate(180)'}
+              />
+            }
+            buttonType='service-m'
+            onClick={toggleCollapse}
+          />
+        </S.CollapseContainer>
+      )}
     </>
   );
 };

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Grid } from '@mui/material';
 
 export const SubtitleContainer = styled('div')(({ theme }) => ({
   width: '100%',
@@ -6,4 +7,10 @@ export const SubtitleContainer = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   marginBottom: theme.spacing(1),
+}));
+
+export const PredefinedContainer = styled(Grid)(({ theme }) => ({
+  borderTop: '1px solid',
+  borderTopColor: theme.palette.divider,
+  paddingTop: theme.spacing(1),
 }));
