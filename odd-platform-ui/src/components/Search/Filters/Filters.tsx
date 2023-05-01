@@ -48,7 +48,7 @@ const Filters: React.FC = () => {
           name='Datasource'
           facetOptions={datasources}
         />
-        {searchClass && searchClass > 0 ? (
+        {typeof searchClass === 'number' && searchClass > 0 ? (
           <MultipleFilterItem key='st' facetName='types' name='Type' />
         ) : null}
         <SingleFilterItem
