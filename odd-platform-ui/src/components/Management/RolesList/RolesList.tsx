@@ -11,7 +11,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { fetchRolesList } from 'redux/thunks';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -102,9 +102,11 @@ const RolesList: React.FC = () => {
         <WithPermissions permissionTo={Permission.ROLE_CREATE}>
           <RoleForm
             openBtn={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Create role
-              </AppButton>
+              <Button
+                text='Create role'
+                buttonType='secondary-m'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>

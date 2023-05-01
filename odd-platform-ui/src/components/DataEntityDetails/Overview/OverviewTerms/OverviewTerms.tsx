@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { Permission, type TermRef } from 'generated-sources';
-import { AppButton, TermItem } from 'components/shared/elements';
+import { Button, TermItem } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
@@ -24,9 +24,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
           <AddTermsForm
             dataEntityId={dataEntityId}
             btnCreateEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Add terms
-              </AppButton>
+              <Button text='Add terms' buttonType='secondary-m' startIcon={<AddIcon />} />
             }
           />
         </WithPermissions>
@@ -50,14 +48,12 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
                       <TermItem key={term.id} term={term} dataEntityId={dataEntityId} />
                     ))}
               </Collapse>
-              <AppButton
-                size='small'
-                color='tertiary'
-                sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
+              <Button
+                text={viewAll ? 'Hide' : `View All (${terms?.length})`}
+                buttonType='tertiary-m'
+                sx={{ ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
-              >
-                {viewAll ? 'Hide' : `View All (${terms?.length})`}
-              </AppButton>
+              />
             </>
           )}
         </Box>
@@ -74,11 +70,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
             <AddTermsForm
               dataEntityId={dataEntityId}
-              btnCreateEl={
-                <AppButton size='small' color='tertiary'>
-                  Add terms
-                </AppButton>
-              }
+              btnCreateEl={<Button text='Add terms' buttonType='tertiary-sm' />}
             />
           </WithPermissions>
         </Grid>

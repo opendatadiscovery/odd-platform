@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { type InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
-import { AppButton, AppInput, DialogWrapper } from 'components/shared/elements';
+import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
@@ -79,15 +79,13 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
+      buttonType='main-lg'
       type='submit'
       form='dataentity-internal-name'
-      color='primary'
       fullWidth
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

@@ -5,7 +5,7 @@ import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { AlertStatusItem, AppButton } from 'components/shared/elements';
+import { AlertStatusItem, Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { alertTitlesMap } from 'lib/constants';
@@ -92,14 +92,12 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
                 </Typography>
               )}
               {alertChunkList && alertChunkList?.length > 0 && (
-                <AppButton
+                <Button
+                  text={`${showHistory ? 'Hide' : 'Show'} history`}
                   sx={{ ml: 1 }}
-                  size='medium'
-                  color='tertiary'
+                  buttonType='tertiary-m'
                   onClick={() => setShowHistory(prev => !prev)}
-                >
-                  {`${showHistory ? 'Hide' : 'Show'} history`}
-                </AppButton>
+                />
               )}
             </Grid>
           </Grid>
@@ -109,14 +107,12 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
           <AlertStatusItem status={alertStatus} />
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
             <Grid>
-              <AppButton
+              <Button
+                text={alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
                 sx={{ ml: 2 }}
-                size='medium'
-                color='primaryLight'
+                buttonType='secondary-m'
                 onClick={alertStatusHandler}
-              >
-                {alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
-              </AppButton>
+              />
             </Grid>
           </WithPermissions>
         </S.Wrapper>

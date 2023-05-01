@@ -1,9 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { type DataEntityRun } from 'generated-sources';
-import TestRunStatusItem from 'components/shared/elements/TestRunStatusItem/TestRunStatusItem';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
 import { useAppDateTime } from 'lib/hooks';
+import { Button, TestRunStatusItem } from 'components/shared/elements';
 import TestRunStatusReasonModal from '../TestRunStatusReasonModal/TestRunStatusReasonModal';
 import { Container, StatusReasonModalBtnContainer } from './TestRunItemStyles';
 import { ColContainer } from '../TestRunsHistoryStyles';
@@ -42,11 +41,7 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
               dataQATestId={dataQATestId}
               dataQATestName={dataQATestName}
               dataQATestRun={dataQATestRun}
-              btnCreateEl={
-                <AppButton size='small' color='tertiary'>
-                  See details
-                </AppButton>
-              }
+              btnCreateEl={<Button text='See details' buttonType='tertiary-m' />}
             />
           </StatusReasonModalBtnContainer>
         )}

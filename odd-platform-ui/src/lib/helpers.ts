@@ -227,3 +227,6 @@ export function getMetadataValue(
 
   return metadataVal;
 }
+
+export const mapKeysToValue = <K extends string, V>(keys: K[], value: V) =>
+  Object.fromEntries(keys.map(key => [key, value])) as { [key in K]: V };

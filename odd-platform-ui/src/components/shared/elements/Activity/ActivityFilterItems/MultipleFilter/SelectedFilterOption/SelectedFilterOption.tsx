@@ -8,9 +8,9 @@ import {
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
 import { useQueryParams } from 'lib/hooks';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import TextFormatted from 'components/shared/elements/TextFormatted/TextFormatted';
 import { Container } from 'components/shared/elements/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOptionStyles';
+import Button from 'components/shared/elements/Button/Button';
 
 interface SelectedFilterOptionProps {
   selectedOption: ActivityFilterOption;
@@ -35,10 +35,9 @@ const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
       <Typography noWrap title={selectedOption.name}>
         <TextFormatted value={selectedOption.name} />
       </Typography>
-      <AppIconButton
+      <Button
         sx={{ ml: 0.5 }}
-        size='small'
-        color='unfilled'
+        buttonType='linkGray-m'
         icon={<ClearIcon />}
         onClick={onRemoveClick}
       />

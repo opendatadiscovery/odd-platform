@@ -9,7 +9,7 @@ import {
 } from 'redux/selectors';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { AppButton, AppCircularProgress } from 'components/shared/elements';
+import { Button, AppCircularProgress } from 'components/shared/elements';
 import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
@@ -35,13 +35,11 @@ const Filters: React.FC = () => {
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h4'>Filters</Typography>
-        <AppButton
-          color='tertiary'
-          size='medium'
+        <Button
+          text='Clear All'
+          buttonType='tertiary-m'
           onClick={() => dispatch(clearDataEntitySearchFacets())}
-        >
-          Clear All
-        </AppButton>
+        />
       </Grid>
       <S.ListContainer>
         <SingleFilterItem
@@ -50,7 +48,7 @@ const Filters: React.FC = () => {
           name='Datasource'
           facetOptions={datasources}
         />
-        {searchClass && searchClass > 0 ? (
+        {typeof searchClass === 'number' && searchClass > 0 ? (
           <MultipleFilterItem key='st' facetName='types' name='Type' />
         ) : null}
         <SingleFilterItem

@@ -9,8 +9,8 @@ import {
 import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import { WaitIcon } from 'components/shared/icons';
-import { AppIconButton } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
+import { Button } from 'components/shared/elements';
 import OwnerAssociationForm from './OwnerAssociationForm/OwnerAssociationForm';
 import OwnerEntitiesList from './OwnerEntitiesList/OwnerEntitiesList';
 import * as S from './OwnerAssociationStyles';
@@ -66,9 +66,8 @@ const OwnerAssociation: React.FC = () => {
                   re-submit your request.
                 </Typography>
               </Grid>
-              <AppIconButton
-                size='small'
-                color='unfilled'
+              <Button
+                buttonType='linkGray-m'
                 icon={<S.RejectIcon />}
                 onClick={() => setShowRejectMsg(false)}
               />

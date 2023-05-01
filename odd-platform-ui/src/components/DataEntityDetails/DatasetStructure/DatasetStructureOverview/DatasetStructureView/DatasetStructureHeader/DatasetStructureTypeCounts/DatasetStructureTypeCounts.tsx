@@ -3,7 +3,7 @@ import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import TruncateMarkup from 'react-truncate-markup';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { Grid } from '@mui/material';
 import DatasetStructureTypeCountLabel from './DatasetStructureTypeCountLabel/DatasetStructureTypeCountLabel';
 
@@ -39,11 +39,15 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
     listLength?: number,
     renderedListLength?: number
   ) => (
-    <AppButton size='medium' color='tertiary' onClick={() => setExpanded(prev => !prev)}>
-      {!showOrHide && listLength && renderedListLength
-        ? `Show ${listLength - renderedListLength - 1} hidden`
-        : 'Hide'}
-    </AppButton>
+    <Button
+      text={
+        !showOrHide && listLength && renderedListLength
+          ? `Show ${listLength - renderedListLength - 1} hidden`
+          : 'Hide'
+      }
+      buttonType='tertiary-m'
+      onClick={() => setExpanded(prev => !prev)}
+    />
   );
 
   const ellipsis = React.useCallback(

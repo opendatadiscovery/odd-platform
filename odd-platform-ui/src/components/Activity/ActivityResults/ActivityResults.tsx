@@ -83,6 +83,7 @@ const ActivityResults: React.FC = () => {
           isActivitiesFetched && !isActivitiesFetching && !isActivitiesNotFetched
         }
         isContentEmpty={!activitiesLength}
+        offsetTop={110}
       />
     </Grid>
   );

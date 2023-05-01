@@ -3,12 +3,12 @@ import { Group } from '@visx/group';
 
 export const LoadMoreButton = styled(Group)(({ theme }) => ({
   cursor: 'pointer',
-  fill: theme.palette.button.primaryLight.normal.background,
+  fill: theme.palette.button.secondary.normal.background,
   '&:hover': {
-    fill: theme.palette.button.primaryLight.hover.background,
+    fill: theme.palette.button.secondary.hover.background,
   },
   '&:active': {
-    fill: theme.palette.button.primaryLight.active.background,
+    fill: theme.palette.button.secondary.active.background,
   },
 }));
 
@@ -16,7 +16,7 @@ export const LoadMoreSpinner = styled('circle')(({ theme }) => ({
   fill: 'transparent',
   strokeWidth: 2,
   strokeDasharray: 2 * Math.PI * 8,
-  stroke: theme.palette.button.primaryLight.normal.color,
+  stroke: theme.palette.border.element,
   strokeLinecap: 'round',
   animation: 'dash 1.5s ease-in-out infinite',
   '@keyframes dash': {

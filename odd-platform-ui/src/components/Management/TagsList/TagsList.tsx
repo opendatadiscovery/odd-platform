@@ -13,7 +13,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { fetchTagsList } from 'redux/thunks';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -101,9 +101,11 @@ const TagsListView: React.FC = () => {
         <WithPermissions permissionTo={Permission.TAG_CREATE}>
           <TagCreateForm
             btnCreateEl={
-              <AppButton size='medium' color='primaryLight' startIcon={<AddIcon />}>
-                Create tag
-              </AppButton>
+              <Button
+                text='Create tag'
+                buttonType='secondary-m'
+                startIcon={<AddIcon />}
+              />
             }
           />
         </WithPermissions>

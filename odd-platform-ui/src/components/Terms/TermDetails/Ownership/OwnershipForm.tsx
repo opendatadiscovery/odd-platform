@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { type Ownership, type OwnershipFormData, Permission } from 'generated-sources';
 import {
-  AppButton,
+  Button,
   DialogWrapper,
   LabeledInfoItem,
   OwnerAutocomplete,
@@ -100,16 +100,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   );
 
   const ownerEditDialogActions = () => (
-    <AppButton
-      size='large'
-      color='primary'
+    <Button
+      text={termDetailsOwnership ? 'Edit owner' : 'Add owner'}
+      buttonType='main-lg'
       type='submit'
       form='term-owner-add-form'
       fullWidth
       disabled={!methods.formState.isValid}
-    >
-      {termDetailsOwnership ? 'Edit' : 'Add'} owner
-    </AppButton>
+    />
   );
 
   return (

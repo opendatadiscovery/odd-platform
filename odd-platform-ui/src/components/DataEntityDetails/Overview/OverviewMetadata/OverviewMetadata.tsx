@@ -1,7 +1,7 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { AddIcon } from 'components/shared/icons';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
@@ -44,14 +44,14 @@ const OverviewMetadata: React.FC = () => {
             </Grid>
           ) : null}
         </Collapse>
-        <AppButton
-          size='small'
-          color='tertiary'
+        <Button
+          text={
+            predefOpen ? 'Hide' : `View All (${predefinedMetadata.length - visibleLimit})`
+          }
+          buttonType='tertiary-m'
           onClick={() => setPredefOpen(!predefOpen)}
           sx={{ mt: 0.75, width: 'fit-content' }}
-        >
-          {predefOpen ? 'Hide' : `View All (${predefinedMetadata.length - visibleLimit})`}
-        </AppButton>
+        />
       </Grid>
     );
   }
@@ -73,14 +73,14 @@ const OverviewMetadata: React.FC = () => {
             </Grid>
           ) : null}
         </Collapse>
-        <AppButton
+        <Button
+          text={
+            customOpen ? 'Hide' : `View All (${customMetadata.length - visibleLimit})`
+          }
           sx={{ mt: 0.75, width: 'fit-content' }}
-          size='small'
-          color='tertiary'
+          buttonType='tertiary-m'
           onClick={() => setCustomOpen(!customOpen)}
-        >
-          {customOpen ? 'Hide' : `View All (${customMetadata.length - visibleLimit})`}
-        </AppButton>
+        />
       </Grid>
     );
   }
@@ -97,14 +97,12 @@ const OverviewMetadata: React.FC = () => {
                 <MetadataCreateForm
                   dataEntityId={dataEntityId}
                   btnCreateEl={
-                    <AppButton
+                    <Button
+                      text='Add metadata'
                       data-qa='add_metadata'
-                      size='medium'
-                      color='primaryLight'
+                      buttonType='secondary-m'
                       startIcon={<AddIcon />}
-                    >
-                      Add metadata
-                    </AppButton>
+                    />
                   }
                 />
               </WithPermissions>
@@ -139,9 +137,11 @@ const OverviewMetadata: React.FC = () => {
                     <MetadataCreateForm
                       dataEntityId={dataEntityId}
                       btnCreateEl={
-                        <AppButton sx={{ ml: 0.5 }} size='small' color='tertiary'>
-                          Add Metadata
-                        </AppButton>
+                        <Button
+                          text='Add Metadata'
+                          sx={{ ml: 0.5 }}
+                          buttonType='tertiary-sm'
+                        />
                       }
                     />
                   }

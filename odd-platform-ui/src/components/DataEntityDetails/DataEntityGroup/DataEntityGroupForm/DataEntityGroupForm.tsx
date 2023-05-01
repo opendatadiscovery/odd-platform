@@ -9,7 +9,7 @@ import {
   DataEntityTypeNameEnum,
 } from 'generated-sources';
 import {
-  AppButton,
+  Button,
   AppInput,
   AppMenuItem,
   AppSelect,
@@ -175,16 +175,14 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
   );
 
   const formActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text={dataEntityGroupDetails.id ? 'Save changes' : 'Create group'}
+      buttonType='main-lg'
       type='submit'
       form='dataentitygroup-create-form'
-      color='primary'
       fullWidth
       disabled={!formState.isValid}
-    >
-      {dataEntityGroupDetails ? 'Save changes' : 'Create group'}
-    </AppButton>
+    />
   );
 
   return (

@@ -3,7 +3,7 @@ import { Collapse, Grid, Typography } from '@mui/material';
 import { type DataSetField } from 'generated-sources';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure } from 'redux/selectors';
-import { AppIconButton, AppTooltip } from 'components/shared/elements';
+import { AppTooltip, Button } from 'components/shared/elements';
 import { ChevronIcon, StrokedInfoIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import useStructure from '../../../lib/useStructure';
@@ -51,8 +51,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   const collapseBlock = useMemo(
     () => (
       <S.CollapseContainer $visibility={!!childFields?.length}>
-        <AppIconButton
-          color='tertiary'
+        <Button
+          buttonType='tertiary-m'
           icon={
             <ChevronIcon
               width={10}

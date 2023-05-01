@@ -44,6 +44,6 @@ export const ProgressBack = styled(CircularProgress)<{
 }));
 
 export const Progress = styled(CircularProgress)(({ theme }) => ({
-  color: theme.palette.button.primaryLight.normal.color,
+  color: theme.palette.backgrounds.element,
   position: 'absolute',
 }));

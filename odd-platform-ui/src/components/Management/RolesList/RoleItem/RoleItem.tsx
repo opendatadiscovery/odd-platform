@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { deleteRole } from 'redux/thunks';
 import { Permission, type Role } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TruncateMarkup from 'react-truncate-markup';
@@ -58,14 +58,12 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
               name={name}
               policies={policies}
               openBtn={
-                <AppButton
-                  size='medium'
-                  color='primaryLight'
+                <Button
+                  text='Edit'
+                  buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
-                >
-                  Edit
-                </AppButton>
+                />
               }
             />
           </WithPermissions>
@@ -79,9 +77,11 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
               actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
               onConfirm={handleDelete}
               actionBtn={
-                <AppButton size='medium' color='primaryLight' startIcon={<DeleteIcon />}>
-                  Delete
-                </AppButton>
+                <Button
+                  text='Delete'
+                  buttonType='secondary-m'
+                  startIcon={<DeleteIcon />}
+                />
               }
             />
           </WithPermissions>

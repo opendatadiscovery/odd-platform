@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { AppButton } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { ActivityEventType } from 'generated-sources';
 import {
-  MultipleFilter,
   CalendarFilter,
+  MultipleFilter,
   SingleFilter,
 } from 'components/shared/elements/Activity';
 import { useQueryParams } from 'lib/hooks';
@@ -43,9 +43,7 @@ const Filters: React.FC = () => {
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
         <Typography variant='h4'>Filters</Typography>
-        <AppButton color='tertiary' size='medium' onClick={handleClearAll}>
-          Clear All
-        </AppButton>
+        <Button text='Clear All' buttonType='tertiary-m' onClick={handleClearAll} />
       </Grid>
       <>
         <CalendarFilter />

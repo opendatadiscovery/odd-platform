@@ -12,7 +12,7 @@ import { createFilterOptions } from '@mui/material/useAutocomplete';
 import type { Owner, OwnerFormData } from 'generated-sources';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/icons';
-import { AppButton, AppInput, AutocompleteSuggestion } from 'components/shared/elements';
+import { Button, AppInput, AutocompleteSuggestion } from 'components/shared/elements';
 import {
   createOwnerAssociationRequest,
   fetchIdentity,
@@ -140,7 +140,6 @@ const OwnerAssociationForm: React.FC = () => {
 
     ownersPromise.unwrap().then(({ items }) => setPossibleOwners(items));
 
-    // eslint-disable-next-line consistent-return
     return () => {
       ownersPromise.abort();
     };
@@ -243,18 +242,16 @@ const OwnerAssociationForm: React.FC = () => {
               />
             )}
           />
-          <AppButton
+          <Button
+            text={associateImmediately ? 'Associate' : 'Send a request'}
             sx={{ mt: 2 }}
-            size='large'
-            color='primary'
+            buttonType='main-lg'
             type='submit'
             form='owner-connect-form'
             fullWidth
             disabled={!methods.formState.isValid}
             isLoading={isRequestCreating}
-          >
-            {associateImmediately ? 'Associate' : 'Send a request'}
-          </AppButton>
+          />
         </S.FormContainer>
       </Grid>
     </Grid>

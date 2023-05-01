@@ -9,13 +9,13 @@ import {
 } from 'redux/selectors';
 import { Typography } from '@mui/material';
 import {
-  AppButton,
+  Button,
   AppInput,
   NamespaceAutocomplete,
   DialogWrapper,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
-import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
+import { Asterisk } from './CollectorFormStyles';
 
 interface CollectorFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -142,16 +142,14 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   );
 
   const collectorFormActionButtons = () => (
-    <AppButton
-      size='large'
+    <Button
+      text='Save'
       type='submit'
       form='collector-create-form'
-      color='primary'
+      buttonType='main-lg'
       fullWidth
       disabled={!isValid}
-    >
-      Save
-    </AppButton>
+    />
   );
 
   return (

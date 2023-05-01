@@ -8,10 +8,10 @@ import {
 } from 'components/shared/icons';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import { useAppInfo, useAppLinks } from 'lib/hooks/api';
 import * as S from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenuStyles';
+import Button from 'components/shared/elements/Button/Button';
 
 const AppInfoMenu: React.FC = () => {
   const { data: version } = useAppInfo();
@@ -71,11 +71,10 @@ const AppInfoMenu: React.FC = () => {
   return (
     <Grid>
       <Grid item>
-        <AppIconButton
+        <Button
           sx={{ mr: 1 }}
           icon={<InformationIcon width={16} height={16} />}
-          color='unfilled'
-          edge='end'
+          buttonType='linkGray-m'
           aria-label='app info menu'
           aria-controls={menuId}
           aria-haspopup='true'

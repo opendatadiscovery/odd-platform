@@ -94,7 +94,7 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
           marginRight: 0,
           '&:hover': {
             backgroundColor: 'unset',
-            color: theme.palette.button.unfilled.hover.color,
+            color: theme.palette.backgrounds.secondary,
           },
         },
       },

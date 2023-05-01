@@ -14,12 +14,12 @@ const iconStyles = {
 };
 
 export const Icon = styled('span')(({ theme }) => ({
-  boxShadow: `0 0 0 1px ${theme.palette.button.primary.normal.border}`,
+  boxShadow: `0 0 0 1px ${theme.palette.backgrounds.element}`,
   ...iconStyles,
 }));
 
 export const IconChecked = styled(Icon)(({ theme }) => ({
-  backgroundColor: theme.palette.button.primary.normal.background,
+  backgroundColor: theme.palette.backgrounds.element,
   '&:before': {
     display: 'block',
     content: '""',

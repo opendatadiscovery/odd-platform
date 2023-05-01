@@ -6,8 +6,8 @@ import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import CloseIcon from 'components/shared/icons/CloseIcon';
 import WithPermissions from 'components/shared/contexts/Permission/WithPermissions';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
-import * as S from 'components/shared/elements/TermItem/TermItemStyles';
+import Button from 'components/shared/elements/Button/Button';
+import * as S from './TermItemStyles';
 
 interface TermItemProps {
   dataEntityId: number;
@@ -35,12 +35,11 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
         </Grid>
         <S.ActionsContainer>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_TERM}>
-            <AppIconButton
-              size='small'
-              color='unfilled'
+            <Button
+              sx={{ ml: 0.25 }}
+              buttonType='linkGray-m'
               icon={<CloseIcon />}
               onClick={handleDelete}
-              sx={{ ml: 0.25 }}
             />
           </WithPermissions>
         </S.ActionsContainer>

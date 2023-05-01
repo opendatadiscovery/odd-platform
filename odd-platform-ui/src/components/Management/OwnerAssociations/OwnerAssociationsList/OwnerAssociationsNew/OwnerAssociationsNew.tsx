@@ -59,13 +59,13 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => 
         <Grid item lg={4}>
           {tableCellText('User name')}
         </Grid>
-        <Grid item lg={3}>
+        <Grid item lg={2.5}>
           {tableCellText('Owner name')}
         </Grid>
-        <Grid item lg={3}>
+        <Grid item lg={2.5}>
           {tableCellText('Provider')}
         </Grid>
-        <Grid item lg={2} />
+        <Grid item lg={3} />
       </S.TableHeader>
       <Grid container>
         <Grid item xs={12}>

@@ -1,9 +1,8 @@
-import { CircularProgress, type Theme } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import React from 'react';
 import { AlertIcon, CopyIcon, SuccessIcon } from 'components/shared/icons';
-import { type SxProps } from '@mui/system';
-import AppButton from 'components/shared/elements/AppButton/AppButton';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
+import { type SxProps, type Theme } from '@mui/system';
+import Button from 'components/shared/elements/Button/Button';
 
 interface CopyButtonProps {
   text?: string;
@@ -56,12 +55,18 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     buttonIcon = <CircularProgress size={16} />;
     buttonText = fallbackText;
   }
-  return text ? (
-    <AppButton color='tertiary' onClick={copyToClipboard} startIcon={buttonIcon} sx={sx}>
+
+  return (
+    <Button
+      text={text}
+      buttonType='tertiary-m'
+      onClick={copyToClipboard}
+      startIcon={text ? buttonIcon : undefined}
+      icon={text ? undefined : buttonIcon}
+      sx={sx}
+    >
       {buttonText}
-    </AppButton>
-  ) : (
-    <AppIconButton icon={buttonIcon} color='tertiary' onClick={copyToClipboard} sx={sx} />
+    </Button>
   );
 };
 

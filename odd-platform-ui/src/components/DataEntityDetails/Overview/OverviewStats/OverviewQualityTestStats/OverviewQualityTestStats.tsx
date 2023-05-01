@@ -7,7 +7,7 @@ import {
 } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import {
-  AppButton,
+  Button,
   EntitiesListModal,
   EntityClassItem,
   LabeledInfoItem,
@@ -49,16 +49,13 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
           </Typography>
           {datasetsList?.slice(0, displayedEntitiesNumber).map(dataset => (
-            <AppButton
+            <Button
+              text={dataset.internalName || dataset.externalName}
               to={dataEntityOverviewPath(dataset.id)}
               key={dataset.id}
-              sx={{ my: 0.25 }}
-              size='medium'
-              color='tertiary'
-              truncate
-            >
-              {dataset.internalName || dataset.externalName}
-            </AppButton>
+              sx={{ my: 0.25, maxWidth: '100%' }}
+              buttonType='link-m'
+            />
           ))}
           {datasetsList && datasetsList.length > displayedEntitiesNumber ? (
             <EntitiesListModal
@@ -66,9 +63,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
               labelFor='Datasets'
               dataEntityName={dataEntityName}
               openBtnEl={
-                <AppButton size='medium' color='tertiary' sx={{ my: 0.25 }}>
-                  Show All
-                </AppButton>
+                <Button text='Show All' buttonType='tertiary-m' sx={{ my: 0.25 }} />
               }
             />
           ) : null}
@@ -79,16 +74,13 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
               <Typography variant='h3' sx={{ mb: 1.25 }}>
                 Suite
               </Typography>
-              <AppButton
+              <Button
+                text={suiteName || suiteUrl}
                 to={suiteUrl}
-                sx={{ my: 0.25 }}
-                size='medium'
-                color='tertiary'
-                truncate
-                linkTarget='_blank'
-              >
-                {suiteName || suiteUrl}
-              </AppButton>
+                sx={{ my: 0.25, maxWidth: '100%' }}
+                buttonType='link-m'
+                target='_blank'
+              />
             </Grid>
           </Grid>
         )}
@@ -116,13 +108,11 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
               )}
           </LabeledInfoItem>
           <Grid container>
-            <AppButton
-              size='small'
-              color='tertiary'
+            <Button
+              text='History'
+              buttonType='secondary-m'
               to={dataEntityHistoryPath(qualityTest?.id)}
-            >
-              History
-            </AppButton>
+            />
           </Grid>
         </S.Overview>
       </S.StatsContainer>

@@ -11,7 +11,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { fetchPolicyList } from 'redux/thunks';
 import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
 import {
-  AppButton,
+  Button,
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
@@ -101,14 +101,12 @@ const PolicyList: React.FC = () => {
           onChange={handleInputChange}
         />
         <WithPermissions permissionTo={Permission.POLICY_CREATE}>
-          <AppButton
+          <Button
+            text='Create policy'
             to={ManagementRoutes.createPolicy}
-            size='medium'
-            color='primaryLight'
+            buttonType='secondary-m'
             startIcon={<AddIcon />}
-          >
-            Create policy
-          </AppButton>
+          />
         </WithPermissions>
       </S.Caption>
       <S.TableHeader container flexWrap='nowrap'>

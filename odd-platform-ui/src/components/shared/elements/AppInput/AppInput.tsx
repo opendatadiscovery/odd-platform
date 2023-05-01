@@ -1,10 +1,10 @@
 import React from 'react';
-import type { TextFieldProps, Theme } from '@mui/material';
+import type { TextFieldProps } from '@mui/material';
 import { CircularProgress } from '@mui/material';
 import type { AppInputSizes } from 'components/shared/elements/AppInput/AppInputStyles';
 import { StyledAppInput } from 'components/shared/elements/AppInput/AppInputStyles';
-import AppIconButton from 'components/shared/elements/AppIconButton/AppIconButton';
-import type { SxProps } from '@mui/system';
+import type { SxProps, Theme } from '@mui/system';
+import Button from 'components/shared/elements/Button/Button';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
 
@@ -77,11 +77,10 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
       }
 
       return (
-        <AppIconButton
-          sx={position || { mx: 1 }}
-          size='small'
-          color='unfilled'
+        <Button
+          buttonType='linkGray-m'
           icon={icon}
+          sx={position || { mx: 1 }}
           disabled={props.disabled}
           onClick={onCLick}
         />

@@ -6,7 +6,7 @@ import {
   OwnerAssociationRequestStatus,
   Permission,
 } from 'generated-sources';
-import { AppButton, ConfirmationDialog } from 'components/shared/elements';
+import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { AcceptIcon, RejectIcon } from 'components/shared/icons';
 import { updateOwnerAssociationRequest } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -62,29 +62,27 @@ const ActiveAssociationRequest: React.FC<Props> = ({
           {username}
         </Typography>
       </Grid>
-      <Grid item lg={3}>
+      <Grid item lg={2.5}>
         <Typography variant='body1' noWrap title={ownerName}>
           {ownerName}
         </Typography>
       </Grid>
-      <Grid item lg={3}>
+      <Grid item lg={2.5}>
         {provider}
       </Grid>
-      <S.AssociationsItemActionsContainer container item lg={2}>
+      <S.AssociationsItemActionsContainer container item lg={3}>
         <ConfirmationDialog
           actionTitle='Are you sure you want to accept association request?'
           actionName='Accept'
           actionText={<>{`User "${username}" will be map to owner "${ownerName}"`}</>}
           onConfirm={handleAccept}
           actionBtn={
-            <AppButton
-              size='medium'
-              color='secondarySuccess'
+            <Button
+              text='Accept'
+              buttonType='secondarySuccess-m'
               startIcon={<AcceptIcon />}
               disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
-            >
-              Accept
-            </AppButton>
+            />
           }
         />
         <ConfirmationDialog
@@ -93,15 +91,13 @@ const ActiveAssociationRequest: React.FC<Props> = ({
           actionText={`Association request to map user "${username}" to owner "${ownerName}" will be rejected`}
           onConfirm={handleReject}
           actionBtn={
-            <AppButton
+            <Button
               sx={{ ml: 1 }}
-              size='medium'
-              color='secondaryWarn'
+              text='Reject'
+              buttonType='secondaryWarning-m'
               startIcon={<RejectIcon />}
               disabled={!hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
-            >
-              Reject
-            </AppButton>
+            />
           }
         />
       </S.AssociationsItemActionsContainer>

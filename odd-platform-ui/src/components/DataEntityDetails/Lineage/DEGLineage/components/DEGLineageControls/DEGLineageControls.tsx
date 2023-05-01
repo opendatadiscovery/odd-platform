@@ -1,5 +1,5 @@
 import React, { type FC, useCallback } from 'react';
-import { AppButton, AppTabs } from 'components/shared/elements';
+import { AppTabs, Button } from 'components/shared/elements';
 import { TargetIcon } from 'components/shared/icons';
 import { useQueryParams } from 'lib/hooks';
 import { useSetAtom } from 'jotai';
@@ -31,14 +31,12 @@ const DEGLineageControls: FC = () => {
 
   return (
     <S.ControlsContainer>
-      <AppButton
-        color='primaryLight'
-        size='medium'
+      <Button
+        text='Fit'
+        buttonType='secondary-m'
         startIcon={<TargetIcon />}
         onClick={handleFitClick}
-      >
-        Fit
-      </AppButton>
+      />
       <AppTabs
         type='secondarySmall'
         orientation='horizontal'
