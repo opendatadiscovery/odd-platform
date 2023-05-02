@@ -13,4 +13,5 @@ export const PredefinedContainer = styled(Grid)(({ theme }) => ({
   borderTop: '1px solid',
   borderTopColor: theme.palette.divider,
   paddingTop: theme.spacing(1),
+  marginTop: theme.spacing(2),
 }));

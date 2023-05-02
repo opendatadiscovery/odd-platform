@@ -26,7 +26,7 @@ export const getErrorResponse = async (response: Response): Promise<AppError> =>
 };
 
 interface ToastOptions {
-  id: string;
+  id?: string;
   message: string;
 }
 

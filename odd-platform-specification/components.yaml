@@ -2161,6 +2161,9 @@ components:
           format: int64
         name:
           type: string
+      required:
+        - id
+        - name
 
     DataEntityLink:
       type: object
@@ -2172,6 +2175,10 @@ components:
           type: string
         url:
           type: string
+      required:
+        - id
+        - name
+        - url
 
     DataEntityFilesFormData:
       type: object
