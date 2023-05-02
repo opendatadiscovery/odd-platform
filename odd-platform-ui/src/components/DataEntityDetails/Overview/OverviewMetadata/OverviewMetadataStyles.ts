@@ -15,3 +15,8 @@ export const PredefinedContainer = styled(Grid)(({ theme }) => ({
   paddingTop: theme.spacing(1),
   marginTop: theme.spacing(2),
 }));
+
+export const CollapseContainer = styled(Grid)(({ theme }) => ({
+  borderTop: '1px solid',
+  borderTopColor: theme.palette.divider,
+}));

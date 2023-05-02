@@ -115,7 +115,10 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 <Button text='Save' type='submit' buttonType='main-m' />
                 <Button
                   text='Cancel'
-                  onClick={() => setEditMode(false)}
+                  onClick={() => {
+                    setEditMode(false);
+                    updateCollapse();
+                  }}
                   type='button'
                   buttonType='secondary-m'
                 />
@@ -148,6 +151,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     icon={<EditIcon />}
                     onClick={() => {
                       setEditMode(true);
+                      updateCollapse();
                     }}
                   />
                 </WithPermissions>

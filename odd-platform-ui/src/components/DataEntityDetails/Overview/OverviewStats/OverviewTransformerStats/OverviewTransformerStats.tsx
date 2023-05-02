@@ -38,9 +38,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             <Typography variant='h2' sx={{ mr: 0.5 }}>
               {(sources?.length || 0) + (unknownSourcesCount || 0)}
             </Typography>
-            <Typography variant='body1' color='texts.hint'>
-              sources
-            </Typography>
+            <Typography variant='h4'>sources</Typography>
           </Grid>
           <Grid
             item
@@ -85,9 +83,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             <Typography variant='h2' sx={{ mr: 0.5 }}>
               {(targets?.length || 0) + (unknownTargetsCount || 0)}
             </Typography>
-            <Typography variant='body1' color='texts.hint'>
-              targets
-            </Typography>
+            <Typography variant='h4'>targets</Typography>
           </Grid>
           <Grid
             item

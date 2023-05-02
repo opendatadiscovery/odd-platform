@@ -112,7 +112,7 @@ const OverviewMetadata: React.FC = () => {
         )}
       </div>
       {isCollapsible && (
-        <Grid container>
+        <S.CollapseContainer container>
           <Button
             text={isCollapsed ? 'Show hidden' : `Hide`}
             endIcon={
@@ -125,7 +125,7 @@ const OverviewMetadata: React.FC = () => {
             buttonType='service-m'
             onClick={toggleCollapse}
           />
-        </Grid>
+        </S.CollapseContainer>
       )}
     </>
   );

@@ -28,9 +28,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
           <Typography variant='h2' sx={{ mr: 0.5 }}>
             {(outputs?.length || 0) + (unknownOutputsCount || 0)}
           </Typography>
-          <Typography variant='body1' color='texts.hint'>
-            outputs
-          </Typography>
+          <Typography variant='h4'>outputs</Typography>
         </Grid>
         <Grid item container xs={12} direction='column' alignItems='flex-start'>
           {outputs?.slice(0, displayedEntitiesNumber).map(output => (
