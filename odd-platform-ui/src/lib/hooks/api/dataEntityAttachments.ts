@@ -5,6 +5,9 @@ import type {
   DataEntityAttachmentApiSaveLinksRequest,
   DataEntityAttachmentApiUpdateLinkRequest,
   DataEntityAttachmentApiDeleteLinkRequest,
+  DataEntityAttachmentApiSaveFilesRequest,
+  DataEntityAttachmentApiDownloadFileRequest,
+  DataEntityAttachmentApiDeleteFileRequest,
 } from 'generated-sources';
 import { showSuccessToast } from 'lib/errorHandling';
 
@@ -31,7 +34,6 @@ export function useSaveDataEntityLinks() {
   );
 }
 
-// TODO check for design - link or links
 export function useUpdateDataEntityLink() {
   const client = useQueryClient();
 
@@ -56,6 +58,45 @@ export function useDeleteDataEntityLink() {
     {
       onSuccess: () => {
         showSuccessToast({ message: 'Link successfully deleted!' });
+        client.invalidateQueries(['dataEntityAttachments']);
+      },
+    }
+  );
+}
+
+export function useSaveDataEntityFiles() {
+  const client = useQueryClient();
+
+  return useMutation(
+    (params: DataEntityAttachmentApiSaveFilesRequest) =>
+      dataEntityAttachmentApi.saveFiles(params),
+    {
+      onSuccess: () => {
+        showSuccessToast({ message: 'Files successfully saved!' });
+        client.invalidateQueries(['dataEntityAttachments']);
+      },
+    }
+  );
+}
+
+export function useDownloadDataEntityFile({
+  dataEntityId,
+  fileId,
+}: DataEntityAttachmentApiDownloadFileRequest) {
+  return useQuery(['dataEntityFiles', dataEntityId, fileId], () =>
+    dataEntityAttachmentApi.downloadFile({ dataEntityId, fileId })
+  );
+}
+
+export function useDeleteDataEntityFile() {
+  const client = useQueryClient();
+
+  return useMutation(
+    (params: DataEntityAttachmentApiDeleteFileRequest) =>
+      dataEntityAttachmentApi.deleteFile(params),
+    {
+      onSuccess: () => {
+        showSuccessToast({ message: 'Files successfully deleted!' });
         client.invalidateQueries(['dataEntityAttachments']);
       },
     }

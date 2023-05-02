@@ -2152,6 +2152,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityLink'
+      required:
+        - files
+        - links
 
     DataEntityFile:
       type: object
