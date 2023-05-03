@@ -30,7 +30,7 @@ interface UseCollapseReturn {
 }
 
 const useCollapse = ({
-  initialCollapsed = false,
+  initialCollapsed = true,
   initialMaxHeight = 200,
   transitionDuration = 300,
   maxHeightReduceRatio = 0.85,
@@ -72,7 +72,6 @@ const useCollapse = ({
         maxHeight: isCollapsed ? `${initialMaxHeight}px` : 'none',
         overflow: 'hidden',
         transition: `max-height ${transitionDuration}ms ease-in-out`,
-        boxSizing: 'content-box',
       },
     }),
     [isCollapsed, initialMaxHeight, transitionDuration]

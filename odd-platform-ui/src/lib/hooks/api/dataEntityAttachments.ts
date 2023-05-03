@@ -8,14 +8,26 @@ import type {
   DataEntityAttachmentApiSaveFilesRequest,
   DataEntityAttachmentApiDownloadFileRequest,
   DataEntityAttachmentApiDeleteFileRequest,
+  DataEntityAttachments,
+  DataEntityFile,
+  DataEntityLink,
 } from 'generated-sources';
 import { showSuccessToast } from 'lib/errorHandling';
+import type { ErrorState } from 'redux/interfaces';
 
 export function useDataEntityAttachments({
   dataEntityId,
 }: DataEntityAttachmentApiGetAttachmentsRequest) {
-  return useQuery(['dataEntityAttachments'], () =>
-    dataEntityAttachmentApi.getAttachments({ dataEntityId })
+  return useQuery<
+    DataEntityAttachments,
+    ErrorState,
+    Array<DataEntityFile | DataEntityLink>
+  >(
+    ['dataEntityAttachments'],
+    () => dataEntityAttachmentApi.getAttachments({ dataEntityId }),
+    {
+      select: data => [...data.files, ...data.links],
+    }
   );
 }
 

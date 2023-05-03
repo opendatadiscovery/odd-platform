@@ -26,6 +26,7 @@ import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
+import OverviewAttachments from './OverviewAttachments/OverviewAttachments';
 
 const Overview: React.FC = () => {
   const { dataEntityId } = useAppParams();
@@ -68,8 +69,19 @@ const Overview: React.FC = () => {
                 Component={OverviewMetadata}
               />
             </SectionContainer>
+            <SectionContainer square elevation={0}>
+              <WithPermissionsProvider
+                // TODO add right permissions
+                allowedPermissions={[
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE,
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_UPDATE,
+                  Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE,
+                ]}
+                resourcePermissions={resourcePermissions}
+                Component={OverviewAttachments}
+              />
+            </SectionContainer>
             <OverviewMetrics showOverview={isDataset} />
-
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}

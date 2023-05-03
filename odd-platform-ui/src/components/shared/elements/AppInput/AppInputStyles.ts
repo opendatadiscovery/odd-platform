@@ -85,7 +85,7 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
         outline: 'none !important',
         top: theme.spacing(-0.25),
       },
-      [`& .${inputLabelClasses.asterisk}`]: { color: theme.palette.warning.main },
+      [`& .${inputLabelClasses.asterisk}`]: { color: theme.palette.texts.secondary },
     },
     // overriding DatePicker input's endAdornment button
     [`& .${outlinedInputClasses.root}`]: {

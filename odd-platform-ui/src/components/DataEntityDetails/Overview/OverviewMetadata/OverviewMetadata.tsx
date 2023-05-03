@@ -33,7 +33,7 @@ const OverviewMetadata: React.FC = () => {
   return (
     <>
       <div ref={contentRef} {...collapsibleContentProps}>
-        <Grid item container>
+        <Grid container>
           <Grid container>
             <Grid item xs={12}>
               <S.SubtitleContainer>

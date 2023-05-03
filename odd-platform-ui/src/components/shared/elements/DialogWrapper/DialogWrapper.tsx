@@ -44,30 +44,22 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
 }) => {
   const [open, setOpen] = React.useState(false);
 
-  const handleOpen = React.useCallback(
-    (e?: React.MouseEvent) => {
-      e?.preventDefault();
-      e?.stopPropagation();
-      setOpen(true);
-    },
-    [setOpen]
-  );
-  const handleClose = React.useCallback(
-    (e?: React.MouseEvent) => {
-      e?.stopPropagation();
-      setOpen(false);
-      if (clearState) {
-        clearState();
-      }
-    },
-    [setOpen]
-  );
+  const handleOpen = React.useCallback((e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    setOpen(true);
+  }, []);
+  const handleClose = React.useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setOpen(false);
+    if (clearState) {
+      clearState();
+    }
+  }, []);
 
   React.useEffect(() => {
     handleClose();
   }, [handleCloseSubmittedForm, handleClose]);
-
-  React.useEffect(() => () => setOpen(false), [setOpen]);
 
   const dialogOnKeyDownHandler = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' && !event.shiftKey && formSubmitHandler) {
