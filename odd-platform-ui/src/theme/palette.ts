@@ -26,6 +26,7 @@ const colors = {
   blue20: '#80AEFF',
   blue10: '#B3D1FF',
   blue5: '#E5EEFF',
+  blue3: '#F0F5FF',
 
   orange50: '#FFAA00',
   orange40: '#FFBB33',
@@ -257,9 +258,10 @@ export const palette = createPalette({
     blank: '',
     custom: '',
   },
-  switch: {
-    checked: colors.green40,
-    track: colors.black10,
-    thumb: colors.white,
+  switch: { checked: colors.green40, track: colors.black10, thumb: colors.white },
+  attachment: {
+    normal: { background: colors.blue3, color: colors.black70 },
+    hover: { background: colors.blue5, color: colors.black80 },
+    active: { background: colors.blue10, color: colors.black90 },
   },
 });

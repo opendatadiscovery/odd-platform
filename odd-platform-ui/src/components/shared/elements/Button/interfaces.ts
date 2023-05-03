@@ -37,7 +37,8 @@ type IconButton =
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.m}-icon`
   | `${ButtonColorEnum.secondary}-${ButtonSizeEnum.sm}-icon`
   | `${ButtonColorEnum.tertiary}-${ButtonSizeEnum.m}-icon`
-  | `${ButtonColorEnum.expand}-${ButtonSizeEnum.sm}-icon`;
+  | `${ButtonColorEnum.expand}-${ButtonSizeEnum.sm}-icon`
+  | `${ButtonColorEnum.linkGray}-${ButtonSizeEnum.m}-icon`;
 
 export type Button = TextButton | IconButton;
 

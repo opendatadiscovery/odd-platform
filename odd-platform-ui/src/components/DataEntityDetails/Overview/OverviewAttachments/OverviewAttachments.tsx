@@ -1,23 +1,30 @@
-import React, { type FC } from 'react';
-import { Grid, Typography } from '@mui/material';
+import React, { type FC, useState } from 'react';
+import { Collapse, Grid, Typography } from '@mui/material';
 import { AppCircularProgress, AppErrorBlock, Button } from 'components/shared/elements';
 import { ChevronIcon } from 'components/shared/icons';
-import { useAppParams, useCollapse, useDataEntityAttachments } from 'lib/hooks';
+import { useAppParams, useDataEntityAttachments } from 'lib/hooks';
+import type { DataEntityFile, DataEntityLink } from 'generated-sources';
+import LinkAttachment from './AttachmentItem/LinkAttachment';
 import AttachmentsHeader from './AttachmentsHeader/AttachmentsHeader';
 import * as S from './OverviewAttachments.styles';
 
 const OverviewAttachments: FC = () => {
   const { dataEntityId } = useAppParams();
-  const {
-    contentRef,
-    collapsibleContentProps,
-    toggleCollapse,
-    updateCollapse,
-    isCollapsed,
-    isCollapsible,
-  } = useCollapse({ initialMaxHeight: 200 });
 
   const { data, isError, isLoading } = useDataEntityAttachments({ dataEntityId });
+
+  const [collapsed, setCollapsed] = useState(false);
+  const visibleLimit = 9;
+
+  const isLink = (item: DataEntityFile | DataEntityLink): item is DataEntityLink =>
+    'url' in item;
+
+  const renderItem = (item: DataEntityFile | DataEntityLink) =>
+    isLink(item) ? (
+      <LinkAttachment key={item.id} linkId={item.id} name={item.name} url={item.url} />
+    ) : (
+      <div>file</div>
+    );
 
   const getContent = () => {
     if (isError || !data) return <AppErrorBlock />;
@@ -43,30 +50,43 @@ const OverviewAttachments: FC = () => {
         </Grid>
       );
 
-    return data.map(item => <div>attachment</div>);
+    return (
+      <>
+        <S.ListContainer container>
+          {data.slice(0, visibleLimit).map(renderItem)}
+        </S.ListContainer>
+        {data.length > visibleLimit && (
+          <Collapse in={collapsed} timeout='auto' unmountOnExit>
+            <S.ListContainer container $multiline>
+              {data.slice(visibleLimit).map(renderItem)}
+            </S.ListContainer>
+          </Collapse>
+        )}
+      </>
+    );
   };
 
   return (
     <>
-      <Grid item container ref={contentRef} {...collapsibleContentProps}>
+      <Grid item container>
         <Grid container>
           <AttachmentsHeader />
           {getContent()}
         </Grid>
       </Grid>
-      {isCollapsible && (
+      {data && data.length > visibleLimit && (
         <S.CollapseFooter container>
           <Button
-            text={isCollapsed ? 'Show hidden' : `Hide`}
+            text={collapsed ? `Hide` : 'Show hidden'}
             endIcon={
               <ChevronIcon
                 width={10}
                 height={5}
-                transform={isCollapsed ? 'rotate(0)' : 'rotate(180)'}
+                transform={collapsed ? 'rotate(180)' : 'rotate(0)'}
               />
             }
             buttonType='service-m'
-            onClick={toggleCollapse}
+            onClick={() => setCollapsed(prev => !prev)}
           />
         </S.CollapseFooter>
       )}

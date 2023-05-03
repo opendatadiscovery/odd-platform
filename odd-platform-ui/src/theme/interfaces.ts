@@ -113,6 +113,7 @@ declare module '@mui/material/styles' {
     border: Border;
     toast: Toast;
     switch: SwitchColors;
+    attachment: ItemCondition;
   }
 
   interface PaletteOptions {
@@ -133,6 +134,7 @@ declare module '@mui/material/styles' {
     border: Border;
     toast: Toast;
     switch: SwitchColors;
+    attachment: ItemCondition;
   }
 }
 
