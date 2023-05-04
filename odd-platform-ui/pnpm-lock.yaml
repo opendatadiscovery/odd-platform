@@ -234,9 +234,6 @@ devDependencies:
   husky:
     specifier: ^8.0.3
     version: 8.0.3
-  jest-dom:
-    specifier: ^4.0.0
-    version: 4.0.0
   jsdom:
     specifier: ^21.1.1
     version: 21.1.1
@@ -4150,11 +4147,6 @@ packages:
       diff-sequences: 27.5.1
       jest-get-type: 27.5.1
       pretty-format: 27.5.1
-    dev: true
-
-  /jest-dom@4.0.0:
-    resolution: {integrity: sha512-gBxYZlZB1Jgvf2gP2pRfjjUWF8woGBHj/g5rAQgFPB/0K2atGuhVcPO+BItyjWeKg9zM+dokgcMOH01vrWVMFA==}
-    deprecated: '🚨 jest-dom has moved to @testing-library/jest-dom. Please uninstall jest-dom and install @testing-library/jest-dom instead, or use an older version of jest-dom. Learn more about this change here: https://github.com/testing-library/dom-testing-library/issues/260 Thanks! :)'
     dev: true
 
   /jest-get-type@27.5.1:
