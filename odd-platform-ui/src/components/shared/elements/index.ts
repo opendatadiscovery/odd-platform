@@ -22,7 +22,7 @@ export { default as TagItem } from './TagItem/TagItem';
 export { default as TruncatedCell } from './TruncatedCell/TruncatedCell';
 export { default as TruncatedLabel } from './TruncatedLabel/TruncatedLabel';
 export { default as AppTooltip } from './AppTooltip/AppTooltip';
-export { default as AppCheckbox } from './AppCheckbox/AppCheckbox';
+export { default as Checkbox } from 'components/shared/elements/Checkbox/Checkbox';
 export { default as EmptyContentPlaceholder } from './EmptyContentPlaceholder/EmptyContentPlaceholder';
 export { default as NamespaceAutocomplete } from './Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';

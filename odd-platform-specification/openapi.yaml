@@ -1173,6 +1173,11 @@ paths:
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
+        - name: propagate
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'

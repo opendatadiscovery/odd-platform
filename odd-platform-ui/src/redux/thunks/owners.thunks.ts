@@ -132,8 +132,8 @@ export const deleteDataEntityOwnership = handleResponseAsyncThunk<
   DataEntityApiDeleteOwnershipRequest
 >(
   actions.deleteDataEntityOwnershipAction,
-  async ({ dataEntityId, ownershipId }) => {
-    await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId });
+  async ({ dataEntityId, ownershipId, propagate }) => {
+    await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId, propagate });
     return { dataEntityId, ownershipId };
   },
   {

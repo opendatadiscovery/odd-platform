@@ -19,6 +19,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import reactor.core.publisher.Mono;
@@ -58,11 +60,15 @@ class OwnershipServiceImplTest {
     private OwnershipMapper ownershipMapper;
     @Mock
     private DataEntityFilledService dataEntityFilledService;
+    @Mock
+    private ReactiveDataEntityRepository dataEntityRepository;
+    @Mock
+    private ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
 
     @BeforeEach
     void setUp() {
-        ownershipService = new OwnershipServiceImpl(titleService, ownerService, ownershipRepository,
-            searchEntrypointRepository, dataEntityFilledService, ownershipMapper);
+        ownershipService = new OwnershipServiceImpl(dataEntityRepository, groupEntityRelationRepository, titleService,
+            ownerService, ownershipRepository, searchEntrypointRepository, dataEntityFilledService, ownershipMapper);
     }
 
     @Test

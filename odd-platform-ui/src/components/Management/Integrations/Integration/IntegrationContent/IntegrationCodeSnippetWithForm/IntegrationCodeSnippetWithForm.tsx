@@ -2,7 +2,7 @@ import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
 import { FormControlLabel, Grid, Typography } from '@mui/material';
-import { Button, AppCheckbox, AppInput, Markdown } from 'components/shared/elements';
+import { Button, Checkbox, AppInput, Markdown } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
 
@@ -44,7 +44,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                       {...field}
                       sx={{ ml: -0.25 }}
                       checked={field.value}
-                      control={<AppCheckbox sx={{ mr: 1 }} />}
+                      control={<Checkbox sx={{ mr: 1 }} />}
                       label={arg.name}
                     />
                   )}

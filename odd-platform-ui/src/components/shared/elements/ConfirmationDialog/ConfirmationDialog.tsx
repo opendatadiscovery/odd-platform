@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import * as S from 'components/shared/elements/ConfirmationDialog/ConfirmationDialogStyles';
 import Button from 'components/shared/elements/Button/Button';
@@ -10,6 +10,7 @@ interface ConfirmationDialogProps {
   actionText: JSX.Element | string;
   actionName: string;
   onConfirm: () => Promise<unknown>;
+  additionalContent?: JSX.Element | null;
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -18,6 +19,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   actionText,
   actionName,
   onConfirm,
+  additionalContent,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const onClose = (handleClose: () => void, action?: () => Promise<unknown>) => () => {
@@ -36,13 +38,19 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     </Typography>
   );
 
-  const formContent = () => <Typography variant='subtitle1'>{actionText}</Typography>;
+  const formContent = () => (
+    <Grid>
+      <Typography variant='subtitle1'>{actionText}</Typography>
+      {additionalContent}
+    </Grid>
+  );
 
   const formActionButtons = ({ handleClose }: { handleClose: () => void }) => (
     <S.Actions>
       <Button
         text={actionName}
         buttonType='main-lg'
+        fullWidth
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
           onClose(handleClose, onConfirm)();
