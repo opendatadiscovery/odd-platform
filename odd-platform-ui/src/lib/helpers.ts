@@ -230,3 +230,22 @@ export function getMetadataValue(
 
 export const mapKeysToValue = <K extends string, V>(keys: K[], value: V) =>
   Object.fromEntries(keys.map(key => [key, value])) as { [key in K]: V };
+
+export const bytesToKb = (bytes: number) => Math.ceil(bytes / 1000);
+export const bytesToMb = (bytes: number) => Math.ceil(bytes / 1000000);
+
+export function isImageFile(fileName: string): boolean {
+  const imageExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'bmp',
+    'webp',
+    'svg',
+    'tif',
+    'tiff',
+  ];
+  const extension = fileName.split('.').pop()?.toLowerCase() || '';
+  return imageExtensions.includes(extension);
+}

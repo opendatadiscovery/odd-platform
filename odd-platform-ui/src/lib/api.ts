@@ -7,6 +7,7 @@ import {
   DataCollaborationApi,
   DataEntityApi,
   DataEntityRunApi,
+  DataEntityAttachmentApi,
   DataQualityApi,
   DataSetApi,
   DatasetFieldApi,
@@ -59,3 +60,4 @@ export const identityApi = new IdentityApi(apiConf);
 export const roleApi = new RoleApi(apiConf);
 export const tagApi = new TagApi(apiConf);
 export const integrationApi = new IntegrationApi(apiConf);
+export const dataEntityAttachmentApi = new DataEntityAttachmentApi(apiConf);

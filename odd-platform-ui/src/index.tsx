@@ -35,6 +35,11 @@ const queryClient = new QueryClient({
         showServerErrorToast(e as Response);
       },
     },
+    mutations: {
+      onError(e) {
+        showServerErrorToast(e as Response);
+      },
+    },
   },
 });
 

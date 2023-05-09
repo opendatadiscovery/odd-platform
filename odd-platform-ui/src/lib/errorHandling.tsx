@@ -18,15 +18,15 @@ export const getErrorResponse = async (response: Response): Promise<AppError> =>
   }
 
   return {
-    status: response.status,
-    statusText: response.statusText,
-    url: response.url,
+    status: response?.status,
+    statusText: response?.statusText,
+    url: response?.url,
     message: body?.message || 'An error occurred',
   };
 };
 
 interface ToastOptions {
-  id: string;
+  id?: string;
   message: string;
 }
 

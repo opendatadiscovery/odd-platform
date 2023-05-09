@@ -113,6 +113,8 @@ declare module '@mui/material/styles' {
     border: Border;
     toast: Toast;
     switch: SwitchColors;
+    attachment: ItemCondition;
+    fileInput: ItemCondition;
   }
 
   interface PaletteOptions {
@@ -133,6 +135,8 @@ declare module '@mui/material/styles' {
     border: Border;
     toast: Toast;
     switch: SwitchColors;
+    attachment: ItemCondition;
+    fileInput: ItemCondition;
   }
 }
 
@@ -141,16 +145,19 @@ declare module '@mui/material/styles/createTypography' {
   interface Typography extends Record<ButtonFont, TypographyStyle> {
     errorCode: TypographyStyle;
     totalCountTitle: TypographyStyle;
+    h0: TypographyStyle;
   }
 
   interface TypographyOptions extends Record<ButtonFont, TypographyStyle> {
     errorCode?: TypographyStyleOptions;
     totalCountTitle?: TypographyStyleOptions;
+    h0?: TypographyStyleOptions;
   }
 }
 declare module '@mui/material/Typography/Typography' {
   interface TypographyPropsVariantOverrides extends Record<ButtonFont, true> {
     errorCode: true;
     totalCountTitle: true;
+    h0: true;
   }
 }

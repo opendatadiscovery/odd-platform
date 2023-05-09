@@ -64,3 +64,4 @@ export { default as AppSuspenseWrapper } from './AppSuspenseWrapper/AppSuspenseW
 export { default as Markdown } from './Markdown/Markdown';
 export { default as IntegrationLogo } from './IntegrationLogo/IntegrationLogo';
 export { default as Button } from './Button/Button';
+export { default as FileInput } from './FileInput/FileInput';

@@ -16,7 +16,7 @@ export default function useCreateSearch() {
         .unwrap()
         .then(({ searchId }) => {
           const searchLink = searchPath(searchId);
-          navigate(searchLink);
+          navigate(searchLink, { replace: true });
         });
     },
     [dispatch, createDataEntitiesSearch, searchPath, navigate]

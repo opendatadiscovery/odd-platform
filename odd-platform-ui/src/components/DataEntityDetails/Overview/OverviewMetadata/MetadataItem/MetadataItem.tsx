@@ -29,9 +29,14 @@ import * as S from './MetadataItemStyles';
 interface MetadataItemProps {
   dataEntityId: number;
   metadataItem: MetadataFieldValue;
+  updateCollapse: () => void;
 }
 
-const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem }) => {
+const MetadataItem: React.FC<MetadataItemProps> = ({
+  dataEntityId,
+  metadataItem,
+  updateCollapse,
+}) => {
   const dispatch = useAppDispatch();
   const { metadataFormattedDateTime } = useAppDateTime();
 
@@ -51,6 +56,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
       })
     ).then(() => {
       setEditMode(false);
+      updateCollapse();
     });
 
   const handleDelete = () =>
@@ -59,7 +65,9 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
         dataEntityId,
         metadataFieldId: metadataItem.field.id,
       })
-    );
+    ).then(() => {
+      updateCollapse();
+    });
 
   const metadataVal = getMetadataValue(
     metadataItem.field,
@@ -107,7 +115,10 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                 <Button text='Save' type='submit' buttonType='main-m' />
                 <Button
                   text='Cancel'
-                  onClick={() => setEditMode(false)}
+                  onClick={() => {
+                    setEditMode(false);
+                    updateCollapse();
+                  }}
                   type='button'
                   buttonType='secondary-m'
                 />
@@ -140,6 +151,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                     icon={<EditIcon />}
                     onClick={() => {
                       setEditMode(true);
+                      updateCollapse();
                     }}
                   />
                 </WithPermissions>

@@ -28,7 +28,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
           <Typography variant='h2'>
             {(inputs?.length || 0) + (unknownInputsCount || 0)}
           </Typography>
-          <Typography sx={{ ml: 0.5, color: 'texts.hint' }} variant='body1'>
+          <Typography sx={{ ml: 0.5 }} variant='h4'>
             inputs
           </Typography>
         </Grid>
