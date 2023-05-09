@@ -2,6 +2,8 @@ import React, { type FC } from 'react';
 import { Typography } from '@mui/material';
 import { AppMenu, AppMenuItem, Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import SaveLinksForm from '../SaveLinksForm/SaveLinksForm';
 import SaveFilesForm from '../SaveFilesForm/SaveFilesForm';
 import * as S from './AttachmentsHeader.styles';
@@ -22,15 +24,17 @@ const AttachmentsHeader: FC = () => {
   return (
     <S.Header>
       <Typography variant='h2'>Attachments</Typography>
-      <Button
-        text='Add attachments'
-        buttonType='secondary-lg'
-        startIcon={<AddIcon />}
-        aria-label={menuId}
-        aria-controls={menuId}
-        aria-haspopup='true'
-        onClick={handleMenuOpen}
-      />
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_CREATE}>
+        <Button
+          text='Add attachments'
+          buttonType='secondary-lg'
+          startIcon={<AddIcon />}
+          aria-label={menuId}
+          aria-controls={menuId}
+          aria-haspopup='true'
+          onClick={handleMenuOpen}
+        />
+      </WithPermissions>
       <AppMenu
         PaperProps={{ sx: { borderRadius: 2, width: anchorEl?.offsetWidth } }}
         MenuListProps={{ sx: { p: 1 } }}

@@ -62,7 +62,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
         name='files'
         control={control}
         render={({ field: { onChange } }) => (
-          <FileInput onFilesSelected={handleFilesUpload(onChange)} />
+          <FileInput multiple onFilesSelected={handleFilesUpload(onChange)} />
         )}
       />
       <Grid container flexDirection='column' mt={2}>

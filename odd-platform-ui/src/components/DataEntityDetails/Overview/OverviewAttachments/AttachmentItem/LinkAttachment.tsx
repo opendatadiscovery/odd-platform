@@ -1,9 +1,11 @@
 import React, { type FC, memo } from 'react';
 import type { DataEntityLink } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { Link } from 'react-router-dom';
 import { DeleteIcon, EditIcon, LinkIcon } from 'components/shared/icons';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { useAppParams, useDeleteDataEntityLink } from 'lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import EditLinkForm from '../EditLinkForm/EditLinkForm';
 import * as S from './AttachmentItem.styles';
 
@@ -21,19 +23,23 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
     <Link to={url} target='_blank'>
       <S.Container>
         <S.ActionsContainer>
-          <EditLinkForm
-            linkId={linkId}
-            name={name}
-            url={url}
-            openBtn={<Button buttonType='linkGray-m-icon' icon={<EditIcon />} />}
-          />
-          <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this link?'
-            actionName='Delete link'
-            actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
-            onConfirm={() => deleteLink({ dataEntityId, linkId })}
-            actionBtn={<Button buttonType='linkGray-m-icon' icon={<DeleteIcon />} />}
-          />
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_UPDATE}>
+            <EditLinkForm
+              linkId={linkId}
+              name={name}
+              url={url}
+              openBtn={<Button buttonType='linkGray-m-icon' icon={<EditIcon />} />}
+            />
+          </WithPermissions>
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_DELETE}>
+            <ConfirmationDialog
+              actionTitle='Are you sure you want to delete this link?'
+              actionName='Delete link'
+              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              onConfirm={() => deleteLink({ dataEntityId, linkId })}
+              actionBtn={<Button buttonType='linkGray-m-icon' icon={<DeleteIcon />} />}
+            />
+          </WithPermissions>
         </S.ActionsContainer>
         <S.IconContainer>
           <LinkIcon width={24} height={24} />

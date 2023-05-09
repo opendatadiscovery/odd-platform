@@ -70,7 +70,15 @@ const Overview: React.FC = () => {
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewAttachments />
+              <WithPermissionsProvider
+                allowedPermissions={[
+                  Permission.DATA_ENTITY_ATTACHMENT_CREATE,
+                  Permission.DATA_ENTITY_ATTACHMENT_UPDATE,
+                  Permission.DATA_ENTITY_ATTACHMENT_DELETE,
+                ]}
+                resourcePermissions={resourcePermissions}
+                Component={OverviewAttachments}
+              />
             </SectionContainer>
             <OverviewMetrics showOverview={isDataset} />
             <SectionContainer square elevation={0}>

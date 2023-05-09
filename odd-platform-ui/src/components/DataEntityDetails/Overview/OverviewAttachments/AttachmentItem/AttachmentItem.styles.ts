@@ -46,6 +46,7 @@ export const Container = styled('div')(({ theme }) => ({
   position: 'relative',
 
   '&:hover': {
+    cursor: 'pointer',
     [`${NameContainer}`]: { color: theme.palette.attachment.hover.color },
     [`${IconContainer}`]: { backgroundColor: theme.palette.attachment.hover.background },
     [`${ActionsContainer}`]: { visibility: 'visible' },

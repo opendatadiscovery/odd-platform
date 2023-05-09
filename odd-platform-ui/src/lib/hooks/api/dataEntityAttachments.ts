@@ -95,8 +95,10 @@ export function useDownloadDataEntityFile({
   dataEntityId,
   fileId,
 }: DataEntityAttachmentApiDownloadFileRequest) {
-  return useQuery(['dataEntityFiles', dataEntityId, fileId], () =>
-    dataEntityAttachmentApi.downloadFile({ dataEntityId, fileId })
+  return useQuery(
+    ['dataEntityFiles', dataEntityId, fileId],
+    () => dataEntityAttachmentApi.downloadFile({ dataEntityId, fileId }),
+    { enabled: false }
   );
 }
 

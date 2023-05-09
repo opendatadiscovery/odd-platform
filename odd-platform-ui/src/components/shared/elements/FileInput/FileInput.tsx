@@ -10,12 +10,14 @@ export interface FileInputProps {
   onFilesSelected: (files: File[] | null | undefined) => void;
   maxFileSizeInBytes?: number;
   hint?: string;
+  multiple?: boolean;
 }
 
 const FileInput: FC<FileInputProps> = ({
   maxFileSizeInBytes = DEFAULT_MAX_FILE_SIZE_IN_BYTES,
   onFilesSelected,
   hint = `The maximum file size should not exceed ${bytesToMb(maxFileSizeInBytes)} Mb`,
+  multiple = false,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -77,7 +79,7 @@ const FileInput: FC<FileInputProps> = ({
           type='file'
           onChange={handleInputChange}
           style={{ display: 'none' }}
-          multiple
+          multiple={multiple}
         />
       </S.Input>
       {hint && (
