@@ -31,14 +31,8 @@ const OverviewDescription: React.FC = () => {
     DEInternalDescription || ''
   );
 
-  const {
-    contentRef,
-    collapsibleContentProps,
-    toggleCollapse,
-    updateCollapse,
-    isCollapsed,
-    isCollapsible,
-  } = useCollapse({ initialMaxHeight: 260 });
+  const { contentRef, containerStyle, controlsStyle, toggleCollapse, isCollapsed } =
+    useCollapse({ initialMaxHeight: 304 });
 
   const onEditClick = useCallback(() => {
     setEditMode(true);
@@ -54,7 +48,6 @@ const OverviewDescription: React.FC = () => {
       () => {
         setError('');
         setEditMode(false);
-        updateCollapse();
       },
       (response: Response) => {
         setError(response.statusText || 'Unable to update description');
@@ -75,7 +68,7 @@ const OverviewDescription: React.FC = () => {
 
   return (
     <>
-      <div ref={contentRef} {...collapsibleContentProps}>
+      <div ref={contentRef} style={containerStyle}>
         <S.CaptionContainer>
           <Typography variant='h2'>About</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
@@ -148,22 +141,20 @@ const OverviewDescription: React.FC = () => {
           </S.ExternalContainer>
         ) : null}
       </div>
-      {isCollapsible && (
-        <S.CollapseContainer container>
-          <Button
-            text={isCollapsed ? 'Show hidden' : `Hide`}
-            endIcon={
-              <ChevronIcon
-                width={10}
-                height={5}
-                transform={isCollapsed ? 'rotate(0)' : 'rotate(180)'}
-              />
-            }
-            buttonType='service-m'
-            onClick={toggleCollapse}
-          />
-        </S.CollapseContainer>
-      )}
+      <S.CollapseContainer container style={controlsStyle}>
+        <Button
+          text={isCollapsed ? 'Show hidden' : `Hide`}
+          endIcon={
+            <ChevronIcon
+              width={10}
+              height={5}
+              transform={isCollapsed ? 'rotate(0)' : 'rotate(180)'}
+            />
+          }
+          buttonType='service-m'
+          onClick={toggleCollapse}
+        />
+      </S.CollapseContainer>
     </>
   );
 };

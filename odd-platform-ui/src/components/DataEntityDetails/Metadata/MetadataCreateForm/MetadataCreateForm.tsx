@@ -11,13 +11,11 @@ import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormI
 interface MetadataCreateFormProps {
   dataEntityId: number;
   btnCreateEl: JSX.Element;
-  updateCollapse: () => void;
 }
 
 const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   dataEntityId,
   btnCreateEl,
-  updateCollapse,
 }) => {
   const dispatch = useAppDispatch();
   const { isLoading: isMetadataCreating, isLoaded: isMetadataCreated } = useAppSelector(
@@ -41,7 +39,6 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       })
     ).then(() => {
       clearState();
-      updateCollapse();
     });
   };
 

@@ -16,14 +16,8 @@ import * as S from './OverviewMetadataStyles';
 
 const OverviewMetadata: React.FC = () => {
   const { dataEntityId } = useAppParams();
-  const {
-    contentRef,
-    collapsibleContentProps,
-    toggleCollapse,
-    updateCollapse,
-    isCollapsed,
-    isCollapsible,
-  } = useCollapse({ initialMaxHeight: 200 });
+  const { contentRef, containerStyle, toggleCollapse, isCollapsed, controlsStyle } =
+    useCollapse({ initialMaxHeight: 200 });
 
   const predefinedMetadata = useAppSelector(
     getDataEntityPredefinedMetadataList(dataEntityId)
@@ -32,7 +26,7 @@ const OverviewMetadata: React.FC = () => {
 
   return (
     <>
-      <div ref={contentRef} {...collapsibleContentProps}>
+      <div ref={contentRef} style={containerStyle}>
         <Grid container>
           <Grid container>
             <Grid item xs={12}>
@@ -45,7 +39,6 @@ const OverviewMetadata: React.FC = () => {
                 >
                   <MetadataCreateForm
                     dataEntityId={dataEntityId}
-                    updateCollapse={updateCollapse}
                     btnCreateEl={
                       <Button
                         text='Add metadata'
@@ -64,7 +57,6 @@ const OverviewMetadata: React.FC = () => {
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
-                  updateCollapse={updateCollapse}
                 />
               ))
             ) : (
@@ -82,7 +74,6 @@ const OverviewMetadata: React.FC = () => {
                 >
                   <MetadataCreateForm
                     dataEntityId={dataEntityId}
-                    updateCollapse={updateCollapse}
                     btnCreateEl={
                       <Button
                         text='Add Metadata'
@@ -104,29 +95,26 @@ const OverviewMetadata: React.FC = () => {
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
-                  updateCollapse={updateCollapse}
                 />
               ))}
             </Grid>
           </S.PredefinedContainer>
         )}
       </div>
-      {isCollapsible && (
-        <S.CollapseContainer container>
-          <Button
-            text={isCollapsed ? 'Show hidden' : `Hide`}
-            endIcon={
-              <ChevronIcon
-                width={10}
-                height={5}
-                transform={isCollapsed ? 'rotate(0)' : 'rotate(180)'}
-              />
-            }
-            buttonType='service-m'
-            onClick={toggleCollapse}
-          />
-        </S.CollapseContainer>
-      )}
+      <S.CollapseContainer container style={controlsStyle}>
+        <Button
+          text={isCollapsed ? 'Show hidden' : `Hide`}
+          endIcon={
+            <ChevronIcon
+              width={10}
+              height={5}
+              transform={isCollapsed ? 'rotate(0)' : 'rotate(180)'}
+            />
+          }
+          buttonType='service-m'
+          onClick={toggleCollapse}
+        />
+      </S.CollapseContainer>
     </>
   );
 };
