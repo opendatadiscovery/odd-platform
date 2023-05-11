@@ -22,11 +22,13 @@ public class DatasetVersionHashCalculator {
         if (CollectionUtils.isEmpty(fields)) {
             return EMPTY_FIELDS_HASH;
         }
+
         final List<HashableDatasetField> sortedFields = fields.stream()
             .map(f -> HashableDatasetField.builder()
                 .name(f.getName())
                 .oddrn(f.getOddrn())
                 .parentFieldOddrn(f.getParentFieldOddrn())
+                .referenceOddrn(f.getReferenceOddrn())
                 .type(f.getType())
                 .isKey(BooleanUtils.toBoolean(f.getIsKey()))
                 .isValue(BooleanUtils.toBoolean(f.getIsValue()))
@@ -50,6 +52,7 @@ public class DatasetVersionHashCalculator {
                     .name(f.getName())
                     .oddrn(f.getOddrn())
                     .parentFieldOddrn(f.getParentFieldOddrn())
+                    .referenceOddrn(f.getReferenceOddrn())
                     .type(dataSetFieldType)
                     .isKey(BooleanUtils.toBoolean(f.getIsKey()))
                     .isValue(BooleanUtils.toBoolean(f.getIsValue()))
