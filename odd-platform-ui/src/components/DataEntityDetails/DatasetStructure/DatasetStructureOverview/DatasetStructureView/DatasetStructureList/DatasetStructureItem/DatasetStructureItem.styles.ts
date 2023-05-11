@@ -4,7 +4,7 @@ import { nestingFactor } from '../../../../shared/constants';
 
 export const CollapseContainer = styled('div')<{ $visibility: boolean }>(
   ({ $visibility, theme }) => ({
-    padding: theme.spacing(0.5, 1),
+    padding: theme.spacing(0.25, 0.5),
     display: 'flex',
     alignSelf: 'center',
     visibility: $visibility ? 'visible' : 'hidden',

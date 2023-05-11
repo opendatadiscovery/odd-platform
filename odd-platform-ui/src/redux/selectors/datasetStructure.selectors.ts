@@ -101,3 +101,9 @@ export const getDatasetFieldById = (datasetFieldId: number) =>
     getDatasetStructureState,
     datasetStructureState => datasetStructureState.fieldById[datasetFieldId]
   );
+
+export const getDatasetFieldName = (datasetFieldId: number) =>
+  createSelector(
+    getDatasetStructureState,
+    datasetStructureState => datasetStructureState.fieldById[datasetFieldId].name
+  );

@@ -38,9 +38,7 @@ const DatasetStructureOverview: React.FC = () => {
               dataEntityId,
               dataSetVersionId
             ),
-            {
-              replace: true,
-            }
+            { replace: true }
           );
         });
     }
