@@ -1,6 +1,7 @@
 import React, { type ChangeEvent, type FC, useCallback, useRef } from 'react';
-import { ClearIcon } from 'components/shared/icons';
+import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import Button from 'components/shared/elements/Button/Button';
+import AppCircularProgress from 'components/shared/elements/AppCircularProgress/AppCircularProgress';
 import type { InputSize, InputType, InputVariant } from './interfaces';
 import * as S from './Input.styles';
 
@@ -10,58 +11,65 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   hint?: string;
   maxWidth?: number;
   error?: string;
+  isLoading?: boolean;
   handleCleanUp?: () => void;
+  handleSearchClick?: () => void;
 }
 
 const Input: FC<InputProps> = ({
   variant,
-  label,
-  hint,
   type = 'text',
   maxWidth,
-  error,
   handleCleanUp,
-  onChange,
-  value,
+  isLoading,
+  handleSearchClick,
   ...props
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputType, inputSize] = variant.split('-') as [InputType, InputSize];
 
   const handleCleanUpClick = useCallback(() => {
-    onChange?.({ target: { value: '' } } as ChangeEvent<HTMLInputElement>);
+    props.onChange?.({ target: { value: '' } } as ChangeEvent<HTMLInputElement>);
     inputRef.current?.focus();
 
     handleCleanUp?.();
-  }, [handleCleanUp, onChange]);
+  }, [handleCleanUp, props.onChange]);
 
   return (
     <S.Container $maxWidth={maxWidth}>
-      {label && <S.Label>{label}</S.Label>}
+      {props.label && <S.Label>{props.label}</S.Label>}
       <div style={{ position: 'relative' }}>
+        {inputType === 'search' && (
+          <S.Adornment $isStart>
+            <Button
+              buttonType='linkGray-m'
+              onClick={handleSearchClick}
+              icon={<SearchIcon />}
+            />
+          </S.Adornment>
+        )}
         <S.Input
           ref={inputRef}
-          $isError={!!error}
+          $isError={!!props.error}
           $type={inputType}
           $size={inputSize}
           type={type}
-          value={value}
-          onChange={onChange}
           {...props}
         />
-        <S.EndAdornment>
-          {value && (
+        <S.Adornment>
+          {isLoading && <AppCircularProgress size={16} background='transparent' />}
+          {props.value && (
             <Button
               buttonType='linkGray-m'
               onClick={handleCleanUpClick}
               icon={<ClearIcon />}
             />
           )}
-        </S.EndAdornment>
+        </S.Adornment>
       </div>
 
-      {hint && <S.Hint>{hint}</S.Hint>}
-      {error && <S.Error>{error}</S.Error>}
+      {props.hint && <S.Hint>{props.hint}</S.Hint>}
+      {props.error && <S.Hint $isError>{props.error}</S.Hint>}
     </S.Container>
   );
 };

@@ -1,11 +1,11 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
   SkeletonWrapper,
 } from 'components/shared/elements';
@@ -97,24 +97,11 @@ const NamespaceList: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
+          maxWidth={320}
           placeholder='Search namespace...'
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
           value={searchText}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!searchText,
-            onCLick: () => setSearchText(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />

@@ -2,15 +2,12 @@ import type { CSSObject } from 'styled-components';
 import styled from 'styled-components';
 import type { InputSize, InputType } from './interfaces';
 
-export const Container = styled('div')<{ $maxWidth?: number }>(
-  ({ $maxWidth }) =>
-    ({
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      maxWidth: `${$maxWidth}px` ?? 'auto',
-    } as CSSObject)
-);
+export const Container = styled('div')<{ $maxWidth?: number }>(({ $maxWidth }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  maxWidth: `${$maxWidth}px` ?? 'auto',
+}));
 
 export const Input = styled('input')<{
   $type: InputType;
@@ -18,7 +15,7 @@ export const Input = styled('input')<{
   $isError: boolean;
 }>(({ theme, $type, $size, $isError }) => {
   type Condition = 'normal' | 'error' | 'hover' | 'active';
-  const isErrorOr = (val: Condition): Condition => ($isError ? 'error' : val);
+  const isErrorOr = (val: Condition) => ($isError ? 'error' : val);
 
   const common = {
     fontFamily: 'inherit',
@@ -46,27 +43,41 @@ export const Input = styled('input')<{
 
   let styles = {};
 
-  if ($type === 'search' && $size === 'lg') {
-    styles = {};
-  }
-
   if ($size === 'm') {
-    styles = { height: '32px', padding: theme.spacing(0.75, 3.5, 0.75, 1) };
+    styles = { padding: theme.spacing(0.875, 4.25, 0.875, 1) };
   }
 
   if ($size === 'sm') {
-    styles = { height: '24px', padding: theme.spacing(0.25, 3.5, 0.25, 1) };
+    styles = { padding: theme.spacing(0.375, 4.25, 0.375, 1) };
+  }
+
+  if ($type === 'search' && $size === 'lg') {
+    styles = {
+      padding: theme.spacing(1.375, 4.25),
+      borderColor: theme.palette.input.searchLg.normal.border,
+
+      '&:hover': { borderColor: theme.palette.input.searchLg.hover.border },
+      '&:focus': {
+        borderColor: 'transparent',
+        outline: '2px solid',
+        outlineColor: theme.palette.input.searchLg.active.border,
+      },
+    };
+  }
+
+  if ($type === 'search' && $size === 'm') {
+    styles = { padding: theme.spacing(0.875, 4.25) };
   }
 
   return { ...common, ...styles } as CSSObject;
 });
 
-export const EndAdornment = styled('div')(({ theme }) => ({
+export const Adornment = styled('div')<{ $isStart?: boolean }>(({ theme, $isStart }) => ({
   position: 'absolute',
   display: 'flex',
   height: '100%',
   alignItems: 'center',
-  right: theme.spacing(1),
+  [$isStart ? 'left' : 'right']: theme.spacing(1),
   top: 0,
 }));
 
@@ -79,20 +90,11 @@ export const Label = styled('p')(({ theme }) => ({
   marginBottom: theme.spacing(0.125),
 }));
 
-export const Hint = styled('p')(({ theme }) => ({
+export const Hint = styled('p')<{ $isError?: boolean }>(({ theme, $isError }) => ({
   fontSize: '12px',
   fontWeight: 400,
   lineHeight: '16px',
-  color: theme.palette.input.hint.color,
-  margin: 0,
-  marginTop: theme.spacing(0.125),
-}));
-
-export const Error = styled('p')(({ theme }) => ({
-  fontSize: '12px',
-  fontWeight: 400,
-  lineHeight: '16px',
-  color: theme.palette.input.error?.color,
+  color: theme.palette.input[$isError ? 'error' : 'hint']?.color,
   margin: 0,
   marginTop: theme.spacing(0.125),
 }));
