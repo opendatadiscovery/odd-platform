@@ -27,7 +27,7 @@ export const Container = styled('div')<{
 
 function parseDatasourceName(input: string): DatasourceName {
   const regex = /^\/\/([^/]+)/;
-  const match = input.match(regex);
+  const match = regex.exec(input);
   return match ? (match[1] as DatasourceName) : (input as DatasourceName);
 }
 
