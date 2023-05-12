@@ -4,12 +4,12 @@ import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { IntegratedIcon } from 'components/shared/icons';
-import type { IntegrationId } from 'lib/interfaces';
-import { IntegrationLogo } from 'components/shared/elements';
+import type { DatasourceName } from 'lib/interfaces';
+import { DatasourceLogo } from 'components/shared/elements';
 import * as S from './IntegrationPreviewItem.styles';
 
 interface IntegrationPreviewItemProps {
-  id: IntegrationId;
+  id: DatasourceName;
   name: IntegrationPreview['name'];
   description: IntegrationPreview['description'];
   installed: IntegrationPreview['installed'];
@@ -31,7 +31,7 @@ const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
   return (
     <S.Container onClick={handleOnItemClick}>
       <S.LogoContainer>
-        <IntegrationLogo id={id} />
+        <DatasourceLogo name={id} />
       </S.LogoContainer>
       <S.TextContainer>
         <Typography title={name} variant='h3' textAlign='center'>
