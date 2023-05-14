@@ -10,10 +10,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
@@ -29,6 +32,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataInput;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
@@ -113,7 +117,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         }
 
         if (entityClasses.contains(DATA_SET)) {
-            builder = builder.dataSet(createDatasetIngestionDto(dataEntity.getDataset()));
+            builder = builder.dataSet(createDatasetIngestionDto(dataEntity));
         }
 
         if (entityClasses.contains(DATA_TRANSFORMER)) {
@@ -220,13 +224,23 @@ public class IngestionMapperImpl implements IngestionMapper {
             .build();
     }
 
-    private DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
-        final String structureHash = datasetVersionHashCalculator.calculateStructureHash(dataEntity.getFieldList());
+    private DataSetIngestionDto createDatasetIngestionDto(final DataEntity dataEntity) {
+        final DataSet dataset = dataEntity.getDataset();
+        final String structureHash = datasetVersionHashCalculator.calculateStructureHash(dataset.getFieldList());
+
+        if (!validateStructure(dataset.getFieldList())) {
+            throw new BadUserRequestException("""
+                Dataset with oddrn %s has an incomplete structure.
+                Please check if parent_field_oddrn and reference_oddrn properties of each dataset field
+                have correspondent dataset fields in the payload
+                """, dataEntity.getOddrn());
+        }
+
         return new DataSetIngestionDto(
-            dataEntity.getParentOddrn(),
-            datasetFieldIngestionMapper.mapFields(dataEntity.getFieldList()),
+            dataset.getParentOddrn(),
+            datasetFieldIngestionMapper.mapFields(dataset.getFieldList()),
             structureHash,
-            dataEntity.getRowsNumber()
+            dataset.getRowsNumber()
         );
     }
 
@@ -344,5 +358,23 @@ public class IngestionMapperImpl implements IngestionMapper {
         if (!isProperlyFilledClasses) {
             throw new DataEntityClassTypeValidationException(oddrn, type, entityClasses, expectedClasses);
         }
+    }
+
+    private boolean validateStructure(final List<DataSetField> fieldList) {
+        final Set<String> fieldOddrns = fieldList.stream().map(DataSetField::getOddrn).collect(Collectors.toSet());
+
+        for (final DataSetField field : fieldList) {
+            if (!StringUtils.isEmpty(field.getParentFieldOddrn())
+                && !fieldOddrns.contains(field.getParentFieldOddrn())) {
+                return false;
+            }
+
+            if (!StringUtils.isEmpty(field.getReferenceOddrn())
+                && !fieldOddrns.contains(field.getReferenceOddrn())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
