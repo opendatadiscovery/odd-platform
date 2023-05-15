@@ -7,6 +7,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityFile;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLink;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLinkFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLinkListFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUpload;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUploadFormData;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.Part;
@@ -26,10 +28,26 @@ public class DataEntityAttachmentController implements DataEntityAttachmentApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<DataEntityFile>>> saveFiles(final Long dataEntityId,
-                                                                final Flux<Part> files,
-                                                                final ServerWebExchange exchange) {
-        return DataEntityAttachmentApi.super.saveFiles(dataEntityId, files, exchange);
+    public Mono<ResponseEntity<DataEntityUpload>> initiateFileUpload(final Long dataEntityId,
+                                                                     final Mono<DataEntityUploadFormData> formDataMono,
+                                                                     final ServerWebExchange exchange) {
+        return DataEntityAttachmentApi.super.initiateFileUpload(dataEntityId, formDataMono, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> uploadFileChunk(final Long dataEntityId,
+                                                      final String uploadId,
+                                                      final Mono<Part> file,
+                                                      final Integer index,
+                                                      final ServerWebExchange exchange) {
+        return DataEntityAttachmentApi.super.uploadFileChunk(dataEntityId, uploadId, file, index, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityFile>> completeFileUpload(final Long dataEntityId,
+                                                                   final String uploadId,
+                                                                   final ServerWebExchange exchange) {
+        return DataEntityAttachmentApi.super.completeFileUpload(dataEntityId, uploadId, exchange);
     }
 
     @Override

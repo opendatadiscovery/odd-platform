@@ -2159,6 +2159,27 @@ components:
         - files
         - links
 
+    DataEntityUploadFormData:
+      type: object
+      properties:
+        fileName:
+          type: string
+
+    DataEntityUpload:
+      type: object
+      properties:
+        id:
+          type: string
+
+    DataEntityFileChunkFormData:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        index:
+          type: integer
+
     DataEntityFile:
       type: object
       properties:
