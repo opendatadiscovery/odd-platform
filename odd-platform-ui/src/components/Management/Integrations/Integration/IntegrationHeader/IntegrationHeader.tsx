@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Button, IntegrationLogo } from 'components/shared/elements';
+import { Button, DatasourceLogo } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
 import { useAppPaths } from 'lib/hooks';
 
@@ -16,7 +16,7 @@ const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }
   return (
     <Grid container justifyContent='space-between' flexWrap='nowrap'>
       <Grid container>
-        <IntegrationLogo id={id} />
+        <DatasourceLogo name={id} />
         <Grid sx={{ ml: 2 }}>
           <Typography variant='h1'>{name}</Typography>
           <Typography variant='body1' color='texts.hint'>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Grid } from '@mui/material';
-import { CopyButton, LabeledInfoItem } from 'components/shared/elements';
+import { Box, Grid } from '@mui/material';
+import { CopyButton, DatasourceLogo, LabeledInfoItem } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
@@ -25,10 +25,18 @@ const OverviewGeneral: React.FC = () => {
             {dataEntityDetails.dataSource?.namespace?.name}
           </LabeledInfoItem>
         </Grid>
-        {!dataEntityDetails?.manuallyCreated && (
+        {!dataEntityDetails.manuallyCreated && dataEntityDetails.dataSource?.oddrn && (
           <Grid item sm={12}>
             <LabeledInfoItem inline label='Datasource' labelWidth={4}>
-              {dataEntityDetails.dataSource?.name}
+              <Grid container flexWrap='nowrap' alignItems='center'>
+                <DatasourceLogo
+                  width={24}
+                  padding={0}
+                  transparentBackground
+                  name={dataEntityDetails.dataSource?.oddrn}
+                />
+                <Box ml={0.5}>{dataEntityDetails.dataSource?.name}</Box>
+              </Grid>
             </LabeledInfoItem>
           </Grid>
         )}
