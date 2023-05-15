@@ -28,6 +28,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.springframework.http.MediaType;
+import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
@@ -300,6 +301,32 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
                 .toList());
 
         assertDatasetStructuresEqual(foundEntityId, expectedOriginalStructure);
+    }
+
+    @Test
+    public void missingFieldDependenciesTest() {
+        final DataSource createdDataSource = createDataSource();
+
+        final List<DataSetField> fields = IngestionModelGenerator.generateDatasetFields(5);
+
+        for (final DataSetField field : fields) {
+            field.setParentFieldOddrn("unknown_value");
+            field.setReferenceOddrn("unknown_value");
+        }
+
+        final DataEntity datasetToIngest = IngestionModelGenerator
+            .generateSimpleDataEntity(DataEntityType.TABLE)
+            .dataset(new DataSet().fieldList(fields).rowsNumber(1000L));
+
+        final var dataEntityList = new DataEntityList()
+            .dataSourceOddrn(createdDataSource.getOddrn())
+            .items(List.of(datasetToIngest));
+
+        webTestClient.post()
+            .uri("/ingestion/entities")
+            .body(Mono.just(dataEntityList), DataEntityList.class)
+            .exchange()
+            .expectStatus().is4xxClientError();
     }
 
     private void createInternalEnumLabelState(final long dataEntityId) {
