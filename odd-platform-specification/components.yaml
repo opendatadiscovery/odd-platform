@@ -399,12 +399,16 @@ components:
           type: string
         title_name:
           type: string
+        propagate:
+          type: boolean
 
     OwnershipUpdateFormData:
       type: object
       properties:
         title_name:
           type: string
+        propagate:
+          type: boolean
 
     DataEntityUsageInfo:
       type: object

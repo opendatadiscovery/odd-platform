@@ -5,7 +5,7 @@ import type { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTag } from 'redux/thunks';
 import { getTagCreatingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
-import { AppCheckbox, AppInput, Button, DialogWrapper } from 'components/shared/elements';
+import { Checkbox, AppInput, Button, DialogWrapper } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 
 interface TagEditFormProps {
@@ -72,7 +72,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
               {...field}
               sx={{ ml: -0.25 }}
               checked={field.value}
-              control={<AppCheckbox sx={{ mr: 1 }} />}
+              control={<Checkbox sx={{ mr: 1 }} />}
               label='Important'
             />
           )}

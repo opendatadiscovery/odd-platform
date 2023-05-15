@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormControlLabel } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, AppInput, AppCheckbox } from 'components/shared/elements';
+import { Button, AppInput, Checkbox } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { TagItemBtnsContainer } from './TagCreateFormItemStyles';
 
@@ -49,7 +49,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
               {...field}
               sx={{ ml: -0.25 }}
               checked={field.value}
-              control={<AppCheckbox sx={{ mr: 1 }} />}
+              control={<Checkbox sx={{ mr: 1 }} />}
               label='Important'
             />
           )}

@@ -1,7 +1,7 @@
 import React, { type FC, useCallback } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
-import { Button, AppCheckbox, AppMenuItem, AppSelect } from 'components/shared/elements';
+import { Button, Checkbox, AppMenuItem, AppSelect } from 'components/shared/elements';
 import { useAppDateTime, useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import type { DataSetVersion } from 'generated-sources';
@@ -66,7 +66,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
           <FormControlLabel
             sx={{ ml: 1 }}
             control={
-              <AppCheckbox
+              <Checkbox
                 value={showOnlyChanges}
                 checked={showOnlyChanges}
                 onChange={handleShowOnlyChangesChange}

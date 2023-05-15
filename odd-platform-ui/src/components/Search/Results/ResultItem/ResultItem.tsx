@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
+  DatasourceLogo,
   EntityClassItem,
   NumberFormatted,
   TruncatedCell,
@@ -199,9 +200,22 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <Typography variant='subtitle2'>not in any namespace</Typography>
           )}
           {searchResult.dataSource?.name ? (
-            <Typography variant='body1' title={searchResult.dataSource?.name} noWrap>
-              {searchResult.dataSource?.name}
-            </Typography>
+            <Grid container alignItems='center' flexWrap='nowrap'>
+              <DatasourceLogo
+                width={24}
+                padding={0}
+                transparentBackground
+                name={searchResult.dataSource?.oddrn}
+              />
+              <Typography
+                ml={1}
+                variant='body1'
+                title={searchResult.dataSource?.name}
+                noWrap
+              >
+                {searchResult.dataSource?.name}
+              </Typography>
+            </Grid>
           ) : (
             <Typography variant='subtitle2'>manually created</Typography>
           )}

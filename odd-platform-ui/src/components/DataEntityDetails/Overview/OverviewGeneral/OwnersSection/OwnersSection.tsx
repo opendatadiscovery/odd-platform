@@ -1,29 +1,21 @@
-import React from 'react';
+import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  Button,
-  ConfirmationDialog,
-  LabeledInfoItem,
-  LabelItem,
-} from 'components/shared/elements';
-import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/icons';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { deleteDataEntityOwnership } from 'redux/thunks';
-import { getDataEntityOwnership } from 'redux/selectors';
+import { Button, LabeledInfoItem, LabelItem } from 'components/shared/elements';
+import { AddIcon, EditIcon } from 'components/shared/icons';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getDataEntityOwnership, getIsDataEntityBelongsToClass } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import OwnershipDeleteForm from './OwnershipDeleteForm/OwnershipDeleteForm';
 import * as S from './OwnersSectionStyles';
 import OwnershipForm from './OwnershipForm/OwnershipForm';
 
-const OwnersSection: React.FC = () => {
-  const dispatch = useAppDispatch();
+const OwnersSection: FC = () => {
   const { dataEntityId } = useAppParams();
 
   const ownership = useAppSelector(getDataEntityOwnership(dataEntityId));
-
-  const handleOwnershipDelete = (ownershipId: number) => () =>
-    dispatch(deleteDataEntityOwnership({ dataEntityId, ownershipId }));
+  const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
 
   return (
     <Grid item sm={12} sx={{ mt: 2 }}>
@@ -31,13 +23,19 @@ const OwnersSection: React.FC = () => {
         {ownership?.length ? (
           ownership?.map(ownershipItem => (
             <S.OwnerItem key={ownershipItem.id}>
-              {ownershipItem.owner.name}
-              <LabelItem labelName={ownershipItem.title?.name} />
+              <Typography variant='body1' noWrap>
+                {ownershipItem.owner.name}
+              </Typography>
+              <LabelItem
+                labelName={ownershipItem.title?.name}
+                sx={{ flexShrink: 0, ml: 1 }}
+              />
               <S.OwnerActionBtns>
                 <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_UPDATE}>
                   <OwnershipForm
                     dataEntityId={dataEntityId}
                     dataEntityOwnership={ownershipItem}
+                    isDEG={isDEG}
                     ownerEditBtn={
                       <Button
                         buttonType='tertiary-m'
@@ -48,23 +46,11 @@ const OwnersSection: React.FC = () => {
                   />
                 </WithPermissions>
                 <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_DELETE}>
-                  <ConfirmationDialog
-                    actionTitle='Are you sure you want to delete this owner?'
-                    actionName='Delete Owner'
-                    actionText={
-                      <>
-                        &quot;{ownershipItem.owner.name}&quot; will be deleted
-                        permanently.
-                      </>
-                    }
-                    onConfirm={handleOwnershipDelete(ownershipItem.id)}
-                    actionBtn={
-                      <Button
-                        buttonType='tertiary-m'
-                        icon={<DeleteIcon />}
-                        sx={{ ml: 0.5 }}
-                      />
-                    }
+                  <OwnershipDeleteForm
+                    ownerName={ownershipItem.owner.name}
+                    ownershipId={ownershipItem.id}
+                    dataEntityId={dataEntityId}
+                    isDEG={isDEG}
                   />
                 </WithPermissions>
               </S.OwnerActionBtns>
@@ -76,6 +62,7 @@ const OwnersSection: React.FC = () => {
         <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_CREATE}>
           <OwnershipForm
             dataEntityId={dataEntityId}
+            isDEG={isDEG}
             ownerEditBtn={
               <Button
                 text='Add Owner'
