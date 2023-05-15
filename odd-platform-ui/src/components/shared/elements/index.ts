@@ -62,6 +62,6 @@ export { default as AppErrorBlock } from './AppErrorBlock/AppErrorBlock';
 export { default as MetricFamily } from './MetricFamily/MetricFamily';
 export { default as AppSuspenseWrapper } from './AppSuspenseWrapper/AppSuspenseWrapper';
 export { default as Markdown } from './Markdown/Markdown';
-export { default as IntegrationLogo } from './IntegrationLogo/IntegrationLogo';
+export { default as DatasourceLogo } from './DatasourceLogo/DatasourceLogo';
 export { default as Button } from './Button/Button';
 export { default as Input } from './Input/Input';

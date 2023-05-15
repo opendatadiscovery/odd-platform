@@ -6,7 +6,7 @@ import type {
   IntegrationPreview as GeneratedIntegrationPreview,
 } from 'generated-sources';
 import type { ErrorState } from 'redux/interfaces';
-import type { Integration, IntegrationId, IntegrationPreview } from 'lib/interfaces';
+import type { Integration, DatasourceName, IntegrationPreview } from 'lib/interfaces';
 
 export function useIntegrationPreviews() {
   return useQuery<
@@ -38,7 +38,7 @@ export function useIntegration({ integrationId }: IntegrationApiGetIntegrationRe
           {}
         );
 
-        return { id: id as IntegrationId, name, description, installed, contentByTitle };
+        return { id: id as DatasourceName, name, description, installed, contentByTitle };
       },
     }
   );

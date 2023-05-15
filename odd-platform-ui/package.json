@@ -6,15 +6,15 @@
     "start": "vite",
     "build-only": "vite build",
     "clean": "rm -rf ./src/generated-sources",
-    "build": "npm run generate && tsc --noEmit && vite build",
+    "build": "pnpm generate && tsc --noEmit && vite build",
     "test": "vitest",
     "tsc": "tsc",
     "generate": "docker run -v `pwd`/..:/mnt -w /mnt --rm openapitools/openapi-generator-cli:v5.1.1 generate -c odd-platform-ui/openapi-config.yaml",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "prepare": "chmod u+x .husky/prepare.sh && .husky/prepare.sh",
-    "pre-commit": "npm run tsc --noEmit && lint-staged",
-    "preinstall": "npm install husky"
+    "pre-commit": "pnpm tsc --noEmit && lint-staged",
+    "preinstall": "pnpm install husky && npx only-allow pnpm"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
@@ -87,6 +87,11 @@
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/d3": "^7.4.0",
+    "@types/d3-hierarchy": "^3.1.2",
+    "@types/d3-selection": "^3.0.5",
+    "@types/d3-shape": "^3.1.1",
+    "@types/d3-zoom": "^3.0.2",
+    "@types/hast": "^2.3.4",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.13",
@@ -94,6 +99,8 @@
     "@types/react-dom": "^18.0.11",
     "@types/react-redux": "^7.1.11",
     "@types/styled-components": "^5.1.26",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "@types/unist": "^2.0.6",
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
@@ -120,5 +127,9 @@
   },
   "resolutions": {
     "minimist": "1.2.6"
+  },
+  "engines": {
+    "node": "v18.16.0",
+    "pnpm": "^8.4.0"
   }
 }

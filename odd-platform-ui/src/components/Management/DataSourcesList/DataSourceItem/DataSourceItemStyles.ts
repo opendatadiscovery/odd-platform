@@ -9,18 +9,16 @@ export const ActionsContainer = styled(Grid)(() => ({
 }));
 
 export const DescriptionContainer = styled(Grid)(({ theme }) => ({
-  '& > *': {
-    marginBottom: theme.spacing(1),
-  },
-  '& > *:last-child': {
-    marginBottom: theme.spacing(0),
-  },
+  paddingLeft: theme.spacing(7),
+  '& > *': { marginBottom: theme.spacing(1) },
+  '& > *:last-child': { marginBottom: theme.spacing(0) },
 }));
 
 export const Container = styled(AppPaper)(({ theme }) => ({
+  display: 'flex',
   width: '100%',
-  padding: theme.spacing(2, 2, 2, 2),
-  margin: '0 auto',
+  flexDirection: 'column',
+  padding: theme.spacing(2),
   alignItems: 'flex-start',
   '&:hover': {
     boxShadow: theme.shadows[8],
