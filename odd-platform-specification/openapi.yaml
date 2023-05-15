@@ -1591,27 +1591,69 @@ paths:
       tags:
         - dataEntityAttachment
 
-  /api/dataentities/{data_entity_id}/files:
+  /api/dataentities/{data_entity_id}/files/uploads:
     post:
-      summary: Save files for data entity
-      operationId: saveFiles
+      summary: Initiate file upload for data entity
+      operationId: initiateFileUpload
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataEntityFilesFormData'
+              $ref: './components.yaml/#/components/schemas/DataEntityUploadFormData'
       responses:
-        '201':
-          description: The resource has been successfully created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components.yaml/#/components/schemas/DataEntityFile'
+                $ref: './components.yaml/#/components/schemas/DataEntityUpload'
+      tags:
+        - dataEntityAttachment
+
+  /api/dataentities/{data_entity_id}/files/uploads/{upload_id}/chunks:
+    post:
+      summary: Upload file chunk
+      operationId: uploadFileChunk
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: upload_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityFileChunkFormData'
+      responses:
+        '200':
+          description: OK
+      tags:
+        - dataEntityAttachment
+
+  /api/dataentities/{data_entity_id}/files/uploads/{upload_id}:
+    put:
+      summary: Complete file upload
+      operationId: completeFileUpload
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: upload_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityFile'
       tags:
         - dataEntityAttachment
 
