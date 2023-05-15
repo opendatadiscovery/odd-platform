@@ -9,15 +9,14 @@ import {
   DataEntityTypeNameEnum,
 } from 'generated-sources';
 import {
-  Button,
-  AppInput,
   AppMenuItem,
   AppSelect,
+  Button,
   DialogWrapper,
+  Input,
   NamespaceAutocomplete,
   SearchSuggestionsAutocomplete,
 } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
@@ -115,16 +114,11 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             placeholder='Data Entity Group Name'
             label='Name'
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />
@@ -160,7 +154,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
       <SearchSuggestionsAutocomplete
         append={append}
         addEntities
-        inputParams={{ label: 'Entities' }}
+        inputParams={{ label: 'Entities', variant: 'main-m' }}
       />
       <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (

@@ -1,8 +1,9 @@
 import type { CSSObject } from 'styled-components';
 import styled from 'styled-components';
+import { Box } from '@mui/material';
 import type { InputSize, InputType } from './interfaces';
 
-export const Container = styled('div')<{ $maxWidth?: number }>(({ $maxWidth }) => ({
+export const Container = styled(Box)<{ $maxWidth?: number }>(({ $maxWidth }) => ({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
