@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -113,13 +114,13 @@ public class ReactiveDatasetVersionRepositoryImpl
             .flux(selectHavingStep)
             .collect(groupingBy(this::extractDatasetVersion, mapping(this::extractDatasetFieldDto, toList())))
             .flatMap(m -> m.entrySet().stream().findFirst()
-                .map(e -> Tuples.of(e.getKey(), e.getValue()))
+                .map(e -> Tuples.of(e.getKey(), isNullList(e.getValue()) ? List.<DatasetFieldDto>of() : e.getValue()))
                 .map(Mono::just)
                 .orElseGet(Mono::empty))
             .doOnNext(tuple -> setFieldDependencies(tuple.getT2()))
             .map(function((version, fields) -> DatasetStructureDto.builder()
                 .datasetVersion(version)
-                .datasetFields(isNullList(fields) ? emptyList() : fields)
+                .datasetFields(fields)
                 .build()));
     }
 
@@ -177,13 +178,13 @@ public class ReactiveDatasetVersionRepositoryImpl
             .flux(selectHavingStep)
             .collect(groupingBy(this::extractDatasetVersion, mapping(this::extractDatasetFieldDto, toList())))
             .flatMap(m -> m.entrySet().stream().findFirst()
-                .map(e -> Tuples.of(e.getKey(), e.getValue()))
+                .map(e -> Tuples.of(e.getKey(), isNullList(e.getValue()) ? List.<DatasetFieldDto>of() : e.getValue()))
                 .map(Mono::just)
                 .orElseGet(Mono::empty))
             .doOnNext(tuple -> setFieldDependencies(tuple.getT2()))
             .map(function((version, fields) -> DatasetStructureDto.builder()
                 .datasetVersion(version)
-                .datasetFields(isNullList(fields) ? emptyList() : fields)
+                .datasetFields(fields)
                 .build()));
     }
 

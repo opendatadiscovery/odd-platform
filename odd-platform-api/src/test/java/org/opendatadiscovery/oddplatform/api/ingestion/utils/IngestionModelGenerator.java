@@ -53,6 +53,8 @@ public class IngestionModelGenerator {
     public static List<DataSetField> generateDatasetFields(final int size) {
         return EASY_RANDOM.objects(DataSetField.class, size)
             .peek(df -> df.setEnumValues(null))
+            .peek(df -> df.setReferenceOddrn(null))
+            .peek(df -> df.setParentFieldOddrn(null))
             .toList();
     }
 
