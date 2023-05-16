@@ -45,7 +45,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     })
   );
 
-  const referenceFieldName = useAppSelector(getDatasetFieldName(datasetField.id));
+  const referenceFieldName = useAppSelector(
+    getDatasetFieldName(datasetField.referenceFieldId)
+  );
 
   const collapseBlock = useMemo(
     () => (
