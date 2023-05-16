@@ -1,5 +1,5 @@
 import React, { type FC, useCallback, useState } from 'react';
-import { useAppParams, useSaveDataEntityFiles } from 'lib/hooks';
+import { useAppParams, useSaveDataEntityFile } from 'lib/hooks';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import { Button, DialogWrapper, FileInput } from 'components/shared/elements';
@@ -10,35 +10,32 @@ interface SaveFilesFormProps {
 }
 
 interface FormData {
-  files: Array<Blob>;
+  file: Blob;
 }
 
 const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
   const formId = 'save-files-form';
   const { dataEntityId } = useAppParams();
 
-  const { mutate: saveFiles, isLoading, isSuccess } = useSaveDataEntityFiles();
+  const { mutate: saveFile, isLoading, isSuccess } = useSaveDataEntityFile();
 
-  const [uploadedFiles, setUploadedFiles] = useState<Blob[]>([]);
+  const [uploadedFile, setUploadedFile] = useState<Blob | undefined>(undefined);
   const { reset, handleSubmit, control } = useForm<FormData>({
-    defaultValues: { files: [] },
+    defaultValues: { file: undefined },
     mode: 'onChange',
   });
 
   const clearState = () => reset();
 
   const onSubmit = () => {
-    saveFiles({ dataEntityId, files: uploadedFiles });
+    if (!uploadedFile) return;
+
+    saveFile({ dataEntityId, file: uploadedFile });
   };
 
-  const handleFileDelete = useCallback(
-    (index: number) => () => {
-      const newFiles = [...uploadedFiles];
-      newFiles.splice(index, 1);
-      setUploadedFiles(newFiles);
-    },
-    [uploadedFiles]
-  );
+  const handleFileDelete = useCallback(() => {
+    setUploadedFile(undefined);
+  }, []);
 
   const formTitle = (
     <Typography variant='h4' component='span'>
@@ -49,8 +46,9 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
   const handleFilesUpload = useCallback(
     (onChange: (val: unknown) => void) => (files: File[] | null | undefined) => {
       if (files) {
-        setUploadedFiles(prev => [...prev, ...files]);
-        onChange(files);
+        const file = files[0];
+        setUploadedFile(file);
+        onChange(file);
       }
     },
     []
@@ -59,22 +57,22 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
   const formContent = () => (
     <form id={formId} onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name='files'
+        name='file'
         control={control}
         render={({ field: { onChange } }) => (
           <FileInput multiple onFilesSelected={handleFilesUpload(onChange)} />
         )}
       />
       <Grid container flexDirection='column' mt={2}>
-        {uploadedFiles.map(({ name, size, type }, idx) => (
+        {uploadedFile && (
           <FileItem
-            key={`${name}-${size}`}
-            name={name}
-            size={size}
-            type={type}
-            handleDelete={handleFileDelete(idx)}
+            key={`${uploadedFile.name}-${uploadedFile.size}`}
+            name={uploadedFile.name}
+            size={uploadedFile.size}
+            type={uploadedFile.type}
+            handleDelete={handleFileDelete}
           />
-        ))}
+        )}
       </Grid>
     </form>
   );
@@ -86,7 +84,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
       type='submit'
       form={formId}
       fullWidth
-      disabled={uploadedFiles.length === 0}
+      disabled={!uploadedFile}
     />
   );
 

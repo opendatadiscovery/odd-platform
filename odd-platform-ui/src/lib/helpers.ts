@@ -249,3 +249,28 @@ export function isImageFile(fileName: string): boolean {
   const extension = fileName.split('.').pop()?.toLowerCase() || '';
   return imageExtensions.includes(extension);
 }
+
+export async function asyncPool(
+  concurrency: number,
+  iterable: number[],
+  iteratorFn: (item: number, iterable: number[]) => Promise<void>
+) {
+  const retries = [];
+  const executing = new Set();
+
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const item of iterable) {
+    const currentTask = Promise.resolve().then(() => iteratorFn(item, iterable));
+
+    retries.push(currentTask);
+    executing.add(currentTask);
+
+    const clean = () => executing.delete(currentTask);
+    currentTask.then(clean).catch(clean);
+    if (executing.size >= concurrency) {
+      await Promise.race(executing);
+    }
+  }
+
+  return Promise.all(retries);
+}
