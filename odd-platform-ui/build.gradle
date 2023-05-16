@@ -1,20 +1,21 @@
 plugins {
     id "java"
-    id "com.github.node-gradle.node" version "3.1.0"
+    id "com.github.node-gradle.node" version "5.0.0"
     id "org.sonarqube" version "3.3"
 }
 
 node {
     download = true
     version = "18.16.0"
+    pnpmVersion = "8.4.0"
 }
 
-tasks.register("buildUI", NpmTask) {
+tasks.register("buildUI", PnpmTask) {
     // Output is defined in the vite.config.ts. These are for incremental builds only
     inputs.dir("src")
     outputs.dir("${project.buildDir}/ui")
 
-    dependsOn npmInstall
+    dependsOn pnpmInstall
     args = ['run', 'build']
 }
 

@@ -1,13 +1,22 @@
-import React, { type FC } from 'react';
+import React, { type FC, type ReactNode } from 'react';
 import MDEditor from '@uiw/react-md-editor';
-import type { ReactMarkdownProps } from 'react-markdown/lib/ast-to-react';
 import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
+import type { Position } from 'unist';
+import type { Element } from 'hast';
 
 interface MarkdownProps {
   value: string;
   editor?: boolean;
   disableCopy?: boolean;
 }
+
+export type ReactMarkdownProps = {
+  node: Element;
+  children: ReactNode[];
+  sourcePosition?: Position;
+  index?: number;
+  siblingCount?: number;
+};
 
 type MarkdownCopyButtonProps = Omit<
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
