@@ -2168,12 +2168,16 @@ components:
       properties:
         fileName:
           type: string
+      required:
+        - fileName
 
     DataEntityUpload:
       type: object
       properties:
         id:
           type: string
+      required:
+        - id
 
     DataEntityFileChunkFormData:
       type: object
@@ -2183,6 +2187,9 @@ components:
           format: binary
         index:
           type: integer
+      required:
+        - file
+        - index
 
     DataEntityFile:
       type: object
