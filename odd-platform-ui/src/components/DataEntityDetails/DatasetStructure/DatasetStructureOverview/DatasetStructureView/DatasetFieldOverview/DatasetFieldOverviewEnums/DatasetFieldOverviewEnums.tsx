@@ -4,7 +4,6 @@ import { WithPermissions } from 'components/shared/contexts';
 import type { DataSetField } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { Button, LabeledInfoItem } from 'components/shared/elements';
-import { AddIcon, EditIcon } from 'components/shared/icons';
 import { fetchDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldEnums, getDatasetFieldEnumsFetchingError } from 'redux/selectors';
@@ -85,7 +84,6 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
                   disabled={!editEnums}
                   text={field.enumValueCount ? 'Edit enums' : 'Add enums'}
                   buttonType='secondary-m'
-                  startIcon={field.enumValueCount ? <EditIcon /> : <AddIcon />}
                   sx={{ mr: 1 }}
                 />
               }

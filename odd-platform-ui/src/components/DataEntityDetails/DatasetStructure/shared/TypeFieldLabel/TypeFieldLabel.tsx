@@ -13,7 +13,7 @@ const TypeFieldLabel: React.FC<DatasetStructureFieldTypeLabelProps> = ({
   sx,
 }) => (
   <S.Content component='span' sx={sx} $typeName={typeName}>
-    {DatasetTypeLabelMap.get(typeName)?.short}
+    {DatasetTypeLabelMap[typeName].short}
   </S.Content>
 );
 

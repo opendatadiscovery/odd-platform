@@ -1498,6 +1498,9 @@ components:
         parent_field_id:
           type: integer
           format: int64
+        reference_field_id:
+          type: integer
+          format: int64
         oddrn:
           type: string
         name:
@@ -1553,6 +1556,7 @@ components:
             - TYPE_MAP
             - TYPE_UNION
             - TYPE_DURATION
+            - TYPE_REFERENCE
             - TYPE_UNKNOWN
         logical_type:
           type: string

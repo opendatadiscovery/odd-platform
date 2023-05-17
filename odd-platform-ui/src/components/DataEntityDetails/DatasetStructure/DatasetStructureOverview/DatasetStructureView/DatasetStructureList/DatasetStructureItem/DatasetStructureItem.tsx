@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { type DataSetField } from 'generated-sources';
-import { isComplexField } from 'lib/helpers';
-import { getDatasetStructure } from 'redux/selectors';
+import { getDatasetFieldName, getDatasetStructure } from 'redux/selectors';
 import { AppTooltip, Button } from 'components/shared/elements';
-import { ChevronIcon, StrokedInfoIcon } from 'components/shared/icons';
+import { ChevronIcon, RecursiveIcon, StrokedInfoIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
+import type { DataSetField } from 'generated-sources';
 import useStructure from '../../../lib/useStructure';
 import TypeFieldLabel from '../../../../shared/TypeFieldLabel/TypeFieldLabel';
 import KeyFieldLabel from '../../../../shared/KeyFieldLabel/KeyFieldLabel';
@@ -38,7 +37,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 
   const [open, setOpen] = React.useState(initialStateOpen);
 
-  const datasetStructure = useAppSelector(
+  const childFields = useAppSelector(
     getDatasetStructure({
       datasetId: dataEntityId,
       versionId,
@@ -46,13 +45,15 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     })
   );
 
-  const childFields = isComplexField(datasetField.type.type) ? datasetStructure : [];
+  const referenceFieldName = useAppSelector(
+    getDatasetFieldName(datasetField.referenceFieldId)
+  );
 
   const collapseBlock = useMemo(
     () => (
       <S.CollapseContainer $visibility={!!childFields?.length}>
         <Button
-          buttonType='tertiary-m'
+          buttonType='linkGray-m'
           icon={
             <ChevronIcon
               width={10}
@@ -73,6 +74,18 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     setSearchQuery('');
   }, [datasetField.id]);
 
+  const handleReferenceFieldClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+
+      if (!datasetField.referenceFieldId) return;
+
+      setSelectedFieldId(datasetField.referenceFieldId);
+      setSearchQuery('');
+    },
+    [datasetField.referenceFieldId]
+  );
+
   const isRowSelected = selectedFieldId === datasetField.id;
 
   return (
@@ -84,16 +97,26 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         $rowHeight={rowHeight}
         $isRowSelected={isRowSelected}
       >
-        <Grid container item sx={{ pr: 1, py: 1.25 }} flexWrap='nowrap'>
-          <S.RowInfoWrapper container $nesting={nesting} item>
+        <Grid container item sx={{ py: 1.75 }} flexWrap='nowrap'>
+          <S.RowInfoWrapper container $nesting={nesting} item sx={{ px: 1 }}>
             {collapseBlock}
-            <Grid container justifyContent='space-between' py={0.25} flexWrap='nowrap'>
+            <Grid container justifyContent='space-between' flexWrap='nowrap'>
               <Grid display='flex' minWidth={0} flexWrap='nowrap' alignItems='center'>
                 <Typography variant='h4' noWrap title={datasetField.name}>
                   {(datasetField.isKey && 'Key') ||
                     (datasetField.isValue && 'Value') ||
                     datasetField.name}
                 </Typography>
+                {datasetField?.type.type === 'TYPE_REFERENCE' &&
+                  datasetField.referenceFieldId && (
+                    <Button
+                      sx={{ ml: 1 }}
+                      text={referenceFieldName}
+                      buttonType='link-m'
+                      startIcon={<RecursiveIcon />}
+                      onClick={handleReferenceFieldClick}
+                    />
+                  )}
                 {datasetField.isPrimaryKey && (
                   <KeyFieldLabel sx={{ ml: 0.5 }} keyType='primary' />
                 )}
@@ -114,6 +137,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   title={`Logical type: ${datasetField.type.logicalType}`}
                   type='dark'
                   checkForOverflow={false}
+                  childSx={{ display: 'flex' }}
                 >
                   <StrokedInfoIcon />
                 </AppTooltip>
