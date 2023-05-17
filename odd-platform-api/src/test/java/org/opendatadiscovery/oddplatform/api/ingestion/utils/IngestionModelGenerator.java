@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.collection.MapRandomizer;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
@@ -15,6 +16,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.MetadataExtension;
@@ -23,7 +25,12 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import static java.util.stream.Collectors.toMap;
 
 public class IngestionModelGenerator {
-    private static final EasyRandom EASY_RANDOM = new EasyRandom();
+    private static final EasyRandomParameters EASY_RANDOM_PARAMETERS = new EasyRandomParameters()
+        .excludeField(field -> field.getName().equals("enumValues"))
+        .excludeField(field -> field.getName().equals("referenceOddrn"))
+        .excludeField(field -> field.getName().equals("parentFieldOddrn"));
+
+    private static final EasyRandom EASY_RANDOM = new EasyRandom(EASY_RANDOM_PARAMETERS);
 
     private static final MapRandomizer<String, String> MAP_RANDOMIZER =
         new MapRandomizer<>(new StringRandomizer(), new StringRandomizer());
@@ -52,9 +59,11 @@ public class IngestionModelGenerator {
 
     public static List<DataSetField> generateDatasetFields(final int size) {
         return EASY_RANDOM.objects(DataSetField.class, size)
-            .peek(df -> df.setEnumValues(null))
-            .peek(df -> df.setReferenceOddrn(null))
-            .peek(df -> df.setParentFieldOddrn(null))
+            .peek(field -> {
+                if (field.getType().getType().equals(DataSetFieldType.TypeEnum.REFERENCE)) {
+                    field.getType().setType(DataSetFieldType.TypeEnum.UNKNOWN);
+                }
+            })
             .toList();
     }
 
