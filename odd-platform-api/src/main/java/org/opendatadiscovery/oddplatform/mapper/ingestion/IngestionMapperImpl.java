@@ -10,12 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
@@ -33,6 +31,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTes
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
@@ -62,7 +61,6 @@ import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Da
 import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataTransformer.SOURCE_CODE_URL;
 import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataTransformer.SOURCE_LIST;
 import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.DataTransformer.TARGET_LIST;
-import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.CONSUMERS_COUNT;
 import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.FIELDS_COUNT;
 import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.PARENT_DATASET;
 import static org.opendatadiscovery.oddplatform.dto.attributes.AttributeNames.Dataset.ROWS_COUNT;
@@ -231,7 +229,8 @@ public class IngestionMapperImpl implements IngestionMapper {
             throw new BadUserRequestException("""
                 Dataset with oddrn %s has an incomplete structure.
                 Please check if parent_field_oddrn and reference_oddrn properties of each dataset field
-                have correspondent dataset fields in the payload
+                have correspondent dataset fields in the payload and TYPE_REFERENCE fields have correspondent
+                reference_oddrn properties and vice versa.
                 """, dataEntity.getOddrn());
         }
 
@@ -372,6 +371,13 @@ public class IngestionMapperImpl implements IngestionMapper {
 
             if (StringUtils.isNotEmpty(field.getReferenceOddrn())
                 && !fieldOddrns.contains(field.getReferenceOddrn())) {
+                return false;
+            }
+
+            final boolean isReferenceField = DataSetFieldType.TypeEnum.REFERENCE.equals(field.getType().getType());
+            final boolean hasReferenceProperty = StringUtils.isNotEmpty(field.getReferenceOddrn());
+
+            if (isReferenceField != hasReferenceProperty) {
                 return false;
             }
         }

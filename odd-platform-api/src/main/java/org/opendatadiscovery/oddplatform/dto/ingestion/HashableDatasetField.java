@@ -10,7 +10,6 @@ public class HashableDatasetField {
     private String oddrn;
     private String name;
     private String parentFieldOddrn;
-    private String referenceOddrn;
     private DataSetFieldType type;
     private boolean isKey;
     private boolean isValue;

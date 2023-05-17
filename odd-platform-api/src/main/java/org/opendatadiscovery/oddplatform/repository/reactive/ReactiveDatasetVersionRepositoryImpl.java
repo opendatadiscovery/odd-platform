@@ -329,23 +329,23 @@ public class ReactiveDatasetVersionRepositoryImpl
             final DatasetFieldPojo pojo = field.getDatasetFieldPojo();
 
             if (StringUtils.isNotEmpty(pojo.getParentFieldOddrn())) {
-                if (!dsfIdMap.containsKey(pojo.getParentFieldOddrn())) {
+                final Long parentFieldId = dsfIdMap.get(pojo.getParentFieldOddrn());
+                if (parentFieldId == null) {
                     log.warn("Dataset field with oddrn {} has unknown parent field with oddrn {}",
                         pojo.getOddrn(), pojo.getParentFieldOddrn());
-                    continue;
+                } else {
+                    field.setParentFieldId(dsfIdMap.get(pojo.getParentFieldOddrn()));
                 }
-
-                field.setParentFieldId(dsfIdMap.get(pojo.getParentFieldOddrn()));
             }
 
             if (StringUtils.isNotEmpty(pojo.getReferenceOddrn())) {
-                if (!dsfIdMap.containsKey(pojo.getReferenceOddrn())) {
+                final Long referenceFieldId = dsfIdMap.get(pojo.getReferenceOddrn());
+                if (referenceFieldId == null) {
                     log.warn("Dataset field with oddrn {} has unknown reference field with oddrn {}",
                         pojo.getOddrn(), pojo.getReferenceOddrn());
-                    continue;
+                } else {
+                    field.setReferenceFieldId(dsfIdMap.get(pojo.getReferenceOddrn()));
                 }
-
-                field.setReferenceFieldId(dsfIdMap.get(pojo.getReferenceOddrn()));
             }
         }
     }
