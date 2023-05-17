@@ -226,7 +226,6 @@ public class IngestionMapperImpl implements IngestionMapper {
 
     private DataSetIngestionDto createDatasetIngestionDto(final DataEntity dataEntity) {
         final DataSet dataset = dataEntity.getDataset();
-        final String structureHash = datasetVersionHashCalculator.calculateStructureHash(dataset.getFieldList());
 
         if (!validateStructure(dataset.getFieldList())) {
             throw new BadUserRequestException("""
@@ -235,6 +234,8 @@ public class IngestionMapperImpl implements IngestionMapper {
                 have correspondent dataset fields in the payload
                 """, dataEntity.getOddrn());
         }
+
+        final String structureHash = datasetVersionHashCalculator.calculateStructureHash(dataset.getFieldList());
 
         return new DataSetIngestionDto(
             dataset.getParentOddrn(),
