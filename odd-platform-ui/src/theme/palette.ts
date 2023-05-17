@@ -216,6 +216,7 @@ export const palette = createPalette({
     TYPE_UNION: { border: colors.blue65 },
     TYPE_DURATION: { border: colors.blue40 },
     TYPE_UNKNOWN: { border: colors.black10 },
+    TYPE_REFERENCE: { border: colors.purple40 },
   },
   datasetFieldKey: {
     primary: { background: colors.black30, color: colors.white, border: colors.blue30 },

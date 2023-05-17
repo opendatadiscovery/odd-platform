@@ -126,6 +126,7 @@ public class ReactiveDatasetFieldRepositoryImpl
 
         final Set<LabelPojo> labels = jooqRecordHelper
             .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
+
         return DatasetFieldDto.builder()
             .datasetFieldPojo(pojo)
             .labels(labels.stream().map(l -> new LabelDto(l, false)).toList())

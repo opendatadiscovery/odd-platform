@@ -20,7 +20,7 @@ const DatasetStructureTypeCountLabel: React.FC<DatasetStructureTypeCountLabelPro
 }) => (
   <S.Container $typeName={typeName} sx={sx}>
     <Typography variant='h5'>{count}</Typography>
-    <Typography variant='body2'>{DatasetTypeLabelMap.get(typeName)?.short}</Typography>
+    <Typography variant='body2'>{DatasetTypeLabelMap[typeName].short}</Typography>
     <S.Divider />
     <Typography variant='body2' color='texts.hint'>
       {count && fieldsCount ? round((count * 100) / fieldsCount, 2) : 0}%

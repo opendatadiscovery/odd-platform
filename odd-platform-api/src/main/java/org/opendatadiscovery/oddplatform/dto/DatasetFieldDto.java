@@ -17,5 +17,6 @@ public class DatasetFieldDto {
     private List<LabelDto> labels;
     private List<DatasetFieldMetadataDto> metadata;
     private Long parentFieldId;
+    private Long referenceFieldId;
     private Integer enumValueCount;
 }
