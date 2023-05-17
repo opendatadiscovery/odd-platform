@@ -6,6 +6,8 @@ import {
   AppMenuItem,
   AppSelect,
   LabeledInfoItem,
+  TestRunStatusItem,
+  TestRunStatusReasonModal,
 } from 'components/shared/elements';
 import type { DataQualityTestExpectation } from 'generated-sources';
 import { DataQualityTestSeverity, Permission } from 'generated-sources';
@@ -63,7 +65,7 @@ const TestReportDetailsOverview: React.FC = () => {
         <TestReportDetailsOverviewSkeleton length={1} />
       ) : (
         <>
-          <Grid item sx={{ mt: 2 }} xs={12}>
+          <S.LatestRunInfoContainer item xs={12}>
             <LabeledInfoItem label='Date' inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTestRunFormattedDateTime(
@@ -79,6 +81,22 @@ const TestReportDetailsOverview: React.FC = () => {
                   { addSuffix: false }
                 )}
             </LabeledInfoItem>
+            {qualityTest.latestRun?.status && (
+              <LabeledInfoItem label='Status' inline labelWidth={2.4}>
+                <Grid container flexWrap='nowrap' alignItems='center'>
+                  <TestRunStatusItem
+                    sx={{ mr: 1.25 }}
+                    typeName={qualityTest.latestRun?.status}
+                  />
+                  {qualityTest.latestRun.statusReason && (
+                    <TestRunStatusReasonModal
+                      openBtn={<Button text='Status reason' buttonType='link-m' />}
+                      statusReason={qualityTest.latestRun.statusReason}
+                    />
+                  )}
+                </Grid>
+              </LabeledInfoItem>
+            )}
             <LabeledInfoItem
               label='Severity'
               inline
@@ -104,7 +122,7 @@ const TestReportDetailsOverview: React.FC = () => {
                 )}
               />
             </LabeledInfoItem>
-          </Grid>
+          </S.LatestRunInfoContainer>
 
           {hasDataQualityTestExpectations(qualityTest?.expectation) && (
             <Grid container sx={{ mt: 2 }} flexDirection='column'>

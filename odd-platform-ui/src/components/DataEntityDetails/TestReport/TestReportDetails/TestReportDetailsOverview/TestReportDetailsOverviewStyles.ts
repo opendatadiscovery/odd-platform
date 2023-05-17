@@ -1,5 +1,13 @@
 import styled from 'styled-components';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+
+export const LatestRunInfoContainer = styled(Grid)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  '& > *': {
+    marginBottom: theme.spacing(0.75),
+    '&:last-child': { marginBottom: theme.spacing(0) },
+  },
+}));
 
 const paramsHeight = 220;
 
