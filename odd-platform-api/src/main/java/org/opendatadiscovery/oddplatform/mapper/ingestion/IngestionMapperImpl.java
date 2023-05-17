@@ -365,12 +365,12 @@ public class IngestionMapperImpl implements IngestionMapper {
         final Set<String> fieldOddrns = fieldList.stream().map(DataSetField::getOddrn).collect(Collectors.toSet());
 
         for (final DataSetField field : fieldList) {
-            if (!StringUtils.isEmpty(field.getParentFieldOddrn())
+            if (StringUtils.isNotEmpty(field.getParentFieldOddrn())
                 && !fieldOddrns.contains(field.getParentFieldOddrn())) {
                 return false;
             }
 
-            if (!StringUtils.isEmpty(field.getReferenceOddrn())
+            if (StringUtils.isNotEmpty(field.getReferenceOddrn())
                 && !fieldOddrns.contains(field.getReferenceOddrn())) {
                 return false;
             }
