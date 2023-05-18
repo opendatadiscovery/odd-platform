@@ -65,7 +65,34 @@ const TestReportDetailsOverview: React.FC = () => {
         <TestReportDetailsOverviewSkeleton length={1} />
       ) : (
         <>
-          <S.LatestRunInfoContainer item xs={12}>
+          <LabeledInfoItem
+            label='Severity'
+            inline
+            labelWidth={2.4}
+            valueComponent='div'
+            sx={{ mt: 2 }}
+          >
+            <WithPermissions
+              permissionTo={Permission.DATASET_TEST_RUN_SET_SEVERITY}
+              renderContent={({ isAllowedTo }) => (
+                <AppSelect
+                  disabled={!isAllowedTo}
+                  size='small'
+                  defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
+                  onChange={handleSeverityChange}
+                >
+                  {ORDERED_SEVERITY.map(severity => (
+                    <AppMenuItem key={severity} value={severity}>
+                      {severity}
+                    </AppMenuItem>
+                  ))}
+                </AppSelect>
+              )}
+            />
+          </LabeledInfoItem>
+
+          <S.LatestRunInfoContainer container>
+            <Typography variant='h4'>Last execution</Typography>
             <LabeledInfoItem label='Date' inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTestRunFormattedDateTime(
@@ -97,31 +124,6 @@ const TestReportDetailsOverview: React.FC = () => {
                 </Grid>
               </LabeledInfoItem>
             )}
-            <LabeledInfoItem
-              label='Severity'
-              inline
-              labelWidth={2.4}
-              valueComponent='div'
-            >
-              <WithPermissions
-                permissionTo={Permission.DATASET_TEST_RUN_SET_SEVERITY}
-                renderContent={({ isAllowedTo }) => (
-                  <AppSelect
-                    disabled={!isAllowedTo}
-                    size='small'
-                    sx={{ width: 'fit-content' }}
-                    defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
-                    onChange={handleSeverityChange}
-                  >
-                    {ORDERED_SEVERITY.map(severity => (
-                      <AppMenuItem key={severity} value={severity}>
-                        {severity}
-                      </AppMenuItem>
-                    ))}
-                  </AppSelect>
-                )}
-              />
-            </LabeledInfoItem>
           </S.LatestRunInfoContainer>
 
           {hasDataQualityTestExpectations(qualityTest?.expectation) && (
