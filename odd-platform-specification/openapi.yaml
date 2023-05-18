@@ -1597,6 +1597,20 @@ paths:
         - dataEntityAttachment
 
   /api/dataentities/{data_entity_id}/files/uploads:
+    options:
+      summary: Get file upload options
+      operationId: getUploadOptions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityUploadOptions'
+      tags:
+        - dataEntityAttachment
     post:
       summary: Initiate file upload for data entity
       operationId: initiateFileUpload
