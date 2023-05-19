@@ -6,6 +6,7 @@ import AppTab from 'components/shared/elements/AppTabs/AppTab/AppTab';
 import AppLinkTab from 'components/shared/elements/AppTabs/AppTab/AppLinkTab';
 import AppTabLabel from 'components/shared/elements/AppTabs/AppTabLabel/AppTabLabel';
 import { TabsContainer } from 'components/shared/elements/AppTabs/AppTabsStyles';
+import type { SxProps, Theme } from '@mui/system';
 
 export type AppTabItem<ValueT = number | string | boolean> = {
   name: string;
@@ -23,6 +24,7 @@ interface AppTabsProps
   selectedTab?: number | boolean;
   type: TabType;
   isHintUpdating?: boolean;
+  tabSx?: SxProps<Theme>;
 }
 
 const AppTabs: React.FC<AppTabsProps> = ({
@@ -33,6 +35,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   orientation,
   isHintUpdating = false,
   sx,
+  tabSx,
 }) => {
   const selectedTabState = selectedTab === -1 ? false : selectedTab;
   const [currentTab, setCurrent] = React.useState<number | boolean | undefined>(
@@ -76,6 +79,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
             type={type}
             hidden={item.hidden}
             key={item.name}
+            sx={tabSx}
             label={
               <AppTabLabel
                 name={item.name}
@@ -94,6 +98,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
             type={type}
             hidden={item.hidden}
             key={item.name}
+            sx={tabSx}
             label={
               <AppTabLabel
                 name={item.name}

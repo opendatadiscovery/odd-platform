@@ -6,6 +6,8 @@ import {
   AppMenuItem,
   AppSelect,
   LabeledInfoItem,
+  TestRunStatusItem,
+  TestRunStatusReasonModal,
 } from 'components/shared/elements';
 import type { DataQualityTestExpectation } from 'generated-sources';
 import { DataQualityTestSeverity, Permission } from 'generated-sources';
@@ -63,7 +65,34 @@ const TestReportDetailsOverview: React.FC = () => {
         <TestReportDetailsOverviewSkeleton length={1} />
       ) : (
         <>
-          <Grid item sx={{ mt: 2 }} xs={12}>
+          <LabeledInfoItem
+            label='Severity'
+            inline
+            labelWidth={2.4}
+            valueComponent='div'
+            sx={{ mt: 2 }}
+          >
+            <WithPermissions
+              permissionTo={Permission.DATASET_TEST_RUN_SET_SEVERITY}
+              renderContent={({ isAllowedTo }) => (
+                <AppSelect
+                  disabled={!isAllowedTo}
+                  size='small'
+                  defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
+                  onChange={handleSeverityChange}
+                >
+                  {ORDERED_SEVERITY.map(severity => (
+                    <AppMenuItem key={severity} value={severity}>
+                      {severity}
+                    </AppMenuItem>
+                  ))}
+                </AppSelect>
+              )}
+            />
+          </LabeledInfoItem>
+
+          <S.LatestRunInfoContainer container>
+            <Typography variant='h4'>Last execution</Typography>
             <LabeledInfoItem label='Date' inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTestRunFormattedDateTime(
@@ -79,32 +108,23 @@ const TestReportDetailsOverview: React.FC = () => {
                   { addSuffix: false }
                 )}
             </LabeledInfoItem>
-            <LabeledInfoItem
-              label='Severity'
-              inline
-              labelWidth={2.4}
-              valueComponent='div'
-            >
-              <WithPermissions
-                permissionTo={Permission.DATASET_TEST_RUN_SET_SEVERITY}
-                renderContent={({ isAllowedTo }) => (
-                  <AppSelect
-                    disabled={!isAllowedTo}
-                    size='small'
-                    sx={{ width: 'fit-content' }}
-                    defaultValue={qualityTest?.severity || DataQualityTestSeverity.MAJOR}
-                    onChange={handleSeverityChange}
-                  >
-                    {ORDERED_SEVERITY.map(severity => (
-                      <AppMenuItem key={severity} value={severity}>
-                        {severity}
-                      </AppMenuItem>
-                    ))}
-                  </AppSelect>
-                )}
-              />
-            </LabeledInfoItem>
-          </Grid>
+            {qualityTest.latestRun?.status && (
+              <LabeledInfoItem label='Status' inline labelWidth={2.4}>
+                <Grid container flexWrap='nowrap' alignItems='center'>
+                  <TestRunStatusItem
+                    sx={{ mr: 1.25 }}
+                    typeName={qualityTest.latestRun?.status}
+                  />
+                  {qualityTest.latestRun.statusReason && (
+                    <TestRunStatusReasonModal
+                      openBtn={<Button text='Status reason' buttonType='link-m' />}
+                      statusReason={qualityTest.latestRun.statusReason}
+                    />
+                  )}
+                </Grid>
+              </LabeledInfoItem>
+            )}
+          </S.LatestRunInfoContainer>
 
           {hasDataQualityTestExpectations(qualityTest?.expectation) && (
             <Grid container sx={{ mt: 2 }} flexDirection='column'>

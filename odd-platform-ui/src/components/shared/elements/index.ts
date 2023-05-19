@@ -65,3 +65,4 @@ export { default as Markdown } from './Markdown/Markdown';
 export { default as DatasourceLogo } from './DatasourceLogo/DatasourceLogo';
 export { default as Button } from './Button/Button';
 export { default as Input } from './Input/Input';
+export { default as TestRunStatusReasonModal } from './TestRunStatusReasonModal/TestRunStatusReasonModal';
