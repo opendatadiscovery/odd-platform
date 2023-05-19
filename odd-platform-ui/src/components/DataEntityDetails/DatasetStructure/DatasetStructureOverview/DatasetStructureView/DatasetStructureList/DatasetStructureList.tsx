@@ -1,7 +1,7 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef } from 'react';
-import type { DataSetField } from 'generated-sources';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAppParams } from 'lib/hooks';
+import type { DataSetField } from 'generated-sources';
 import useStructure from '../../lib/useStructure';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureList.styles';

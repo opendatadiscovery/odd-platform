@@ -1,10 +1,10 @@
 import {
+  type DataSetFieldTypeTypeEnum,
   type BinaryFieldStat,
   type BooleanFieldStat,
   type ComplexFieldStat,
   type DataSetField,
   type DataSetFieldType,
-  DataSetFieldTypeTypeEnum,
   type DateTimeFieldStat,
   type EnumValueList,
   type NumberFieldStat,
@@ -20,25 +20,26 @@ export type DataSetFormattedStats = StringFieldStat &
   ComplexFieldStat &
   IntegerFieldStat;
 
-export const DatasetTypeLabelMap: Map<
+export const DatasetTypeLabelMap: Record<
   DataSetFieldTypeTypeEnum,
   { short: string; plural: string }
-> = new Map([
-  [DataSetFieldTypeTypeEnum.STRING, { short: 'Str', plural: 'strings' }],
-  [DataSetFieldTypeTypeEnum.BOOLEAN, { short: 'Bool', plural: 'booleans' }],
-  [DataSetFieldTypeTypeEnum.INTEGER, { short: 'Int', plural: 'integers' }],
-  [DataSetFieldTypeTypeEnum.DATETIME, { short: 'Date', plural: 'dates' }],
-  [DataSetFieldTypeTypeEnum.BINARY, { short: 'Bin', plural: 'binaries' }],
-  [DataSetFieldTypeTypeEnum.NUMBER, { short: 'Dec', plural: 'decimals' }],
-  [DataSetFieldTypeTypeEnum.STRUCT, { short: 'Struct', plural: 'structures' }],
-  [DataSetFieldTypeTypeEnum.LIST, { short: 'List', plural: 'lists' }],
-  [DataSetFieldTypeTypeEnum.MAP, { short: 'Map', plural: 'maps' }],
-  [DataSetFieldTypeTypeEnum.CHAR, { short: 'Char', plural: 'chars' }],
-  [DataSetFieldTypeTypeEnum.TIME, { short: 'Time', plural: 'times' }],
-  [DataSetFieldTypeTypeEnum.UNION, { short: 'Union', plural: 'unions' }],
-  [DataSetFieldTypeTypeEnum.DURATION, { short: 'Dur', plural: 'durations' }],
-  [DataSetFieldTypeTypeEnum.UNKNOWN, { short: 'Unk', plural: 'unknowns' }],
-]);
+> = {
+  TYPE_STRING: { short: 'Str', plural: 'strings' },
+  TYPE_BOOLEAN: { short: 'Bool', plural: 'booleans' },
+  TYPE_INTEGER: { short: 'Int', plural: 'integers' },
+  TYPE_DATETIME: { short: 'Date', plural: 'dates' },
+  TYPE_BINARY: { short: 'Bin', plural: 'binaries' },
+  TYPE_NUMBER: { short: 'Dec', plural: 'decimals' },
+  TYPE_STRUCT: { short: 'Struct', plural: 'structures' },
+  TYPE_LIST: { short: 'List', plural: 'lists' },
+  TYPE_MAP: { short: 'Map', plural: 'maps' },
+  TYPE_CHAR: { short: 'Char', plural: 'chars' },
+  TYPE_TIME: { short: 'Time', plural: 'times' },
+  TYPE_UNION: { short: 'Union', plural: 'unions' },
+  TYPE_DURATION: { short: 'Dur', plural: 'durations' },
+  TYPE_UNKNOWN: { short: 'Unk', plural: 'unknowns' },
+  TYPE_REFERENCE: { short: 'Ref', plural: 'references' },
+};
 
 export type DataSetFormattedStatsKeys = keyof Required<DataSetFormattedStats>;
 

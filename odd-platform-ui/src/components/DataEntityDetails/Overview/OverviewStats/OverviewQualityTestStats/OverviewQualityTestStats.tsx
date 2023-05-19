@@ -11,6 +11,8 @@ import {
   EntitiesListModal,
   EntityClassItem,
   LabeledInfoItem,
+  TestRunStatusItem,
+  TestRunStatusReasonModal,
 } from 'components/shared/elements';
 import * as S from './OverviewQualityTestStatsStyles';
 
@@ -86,14 +88,27 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         )}
         <S.Overview item lg={4}>
           <Typography variant='h4'>Last execution</Typography>
-          <LabeledInfoItem
-            inline
-            label='Status'
-            labelWidth={3}
-            runStatus={qualityTest.latestRun?.status}
-          >
-            {qualityTest?.latestRun?.status}
-          </LabeledInfoItem>
+          {qualityTest?.latestRun?.status && (
+            <LabeledInfoItem
+              inline
+              label='Status'
+              labelWidth={3}
+              runStatus={qualityTest.latestRun?.status}
+            >
+              <Grid container flexWrap='nowrap' alignItems='center'>
+                <TestRunStatusItem
+                  sx={{ mr: 1.25 }}
+                  typeName={qualityTest.latestRun?.status}
+                />
+                {qualityTest.latestRun.statusReason && (
+                  <TestRunStatusReasonModal
+                    openBtn={<Button text='Status reason' buttonType='link-m' />}
+                    statusReason={qualityTest.latestRun.statusReason}
+                  />
+                )}
+              </Grid>
+            </LabeledInfoItem>
+          )}
           <LabeledInfoItem inline label='Date' labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
               qualityTestFormattedDateTime(qualityTest?.latestRun?.startTime.getTime())}

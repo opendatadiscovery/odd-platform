@@ -22,6 +22,7 @@ public class DatasetVersionHashCalculator {
         if (CollectionUtils.isEmpty(fields)) {
             return EMPTY_FIELDS_HASH;
         }
+
         final List<HashableDatasetField> sortedFields = fields.stream()
             .map(f -> HashableDatasetField.builder()
                 .name(f.getName())

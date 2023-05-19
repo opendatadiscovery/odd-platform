@@ -2,7 +2,6 @@ import React from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
-import { AddIcon, EditIcon } from 'components/shared/icons';
 import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
@@ -78,7 +77,6 @@ const DatasetFieldOverview: React.FC = () => {
                     }
                     disabled={!editDescription}
                     buttonType='secondary-m'
-                    startIcon={field.internalDescription ? <EditIcon /> : <AddIcon />}
                     sx={{ mr: 1 }}
                   />
                 }
@@ -111,9 +109,6 @@ const DatasetFieldOverview: React.FC = () => {
                     data-qa='edit_labels'
                     disabled={!editLabels}
                     buttonType='secondary-m'
-                    startIcon={
-                      field.labels && field.labels.length > 0 ? <EditIcon /> : <AddIcon />
-                    }
                     sx={{ mr: 1 }}
                   />
                 }

@@ -11,7 +11,6 @@ import type {
   DataEntitySearchHighlight,
   DataEntityType,
   DataQualityTest,
-  DataSetField,
   DataSetSLAReport,
   DataSetTestReport,
   DataSetVersion,
@@ -35,11 +34,10 @@ import type {
   TermRef,
   ActivityType,
   EnumValueList,
+  DataSetField,
 } from 'generated-sources';
-// eslint-disable-next-line lodash/import-scope
-import type { Dictionary } from 'lodash';
 import type { DataSetQualityTestsStatusCount } from './dataQualityTest';
-import type { CurrentPageInfo, PageInfo, PaginatedResponse } from './common';
+import type { CurrentPageInfo, Dictionary, PageInfo, PaginatedResponse } from './common';
 import type { DataSetStructureTypesCount } from './datasetStructure';
 import type { DataEntityLineageById } from './dataentityLineage';
 import type { DataEntity, DataEntityDetailsState } from './dataentities';

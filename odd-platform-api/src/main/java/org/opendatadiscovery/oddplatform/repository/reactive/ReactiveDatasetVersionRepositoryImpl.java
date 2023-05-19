@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -38,6 +39,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
@@ -56,6 +58,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
+import static reactor.function.TupleUtils.function;
 
 @Repository
 @Slf4j
@@ -107,14 +110,15 @@ public class ReactiveDatasetVersionRepositoryImpl
         return jooqReactiveOperations
             .flux(selectHavingStep)
             .collect(groupingBy(this::extractDatasetVersion, mapping(this::extractDatasetFieldDto, toList())))
-            .flatMap(m -> m.entrySet().stream()
-                .findFirst()
-                .map(e -> Mono.just(DatasetStructureDto.builder()
-                    .datasetVersion(e.getKey())
-                    .datasetFields(isNullList(e.getValue()) ? List.of() : e.getValue())
-                    .build()))
-                .orElse(Mono.empty())
-            );
+            .flatMap(m -> m.entrySet().stream().findFirst()
+                .map(e -> Tuples.of(e.getKey(), isNullList(e.getValue()) ? List.<DatasetFieldDto>of() : e.getValue()))
+                .map(Mono::just)
+                .orElseGet(Mono::empty))
+            .doOnNext(tuple -> setFieldDependencies(tuple.getT2()))
+            .map(function((version, fields) -> DatasetStructureDto.builder()
+                .datasetVersion(version)
+                .datasetFields(fields)
+                .build()));
     }
 
     @Override
@@ -170,14 +174,15 @@ public class ReactiveDatasetVersionRepositoryImpl
         return jooqReactiveOperations
             .flux(selectHavingStep)
             .collect(groupingBy(this::extractDatasetVersion, mapping(this::extractDatasetFieldDto, toList())))
-            .flatMap(m -> m.entrySet().stream()
-                .findFirst()
-                .map(e -> Mono.just(DatasetStructureDto.builder()
-                    .datasetVersion(e.getKey())
-                    .datasetFields(isNullList(e.getValue()) ? List.of() : e.getValue())
-                    .build()))
-                .orElse(Mono.empty())
-            );
+            .flatMap(m -> m.entrySet().stream().findFirst()
+                .map(e -> Tuples.of(e.getKey(), isNullList(e.getValue()) ? List.<DatasetFieldDto>of() : e.getValue()))
+                .map(Mono::just)
+                .orElseGet(Mono::empty))
+            .doOnNext(tuple -> setFieldDependencies(tuple.getT2()))
+            .map(function((version, fields) -> DatasetStructureDto.builder()
+                .datasetVersion(version)
+                .datasetFields(fields)
+                .build()));
     }
 
     @Override
@@ -312,5 +317,36 @@ public class ReactiveDatasetVersionRepositoryImpl
     private boolean isNullList(final List<DatasetFieldDto> list) {
         return CollectionUtils.isNotEmpty(list)
             && list.stream().allMatch(Objects::isNull);
+    }
+
+    private void setFieldDependencies(final List<DatasetFieldDto> fields) {
+        final Map<String, Long> dsfIdMap = fields
+            .stream()
+            .map(DatasetFieldDto::getDatasetFieldPojo)
+            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, DatasetFieldPojo::getId));
+
+        for (final DatasetFieldDto field : fields) {
+            final DatasetFieldPojo pojo = field.getDatasetFieldPojo();
+
+            if (StringUtils.isNotEmpty(pojo.getParentFieldOddrn())) {
+                final Long parentFieldId = dsfIdMap.get(pojo.getParentFieldOddrn());
+                if (parentFieldId == null) {
+                    log.warn("Dataset field with oddrn {} has unknown parent field with oddrn {}",
+                        pojo.getOddrn(), pojo.getParentFieldOddrn());
+                } else {
+                    field.setParentFieldId(dsfIdMap.get(pojo.getParentFieldOddrn()));
+                }
+            }
+
+            if (StringUtils.isNotEmpty(pojo.getReferenceOddrn())) {
+                final Long referenceFieldId = dsfIdMap.get(pojo.getReferenceOddrn());
+                if (referenceFieldId == null) {
+                    log.warn("Dataset field with oddrn {} has unknown reference field with oddrn {}",
+                        pojo.getOddrn(), pojo.getReferenceOddrn());
+                } else {
+                    field.setReferenceFieldId(dsfIdMap.get(pojo.getReferenceOddrn()));
+                }
+            }
+        }
     }
 }

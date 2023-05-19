@@ -29,3 +29,7 @@ export interface KeySetPaginatedResponse<Data, LastId extends number> {
 export type EntityId = { entityId: number };
 export type RelatedToEntityId<Data> = Data & EntityId;
 export type RequiredField<I, K extends keyof I> = I & Required<Pick<I, K>>;
+
+export interface Dictionary<T> {
+  [index: string]: T;
+}
