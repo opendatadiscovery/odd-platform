@@ -8,7 +8,7 @@ const SELECTORS = {
   datasourceFilter: '[data-qa="datasource_filter"] >> ..',
   namespaceFilter: '[data-qa="namespace_filter"] >> ..',
   eventTypeSelect: '[data-qa="event_type_filter"] >> ..',
-  tagFilter: `label:has-text('Tag')>> ..`,
+  tagFilter: `[data-qa="tag_filter"] input`,
   ownerFilter: `label:has-text('Owner')>> ..`,
   resultList: `[data-qa="activity_results_list"]`,
   resultItem: `[data-qa="activity_list_item"]`,
