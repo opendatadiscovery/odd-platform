@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLinkFormDa
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLinkListFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUpload;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUploadFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUploadOptions;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.Part;
@@ -25,6 +26,12 @@ public class DataEntityAttachmentController implements DataEntityAttachmentApi {
     public Mono<ResponseEntity<DataEntityAttachments>> getAttachments(final Long dataEntityId,
                                                                       final ServerWebExchange exchange) {
         return DataEntityAttachmentApi.super.getAttachments(dataEntityId, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityUploadOptions>> getUploadOptions(final Long dataEntityId,
+                                                                          final ServerWebExchange exchange) {
+        return DataEntityAttachmentApi.super.getUploadOptions(dataEntityId, exchange);
     }
 
     @Override

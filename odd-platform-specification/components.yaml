@@ -2163,6 +2163,14 @@ components:
         - files
         - links
 
+    DataEntityUploadOptions:
+      type: object
+      properties:
+        maxSize:
+          type: integer
+      required:
+        - maxSize
+
     DataEntityUploadFormData:
       type: object
       properties:
