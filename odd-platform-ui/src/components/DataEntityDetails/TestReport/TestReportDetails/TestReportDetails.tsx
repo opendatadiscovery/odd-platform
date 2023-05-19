@@ -90,6 +90,8 @@ const TestReportDetails: React.FC = () => {
             items={tabs}
             selectedTab={selectedTab}
             handleTabChange={() => {}}
+            sx={{ width: '100%' }}
+            tabSx={{ flexGrow: 1 }}
           />
         ) : null}
         <React.Suspense fallback={<AppCircularProgress sx={{ mt: 5 }} size={40} />}>

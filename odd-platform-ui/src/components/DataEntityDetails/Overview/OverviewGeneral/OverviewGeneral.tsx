@@ -1,6 +1,11 @@
 import React from 'react';
 import { Box, Grid } from '@mui/material';
-import { CopyButton, DatasourceLogo, LabeledInfoItem } from 'components/shared/elements';
+import {
+  AppTooltip,
+  CopyButton,
+  DatasourceLogo,
+  LabeledInfoItem,
+} from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
@@ -35,7 +40,11 @@ const OverviewGeneral: React.FC = () => {
                   transparentBackground
                   name={dataEntityDetails.dataSource?.oddrn}
                 />
-                <Box ml={0.5}>{dataEntityDetails.dataSource?.name}</Box>
+                <AppTooltip title={dataEntityDetails.dataSource?.name}>
+                  <Box sx={{ ml: 0.5, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {dataEntityDetails.dataSource?.name}
+                  </Box>
+                </AppTooltip>
               </Grid>
             </LabeledInfoItem>
           </Grid>

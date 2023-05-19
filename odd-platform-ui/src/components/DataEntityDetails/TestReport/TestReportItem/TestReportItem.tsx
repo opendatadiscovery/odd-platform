@@ -58,7 +58,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
           <Grid item>
             <Typography variant='body1'>{suitName}</Typography>
           </Grid>
-          <Grid item container justifyContent='flex-end'>
+          <S.TestRunStatusContainer item container>
             {Object.entries(dataQATestReport).map(
               ([testType, count]) =>
                 count !== 0 && (
@@ -70,7 +70,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                   />
                 )
             )}
-          </Grid>
+          </S.TestRunStatusContainer>
         </Grid>
       </S.TestReportBySuitNameHeader>
       <Collapse in={open} timeout='auto' unmountOnExit>

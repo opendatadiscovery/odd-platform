@@ -64,3 +64,4 @@ export { default as AppSuspenseWrapper } from './AppSuspenseWrapper/AppSuspenseW
 export { default as Markdown } from './Markdown/Markdown';
 export { default as DatasourceLogo } from './DatasourceLogo/DatasourceLogo';
 export { default as Button } from './Button/Button';
+export { default as TestRunStatusReasonModal } from './TestRunStatusReasonModal/TestRunStatusReasonModal';
