@@ -5,6 +5,7 @@ import { showSuccessToast } from 'lib/errorHandling';
 import type {
   DataEntityAttachmentApiDeleteFileRequest,
   DataEntityAttachmentApiDownloadFileRequest,
+  DataEntityAttachmentApiGetUploadOptionsRequest,
 } from 'generated-sources';
 
 const CHUNK_SIZE = 100 * 1024;
@@ -104,5 +105,13 @@ export function useDeleteDataEntityFile() {
         client.invalidateQueries(['dataEntityAttachments']);
       },
     }
+  );
+}
+
+export function useGetUploadOptions({
+  dataEntityId,
+}: DataEntityAttachmentApiGetUploadOptionsRequest) {
+  return useQuery(['dataEntityUploadOptions', dataEntityId], () =>
+    dataEntityAttachmentApi.getUploadOptions({ dataEntityId })
   );
 }

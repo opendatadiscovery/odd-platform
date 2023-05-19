@@ -7,13 +7,14 @@ import FileItem from './FileItem/FileItem';
 
 interface SaveFilesFormProps {
   openBtn: JSX.Element;
+  maxSize?: number;
 }
 
 interface FormData {
   file: Blob;
 }
 
-const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
+const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
   const formId = 'save-files-form';
   const { dataEntityId } = useAppParams();
 
@@ -60,7 +61,11 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
         name='file'
         control={control}
         render={({ field: { onChange } }) => (
-          <FileInput multiple onFilesSelected={handleFilesUpload(onChange)} />
+          <FileInput
+            multiple
+            onFilesSelected={handleFilesUpload(onChange)}
+            maxFileSizeInBytes={maxSize}
+          />
         )}
       />
       <Grid container flexDirection='column' mt={2}>

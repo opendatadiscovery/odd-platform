@@ -4,11 +4,15 @@ import { AppMenu, AppMenuItem, Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useAppParams, useGetUploadOptions } from 'lib/hooks';
 import SaveLinksForm from '../SaveLinksForm/SaveLinksForm';
 import SaveFilesForm from '../SaveFilesForm/SaveFilesForm';
 import * as S from './AttachmentsHeader.styles';
 
 const AttachmentsHeader: FC = () => {
+  const { dataEntityId } = useAppParams();
+  const { data } = useGetUploadOptions({ dataEntityId });
+
   const menuId = 'add-attachments-menu';
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -48,7 +52,10 @@ const AttachmentsHeader: FC = () => {
         onClick={handleMenuClose}
       >
         <SaveLinksForm openBtn={<AppMenuItem>Add links</AppMenuItem>} />
-        <SaveFilesForm openBtn={<AppMenuItem>Add file</AppMenuItem>} />
+        <SaveFilesForm
+          openBtn={<AppMenuItem>Add file</AppMenuItem>}
+          maxSize={data?.maxSize}
+        />
       </AppMenu>
     </S.Header>
   );
