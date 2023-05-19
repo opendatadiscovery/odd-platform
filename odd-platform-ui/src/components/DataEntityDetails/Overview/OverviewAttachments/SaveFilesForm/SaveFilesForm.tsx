@@ -39,7 +39,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Add files
+      Add file
     </Typography>
   );
 

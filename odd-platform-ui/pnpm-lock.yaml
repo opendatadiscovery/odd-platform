@@ -4,6 +4,9 @@ overrides:
   minimist: 1.2.6
 
 dependencies:
+  '@hookform/error-message':
+    specifier: ^2.0.1
+    version: 2.0.1(react-dom@18.2.0)(react-hook-form@7.43.9)(react@18.2.0)
   '@mui/lab':
     specifier: ^5.0.0-alpha.128
     version: 5.0.0-alpha.128(@emotion/react@11.10.4)(@emotion/styled@11.8.1)(@mui/material@5.12.2)(@types/react@18.0.28)(react-dom@18.2.0)(react@18.2.0)
@@ -873,6 +876,18 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@hookform/error-message@2.0.1(react-dom@18.2.0)(react-hook-form@7.43.9)(react@18.2.0):
+    resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      react-hook-form: ^7.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-hook-form: 7.43.9(react@18.2.0)
+    dev: false
 
   /@humanwhocodes/config-array@0.10.7:
     resolution: {integrity: sha512-MDl6D6sBsaV452/QSdX+4CXIjZhIcI0PELsxUjk4U828yd58vk3bTIvk/6w5FY+4hIy9sLW0sfrV7K7Kc++j/w==}

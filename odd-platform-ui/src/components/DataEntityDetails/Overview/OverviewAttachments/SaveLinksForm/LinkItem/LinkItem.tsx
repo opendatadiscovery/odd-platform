@@ -2,8 +2,9 @@ import React, { type FC } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { AppInput, Button } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import type { DataEntityLinkListFormData } from 'generated-sources';
+import { ErrorMessage } from '@hookform/error-message';
 
 interface LinkItemProps {
   idx: number;
@@ -12,7 +13,7 @@ interface LinkItemProps {
 }
 
 const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
-  const { control } = useFormContext<DataEntityLinkListFormData>();
+  const { control, formState } = useFormContext<DataEntityLinkListFormData>();
 
   const isLastLink = idx + 1 === fieldsCount;
   const isFirstLink = idx === 0;
@@ -27,20 +28,37 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
       <Controller
         name={`items.${idx}.url`}
         control={control}
-        rules={{ required: true, validate: value => !!value.trim() }}
+        rules={{
+          required: true,
+          pattern: {
+            value: /^(https?|ftp|mailto|tel|file|data):\/\//,
+            message: 'URL should include protocol',
+          },
+        }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            placeholder='Place link here'
-            label='URL'
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <>
+            <AppInput
+              {...field}
+              placeholder='Place link here'
+              label='URL'
+              required
+              customEndAdornment={{
+                variant: 'clear',
+                showAdornment: !!field.value,
+                onCLick: () => field.onChange(''),
+                icon: <ClearIcon />,
+              }}
+            />
+            <ErrorMessage
+              errors={formState.errors}
+              name={`items.${idx}.url`}
+              render={({ message }) => (
+                <Typography mt={0.5} variant='body2' color='warning.main'>
+                  {message}
+                </Typography>
+              )}
+            />
+          </>
         )}
       />
       <Controller

@@ -38,6 +38,7 @@
     ]
   },
   "dependencies": {
+    "@hookform/error-message": "^2.0.1",
     "@mui/lab": "^5.0.0-alpha.128",
     "@mui/material": "^5.12.2",
     "@mui/system": "^5.12.1",

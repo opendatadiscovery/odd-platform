@@ -48,7 +48,7 @@ const AttachmentsHeader: FC = () => {
         onClick={handleMenuClose}
       >
         <SaveLinksForm openBtn={<AppMenuItem>Add links</AppMenuItem>} />
-        <SaveFilesForm openBtn={<AppMenuItem>Add files</AppMenuItem>} />
+        <SaveFilesForm openBtn={<AppMenuItem>Add file</AppMenuItem>} />
       </AppMenu>
     </S.Header>
   );

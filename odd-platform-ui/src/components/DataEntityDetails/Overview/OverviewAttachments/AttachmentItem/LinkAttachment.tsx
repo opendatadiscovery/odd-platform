@@ -1,7 +1,6 @@
 import React, { type FC, memo } from 'react';
 import type { DataEntityLink } from 'generated-sources';
 import { Permission } from 'generated-sources';
-import { Link } from 'react-router-dom';
 import { DeleteIcon, EditIcon, LinkIcon } from 'components/shared/icons';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { useAppParams, useDeleteDataEntityLink } from 'lib/hooks';
@@ -20,7 +19,7 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
   const { mutateAsync: deleteLink } = useDeleteDataEntityLink();
 
   return (
-    <Link to={url} target='_blank'>
+    <a href={url} target='_blank' rel='noreferrer'>
       <S.Container>
         <S.ActionsContainer>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_UPDATE}>
@@ -46,7 +45,7 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
         </S.IconContainer>
         <S.NameContainer variant='h5'>{name}</S.NameContainer>
       </S.Container>
-    </Link>
+    </a>
   );
 };
 
