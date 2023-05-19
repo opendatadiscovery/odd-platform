@@ -36,7 +36,7 @@ export const handleResponseAsyncThunk = <Returned, ThunkArg = void>(
       const errResp = await getErrorResponse(err as Response);
 
       if (!options.switchOffErrorMessage) {
-        showServerErrorToast(err as Response);
+        await showServerErrorToast(err as Response);
       }
 
       return thunkAPI.rejectWithValue(errResp);

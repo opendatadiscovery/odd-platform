@@ -12,7 +12,9 @@ const AppErrorBlock: React.FC<AppErrorBlockProps> = ({ errResponse }) => {
   const [error, setError] = React.useState<AppError | undefined>(undefined);
 
   React.useEffect(() => {
-    getErrorResponse(errResponse as Response).then(err => setError(err));
+    getErrorResponse(errResponse as Response)
+      .then(err => setError(err))
+      .catch(() => {});
   }, []);
 
   return (

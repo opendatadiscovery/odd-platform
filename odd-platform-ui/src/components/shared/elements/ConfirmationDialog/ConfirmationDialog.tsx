@@ -25,10 +25,12 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   const onClose = (handleClose: () => void, action?: () => Promise<unknown>) => () => {
     if (action) {
       setIsLoading(true);
-      action().then(() => {
-        setIsLoading(false);
-        handleClose();
-      });
+      action()
+        .then(() => {
+          setIsLoading(false);
+          handleClose();
+        })
+        .catch(() => {});
     }
   };
 
