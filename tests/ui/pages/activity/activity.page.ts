@@ -9,7 +9,7 @@ const SELECTORS = {
   namespaceFilter: '[data-qa="namespace_filter"] >> ..',
   eventTypeSelect: '[data-qa="event_type_filter"] >> ..',
   tagFilter: `[data-qa="tag_filter"] input`,
-  ownerFilter: `label:has-text('Owner')>> ..`,
+  ownerFilter: `[data-qa="owner_filter"] input`,
   resultList: `[data-qa="activity_results_list"]`,
   resultItem: `[data-qa="activity_list_item"]`,
   filterWithInputOption: `[role="presentation"]`,
