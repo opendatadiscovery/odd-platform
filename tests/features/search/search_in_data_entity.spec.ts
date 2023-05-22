@@ -141,14 +141,14 @@ test.describe('Search by data in data-entity in the Catalog', () => {
     workerId,
     steps: { pages },
   }) => {
-    const ownerName7 = `ownerName7${workerId}`;
-    const ownerTitle7 = `ownerTitle7${workerId}`;
+    const ownerName777 = `ownerName777${workerId}`;
+    const ownerTitle777 = `ownerTitle777${workerId}`;
     await test.step(`When filling a valid expression in the search input`, async () => {
       await pages.catalog.searchBy(entityNameWithAlphabeticChars);
       await pages.catalog.clickOnListItem(entityNameWithAlphabeticChars);
-      await pages.overview.createOwner(ownerName7, ownerTitle7);
+      await pages.overview.createOwner(ownerName777, ownerTitle777);
       await pages.topPanel.clickTab('Catalog');
-      await pages.catalog.searchBy(`${externalDescription} ${ownerName7}`);
+      await pages.catalog.searchBy(`${externalDescription} ${ownerName777}`);
       expect(await pages.catalog.isListItemVisible(entityNameWithAlphabeticChars)).toBeTruthy();
     });
   });

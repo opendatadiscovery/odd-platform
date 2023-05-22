@@ -12,7 +12,7 @@ import type {
   SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
 import { useDebouncedCallback } from 'use-debounce';
-import { ClearIcon, SearchIcon } from 'components/shared/icons';
+import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
@@ -22,18 +22,16 @@ import {
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
-import type { AppInputProps } from 'components/shared/elements/AppInput/AppInput';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import Button from 'components/shared/elements/Button/Button';
+import Input, { type InputProps } from 'components/shared/elements/Input/Input';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
   append?: UseFieldArrayAppend<DataEntityGroupFormData, 'entities'>;
   searchParams?: SearchApiGetSearchSuggestionsRequest;
   formOnChange?: (val: unknown) => void;
-  inputParams?: Pick<AppInputProps, 'placeholder' | 'size' | 'label'> & {
-    showSearchAdornment?: boolean;
+  inputParams?: Pick<InputProps, 'placeholder' | 'variant' | 'label'> & {
     searchAdornmentHandler?: (query: string) => void;
     onKeyDownHandler?: (e: React.KeyboardEvent) => (query: string) => void;
   };
@@ -151,39 +149,23 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     inputParams.onKeyDownHandler(e)(searchText);
   };
 
-  const handleSearchIconClick = () => {
+  const handleSearchClick = () => {
     if (!inputParams?.searchAdornmentHandler) return;
     inputParams.searchAdornmentHandler(searchText);
   };
 
-  const customStartAdornment: AppInputProps['customStartAdornment'] =
-    inputParams?.showSearchAdornment
-      ? {
-          variant: 'search',
-          showAdornment: true,
-          onCLick: handleSearchIconClick,
-          icon: <SearchIcon />,
-        }
-      : undefined;
-
-  const customEndAdornment: AppInputProps['customEndAdornment'] = {
-    variant: 'loader',
-    showAdornment: isSuggestionsLoading,
-    position: { mr: 4 },
-  };
-
   const renderInput = (params: AutocompleteRenderInputParams): React.ReactNode => (
     <Grid container flexWrap='nowrap' alignItems='center'>
-      <AppInput
-        {...params}
-        dataQAId='search_string'
-        placeholder={inputParams?.placeholder}
-        size={inputParams?.size}
+      <Input
+        data-qa='search_string'
+        variant={inputParams?.variant}
+        inputContainerRef={params.InputProps.ref}
+        inputProps={params.inputProps}
         label={inputParams?.label}
-        ref={params.InputProps.ref}
+        placeholder={inputParams?.placeholder}
+        isLoading={isSuggestionsLoading}
         onKeyDown={handleKeyDown}
-        customStartAdornment={customStartAdornment}
-        customEndAdornment={customEndAdornment}
+        handleSearchClick={handleSearchClick}
       />
       {addEntities && (
         <Button

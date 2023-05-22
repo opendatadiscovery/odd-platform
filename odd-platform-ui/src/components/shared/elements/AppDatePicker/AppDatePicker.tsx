@@ -3,7 +3,7 @@ import { Box, type Theme } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import { CalendarIcon } from 'components/shared/icons';
 import { DatePicker, type DatePickerProps } from '@mui/x-date-pickers';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
+import Input from 'components/shared/elements/Input/Input';
 
 export const metadataDatePickerInputFormat = 'd MMM yyyy';
 export const metadataBackendDateFormat = "yyyy-MM-dd'T'HH:mm:ss";
@@ -16,8 +16,7 @@ interface AppDatePickerProps
     'onChange' | 'onAccept' | 'label' | 'inputFormat' | 'disableMaskedInput'
   > {
   sx?: SxProps<Theme>;
-  showInputError?: boolean;
-  inputHelperText?: string;
+  errorText?: string;
   defaultDate: string;
 }
 
@@ -30,9 +29,8 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
       inputFormat,
       disableMaskedInput,
       sx,
-      showInputError,
-      inputHelperText,
       defaultDate,
+      errorText,
     },
     ref
   ) => {
@@ -64,13 +62,16 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
           components={{
             OpenPickerIcon: AppDatePickerIcon,
           }}
+          OpenPickerButtonProps={{ disableRipple: true }}
           renderInput={params => (
-            <AppInput
-              {...params}
+            <Input
+              maxWidth={320}
+              variant='main-m'
+              inputProps={params.inputProps}
               ref={params.inputRef}
               type='date'
-              error={showInputError}
-              helperText={inputHelperText}
+              error={errorText}
+              calendar={params.InputProps?.endAdornment}
             />
           )}
         />

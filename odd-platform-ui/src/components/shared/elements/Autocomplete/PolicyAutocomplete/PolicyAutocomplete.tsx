@@ -17,7 +17,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchPolicyList } from 'redux/thunks';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { type SxProps } from '@mui/system';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
+import Input from 'components/shared/elements/Input/Input';
 
 interface PolicyAutocompleteProps {
   append: UseFieldArrayAppend<RoleFormData, 'policies'>;
@@ -99,16 +99,13 @@ const PolicyAutocomplete: React.FC<PolicyAutocompleteProps> = ({ append, sx }) =
     option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
-    <AppInput
-      {...params}
-      ref={params.InputProps.ref}
+    <Input
+      variant='main-m'
+      inputContainerRef={params.InputProps.ref}
+      inputProps={params.inputProps}
       label='Policy'
-      placeholder='Search by name'
-      customEndAdornment={{
-        variant: 'loader',
-        showAdornment: policiesLoading,
-        position: { mr: 4 },
-      }}
+      placeholder='Search by name…'
+      isLoading={policiesLoading}
     />
   );
 

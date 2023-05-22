@@ -11,11 +11,11 @@ import {
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntityChannels } from 'redux/thunks';
 import { type SxProps } from '@mui/system';
+import Input from 'components/shared/elements/Input/Input';
 
 interface DataEntityChannelsAutocompleteProps {
   dataEntityId: number;
@@ -101,17 +101,14 @@ const DataEntityChannelsAutocomplete: React.FC<DataEntityChannelsAutocompletePro
   ) => option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
-    <AppInput
-      {...params}
+    <Input
       sx={{ mt: 1.5 }}
-      ref={params.InputProps.ref}
+      variant='main-m'
+      inputContainerRef={params.InputProps.ref}
+      inputProps={params.inputProps}
       label='Channels'
-      placeholder='Search channel'
-      customEndAdornment={{
-        variant: 'loader',
-        showAdornment: channelsLoading,
-        position: { mr: 4 },
-      }}
+      placeholder='Search channel...'
+      isLoading={channelsLoading}
     />
   );
 

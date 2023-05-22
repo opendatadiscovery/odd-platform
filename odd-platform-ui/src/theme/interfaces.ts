@@ -32,6 +32,12 @@ interface ItemCondition {
   disabled?: ItemColors;
 }
 
+type Input = ItemCondition & {
+  label: ItemColors;
+  hint: ItemColors;
+  searchLg: ItemCondition;
+};
+
 type EntityClasses = Record<DataEntityClassNameEnum, string>;
 
 type StructureLabel = Record<DataSetFieldTypeTypeEnum, ItemColors>;
@@ -113,6 +119,7 @@ declare module '@mui/material/styles' {
     border: Border;
     toast: Toast;
     switch: SwitchColors;
+    input: Input;
   }
 
   interface PaletteOptions {
@@ -133,6 +140,7 @@ declare module '@mui/material/styles' {
     border: Border;
     toast: Toast;
     switch: SwitchColors;
+    input: Input;
   }
 }
 

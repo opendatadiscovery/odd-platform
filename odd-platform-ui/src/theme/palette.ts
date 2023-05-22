@@ -240,6 +240,20 @@ export const palette = createPalette({
     error: { border: colors.red50 },
     disabled: { border: colors.black10 },
   },
+  input: {
+    normal: { border: colors.black20, background: colors.white, color: colors.black30 },
+    hover: { border: colors.black50, color: colors.black50 },
+    active: { border: colors.blue50, color: colors.black90 },
+    error: { border: colors.red50, color: colors.red50 },
+    disabled: { border: colors.black10, color: colors.black20, background: colors.white },
+    label: { color: colors.black50 },
+    hint: { color: colors.black30 },
+    searchLg: {
+      normal: { border: colors.blue50, color: colors.black30 },
+      hover: { border: colors.blue60, color: colors.black50 },
+      active: { border: colors.blue50, color: colors.black90 },
+    },
+  },
   background: { default: colors.white },
   activityEvent: {
     created: colors.green10,

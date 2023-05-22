@@ -16,7 +16,7 @@ import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnershipTitleList } from 'redux/thunks';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
+import Input from 'components/shared/elements/Input/Input';
 
 interface OwnershipTitleAutocompleteProps {
   field: ControllerRenderProps<OwnershipFormData, 'titleName'>;
@@ -101,17 +101,14 @@ const OwnershipTitleAutocomplete: React.FC<OwnershipTitleAutocompleteProps> = ({
     option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
-    <AppInput
-      {...params}
+    <Input
       sx={{ mt: 1.5 }}
-      ref={params.InputProps.ref}
+      variant='main-m'
+      inputContainerRef={params.InputProps.ref}
+      inputProps={params.inputProps}
       label='Title'
-      placeholder='Search title'
-      customEndAdornment={{
-        variant: 'loader',
-        showAdornment: titlesLoading,
-        position: { mr: 4 },
-      }}
+      placeholder='Search title…'
+      isLoading={titlesLoading}
     />
   );
 
