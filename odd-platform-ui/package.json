@@ -71,7 +71,7 @@
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.0",
     "react-infinite-scroll-component": "^6.1.0",
-    "react-multi-date-picker": "^3.3.4",
+    "react-multi-date-picker": "^4.0.0",
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.9.0",
     "react-truncate-markup": "^5.1.2",
