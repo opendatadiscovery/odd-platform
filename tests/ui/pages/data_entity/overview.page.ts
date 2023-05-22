@@ -8,7 +8,7 @@ import DataEntityPage from './data_entity.page';
 const SELECTORS = {
   addOwnerButton: `text=Add Owner`,
   inputOwnerName: `[placeholder="Search name"]`,
-  inputOwnerTitle: `[placeholder="Search title"]`,
+  inputOwnerTitle: `[name="titleName"] input`,
   saveNewOwnerButton: `[type="submit"]`,
   inputTagName: `[role="combobox"]`,
   saveButton: `[type="submit"]`,
