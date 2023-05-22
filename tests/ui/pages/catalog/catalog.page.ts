@@ -8,7 +8,7 @@ const SELECTORS = {
   filterWithSelect: filterName => `#select-label-id:has-text('${filterName}') >> ..`,
   filterWithInput: filterName => `label:text-is("${filterName}") >> ..`,
   searchBar: `[placeholder="Search"]`,
-  cleanSearchBarButton: `[placeholder="Search"] >> .. >> [title="Clear"]`,
+  cleanSearchBarButton: `[data-qa="search_string"] >> .. >> button path[fill-rule="evenodd"]`,
   filterList: `[role="listbox"]`,
   filterOption: `[role="option"]`,
   filterWithInputOption: `[role="presentation"]`,
