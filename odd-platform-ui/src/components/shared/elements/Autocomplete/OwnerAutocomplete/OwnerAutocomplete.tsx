@@ -15,8 +15,8 @@ import {
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
+import Input from 'components/shared/elements/Input/Input';
 
 interface OwnerAutocompleteProps {
   disableOwnerCreating?: boolean;
@@ -103,16 +103,13 @@ const OwnerAutocomplete: React.FC<OwnerAutocompleteProps> = ({
     option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
-    <AppInput
-      {...params}
-      ref={params.InputProps.ref}
+    <Input
+      variant='main-m'
+      inputContainerRef={params.InputProps.ref}
+      inputProps={params.inputProps}
       label='Owner name'
       placeholder='Search name'
-      customEndAdornment={{
-        variant: 'loader',
-        showAdornment: ownersLoading,
-        position: { mr: 4 },
-      }}
+      isLoading={ownersLoading}
     />
   );
 

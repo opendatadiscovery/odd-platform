@@ -22,3 +22,4 @@ node_modules/
 /tests/playwright-report/
 /tests/dist/
 /playwright/.cache/
+.tool-versions

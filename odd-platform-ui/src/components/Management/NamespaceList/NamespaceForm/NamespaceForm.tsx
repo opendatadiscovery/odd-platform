@@ -2,8 +2,7 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import type { Namespace, NamespaceFormData } from 'generated-sources';
 import { Typography } from '@mui/material';
-import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { Button, DialogWrapper, Input } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createNamespace, updateNamespace } from 'redux/thunks';
 import {
@@ -63,16 +62,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            placeholder='Namespace Name'
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <Input {...field} variant='main-m' placeholder='Enter namespace name...' />
         )}
       />
     </form>

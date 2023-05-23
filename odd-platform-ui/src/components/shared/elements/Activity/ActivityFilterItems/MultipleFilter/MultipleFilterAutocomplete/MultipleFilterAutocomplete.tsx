@@ -1,12 +1,12 @@
 import React, { type HTMLAttributes } from 'react';
-import { Autocomplete, type AutocompleteRenderOptionState } from '@mui/material';
+import { type AutocompleteRenderOptionState } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { type AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityMultipleFilterNames,
@@ -14,7 +14,8 @@ import {
   type ActivityFilterOption,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import * as S from 'components/shared/elements/Activity/ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocompleteStyles';
+import Input from 'components/shared/elements/Input/Input';
+import * as S from './MultipleFilterAutocompleteStyles';
 
 interface MultipleFilterAutocompleteProps {
   filterName: ActivityMultipleFilterNames;
@@ -108,10 +109,10 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
       const parts = text?.split(new RegExp(`(${highlight})`, 'gi'));
       return (
         <span>
-          {parts?.map((part, i) => (
+          {parts?.map((part, idx) => (
             <S.HighlightedTextPart
               // eslint-disable-next-line react/no-array-index-key
-              key={i}
+              key={`${part}-${idx}`}
               isHighlighted={part.toLowerCase() === highlight.toLowerCase()}
             >
               {part}
@@ -133,7 +134,6 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
   return (
     <Autocomplete
       fullWidth
-      id='dataentity-tag-add-name-search'
       open={autocompleteOpen}
       onOpen={() => setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
@@ -149,17 +149,14 @@ const MultipleFilterAutocomplete: React.FC<MultipleFilterAutocompleteProps> = ({
       value={{ name: searchText, id: 0 }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
+        <Input
           sx={{ mt: 2 }}
-          ref={params.InputProps.ref}
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           label={name}
           placeholder='Search by name…'
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: loading,
-            position: { mr: 4 },
-          }}
+          isLoading={loading}
         />
       )}
       renderOption={fillOptionMatches}

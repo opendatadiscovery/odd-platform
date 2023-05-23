@@ -12,12 +12,12 @@ import {
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { AppInput } from 'components/shared/elements/index';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchRolesList } from 'redux/thunks';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { type SxProps } from '@mui/system';
+import Input from 'components/shared/elements/Input/Input';
 
 interface RoleAutocompleteProps {
   append: UseFieldArrayAppend<OwnerFormData, 'roles'>;
@@ -99,16 +99,13 @@ const RoleAutocomplete: React.FC<RoleAutocompleteProps> = ({ append, sx }) => {
     option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
-    <AppInput
-      {...params}
-      ref={params.InputProps.ref}
+    <Input
+      variant='main-m'
+      inputContainerRef={params.InputProps.ref}
+      inputProps={params.inputProps}
       label='Role'
-      placeholder='Search by name'
-      customEndAdornment={{
-        variant: 'loader',
-        showAdornment: rolesLoading,
-        position: { mr: 4 },
-      }}
+      placeholder='Search by name…'
+      isLoading={rolesLoading}
     />
   );
 

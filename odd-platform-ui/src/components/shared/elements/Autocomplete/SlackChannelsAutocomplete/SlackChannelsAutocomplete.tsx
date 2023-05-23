@@ -11,12 +11,12 @@ import {
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchSlackChannels } from 'redux/thunks';
 import { type SxProps } from '@mui/system';
 import { type ControllerRenderProps } from 'react-hook-form';
+import Input from 'components/shared/elements/Input/Input';
 
 type MessageFormData = Omit<MessageRequest, 'dataEntityId'>;
 
@@ -103,16 +103,13 @@ const SlackChannelsAutocomplete: React.FC<SlackChannelsAutocompleteProps> = ({
   ) => option.name === value.name;
 
   const renderInput = (params: AutocompleteRenderInputParams) => (
-    <AppInput
-      {...params}
-      ref={params.InputProps.ref}
+    <Input
+      variant='main-m'
+      inputContainerRef={params.InputProps.ref}
+      inputProps={params.inputProps}
       label='Channel'
-      placeholder='Search by name'
-      customEndAdornment={{
-        variant: 'loader',
-        showAdornment: channelsLoading,
-        position: { mr: 4 },
-      }}
+      placeholder='Search by name…'
+      isLoading={channelsLoading}
     />
   );
 

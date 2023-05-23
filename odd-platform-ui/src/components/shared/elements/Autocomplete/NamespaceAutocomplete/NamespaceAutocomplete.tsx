@@ -2,8 +2,8 @@ import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
 import {
   type AutocompleteInputChangeReason,
-  type FilterOptionsState,
   createFilterOptions,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import type {
@@ -18,7 +18,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import type { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
+import Input from 'components/shared/elements/Input/Input';
 
 type FilterOption = Omit<Namespace, 'id' | 'name'> & Partial<Namespace>;
 
@@ -118,9 +118,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
 
         // Create value from keyboard
         if (typeof newValue === 'string') {
-          newField = {
-            name: newValue,
-          };
+          newField = { name: newValue };
         }
         onChange(newField?.name || '');
       },
@@ -151,16 +149,13 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
       clearIcon={<ClearIcon />}
       sx={{ mt: 1.25 }}
       renderInput={params => (
-        <AppInput
-          {...params}
-          ref={params.InputProps.ref}
-          placeholder='Namespace'
+        <Input
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           label='Namespace'
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: loading,
-            position: { mr: 4 },
-          }}
+          placeholder='Namespace'
+          isLoading={loading}
         />
       )}
       renderOption={(props, option: FilterOption) => (

@@ -66,9 +66,8 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
       <SearchSuggestionsAutocomplete
         linkedOption
         inputParams={{
-          size: 'large',
+          variant: 'search-lg',
           placeholder: placeholder || defaultPlaceholder,
-          showSearchAdornment: true,
           searchAdornmentHandler: mainSearch ? handleCreateSearch : handleUpdateSearch,
           onKeyDownHandler: handleKeyDown,
         }}

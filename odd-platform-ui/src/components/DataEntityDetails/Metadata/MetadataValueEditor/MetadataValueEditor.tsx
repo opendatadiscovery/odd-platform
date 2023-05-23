@@ -5,8 +5,8 @@ import { isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
 import {
   AppDatePicker,
-  AppInput,
   AppRadio,
+  Input,
   maxDate,
   minDate,
 } from 'components/shared/elements';
@@ -65,8 +65,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
                 ? metadataValue
                 : ''
             }
-            showInputError={!!fieldState.error?.message}
-            inputHelperText={fieldState.error?.message}
+            errorText={fieldState.error?.message}
           />
         )}
       />
@@ -106,23 +105,20 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       defaultValue={metadataValue || ''}
       rules={{ required: true }}
       render={({ field }) => (
-        <AppInput
+        <Input
           {...field}
           sx={{ mt: 1 }}
-          size={size}
-          fullWidth
-          label={labeled ? 'Value' : null}
+          variant='main-m'
+          label={labeled ? 'Value' : undefined}
           placeholder={labeled ? '' : defaultText}
-          multiline
-          inputProps={{
-            type:
-              metadataType &&
-              [MetadataFieldType.INTEGER, MetadataFieldType.FLOAT].includes(metadataType)
-                ? 'number'
-                : 'text',
-            step: metadataType === MetadataFieldType.FLOAT ? 'any' : '1',
-            lang: 'en',
-          }}
+          type={
+            metadataType &&
+            [MetadataFieldType.INTEGER, MetadataFieldType.FLOAT].includes(metadataType)
+              ? 'number'
+              : 'text'
+          }
+          step={metadataType === MetadataFieldType.FLOAT ? 'any' : '1'}
+          lang='en'
         />
       )}
     />

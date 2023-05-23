@@ -9,8 +9,8 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import SelectedFilterOption from 'components/shared/elements/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOption';
-import MultipleFilterAutocomplete from 'components/shared/elements/Activity/ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocomplete';
+import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
+import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 
 interface MultipleFilterProps {
   name: string;
