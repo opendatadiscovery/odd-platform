@@ -71,11 +71,7 @@ const Overview: React.FC = () => {
             </SectionContainer>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
-                allowedPermissions={[
-                  Permission.DATA_ENTITY_ATTACHMENT_CREATE,
-                  Permission.DATA_ENTITY_ATTACHMENT_UPDATE,
-                  Permission.DATA_ENTITY_ATTACHMENT_DELETE,
-                ]}
+                allowedPermissions={[Permission.DATA_ENTITY_ATTACHMENT_MANAGE]}
                 resourcePermissions={resourcePermissions}
                 Component={OverviewAttachments}
               />

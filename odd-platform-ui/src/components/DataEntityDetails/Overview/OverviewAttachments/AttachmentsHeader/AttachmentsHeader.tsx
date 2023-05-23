@@ -28,7 +28,7 @@ const AttachmentsHeader: FC = () => {
   return (
     <S.Header>
       <Typography variant='h2'>Attachments</Typography>
-      <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_CREATE}>
+      <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
         <Button
           text='Add attachments'
           buttonType='secondary-lg'

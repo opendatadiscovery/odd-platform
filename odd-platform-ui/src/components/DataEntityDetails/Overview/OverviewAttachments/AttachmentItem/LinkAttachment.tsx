@@ -22,7 +22,7 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
     <a href={url} target='_blank' rel='noreferrer'>
       <S.Container>
         <S.ActionsContainer>
-          <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_UPDATE}>
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
             <EditLinkForm
               linkId={linkId}
               name={name}
@@ -30,7 +30,7 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
               openBtn={<Button buttonType='linkGray-m-icon' icon={<EditIcon />} />}
             />
           </WithPermissions>
-          <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_DELETE}>
+          <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
             <ConfirmationDialog
               actionTitle='Are you sure you want to delete this link?'
               actionName='Delete link'

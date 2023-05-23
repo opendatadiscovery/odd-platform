@@ -39,7 +39,7 @@ const FileAttachment: FC<FileAttachmentProps> = ({ fileId, name }) => {
   return (
     <S.Container onClick={handleFileDownload}>
       <S.ActionsContainer>
-        <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_DELETE}>
+        <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
           <ConfirmationDialog
             actionTitle='Are you sure you want to delete this file?'
             actionName='Delete file'
