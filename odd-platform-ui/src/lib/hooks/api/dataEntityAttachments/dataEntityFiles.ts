@@ -101,7 +101,7 @@ export function useDeleteDataEntityFile() {
       dataEntityAttachmentApi.deleteFile(params),
     {
       onSuccess: () => {
-        showSuccessToast({ message: 'Files successfully deleted!' });
+        showSuccessToast({ message: 'File successfully deleted!' });
         client.invalidateQueries(['dataEntityAttachments']);
       },
     }

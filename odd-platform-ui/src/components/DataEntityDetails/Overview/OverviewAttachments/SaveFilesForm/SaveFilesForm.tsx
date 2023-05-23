@@ -26,7 +26,10 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
     mode: 'onChange',
   });
 
-  const clearState = () => reset();
+  const clearState = () => {
+    setUploadedFile(undefined);
+    reset();
+  };
 
   const onSubmit = () => {
     if (!uploadedFile) return;
