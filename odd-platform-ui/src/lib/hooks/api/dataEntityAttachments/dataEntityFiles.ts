@@ -34,8 +34,9 @@ async function uploadFile({
     const start = index * chunkSize;
     const end = index + 1 === chunks ? fileSize : (index + 1) * chunkSize;
     const chunk = file.slice(start, end);
+    const stringIndex = String(index);
 
-    const uploadChunkParams = { dataEntityId, uploadId, file: chunk, index };
+    const uploadChunkParams = { dataEntityId, uploadId, file: chunk, index: stringIndex };
 
     return dataEntityFileUploadApi.uploadFileChunk(uploadChunkParams);
   };

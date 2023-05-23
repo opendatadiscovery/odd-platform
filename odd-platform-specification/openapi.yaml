@@ -1597,7 +1597,7 @@ paths:
         - dataEntityAttachment
 
   /api/dataentities/{data_entity_id}/files/uploads:
-    options:
+    get:
       summary: Get file upload options
       operationId: getUploadOptions
       parameters:
@@ -1649,6 +1649,11 @@ paths:
           multipart/form-data:
             schema:
               $ref: './components.yaml/#/components/schemas/DataEntityFileChunkFormData'
+            encoding:
+              file:
+                contentType: application/octet-stream
+              index:
+                contentType: application/json
       responses:
         '200':
           description: OK

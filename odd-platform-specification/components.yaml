@@ -2196,7 +2196,7 @@ components:
           type: string
           format: binary
         index:
-          type: integer
+          type: string
       required:
         - file
         - index
@@ -2227,15 +2227,6 @@ components:
         - id
         - name
         - url
-
-    DataEntityFilesFormData:
-      type: object
-      properties:
-        files:
-          type: array
-          items:
-            type: string
-            format: binary
 
     DataEntityLinkListFormData:
       type: object

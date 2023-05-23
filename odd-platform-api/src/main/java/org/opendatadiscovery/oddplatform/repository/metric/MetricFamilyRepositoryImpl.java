@@ -21,7 +21,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METRIC_FAMILY;
 @RequiredArgsConstructor
 public class MetricFamilyRepositoryImpl implements MetricFamilyRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
-    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Flux<MetricFamilyPojo> createOrUpdateMetricFamilies(final Collection<MetricFamilyPojo> metricFamilies) {
