@@ -92,7 +92,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
       type='submit'
       form={formId}
       fullWidth
-      disabled={!uploadedFile}
+      disabled={!uploadedFile || isLoading}
     />
   );
 
