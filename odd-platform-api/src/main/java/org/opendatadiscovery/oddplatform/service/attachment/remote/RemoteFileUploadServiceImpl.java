@@ -6,12 +6,16 @@ import io.minio.MinioAsyncClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.file.Path;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.exception.MinioException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.FilePojo;
 import org.opendatadiscovery.oddplatform.service.attachment.FilePathConstructor;
 import org.opendatadiscovery.oddplatform.service.attachment.FileUploadService;
@@ -48,8 +52,8 @@ public class RemoteFileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public Mono<String> initiateUpload(final long dataEntityId) {
-        final String uploadId = UUID.randomUUID().toString();
+    public Mono<UUID> initiateUpload(final long dataEntityId) {
+        final UUID uploadId = UUID.randomUUID();
         final Path chunkDirectory = FileUtils.getChunkDirectory(uploadId);
         final Mono<Path> chunkMono = FileUtils.createDirectories(chunkDirectory);
         return chunkMono.thenReturn(uploadId);
@@ -58,10 +62,10 @@ public class RemoteFileUploadServiceImpl implements FileUploadService {
     @Override
     public Mono<Void> completeFileUpload(final FilePojo filePojo) {
         final Path chunkDirectory = FileUtils.getChunkDirectory(filePojo.getUploadId());
-        final Flux<DataBuffer> chunksFlux = Mono.just(chunkDirectory)
+        final Flux<DataBuffer> chunksFlux = Flux.defer(() -> Mono.just(chunkDirectory)
             .flatMapIterable(FileUtils::listFilesInOrder)
             .flatMap(FileUtils::readFile)
-            .subscribeOn(Schedulers.boundedElastic());
+            .subscribeOn(Schedulers.boundedElastic()));
         return DataBufferUtils.join(chunksFlux)
             .map(DataBuffer::asInputStream)
             .flatMap(stream -> getStreamSize(stream).map(size -> Tuples.of(stream, size)))
@@ -98,7 +102,7 @@ public class RemoteFileUploadServiceImpl implements FileUploadService {
             try {
                 return minioClient.putObject(args);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new MinioException(e);
             }
         });
     }
@@ -108,7 +112,7 @@ public class RemoteFileUploadServiceImpl implements FileUploadService {
             try {
                 return minioClient.getObject(args);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new MinioException(e);
             }
         });
     }
@@ -118,7 +122,7 @@ public class RemoteFileUploadServiceImpl implements FileUploadService {
             try {
                 return minioClient.removeObject(args);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new MinioException(e);
             }
         });
     }

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityFile;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUploadFormData;
@@ -22,7 +23,7 @@ public class FileMapper {
     }
 
     public FilePojo mapToProcessingPojo(final DataEntityUploadFormData fileMetadata,
-                                        final String uploadId,
+                                        final UUID uploadId,
                                         final long dataEntityId) {
         final FilePojo filePojo = new FilePojo();
         filePojo.setDataEntityId(dataEntityId);

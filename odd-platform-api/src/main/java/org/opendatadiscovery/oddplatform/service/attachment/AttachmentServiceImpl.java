@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service.attachment;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAttachments;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityFile;
@@ -67,12 +68,12 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public Mono<Void> uploadFileChunk(final String uploadId, final Part file, final int index) {
+    public Mono<Void> uploadFileChunk(final UUID uploadId, final Part file, final int index) {
         return fileService.uploadFileChunk(uploadId, file, index);
     }
 
     @Override
-    public Mono<DataEntityFile> completeFileUpload(final String uploadId) {
+    public Mono<DataEntityFile> completeFileUpload(final UUID uploadId) {
         return fileService.completeFileUpload(uploadId);
     }
 

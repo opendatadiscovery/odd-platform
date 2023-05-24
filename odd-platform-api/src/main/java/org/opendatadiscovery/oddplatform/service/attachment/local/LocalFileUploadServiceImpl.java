@@ -28,8 +28,8 @@ public class LocalFileUploadServiceImpl implements FileUploadService {
     private final FilePathConstructor pathConstructor;
 
     @Override
-    public Mono<String> initiateUpload(final long dataEntityId) {
-        final String uploadId = UUID.randomUUID().toString();
+    public Mono<UUID> initiateUpload(final long dataEntityId) {
+        final UUID uploadId = UUID.randomUUID();
         final Path chunkDirectory = FileUtils.getChunkDirectory(uploadId);
         final Path fileDirectory = pathConstructor.getFileDirectory(dataEntityId);
 
@@ -42,10 +42,10 @@ public class LocalFileUploadServiceImpl implements FileUploadService {
     @Override
     public Mono<Void> completeFileUpload(final FilePojo filePojo) {
         final Path chunkDirectory = FileUtils.getChunkDirectory(filePojo.getUploadId());
-        final Flux<DataBuffer> chunksFlux = Mono.just(chunkDirectory)
+        final Flux<DataBuffer> chunksFlux = Flux.defer(() -> Mono.just(chunkDirectory)
             .flatMapIterable(FileUtils::listFilesInOrder)
             .flatMap(FileUtils::readFile)
-            .subscribeOn(Schedulers.boundedElastic());
+            .subscribeOn(Schedulers.boundedElastic()));
         return DataBufferUtils.write(chunksFlux, Path.of(filePojo.getPath()))
             .then(FileUtils.deleteDirectoryWithFiles(chunkDirectory));
     }

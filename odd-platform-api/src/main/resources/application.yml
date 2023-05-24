@@ -179,7 +179,7 @@ odd:
 
 attachment:
   storage: LOCAL # LOCAL, REMOTE
-  max-file-size: 30 # mb
+  max-file-size: 20 # mb
   local:
     path: /tmp/odd/attachments
   remote:

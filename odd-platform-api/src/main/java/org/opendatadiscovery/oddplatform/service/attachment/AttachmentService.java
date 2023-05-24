@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.attachment;
 
+import java.util.UUID;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAttachments;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityFile;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLink;
@@ -26,9 +27,9 @@ public interface AttachmentService {
 
     Mono<DataEntityUpload> initiateFileUpload(final DataEntityUploadFormData fileMetadata, final long dataEntityId);
 
-    Mono<Void> uploadFileChunk(final String uploadId, final Part file, final int index);
+    Mono<Void> uploadFileChunk(final UUID uploadId, final Part file, final int index);
 
-    Mono<DataEntityFile> completeFileUpload(final String uploadId);
+    Mono<DataEntityFile> completeFileUpload(final UUID uploadId);
 
     Mono<FileDto> downloadFile(final long fileId);
 

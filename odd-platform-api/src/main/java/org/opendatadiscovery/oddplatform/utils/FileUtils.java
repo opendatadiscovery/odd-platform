@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
+import lombok.experimental.UtilityClass;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.util.FileSystemUtils;
@@ -17,11 +19,12 @@ import reactor.core.publisher.Mono;
 import static org.opendatadiscovery.oddplatform.utils.BlockingOperationUtils.blockingOperation;
 import static org.springframework.core.io.buffer.DefaultDataBufferFactory.sharedInstance;
 
+@UtilityClass
 public class FileUtils {
     private static final String CHUNK_BASE_PATH = "/tmp/odd/chunks";
 
-    public static Path getChunkDirectory(final String uploadId) {
-        return Paths.get(CHUNK_BASE_PATH, String.valueOf(uploadId));
+    public static Path getChunkDirectory(final UUID uploadId) {
+        return Paths.get(CHUNK_BASE_PATH, uploadId.toString());
     }
 
     public static Mono<Path> createDirectories(final Path path) {

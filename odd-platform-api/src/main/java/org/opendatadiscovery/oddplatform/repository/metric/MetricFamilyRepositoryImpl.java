@@ -9,7 +9,6 @@ import org.jooq.InsertSetStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricFamilyPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MetricFamilyRecord;
-import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;

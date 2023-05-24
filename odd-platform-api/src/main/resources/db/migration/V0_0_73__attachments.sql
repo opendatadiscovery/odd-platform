@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS file
     name           VARCHAR(255)                NOT NULL,
     path           TEXT                        NOT NULL,
     status         SMALLINT                    NOT NULL,
-    upload_id      TEXT                        NOT NULL,
+    upload_id      UUID                        NOT NULL,
     created_at     TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE ('UTC')),
     updated_at     TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (NOW() AT TIME ZONE ('UTC')),
     deleted_at     TIMESTAMP WITHOUT TIME ZONE,

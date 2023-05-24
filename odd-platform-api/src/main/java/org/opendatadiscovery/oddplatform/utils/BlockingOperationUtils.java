@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.utils;
 
 import java.util.concurrent.Callable;
+import lombok.experimental.UtilityClass;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+@UtilityClass
 public class BlockingOperationUtils {
 
     public static Mono<Void> blockingOperation(final Callable<?> callable) {

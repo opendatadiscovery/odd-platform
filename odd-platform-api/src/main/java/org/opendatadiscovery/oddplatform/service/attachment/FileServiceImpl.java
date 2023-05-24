@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service.attachment;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityFile;
@@ -39,22 +40,26 @@ public class FileServiceImpl implements FileService {
     @Override
     public Mono<DataEntityUpload> initiateFileUpload(final DataEntityUploadFormData fileMetadata,
                                                      final long dataEntityId) {
-        final Mono<DataEntityUpload> uploadMono = fileUploadService.initiateUpload(dataEntityId)
+        final Mono<DataEntityUpload> uploadMono = Mono.defer(() -> fileUploadService.initiateUpload(dataEntityId)
             .map(uploadId -> fileMapper.mapToProcessingPojo(fileMetadata, uploadId, dataEntityId))
             .flatMap(fileRepository::create)
-            .map(pojo -> new DataEntityUpload().id(pojo.getUploadId()));
+            .map(pojo -> new DataEntityUpload().id(pojo.getUploadId())));
         return fileRepository.getFileByDataEntityAndName(dataEntityId, fileMetadata.getFileName())
-            .map(existing -> new BadUserRequestException(
-                "File with name %s already exists for this data entity".formatted(fileMetadata.getFileName())))
+            .handle((pojo, sink) -> {
+                if (pojo != null) {
+                    sink.error(new BadUserRequestException(
+                        "File with name %s already exists for this data entity".formatted(fileMetadata.getFileName())));
+                }
+            })
             .then(uploadMono);
     }
 
     @Override
-    public Mono<Void> uploadFileChunk(final String uploadId, final Part file, final int index) {
+    public Mono<Void> uploadFileChunk(final UUID uploadId, final Part file, final int index) {
         if (file instanceof FilePart filePart) {
             final Path chunkDirectory = FileUtils.getChunkDirectory(uploadId);
-            final Mono<Void> uploadedMono = Mono.just(chunkDirectory)
-                .flatMap(path -> filePart.transferTo(path.resolve(String.valueOf(index))));
+            final Mono<Void> uploadedMono = Mono.defer(() -> Mono.just(chunkDirectory)
+                .flatMap(path -> filePart.transferTo(path.resolve(String.valueOf(index)))));
             return checkProcessingUploadById(uploadId).then(uploadedMono);
         } else {
             return Mono.error(new BadUserRequestException("Uploaded multipart is not a file"));
@@ -62,7 +67,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Mono<DataEntityFile> completeFileUpload(final String uploadId) {
+    public Mono<DataEntityFile> completeFileUpload(final UUID uploadId) {
         return checkProcessingUploadById(uploadId)
             .flatMap(pojo -> fileUploadService.completeFileUpload(pojo).thenReturn(pojo))
             .map(pojo -> pojo.setStatus(FileUploadStatus.COMPLETED.getCode()))
@@ -85,7 +90,7 @@ public class FileServiceImpl implements FileService {
                 .map(r -> new FileDto(r, pojo.getName())));
     }
 
-    private Mono<FilePojo> checkProcessingUploadById(final String uploadId) {
+    private Mono<FilePojo> checkProcessingUploadById(final UUID uploadId) {
         return fileRepository.getFileByUploadId(uploadId).handle((pojo, sink) -> {
             if (!pojo.getStatus().equals(PROCESSING.getCode())) {
                 sink.error(

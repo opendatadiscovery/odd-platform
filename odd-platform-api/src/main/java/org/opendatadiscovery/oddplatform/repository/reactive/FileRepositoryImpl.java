@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.UUID;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FileUploadStatus;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.FilePojo;
@@ -30,7 +31,7 @@ public class FileRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRepository
     }
 
     @Override
-    public Mono<FilePojo> getFileByUploadId(final String uploadId) {
+    public Mono<FilePojo> getFileByUploadId(final UUID uploadId) {
         final var query = DSL.selectFrom(FILE)
             .where(addSoftDeleteFilter(FILE.UPLOAD_ID.eq(uploadId)));
         return jooqReactiveOperations.mono(query)

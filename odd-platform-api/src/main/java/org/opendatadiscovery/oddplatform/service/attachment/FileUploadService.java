@@ -1,11 +1,12 @@
 package org.opendatadiscovery.oddplatform.service.attachment;
 
+import java.util.UUID;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.FilePojo;
 import org.springframework.core.io.Resource;
 import reactor.core.publisher.Mono;
 
 public interface FileUploadService {
-    Mono<String> initiateUpload(final long dataEntityId);
+    Mono<UUID> initiateUpload(final long dataEntityId);
 
     Mono<Void> completeFileUpload(final FilePojo filePojo);
 

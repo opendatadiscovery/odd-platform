@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityAttachmentApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAttachments;
@@ -51,7 +52,7 @@ public class DataEntityAttachmentController implements DataEntityAttachmentApi {
 
     @Override
     public Mono<ResponseEntity<Void>> uploadFileChunk(final Long dataEntityId,
-                                                      final String uploadId,
+                                                      final UUID uploadId,
                                                       final Mono<Part> fileMono,
                                                       final String index,
                                                       final ServerWebExchange exchange) {
@@ -62,7 +63,7 @@ public class DataEntityAttachmentController implements DataEntityAttachmentApi {
 
     @Override
     public Mono<ResponseEntity<DataEntityFile>> completeFileUpload(final Long dataEntityId,
-                                                                   final String uploadId,
+                                                                   final UUID uploadId,
                                                                    final ServerWebExchange exchange) {
         return attachmentService.completeFileUpload(uploadId)
             .map(ResponseEntity::ok);
