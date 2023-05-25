@@ -1532,6 +1532,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MetadataFieldValue'
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
       required:
         - id
         - oddrn
