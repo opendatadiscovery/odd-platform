@@ -31,6 +31,7 @@ export { default as OwnerTitleAutocomplete } from './Autocomplete/OwnerTitleAuto
 export { default as DataEntityChannelsAutocomplete } from './Autocomplete/DataEntityChannelsAutocomplete/DataEntityChannelsAutocomplete';
 export { default as SlackChannelsAutocomplete } from './Autocomplete/SlackChannelsAutocomplete/SlackChannelsAutocomplete';
 export { default as PolicyAutocomplete } from './Autocomplete/PolicyAutocomplete/PolicyAutocomplete';
+export { default as TermsAutocomplete } from './Autocomplete/TermsAutocomplete/TermsAutocomplete';
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';

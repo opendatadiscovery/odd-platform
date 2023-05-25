@@ -1,21 +1,27 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import type { DataEntityTermFormData, TermRef } from 'generated-sources';
+import type {
+  DataEntityTermFormData,
+  TermRef,
+  CollectorFormData,
+} from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
-  type FilterOptionsState,
   createFilterOptions,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/icons/ClearIcon';
-import AppInput from 'components/shared/elements/AppInput/AppInput';
 import { type ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermsList } from 'redux/thunks';
+import Input from 'components/shared/elements/Input/Input';
 
 interface TermsAutocompleteProps {
   setSelectedTerm: (term: TermRef) => void;
-  field: ControllerRenderProps<DataEntityTermFormData, 'termId'>;
+  field:
+    | ControllerRenderProps<DataEntityTermFormData, 'termId'>
+    | ControllerRenderProps<CollectorFormData, 'namespaceName'>;
 }
 
 const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
@@ -58,15 +64,9 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
   const getFilterOptions = React.useCallback(
     (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
-      if (
-        searchText !== '' &&
-        !loading &&
-        !options.find(
-          option => option.name.toLocaleLowerCase() === searchText.toLocaleLowerCase()
-        )
-      ) {
-        return [...options, { name: searchText }];
-      }
+
+      if (!loading && filtered.length === 0) return [{ name: '' }];
+
       return filtered;
     },
     [searchText, loading, options]
@@ -126,15 +126,12 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
-          ref={params.InputProps.ref}
+        <Input
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           placeholder='Enter term name…'
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: loading,
-            position: { mr: 4 },
-          }}
+          isLoading={loading}
         />
       )}
       renderOption={(props, option) =>

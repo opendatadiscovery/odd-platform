@@ -1,25 +1,28 @@
-import React from 'react';
+import React, { type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import type { DataEntityTermFormData, TermRef } from 'generated-sources';
+import type {
+  DataEntityTermFormData,
+  TermRef,
+  DatasetFieldTermFormData,
+} from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { DialogWrapper, Button, TermsAutocomplete } from 'components/shared/elements';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { addDataEntityTerm } from 'redux/thunks';
-import { getDataEntityAddTermStatuses } from 'redux/selectors';
+import { Button, DialogWrapper, TermsAutocomplete } from 'components/shared/elements';
+import { useAddDatasetFieldTerm } from 'lib/hooks';
 
-interface AddTermsFormProps {
-  btnCreateEl: JSX.Element;
-  dataEntityId: number;
+interface AddTermFormProps {
+  openBtnEl: JSX.Element;
+  datasetFieldId: number;
+  handleAddTerm: (term: TermRef) => void;
 }
 
-const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }) => {
-  const dispatch = useAppDispatch();
+const AddTermForm: FC<AddTermFormProps> = ({
+  openBtnEl,
+  datasetFieldId,
+  handleAddTerm,
+}) => {
+  const { isLoading, isSuccess, mutateAsync: addTerm } = useAddDatasetFieldTerm();
 
-  const { isLoading: isTermAdding, isLoaded: isTermAdded } = useAppSelector(
-    getDataEntityAddTermStatuses
-  );
-
-  const { handleSubmit, control, reset, formState } = useForm<DataEntityTermFormData>({
+  const { handleSubmit, control, reset, formState } = useForm<DatasetFieldTermFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
@@ -31,13 +34,9 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
     reset();
   };
 
-  const onSubmit = (data: DataEntityTermFormData) => {
-    dispatch(
-      addDataEntityTerm({
-        dataEntityId,
-        dataEntityTermFormData: { termId: data.termId },
-      })
-    ).then(() => {
+  const onSubmit = ({ termId }: DataEntityTermFormData) => {
+    addTerm({ datasetFieldId, termId }).then(term => {
+      handleAddTerm(term);
       clearState();
     });
   };
@@ -61,9 +60,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
       <Controller
         name='termId'
         control={control}
-        rules={{
-          required: true,
-        }}
+        rules={{ required: true }}
         render={({ field }) => (
           <TermsAutocomplete field={field} setSelectedTerm={handleSetSelectedTerm} />
         )}
@@ -101,17 +98,17 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
   return (
     <DialogWrapper
       renderOpenBtn={({ handleOpen }) =>
-        React.cloneElement(btnCreateEl, { onClick: handleOpen })
+        React.cloneElement(openBtnEl, { onClick: handleOpen })
       }
       maxWidth='md'
       title={termFormTitle}
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
-      handleCloseSubmittedForm={isTermAdded}
-      isLoading={isTermAdding}
+      handleCloseSubmittedForm={isSuccess}
+      isLoading={isLoading}
       clearState={clearState}
     />
   );
 };
 
-export default AddTermsForm;
+export default AddTermForm;
