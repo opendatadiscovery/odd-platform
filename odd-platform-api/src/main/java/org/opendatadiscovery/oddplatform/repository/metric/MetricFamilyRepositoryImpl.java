@@ -9,7 +9,6 @@ import org.jooq.InsertSetStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricFamilyPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MetricFamilyRecord;
-import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -21,7 +20,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METRIC_FAMILY;
 @RequiredArgsConstructor
 public class MetricFamilyRepositoryImpl implements MetricFamilyRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
-    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Flux<MetricFamilyPojo> createOrUpdateMetricFamilies(final Collection<MetricFamilyPojo> metricFamilies) {

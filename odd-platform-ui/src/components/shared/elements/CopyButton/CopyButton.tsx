@@ -3,6 +3,7 @@ import React from 'react';
 import { AlertIcon, CopyIcon, SuccessIcon } from 'components/shared/icons';
 import { type SxProps, type Theme } from '@mui/system';
 import Button from 'components/shared/elements/Button/Button';
+import type { Button as ButtonType } from 'components/shared/elements/Button/interfaces';
 
 interface CopyButtonProps {
   text?: string;
@@ -11,6 +12,7 @@ interface CopyButtonProps {
   stringToCopy: string;
   msDelay?: number;
   sx?: SxProps<Theme>;
+  buttonType?: ButtonType;
 }
 
 const CopyButton: React.FC<CopyButtonProps> = ({
@@ -19,6 +21,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   popupText = 'Copied!',
   stringToCopy,
   msDelay = 3000,
+  buttonType,
   sx,
 }) => {
   const [error, setError] = React.useState<string>('');
@@ -59,7 +62,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   return (
     <Button
       text={text}
-      buttonType='tertiary-m'
+      buttonType={buttonType || 'tertiary-m'}
       onClick={copyToClipboard}
       startIcon={text ? buttonIcon : undefined}
       icon={text ? undefined : buttonIcon}

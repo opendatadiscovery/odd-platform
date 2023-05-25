@@ -230,3 +230,47 @@ export function getMetadataValue(
 
 export const mapKeysToValue = <K extends string, V>(keys: K[], value: V) =>
   Object.fromEntries(keys.map(key => [key, value])) as { [key in K]: V };
+
+export const bytesToKb = (bytes: number) => Math.ceil(bytes / 1000);
+export const bytesToMb = (bytes: number) => Math.ceil(bytes / 1000000);
+
+export function isImageFile(fileName: string): boolean {
+  const imageExtensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'bmp',
+    'webp',
+    'svg',
+    'tif',
+    'tiff',
+  ];
+  const extension = fileName.split('.').pop()?.toLowerCase() || '';
+  return imageExtensions.includes(extension);
+}
+
+export async function asyncPool(
+  concurrency: number,
+  iterable: number[],
+  iteratorFn: (item: number, iterable: number[]) => Promise<void>
+) {
+  const retries = [];
+  const executing = new Set();
+
+  // eslint-disable-next-line no-restricted-syntax
+  for await (const item of iterable) {
+    const currentTask = Promise.resolve().then(() => iteratorFn(item, iterable));
+
+    retries.push(currentTask);
+    executing.add(currentTask);
+
+    const clean = () => executing.delete(currentTask);
+    currentTask.then(clean).catch(clean);
+    if (executing.size >= concurrency) {
+      await Promise.race(executing);
+    }
+  }
+
+  return Promise.all(retries);
+}

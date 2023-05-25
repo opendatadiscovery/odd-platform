@@ -178,6 +178,7 @@ components:
         - DATA_ENTITY_GROUP_CREATE
         - DATA_ENTITY_GROUP_UPDATE
         - DATA_ENTITY_GROUP_DELETE
+        - DATA_ENTITY_ATTACHMENT_MANAGE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -2148,6 +2149,104 @@ components:
         distribution_anomaly_halt_until:
           type: string
           format: date-time
+
+    DataEntityAttachments:
+      type: object
+      properties:
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityFile'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLink'
+      required:
+        - files
+        - links
+
+    DataEntityUploadOptions:
+      type: object
+      properties:
+        maxSize:
+          type: integer
+      required:
+        - maxSize
+
+    DataEntityUploadFormData:
+      type: object
+      properties:
+        fileName:
+          type: string
+      required:
+        - fileName
+
+    DataEntityUpload:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+        - id
+
+    DataEntityFileChunkFormData:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        index:
+          type: string
+      required:
+        - file
+        - index
+
+    DataEntityFile:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    DataEntityLink:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - name
+        - url
+
+    DataEntityLinkListFormData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLinkFormData'
+
+    DataEntityLinkFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+      required:
+        - name
+        - url
 
     AppInfo:
       type: object

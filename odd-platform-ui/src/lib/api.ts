@@ -1,3 +1,4 @@
+import type { ConfigurationParameters } from 'generated-sources';
 import {
   ActivityApi,
   AlertApi,
@@ -7,6 +8,7 @@ import {
   DataCollaborationApi,
   DataEntityApi,
   DataEntityRunApi,
+  DataEntityAttachmentApi,
   DataQualityApi,
   DataSetApi,
   DatasetFieldApi,
@@ -28,9 +30,18 @@ import {
   TitleApi,
   IntegrationApi,
 } from 'generated-sources';
-import { BASE_PARAMS } from 'lib/constants';
 
-const apiConf = new Configuration(BASE_PARAMS);
+const HEADERS: ConfigurationParameters = {
+  headers: { 'Content-Type': 'application/json' },
+};
+
+const BASE_PARAMS: ConfigurationParameters = {
+  basePath: import.meta.env.VITE_API_URL || '',
+  credentials: 'same-origin',
+};
+
+const apiConf = new Configuration({ ...BASE_PARAMS, ...HEADERS });
+const fileUploadConf = new Configuration({ ...BASE_PARAMS });
 
 export const activityApi = new ActivityApi(apiConf);
 export const alertApi = new AlertApi(apiConf);
@@ -59,3 +70,5 @@ export const identityApi = new IdentityApi(apiConf);
 export const roleApi = new RoleApi(apiConf);
 export const tagApi = new TagApi(apiConf);
 export const integrationApi = new IntegrationApi(apiConf);
+export const dataEntityAttachmentApi = new DataEntityAttachmentApi(apiConf);
+export const dataEntityFileUploadApi = new DataEntityAttachmentApi(fileUploadConf);

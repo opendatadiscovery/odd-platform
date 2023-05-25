@@ -5,17 +5,19 @@ import { getErrorResponse } from 'lib/errorHandling';
 import { AlertIcon } from 'components/shared/icons';
 
 interface AppErrorBlockProps {
-  errResponse: unknown;
+  errResponse?: unknown;
 }
 
 const AppErrorBlock: React.FC<AppErrorBlockProps> = ({ errResponse }) => {
   const [error, setError] = React.useState<AppError | undefined>(undefined);
 
   React.useEffect(() => {
-    getErrorResponse(errResponse as Response).then(err => setError(err));
+    getErrorResponse(errResponse as Response)
+      .then(err => setError(err))
+      .catch(() => {});
   }, []);
 
-  return error ? (
+  return (
     <Grid container alignItems='center' justifyContent='center'>
       <Grid display='flex' flexWrap='nowrap' alignItems='center' justifyContent='center'>
         <AlertIcon fill='#A8B0BD' width='8%' height='auto' />
@@ -32,7 +34,7 @@ const AppErrorBlock: React.FC<AppErrorBlockProps> = ({ errResponse }) => {
         </Grid>
       </Grid>
     </Grid>
-  ) : null;
+  );
 };
 
 export default AppErrorBlock;

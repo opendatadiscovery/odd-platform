@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import React from 'react';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -26,6 +26,7 @@ import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
+import OverviewAttachments from './OverviewAttachments/OverviewAttachments';
 
 const Overview: React.FC = () => {
   const { dataEntityId } = useAppParams();
@@ -50,21 +51,13 @@ const Overview: React.FC = () => {
               <OverviewStats />
             </SectionContainer>
             {hasDataQualityTestExpectations(dataEntityDetails?.expectation) && (
-              <>
-                <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
-                  Expectations
-                </Typography>
-                <SectionContainer square elevation={0}>
-                  <OverviewExpectations
-                    parameters={dataEntityDetails.expectation}
-                    linkedUrlList={dataEntityDetails.linkedUrlList}
-                  />
-                </SectionContainer>
-              </>
+              <SectionContainer square elevation={0}>
+                <OverviewExpectations
+                  parameters={dataEntityDetails.expectation}
+                  linkedUrlList={dataEntityDetails.linkedUrlList}
+                />
+              </SectionContainer>
             )}
-            <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
-              Metadata
-            </Typography>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[
@@ -76,10 +69,14 @@ const Overview: React.FC = () => {
                 Component={OverviewMetadata}
               />
             </SectionContainer>
+            <SectionContainer square elevation={0}>
+              <WithPermissionsProvider
+                allowedPermissions={[Permission.DATA_ENTITY_ATTACHMENT_MANAGE]}
+                resourcePermissions={resourcePermissions}
+                Component={OverviewAttachments}
+              />
+            </SectionContainer>
             <OverviewMetrics showOverview={isDataset} />
-            <Typography variant='h3' sx={{ mt: 3, mb: 1 }}>
-              About
-            </Typography>
             <SectionContainer square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}

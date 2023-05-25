@@ -32,9 +32,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           <Typography variant='h2' sx={{ mr: 0.5 }}>
             {entities?.length || 0}
           </Typography>
-          <Typography variant='body1' color='texts.hint'>
-            entities
-          </Typography>
+          <Typography variant='h4'>entities</Typography>
         </Grid>
         <Grid
           item
@@ -73,9 +71,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           <Typography variant='h2' sx={{ mr: 0.5 }}>
             {entityGroups?.length || 0}
           </Typography>
-          <Typography variant='body1' color='texts.hint'>
-            upper groups
-          </Typography>
+          <Typography variant='h4'>upper groups</Typography>
         </Grid>
         <Grid
           item

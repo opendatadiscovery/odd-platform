@@ -66,7 +66,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
     <Grid container flexDirection='column' alignItems='flex-start'>
       <Grid container alignItems='center' flexWrap='nowrap'>
         <Grid container item lg={9} alignItems='center' flexWrap='nowrap'>
-          <Typography variant='h1' noWrap sx={{ mr: 1 }}>
+          <Typography variant='h0' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
           {entityClasses?.map(entityClass => (

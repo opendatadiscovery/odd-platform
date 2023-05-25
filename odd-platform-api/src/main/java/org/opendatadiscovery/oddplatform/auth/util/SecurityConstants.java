@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.auth.util;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 import org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.ALERT;
@@ -23,6 +22,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TO_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_CONFIG_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_RESOLVE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ATTACHMENT_MANAGE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_UPDATE;
@@ -68,6 +68,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.T
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_TAGS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_UPDATE;
 import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
@@ -128,7 +129,7 @@ public final class SecurityConstants {
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners/{owner_id}", DELETE),
             OWNER_DELETE),
         new SecurityRule(
-            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owner_association_request", HttpMethod.GET),
+            NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owner_association_request", GET),
             OWNER_ASSOCIATION_MANAGE),
         new SecurityRule(
             NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher(
@@ -211,6 +212,36 @@ public final class SecurityConstants {
             DATA_ENTITY, new PathPatternParserServerWebExchangeMatcher(
             "/api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}/severity", PUT),
             DATASET_TEST_RUN_SET_SEVERITY),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/files/**", POST),
+            DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/files/**", PUT),
+            DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/files/{file_id}", DELETE),
+            DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/links", POST),
+            DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/links/{link_id}", PUT),
+            DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/links/{link_id}", DELETE),
+            DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
         new SecurityRule(DATASET_FIELD,
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/description", PUT),
             DATASET_FIELD_DESCRIPTION_UPDATE),

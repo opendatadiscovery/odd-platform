@@ -177,6 +177,17 @@ odd:
   activity:
     partition-period: 30
 
+attachment:
+  storage: LOCAL # LOCAL, REMOTE
+  max-file-size: 20 # mb
+  local:
+    path: /tmp/odd/attachments
+  remote:
+    url: http://localhost:9000
+    access-key:
+    secret-key:
+    bucket: odd
+
 management:
   endpoints:
     enabled-by-default: false

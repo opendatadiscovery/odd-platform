@@ -152,7 +152,7 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
                   </AppTooltip>
                 </Grid>
                 <Grid item>
-                  <CopyButton stringToCopy={slaRef} />
+                  <CopyButton stringToCopy={slaRef} buttonType='secondary-m-icon' />
                 </Grid>
               </Grid>
               <Grid

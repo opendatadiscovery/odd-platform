@@ -46,7 +46,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
       </Grid>
       <S.StatsContainer container>
         <Grid item lg={4} container flexDirection='column' alignItems='flex-start'>
-          <Typography variant='h3' sx={{ mb: 1.25 }}>
+          <Typography variant='h4' sx={{ mb: 1 }}>
             {datasetsList?.length || 0}{' '}
             {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
           </Typography>
@@ -73,7 +73,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         {suiteUrl && (
           <Grid item lg={4}>
             <Grid container flexDirection='column' alignItems='flex-start'>
-              <Typography variant='h3' sx={{ mb: 1.25 }}>
+              <Typography variant='h4' sx={{ mb: 1 }}>
                 Suite
               </Typography>
               <Button
@@ -87,7 +87,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
         )}
         <S.Overview item lg={4}>
-          <Typography variant='h3'>Last execution</Typography>
+          <Typography variant='h4'>Last execution</Typography>
           {qualityTest?.latestRun?.status && (
             <LabeledInfoItem
               inline

@@ -31,8 +31,13 @@ const queryClient = new QueryClient({
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
-      onError(e) {
-        showServerErrorToast(e as Response);
+      async onError(e) {
+        await showServerErrorToast(e as Response);
+      },
+    },
+    mutations: {
+      async onError(e) {
+        await showServerErrorToast(e as Response);
       },
     },
   },

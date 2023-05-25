@@ -2,6 +2,7 @@ import { styled } from '@mui/material';
 import { Link } from 'react-router-dom';
 import type { CSSProperties } from 'react';
 import { mapKeysToValue } from 'lib/helpers';
+import type { CSSObject } from 'styled-components';
 import { type ButtonColor, type ButtonSize, type Button } from './interfaces';
 import { getButtonFontType, getButtonType } from './helpers';
 
@@ -25,6 +26,7 @@ export const StyledButton = styled('button')<ButtonProps>(
       fontFamily: 'inherit',
       border: 'none',
       minWidth: 0,
+      boxSizing: 'border-box',
 
       color: theme.palette.button[$color].normal.color,
       backgroundColor: theme.palette.button[$color].normal.background,
@@ -57,8 +59,8 @@ export const StyledButton = styled('button')<ButtonProps>(
       },
       [getButtonType('main', 'm')]: {
         height: '24px',
-        borderRadius: '4px',
-        padding: theme.spacing(0.5, 1),
+        borderRadius: '12px',
+        padding: theme.spacing(0.25, 1),
       },
       [getButtonType('secondary', 'lg')]: {
         height: '32px',
@@ -122,9 +124,13 @@ export const StyledButton = styled('button')<ButtonProps>(
         borderRadius: '2px',
         padding: theme.spacing(0.75, 0.5),
       },
+
+      [getButtonType('service', 'm')]: {
+        height: '20px',
+      },
     };
 
-    return { ...common, ...stylesByButtonType[btnType] };
+    return { ...(common as CSSObject), ...stylesByButtonType[btnType] };
   }
 );
 

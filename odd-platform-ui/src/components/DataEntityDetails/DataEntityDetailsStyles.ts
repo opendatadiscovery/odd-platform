@@ -4,7 +4,6 @@ import styled from 'styled-components';
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',
   padding: theme.spacing(2),
-  width: `${maxContentWidthWithoutSidebar}px`,
   display: 'flex',
   flexDirection: 'column',
   [theme.breakpoints.up(maxContentWidthWithoutSidebar)]: {

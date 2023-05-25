@@ -25,6 +25,11 @@ export const breakpointDownLgBody2: CSSObject = {
 };
 
 export const typography = createTypography(palette, {
+  h0: {
+    fontSize: pxToRem(24),
+    lineHeight: pxToRem(36),
+    fontWeight: 500,
+  },
   h1: {
     fontSize: pxToRem(20),
     lineHeight: pxToRem(32),
@@ -101,7 +106,11 @@ export const typography = createTypography(palette, {
     fontWeight: 500,
   },
   ...mapKeysToValue(
-    [getButtonFontType('main', 'lg'), getButtonFontType('secondary', 'lg')],
+    [
+      getButtonFontType('main', 'lg'),
+      getButtonFontType('secondary', 'lg'),
+      getButtonFontType('service', 'm'),
+    ],
     {
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),

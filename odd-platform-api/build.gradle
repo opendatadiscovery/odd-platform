@@ -43,6 +43,8 @@ dependencies {
     implementation libs.caffeine
     implementation libs.protobuf.java
     implementation libs.snappy.java
+    implementation libs.minio
+    implementation libs.okhttp
 
     compileOnly libs.lombok
 

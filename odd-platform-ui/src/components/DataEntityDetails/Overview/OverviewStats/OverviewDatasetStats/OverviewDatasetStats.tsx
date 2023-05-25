@@ -1,12 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
-import NumberFormatted from 'components/shared/elements/NumberFormatted/NumberFormatted';
-import RowsIcon from 'components/shared/icons/RowsIcon';
-import ColumnsIcon from 'components/shared/icons/ColumnsIcon';
-import UserIcon from 'components/shared/icons/UserIcon';
-import { StatLabel } from './OverviewDatasetStatsStyles';
+import { EntityClassItem, NumberFormatted } from 'components/shared/elements';
+import { UserIcon, ColumnsIcon, RowsIcon } from 'components/shared/icons';
 
 interface OverviewDatasetStatsProps {
   stats: {
@@ -23,7 +19,7 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({ stats }) =>
     </Grid>
     <Grid alignItems='center' item container xs={4}>
       <Grid item xs={12}>
-        <StatLabel variant='h6'>Rows</StatLabel>
+        <Typography variant='h4'>Rows</Typography>
       </Grid>
       <Grid item container xs={12} wrap='nowrap' alignItems='center'>
         <RowsIcon sx={{ mr: 1 }} />
@@ -34,7 +30,7 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({ stats }) =>
     </Grid>
     <Grid alignItems='center' item container xs={4}>
       <Grid item xs={12}>
-        <StatLabel variant='h6'>Columns</StatLabel>
+        <Typography variant='h4'>Columns</Typography>
       </Grid>
       <Grid item container xs={12} wrap='nowrap' alignItems='center'>
         <ColumnsIcon sx={{ mr: 1 }} />
@@ -45,7 +41,7 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({ stats }) =>
     </Grid>
     <Grid alignItems='center' item container xs={4}>
       <Grid item xs={12}>
-        <StatLabel variant='h6'>Used by</StatLabel>
+        <Typography variant='h4'>Used by</Typography>
       </Grid>
       <Grid item container xs={12} wrap='nowrap' alignItems='center'>
         <UserIcon sx={{ mr: 1 }} />

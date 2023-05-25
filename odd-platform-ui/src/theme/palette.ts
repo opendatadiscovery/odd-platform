@@ -26,6 +26,7 @@ const colors = {
   blue20: '#80AEFF',
   blue10: '#B3D1FF',
   blue5: '#E5EEFF',
+  blue3: '#F0F5FF',
 
   orange50: '#FFAA00',
   orange40: '#FFBB33',
@@ -180,6 +181,11 @@ export const palette = createPalette({
       active: { background: colors.transparent, color: colors.black90 },
       disabled: { background: colors.transparent, color: colors.black15 },
     },
+    service: {
+      normal: { background: colors.transparent, color: colors.black70 },
+      hover: { background: colors.transparent, color: colors.black80 },
+      active: { background: colors.transparent, color: colors.black90 },
+    },
   },
   tag: {
     main: {
@@ -240,6 +246,13 @@ export const palette = createPalette({
     error: { border: colors.red50 },
     disabled: { border: colors.black10 },
   },
+  fileInput: {
+    normal: { border: colors.blue10, background: colors.black3 },
+    hover: { border: colors.blue50, background: colors.black10 },
+    active: { border: colors.blue65, background: colors.black10 },
+    error: { border: colors.red50 },
+    disabled: { border: colors.black20 },
+  },
   input: {
     normal: { border: colors.black20, background: colors.white, color: colors.black30 },
     hover: { border: colors.black50, color: colors.black50 },
@@ -267,9 +280,10 @@ export const palette = createPalette({
     blank: '',
     custom: '',
   },
-  switch: {
-    checked: colors.green40,
-    track: colors.black10,
-    thumb: colors.white,
+  switch: { checked: colors.green40, track: colors.black10, thumb: colors.white },
+  attachment: {
+    normal: { background: colors.blue3, color: colors.black70 },
+    hover: { background: colors.blue5, color: colors.black80 },
+    active: { background: colors.blue10, color: colors.black90 },
   },
 });

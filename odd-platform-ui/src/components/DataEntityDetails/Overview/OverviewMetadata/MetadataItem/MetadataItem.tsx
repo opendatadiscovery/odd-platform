@@ -107,7 +107,9 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                 <Button text='Save' type='submit' buttonType='main-m' />
                 <Button
                   text='Cancel'
-                  onClick={() => setEditMode(false)}
+                  onClick={() => {
+                    setEditMode(false);
+                  }}
                   type='button'
                   buttonType='secondary-m'
                 />

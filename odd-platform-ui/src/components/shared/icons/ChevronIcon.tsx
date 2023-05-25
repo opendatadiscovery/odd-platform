@@ -3,7 +3,7 @@ import { type SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from 'components/shared/icons/AppSvgIcon';
 
 const ChevronIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
-  <AppSvgIcon sx={sx} viewBox='0 0 10 5' {...props}>
+  <AppSvgIcon sx={sx} width={10} height={5} viewBox='0 0 10 5' {...props}>
     <svg
       width='10'
       height='5'

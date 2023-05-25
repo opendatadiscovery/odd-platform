@@ -11,6 +11,7 @@ openApiGenerate {
 
     inputSpec = "$projectDir/../odd-platform-specification/openapi.yaml"
     outputDir = "$buildDir/generated"
+    templateDir = "$projectDir/../odd-platform-specification/templates"
 
     apiPackage = "org.opendatadiscovery.oddplatform.api.contract.api"
     invokerPackage = "org.opendatadiscovery.oddplatform.api.contract"

@@ -1,18 +1,11 @@
 import {
   AlertType,
-  type ConfigurationParameters,
   DataQualityTestSeverity,
   type DataSourceHighlight,
   type AlertHaltConfigActivityState,
   type DataEntitySearchHighlight,
   type DataEntityHighlight,
 } from 'generated-sources';
-
-export const BASE_PARAMS: ConfigurationParameters = {
-  basePath: import.meta.env.VITE_API_URL || '',
-  credentials: 'same-origin',
-  headers: { 'Content-Type': 'application/json' },
-};
 
 export const ORDERED_SEVERITY = [
   DataQualityTestSeverity.CRITICAL,

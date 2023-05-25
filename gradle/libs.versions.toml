@@ -38,6 +38,8 @@ logback = '1.2.11'
 easy-random-core = '5.0.0'
 protobuf-java = '3.21.12'
 snappy-java = '1.1.9.1'
+minio = '8.4.6'
+okhttp = '4.10.0'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
@@ -104,6 +106,8 @@ testcontainers-junit-jupiter = { module = 'org.testcontainers:junit-jupiter', ve
 easy-random-core = { module = 'org.jeasy:easy-random-core', version.ref = 'easy-random-core' }
 protobuf-java = { module = 'com.google.protobuf:protobuf-java', version.ref = 'protobuf-java' }
 snappy-java = { module = 'org.xerial.snappy:snappy-java', version.ref = 'snappy-java' }
+minio = { module = 'io.minio:minio', version.ref = 'minio' }
+okhttp = { module = 'com.squareup.okhttp3:okhttp', version.ref = 'okhttp' }
 
 [bundles]
 spring = [
