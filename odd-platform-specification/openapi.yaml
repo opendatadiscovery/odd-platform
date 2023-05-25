@@ -1047,7 +1047,7 @@ paths:
       tags:
         - dataEntity
 
-  /api/dataentities/{data_entity_id}/term:
+  /api/dataentities/{data_entity_id}/terms:
     post:
       summary: Add term to data entity
       description: Link existing term with data entity
@@ -1070,7 +1070,7 @@ paths:
       tags:
         - dataEntity
 
-  /api/dataentities/{data_entity_id}/term/{term_id}:
+  /api/dataentities/{data_entity_id}/terms/{term_id}:
     delete:
       summary: Delete term from Data entity
       description: Delete term from current data entity terms list
@@ -2174,6 +2174,43 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/MetricSet'
+      tags:
+        - datasetField
+
+  /api/datasetfields/{dataset_field_id}/terms:
+    post:
+      summary: Add term to dataset field
+      description: Link existing term with dataset field
+      operationId: addDatasetFieldTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DatasetFieldTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRef'
+      tags:
+        - datasetField
+
+  /api/datasetfields/{dataset_field_id}/terms/{term_id}:
+    delete:
+      summary: Delete term from dataset field
+      description: Delete term from current dataset field terms list
+      operationId: deleteTermFromDatasetField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - datasetField
 

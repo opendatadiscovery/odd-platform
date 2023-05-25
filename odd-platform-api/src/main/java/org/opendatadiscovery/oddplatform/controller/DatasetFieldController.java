@@ -6,9 +6,11 @@ import org.opendatadiscovery.oddplatform.api.contract.model.BulkEnumValueFormDat
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.EnumValueService;
 import org.opendatadiscovery.oddplatform.service.MetricService;
@@ -67,5 +69,18 @@ public class DatasetFieldController implements DatasetFieldApi {
                                                                   final ServerWebExchange exchange) {
         return metricService.getLatestMetricsForDatasetField(datasetFieldId)
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<TermRef>> addDatasetFieldTerm(final Long datasetFieldId,
+                                                             final Mono<DatasetFieldTermFormData> formData,
+                                                             final ServerWebExchange exchange) {
+        return DatasetFieldApi.super.addDatasetFieldTerm(datasetFieldId, formData, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteTermFromDatasetField(final Long datasetFieldId,final Long termId,
+                                                                 final ServerWebExchange exchange) {
+        return DatasetFieldApi.super.deleteTermFromDatasetField(datasetFieldId, termId, exchange);
     }
 }

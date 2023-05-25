@@ -2348,6 +2348,15 @@ components:
       required:
         - term_id
 
+    DatasetFieldTermFormData:
+      type: object
+      properties:
+        term_id:
+          type: integer
+          format: int64
+      required:
+        - term_id
+
     TermSearchFormData:
       type: object
       properties:
