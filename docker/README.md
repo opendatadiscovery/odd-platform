@@ -62,7 +62,7 @@ You should be able to see metadata sample injected into the Platform
 1. Open http://localhost:8080/management/datasources in your browser
 
 You should be able to see a new data source with the name you've passed into the collector_config.yaml file
-(Default is `Sample demo data source`). Overall you should see 11 data sources in the list
+(Default is `postgresql-step2-test`). Overall you should see 11 data sources in the list
 
 2. Go to the **Catalog** section. Select the created data source in the `Datasources` filter
 
