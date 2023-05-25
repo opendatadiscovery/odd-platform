@@ -224,11 +224,6 @@ public final class SecurityConstants {
         ),
         new SecurityRule(
             DATA_ENTITY,
-            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/files/{file_id}", GET),
-            DATA_ENTITY_ATTACHMENT_MANAGE
-        ),
-        new SecurityRule(
-            DATA_ENTITY,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/files/{file_id}", DELETE),
             DATA_ENTITY_ATTACHMENT_MANAGE
         ),
