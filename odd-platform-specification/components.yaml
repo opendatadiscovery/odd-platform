@@ -2500,6 +2500,8 @@ components:
           $ref: '#/components/schemas/DatasetFieldValuesActivityState'
         dataset_field_information:
           $ref: '#/components/schemas/DatasetFieldInformationActivityState'
+        dataset_field_terms:
+          $ref: '#/components/schemas/DatasetFieldTermsActivityState'
         custom_group:
           $ref: '#/components/schemas/CustomGroupActivityState'
         alert_halt_config:
@@ -2608,6 +2610,21 @@ components:
           format: int64
         name:
           type: string
+
+    DatasetFieldTermsActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermActivityState'
 
     DatasetFieldInformationActivityState:
       type: object
@@ -2744,6 +2761,8 @@ components:
         - DATASET_FIELD_VALUES_UPDATED
         - DATASET_FIELD_DESCRIPTION_UPDATED
         - DATASET_FIELD_LABELS_UPDATED
+        - DATASET_FIELD_TERM_ASSIGNED
+        - DATASET_FIELD_TERM_ASSIGNMENT_DELETED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED

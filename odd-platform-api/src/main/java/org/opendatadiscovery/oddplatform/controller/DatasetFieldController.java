@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.EnumValueService;
 import org.opendatadiscovery.oddplatform.service.MetricService;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,7 @@ public class DatasetFieldController implements DatasetFieldApi {
     private final DatasetFieldService datasetFieldService;
     private final EnumValueService enumValueService;
     private final MetricService metricService;
+    private final TermService termService;
 
     @Override
     public Mono<ResponseEntity<DataSetFieldDescription>> updateDatasetFieldDescription(
@@ -75,13 +77,16 @@ public class DatasetFieldController implements DatasetFieldApi {
     public Mono<ResponseEntity<TermRef>> addDatasetFieldTerm(final Long datasetFieldId,
                                                              final Mono<DatasetFieldTermFormData> formData,
                                                              final ServerWebExchange exchange) {
-        return DatasetFieldApi.super.addDatasetFieldTerm(datasetFieldId, formData, exchange);
+        return formData
+            .flatMap(fd -> termService.linkTermWithDatasetField(fd.getTermId(), datasetFieldId))
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Void>> deleteTermFromDatasetField(final Long datasetFieldId,
                                                                  final Long termId,
                                                                  final ServerWebExchange exchange) {
-        return DatasetFieldApi.super.deleteTermFromDatasetField(datasetFieldId, termId, exchange);
+        return termService.removeTermFromDatasetField(termId, datasetFieldId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 }
