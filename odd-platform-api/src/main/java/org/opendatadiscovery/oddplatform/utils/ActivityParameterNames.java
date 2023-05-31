@@ -30,6 +30,14 @@ public final class ActivityParameterNames {
         public static final String DATA_ENTITY_ID = "dataEntityId";
     }
 
+    public static final class FieldTermAssigned {
+        public static final String DATASET_FIELD_ID = "datasetFieldId";
+    }
+
+    public static final class FieldTermAssignmentDeleted {
+        public static final String DATASET_FIELD_ID = "datasetFieldId";
+    }
+
     public static final class DatasetFieldInformationUpdated {
         public static final String DATASET_FIELD_ID = "datasetFieldId";
     }

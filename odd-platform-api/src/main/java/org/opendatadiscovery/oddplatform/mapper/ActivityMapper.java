@@ -24,6 +24,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldInformationActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermsActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldValuesActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DescriptionActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
@@ -42,6 +43,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateD
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTermsActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.OwnershipActivityStateDto;
@@ -114,6 +116,7 @@ public abstract class ActivityMapper {
             case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValuesState(jsonb);
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 mapDatasetFieldInformationState(jsonb);
+            case DATASET_FIELD_TERM_ASSIGNED, DATASET_FIELD_TERM_ASSIGNMENT_DELETED -> mapDatasetFieldTermState(jsonb);
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> mapCustomGroupState(jsonb);
             case ALERT_HALT_CONFIG_UPDATED -> mapAlertHaltConfigState(jsonb);
             case ALERT_STATUS_UPDATED -> mapAlertUpdatedStatus(jsonb);
@@ -204,6 +207,20 @@ public abstract class ActivityMapper {
     @Mapping(source = "dto.type", target = "type", qualifiedByName = "deserializeDatasetFieldType")
     abstract DatasetFieldInformationActivityState mapDatasetFieldInformation(
         final DatasetFieldInformationActivityStateDto dto);
+
+    ActivityState mapDatasetFieldTermState(final JSONB jsonb) {
+        final DatasetFieldTermsActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), DatasetFieldTermsActivityStateDto.class);
+        final List<TermActivityState> termActivityStates = stateDto.terms().stream()
+            .map(this::mapTermActivityState).toList();
+        final DatasetFieldTermsActivityState datasetFieldTerms = mapDatasetFieldTerms(stateDto);
+        datasetFieldTerms.setTerms(termActivityStates);
+        return new ActivityState().datasetFieldTerms(datasetFieldTerms);
+    }
+
+    @Mapping(source = "dto.type", target = "type", qualifiedByName = "deserializeDatasetFieldType")
+    @Mapping(target = "terms", ignore = true)
+    abstract DatasetFieldTermsActivityState mapDatasetFieldTerms(final DatasetFieldTermsActivityStateDto dto);
 
     ActivityState mapCustomGroupState(final JSONB jsonb) {
         final CustomGroupActivityStateDto stateDto =

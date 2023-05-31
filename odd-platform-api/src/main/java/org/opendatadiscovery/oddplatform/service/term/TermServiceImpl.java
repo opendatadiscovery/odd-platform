@@ -28,6 +28,8 @@ import org.opendatadiscovery.oddplatform.service.TagService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.FieldTermAssigned;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.FieldTermAssignmentDeleted;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
@@ -135,7 +137,10 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    public Mono<TermRef> linkTermWithDatasetField(final Long termId, final Long datasetFieldId) {
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNED)
+    public Mono<TermRef> linkTermWithDatasetField(final Long termId,
+                                                  @ActivityParameter(FieldTermAssigned.DATASET_FIELD_ID)
+                                                  final Long datasetFieldId) {
         return termRepository.createRelationWithDatasetField(datasetFieldId, termId)
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
             .flatMap(termRefDto -> dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
@@ -145,12 +150,15 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    public Mono<Void> removeTermFromDatasetField(final Long termId, final Long datasetFieldId) {
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNMENT_DELETED)
+    public Mono<Void> removeTermFromDatasetField(final Long termId,
+                                                 @ActivityParameter(FieldTermAssignmentDeleted.DATASET_FIELD_ID)
+                                                 final Long datasetFieldId) {
         return termRepository.deleteRelationWithDatasetField(datasetFieldId, termId)
             .then(termRepository.getDatasetFieldTerms(datasetFieldId).collectList())
             .flatMap(termDtos -> {
                 if (CollectionUtils.isEmpty(termDtos)) {
-                    return dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
+                    return dataEntityFilledService.markEntityUnfilledByDatasetFieldId(datasetFieldId,
                         DATASET_FIELD_TERMS);
                 }
                 return Mono.just(termDtos);
