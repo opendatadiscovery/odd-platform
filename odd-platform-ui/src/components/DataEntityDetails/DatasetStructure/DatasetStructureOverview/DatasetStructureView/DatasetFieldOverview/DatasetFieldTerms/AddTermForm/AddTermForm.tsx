@@ -46,13 +46,7 @@ const AddTermForm: FC<AddTermFormProps> = ({
     [setSelectedTerm]
   );
 
-  const termFormTitle = (
-    <Typography variant='h4' component='span'>
-      Add term
-    </Typography>
-  );
-
-  const termFormContent = () => (
+  const content = () => (
     <form id='add-term-form' onSubmit={handleSubmit(onSubmit)}>
       <Typography variant='subtitle2' fontSize='0.73rem'>
         Select a term from the dictionary.
@@ -84,7 +78,7 @@ const AddTermForm: FC<AddTermFormProps> = ({
     </form>
   );
 
-  const termFormActionButtons = () => (
+  const actionButton = () => (
     <Button
       text='Add term'
       buttonType='main-lg'
@@ -101,9 +95,13 @@ const AddTermForm: FC<AddTermFormProps> = ({
         React.cloneElement(openBtnEl, { onClick: handleOpen })
       }
       maxWidth='md'
-      title={termFormTitle}
-      renderContent={termFormContent}
-      renderActions={termFormActionButtons}
+      title={
+        <Typography variant='h4' component='span'>
+          Add term
+        </Typography>
+      }
+      renderContent={content}
+      renderActions={actionButton}
       handleCloseSubmittedForm={isSuccess}
       isLoading={isLoading}
       clearState={clearState}
