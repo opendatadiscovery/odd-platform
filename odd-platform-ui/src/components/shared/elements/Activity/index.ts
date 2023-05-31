@@ -14,3 +14,4 @@ export { default as MultipleFilterAutocomplete } from 'components/shared/element
 export { default as SelectedFilterOption } from 'components/shared/elements/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOption';
 export { default as ActivityResultsList } from 'components/shared/elements/Activity/ActivityResultsList/ActivityResultsList';
 export { default as AlertActivityField } from 'components/shared/elements/Activity/ActivityFields/AlertActivityField/AlertActivityField';
+export { default as DatasetTermActivityField } from 'components/shared/elements/Activity/ActivityFields/DatasetTermActivityField/DatasetTermActivityField';

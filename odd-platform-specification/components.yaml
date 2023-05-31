@@ -2625,6 +2625,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TermActivityState'
+      required:
+        - id
+        - name
+        - type
+        - terms
 
     DatasetFieldInformationActivityState:
       type: object

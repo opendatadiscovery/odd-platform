@@ -56,6 +56,8 @@ export const setActivityBackgroundColor = (
   switch (eventType) {
     case 'created':
       return theme.palette.activityEvent.created;
+    case 'assigned':
+      return theme.palette.activityEvent.created;
     case 'updated':
       return theme.palette.activityEvent.updated;
     case 'deleted':

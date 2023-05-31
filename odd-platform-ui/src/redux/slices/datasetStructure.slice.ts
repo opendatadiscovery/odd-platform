@@ -7,6 +7,7 @@ import type {
 import * as thunks from 'redux/thunks';
 import { createSlice } from '@reduxjs/toolkit';
 import { datasetStructureActionTypePrefix } from 'redux/actions';
+import type { TermRef } from 'generated-sources';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
@@ -92,7 +93,27 @@ const updateDataSetFieldEnums = (
 export const datasetStructureSlice = createSlice({
   name: datasetStructureActionTypePrefix,
   initialState,
-  reducers: {},
+  reducers: {
+    addDatasetFieldTerm: (
+      state,
+      { payload }: { payload: { fieldId: number; term: TermRef } }
+    ) => {
+      const { fieldId, term } = payload;
+
+      state.fieldById[fieldId].terms = [...(state.fieldById[fieldId].terms || []), term];
+    },
+
+    deleteDatasetFieldTerm: (
+      state,
+      { payload }: { payload: { fieldId: number; termId: TermRef['id'] } }
+    ) => {
+      const { fieldId, termId } = payload;
+
+      state.fieldById[fieldId].terms = state.fieldById[fieldId].terms?.filter(
+        term => term.id !== termId
+      );
+    },
+  },
   extraReducers: builder => {
     builder.addCase(thunks.fetchDataSetStructureLatest.fulfilled, updateDatasetStructure);
     builder.addCase(thunks.fetchDataSetStructure.fulfilled, updateDatasetStructure);
@@ -128,4 +149,7 @@ export const datasetStructureSlice = createSlice({
     );
   },
 });
+
+export const { addDatasetFieldTerm, deleteDatasetFieldTerm } =
+  datasetStructureSlice.actions;
 export default datasetStructureSlice.reducer;

@@ -1,9 +1,14 @@
-import React, { type FC, useCallback, useState } from 'react';
+import React, { type FC, useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import type { DataSetField, TermRef } from 'generated-sources';
 import { Permission } from 'generated-sources';
+import { useAppDispatch } from 'redux/lib/hooks';
+import {
+  addDatasetFieldTerm,
+  deleteDatasetFieldTerm,
+} from 'redux/slices/datasetStructure.slice';
 import * as S from '../DatasetFieldOverview.styles';
 import AddTermForm from './AddTermForm/AddTermForm';
 import TermItem from './TermItem/TermItem';
@@ -14,26 +19,30 @@ interface DatasetFieldTermsProps {
 }
 
 const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
-  fieldTerms = [],
+  fieldTerms,
   datasetFieldId,
 }) => {
-  const [terms, setTerms] = useState<TermRef[]>(fieldTerms);
+  const dispatch = useAppDispatch();
 
   const handleAddTerm = useCallback(
-    (term: TermRef) => setTerms(prev => [...prev, term]),
-    []
+    (term: TermRef) => {
+      dispatch(addDatasetFieldTerm({ fieldId: datasetFieldId, term }));
+    },
+    [datasetFieldId]
   );
 
   const removeTerm = useCallback(
-    (termId: number) => setTerms(prev => prev.filter(term => term.id !== termId)),
-    []
+    (termId: number) => {
+      dispatch(deleteDatasetFieldTerm({ fieldId: datasetFieldId, termId }));
+    },
+    [datasetFieldId]
   );
 
   const content = React.useMemo(
     () =>
-      terms && terms.length > 0 ? (
+      fieldTerms && fieldTerms.length > 0 ? (
         <Grid container mt={1}>
-          {terms.map(({ name, definition, id }) => (
+          {fieldTerms.map(({ name, definition, id }) => (
             <TermItem
               key={id}
               termId={id}
@@ -49,7 +58,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
           Terms are not added yet
         </Typography>
       ),
-    [terms, terms?.length]
+    [fieldTerms?.length, fieldTerms]
   );
 
   return (
