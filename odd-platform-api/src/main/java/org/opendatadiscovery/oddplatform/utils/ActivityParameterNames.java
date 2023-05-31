@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.utils;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public final class ActivityParameterNames {
     public static final class OwnershipCreate {
         public static final String DATA_ENTITY_ID = "dataEntityId";
-        public static final String OWNERSHIP_FORM_DATA = "formData";
     }
 
     public static final class OwnershipUpdate {
