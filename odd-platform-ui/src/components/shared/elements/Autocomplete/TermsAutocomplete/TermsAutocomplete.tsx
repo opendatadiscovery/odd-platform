@@ -61,17 +61,6 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
     return '';
   }, []);
 
-  const getFilterOptions = React.useCallback(
-    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
-      const filtered = filter(options, params);
-
-      if (!loading && filtered.length === 0) return [{ name: '' }];
-
-      return filtered;
-    },
-    [searchText, loading, options]
-  );
-
   const searchInputChange = React.useCallback(
     (
       _: React.ChangeEvent<unknown>,
@@ -87,13 +76,6 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
     [setSearchText]
   );
 
-  React.useEffect(() => {
-    setLoading(autocompleteOpen);
-    if (autocompleteOpen) {
-      handleSearch();
-    }
-  }, [autocompleteOpen, searchText]);
-
   const handleAutocompleteSelect = (
     _: React.ChangeEvent<unknown>,
     value: FilterOption | string | null
@@ -103,6 +85,24 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
     setSearchText(typeof value === 'string' ? value : value.name);
     field.onChange(typeof value === 'string' ? value : value.id);
   };
+
+  const getFilterOptions = React.useCallback(
+    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
+      const filtered = filter(options, params);
+
+      if (!loading && filtered.length === 0) return [{ name: '' }];
+
+      return filtered;
+    },
+    [searchText, loading, options]
+  );
+
+  React.useEffect(() => {
+    setLoading(autocompleteOpen);
+    if (autocompleteOpen) {
+      handleSearch();
+    }
+  }, [autocompleteOpen, searchText]);
 
   return (
     <Autocomplete
