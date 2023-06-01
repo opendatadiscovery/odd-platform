@@ -41,6 +41,7 @@ tags:
   - name: links
   - name: integration
   - name: dataEntityAttachment
+  - name: directory
 
 paths:
   /api/integrations:
@@ -3078,3 +3079,78 @@ paths:
                 $ref: './components.yaml/#/components/schemas/Message'
       tags:
         - dataCollaboration
+
+  /api/directory:
+    get:
+      summary: Get directory view
+      description: Get data source types
+      operationId: getDataSourceTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSourceTypeList'
+      tags:
+        - directory
+
+  /api/directory/datasources:
+    get:
+      summary: Get data sources
+      description: Get data sources
+      operationId: getDirectoryDatasourceList
+      parameters:
+        - name: prefix
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSourceDirectoryList'
+      tags:
+        - directory
+
+  /api/directory/datasources/{data_source_id}/types:
+    get:
+      summary: Get data source entity types
+      description: Get data entity types within data source
+      operationId: getDatasourceEntityTypes
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataSourceIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityTypeList'
+      tags:
+        - directory
+
+  /api/directory/datasources/{data_source_id}:
+    get:
+      summary: Get data source entities
+      description: Get data source entities by type
+      operationId: getDatasourceEntities
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataSourceIdParam'
+        - name: type_id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSourceEntityList'
+      tags:
+        - directory

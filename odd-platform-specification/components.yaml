@@ -463,9 +463,12 @@ components:
           items:
             $ref: '#/components/schemas/DataEntityClass'
         types:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataEntityType'
+          $ref: '#/components/schemas/DataEntityTypeList'
+
+    DataEntityTypeList:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataEntityType'
 
     DataEntityRunBaseObject:
       type: object
@@ -526,7 +529,7 @@ components:
         - oddrn
         - external_name
         - data_source
-        - types
+        - type
         - namespace
         - view_count
 
@@ -3176,6 +3179,101 @@ components:
         - quantile
         - value
 
+    DataSourceTypeList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSourceType'
+      required:
+        - items
+
+    DataSourceType:
+      type: object
+      properties:
+        prefix:
+          type: string
+      required:
+        - prefix
+
+    DataSourceDirectoryList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSourceDirectory'
+      required:
+        - items
+
+    DataSourceDirectory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+        entities_count:
+          type: integer
+          format: int64
+      required:
+        - id
+        - name
+        - properties
+        - entities_count
+
+    DataSourceEntityList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSourceEntity'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+        entities_count:
+          type: integer
+          format: int64
+      required:
+        - items
+        - page_info
+        - entities_count
+
+    DataSourceEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        external_name:
+          type: string
+        internal_name:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        ownership:
+          $ref: '#/components/schemas/OwnershipList'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - external_name
+        - type
+
   parameters:
     PageParam:
       name: page
@@ -3300,6 +3398,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/PermissionResourceType'
+
+    DataSourceIdParam:
+      name: data_source_id
+      in: path
+      requited: true
+      schema:
+        type: integer
+        format: int64
 
   responses:
     Deleted:
