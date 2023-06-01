@@ -10,8 +10,8 @@ import {
   deleteDatasetFieldTerm,
 } from 'redux/slices/datasetStructure.slice';
 import * as S from '../DatasetFieldOverview.styles';
-import AddTermForm from './AddTermForm/AddTermForm';
 import TermItem from './TermItem/TermItem';
+import AssignFieldTermForm from './AssignFieldTermForm/AssignFieldTermForm';
 
 interface DatasetFieldTermsProps {
   fieldTerms: DataSetField['terms'];
@@ -70,7 +70,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
         <WithPermissions
           permissionTo={Permission.DATASET_FIELD_ADD_TERM}
           renderContent={({ isAllowedTo: addTerm }) => (
-            <AddTermForm
+            <AssignFieldTermForm
               datasetFieldId={datasetFieldId}
               handleAddTerm={handleAddTerm}
               openBtnEl={
