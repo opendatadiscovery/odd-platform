@@ -1,70 +1,67 @@
 package org.opendatadiscovery.oddplatform.utils;
 
-import lombok.experimental.UtilityClass;
-
-@UtilityClass
-public final class ActivityParameterNames {
-    public static final class OwnershipCreate {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+public interface ActivityParameterNames {
+    interface OwnershipCreate {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class OwnershipUpdate {
-        public static final String OWNERSHIP_ID = "ownershipId";
+    interface OwnershipUpdate {
+        String OWNERSHIP_ID = "ownershipId";
     }
 
-    public static final class OwnershipDelete {
-        public static final String OWNERSHIP_ID = "ownershipId";
+    interface OwnershipDelete {
+        String OWNERSHIP_ID = "ownershipId";
     }
 
-    public static final class DescriptionUpdated {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface DescriptionUpdated {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class InternalNameUpdated {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface InternalNameUpdated {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class TermAssigned {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface TermAssigned {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class TermAssignmentDeleted {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface TermAssignmentDeleted {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class FieldTermAssigned {
-        public static final String DATASET_FIELD_ID = "datasetFieldId";
+    interface FieldTermAssigned {
+        String DATASET_FIELD_ID = "datasetFieldId";
     }
 
-    public static final class FieldTermAssignmentDeleted {
-        public static final String DATASET_FIELD_ID = "datasetFieldId";
+    interface FieldTermAssignmentDeleted {
+        String DATASET_FIELD_ID = "datasetFieldId";
     }
 
-    public static final class DatasetFieldInformationUpdated {
-        public static final String DATASET_FIELD_ID = "datasetFieldId";
+    interface DatasetFieldInformationUpdated {
+        String DATASET_FIELD_ID = "datasetFieldId";
     }
 
-    public static final class DatasetFieldValuesUpdated {
-        public static final String DATASET_FIELD_ID = "datasetFieldId";
+    interface DatasetFieldValuesUpdated {
+        String DATASET_FIELD_ID = "datasetFieldId";
     }
 
-    public static final class TagsAssociationUpdated {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface TagsAssociationUpdated {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class CustomGroupUpdated {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface CustomGroupUpdated {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class CustomGroupDeleted {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface CustomGroupDeleted {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class AlertHaltConfigUpdated {
-        public static final String DATA_ENTITY_ID = "dataEntityId";
+    interface AlertHaltConfigUpdated {
+        String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    public static final class AlertStatusUpdated {
-        public static final String ALERT_ID = "alertId";
+    interface AlertStatusUpdated {
+        String ALERT_ID = "alertId";
     }
 }
