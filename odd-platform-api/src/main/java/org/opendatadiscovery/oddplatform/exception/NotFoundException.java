@@ -17,6 +17,10 @@ public class NotFoundException extends ExceptionWithErrorCode {
         super(ErrorCode.NOT_FOUND, "%s with id %s is not found".formatted(capitalize(entityName), id));
     }
 
+    public NotFoundException(final String entityName, final Integer id) {
+        super(ErrorCode.NOT_FOUND, "%s with id %s is not found".formatted(capitalize(entityName), id));
+    }
+
     public NotFoundException(final String entityName, final UUID uuid) {
         super(ErrorCode.NOT_FOUND, "%s with UUID %s is not found".formatted(capitalize(entityName), uuid));
     }

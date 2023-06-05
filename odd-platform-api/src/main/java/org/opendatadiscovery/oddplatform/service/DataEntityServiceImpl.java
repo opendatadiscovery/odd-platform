@@ -144,6 +144,21 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     @Override
+    public Mono<DataEntityList> getDataEntitiesByDatasourceAndType(final long datasourceId,
+                                                                   final Integer typeId,
+                                                                   final int page,
+                                                                   final int size) {
+        final Mono<List<DataEntityDimensionsDto>> enrichedDimensions = reactiveDataEntityRepository
+            .listByDatasourceAndType(datasourceId, typeId, page, size)
+            .flatMap(this::enrichEntityClassDetails)
+            .flatMap(this::enrichParentGroups);
+        final Mono<Long> count = reactiveDataEntityRepository.countByDatasourceAndType(datasourceId, typeId);
+        return Mono.zip(enrichedDimensions, count)
+            .map(function((dtos, total) -> new Page<>(dtos, total, true)))
+            .map(dataEntityMapper::mapPojos);
+    }
+
+    @Override
     public Mono<DataEntityList> findByState(final FacetStateDto state,
                                             final int page,
                                             final int size,

@@ -3145,12 +3145,14 @@ paths:
           schema:
             type: integer
             format: int32
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataSourceEntityList'
+                $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - directory

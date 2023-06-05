@@ -42,6 +42,11 @@ public interface DataEntityService {
                                      final int size,
                                      final OwnerPojo owner);
 
+    Mono<DataEntityList> getDataEntitiesByDatasourceAndType(final long datasourceId,
+                                                            final Integer typeId,
+                                                            final int page,
+                                                            final int size);
+
     Mono<DataEntityDetails> getDetails(final long dataEntityId);
 
     Mono<List<String>> getDependentDataEntityOddrns(final LineageStreamKind streamKind);

@@ -3194,8 +3194,15 @@ components:
       properties:
         prefix:
           type: string
+        name:
+          type: string
+        entities_count:
+          type: integer
+          format: int64
       required:
         - prefix
+        - name
+        - entities_count
 
     DataSourceDirectoryList:
       type: object
@@ -3204,8 +3211,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataSourceDirectory'
+        entities_count:
+          type: integer
+          format: int64
       required:
         - items
+        - entities_count
 
     DataSourceDirectory:
       type: object
@@ -3237,42 +3248,9 @@ components:
             $ref: '#/components/schemas/DataSourceEntity'
         page_info:
           $ref: '#/components/schemas/PageInfo'
-        entities_count:
-          type: integer
-          format: int64
       required:
         - items
         - page_info
-        - entities_count
-
-    DataSourceEntity:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        external_name:
-          type: string
-        internal_name:
-          type: string
-        entity_classes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataEntityClass'
-        type:
-          $ref: '#/components/schemas/DataEntityType'
-        ownership:
-          $ref: '#/components/schemas/OwnershipList'
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-      required:
-        - id
-        - external_name
-        - type
 
   parameters:
     PageParam:
