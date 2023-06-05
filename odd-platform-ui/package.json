@@ -42,7 +42,7 @@
     "@mui/lab": "^5.0.0-alpha.128",
     "@mui/material": "^5.12.2",
     "@mui/system": "^5.12.1",
-    "@mui/x-date-pickers": "^5.0.20",
+    "@mui/x-date-pickers": "^6.6.0",
     "@reduxjs/toolkit": "^1.8.5",
     "@tanstack/react-query": "^4.28.0",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
