@@ -11,10 +11,12 @@ import {
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { Toaster } from 'react-hot-toast';
-import ManagementRoutes from './Management/ManagementRoutes/ManagementRoutes';
 
 // lazy elements
 const Management = React.lazy(() => import('./Management/Management'));
+const ManagementRoutes = React.lazy(
+  () => import('./Management/ManagementRoutes/ManagementRoutes')
+);
 const DataEntityDetails = React.lazy(
   () => import('./DataEntityDetails/DataEntityDetails')
 );
@@ -24,6 +26,7 @@ const Search = React.lazy(() => import('./Search/Search'));
 const TermSearch = React.lazy(() => import('./Terms/TermSearch/TermSearch'));
 const Alerts = React.lazy(() => import('./Alerts/Alerts'));
 const Activity = React.lazy(() => import('./Activity/Activity'));
+const DirectoryRoutes = React.lazy(() => import('./Directory/DirectoryRoutes'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +40,7 @@ const App: React.FC = () => {
     DataEntityRoutes,
     ActivityRoutes,
     AlertsRoutes,
+    DirectoryRoutes: DirectoryRoutesEnum,
     getNonExactPath,
     getNonExactParamPath,
   } = useAppPaths();
@@ -97,6 +101,10 @@ const App: React.FC = () => {
                 />
               </Route>
             </Route>
+            <Route
+              path={getNonExactPath(DirectoryRoutesEnum.directory)}
+              element={<DirectoryRoutes />}
+            />
           </Routes>
         </AppSuspenseWrapper>
       </div>

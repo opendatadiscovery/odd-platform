@@ -20,6 +20,7 @@ export const useAppParams = (): AppRouteParams => {
     integrationId,
     integrationViewType,
     structureViewType,
+    dataSourceTypePrefix,
   } = useParams<keyof RouteParams>() as RouteParams;
 
   return {
@@ -40,6 +41,7 @@ export const useAppParams = (): AppRouteParams => {
     policyId: parseInt(policyId, 10),
     integrationId,
     integrationViewType,
+    dataSourceTypePrefix,
   };
 };
 

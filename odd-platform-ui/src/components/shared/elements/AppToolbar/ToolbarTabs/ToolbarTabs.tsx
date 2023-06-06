@@ -25,6 +25,7 @@ const ToolbarTabs: React.FC = () => {
     TermsRoutes,
     SearchRoutes,
     ActivityRoutes,
+    DirectoryRoutes,
     DataEntityRoutes,
     updatePath,
   } = useAppPaths();
@@ -35,6 +36,11 @@ const ToolbarTabs: React.FC = () => {
         name: 'Catalog',
         link: updatePath(SearchRoutes.search),
         value: SearchRoutes.search,
+      },
+      {
+        name: 'Directory',
+        link: updatePath(DirectoryRoutes.directory),
+        value: DirectoryRoutes.directory,
       },
       {
         name: 'Management',

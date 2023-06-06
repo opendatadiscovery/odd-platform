@@ -7,7 +7,11 @@ import type {
 } from 'generated-sources';
 
 export function useGetDataSourceTypes() {
-  return useQuery(['dataSourceTypes'], () => directoryApi.getDataSourceTypes());
+  return useQuery(['dataSourceTypes'], async () => {
+    const { items } = await directoryApi.getDataSourceTypes();
+
+    return items;
+  });
 }
 
 export function useGetDirectoryDataSources(

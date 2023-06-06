@@ -10,6 +10,7 @@ import {
   ManagementRoutes,
   TermsRoutes,
   DataEntityRoutes,
+  DirectoryRoutes,
 } from './shared';
 
 const useAppPaths = () => {
@@ -47,6 +48,7 @@ const useAppPaths = () => {
       ManagementRoutes,
       TermsRoutes,
       DataEntityRoutes,
+      DirectoryRoutes,
       basePath,
       updatePath,
       getNonExactPath,

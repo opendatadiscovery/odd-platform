@@ -274,3 +274,7 @@ export async function asyncPool(
 
   return Promise.all(retries);
 }
+
+export function pluralize(count: number, text: string, pluralText: string) {
+  return `${count} ${count === 1 ? text : pluralText}`;
+}

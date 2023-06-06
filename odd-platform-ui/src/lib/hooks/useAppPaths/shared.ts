@@ -94,3 +94,13 @@ export enum TermsRoutes {
   overview = 'overview',
   linkedItems = 'linked-items',
 }
+
+export enum DirectoryRoutes {
+  directory = 'directory',
+  dataSourceTypePrefix = 'dataSourceTypePrefix',
+  dataSourceTypePrefixParam = ':dataSourceTypePrefix',
+  dataSourceName = 'dataSourceName',
+  dataSourceNameParam = ':dataSourceName',
+  entityType = 'entityType',
+  entityTypeParam = ':entityTypeParam',
+}
