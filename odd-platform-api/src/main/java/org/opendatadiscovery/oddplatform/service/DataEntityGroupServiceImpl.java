@@ -43,7 +43,7 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 @RequiredArgsConstructor
 public class DataEntityGroupServiceImpl implements DataEntityGroupService {
-    private final Generator oddrnGenerator = new Generator();
+    private final Generator oddrnGenerator = Generator.getInstance();
 
     private final NamespaceService namespaceService;
     private final ActivityService activityService;
@@ -190,7 +190,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
         try {
             return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
                 .id(pojo.getId())
-                .build(), "id");
+                .build());
         } catch (final Exception e) {
             log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
             throw new RuntimeException(e);

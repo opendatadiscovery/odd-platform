@@ -523,10 +523,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Mono<Long> countByDatasourceAndType(final long datasourceId, final Integer typeId) {
-        final List<Condition> conditions = new ArrayList<>();
-        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
-        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        final List<Condition> conditions = getDataEntityDefaultConditions();
         conditions.add(DATA_ENTITY.DATA_SOURCE_ID.eq(datasourceId));
         if (typeId != null) {
             conditions.add(DATA_ENTITY.TYPE_ID.eq(typeId));
@@ -704,11 +701,8 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Flux<Integer> getDataSourceEntityTypeIds(final long dataSourceId) {
-        final List<Condition> conditions = new ArrayList<>();
+        final List<Condition> conditions = getDataEntityDefaultConditions();
         conditions.add(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId));
-        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
-        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
         final var query = DSL.selectDistinct(DATA_ENTITY.TYPE_ID)
             .from(DATA_ENTITY)
             .where(conditions);
@@ -718,10 +712,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Mono<Map<Long, Long>> getCountByDataSources(final Collection<Long> dataSourceIds) {
-        final List<Condition> conditions = new ArrayList<>();
-        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
-        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        final List<Condition> conditions = getDataEntityDefaultConditions();
         if (CollectionUtils.isNotEmpty(dataSourceIds)) {
             conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
         }
@@ -854,5 +845,13 @@ public class ReactiveDataEntityRepositoryImpl
             orderFields.add(field(DATA_ENTITY.ID).desc());
         }
         return orderFields;
+    }
+
+    private List<Condition> getDataEntityDefaultConditions() {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        return conditions;
     }
 }

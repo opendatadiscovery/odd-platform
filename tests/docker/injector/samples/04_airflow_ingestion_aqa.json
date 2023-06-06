@@ -1,8 +1,8 @@
 {
-  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com/air",
+  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com",
   "items": [
     {
-      "oddrn": "//airflow/host/aws.airflow.aws.com/flights/_!AirFlights",
+      "oddrn": "//airflow/host/aws.airflow.aws.com/dags/_!AirFlights",
       "name": "_!AirFlights",
       "version": null,
       "description": null,
@@ -58,8 +58,8 @@
       "data_transformer": {
         "source_code_url": null,
         "sql": null,
-        "inputs": ["//s3/cloud/aws/account/111111111111/region/us-west-2/flights/arrives"],
-        "outputs": ["//s3/cloud/aws/account/111111111111/region/us-west-2/flights/departure"]
+        "inputs": ["//s3/cloud/aws/buckets/arrives"],
+        "outputs": ["//s3/cloud/aws/buckets/departure"]
       },
       "data_transformer_run": null,
       "data_quality_test": null,

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceDirectory;
@@ -14,6 +15,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceTypeList;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
@@ -32,7 +34,8 @@ import static reactor.function.TupleUtils.function;
 public class DirectoryServiceImpl implements DirectoryService {
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
-    private final Generator oddrnGenerator;
+    private final DataSourceMapper dataSourceMapper;
+    private final Generator oddrnGenerator = Generator.getInstance();
 
     @Override
     public Mono<DataSourceTypeList> getDataSourceTypes() {
@@ -44,7 +47,11 @@ public class DirectoryServiceImpl implements DirectoryService {
             final List<DataSourceType> dataSourceTypes = dataSourcesMap.entrySet().stream()
                 .map(e -> {
                     final Long prefixCount = getPrefixCount(e.getValue(), counts);
-                    return new DataSourceType().prefix(e.getKey()).entitiesCount(prefixCount);
+                    final DataSourcePojo dataSource = getFirstDataSource(e.getValue());
+                    return new DataSourceType()
+                        .prefix(e.getKey())
+                        .name(getDataSourceName(dataSource.getOddrn()))
+                        .entitiesCount(prefixCount);
                 }).toList();
             return new DataSourceTypeList().items(dataSourceTypes);
         }));
@@ -61,14 +68,9 @@ public class DirectoryServiceImpl implements DirectoryService {
             .map(function((counts, pojos) -> {
                 final Long totalCount = counts.values().stream().reduce(Long::sum).orElse(0L);
                 final List<DataSourceDirectory> dataSources = pojos.stream().map(pojo -> {
-                    final String oddrn = pojo.getOddrn();
-                    final Map<String, String> oddrnProperties = getOddrnProperties(oddrn, prefix);
-                    final DataSourceDirectory dataSource = new DataSourceDirectory();
-                    dataSource.setId(pojo.getId());
-                    dataSource.setName(pojo.getName());
-                    dataSource.setProperties(oddrnProperties);
-                    dataSource.setEntitiesCount(counts.getOrDefault(pojo.getId(), 0L));
-                    return dataSource;
+                    final Map<String, String> oddrnProperties = getOddrnProperties(pojo.getOddrn(), prefix);
+                    final Long entitiesCount = counts.getOrDefault(pojo.getId(), 0L);
+                    return dataSourceMapper.mapToDirectoryDataSource(pojo, oddrnProperties, entitiesCount);
                 }).toList();
                 return new DataSourceDirectoryList().items(dataSources).entitiesCount(totalCount);
             }));
@@ -87,7 +89,19 @@ public class DirectoryServiceImpl implements DirectoryService {
                 .map(OddrnPath::prefix)
                 .orElse(oddrn);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Error while extracting ODDRN prefix for oddrn {}", oddrn, e);
+            return oddrn;
+        }
+    }
+
+    private String getDataSourceName(final String oddrn) {
+        try {
+            return oddrnGenerator.parse(oddrn)
+                .map(OddrnPath::name)
+                .orElse(oddrn);
+        } catch (Exception e) {
+            log.error("Error while extracting ODDRN name for oddrn {}", oddrn, e);
+            return oddrn;
         }
     }
 
@@ -117,5 +131,12 @@ public class DirectoryServiceImpl implements DirectoryService {
             properties.put(StringUtils.capitalize(split[i].toLowerCase()), split[i + 1]);
         }
         return properties;
+    }
+
+    private DataSourcePojo getFirstDataSource(final Collection<DataSourcePojo> pojos) {
+        if (CollectionUtils.isEmpty(pojos)) {
+            throw new IllegalArgumentException("Collection can not be empty");
+        }
+        return pojos.iterator().next();
     }
 }
