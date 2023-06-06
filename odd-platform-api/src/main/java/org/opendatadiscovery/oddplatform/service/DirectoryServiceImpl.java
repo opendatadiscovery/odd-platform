@@ -32,6 +32,8 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 @RequiredArgsConstructor
 public class DirectoryServiceImpl implements DirectoryService {
+    private static final String UNKNOWN_DATASOURCE_TYPE = "other";
+
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final DataSourceMapper dataSourceMapper;
@@ -59,8 +61,7 @@ public class DirectoryServiceImpl implements DirectoryService {
 
     @Override
     public Mono<DataSourceDirectoryList> getDirectoryDatasourceList(final String prefix) {
-        return dataSourceRepository.findByPrefix(prefix)
-            .collectList()
+        return getDataSourcesByPrefix(prefix)
             .flatMap(dataSources -> {
                 final List<Long> ids = dataSources.stream().map(DataSourcePojo::getId).toList();
                 return dataEntityRepository.getCountByDataSources(ids).map(counts -> Tuples.of(counts, dataSources));
@@ -83,14 +84,24 @@ public class DirectoryServiceImpl implements DirectoryService {
             .map(dto -> new DataEntityType().id(dto.getId()).name(DataEntityType.NameEnum.fromValue(dto.name())));
     }
 
+    private Mono<List<DataSourcePojo>> getDataSourcesByPrefix(final String prefix) {
+        if (UNKNOWN_DATASOURCE_TYPE.equalsIgnoreCase(prefix)) {
+            return dataSourceRepository.list()
+                .filter(pojo -> getDataSourcePrefix(pojo.getOddrn()).equals(UNKNOWN_DATASOURCE_TYPE))
+                .collectList();
+        } else {
+            return dataSourceRepository.findByPrefix(prefix).collectList();
+        }
+    }
+
     private String getDataSourcePrefix(final String oddrn) {
         try {
             return oddrnGenerator.parse(oddrn)
                 .map(OddrnPath::prefix)
-                .orElse(oddrn);
+                .orElse(UNKNOWN_DATASOURCE_TYPE);
         } catch (Exception e) {
             log.error("Error while extracting ODDRN prefix for oddrn {}", oddrn, e);
-            return oddrn;
+            return UNKNOWN_DATASOURCE_TYPE;
         }
     }
 
@@ -98,10 +109,10 @@ public class DirectoryServiceImpl implements DirectoryService {
         try {
             return oddrnGenerator.parse(oddrn)
                 .map(OddrnPath::name)
-                .orElse(oddrn);
+                .orElse(StringUtils.capitalize(UNKNOWN_DATASOURCE_TYPE));
         } catch (Exception e) {
             log.error("Error while extracting ODDRN name for oddrn {}", oddrn, e);
-            return oddrn;
+            return StringUtils.capitalize(UNKNOWN_DATASOURCE_TYPE);
         }
     }
 
@@ -120,6 +131,9 @@ public class DirectoryServiceImpl implements DirectoryService {
     }
 
     private Map<String, String> getOddrnProperties(final String oddrn, final String prefix) {
+        if (UNKNOWN_DATASOURCE_TYPE.equalsIgnoreCase(prefix)) {
+            return Map.of("oddrn", oddrn);
+        }
         final String replaced = oddrn.replace(prefix + "/", "");
         final String[] split = replaced.split("/");
         if (split.length % 2 != 0) {
