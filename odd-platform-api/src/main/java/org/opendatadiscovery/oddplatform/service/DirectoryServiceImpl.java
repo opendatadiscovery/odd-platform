@@ -19,6 +19,7 @@ import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.utils.OddrnUtils;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
@@ -26,14 +27,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
+import static org.opendatadiscovery.oddplatform.utils.OddrnUtils.UNKNOWN_DATASOURCE_TYPE;
 import static reactor.function.TupleUtils.function;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class DirectoryServiceImpl implements DirectoryService {
-    private static final String UNKNOWN_DATASOURCE_TYPE = "other";
-
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final DataSourceMapper dataSourceMapper;
@@ -51,7 +51,7 @@ public class DirectoryServiceImpl implements DirectoryService {
                     final Long prefixCount = getPrefixCount(e.getValue(), counts);
                     final DataSourcePojo dataSource = getFirstDataSource(e.getValue());
                     return new DataSourceType()
-                        .prefix(e.getKey())
+                        .prefix(OddrnUtils.transformPrefix(e.getKey()))
                         .name(getDataSourceName(dataSource.getOddrn()))
                         .entitiesCount(prefixCount);
                 }).toList();
@@ -61,7 +61,8 @@ public class DirectoryServiceImpl implements DirectoryService {
 
     @Override
     public Mono<DataSourceDirectoryList> getDirectoryDatasourceList(final String prefix) {
-        return getDataSourcesByPrefix(prefix)
+        final String normalizedPrefix = OddrnUtils.normalizePrefix(prefix);
+        return getDataSourcesByPrefix(normalizedPrefix)
             .flatMap(dataSources -> {
                 final List<Long> ids = dataSources.stream().map(DataSourcePojo::getId).toList();
                 return dataEntityRepository.getCountByDataSources(ids).map(counts -> Tuples.of(counts, dataSources));
@@ -69,7 +70,7 @@ public class DirectoryServiceImpl implements DirectoryService {
             .map(function((counts, pojos) -> {
                 final Long totalCount = counts.values().stream().reduce(Long::sum).orElse(0L);
                 final List<DataSourceDirectory> dataSources = pojos.stream().map(pojo -> {
-                    final Map<String, String> oddrnProperties = getOddrnProperties(pojo.getOddrn(), prefix);
+                    final Map<String, String> oddrnProperties = getOddrnProperties(pojo.getOddrn(), normalizedPrefix);
                     final Long entitiesCount = counts.getOrDefault(pojo.getId(), 0L);
                     return dataSourceMapper.mapToDirectoryDataSource(pojo, oddrnProperties, entitiesCount);
                 }).toList();
