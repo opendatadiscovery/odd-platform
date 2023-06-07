@@ -110,6 +110,7 @@ public class DirectoryServiceImpl implements DirectoryService {
         try {
             return oddrnGenerator.parse(oddrn)
                 .map(OddrnPath::name)
+                .map(name -> StringUtils.capitalize(name).replace("_", " "))
                 .orElse(StringUtils.capitalize(UNKNOWN_DATASOURCE_TYPE));
         } catch (Exception e) {
             log.error("Error while extracting ODDRN name for oddrn {}", oddrn, e);
