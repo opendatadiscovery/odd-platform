@@ -13,9 +13,9 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = ({ cells, sx }) => (
   <S.HeaderContainer sx={sx}>
     {cells.map(cell => (
-      <S.HeaderCell key={cell.content} $flex={cell.flex}>
+      <S.Cell key={cell.content} $flex={cell.flex}>
         <Typography variant='caption'>{cell.content}</Typography>
-      </S.HeaderCell>
+      </S.Cell>
     ))}
   </S.HeaderContainer>
 );
@@ -29,9 +29,9 @@ export const Row: FC<RowProps> = ({ row, sx }) => (
   <Link to={`/${row.id}`}>
     <S.RowContainer sx={sx}>
       {row.cells.map(cell => (
-        <S.RowCell key={cell.content} $flex={cell.flex}>
+        <S.Cell key={cell.content} $flex={cell.flex}>
           <Typography variant='body1'>{cell.content}</Typography>
-        </S.RowCell>
+        </S.Cell>
       ))}
     </S.RowContainer>
   </Link>

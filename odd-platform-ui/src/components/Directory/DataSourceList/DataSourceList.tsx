@@ -11,10 +11,14 @@ import {
 import { pluralize } from 'lib/helpers';
 import type { ErrorState } from 'redux/interfaces';
 import type { DataSourceDirectory } from 'generated-sources';
+import startCase from 'lodash/startCase';
+import uniq from 'lodash/uniq';
+import keys from 'lodash/keys';
+import flatten from 'lodash/flatten';
+import omit from 'lodash/omit';
 import * as S from './DataSourceList.styles';
 import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';
 import * as Table from './DataSourceTable/Table';
-import { addHeaderCell } from './DataSourceTable/helpers';
 
 const DataSourceList: FC = () => {
   const { dataSourceTypePrefix: prefix } = useAppParams();
@@ -28,29 +32,27 @@ const DataSourceList: FC = () => {
   const dataSourceName = getCapitalizedDatasourceNameFromPrefix(prefix);
 
   const transformToHeaderCells = (data: DataSourceDirectory[]): Cell[] => {
-    const addedFieldNames = new Set<string>();
+    const keysToOmit: Array<keyof DataSourceDirectory> = [
+      'id',
+      'properties',
+      'entitiesCount',
+    ];
+    const entitiesCount: keyof DataSourceDirectory = 'entitiesCount';
 
-    return data.reduce((acc: Cell[], item) => {
-      const entries = Object.entries(item);
+    const fieldNames = uniq(
+      flatten(
+        data.map(item => [
+          ...keys(omit(item, keysToOmit)),
+          ...keys(item.properties || {}),
+          entitiesCount,
+        ])
+      )
+    );
 
-      const cellsByKey = entries.reduce((memo: Cell[], [key, value]) => {
-        if (key === 'properties') {
-          const propertiesEntries = Object.entries(value);
-          return propertiesEntries.reduce(
-            (ac: Cell[], [propKey]) => addHeaderCell(acc, propKey, addedFieldNames),
-            memo
-          );
-        }
-
-        if (key !== 'id') {
-          return addHeaderCell(memo, key, addedFieldNames);
-        }
-
-        return memo;
-      }, acc);
-
-      return cellsByKey;
-    }, []);
+    return fieldNames.map(fieldName => ({
+      fieldName,
+      content: startCase(fieldName),
+    }));
   };
 
   const addFlexToCell = (cells: Cell[]): FlexCell[] => {

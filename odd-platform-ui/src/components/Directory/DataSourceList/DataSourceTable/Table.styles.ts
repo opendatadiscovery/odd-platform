@@ -8,9 +8,10 @@ export const HeaderContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.border.primary,
+  padding: theme.spacing(0, 0.25, 0, 0),
 }));
 
-export const HeaderCell = styled('div')<{ $flex: CSSProperties['flex'] }>(
+export const Cell = styled('div')<{ $flex: CSSProperties['flex'] }>(
   ({ theme, $flex }) => ({
     display: 'flex',
     flex: $flex,
@@ -29,13 +30,3 @@ export const RowContainer = styled(Box)(({ theme }) => ({
   borderBottomColor: theme.palette.border.primary,
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
 }));
-
-export const RowCell = styled('div')<{ $flex: CSSProperties['flex'] }>(
-  ({ theme, $flex }) => ({
-    display: 'flex',
-    flex: $flex,
-    alignItems: 'center',
-    overflow: 'hidden',
-    paddingLeft: theme.spacing(1),
-  })
-);
