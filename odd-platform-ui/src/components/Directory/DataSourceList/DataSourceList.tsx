@@ -1,27 +1,107 @@
-import React, { type FC } from 'react';
+import React, { type FC, useMemo } from 'react';
 import { useAppParams, useGetDirectoryDataSources } from 'lib/hooks';
 import { Typography } from '@mui/material';
 import {
+  AppErrorPage,
+  AppLoadingPage,
   DatasourceLogo,
   getCapitalizedDatasourceNameFromPrefix,
+  ScrollableContainer,
 } from 'components/shared/elements';
-import type { DataSourceDirectoryList } from 'generated-sources';
 import { pluralize } from 'lib/helpers';
+import type { ErrorState } from 'redux/interfaces';
+import type { DataSourceDirectory } from 'generated-sources';
 import * as S from './DataSourceList.styles';
+import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';
+import * as Table from './DataSourceTable/Table';
+import { addHeaderCell } from './DataSourceTable/helpers';
 
 const DataSourceList: FC = () => {
   const { dataSourceTypePrefix: prefix } = useAppParams();
-  const { data, isLoading, isError, error } = useGetDirectoryDataSources({ prefix });
+  const {
+    data: dataSourceList,
+    isLoading,
+    isError,
+    error,
+  } = useGetDirectoryDataSources({ prefix });
 
   const dataSourceName = getCapitalizedDatasourceNameFromPrefix(prefix);
 
-  // fake
-  const dataSourceList: DataSourceDirectoryList = { entitiesCount: 16, items: [] };
+  const transformToHeaderCells = (data: DataSourceDirectory[]): Cell[] => {
+    const addedFieldNames = new Set<string>();
+
+    return data.reduce((acc: Cell[], item) => {
+      const entries = Object.entries(item);
+
+      const cellsByKey = entries.reduce((memo: Cell[], [key, value]) => {
+        if (key === 'properties') {
+          const propertiesEntries = Object.entries(value);
+          return propertiesEntries.reduce(
+            (ac: Cell[], [propKey]) => addHeaderCell(acc, propKey, addedFieldNames),
+            memo
+          );
+        }
+
+        if (key !== 'id') {
+          return addHeaderCell(memo, key, addedFieldNames);
+        }
+
+        return memo;
+      }, acc);
+
+      return cellsByKey;
+    }, []);
+  };
+
+  const addFlexToCell = (cells: Cell[]): FlexCell[] => {
+    const { length } = cells;
+    const fullBasis = 100;
+    const setFlex = (basis: number) => `0 0 ${basis}%`;
+
+    const countBasis = 10;
+    const restBasis = fullBasis - countBasis;
+    return cells.map(cell => {
+      if (cell.fieldName === 'entitiesCount') {
+        return { ...cell, flex: setFlex(countBasis) };
+      }
+
+      return { ...cell, flex: setFlex(restBasis / (length - 1)) };
+    });
+  };
+
+  const headerCells = useMemo(() => {
+    if (!dataSourceList?.items) return [];
+
+    return transformToHeaderCells(dataSourceList.items);
+  }, [dataSourceList?.items]);
+
+  const flexedHeaderCells = useMemo(() => addFlexToCell(headerCells), [headerCells]);
+
+  const createRows = (data: DataSourceDirectory[], cells: FlexCell[]): Row[] =>
+    data.map(item => {
+      const cellsForItem = cells.map(({ fieldName, flex }) => {
+        let content = '';
+        if (fieldName in item) {
+          content = String(item[fieldName as keyof DataSourceDirectory]);
+        } else if ('properties' in item && fieldName in item.properties) {
+          content = String(item.properties[fieldName]);
+        }
+        return { content, flex };
+      });
+
+      return { id: item.id, cells: cellsForItem };
+    });
+
+  const rows = useMemo(() => {
+    if (!dataSourceList?.items) return [];
+
+    return createRows(dataSourceList.items, flexedHeaderCells);
+  }, [dataSourceList?.items, flexedHeaderCells]);
 
   return (
     <>
-      {/* {isLoading && <AppLoadingPage />} */}
-      {/* <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} /> */}
+      {isLoading && <AppLoadingPage />}
+      <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
       {dataSourceList && (
         <S.Container>
           <S.Header>
@@ -35,6 +115,12 @@ const DataSourceList: FC = () => {
               {pluralize(dataSourceList.entitiesCount, 'entity', 'entities')}
             </Typography>
           </S.Header>
+          <Table.Header cells={flexedHeaderCells} sx={{ mt: 1 }} />
+          <ScrollableContainer>
+            {rows.map(row => (
+              <Table.Row key={row.id} row={row} />
+            ))}
+          </ScrollableContainer>
         </S.Container>
       )}
     </>

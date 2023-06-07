@@ -278,3 +278,11 @@ export async function asyncPool(
 export function pluralize(count: number, text: string, pluralText: string) {
   return `${count} ${count === 1 ? text : pluralText}`;
 }
+
+export function capitalizeFirstLetterAndSeparate(string: string) {
+  const separated = string.replace(/([a-z])([A-Z])/g, '$1 $2');
+  const uppercaseFirstLetter = separated.charAt(0).toUpperCase();
+  const restOfPhrase = separated.slice(1).toLowerCase();
+
+  return uppercaseFirstLetter + restOfPhrase;
+}
