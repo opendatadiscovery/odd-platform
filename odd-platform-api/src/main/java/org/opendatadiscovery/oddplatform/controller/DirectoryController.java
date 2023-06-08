@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DirectoryApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceDirectoryList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
