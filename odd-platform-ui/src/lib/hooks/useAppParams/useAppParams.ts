@@ -21,7 +21,11 @@ export const useAppParams = (): AppRouteParams => {
     integrationViewType,
     structureViewType,
     dataSourceTypePrefix,
+    dataSourceId,
+    typeId,
   } = useParams<keyof RouteParams>() as RouteParams;
+
+  const directoriesEntityTypeId = typeId === 'all' ? undefined : parseInt(typeId, 10);
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
@@ -42,6 +46,8 @@ export const useAppParams = (): AppRouteParams => {
     integrationId,
     integrationViewType,
     dataSourceTypePrefix,
+    dataSourceId: parseInt(dataSourceId, 10),
+    typeId: directoriesEntityTypeId,
   };
 };
 

@@ -99,8 +99,8 @@ export enum DirectoryRoutes {
   directory = 'directory',
   dataSourceTypePrefix = 'dataSourceTypePrefix',
   dataSourceTypePrefixParam = ':dataSourceTypePrefix',
-  dataSourceName = 'dataSourceName',
-  dataSourceNameParam = ':dataSourceName',
-  entityType = 'entityType',
-  entityTypeParam = ':entityTypeParam',
+  dataSourceId = 'dataSourceId',
+  dataSourceIdParam = ':dataSourceId',
+  typeId = 'typeId',
+  typeIdParam = ':typeId',
 }

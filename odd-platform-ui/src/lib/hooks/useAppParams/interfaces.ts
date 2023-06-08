@@ -103,10 +103,14 @@ interface AppManagementRouteParams extends ManagementRouteViewTypes {
 
 interface DirectoryRouteParams {
   [DirectoryRoutes.dataSourceTypePrefix]: string;
+  [DirectoryRoutes.dataSourceId]: string;
+  [DirectoryRoutes.typeId]: string;
 }
 
 interface AppDirectoryRouteParams {
   [DirectoryRoutes.dataSourceTypePrefix]: string;
+  [DirectoryRoutes.dataSourceId]: number;
+  [DirectoryRoutes.typeId]: undefined | number;
 }
 
 export type RouteParams = DataEntityRouteParams &

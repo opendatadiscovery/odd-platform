@@ -16,7 +16,7 @@ import uniq from 'lodash/uniq';
 import keys from 'lodash/keys';
 import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
-import * as S from './DataSourceList.styles';
+import * as S from '../shared/styles';
 import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';
 import * as Table from './DataSourceTable/Table';
 
@@ -29,7 +29,7 @@ const DataSourceList: FC = () => {
     error,
   } = useGetDirectoryDataSources({ prefix });
 
-  const dataSourceName = getCapitalizedDatasourceNameFromPrefix(prefix);
+  const dataSourceTypeName = getCapitalizedDatasourceNameFromPrefix(prefix);
 
   const transformToHeaderCells = (data: DataSourceDirectory[]): Cell[] => {
     const keysToOmit: Array<keyof DataSourceDirectory> = [
@@ -110,7 +110,7 @@ const DataSourceList: FC = () => {
             <S.LogoContainer>
               <DatasourceLogo name={prefix} rounded width={32} padding={1} />
               <Typography variant='h0' ml={1}>
-                {dataSourceName}
+                {dataSourceTypeName}
               </Typography>
             </S.LogoContainer>
             <Typography variant='body1' color='texts.hint'>

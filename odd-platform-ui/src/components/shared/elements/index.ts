@@ -70,3 +70,4 @@ export { default as Input } from './Input/Input';
 export { default as TestRunStatusReasonModal } from './TestRunStatusReasonModal/TestRunStatusReasonModal';
 export { default as ListLayout } from './ListLayout/ListLayout';
 export { default as ScrollableContainer } from './StyledComponents/ScrollableContainer';
+export * as Table from './StyledComponents/Table';

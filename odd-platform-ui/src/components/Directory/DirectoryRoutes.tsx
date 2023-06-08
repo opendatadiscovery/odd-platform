@@ -1,9 +1,10 @@
 import React, { type FC } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import { ListLayout } from 'components/shared/elements';
 import DataSourcesList from './DataSourceList/DataSourceList';
 import Directory from './Directory/Directory';
+import Entities from './Entities/Entities';
 
 const DirectoryRoutes: FC = () => {
   const { DirectoryRoutes: DirectoryRoutesEnum } = useAppPaths();
@@ -17,8 +18,12 @@ const DirectoryRoutes: FC = () => {
           element={<DataSourcesList />}
         />
         <Route
-          path={`${DirectoryRoutesEnum.dataSourceTypePrefixParam}/:lol`}
-          element={<div>entities list</div>}
+          path={`${DirectoryRoutesEnum.dataSourceTypePrefixParam}/${DirectoryRoutesEnum.dataSourceIdParam}/${DirectoryRoutesEnum.typeIdParam}`}
+          element={<Entities />}
+        />
+        <Route
+          path={`${DirectoryRoutesEnum.dataSourceTypePrefixParam}/${DirectoryRoutesEnum.dataSourceIdParam}`}
+          element={<Navigate to='all' replace />}
         />
       </Routes>
     </ListLayout>

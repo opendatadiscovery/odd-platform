@@ -2,7 +2,7 @@ import React, { type FC } from 'react';
 import { Typography } from '@mui/material';
 import type { SxProps, Theme } from '@mui/system';
 import { Link } from 'react-router-dom';
-import * as S from './Table.styles';
+import { Table } from 'components/shared/elements';
 import type { FlexCell, Row as IRow } from './interfaces';
 
 interface HeaderProps {
@@ -11,13 +11,13 @@ interface HeaderProps {
 }
 
 export const Header: FC<HeaderProps> = ({ cells, sx }) => (
-  <S.HeaderContainer sx={sx}>
+  <Table.HeaderContainer sx={sx}>
     {cells.map(cell => (
-      <S.Cell key={cell.content} $flex={cell.flex}>
+      <Table.Cell key={cell.content} $flex={cell.flex}>
         <Typography variant='caption'>{cell.content}</Typography>
-      </S.Cell>
+      </Table.Cell>
     ))}
-  </S.HeaderContainer>
+  </Table.HeaderContainer>
 );
 
 interface RowProps {
@@ -26,13 +26,13 @@ interface RowProps {
 }
 
 export const Row: FC<RowProps> = ({ row, sx }) => (
-  <Link to={`/${row.id}`}>
-    <S.RowContainer sx={sx}>
+  <Link to={`./${row.id}`}>
+    <Table.RowContainer sx={sx}>
       {row.cells.map(cell => (
-        <S.Cell key={cell.content} $flex={cell.flex}>
+        <Table.Cell key={cell.content} $flex={cell.flex}>
           <Typography variant='body1'>{cell.content}</Typography>
-        </S.Cell>
+        </Table.Cell>
       ))}
-    </S.RowContainer>
+    </Table.RowContainer>
   </Link>
 );

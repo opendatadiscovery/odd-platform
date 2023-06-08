@@ -21,7 +21,7 @@ const DirectoryItem: FC<DirectoryItemProps> = ({ name, prefix, entitiesCount }) 
       <S.TextContainer>
         <Typography variant='h4'>{name}</Typography>
         <Typography variant='subtitle2'>
-          {pluralize(entitiesCount, 'item', 'items')}
+          {pluralize(entitiesCount, 'entity', 'entities')}
         </Typography>
       </S.TextContainer>
     </S.Container>

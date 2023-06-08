@@ -5,6 +5,8 @@ import type {
   DirectoryApiGetDatasourceEntityTypesRequest,
   DirectoryApiGetDirectoryDatasourceListRequest,
 } from 'generated-sources';
+import type { ErrorState } from 'redux/interfaces';
+import type { DataSourceEntityList } from 'lib/interfaces';
 
 export function useGetDataSourceTypes() {
   return useQuery(['dataSourceTypes'], async () => {
@@ -30,20 +32,45 @@ export function useGetDataSourceEntityTypes(
   );
 }
 
-type UseGetDataSourceEntities = Omit<DirectoryApiGetDatasourceEntitiesRequest, 'page'>;
+type UseGetDataSourceEntities = Omit<DirectoryApiGetDatasourceEntitiesRequest, 'page'> & {
+  enabled: boolean;
+};
 
 export function useGetDataSourceEntities({
   dataSourceId,
   size,
   typeId,
+  enabled,
 }: UseGetDataSourceEntities) {
-  return useInfiniteQuery(
+  return useInfiniteQuery<DataSourceEntityList, ErrorState, DataSourceEntityList>(
     ['directoryDataSourceEntities', { dataSourceId, size, typeId }],
-    ({ pageParam = 1 }) =>
-      directoryApi.getDatasourceEntities({ dataSourceId, size, typeId, page: pageParam }),
+    async ({ pageParam = 1 }) => {
+      const response = await directoryApi.getDatasourceEntities({
+        dataSourceId,
+        size,
+        typeId,
+        page: pageParam,
+      });
+
+      const totalItems = response.entities.pageInfo.total;
+      const totalPageCount = Math.ceil(totalItems / size);
+      let nextPage;
+
+      if (pageParam < totalPageCount) {
+        nextPage = pageParam + 1;
+      }
+
+      return {
+        ...response,
+        entities: {
+          ...response.entities,
+          pageInfo: { ...response.entities.pageInfo, nextPage },
+        },
+      };
+    },
     {
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage.pageInfo.hasNext ? allPages.length + 1 : undefined,
+      getNextPageParam: lastPage => lastPage.entities.pageInfo.nextPage,
+      enabled,
     }
   );
 }

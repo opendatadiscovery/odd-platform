@@ -20,3 +20,10 @@ export const LogoContainer = styled('div')(() => ({
   alignItems: 'center',
   justifyContent: 'space-between',
 }));
+
+export const CountContainer = styled('div')(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  width: '25%',
+}));
