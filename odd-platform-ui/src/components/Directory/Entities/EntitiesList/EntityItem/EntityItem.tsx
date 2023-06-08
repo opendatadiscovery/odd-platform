@@ -1,8 +1,12 @@
 import React, { type FC } from 'react';
 import type { DataEntity } from 'generated-sources';
-import { EntityClassItem, Table } from 'components/shared/elements';
+import {
+  EntityClassItem,
+  Table,
+  DataEntityDetailsPreview,
+} from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
 
@@ -35,25 +39,36 @@ const EntityItem: FC<EntityItemProps> = ({
     <Link to={dataEntityOverviewPath(id)}>
       <Table.RowContainer>
         <Table.Cell $flex={flexMap.name}>
-          <Typography variant='body1' noWrap title={name}>
-            {name}
-          </Typography>
           <Grid
             container
-            item
-            justifyContent='flex-end'
+            justifyContent='space-between'
+            alignItems='center'
             wrap='nowrap'
-            flexBasis={0}
-            mr={1}
           >
-            {entityClasses &&
-              entityClasses.map(entityClass => (
-                <EntityClassItem
-                  sx={{ ml: 0.5 }}
-                  key={entityClass.id}
-                  entityClassName={entityClass.name}
-                />
-              ))}
+            <Box
+              sx={{
+                overflow: 'hidden',
+                justifyContent: 'flex-start',
+                mr: 1,
+                display: 'flex',
+                flexWrap: 'nowrap',
+              }}
+            >
+              <Typography variant='body1' noWrap title={name}>
+                {name}
+              </Typography>
+              <Box display='flex' flexWrap='nowrap' mr={1} justifyContent='flex-start'>
+                {entityClasses &&
+                  entityClasses.map(entityClass => (
+                    <EntityClassItem
+                      sx={{ ml: 0.5 }}
+                      key={entityClass.id}
+                      entityClassName={entityClass.name}
+                    />
+                  ))}
+              </Box>
+            </Box>
+            <DataEntityDetailsPreview dataEntityId={id} />
           </Grid>
         </Table.Cell>
         {!typeId && (

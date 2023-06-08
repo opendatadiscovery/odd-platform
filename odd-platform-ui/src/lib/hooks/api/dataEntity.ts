@@ -71,3 +71,19 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
 export function useDataEntitiesUsage() {
   return useQuery(['dataEntitiesUsage'], () => dataEntityApi.getDataEntitiesUsage());
 }
+
+interface UseDataEntityDetailsParams {
+  dataEntityId: number;
+  enabled?: boolean;
+}
+
+export function useDataEntityDetails({
+  dataEntityId,
+  enabled = true,
+}: UseDataEntityDetailsParams) {
+  return useQuery(
+    ['dataEntityDetails', dataEntityId],
+    () => dataEntityApi.getDataEntityDetails({ dataEntityId }),
+    { enabled, staleTime: 120000 }
+  );
+}

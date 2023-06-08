@@ -6,7 +6,12 @@ import * as S from 'components/shared/elements/AppTooltip/AppTooltipStyles';
 interface AppTooltipProps
   extends Pick<
     TooltipProps,
-    'placement' | 'followCursor' | 'componentsProps' | 'disableHoverListener'
+    | 'placement'
+    | 'followCursor'
+    | 'componentsProps'
+    | 'disableHoverListener'
+    | 'onOpen'
+    | 'onClose'
   > {
   title: React.ReactElement | string | undefined | number;
   type?: S.TooltipColorTypes;
@@ -25,6 +30,8 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   childSx,
   componentsProps,
   disableHoverListener,
+  onOpen,
+  onClose,
 }) => {
   const [isOverflowed, setIsOverflow] = React.useState(checkForOverflow);
   const childrenRef = React.useRef<HTMLDivElement>(null);
@@ -46,6 +53,8 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       disableInteractive
       disableHoverListener={disableHoverListener}
       componentsProps={componentsProps}
+      onOpen={onOpen}
+      onClose={onClose}
     >
       <S.ChildrenContainer $isOverflowed={isOverflowed} ref={childrenRef} sx={childSx}>
         {children}

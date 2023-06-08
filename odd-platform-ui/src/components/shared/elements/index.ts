@@ -71,3 +71,4 @@ export { default as TestRunStatusReasonModal } from './TestRunStatusReasonModal/
 export { default as ListLayout } from './ListLayout/ListLayout';
 export { default as ScrollableContainer } from './StyledComponents/ScrollableContainer';
 export * as Table from './StyledComponents/Table';
+export { default as DataEntityDetailsPreview } from './DataEntityDetailsPreview/DataEntityDetailsPreview';

@@ -26,11 +26,11 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
   isContentEmpty,
 }) => {
   const flexMap = {
-    name: '1 0 40%',
-    owner: '1 0 21%',
-    type: '0 0 13%',
-    createdAt: '0 0 13%',
-    updatedAt: '0 0 13%',
+    name: '1 0 32%',
+    owner: '1 0 23%',
+    type: '0 0 15%',
+    createdAt: '0 0 15%',
+    updatedAt: '0 0 15%',
   };
 
   return (

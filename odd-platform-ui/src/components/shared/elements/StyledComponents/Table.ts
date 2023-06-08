@@ -17,7 +17,7 @@ export const Cell = styled('div')<{ $flex: CSSProperties['flex'] }>(
     flex: $flex,
     alignItems: 'center',
     overflow: 'hidden',
-    paddingLeft: theme.spacing(1),
+    padding: theme.spacing(0, 1),
   })
 );
 

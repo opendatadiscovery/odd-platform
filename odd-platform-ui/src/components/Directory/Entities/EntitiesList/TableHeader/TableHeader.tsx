@@ -17,7 +17,7 @@ const TableHeader: FC<TableHeaderProps> = ({ flexMap }) => {
     { name: 'Last update', flex: flexMap.updatedAt },
   ];
 
-  if (!typeId) cells.splice(1, 0, { name: 'Type', flex: '0 0 13%' });
+  if (!typeId) cells.splice(1, 0, { name: 'Type', flex: flexMap.type });
 
   return (
     <Table.HeaderContainer>
