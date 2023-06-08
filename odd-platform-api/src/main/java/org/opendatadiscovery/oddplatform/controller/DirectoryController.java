@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DirectoryApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceDirectoryList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceTypeList;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.DirectoryService;
@@ -34,11 +35,11 @@ public class DirectoryController implements DirectoryApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityList>> getDatasourceEntities(final Long dataSourceId,
-                                                                      final Integer page,
-                                                                      final Integer size,
-                                                                      final Integer typeId,
-                                                                      final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<DataSourceEntityList>> getDatasourceEntities(final Long dataSourceId,
+                                                                            final Integer page,
+                                                                            final Integer size,
+                                                                            final Integer typeId,
+                                                                            final ServerWebExchange exchange) {
         return dataEntityService.getDataEntitiesByDatasourceAndType(dataSourceId, typeId, page, size)
             .map(ResponseEntity::ok);
     }

@@ -3153,6 +3153,6 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityList'
+                $ref: './components.yaml/#/components/schemas/DataSourceEntityList'
       tags:
         - directory

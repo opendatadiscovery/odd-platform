@@ -3242,15 +3242,13 @@ components:
     DataSourceEntityList:
       type: object
       properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataSourceEntity'
-        page_info:
-          $ref: '#/components/schemas/PageInfo'
+        entities:
+          $ref: '#/components/schemas/DataEntityList'
+        data_source:
+          $ref: '#/components/schemas/DataSource'
       required:
-        - items
-        - page_info
+        - entities
+        - data_source
 
   parameters:
     PageParam:
