@@ -43,6 +43,12 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
+    public Mono<DataSource> get(final long id) {
+        return dataSourceRepository.getDto(id)
+            .map(dataSourceMapper::mapDto);
+    }
+
+    @Override
     @ReactiveTransactional
     public Mono<DataSource> create(final DataSourceFormData form) {
         final Mono<TokenDto> token = tokenGenerator.generateToken().flatMap(tokenRepository::create);

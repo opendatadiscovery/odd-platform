@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 public interface DataSourceService {
     Mono<DataSourceList> list(final Integer page, final Integer size, final String nameQuery);
 
+    Mono<DataSource> get(final long id);
+
     Mono<DataSource> create(final DataSourceFormData form);
 
     Mono<DataSource> update(final long id, final DataSourceUpdateFormData form);

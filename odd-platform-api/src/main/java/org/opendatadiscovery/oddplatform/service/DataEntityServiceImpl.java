@@ -20,6 +20,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -104,6 +106,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final TagService tagService;
     private final DataEntityFilledService dataEntityFilledService;
     private final MetadataFieldService metadataFieldService;
+    private final DataSourceService dataSourceService;
 
     private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
     private final ReactiveMetadataFieldRepository reactiveMetadataFieldRepository;
@@ -144,18 +147,22 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     @Override
-    public Mono<DataEntityList> getDataEntitiesByDatasourceAndType(final long datasourceId,
-                                                                   final Integer typeId,
-                                                                   final int page,
-                                                                   final int size) {
+    public Mono<DataSourceEntityList> getDataEntitiesByDatasourceAndType(final long datasourceId,
+                                                                         final Integer typeId,
+                                                                         final int page,
+                                                                         final int size) {
+        final Mono<DataSource> dataSourceMono = dataSourceService.get(datasourceId);
         final Mono<List<DataEntityDimensionsDto>> enrichedDimensions = reactiveDataEntityRepository
             .listByDatasourceAndType(datasourceId, typeId, page, size)
             .flatMap(this::enrichEntityClassDetails)
             .flatMap(this::enrichParentGroups);
         final Mono<Long> count = reactiveDataEntityRepository.countByDatasourceAndType(datasourceId, typeId);
-        return Mono.zip(enrichedDimensions, count)
+
+        final Mono<DataEntityList> dataEntityListMono = Mono.zip(enrichedDimensions, count)
             .map(function((dtos, total) -> new Page<>(dtos, total, true)))
             .map(dataEntityMapper::mapPojos);
+        return Mono.zip(dataEntityListMono, dataSourceMono).map(function((dataEntities, dataSource) ->
+            new DataSourceEntityList().dataSource(dataSource).entities(dataEntities)));
     }
 
     @Override
