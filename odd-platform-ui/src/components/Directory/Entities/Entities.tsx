@@ -9,6 +9,7 @@ import { AppErrorPage, AppLoadingPage, DatasourceLogo } from 'components/shared/
 import { Typography } from '@mui/material';
 import { pluralize } from 'lib/helpers';
 import type { ErrorState } from 'redux/interfaces';
+import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import EntitiesTabs from './EntitiesTabs/EntitiesTabs';
 import EntitiesList from './EntitiesList/EntitiesList';
 import * as S from '../shared/styles';
@@ -40,16 +41,16 @@ const Entities: FC = () => {
   const prevName = usePrevious(entitiesResponse?.pages[0].dataSource.name);
 
   const dataSourceName = useMemo(
-    () => entitiesResponse?.pages[0].dataSource.name || prevName,
+    () => entitiesResponse?.pages[0].dataSource.name ?? prevName,
     [entitiesResponse?.pages[0].dataSource.name]
   );
 
   const total = useMemo(
-    () => entitiesResponse?.pages[0].entities.pageInfo.total || 0,
+    () => entitiesResponse?.pages[0].entities.pageInfo.total ?? 0,
     [entitiesResponse?.pages[0].entities.pageInfo.total]
   );
 
-  const entities = entitiesResponse?.pages.flatMap(page => page.entities.items) || [];
+  const entities = entitiesResponse?.pages.flatMap(page => page.entities.items) ?? [];
 
   return (
     <>
@@ -59,8 +60,8 @@ const Entities: FC = () => {
         offsetTop={210}
         error={(typesError || entitiesError) as ErrorState}
       />
-
       <S.Container>
+        <DirectoryBreadCrumbs dataSourceName={dataSourceName} />
         <S.Header>
           <S.LogoContainer>
             <DatasourceLogo name={prefix} rounded width={32} padding={1} />

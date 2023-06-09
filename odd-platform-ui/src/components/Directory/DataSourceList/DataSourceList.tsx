@@ -16,6 +16,7 @@ import uniq from 'lodash/uniq';
 import keys from 'lodash/keys';
 import flatten from 'lodash/flatten';
 import omit from 'lodash/omit';
+import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import * as S from '../shared/styles';
 import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';
 import * as Table from './DataSourceTable/Table';
@@ -106,6 +107,7 @@ const DataSourceList: FC = () => {
       <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
       {dataSourceList && (
         <S.Container>
+          <DirectoryBreadCrumbs />
           <S.Header>
             <S.LogoContainer>
               <DatasourceLogo name={prefix} rounded width={32} padding={1} />

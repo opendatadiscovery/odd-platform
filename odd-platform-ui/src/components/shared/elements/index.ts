@@ -72,3 +72,4 @@ export { default as ListLayout } from './ListLayout/ListLayout';
 export { default as ScrollableContainer } from './StyledComponents/ScrollableContainer';
 export * as Table from './StyledComponents/Table';
 export { default as DataEntityDetailsPreview } from './DataEntityDetailsPreview/DataEntityDetailsPreview';
+export { default as BreadCrumbs } from './BreadCrumbs/BreadCrumbs';

@@ -7,15 +7,20 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import type { DataEntity } from 'generated-sources';
 import { Grid } from '@mui/material';
-import TableHeader from './TableHeader/TableHeader';
+import type { ErrorState } from 'redux/interfaces';
+import type { DataSourceEntityList } from 'lib/interfaces';
+import type { InfiniteQueryObserverResult } from '@tanstack/query-core';
 import EntityItem from './EntityItem/EntityItem';
+import TableHeader from './TableHeader/TableHeader';
 
 interface EntitiesResultsListProps {
   entities: DataEntity[];
   hasNextPage: boolean;
   isEntitiesLoaded: boolean;
   isContentEmpty: boolean;
-  fetchNextPage: () => void;
+  fetchNextPage: () => Promise<
+    InfiniteQueryObserverResult<DataSourceEntityList, ErrorState>
+  >;
 }
 
 const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
@@ -37,7 +42,7 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
     <>
       <TableHeader flexMap={flexMap} />
       {entities.length > 0 ? (
-        <ScrollableContainer $sxHeight={21} id='directory-entities-list'>
+        <ScrollableContainer $offsetY={190} id='directory-entities-list'>
           <InfiniteScroll
             scrollableTarget='directory-entities-list'
             dataLength={entities.length}
@@ -53,7 +58,7 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
               <EntityItem
                 key={entity.id}
                 id={entity.id}
-                name={entity.internalName || entity.externalName}
+                name={entity.internalName ?? entity.externalName}
                 type={entity.type}
                 flexMap={flexMap}
                 ownership={entity.ownership}

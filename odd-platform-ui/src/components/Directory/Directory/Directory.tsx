@@ -20,7 +20,7 @@ const Directory: FC = () => {
       {isLoading && <AppLoadingPage />}
       <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
       {dataSourceTypes && (
-        <ScrollableContainer $sxHeight={8.5}>
+        <ScrollableContainer $offsetY={70}>
           <Grid container mt={3} columnGap={1} rowGap={3}>
             {dataSourceTypes.map(({ prefix, name, entitiesCount }) => (
               <DirectoryItem
