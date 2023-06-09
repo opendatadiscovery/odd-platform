@@ -408,6 +408,28 @@ components:
         propagate:
           type: boolean
 
+    DataEntityDomainList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityDomain'
+      required:
+        - items
+
+    DataEntityDomain:
+      type: object
+      properties:
+        domain:
+          $ref: '#/components/schemas/DataEntityRef'
+        children_count:
+          type: integer
+          format: int64
+      required:
+        - domain
+        - children_count
+
     DataEntityUsageInfo:
       type: object
       properties:

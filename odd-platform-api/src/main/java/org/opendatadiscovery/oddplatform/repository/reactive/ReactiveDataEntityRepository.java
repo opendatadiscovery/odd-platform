@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -90,4 +91,6 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Mono<DataEntityDetailsDto> getDataEntitySearchFields(final long dataEntityId);
 
     Mono<String> getHighlightedResult(final String text, final String query);
+
+    Flux<DataEntityDomainInfoDto> getDataEntityDomainsInfo();
 }

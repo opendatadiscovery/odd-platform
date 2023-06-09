@@ -17,6 +17,8 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomain;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
@@ -424,6 +426,17 @@ public class DataEntityServiceImpl implements DataEntityService {
         return Mono.zip(dataEntityStatisticsRepository.getStatistics(),
                 dataEntityFilledService.getFilledDataEntitiesCount())
             .map(function(dataEntityMapper::mapUsageInfo));
+    }
+
+    @Override
+    public Mono<DataEntityDomainList> getDomainsInfo() {
+        return reactiveDataEntityRepository.getDataEntityDomainsInfo()
+            .map(info -> {
+                final DataEntityRef entityRef = dataEntityMapper.mapRef(info.domain());
+                return new DataEntityDomain().domain(entityRef).childrenCount(info.childrenCount());
+            })
+            .collectList()
+            .map(list -> new DataEntityDomainList().items(list));
     }
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {

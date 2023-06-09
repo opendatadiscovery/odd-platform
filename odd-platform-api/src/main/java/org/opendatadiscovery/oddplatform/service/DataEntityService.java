@@ -5,6 +5,7 @@ import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
@@ -78,4 +79,6 @@ public interface DataEntityService {
     Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId, final Long dataEntityGroupId);
 
     Mono<DataEntityUsageInfo> getDataEntityUsageInfo();
+
+    Mono<DataEntityDomainList> getDomainsInfo();
 }

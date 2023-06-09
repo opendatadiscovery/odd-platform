@@ -24,7 +24,9 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
@@ -44,6 +46,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
@@ -661,6 +664,28 @@ public class ReactiveDataEntityRepositoryImpl
         final var select = DSL.select(field(sql, String.class));
         return jooqReactiveOperations.mono(select)
             .map(Record1::value1);
+    }
+
+    @Override
+    public Flux<DataEntityDomainInfoDto> getDataEntityDomainsInfo() {
+        final String entitiesCountAlias = "entities_count";
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        conditions.add(DATA_ENTITY.TYPE_ID.eq(DataEntityTypeDto.DOMAIN.getId()));
+        final var query = DSL.select(DATA_ENTITY.fields())
+            .select(coalesce(countDistinct(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), 0L).as(entitiesCountAlias))
+            .from(DATA_ENTITY)
+            .leftJoin(GROUP_ENTITY_RELATIONS).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.GROUP_ODDRN))
+            .where(conditions)
+            .groupBy(DATA_ENTITY.fields());
+        return jooqReactiveOperations.flux(query)
+            .map(r -> {
+                final DataEntityPojo domain = r.into(DATA_ENTITY).into(DataEntityPojo.class);
+                final Long entitiesCount = r.get(entitiesCountAlias, Long.class);
+                return new DataEntityDomainInfoDto(domain, entitiesCount);
+            });
     }
 
     @Override
