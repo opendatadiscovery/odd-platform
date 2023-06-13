@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +143,7 @@ public class DirectoryServiceImpl implements DirectoryService {
         try {
             return oddrnGenerator.parse(oddrn)
                 .map(this::getOddrnPathProperties)
+                .filter(map -> !map.isEmpty())
                 .orElse(defaultPropertiesMap);
         } catch (Exception e) {
             return defaultPropertiesMap;
@@ -150,12 +152,13 @@ public class DirectoryServiceImpl implements DirectoryService {
 
     private Map<String, String> getOddrnPathProperties(final OddrnPath path) {
         final Map<String, String> properties = new HashMap<>();
-        for (final Field field : path.getClass().getDeclaredFields()) {
+        final Class<? extends OddrnPath> pathClass = path.getClass();
+        for (final Field field : pathClass.getDeclaredFields()) {
             final PathField annotation = field.getAnnotation(PathField.class);
             if (annotation != null) {
-                field.setAccessible(true);
                 try {
-                    final Object value = field.get(path);
+                    final Method getMethod = pathClass.getMethod("get" + StringUtils.capitalize(field.getName()));
+                    final Object value = getMethod.invoke(path);
                     if (value != null) {
                         properties.put(field.getName(), value.toString());
                     }
