@@ -1,12 +1,9 @@
 import React, { type FC, useCallback } from 'react';
-import type { TermRef } from 'generated-sources';
-import { Permission } from 'generated-sources';
-import { Grid, Typography } from '@mui/material';
-import WithPermissions from 'components/shared/contexts/Permission/WithPermissions';
-import Button from 'components/shared/elements/Button/Button';
-import CloseIcon from 'components/shared/icons/CloseIcon';
+import { Permission, type TermRef } from 'generated-sources';
+import { WithPermissions } from 'components/shared/contexts';
+import { Button, CollapsibleInfoContainer, InfoItem } from 'components/shared/elements';
+import { DeleteIcon } from 'components/shared/icons';
 import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
-import * as S from './TermItem.styles';
 
 interface TermItemProps {
   name: TermRef['name'];
@@ -31,32 +28,33 @@ const TermItem: FC<TermItemProps> = ({
   const handleDelete = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
-      deleteTerm({ datasetFieldId, termId }).then(() => removeTerm(termId));
+      deleteTerm({ datasetFieldId, termId })
+        .then(() => removeTerm(termId))
+        .catch();
     },
     [deleteTerm, datasetFieldId, termId, removeTerm]
   );
 
   return (
-    <S.TermItemContainer to={termDetailsLink}>
-      <Grid sx={{ my: 0.5 }} container flexWrap='nowrap' justifyContent='space-between'>
-        <Grid container flexDirection='column'>
-          <Typography variant='body1' color='texts.action'>
-            {name}
-          </Typography>
-          <S.TermDefinition variant='subtitle2'>{definition}</S.TermDefinition>
-        </Grid>
-        <S.ActionsContainer>
-          <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
-            <Button
-              sx={{ ml: 0.25 }}
-              buttonType='linkGray-m'
-              icon={<CloseIcon />}
-              onClick={handleDelete}
-            />
-          </WithPermissions>
-        </S.ActionsContainer>
-      </Grid>
-    </S.TermItemContainer>
+    <InfoItem
+      labelWidth={4}
+      label={<Button to={termDetailsLink} buttonType='link-m' text={name} />}
+      info={
+        <CollapsibleInfoContainer
+          content={<>{definition}</>}
+          actions={
+            <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
+              <Button
+                sx={{ mt: 0.25 }}
+                buttonType='link-m'
+                icon={<DeleteIcon />}
+                onClick={handleDelete}
+              />
+            </WithPermissions>
+          }
+        />
+      }
+    />
   );
 };
 
