@@ -6,7 +6,7 @@
   },
   {
     "name": "Kinesis AQA",
-    "oddrn": "//kinesis/cloud/aws/account/13/region/us-west-2/",
+    "oddrn": "//kinesis/cloud/aws/account/13/region/us-west-2",
     "namespace_name": "Messaging"
   },
   {
