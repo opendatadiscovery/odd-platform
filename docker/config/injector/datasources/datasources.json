@@ -19,13 +19,13 @@
   },
   {
     "name": "Great Expectation",
-    "oddrn": "//ge",
+    "oddrn": "//great_expectations",
     "description": "Data quality processes over Snowflake data",
     "namespace_name": "Data Quality"
   },
   {
     "name": "Airflow ETL",
-    "oddrn": "//airflow/host/aws.airflow.aws.com/",
+    "oddrn": "//airflow/host/aws.airflow.aws.com",
     "description": "ETL for Sample Data Lake",
     "namespace_name": "ETL"
   },
@@ -37,7 +37,7 @@
   },
   {
     "name": "User Transactions",
-    "oddrn": "//kafka/host/aws.kafka.connect.io/",
+    "oddrn": "//kafka/host/aws.kafka.connect.io",
     "description": "Kafka topics for user transactions data sample",
     "namespace_name": "Messaging"
   },
@@ -55,7 +55,7 @@
   },
   {
     "name": "KDS Clickstream",
-    "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2/",
+    "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2",
     "namespace_name": "Messaging"
   }
 ]
