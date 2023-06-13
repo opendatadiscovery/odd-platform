@@ -1,5 +1,5 @@
 {
-  "data_source_oddrn": "//kafka/host/aws.kafka.connect.io",
+  "data_source_oddrn": "//kafka/host/aws.kafka.connect.io/",
   "items": [
     {
       "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west",
