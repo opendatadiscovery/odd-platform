@@ -8,6 +8,8 @@ import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import NumberFormatted from '../NumberFormatted/NumberFormatted';
 import AppTooltip from '../AppTooltip/AppTooltip';
 import MetadataItem from '../MetadataItem/MetadataItem';
+import TruncatedList from '../TruncatedList/TruncatedList';
+import TagItem from '../TagItem/TagItem';
 
 interface DataEntityDetailsPreviewProps {
   dataEntityId: number;
@@ -42,7 +44,7 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
 
   const content = useMemo(
     () => (
-      <S.Container container>
+      <S.Container>
         {isLoading ? (
           <Grid container justifyContent='center'>
             <AppCircularProgress
@@ -54,27 +56,71 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
         ) : (
           <>
             <Grid container>
-              <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
-                <Typography variant='h4' color='text.primary'>
-                  Custom metadata
-                </Typography>
-                <Typography variant='subtitle1' color='texts.info'>
-                  <NumberFormatted value={customMetadata.length} /> fields
-                </Typography>
-              </Grid>
-              {customMetadata.length ? (
-                customMetadata
-                  .slice(0, metadataNum)
-                  .map(metadata => (
-                    <MetadataItem key={metadata.field.id} metadata={metadata} />
-                  ))
-              ) : (
-                <Typography variant='body1' color='texts.secondary'>
-                  No custom metadata
-                </Typography>
-              )}
+              <S.BlockContainer>
+                <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
+                  <Typography variant='h4' color='text.primary'>
+                    Tags
+                  </Typography>
+                  <Typography variant='subtitle1' color='texts.info'>
+                    <NumberFormatted value={dataEntityDetails?.tags?.length} /> tags
+                  </Typography>
+                </Grid>
+                {dataEntityDetails && dataEntityDetails?.tags?.length ? (
+                  <TruncatedList
+                    items={dataEntityDetails.tags}
+                    ellipsis={
+                      <Typography
+                        variant='body1'
+                        color='texts.hint'
+                        sx={{ ml: 1 }}
+                        component='span'
+                      >
+                        few tags more
+                      </Typography>
+                    }
+                  >
+                    {tag => (
+                      <TagItem
+                        sx={{ mr: 0.5 }}
+                        key={tag.id}
+                        important={tag.important}
+                        label={tag.name}
+                      />
+                    )}
+                  </TruncatedList>
+                ) : (
+                  <Typography variant='body1' color='texts.secondary'>
+                    No tags
+                  </Typography>
+                )}
+              </S.BlockContainer>
+              <S.BlockContainer>
+                <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
+                  <Typography variant='h4' color='text.primary'>
+                    Custom metadata
+                  </Typography>
+                  <Typography variant='subtitle1' color='texts.info'>
+                    <NumberFormatted value={customMetadata.length} /> fields
+                  </Typography>
+                </Grid>
+                {customMetadata.length ? (
+                  customMetadata
+                    .slice(0, metadataNum)
+                    .map(metadata => (
+                      <MetadataItem
+                        key={metadata.field.id}
+                        metadata={metadata}
+                        labelWidth={5}
+                      />
+                    ))
+                ) : (
+                  <Typography variant='body1' color='texts.secondary'>
+                    No custom metadata
+                  </Typography>
+                )}
+              </S.BlockContainer>
             </Grid>
-            <Grid container sx={{ mt: 2 }}>
+            <Grid container>
               <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
                 <Typography variant='h4' color='text.primary'>
                   Predefined metadata
@@ -87,7 +133,11 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
                 predefinedMetadata
                   .slice(0, metadataNum)
                   .map(metadata => (
-                    <MetadataItem key={metadata.field.id} metadata={metadata} />
+                    <MetadataItem
+                      key={metadata.field.id}
+                      metadata={metadata}
+                      labelWidth={5}
+                    />
                   ))
               ) : (
                 <Typography variant='body1' color='texts.secondary'>
@@ -118,6 +168,7 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
       dataEntityDetails?.internalDescription,
       customMetadata,
       predefinedMetadata,
+      dataEntityDetails?.tags,
     ]
   );
 

@@ -84,6 +84,6 @@ export function useDataEntityDetails({
   return useQuery(
     ['dataEntityDetails', dataEntityId],
     () => dataEntityApi.getDataEntityDetails({ dataEntityId }),
-    { enabled, staleTime: 120000 }
+    { enabled }
   );
 }

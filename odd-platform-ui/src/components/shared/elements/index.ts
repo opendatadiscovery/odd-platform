@@ -77,3 +77,4 @@ export { default as ScrollableContainer } from './StyledComponents/ScrollableCon
 export * as Table from './StyledComponents/Table';
 export { default as DataEntityDetailsPreview } from './DataEntityDetailsPreview/DataEntityDetailsPreview';
 export { default as BreadCrumbs } from './BreadCrumbs/BreadCrumbs';
+export { default as TruncatedList } from './TruncatedList/TruncatedList';

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Theme, TooltipProps } from '@mui/material';
 import type { SxProps } from '@mui/system';
-import * as S from 'components/shared/elements/AppTooltip/AppTooltipStyles';
+import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps
   extends Pick<
@@ -33,10 +33,10 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   onOpen,
   onClose,
 }) => {
-  const [isOverflowed, setIsOverflow] = React.useState(checkForOverflow);
-  const childrenRef = React.useRef<HTMLDivElement>(null);
+  const [isOverflowed, setIsOverflow] = useState(checkForOverflow);
+  const childrenRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (childrenRef.current && checkForOverflow) {
       const element = childrenRef.current.firstElementChild || childrenRef.current;
       const { scrollWidth, clientWidth } = element;
