@@ -31,6 +31,7 @@ export { default as OwnerTitleAutocomplete } from './Autocomplete/OwnerTitleAuto
 export { default as DataEntityChannelsAutocomplete } from './Autocomplete/DataEntityChannelsAutocomplete/DataEntityChannelsAutocomplete';
 export { default as SlackChannelsAutocomplete } from './Autocomplete/SlackChannelsAutocomplete/SlackChannelsAutocomplete';
 export { default as PolicyAutocomplete } from './Autocomplete/PolicyAutocomplete/PolicyAutocomplete';
+export { default as TermsAutocomplete } from './Autocomplete/TermsAutocomplete/TermsAutocomplete';
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';
@@ -67,7 +68,10 @@ export { getCapitalizedDatasourceNameFromPrefix } from './DatasourceLogo/helpers
 export { default as Button } from './Button/Button';
 export { default as FileInput } from './FileInput/FileInput';
 export { default as Input } from './Input/Input';
+export { default as InfoItem } from './InfoItem/InfoItem';
+export { default as CollapsibleInfoContainer } from './CollapsibleInfoContainer/CollapsibleInfoContainer';
 export { default as TestRunStatusReasonModal } from './TestRunStatusReasonModal/TestRunStatusReasonModal';
+export { default as AssignTermForm } from './forms/AssignTermForm/AssignTermForm';
 export { default as ListLayout } from './ListLayout/ListLayout';
 export { default as ScrollableContainer } from './StyledComponents/ScrollableContainer';
 export * as Table from './StyledComponents/Table';

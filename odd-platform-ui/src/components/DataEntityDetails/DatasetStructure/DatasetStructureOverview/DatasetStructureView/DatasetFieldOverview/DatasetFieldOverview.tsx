@@ -7,6 +7,7 @@ import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';
+import DatasetFieldTerms from './DatasetFieldTerms/DatasetFieldTerms';
 import useStructure from '../../lib/useStructure';
 import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
@@ -132,6 +133,7 @@ const DatasetFieldOverview: React.FC = () => {
         </Grid>
       </S.SectionContainer>
       <DatasetFieldOverviewEnums field={field} />
+      <DatasetFieldTerms fieldTerms={field?.terms} datasetFieldId={field.id} />
       {field.metadata &&
         field.metadata?.length > 0 &&
         getOverviewSection(

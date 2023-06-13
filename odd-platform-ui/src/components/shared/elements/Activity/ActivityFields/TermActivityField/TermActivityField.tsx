@@ -64,19 +64,6 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
     setNewValues(setNewState());
   }, [oldState, newState]);
 
-  const renderTermItem = ([namespace, terms]: [string, ActivityData[]]) => (
-    <Grid sx={{ mb: 0.5 }}>
-      <Typography variant='body1' color='texts.hint'>
-        {namespace}
-      </Typography>
-      {terms.map(term => (
-        <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
-          <Box sx={{ p: 0.5 }}>{term.name}</Box>
-        </S.ArrayItemWrapper>
-      ))}
-    </Grid>
-  );
-
   const groupTermsByNamespace = (state: ActivityData[]) =>
     state.reduce<{ [key: string]: ActivityData[] }>(
       (memo, activity) =>
@@ -88,6 +75,19 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
           : {},
       {}
     );
+
+  const renderTermItem = ([namespace, terms]: [string, ActivityData[]]) => (
+    <Grid sx={{ mb: 0.5 }}>
+      <Typography variant='body1' color='texts.hint'>
+        Namespace: {namespace}
+      </Typography>
+      {terms.map(term => (
+        <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
+          <Box sx={{ p: 0.5 }}>{term.name}</Box>
+        </S.ArrayItemWrapper>
+      ))}
+    </Grid>
+  );
 
   return (
     <Grid container flexDirection='column'>

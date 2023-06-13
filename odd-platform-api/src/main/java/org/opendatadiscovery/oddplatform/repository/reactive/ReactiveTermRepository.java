@@ -6,6 +6,7 @@ import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.Term;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
@@ -31,6 +32,10 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId);
 
+    Mono<DatasetFieldToTermPojo> createRelationWithDatasetField(final long datasetFieldId, final long termId);
+
+    Mono<DatasetFieldToTermPojo> deleteRelationWithDatasetField(final long datasetFieldId, final long termId);
+
     Mono<Page<TermRefDto>> getQuerySuggestions(final String query);
 
     Mono<Page<TermDto>> findByState(final FacetStateDto state, final int page, final int size);
@@ -38,4 +43,6 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Mono<Long> countByState(final FacetStateDto state);
 
     Flux<TermRefDto> getDataEntityTerms(final long dataEntityId);
+
+    Flux<TermRefDto> getDatasetFieldTerms(final long datasetFieldId);
 }

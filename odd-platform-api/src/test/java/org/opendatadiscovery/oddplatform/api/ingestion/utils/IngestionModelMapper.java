@@ -136,7 +136,8 @@ public class IngestionModelMapper {
             .isPrimaryKey(field.getIsPrimaryKey())
             .defaultValue(field.getDefaultValue())
             .metadata(metadataFieldValues)
-            .enumValueCount(ListUtils.emptyIfNull(field.getEnumValues()).size());
+            .enumValueCount(ListUtils.emptyIfNull(field.getEnumValues()).size())
+            .terms(List.of());
     }
 
     public static List<MetadataFieldValue> buildExpectedMetadataFieldValue(final Map<String, Object> metadata) {

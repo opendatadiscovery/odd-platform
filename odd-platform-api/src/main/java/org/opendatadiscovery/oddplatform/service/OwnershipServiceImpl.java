@@ -17,7 +17,9 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipCreate;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipDelete;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipUpdate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
@@ -28,7 +30,6 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.OWNERS
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_CREATED;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_DELETED;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_UPDATED;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipCreate.DATA_ENTITY_ID;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -46,7 +47,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     @Override
     @ActivityLog(event = OWNERSHIP_CREATED)
     @ReactiveTransactional
-    public Mono<Ownership> create(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
+    public Mono<Ownership> create(@ActivityParameter(OwnershipCreate.DATA_ENTITY_ID) final long dataEntityId,
                                   final OwnershipFormData formData) {
         return Mono.zip(ownerService.getOrCreate(formData.getOwnerName()),
                 titleService.getOrCreate(formData.getTitleName()))
@@ -75,9 +76,8 @@ public class OwnershipServiceImpl implements OwnershipService {
     @Override
     @ActivityLog(event = OWNERSHIP_DELETED)
     @ReactiveTransactional
-    public Mono<Void> delete(
-        @ActivityParameter(ActivityParameterNames.OwnershipDelete.OWNERSHIP_ID) final long ownershipId,
-        final Boolean propagate) {
+    public Mono<Void> delete(@ActivityParameter(OwnershipDelete.OWNERSHIP_ID) final long ownershipId,
+                             final Boolean propagate) {
         return ownershipRepository.delete(ownershipId)
             .flatMap(pojo -> {
                 if (Boolean.TRUE.equals(propagate)) {
@@ -99,9 +99,8 @@ public class OwnershipServiceImpl implements OwnershipService {
     @Override
     @ActivityLog(event = OWNERSHIP_UPDATED)
     @ReactiveTransactional
-    public Mono<Ownership> update(
-        @ActivityParameter(ActivityParameterNames.OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,
-        final OwnershipUpdateFormData formData) {
+    public Mono<Ownership> update(@ActivityParameter(OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,
+                                  final OwnershipUpdateFormData formData) {
         return ownershipRepository.get(ownershipId)
             .switchIfEmpty(Mono.error(new NotFoundException("Ownership", ownershipId)))
             .then(titleService.getOrCreate(formData.getTitleName()))

@@ -76,7 +76,9 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagReposito
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.InternalNameUpdated;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TagsAssociationUpdated;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -95,7 +97,6 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERN
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_NAME;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_TAGS;
 import static org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin.INTERNAL;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated.DATA_ENTITY_ID;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -318,8 +319,9 @@ public class DataEntityServiceImpl implements DataEntityService {
     @Override
     @ActivityLog(event = ActivityEventTypeDto.DESCRIPTION_UPDATED)
     @ReactiveTransactional
-    public Mono<InternalDescription> upsertDescription(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
-                                                       final InternalDescriptionFormData formData) {
+    public Mono<InternalDescription> upsertDescription(
+        @ActivityParameter(DescriptionUpdated.DATA_ENTITY_ID) final long dataEntityId,
+        final InternalDescriptionFormData formData) {
         return reactiveDataEntityRepository.setInternalDescription(dataEntityId, formData.getInternalDescription())
             .map(pojo -> new InternalDescription().internalDescription(pojo.getInternalDescription()))
             .flatMap(in -> reactiveSearchEntrypointRepository.updateDataEntityVectors(dataEntityId)
@@ -339,7 +341,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     @ActivityLog(event = ActivityEventTypeDto.BUSINESS_NAME_UPDATED)
     @ReactiveTransactional
     public Mono<InternalName> upsertBusinessName(
-        @ActivityParameter(ActivityParameterNames.InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
+        @ActivityParameter(InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final InternalNameFormData formData) {
         return reactiveDataEntityRepository.setInternalName(dataEntityId, formData.getInternalName())
             .map(pojo -> new InternalName().internalName(pojo.getInternalName()))
@@ -359,9 +361,8 @@ public class DataEntityServiceImpl implements DataEntityService {
     @Override
     @ReactiveTransactional
     @ActivityLog(event = ActivityEventTypeDto.TAG_ASSIGNMENT_UPDATED)
-    public Flux<Tag> upsertTags(
-        @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
-        final TagsFormData formData) {
+    public Flux<Tag> upsertTags(@ActivityParameter(TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
+                                final TagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
         return tagService.updateRelationsWithDataEntity(dataEntityId, names)
             .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)

@@ -14,6 +14,8 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.C
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_TOKEN_REGENERATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_ADD_TERM;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_DELETE_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_DESCRIPTION_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_ENUMS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_LABELS_UPDATE;
@@ -21,7 +23,6 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TO_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_CONFIG_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ALERT_RESOLVE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ATTACHMENT_MANAGE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_CUSTOM_METADATA_DELETE;
@@ -253,7 +254,14 @@ public final class SecurityConstants {
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/enum_values", POST),
             DATASET_FIELD_ENUMS_UPDATE),
         new SecurityRule(ALERT, new PathPatternParserServerWebExchangeMatcher("/api/alerts/{alert_id}/status", PUT),
-            DATA_ENTITY_ALERT_RESOLVE),
+            DATASET_FIELD_ADD_TERM),
+        new SecurityRule(DATASET_FIELD,
+            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/terms", POST),
+            DATA_ENTITY_ADD_TERM),
+        new SecurityRule(DATASET_FIELD,
+            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/terms/{term_id}",
+                DELETE),
+            DATASET_FIELD_DELETE_TERM),
         new SecurityRule(
             DATA_ENTITY,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/alert_config", PUT),

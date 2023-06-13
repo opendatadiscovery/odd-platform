@@ -33,6 +33,8 @@ const DatasetStructure: FC = () => {
                 Permission.DATASET_FIELD_ENUMS_UPDATE,
                 Permission.DATASET_FIELD_LABELS_UPDATE,
                 Permission.DATASET_FIELD_DESCRIPTION_UPDATE,
+                Permission.DATASET_FIELD_ADD_TERM,
+                Permission.DATASET_FIELD_DELETE_TERM,
               ]}
               resourcePermissions={resourcePermissions}
               Component={DatasetStructureOverview}
