@@ -12,7 +12,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
@@ -20,14 +19,20 @@ import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 import static org.jooq.JSONB.jsonb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 class DatasetFieldApiMapperTest {
 
     @InjectMocks
     DatasetFieldApiMapper datasetFieldApiMapper = new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
-        new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()));
+        new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
+        new NamespaceMapperImpl(),
+        new OffsetDateTimeMapperImpl(),
+        new OwnershipMapperImpl(
+            new OwnerMapperImpl(),
+            new TitleMapperImpl()
+        )
+    ));
 
     @Test
     @DisplayName("mapping dataset fields")

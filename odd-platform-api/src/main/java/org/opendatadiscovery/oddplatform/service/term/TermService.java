@@ -23,7 +23,11 @@ public interface TermService {
 
     Mono<TermRef> linkTermWithDataEntity(final Long termId, final Long dataEntityId);
 
-    Mono<TermRef> removeTermFromDataEntity(final Long termId, final Long dataEntityId);
+    Mono<Void> removeTermFromDataEntity(final Long termId, final Long dataEntityId);
+
+    Mono<TermRef> linkTermWithDatasetField(final Long termId, final Long datasetFieldId);
+
+    Mono<Void> removeTermFromDatasetField(final Long termId, final Long datasetFieldId);
 
     Flux<Tag> upsertTags(final Long termId, final TagsFormData tagsFormData);
 }

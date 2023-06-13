@@ -35,7 +35,14 @@ class DatasetVersionMapperTest {
     DatasetVersionMapper datasetVersionMapper =
         new DatasetVersionMapperImpl(
             new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
-                new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl())),
+                new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
+                new NamespaceMapperImpl(),
+                new OffsetDateTimeMapperImpl(),
+                new OwnershipMapperImpl(
+                    new OwnerMapperImpl(),
+                    new TitleMapperImpl()
+                )
+            )),
             new OffsetDateTimeMapperImpl());
     private static final EasyRandom EASY_RANDOM;
 

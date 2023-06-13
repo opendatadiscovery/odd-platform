@@ -149,7 +149,7 @@ public class DataEntityController implements DataEntityApi {
     public Mono<ResponseEntity<Void>> deleteTermFromDataEntity(final Long dataEntityId, final Long termId,
                                                                final ServerWebExchange exchange) {
         return termService.removeTermFromDataEntity(termId, dataEntityId)
-            .map(ignored -> ResponseEntity.noContent().build());
+            .thenReturn(ResponseEntity.noContent().build());
     }
 
     @Override

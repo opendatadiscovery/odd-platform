@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { datasetFieldApiClient } from 'lib/api';
-import { showServerErrorToast } from 'lib/errorHandling';
+import { showServerErrorToast, showSuccessToast } from 'lib/errorHandling';
+import type { DatasetFieldApiDeleteTermFromDatasetFieldRequest } from 'generated-sources';
 
 interface UseDataEntityMetricsProps {
   datasetFieldId: number;
@@ -17,6 +18,41 @@ export function useDataSetFieldMetrics({ datasetFieldId }: UseDataEntityMetricsP
         showServerErrorToast(err as Response, {
           additionalMessage: 'while loading field metrics',
         }),
+    }
+  );
+}
+
+interface UseAddDatasetFieldTermParams {
+  datasetFieldId: number;
+  termId: number;
+}
+
+export function useAddDatasetFieldTerm() {
+  return useMutation(
+    ({ datasetFieldId, termId }: UseAddDatasetFieldTermParams) => {
+      const params = { datasetFieldId, datasetFieldTermFormData: { termId } };
+
+      return datasetFieldApiClient.addDatasetFieldTerm(params);
+    },
+    {
+      onSuccess: () => {
+        showSuccessToast({ message: 'Term successfully added!' });
+      },
+    }
+  );
+}
+
+export function useDeleteDatasetFieldTerm() {
+  return useMutation(
+    async (params: DatasetFieldApiDeleteTermFromDatasetFieldRequest) => {
+      await datasetFieldApiClient.deleteTermFromDatasetField(params);
+
+      return params.termId;
+    },
+    {
+      onSuccess: () => {
+        showSuccessToast({ message: 'Term successfully deleted!' });
+      },
     }
   );
 }

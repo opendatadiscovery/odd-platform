@@ -26,12 +26,15 @@ import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.dataset.DatasetVersionFields;
 import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
+import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldMetadataValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetVersionRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -51,6 +54,7 @@ import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_METADATA_VALUE;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -58,6 +62,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static reactor.function.TupleUtils.function;
 
 @Repository
@@ -71,6 +77,8 @@ public class ReactiveDatasetVersionRepositoryImpl
     public static final String ENUM_VALUE_COUNT = "enum_value_count";
     public static final String METADATA_VALUES = "metadata_values";
     public static final String METADATA = "metadata";
+    public static final String TERMS = "terms";
+    public static final String TERM_NAMESPACES = "term_namespaces";
 
     private final JooqRecordHelper jooqRecordHelper;
 
@@ -93,6 +101,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
+            .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
+            .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(TERM_NAMESPACES))
             .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(DATASET_VERSION)
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
@@ -104,6 +114,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(DATASET_FIELD_METADATA_VALUE)
             .on(DATASET_FIELD.ID.eq(DATASET_FIELD_METADATA_VALUE.DATASET_FIELD_ID))
             .leftJoin(METADATA_FIELD).on(DATASET_FIELD_METADATA_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
+            .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD.ID.eq(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID))
+            .leftJoin(TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID)).and(TERM.DELETED_AT.isNull())
+            .leftJoin(NAMESPACE).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID))
             .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields);
 
@@ -155,6 +168,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
+            .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
+            .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(TERM_NAMESPACES))
             .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(subquery)
             .join(DATASET_VERSION)
@@ -169,6 +184,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(DATASET_FIELD_METADATA_VALUE)
             .on(DATASET_FIELD.ID.eq(DATASET_FIELD_METADATA_VALUE.DATASET_FIELD_ID))
             .leftJoin(METADATA_FIELD).on(DATASET_FIELD_METADATA_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
+            .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD.ID.eq(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID))
+            .leftJoin(TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID)).and(TERM.DELETED_AT.isNull())
+            .leftJoin(NAMESPACE).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID))
             .groupBy(selectFields);
 
         return jooqReactiveOperations
@@ -271,6 +289,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .datasetFieldPojo(datasetFieldPojo)
             .labels(extractLabels(datasetVersionRecord))
             .metadata(extractMetadata(datasetVersionRecord))
+            .terms(extractTerms(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
             .build();
     }
@@ -311,6 +330,21 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         return metadataFields.stream()
             .map(pojo -> new DatasetFieldMetadataDto(pojo, values.get(pojo.getId())))
+            .toList();
+    }
+
+    private List<TermRefDto> extractTerms(final Record record) {
+        final Set<TermPojo> terms = jooqRecordHelper.extractAggRelation(record, TERMS, TermPojo.class);
+
+        final Map<Long, NamespacePojo> namespaces = jooqRecordHelper
+            .extractAggRelation(record, TERM_NAMESPACES, NamespacePojo.class)
+            .stream()
+            .collect(Collectors.toMap(NamespacePojo::getId, identity()));
+
+        return terms.stream().map(pojo -> TermRefDto.builder()
+                .term(pojo)
+                .namespace(namespaces.get(pojo.getNamespaceId()))
+                .build())
             .toList();
     }
 

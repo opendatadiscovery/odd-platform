@@ -12,6 +12,7 @@ import {
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
+  DatasetTermActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
@@ -125,6 +126,20 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
           <EnumsActivityField
             oldState={activity.oldState.datasetFieldValues}
             newState={activity.newState.datasetFieldValues}
+            hideAllDetails={hideAllDetails}
+          />
+        )}
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && (
+          <DatasetTermActivityField
+            oldState={activity.oldState.datasetFieldTerms}
+            newState={activity.newState.datasetFieldTerms}
+            hideAllDetails={hideAllDetails}
+          />
+        )}
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && (
+          <DatasetTermActivityField
+            oldState={activity.oldState.datasetFieldTerms}
+            newState={activity.newState.datasetFieldTerms}
             hideAllDetails={hideAllDetails}
           />
         )}
