@@ -1,8 +1,8 @@
 {
-  "data_source_oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2",
+  "data_source_oddrn": "//s3/cloud",
   "items": [
     {
-      "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw",
+      "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw",
       "name": "data_lake",
       "version": null,
       "description": null,
@@ -16,7 +16,7 @@
         "rows_number": null,
         "field_list": [
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/user_id",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/user_id",
             "name": "user_id",
             "version": null,
             "description": null,
@@ -34,7 +34,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_id",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_id",
             "name": "transaction_id",
             "version": null,
             "description": null,
@@ -52,7 +52,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/user_session_id",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/user_session_id",
             "name": "user_session_id",
             "version": null,
             "description": null,
@@ -70,7 +70,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_amount",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_amount",
             "name": "transaction_amount",
             "version": null,
             "description": null,
@@ -88,7 +88,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_description",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_description",
             "name": "transaction_description",
             "version": null,
             "description": null,
@@ -106,7 +106,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_created_at",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_created_at",
             "name": "transaction_created_at",
             "version": null,
             "description": null,
@@ -124,7 +124,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_active",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_active",
             "name": "transaction_active",
             "version": null,
             "description": null,
@@ -142,7 +142,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_type",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_type",
             "name": "transaction_type",
             "version": null,
             "description": null,
@@ -160,7 +160,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw/columns/transaction_duration",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/raw/columns/transaction_duration",
             "name": "transaction_duration",
             "version": null,
             "description": null,
@@ -188,7 +188,7 @@
       "data_entity_group": null
     },
     {
-      "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset",
+      "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset",
       "name": "transaction_dataset",
       "version": null,
       "description": null,
@@ -202,7 +202,7 @@
         "rows_number": null,
         "field_list": [
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/user_id",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/user_id",
             "name": "user_id",
             "version": null,
             "description": null,
@@ -220,7 +220,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_id",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_id",
             "name": "transaction_id",
             "version": null,
             "description": null,
@@ -238,7 +238,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/user_session_id",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/user_session_id",
             "name": "user_session_id",
             "version": null,
             "description": null,
@@ -256,7 +256,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_amount",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_amount",
             "name": "transaction_amount",
             "version": null,
             "description": null,
@@ -274,7 +274,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_description",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_description",
             "name": "transaction_description",
             "version": null,
             "description": null,
@@ -292,7 +292,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_created_at",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_created_at",
             "name": "transaction_created_at",
             "version": null,
             "description": null,
@@ -310,7 +310,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_active",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_active",
             "name": "transaction_active",
             "version": null,
             "description": null,
@@ -328,7 +328,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/user_clickstream_rate",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/user_clickstream_rate",
             "name": "user_clickstream_rate",
             "version": null,
             "description": null,
@@ -346,7 +346,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_type",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_type",
             "name": "transaction_type",
             "version": null,
             "description": null,
@@ -364,7 +364,7 @@
             "stats": null
           },
           {
-            "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset/columns/transaction_duration",
+            "oddrn": "//s3/cloud/aws/buckets/data_lake/keys/transaction_dataset/columns/transaction_duration",
             "name": "transaction_duration",
             "version": null,
             "description": null,

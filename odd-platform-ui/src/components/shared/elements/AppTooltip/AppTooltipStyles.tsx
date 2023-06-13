@@ -21,9 +21,6 @@ const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObjec
   return {
     color: theme.palette.texts.info,
     borderRadius: '4px',
-    padding: theme.spacing(1),
-    border: '1px solid',
-    borderColor: theme.palette.divider,
     backgroundColor: theme.palette.background.default,
   };
 };
@@ -35,6 +32,7 @@ export const AppTooltip = styled(({ className, ...props }: TooltipProps) => (
     maxWidth: 'unset',
     [`& .${tooltipClasses.tooltip}`]: {
       maxWidth: 'unset',
+      padding: 0,
       fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,

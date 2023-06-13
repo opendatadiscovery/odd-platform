@@ -1,7 +1,7 @@
 import React from 'react';
 import { type DataEntityClassNameEnum } from 'generated-sources';
-import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { type BoxProps } from '@mui/material';
+import { DataEntityClassLabelMap } from 'lib/constants';
 import * as S from './EntityClassItem.styles';
 
 export interface EntityClassItemProps extends Pick<BoxProps, 'sx'> {

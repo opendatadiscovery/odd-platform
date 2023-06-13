@@ -3,23 +3,18 @@ import { Box, Grid, Typography } from '@mui/material';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
+  DataEntityDetailsPreview,
   DatasourceLogo,
   EntityClassItem,
   NumberFormatted,
   TruncatedCell,
 } from 'components/shared/elements';
-import {
-  ColumnsIcon,
-  InformationIcon,
-  QuestionIcon,
-  RowsIcon,
-} from 'components/shared/icons';
+import { ColumnsIcon, QuestionIcon, RowsIcon } from 'components/shared/icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
 import { type GridSizesByBreakpoints, SearchCol } from '../ResultsStyles';
-import ResultItemPreview from './ResultItemPreview/ResultItemPreview';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
 
@@ -41,11 +36,6 @@ const ResultItem: React.FC<ResultItemProps> = ({
   const detailsLink = dataEntityOverviewPath(searchResult.id);
 
   const searchQuery = useAppSelector(getSearchQuery);
-
-  const resultItemPreview = React.useMemo(
-    () => <ResultItemPreview dataEntityId={searchResult.id} />,
-    [searchResult.id]
-  );
 
   const searchHighlights = React.useMemo(
     () => <SearchHighlights dataEntityId={searchResult.id} />,
@@ -105,9 +95,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
                   <QuestionIcon sx={{ mr: 1 }} />
                 </AppTooltip>
               )}
-              <AppTooltip checkForOverflow={false} title={resultItemPreview}>
-                <InformationIcon />
-              </AppTooltip>
+              <DataEntityDetailsPreview dataEntityId={searchResult.id} />
             </Box>
           </S.NameContainer>
           <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>

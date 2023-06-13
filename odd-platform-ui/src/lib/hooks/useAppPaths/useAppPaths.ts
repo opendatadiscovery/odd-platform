@@ -10,6 +10,7 @@ import {
   ManagementRoutes,
   TermsRoutes,
   DataEntityRoutes,
+  DirectoryRoutes,
 } from './shared';
 
 const useAppPaths = () => {
@@ -28,13 +29,25 @@ const useAppPaths = () => {
     updatePath(`${baseSearchPath()}/${searchId}`);
 
   // Activity
-  const activityPath = (query?: string) =>
-    updatePath(`${ActivityRoutes.activity}${query ? `?${query}` : ''}`);
+  const activityPath = (query?: string) => {
+    const queryStr = `?${query}`;
+    return updatePath(`${ActivityRoutes.activity}${query ? queryStr : ''}`);
+  };
 
   // Management
   const integrationPath = (integrationId: string) =>
     updatePath(
       `${ManagementRoutes.management}/${ManagementRoutes.integrations}/${integrationId}`
+    );
+
+  // Directories
+  const directoryEntitiesListPath = (
+    dataSourcePrefix: string,
+    dataSourceId: number,
+    typeId: number | string
+  ) =>
+    updatePath(
+      `${DirectoryRoutes.directory}/${dataSourcePrefix}/${dataSourceId}/${typeId}`
     );
 
   return React.useMemo(
@@ -47,6 +60,7 @@ const useAppPaths = () => {
       ManagementRoutes,
       TermsRoutes,
       DataEntityRoutes,
+      DirectoryRoutes,
       basePath,
       updatePath,
       getNonExactPath,
@@ -54,6 +68,7 @@ const useAppPaths = () => {
       searchPath,
       activityPath,
       integrationPath,
+      directoryEntitiesListPath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

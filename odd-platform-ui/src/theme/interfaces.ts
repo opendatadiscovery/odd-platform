@@ -63,6 +63,7 @@ interface Border {
   secondary: string;
   tertiary: string;
   element: string;
+  light: string;
 }
 
 type ButtonAnimationParams = { loaderBg?: { start: string; end: string } };

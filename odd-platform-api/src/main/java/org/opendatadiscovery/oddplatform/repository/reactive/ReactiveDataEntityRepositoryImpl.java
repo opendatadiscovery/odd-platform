@@ -17,6 +17,7 @@ import org.jooq.Name;
 import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
@@ -500,6 +501,41 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<List<DataEntityDimensionsDto>> listByDatasourceAndType(final long datasourceId,
+                                                                       final Integer typeId,
+                                                                       final int page,
+                                                                       final int size) {
+        final List<Condition> cteConditions = new ArrayList<>();
+        cteConditions.add(DATA_ENTITY.DATA_SOURCE_ID.eq(datasourceId));
+        if (typeId != null) {
+            cteConditions.add(DATA_ENTITY.TYPE_ID.eq(typeId));
+        }
+        final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
+            .conditions(cteConditions)
+            .limitOffset(new DataEntityCTEQueryConfig.LimitOffset(size, (page - 1) * size))
+            .orderBy(DATA_ENTITY.ID.desc())
+            .build();
+        final var query = baseDimensionsSelect(cteConfig);
+        return jooqReactiveOperations.flux(query)
+            .map(dataEntityDtoMapper::mapDimensionRecord)
+            .collectList();
+    }
+
+    @Override
+    public Mono<Long> countByDatasourceAndType(final long datasourceId, final Integer typeId) {
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        conditions.add(DATA_ENTITY.DATA_SOURCE_ID.eq(datasourceId));
+        if (typeId != null) {
+            conditions.add(DATA_ENTITY.TYPE_ID.eq(typeId));
+        }
+        final var query = DSL.select(countDistinct(DATA_ENTITY.ID))
+            .from(DATA_ENTITY)
+            .where(conditions);
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.value1().longValue());
+    }
+
+    @Override
     public Flux<DataEntityDto> listPopular(final int page, final int size) {
         final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
             .limitOffset(new DataEntityCTEQueryConfig.LimitOffset(size, (page - 1) * size))
@@ -664,6 +700,31 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Flux<Integer> getDataSourceEntityTypeIds(final long dataSourceId) {
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        conditions.add(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId));
+        final var query = DSL.selectDistinct(DATA_ENTITY.TYPE_ID)
+            .from(DATA_ENTITY)
+            .where(conditions);
+        return jooqReactiveOperations.flux(query)
+            .map(Record1::component1);
+    }
+
+    @Override
+    public Mono<Map<Long, Long>> getCountByDataSources(final Collection<Long> dataSourceIds) {
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        if (CollectionUtils.isNotEmpty(dataSourceIds)) {
+            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
+        }
+        final var query = DSL.select(DATA_ENTITY.DATA_SOURCE_ID, count(DATA_ENTITY.ID))
+            .from(DATA_ENTITY)
+            .where(conditions)
+            .groupBy(DATA_ENTITY.DATA_SOURCE_ID);
+        return jooqReactiveOperations.flux(query)
+            .collectMap(Record2::component1, r -> r.component2().longValue());
+    }
+
+    @Override
     protected List<Field<?>> getNonUpdatableFields() {
         final List<Field<?>> dataEntityNonUpdatableFields = List.of(
             DATA_ENTITY.INTERNAL_NAME,
@@ -784,5 +845,13 @@ public class ReactiveDataEntityRepositoryImpl
             orderFields.add(field(DATA_ENTITY.ID).desc());
         }
         return orderFields;
+    }
+
+    private List<Condition> getDataEntityDefaultConditions() {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        return conditions;
     }
 }

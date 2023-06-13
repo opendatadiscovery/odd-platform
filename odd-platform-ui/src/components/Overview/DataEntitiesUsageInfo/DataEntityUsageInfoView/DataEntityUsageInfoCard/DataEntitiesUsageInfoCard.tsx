@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { DataEntityClassLabelMap, DataEntityClassTypeLabelMap } from 'redux/interfaces';
+import { DataEntityClassLabelMap, DataEntityClassTypeLabelMap } from 'lib/constants';
 import type { DataEntityClass, DataEntityClassUsageInfo } from 'generated-sources';
 import { EntityClassItem } from 'components/shared/elements';
 import * as S from './DataEntitiesUsageInfoCard.styles';

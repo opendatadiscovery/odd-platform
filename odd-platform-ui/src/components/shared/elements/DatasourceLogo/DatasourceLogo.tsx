@@ -1,6 +1,7 @@
 import React, { type FC } from 'react';
 import { type DatasourceName, DatasourceNames } from 'lib/interfaces';
 import styled from 'styled-components';
+import { parseDatasourceName } from './helpers';
 
 interface DatasourceLogoProps {
   name: DatasourceName | string;
@@ -24,12 +25,6 @@ export const Container = styled('div')<{
     ? 'transparent'
     : theme.palette.backgrounds.tertiary,
 }));
-
-function parseDatasourceName(input: string): DatasourceName {
-  const regex = /^\/\/([^/]+)/;
-  const match = regex.exec(input);
-  return match ? (match[1] as DatasourceName) : (input as DatasourceName);
-}
 
 const DatasourceLogo: FC<DatasourceLogoProps> = ({
   name,

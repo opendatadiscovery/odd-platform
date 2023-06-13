@@ -1,10 +1,12 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
+import java.util.Map;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceDirectory;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
@@ -52,4 +54,8 @@ public interface DataSourceMapper {
         return applyToPojo(dataSource, form)
             .setNamespaceId(namespace != null ? namespace.getId() : null);
     }
+
+    DataSourceDirectory mapToDirectoryDataSource(final DataSourcePojo pojo,
+                                                 final Map<String, String> properties,
+                                                 final Long entitiesCount);
 }

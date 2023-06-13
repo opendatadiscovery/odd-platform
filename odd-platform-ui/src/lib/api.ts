@@ -29,6 +29,7 @@ import {
   TermApi,
   TitleApi,
   IntegrationApi,
+  DirectoryApi,
 } from 'generated-sources';
 
 const HEADERS: ConfigurationParameters = {
@@ -72,3 +73,4 @@ export const tagApi = new TagApi(apiConf);
 export const integrationApi = new IntegrationApi(apiConf);
 export const dataEntityAttachmentApi = new DataEntityAttachmentApi(apiConf);
 export const dataEntityFileUploadApi = new DataEntityAttachmentApi(fileUploadConf);
+export const directoryApi = new DirectoryApi(apiConf);

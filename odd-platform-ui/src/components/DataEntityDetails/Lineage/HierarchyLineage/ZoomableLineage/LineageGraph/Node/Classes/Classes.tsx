@@ -1,9 +1,9 @@
 import React from 'react';
-import { DataEntityClassLabelMap } from 'redux/interfaces';
+import { DataEntityClassLabelMap } from 'lib/constants';
 import type { DataEntityClass } from 'generated-sources';
 import { Group } from '@visx/group';
-import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Classes/ClassesStyles';
-import type { NodeSize } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
+import * as S from './ClassesStyles';
+import type { NodeSize } from '../../../../lineageLib/interfaces';
 
 interface ClassesProps {
   entityClasses: DataEntityClass[] | undefined;

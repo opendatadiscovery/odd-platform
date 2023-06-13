@@ -1,5 +1,5 @@
 {
-  "data_source_oddrn": "//kafka/host/aws.kafka.connect.io/",
+  "data_source_oddrn": "//kafka/host/aws.kafka.connect.io",
   "items": [
     {
       "oddrn": "//kafka/host/aws.kafka.connect.io/topics/user_transactions_west",
@@ -320,7 +320,7 @@
           "//kafka/host/aws.kafka.connect.io/topics/user_transactions_east"
         ],
         "outputs": [
-          "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw"
+          "//s3/cloud/aws/account/buckets/data_lake/keys/raw"
         ]
       },
       "data_transformer_run": null,
