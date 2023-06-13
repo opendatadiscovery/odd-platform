@@ -9,7 +9,7 @@ import type { DataEntity } from 'generated-sources';
 import { Grid } from '@mui/material';
 import type { ErrorState } from 'redux/interfaces';
 import type { DataSourceEntityList } from 'lib/interfaces';
-import type { InfiniteQueryObserverResult } from '@tanstack/query-core';
+import type { InfiniteQueryObserverResult } from '@tanstack/react-query';
 import EntityItem from './EntityItem/EntityItem';
 import TableHeader from './TableHeader/TableHeader';
 
