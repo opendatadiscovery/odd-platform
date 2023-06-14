@@ -26,7 +26,7 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
 }) => (
   <Grid container sx={{ mt: 4 }}>
     <Typography variant='h1' mb={1}>
-      Entities info
+      Entities
     </Typography>
     <S.DataEntitiesUsageContainer>
       <S.DataEntitiesTotalContainer role='heading'>

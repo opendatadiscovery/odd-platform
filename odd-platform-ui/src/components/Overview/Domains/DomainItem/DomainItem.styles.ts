@@ -12,6 +12,9 @@ export const Container = styled('div')(({ theme }) => ({
 
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   '&:active': { backgroundColor: theme.palette.backgrounds.secondary },
+
+  [theme.breakpoints.down('lg')]: { width: '173px' },
+  [theme.breakpoints.down('sm')]: { width: '163px' },
 }));
 
 export const CountContainer = styled('div')(({ theme }) => ({

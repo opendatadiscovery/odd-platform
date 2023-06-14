@@ -2,7 +2,7 @@ import React, { type FC } from 'react';
 import { useGetDomains } from 'lib/hooks';
 import { Typography } from '@mui/material';
 import DomainItem from './DomainItem/DomainItem';
-import * as S from './Domains.styles';
+import * as S from '../shared/ItemsList.styles';
 
 const Domains: FC = () => {
   const { data: domains } = useGetDomains();

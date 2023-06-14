@@ -11,6 +11,7 @@ import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
 import TopTagsList from './TopTagsList/TopTagsList';
+import Directory from './Directory/Directory';
 
 const Overview: React.FC = () => {
   const { isLoading: isTagsFetching } = useAppSelector(getTagListFetchingStatuses);
@@ -41,6 +42,7 @@ const Overview: React.FC = () => {
       </S.TagsContainer>
       <Domains />
       <DataEntitiesUsageInfo />
+      <Directory />
       <WithPermissionsProvider
         allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
         resourcePermissions={[]}

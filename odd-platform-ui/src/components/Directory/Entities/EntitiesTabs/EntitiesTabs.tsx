@@ -16,7 +16,7 @@ const EntitiesTabs: FC<EntitiesListTabsProps> = ({ types }) => {
 
   const tabs = React.useMemo<AppTabItem[]>(() => {
     const dynamicTabs = types.map(({ id, name }) => ({
-      name: DataEntityClassTypeLabelMap.get(name)!.normal,
+      name: DataEntityClassTypeLabelMap.get(name)!.plural,
       link: directoryEntitiesListPath(dataSourceTypePrefix, dataSourceId, id),
       value: id,
     }));

@@ -11,14 +11,14 @@ import { getButtonFontType } from 'components/shared/elements/Button/helpers';
 export const { pxToRem } = createTypography(palette, {} as TypographyOptions);
 
 export const breakpointDownLgBody1: CSSObject = {
-  [createTheme({ breakpoints }).breakpoints.down('lg')]: {
+  [createTheme({ breakpoints }).breakpoints.down('md')]: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
   },
 };
 
 export const breakpointDownLgBody2: CSSObject = {
-  [createTheme({ breakpoints }).breakpoints.down('lg')]: {
+  [createTheme({ breakpoints }).breakpoints.down('md')]: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
   },

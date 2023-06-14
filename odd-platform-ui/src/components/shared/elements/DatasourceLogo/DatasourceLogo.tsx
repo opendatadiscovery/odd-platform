@@ -3,27 +3,27 @@ import { type DatasourceName, DatasourceNames } from 'lib/interfaces';
 import styled from 'styled-components';
 import { parseDatasourceName } from './helpers';
 
+type BackgroundColor = 'tertiary' | 'default' | 'transparent';
+
 interface DatasourceLogoProps {
   name: DatasourceName | string;
   width?: number;
   padding?: number;
   rounded?: boolean;
-  transparentBackground?: boolean;
+  backgroundColor?: BackgroundColor;
 }
 
 export const Container = styled('div')<{
   $padding?: number;
   $rounded?: boolean;
-  $transparentBackground?: boolean;
-}>(({ theme, $padding, $rounded, $transparentBackground }) => ({
+  $backgroundColor: BackgroundColor;
+}>(({ theme, $padding, $rounded, $backgroundColor }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   padding: theme.spacing($padding ?? 2),
   borderRadius: $rounded ? '50%' : '8px',
-  backgroundColor: $transparentBackground
-    ? 'transparent'
-    : theme.palette.backgrounds.tertiary,
+  backgroundColor: theme.palette.backgrounds[$backgroundColor],
 }));
 
 const DatasourceLogo: FC<DatasourceLogoProps> = ({
@@ -31,18 +31,14 @@ const DatasourceLogo: FC<DatasourceLogoProps> = ({
   width = 48,
   padding,
   rounded,
-  transparentBackground,
+  backgroundColor = 'tertiary',
 }) => {
   const parsedName = parseDatasourceName(name);
   const isNameExists = DatasourceNames.includes(parsedName);
   const src = isNameExists ? `/imgs/${parsedName}.png` : `/imgs/default.png`;
 
   return (
-    <Container
-      $padding={padding}
-      $rounded={rounded}
-      $transparentBackground={transparentBackground}
-    >
+    <Container $padding={padding} $rounded={rounded} $backgroundColor={backgroundColor}>
       <img width={width} src={src} alt={`${parsedName} logo`} />
     </Container>
   );
