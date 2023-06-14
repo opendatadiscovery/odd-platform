@@ -21,6 +21,7 @@ describe('DataEntitiesUsageInfoCard', () => {
         classTotalCount={dataEntityUsageInfoPayload.dataEntityClassesInfo[0].totalCount}
         handleEntityClassClick={handleEntityClassClick}
         handleEntityClassTypeClick={handleEntityClassTypeClick}
+        classesCount={6}
         {...props}
       />
     );

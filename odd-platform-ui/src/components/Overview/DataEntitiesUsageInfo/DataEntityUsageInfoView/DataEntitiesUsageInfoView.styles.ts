@@ -8,19 +8,12 @@ export const DataEntitiesUsageContainer = styled('div')(({ theme }) => ({
   display: 'flex',
 }));
 
-export const UsageInfoStats = styled('div')(({ theme }) => ({
-  padding: theme.spacing(2.5),
-  display: 'flex',
-  flexDirection: 'column',
-  borderRight: `1px solid ${theme.palette.divider}`,
-}));
-
 export const DataEntitiesTotalContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(3),
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  width: '45%',
+  width: '28%',
   borderRight: `1px solid ${theme.palette.divider}`,
   h1: {
     color: theme.palette.texts.primary,
@@ -40,9 +33,11 @@ export const UnfilledEntities = styled('span')(({ theme }) => ({
 }));
 
 export const ListItemContainer = styled('div')(({ theme }) => ({
-  display: 'flex',
-  padding: theme.spacing(1.5),
-  flexDirection: 'column',
+  padding: theme.spacing(1.75, 3, 1.25, 3),
   width: '100%',
-  justifyContent: 'space-between',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gridAutoRows: '1fr',
+  alignItems: 'stretch',
+  columnGap: '48px',
 }));
