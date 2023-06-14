@@ -24,7 +24,10 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
   handleEntityClassClick,
   handleEntityClassTypeClick,
 }) => (
-  <Grid container sx={{ mt: 8 }} wrap='nowrap'>
+  <Grid container sx={{ mt: 4 }}>
+    <Typography variant='h1' mb={1}>
+      Entities info
+    </Typography>
     <S.DataEntitiesUsageContainer>
       <S.DataEntitiesTotalContainer role='heading'>
         <Box>

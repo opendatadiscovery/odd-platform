@@ -5,6 +5,7 @@ import { MainSearch, SkeletonWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
+import Domains from 'components/Overview/Domains/Domains';
 import DataEntitiesUsageInfo from './DataEntitiesUsageInfo/DataEntitiesUsageInfo';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
@@ -38,6 +39,7 @@ const Overview: React.FC = () => {
       <S.TagsContainer container>
         <TopTagsList />
       </S.TagsContainer>
+      <Domains />
       <DataEntitiesUsageInfo />
       <WithPermissionsProvider
         allowedPermissions={[Permission.DIRECT_OWNER_SYNC]}
