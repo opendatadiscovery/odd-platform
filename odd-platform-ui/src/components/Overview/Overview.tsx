@@ -32,7 +32,7 @@ const Overview: React.FC = () => {
 
   return (
     <S.Container>
-      <Grid container justifyContent='center' sx={{ pt: 8, pb: 9 }}>
+      <Grid container justifyContent='center' sx={{ pt: 4, pb: 5 }}>
         <MainSearch mainSearch />
       </Grid>
       <S.TagsContainer container>

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',
-  padding: theme.spacing(2, 10),
+  padding: theme.spacing(0, 10),
   width: `${maxContentWidthWithoutSidebar}px`,
   [theme.breakpoints.down(maxContentWidthWithoutSidebar)]: {
     width: '100%',
