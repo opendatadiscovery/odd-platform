@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Theme, TooltipProps } from '@mui/material';
 import type { SxProps } from '@mui/system';
-import * as S from 'components/shared/elements/AppTooltip/AppTooltipStyles';
+import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps
   extends Pick<
     TooltipProps,
-    'placement' | 'followCursor' | 'componentsProps' | 'disableHoverListener'
+    | 'placement'
+    | 'followCursor'
+    | 'componentsProps'
+    | 'disableHoverListener'
+    | 'onOpen'
+    | 'onClose'
   > {
   title: React.ReactElement | string | undefined | number;
   type?: S.TooltipColorTypes;
@@ -25,11 +30,13 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   childSx,
   componentsProps,
   disableHoverListener,
+  onOpen,
+  onClose,
 }) => {
-  const [isOverflowed, setIsOverflow] = React.useState(checkForOverflow);
-  const childrenRef = React.useRef<HTMLDivElement>(null);
+  const [isOverflowed, setIsOverflow] = useState(checkForOverflow);
+  const childrenRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (childrenRef.current && checkForOverflow) {
       const element = childrenRef.current.firstElementChild || childrenRef.current;
       const { scrollWidth, clientWidth } = element;
@@ -46,6 +53,8 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       disableInteractive
       disableHoverListener={disableHoverListener}
       componentsProps={componentsProps}
+      onOpen={onOpen}
+      onClose={onClose}
     >
       <S.ChildrenContainer $isOverflowed={isOverflowed} ref={childrenRef} sx={childSx}>
         {children}

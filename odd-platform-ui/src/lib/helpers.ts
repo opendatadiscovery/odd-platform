@@ -56,6 +56,8 @@ export const setActivityBackgroundColor = (
   switch (eventType) {
     case 'created':
       return theme.palette.activityEvent.created;
+    case 'assigned':
+      return theme.palette.activityEvent.created;
     case 'updated':
       return theme.palette.activityEvent.updated;
     case 'deleted':
@@ -273,4 +275,8 @@ export async function asyncPool(
   }
 
   return Promise.all(retries);
+}
+
+export function pluralize(count: number, text: string, pluralText: string) {
+  return `${count} ${count === 1 ? text : pluralText}`;
 }

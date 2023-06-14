@@ -45,6 +45,7 @@ import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.AlertUniqueConstraint;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.AlertStatusUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -57,7 +58,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.ALERT_STATUS_UPDATED;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OPEN_ALERT_RECEIVED;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.RESOLVED_ALERT_RECEIVED;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.AlertStatusUpdated.ALERT_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -109,7 +109,7 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     @ActivityLog(event = ALERT_STATUS_UPDATED)
-    public Mono<Alert> updateStatus(@ActivityParameter(ALERT_ID) final long alertId,
+    public Mono<Alert> updateStatus(@ActivityParameter(AlertStatusUpdated.ALERT_ID) final long alertId,
                                     final AlertStatus alertStatus) {
         final AlertStatusEnum status = AlertStatusEnum.valueOf(alertStatus.name());
 

@@ -6,7 +6,7 @@
   },
   {
     "name": "Kinesis AQA",
-    "oddrn": "//kinesis/cloud/aws/account/13/region/us-west-2/",
+    "oddrn": "//kinesis/cloud/aws/account/13/region/us-west-2",
     "namespace_name": "Messaging"
   },
   {
@@ -17,7 +17,7 @@
   },
   {
     "name": "Air_flights",
-    "oddrn": "//airflow/host/aws.airflow.aws.com/air",
+    "oddrn": "//airflow/host/aws.airflow.aws.com",
     "description": "_!AirFlights",
     "namespace_name": "ETL"
   },

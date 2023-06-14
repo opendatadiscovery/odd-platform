@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -42,6 +43,11 @@ public interface DataEntityService {
                                      final int page,
                                      final int size,
                                      final OwnerPojo owner);
+
+    Mono<DataSourceEntityList> getDataEntitiesByDatasourceAndType(final long datasourceId,
+                                                                  final Integer typeId,
+                                                                  final int page,
+                                                                  final int size);
 
     Mono<DataEntityDetails> getDetails(final long dataEntityId);
 

@@ -19,7 +19,7 @@
           "//kinesis/cloud/aws/account/111111111111/region/us-west-2/streams/kds_clickstream"
         ],
         "outputs": [
-          "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw"
+          "//s3/cloud/aws/account/buckets/data_lake/keys/raw"
         ]
       },
       "data_transformer_run": null,

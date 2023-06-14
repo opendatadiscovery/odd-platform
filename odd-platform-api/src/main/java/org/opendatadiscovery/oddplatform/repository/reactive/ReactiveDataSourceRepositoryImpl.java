@@ -144,6 +144,13 @@ public class ReactiveDataSourceRepositoryImpl
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
+    @Override
+    public Flux<DataSourcePojo> findByPrefix(final String prefix) {
+        final var query = DSL.selectFrom(DATA_SOURCE)
+            .where(DATA_SOURCE.ODDRN.startsWith(prefix)).and(DATA_SOURCE.DELETED_AT.isNull());
+        return jooqReactiveOperations.flux(query).map(r -> r.into(DataSourcePojo.class));
+    }
+
     private SelectJoinStep<Record> baseSelect() {
         return DSL
             .select(DATA_SOURCE.asterisk())

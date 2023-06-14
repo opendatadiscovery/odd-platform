@@ -1,5 +1,5 @@
 {
-  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com/",
+  "data_source_oddrn": "//airflow/host/aws.airflow.aws.com",
   "items": [
     {
       "oddrn": "//airflow/host/aws.airflow.aws.com/dags/preprocessing_job",
@@ -59,10 +59,10 @@
         "source_code_url": null,
         "sql": null,
         "inputs": [
-          "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/raw"
+          "//s3/cloud/aws/account/buckets/data_lake/keys/raw"
         ],
         "outputs": [
-          "//s3/cloud/aws/account/111111111111/region/us-west-2/buckets/data_lake/keys/transaction_dataset"
+          "//s3/cloud/aws/account/buckets/data_lake/keys/transaction_dataset"
         ]
       },
       "data_transformer_run": null,

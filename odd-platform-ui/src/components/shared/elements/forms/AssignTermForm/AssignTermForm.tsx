@@ -1,26 +1,31 @@
-import React from 'react';
+import React, { cloneElement, type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import type { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { DialogWrapper, Button } from 'components/shared/elements';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { addDataEntityTerm } from 'redux/thunks';
-import { getDataEntityAddTermStatuses } from 'redux/selectors';
-import TermsAutocomplete from './TermsAutocomplete/TermsAutocomplete';
+import Button from 'components/shared/elements/Button/Button';
+import TermsAutocomplete from 'components/shared/elements/Autocomplete/TermsAutocomplete/TermsAutocomplete';
+import type { TermRef } from 'generated-sources';
+import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 
-interface AddTermsFormProps {
-  btnCreateEl: JSX.Element;
-  dataEntityId: number;
+interface AssignTermFormData {
+  termId: number;
 }
 
-const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }) => {
-  const dispatch = useAppDispatch();
+interface AssignTermFormProps {
+  onSubmit: (clearState: () => void) => ({ termId }: AssignTermFormData) => void;
+  openBtnEl: JSX.Element;
+  handleCloseSubmittedForm: boolean;
+  isLoading: boolean;
+}
 
-  const { isLoading: isTermAdding, isLoaded: isTermAdded } = useAppSelector(
-    getDataEntityAddTermStatuses
-  );
+const AssignTermForm: FC<AssignTermFormProps> = ({
+  onSubmit,
+  openBtnEl,
+  handleCloseSubmittedForm,
+  isLoading,
+}) => {
+  const formId = 'assign-term-form';
 
-  const { handleSubmit, control, reset, formState } = useForm<DataEntityTermFormData>({
+  const { handleSubmit, control, reset, formState } = useForm<AssignTermFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
@@ -32,39 +37,26 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
     reset();
   };
 
-  const onSubmit = (data: DataEntityTermFormData) => {
-    dispatch(
-      addDataEntityTerm({
-        dataEntityId,
-        dataEntityTermFormData: { termId: data.termId },
-      })
-    ).then(() => {
-      clearState();
-    });
-  };
-
   const handleSetSelectedTerm = React.useCallback(
     (term: TermRef) => setSelectedTerm(term),
-    [setSelectedTerm]
+    []
   );
 
-  const termFormTitle = (
+  const formTitle = (
     <Typography variant='h4' component='span'>
       Add term
     </Typography>
   );
 
-  const termFormContent = () => (
-    <form id='add-term-form' onSubmit={handleSubmit(onSubmit)}>
+  const formContent = () => (
+    <form id={formId} onSubmit={handleSubmit(onSubmit(clearState))}>
       <Typography variant='subtitle2' fontSize='0.73rem'>
         Select a term from the dictionary.
       </Typography>
       <Controller
         name='termId'
         control={control}
-        rules={{
-          required: true,
-        }}
+        rules={{ required: true }}
         render={({ field }) => (
           <TermsAutocomplete field={field} setSelectedTerm={handleSetSelectedTerm} />
         )}
@@ -88,12 +80,12 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
     </form>
   );
 
-  const termFormActionButtons = () => (
+  const formActionButtons = () => (
     <Button
       text='Add term'
       buttonType='main-lg'
       type='submit'
-      form='add-term-form'
+      form={formId}
       fullWidth
       disabled={!formState.isValid}
     />
@@ -101,18 +93,16 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({ btnCreateEl, dataEntityId }
 
   return (
     <DialogWrapper
-      renderOpenBtn={({ handleOpen }) =>
-        React.cloneElement(btnCreateEl, { onClick: handleOpen })
-      }
+      renderOpenBtn={({ handleOpen }) => cloneElement(openBtnEl, { onClick: handleOpen })}
       maxWidth='md'
-      title={termFormTitle}
-      renderContent={termFormContent}
-      renderActions={termFormActionButtons}
-      handleCloseSubmittedForm={isTermAdded}
-      isLoading={isTermAdding}
+      title={formTitle}
+      renderContent={formContent}
+      renderActions={formActionButtons}
+      handleCloseSubmittedForm={handleCloseSubmittedForm}
+      isLoading={isLoading}
       clearState={clearState}
     />
   );
 };
 
-export default AddTermsForm;
+export default AssignTermForm;

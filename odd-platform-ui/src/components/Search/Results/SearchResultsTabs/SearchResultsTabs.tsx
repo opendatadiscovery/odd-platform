@@ -23,16 +23,8 @@ const SearchResultsTabs: React.FC<SearchResultsTabsProps> = ({
 
   React.useEffect(() => {
     setTabs([
-      {
-        name: 'All',
-        hint: totals.all,
-        value: 'all',
-      },
-      {
-        name: 'My Objects',
-        hint: totals.myObjectsTotal,
-        value: 'my',
-      },
+      { name: 'All', hint: totals.all, value: 'all' },
+      { name: 'My Objects', hint: totals.myObjectsTotal, value: 'my' },
       {
         name: 'Datasets',
         hint: totals[DataEntityClassNameEnum.SET]?.count || 0,

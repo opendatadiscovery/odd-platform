@@ -39,6 +39,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityS
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldEnumValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldLabelActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTermsActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.OwnershipActivityStateDto;
@@ -214,6 +215,7 @@ public class ActivityMapperTest {
             case ALERT_HALT_CONFIG_UPDATED -> generateAlertHaltConfigState();
             case ALERT_STATUS_UPDATED -> generateAlertStatusState();
             case OPEN_ALERT_RECEIVED, RESOLVED_ALERT_RECEIVED -> generateAlertReceivedState();
+            case DATASET_FIELD_TERM_ASSIGNED, DATASET_FIELD_TERM_ASSIGNMENT_DELETED -> generateDatasetFieldTermsState();
             default -> "";
         };
     }
@@ -290,6 +292,16 @@ public class ActivityMapperTest {
 
     private String generateCustomGroupState() {
         final CustomGroupActivityStateDto state = GENERATOR.nextObject(CustomGroupActivityStateDto.class);
+        return JSONSerDeUtils.serializeJson(state);
+    }
+
+    private String generateDatasetFieldTermsState() {
+        final DatasetFieldTermsActivityStateDto state = new DatasetFieldTermsActivityStateDto(
+            RANDOM.nextLong(),
+            UUID.randomUUID().toString(),
+            JSONB.jsonb("{\"type\": \"TYPE_INTEGER\", \"is_nullable\": true, \"logical_type\": \"integer\"}"),
+            GENERATOR.objects(TermActivityStateDto.class, 5).toList()
+        );
         return JSONSerDeUtils.serializeJson(state);
     }
 }

@@ -9,7 +9,6 @@ import org.opendatadiscovery.oddplatform.repository.AlertHaltConfigRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

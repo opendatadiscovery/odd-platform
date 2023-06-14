@@ -5,7 +5,7 @@ import { Button, TermItem } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
-import AddTermsForm from './AddTermsForm/AddTermsForm';
+import AssignEntityTermForm from './AssignEntityTermForm/AssignEntityTermForm';
 
 interface OverviewTermsProps {
   dataEntityId: number;
@@ -21,9 +21,9 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
       <TermsCaptionContainer>
         <Typography variant='h4'>Dictionary terms</Typography>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
-          <AddTermsForm
+          <AssignEntityTermForm
             dataEntityId={dataEntityId}
-            btnCreateEl={
+            openBtnEl={
               <Button text='Add terms' buttonType='secondary-m' startIcon={<AddIcon />} />
             }
           />
@@ -68,9 +68,9 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
         >
           <Typography variant='subtitle2'>Not created.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
-            <AddTermsForm
+            <AssignEntityTermForm
               dataEntityId={dataEntityId}
-              btnCreateEl={<Button text='Add terms' buttonType='tertiary-sm' />}
+              openBtnEl={<Button text='Add terms' buttonType='tertiary-sm' />}
             />
           </WithPermissions>
         </Grid>

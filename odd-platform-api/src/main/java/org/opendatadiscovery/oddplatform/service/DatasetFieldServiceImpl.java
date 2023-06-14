@@ -44,6 +44,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -53,7 +54,6 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +74,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     @ReactiveTransactional
     @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED)
     public Mono<DataSetFieldDescription> updateDatasetFieldDescription(
-        @ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+        @ActivityParameter(DatasetFieldInformationUpdated.DATASET_FIELD_ID) final long datasetFieldId,
         final DatasetFieldDescriptionUpdateFormData formData) {
         return reactiveDatasetFieldRepository.updateDescription(datasetFieldId, formData.getDescription())
             .switchIfEmpty(Mono.error(new NotFoundException("DatasetField", datasetFieldId)))
@@ -94,8 +94,9 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     @Override
     @ReactiveTransactional
     @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED)
-    public Flux<Label> updateDatasetFieldLabels(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
-                                                final DatasetFieldLabelsUpdateFormData formData) {
+    public Flux<Label> updateDatasetFieldLabels(
+        @ActivityParameter(DatasetFieldInformationUpdated.DATASET_FIELD_ID) final long datasetFieldId,
+        final DatasetFieldLabelsUpdateFormData formData) {
         final Set<String> names = new HashSet<>(formData.getLabels());
         return reactiveLabelRepository.deleteInternalRelations(datasetFieldId)
             .then(getUpdatedRelations(names, datasetFieldId))

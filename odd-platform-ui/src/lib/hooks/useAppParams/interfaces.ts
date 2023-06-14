@@ -4,6 +4,7 @@ import type {
   ManagementRoutes,
   SearchRoutes,
   TermsRoutes,
+  DirectoryRoutes,
 } from '../useAppPaths/shared';
 
 interface DataEntityViewTypes {
@@ -100,14 +101,28 @@ interface AppManagementRouteParams extends ManagementRouteViewTypes {
   [ManagementRoutes.integrationId]: string;
 }
 
+interface DirectoryRouteParams {
+  [DirectoryRoutes.dataSourceTypePrefix]: string;
+  [DirectoryRoutes.dataSourceId]: string;
+  [DirectoryRoutes.typeId]: string;
+}
+
+interface AppDirectoryRouteParams {
+  [DirectoryRoutes.dataSourceTypePrefix]: string;
+  [DirectoryRoutes.dataSourceId]: number;
+  [DirectoryRoutes.typeId]: undefined | number;
+}
+
 export type RouteParams = DataEntityRouteParams &
   TermRouteParams &
   SearchRouteParams &
   AlertsRouteViewTypes &
-  ManagementRouteParams;
+  ManagementRouteParams &
+  DirectoryRouteParams;
 
 export type AppRouteParams = AppDataEntityRouteParams &
   AppSearchRouteParams &
   AppTermRouteParams &
   AppAlertsRouteParams &
-  AppManagementRouteParams;
+  AppManagementRouteParams &
+  AppDirectoryRouteParams;

@@ -81,6 +81,11 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Flux<DataEntityDimensionsDto> listByTerm(final long termId, final String query, final Integer entityClassId,
                                              final int page, final int size);
 
+    Mono<List<DataEntityDimensionsDto>> listByDatasourceAndType(final long datasourceId, final Integer typeId,
+                                                                final int page, final int size);
+
+    Mono<Long> countByDatasourceAndType(final long datasourceId, final Integer typeId);
+
     Mono<List<DataEntityDimensionsDto>> findByState(final FacetStateDto state,
                                                     final int page,
                                                     final int size,
@@ -91,6 +96,14 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Mono<DataEntityDetailsDto> getDataEntitySearchFields(final long dataEntityId);
 
     Mono<String> getHighlightedResult(final String text, final String query);
+
+    Flux<Integer> getDataSourceEntityTypeIds(final long dataSourceId);
+
+    default Mono<Map<Long, Long>> getCountByDataSources() {
+        return getCountByDataSources(List.of());
+    }
+
+    Mono<Map<Long, Long>> getCountByDataSources(final Collection<Long> dataSourceIds);
 
     Flux<DataEntityDomainInfoDto> getDataEntityDomainsInfo();
 }

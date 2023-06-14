@@ -70,6 +70,7 @@ export const palette = createPalette({
     secondary: colors.black20,
     tertiary: colors.black30,
     element: colors.blue50,
+    light: colors.black5,
   },
   common: { black: colors.black, white: colors.white },
   texts: {

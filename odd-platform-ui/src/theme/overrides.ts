@@ -33,6 +33,9 @@ export const components: Components = {
         color: 'inherit',
         textDecoration: 'inherit',
       },
+      button: {
+        padding: 0,
+      },
     },
   },
 };

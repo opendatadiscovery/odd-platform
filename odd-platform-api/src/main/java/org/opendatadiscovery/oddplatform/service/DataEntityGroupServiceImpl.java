@@ -28,7 +28,8 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermReposit
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.CustomGroupDeleted;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.CustomGroupUpdated;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 @RequiredArgsConstructor
 public class DataEntityGroupServiceImpl implements DataEntityGroupService {
-    private final Generator oddrnGenerator = new Generator();
+    private final Generator oddrnGenerator = Generator.getInstance();
 
     private final NamespaceService namespaceService;
     private final ActivityService activityService;
@@ -74,7 +75,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
     @ReactiveTransactional
     @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_UPDATED)
     public Mono<DataEntityRef> updateDataEntityGroup(
-        @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
+        @ActivityParameter(CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
         final DataEntityGroupFormData formData) {
         return reactiveDataEntityRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
@@ -94,7 +95,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
     @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
     @ReactiveTransactional
     public Mono<DataEntityPojo> deleteDataEntityGroup(
-        @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
+        @ActivityParameter(CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
         return reactiveGroupEntityRelationRepository.degHasEntities(id)
             .filter(hasEntities -> !hasEntities)
             .switchIfEmpty(Mono.error(new CascadeDeleteException("Can't delete data entity group with entities")))
@@ -190,7 +191,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
         try {
             return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
                 .id(pojo.getId())
-                .build(), "id");
+                .build());
         } catch (final Exception e) {
             log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
             throw new RuntimeException(e);

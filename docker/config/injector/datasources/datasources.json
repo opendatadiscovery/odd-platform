@@ -7,25 +7,25 @@
   },
   {
     "name": "BookShop Data Lake",
-    "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm",
+    "oddrn": "//redshift/host/4.3.2.1/databases/data_lake",
     "description": "BookShop Data Lake cited in the Redshift",
     "namespace_name": "Data Lake"
   },
   {
     "name": "Snowflake Sample Data",
-    "oddrn": "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH",
+    "oddrn": "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/databases/COMPUTE_WH",
     "description": "Snowflake sample data from the free trial",
     "namespace_name": "Samples"
   },
   {
     "name": "Great Expectation",
-    "oddrn": "//ge",
+    "oddrn": "//great_expectations",
     "description": "Data quality processes over Snowflake data",
     "namespace_name": "Data Quality"
   },
   {
     "name": "Airflow ETL",
-    "oddrn": "//airflow/host/aws.airflow.aws.com/",
+    "oddrn": "//airflow/host/aws.airflow.aws.com",
     "description": "ETL for Sample Data Lake",
     "namespace_name": "ETL"
   },
@@ -37,13 +37,13 @@
   },
   {
     "name": "User Transactions",
-    "oddrn": "//kafka/host/aws.kafka.connect.io/",
+    "oddrn": "//kafka/host/aws.kafka.connect.io",
     "description": "Kafka topics for user transactions data sample",
     "namespace_name": "Messaging"
   },
   {
     "name": "Data Lake S3",
-    "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2",
+    "oddrn": "//s3/cloud/aws",
     "description": "S3 Data Lake for samples",
     "namespace_name": "Data Lake"
   },
@@ -55,7 +55,7 @@
   },
   {
     "name": "KDS Clickstream",
-    "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2/",
+    "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2",
     "namespace_name": "Messaging"
   }
 ]

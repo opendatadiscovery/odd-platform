@@ -13,6 +13,7 @@ import {
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
+  DatasetTermActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
@@ -167,6 +168,20 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           hideAllDetails={hideAllDetails}
           eventType='deleted'
           stateDirection='column'
+        />
+      )}
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && (
+        <DatasetTermActivityField
+          oldState={activity.oldState.datasetFieldTerms}
+          newState={activity.newState.datasetFieldTerms}
+          hideAllDetails={hideAllDetails}
+        />
+      )}
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && (
+        <DatasetTermActivityField
+          oldState={activity.oldState.datasetFieldTerms}
+          newState={activity.newState.datasetFieldTerms}
+          hideAllDetails={hideAllDetails}
         />
       )}
       {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_VALUES_UPDATED]) && (
