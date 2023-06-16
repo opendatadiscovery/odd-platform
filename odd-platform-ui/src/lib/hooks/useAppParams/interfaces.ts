@@ -17,7 +17,7 @@ interface DataEntityViewTypes {
     | DataEntityRoutes.linkedItems
     | DataEntityRoutes.activity
     | DataEntityRoutes.testReports
-    | DataEntityRoutes.collaboration;
+    | DataEntityRoutes.discussions;
   [DataEntityRoutes.testReportViewType]:
     | DataEntityRoutes.overview
     | DataEntityRoutes.history;
