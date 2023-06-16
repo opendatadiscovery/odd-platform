@@ -127,7 +127,7 @@ OpenDataDiscovery Platform offers comprehensive data source support to meet your
             <td><a href="https://github.com/opendatadiscovery/odd-collector#elasticsearch">Elasticsearch </a></td>
         </tr>
         <tr>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#hive">Hive </td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#hive">Hive</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#kafka">Kafka</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#feast">Feast </a></td>
         </tr>
@@ -158,16 +158,16 @@ OpenDataDiscovery Platform offers comprehensive data source support to meet your
         </tr>
         <tr>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#kinesis">Kinesis</a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#quicksight">Quicksight </a></td></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3">S3 </a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#quicksight">Quicksight </a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3">S3</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker">SageMaker</a> </td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker-featurestore">SageMaker Featurestore </a></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sqs">SQS </a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker-featurestore">SageMaker Featurestore</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#sqs">SQS</a></td>
         </tr>
         <tr>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector-gcp#biquery">BigQuery</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3_delta">Delta lake S3</a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#tableau">Tableau </a></td>
             <td><a href="https://github.com/opendatadiscovery/odd-collector#cubejs">Cube</a></td>
         </tr>
@@ -182,13 +182,28 @@ OpenDataDiscovery Platform offers comprehensive data source support to meet your
             <td><a href="https://github.com/opendatadiscovery/odd-collector#redash">Redash</a></td>
         </tr>
         <tr>
-            <td><a href="https://github.com/opendatadiscovery/odd-spark-adapter">Spark</td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#mlflow">MLflow</a></td></td>
-            <td><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow</a>
-        </td>
+            <td><a href="https://github.com/opendatadiscovery/odd-spark-adapter">Spark</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#mlflow">MLflow</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow</a></td>
         </tr>
         <tr>
-            <td><a href="https://github.com/opendatadiscovery/odd-great-expectations">Great Expectations</td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#databricks">Databricks Unity Catalog</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-great-expectations">Great Expectations</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#sqlite">SQLite</a></td>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#couchbase">Couchbase</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#cockroachdb">Cockroachdb</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#fivetran">Fivetran</a></td>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#airbyte">Airbyte</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#metabase">Metabase</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#mode">Mode</a></td>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector-gcp#biquery">BigQuery</a></td>
+            <td><a href="https://github.com/opendatadiscovery/odd-collector#singlestore">Singlestore</a></td>
         </tr>
     </tbody>
 </table>
