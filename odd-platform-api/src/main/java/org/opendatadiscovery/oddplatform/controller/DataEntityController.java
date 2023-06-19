@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfi
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
@@ -405,6 +406,12 @@ public class DataEntityController implements DataEntityApi {
     public Mono<ResponseEntity<MetricSet>> getDataEntityMetrics(final Long dataEntityId,
                                                                 final ServerWebExchange exchange) {
         return metricService.getLatestMetricsForDataEntity(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityDomainList>> getDomains(final ServerWebExchange exchange) {
+        return dataEntityService.getDomainsInfo()
             .map(ResponseEntity::ok);
     }
 }

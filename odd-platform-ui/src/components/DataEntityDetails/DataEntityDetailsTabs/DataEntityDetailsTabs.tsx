@@ -97,9 +97,9 @@ const DataEntityDetailsTabs: React.FC = () => {
         value: 'activity',
       },
       {
-        name: 'Collaboration',
+        name: 'Discussions',
         link: dataEntityCollaborationPath(dataEntityId),
-        value: DataEntityRoutes.collaboration,
+        value: DataEntityRoutes.discussions,
       },
     ],
     [

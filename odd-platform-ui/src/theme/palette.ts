@@ -91,6 +91,7 @@ export const palette = createPalette({
     darken: colors.black90,
     element: colors.blue50,
     default: colors.white,
+    transparent: colors.transparent,
   },
   info: {
     main: colors.black90,

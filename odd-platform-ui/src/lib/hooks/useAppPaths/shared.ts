@@ -39,7 +39,7 @@ export enum DataEntityRoutes {
   alerts = 'alerts',
   linkedItems = 'linked-items',
   activity = 'activity',
-  collaboration = 'collaboration',
+  discussions = 'discussions',
   createMessage = 'createMessage',
   retries = 'retries',
 }

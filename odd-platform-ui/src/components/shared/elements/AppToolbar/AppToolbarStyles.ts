@@ -2,7 +2,6 @@ import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
 import { maxContentWidth, maxSidebarWidth, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import UserIcon from 'components/shared/icons/UserIcon';
 
 export const Bar = styled(AppBar)(({ theme }) => ({
   [`&.${appBarClasses.root}`]: { backgroundColor: theme.palette.common.white },
@@ -42,7 +41,7 @@ export const Title = styled(Link)(({ theme }) => ({
   display: 'flex',
   color: theme.palette.common.black,
   textDecoration: 'none',
-  [theme.breakpoints.up('sm')]: { alignItems: 'center' },
+  alignItems: 'center',
 }));
 
 export const Logo = styled('div')(({ theme }) => ({
@@ -68,16 +67,10 @@ export const ActionsContainer = styled(Grid)(({ theme }) => ({
 }));
 
 export const SectionDesktop = styled(Grid)(({ theme }) => ({
+  display: 'flex',
   justifyContent: 'flex-end',
   alignItems: 'center',
   color: theme.palette.texts.hint,
-  [theme.breakpoints.up('md')]: { display: 'flex' },
-}));
-
-export const UserAvatar = styled(UserIcon)(() => ({
-  width: '22px',
-  height: '22px',
-  borderRadius: '50%',
 }));
 
 export const UserName = styled('p')(({ theme }) => ({

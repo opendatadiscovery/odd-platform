@@ -1,13 +1,14 @@
-import React from 'react';
-import { type Theme } from '@mui/material';
+import React, { type FC, type ReactElement } from 'react';
+import { type Theme, Typography } from '@mui/material';
 import ClearIcon from 'components/shared/icons/ClearIcon';
 import SystemIcon from 'components/shared/icons/SystemIcon';
 import { type SxProps } from '@mui/system';
 import Button from 'components/shared/elements/Button/Button';
+import isUndefined from 'lodash/isUndefined';
 import * as S from './TagItemStyles';
 
 interface TagItemProps {
-  label: string | React.ReactElement;
+  label: string | ReactElement;
   important?: boolean;
   removable?: boolean;
   onRemoveClick?: () => void;
@@ -15,9 +16,10 @@ interface TagItemProps {
   sx?: SxProps<Theme>;
   cursorPointer?: boolean;
   systemTag?: boolean;
+  count?: number;
 }
 
-const TagItem: React.FC<TagItemProps> = ({
+const TagItem: FC<TagItemProps> = ({
   label,
   important,
   removable,
@@ -26,6 +28,7 @@ const TagItem: React.FC<TagItemProps> = ({
   cursorPointer,
   sx,
   systemTag,
+  count,
 }) => (
   <S.Container
     variant='body1'
@@ -37,6 +40,11 @@ const TagItem: React.FC<TagItemProps> = ({
   >
     {systemTag && <SystemIcon />}
     {label}
+    {!isUndefined(count) && (
+      <Typography ml={0.5} variant='subtitle1'>
+        {count}
+      </Typography>
+    )}
     {removable && !systemTag && (
       <Button
         buttonType='linkGray-m'

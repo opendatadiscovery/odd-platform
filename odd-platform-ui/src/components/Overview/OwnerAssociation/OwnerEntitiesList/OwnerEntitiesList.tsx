@@ -24,6 +24,7 @@ import {
 } from 'components/shared/icons';
 import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { Typography } from '@mui/material';
 import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
@@ -69,36 +70,39 @@ const OwnerEntitiesList: React.FC = () => {
           )}
         />
       ) : (
-        <S.DataEntityContainer container>
-          <DataEntityList
-            dataEntitiesList={myEntities}
-            entityListName='My Objects'
-            entityListIcon={<CatalogIcon />}
-            isFetching={isMyDataEntitiesFetching}
-            isNotFetched={isMyDataEntitiesNotFetched}
-          />
-          <DataEntityList
-            dataEntitiesList={myEntitiesUpstream}
-            entityListName='Upstream dependents'
-            entityListIcon={<UpstreamIcon />}
-            isFetching={isUpstreamDataEntitiesFetching}
-            isNotFetched={isUpstreamDataEntitiesNotFetched}
-          />
-          <DataEntityList
-            dataEntitiesList={myEntitiesDownstream}
-            entityListName='Downstream dependents'
-            entityListIcon={<DownstreamIcon />}
-            isFetching={isDownstreamDataEntitiesFetching}
-            isNotFetched={isDownstreamDataEntitiesNotFetched}
-          />
-          <DataEntityList
-            dataEntitiesList={popularEntities}
-            entityListName='Popular'
-            entityListIcon={<StarIcon />}
-            isFetching={isPopularDataEntitiesFetching}
-            isNotFetched={isPopularDataEntitiesNotFetched}
-          />
-        </S.DataEntityContainer>
+        <S.Container>
+          <Typography variant='h1'>Recommended</Typography>
+          <S.DataEntityContainer container>
+            <DataEntityList
+              dataEntitiesList={myEntities}
+              entityListName='My Objects'
+              entityListIcon={<CatalogIcon />}
+              isFetching={isMyDataEntitiesFetching}
+              isNotFetched={isMyDataEntitiesNotFetched}
+            />
+            <DataEntityList
+              dataEntitiesList={myEntitiesUpstream}
+              entityListName='Upstream dependents'
+              entityListIcon={<UpstreamIcon />}
+              isFetching={isUpstreamDataEntitiesFetching}
+              isNotFetched={isUpstreamDataEntitiesNotFetched}
+            />
+            <DataEntityList
+              dataEntitiesList={myEntitiesDownstream}
+              entityListName='Downstream dependents'
+              entityListIcon={<DownstreamIcon />}
+              isFetching={isDownstreamDataEntitiesFetching}
+              isNotFetched={isDownstreamDataEntitiesNotFetched}
+            />
+            <DataEntityList
+              dataEntitiesList={popularEntities}
+              entityListName='Popular'
+              entityListIcon={<StarIcon />}
+              isFetching={isPopularDataEntitiesFetching}
+              isNotFetched={isPopularDataEntitiesNotFetched}
+            />
+          </S.DataEntityContainer>
+        </S.Container>
       )}
     </>
   );

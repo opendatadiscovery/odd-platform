@@ -16,7 +16,7 @@ const DirectoryItem: FC<DirectoryItemProps> = ({ name, prefix, entitiesCount }) 
   <Link to={prefix}>
     <S.Container>
       <S.LogoContainer>
-        <DatasourceLogo name={prefix} transparentBackground />
+        <DatasourceLogo name={prefix} backgroundColor='transparent' />
       </S.LogoContainer>
       <S.TextContainer>
         <Typography variant='h4'>{name}</Typography>
