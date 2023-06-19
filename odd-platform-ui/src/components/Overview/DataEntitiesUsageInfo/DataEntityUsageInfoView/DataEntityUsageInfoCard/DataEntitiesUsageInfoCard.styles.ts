@@ -1,15 +1,19 @@
-import type { CSSObject } from 'styled-components';
-import styled from 'styled-components';
+import styled, { type CSSObject } from 'styled-components';
 
-export const Wrapper = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexWrap: 'nowrap',
-  padding: theme.spacing(0.5),
-  paddingBottom: theme.spacing(1),
-  marginBottom: theme.spacing(1),
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  '&:last-child': { border: 'none', marginBottom: 0 },
-}));
+export const Wrapper = styled('div')<{ $cellCount: number }>(({ theme, $cellCount }) => {
+  const lastChildCount = $cellCount % 2 === 0 ? 2 : 1;
+
+  return {
+    display: 'flex',
+    flexWrap: 'nowrap',
+    padding: theme.spacing(1.25, 0),
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    [`&:nth-last-child(-n+${lastChildCount})`]: {
+      borderBottom: 'none',
+      marginBottom: 0,
+    },
+  };
+});
 
 export const Container = styled('div')(
   () =>
@@ -20,20 +24,28 @@ export const Container = styled('div')(
     } as CSSObject)
 );
 
+export const ClassHeaderContainer = styled('div')(
+  () =>
+    ({
+      display: 'flex',
+      flexWrap: 'nowrap',
+      justifyContent: 'space-between',
+    } as CSSObject)
+);
+
 export const Header = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0.5, 1),
+  padding: theme.spacing(0, 0.5),
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   cursor: 'pointer',
   borderRadius: '4px',
-  h2: { lineHeight: theme.spacing(4) },
   '&:hover': { backgroundColor: theme.palette.backgrounds.tertiary },
   '&:active': { backgroundColor: theme.palette.backgrounds.primary },
 }));
 
 export const ClassLabelContainer = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(0.25),
+  marginRight: theme.spacing(1),
   width: '12%',
   minWidth: 'fit-content',
 }));
@@ -47,7 +59,7 @@ export const TypeListContainer = styled('div')(({ theme }) => ({
 export const TypeItem = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  padding: theme.spacing(0.5),
+  padding: theme.spacing(0, 0.25),
   marginRight: theme.spacing(1),
   borderRadius: '4px',
   cursor: 'pointer',

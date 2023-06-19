@@ -11,6 +11,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: '8px',
   padding: theme.spacing(4),
+  width: '100%',
 }));
 
 export const PendingContainer = styled(Grid)(

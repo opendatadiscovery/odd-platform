@@ -120,7 +120,7 @@ export const maxChannelsWidth = 200;
 export const activitySidebarWidth = 192;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;
-export const maxTagsContainerWidth = 920;
+export const maxTagsContainerWidth = 960;
 export const maxIdentityFormContentWidth = '320px';
 
 // main skeleton height constant
