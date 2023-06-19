@@ -12,6 +12,7 @@ export const Container = styled('div')(({ theme }) => ({
   borderColor: theme.palette.border.light,
   borderRadius: '8px',
   padding: theme.spacing(1),
+  paddingRight: theme.spacing(2),
 
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   '&:active': { backgroundColor: theme.palette.backgrounds.secondary },
