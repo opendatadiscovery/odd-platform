@@ -2,8 +2,7 @@ import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
 import { FormControlLabel, Grid, Typography } from '@mui/material';
-import { Button, Checkbox, AppInput, Markdown } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { Button, Checkbox, Input, Markdown } from 'components/shared/elements';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
 
 interface IntegrationCodeSnippetWithFormProps {
@@ -16,7 +15,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
   const [showForm, setShowForm] = useState(true);
   const [snippetArgs, setSnippetArgs] = useState({});
 
-  const { handleSubmit, control, formState } = useForm({ mode: 'onChange' });
+  const { handleSubmit, control, formState, setValue } = useForm({ mode: 'onChange' });
 
   const compiledTemplate = Handlebars.compile(snippet.template);
 
@@ -52,6 +51,12 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
               );
             }
 
+            if (arg.staticValue) {
+              setValue(arg.parameter, arg.staticValue);
+
+              return null;
+            }
+
             return (
               <Controller
                 key={arg.name}
@@ -70,17 +75,12 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                       <Typography variant='body1'>{arg.name}</Typography>
                     </Grid>
                     <Grid item lg={8}>
-                      <AppInput
+                      <Input
                         {...field}
+                        variant='main-m'
                         type={arg.type === 'STRING' ? 'string' : 'number'}
-                        // label={arg.name}
                         placeholder={`Enter ${arg.name} ...`}
-                        customEndAdornment={{
-                          variant: 'clear',
-                          showAdornment: !!field.value,
-                          onCLick: () => field.onChange(''),
-                          icon: <ClearIcon />,
-                        }}
+                        handleCleanUp={() => field.onChange('')}
                       />
                     </Grid>
                   </Grid>
