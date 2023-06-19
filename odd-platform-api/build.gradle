@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.7'
+    id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.2.1'
     id 'checkstyle'
@@ -27,7 +27,7 @@ dependencies {
     implementation libs.bundles.flyway
     implementation libs.micrometer.registry.prometheus
     implementation libs.jooq
-    implementation libs.javax.validation
+    implementation libs.jakarta.validation
     implementation libs.jackson.datatype.jsr310
     implementation libs.jackson.databind.nullable
     implementation libs.jackson.annotations
@@ -45,6 +45,8 @@ dependencies {
     implementation libs.snappy.java
     implementation libs.minio
     implementation libs.okhttp
+
+    implementation 'org.springframework.boot:spring-boot-properties-migrator:3.0.3'
 
     compileOnly libs.lombok
 
