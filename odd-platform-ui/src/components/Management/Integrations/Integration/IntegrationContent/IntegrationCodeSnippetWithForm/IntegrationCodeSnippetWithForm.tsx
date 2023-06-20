@@ -15,9 +15,11 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
   const [showForm, setShowForm] = useState(true);
   const [snippetArgs, setSnippetArgs] = useState({});
 
-  const { handleSubmit, control, formState, setValue } = useForm({ mode: 'onChange' });
+  const { handleSubmit, control, formState, register } = useForm({});
 
-  const compiledTemplate = Handlebars.compile(snippet.template);
+  const compiledTemplate = useCallback(Handlebars.compile(snippet.template), [
+    snippet.template,
+  ]);
 
   const templateWithArguments = compiledTemplate(snippetArgs);
 
@@ -41,10 +43,21 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                   render={({ field }) => (
                     <FormControlLabel
                       {...field}
-                      sx={{ ml: -0.25 }}
+                      sx={{
+                        ml: 0,
+                        mb: 1,
+                        width: '100%',
+                        justifyContent: 'flex-end',
+                      }}
+                      labelPlacement='start'
                       checked={field.value}
                       control={<Checkbox sx={{ mr: 1 }} />}
-                      label={arg.name}
+                      disableTypography
+                      label={
+                        <Grid item lg={4}>
+                          <Typography variant='body1'>{arg.name}</Typography>
+                        </Grid>
+                      }
                     />
                   )}
                 />
@@ -52,9 +65,14 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
             }
 
             if (arg.staticValue) {
-              setValue(arg.parameter, arg.staticValue);
-
-              return null;
+              return (
+                <input
+                  key={arg.name}
+                  {...register(arg.parameter)}
+                  value={arg.staticValue}
+                  style={{ display: 'none' }}
+                />
+              );
             }
 
             return (
