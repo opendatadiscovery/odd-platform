@@ -24,7 +24,10 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
   handleEntityClassClick,
   handleEntityClassTypeClick,
 }) => (
-  <Grid container sx={{ mt: 8 }} wrap='nowrap'>
+  <Grid container sx={{ mt: 4 }}>
+    <Typography variant='h1' mb={1}>
+      Entities
+    </Typography>
     <S.DataEntitiesUsageContainer>
       <S.DataEntitiesTotalContainer role='heading'>
         <Box>
@@ -36,40 +39,21 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
         </Box>
       </S.DataEntitiesTotalContainer>
       {!isEmpty(classesUsageInfo) && (
-        <>
-          <S.ListItemContainer role='list'>
-            {classesUsageInfo
-              .slice(0, 3)
-              .map(
-                ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
-                  <DataEntitiesUsageInfoCard
-                    key={entityClass.id}
-                    entityClass={entityClass}
-                    classTotalCount={classTotalCount}
-                    dataEntityTypesInfo={dataEntityTypesInfo}
-                    handleEntityClassClick={handleEntityClassClick}
-                    handleEntityClassTypeClick={handleEntityClassTypeClick}
-                  />
-                )
-              )}
-          </S.ListItemContainer>
-          <S.ListItemContainer>
-            {classesUsageInfo
-              .slice(3)
-              .map(
-                ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
-                  <DataEntitiesUsageInfoCard
-                    key={entityClass.id}
-                    entityClass={entityClass}
-                    classTotalCount={classTotalCount}
-                    dataEntityTypesInfo={dataEntityTypesInfo}
-                    handleEntityClassClick={handleEntityClassClick}
-                    handleEntityClassTypeClick={handleEntityClassTypeClick}
-                  />
-                )
-              )}
-          </S.ListItemContainer>
-        </>
+        <S.ListItemContainer role='list'>
+          {classesUsageInfo.map(
+            ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
+              <DataEntitiesUsageInfoCard
+                key={entityClass.id}
+                entityClass={entityClass}
+                classTotalCount={classTotalCount}
+                classesCount={classesUsageInfo.length}
+                dataEntityTypesInfo={dataEntityTypesInfo}
+                handleEntityClassClick={handleEntityClassClick}
+                handleEntityClassTypeClick={handleEntityClassTypeClick}
+              />
+            )
+          )}
+        </S.ListItemContainer>
       )}
     </S.DataEntitiesUsageContainer>
   </Grid>

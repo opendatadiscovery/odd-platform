@@ -76,6 +76,7 @@ interface Background extends TypeBackground {
   tertiary: string;
   darken: string;
   element: string;
+  transparent: string;
 }
 
 interface Tag {

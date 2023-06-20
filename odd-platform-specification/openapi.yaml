@@ -1970,6 +1970,21 @@ paths:
       tags:
         - dataQuality
 
+  /api/dataentitygroups/domains:
+    get:
+      summary: Get domains info
+      description: Gets system domains and entities count within it
+      operationId: getDomains
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityDomainList'
+      tags:
+        - dataEntity
+
   /api/dataentitygroups/{data_entity_group_id}/children:
     get:
       summary: Get DataEntityGroup children

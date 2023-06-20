@@ -87,3 +87,9 @@ export function useDataEntityDetails({
     { enabled }
   );
 }
+
+export function useGetDomains() {
+  return useQuery(['domains'], () => dataEntityApi.getDomains(), {
+    select: data => data.items,
+  });
+}

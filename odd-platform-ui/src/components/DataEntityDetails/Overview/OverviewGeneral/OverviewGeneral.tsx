@@ -37,7 +37,7 @@ const OverviewGeneral: React.FC = () => {
                 <DatasourceLogo
                   width={24}
                   padding={0}
-                  transparentBackground
+                  backgroundColor='transparent'
                   name={dataEntityDetails.dataSource?.oddrn}
                 />
                 <AppTooltip title={dataEntityDetails.dataSource?.name}>

@@ -78,7 +78,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
           <Route path={DataEntityRoutes.linkedItems} element={<LinkedItemsList />} />
           <Route path={DataEntityRoutes.activity} element={<DataEntityActivity />} />
           <Route
-            path={getNonExactParamPath(DataEntityRoutes.collaboration)}
+            path={getNonExactParamPath(DataEntityRoutes.discussions)}
             element={<DataCollaboration />}
           >
             <Route path={DataEntityRoutes.messageIdParam} />

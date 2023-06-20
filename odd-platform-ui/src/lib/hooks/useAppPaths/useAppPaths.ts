@@ -50,6 +50,9 @@ const useAppPaths = () => {
       `${DirectoryRoutes.directory}/${dataSourcePrefix}/${dataSourceId}/${typeId}`
     );
 
+  const directoryDataSourceListPath = (dataSourcePrefix: string) =>
+    updatePath(`${DirectoryRoutes.directory}/${dataSourcePrefix}`);
+
   return React.useMemo(
     () => ({
       isPathEmbedded,
@@ -69,6 +72,7 @@ const useAppPaths = () => {
       activityPath,
       integrationPath,
       directoryEntitiesListPath,
+      directoryDataSourceListPath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

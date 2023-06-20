@@ -3,10 +3,13 @@ import { maxContentWidthWithoutSidebar, maxTagsContainerWidth } from 'lib/consta
 import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
+  overflowY: 'scroll',
+  alignItems: 'center',
+
   margin: '0 auto',
-  padding: theme.spacing(2, 10),
+  padding: theme.spacing(0, 9.75, 4, 9.75),
   width: `${maxContentWidthWithoutSidebar}px`,
-  [theme.breakpoints.down(maxContentWidthWithoutSidebar)]: {
+  [theme.breakpoints.down(maxContentWidthWithoutSidebar + 1)]: {
     width: '100%',
     maxWidth: `${maxContentWidthWithoutSidebar}px`,
     justifyContent: 'center',

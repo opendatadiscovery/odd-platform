@@ -15,6 +15,7 @@ export interface DataEntityUsageInfoCardProps {
   handleEntityClassClick: (params: HandleEntityClassClickParams) => void;
   handleEntityClassTypeClick: (params: HandleEntityClassTypeClickParams) => void;
   classTotalCount: number;
+  classesCount: number;
 }
 
 const DataEntitiesUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
@@ -23,6 +24,7 @@ const DataEntitiesUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
   dataEntityTypesInfo,
   handleEntityClassClick,
   handleEntityClassTypeClick,
+  classesCount,
 }) => {
   const entityClassClickParams = {
     entityId: entityClass.id,
@@ -30,24 +32,26 @@ const DataEntitiesUsageInfoCard: React.FC<DataEntityUsageInfoCardProps> = ({
   };
 
   return (
-    <S.Wrapper>
+    <S.Wrapper $cellCount={classesCount}>
       <S.ClassLabelContainer>
         <EntityClassItem large entityClassName={entityClass.name} />
       </S.ClassLabelContainer>
       <S.Container>
-        <S.Header
-          role='button'
-          onClick={() => handleEntityClassClick(entityClassClickParams)}
-        >
-          {entityClass && (
-            <Typography noWrap variant='h4' color='texts.action'>
-              {DataEntityClassLabelMap.get(entityClass.name)?.plural}
-            </Typography>
-          )}
+        <S.ClassHeaderContainer>
+          <S.Header
+            role='button'
+            onClick={() => handleEntityClassClick(entityClassClickParams)}
+          >
+            {entityClass && (
+              <Typography noWrap variant='h3' color='texts.action'>
+                {DataEntityClassLabelMap.get(entityClass.name)?.plural}
+              </Typography>
+            )}
+          </S.Header>
           <Typography variant='h4' noWrap>
             {classTotalCount}
           </Typography>
-        </S.Header>
+        </S.ClassHeaderContainer>
         <S.TypeListContainer>
           {dataEntityTypesInfo.map(({ entityType, totalCount }) => (
             <S.TypeItem

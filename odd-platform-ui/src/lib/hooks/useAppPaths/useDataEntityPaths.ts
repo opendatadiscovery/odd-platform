@@ -70,18 +70,18 @@ export const useDataEntityPaths = () => {
 
   const dataEntityCollaborationPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.collaboration)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.discussions)}`;
 
   const dataEntityCollaborationMessagePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
     messageId: string = DataEntityRoutes.messageId
   ) =>
-    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.collaboration)}/${messageId}`;
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.discussions)}/${messageId}`;
 
   const dataEntityCollaborationCreateMessagePath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
   ) =>
-    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.collaboration)}/${
+    `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.discussions)}/${
       DataEntityRoutes.createMessage
     }`;
 

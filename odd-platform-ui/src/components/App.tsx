@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
 import { AppSuspenseWrapper, AppToolbar } from 'components/shared/elements';
@@ -45,11 +45,11 @@ const App: React.FC = () => {
     getNonExactParamPath,
   } = useAppPaths();
 
-  React.useEffect(() => {
-    dispatch(fetchDataEntitiesClassesAndTypes());
-    dispatch(fetchIdentity());
-    dispatch(fetchActiveFeatures());
-    dispatch(fetchTagsList({ page: 1, size: 20 }));
+  useEffect(() => {
+    dispatch(fetchDataEntitiesClassesAndTypes()).catch(() => {});
+    dispatch(fetchIdentity()).catch(() => {});
+    dispatch(fetchActiveFeatures()).catch(() => {});
+    dispatch(fetchTagsList({ page: 1, size: 10 })).catch(() => {});
   }, []);
 
   return (
