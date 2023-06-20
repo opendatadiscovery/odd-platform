@@ -27,3 +27,5 @@ yarn-error.log*
 
 # Generated sources
 src/generated-sources
+
+/tmp
