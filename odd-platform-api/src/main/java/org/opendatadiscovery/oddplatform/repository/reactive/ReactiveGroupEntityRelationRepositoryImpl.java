@@ -238,6 +238,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
 
         final var result = DSL.selectCount()
             .from(GROUP_ENTITY_RELATIONS)
+            .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN))
             .where(conditions).and(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn));
 
         return jooqReactiveOperations.mono(result)
@@ -258,6 +259,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
 
         final var result = DSL.selectCount()
             .from(GROUP_ENTITY_RELATIONS)
+            .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
             .where(conditions).and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(groupOddrn));
 
         return jooqReactiveOperations.mono(result)
