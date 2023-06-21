@@ -157,6 +157,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
         result.setUpperGroupsCount(degUpperGroupsCount);
         final List<DataEntityGroupItem> dataEntityGroupItems = entities.stream()
             .map(e -> dataEntityMapper.mapGroupItem(e, itemsMap.get(e.getDataEntity().getOddrn())))
+            .sorted((o1, o2) -> Boolean.compare(o1.getIsUpperGroup(), o2.getIsUpperGroup()))
             .toList();
         result.setItems(dataEntityGroupItems);
         result.setPageInfo(new PageInfo().hasNext(true).total(entitiesCount + degUpperGroupsCount));

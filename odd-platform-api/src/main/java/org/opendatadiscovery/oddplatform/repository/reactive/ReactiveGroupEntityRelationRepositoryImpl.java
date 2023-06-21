@@ -226,11 +226,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
 
     @Override
     public Mono<Long> getDEGEntitiesCount(final Long dataEntityGroupId, final String query) {
-        final List<Condition> conditions = new ArrayList<>();
-        if (StringUtils.isNotEmpty(query)) {
-            conditions.add(DATA_ENTITY.INTERNAL_NAME.startsWithIgnoreCase(query)
-                .or(DATA_ENTITY.EXTERNAL_NAME.startsWithIgnoreCase(query)));
-        }
+        final List<Condition> conditions = getSearchConditions(query);
 
         final var groupOddrn = DSL.select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
@@ -247,11 +243,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
 
     @Override
     public Mono<Long> getDEGUpperGroupsCount(final Long dataEntityGroupId, final String query) {
-        final List<Condition> conditions = new ArrayList<>();
-        if (StringUtils.isNotEmpty(query)) {
-            conditions.add(DATA_ENTITY.INTERNAL_NAME.startsWithIgnoreCase(query)
-                .or(DATA_ENTITY.EXTERNAL_NAME.startsWithIgnoreCase(query)));
-        }
+        final List<Condition> conditions = getSearchConditions(query);
 
         final var groupOddrn = DSL.select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
@@ -264,5 +256,14 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
 
         return jooqReactiveOperations.mono(result)
             .map(r -> r.value1().longValue());
+    }
+
+    private List<Condition> getSearchConditions(final String query) {
+        final List<Condition> conditions = new ArrayList<>();
+        if (StringUtils.isNotEmpty(query)) {
+            conditions.add(DATA_ENTITY.INTERNAL_NAME.startsWithIgnoreCase(query)
+                .or(DATA_ENTITY.EXTERNAL_NAME.startsWithIgnoreCase(query)));
+        }
+        return conditions;
     }
 }
