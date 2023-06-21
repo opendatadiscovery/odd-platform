@@ -1,9 +1,9 @@
 package org.opendatadiscovery.oddplatform.partition;
 
+import jakarta.annotation.PostConstruct;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;

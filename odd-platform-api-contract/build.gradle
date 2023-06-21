@@ -1,5 +1,5 @@
 plugins {
-    id 'org.openapi.generator' version '5.3.0'
+    id 'org.openapi.generator' version '6.5.0'
 }
 
 dependencies {
@@ -11,17 +11,18 @@ openApiGenerate {
 
     inputSpec = "$projectDir/../odd-platform-specification/openapi.yaml"
     outputDir = "$buildDir/generated"
-    templateDir = "$projectDir/../odd-platform-specification/templates"
+    templateDir = "$projectDir/../odd-platform-api-contract/templates"
 
     apiPackage = "org.opendatadiscovery.oddplatform.api.contract.api"
     invokerPackage = "org.opendatadiscovery.oddplatform.api.contract"
     modelPackage = "org.opendatadiscovery.oddplatform.api.contract.model"
 
     configOptions = [
-            dateLibrary  : "java8",
-            reactive     : "true",
-            interfaceOnly: "true",
-            useTags      : "true"
+            dateLibrary   : "java8",
+            reactive      : "true",
+            interfaceOnly : "true",
+            useTags       : "true",
+            useSpringBoot3: "true"
     ]
 
     globalProperties = [
