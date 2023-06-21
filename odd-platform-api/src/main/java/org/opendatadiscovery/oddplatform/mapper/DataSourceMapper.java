@@ -55,6 +55,10 @@ public interface DataSourceMapper {
             .setNamespaceId(namespace != null ? namespace.getId() : null);
     }
 
+    @Mapping(target = "id", source = "pojo.id")
+    @Mapping(target = "name", source = "pojo.name")
+    @Mapping(target = "entitiesCount", source = "entitiesCount")
+    @Mapping(target = "properties", source = "properties")
     DataSourceDirectory mapToDirectoryDataSource(final DataSourcePojo pojo,
                                                  final Map<String, String> properties,
                                                  final Long entitiesCount);
