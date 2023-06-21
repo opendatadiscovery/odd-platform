@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.notification.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
