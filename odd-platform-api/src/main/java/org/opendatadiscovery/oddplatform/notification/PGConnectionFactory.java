@@ -7,7 +7,6 @@ import java.util.Properties;
 import lombok.RequiredArgsConstructor;
 import org.postgresql.PGProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PGConnectionFactory {
     private final DataSourceProperties dataSourceProperties;
-    private final ApplicationContext applicationContext;
 
     public Connection getConnection() {
         return getConnection(false);
