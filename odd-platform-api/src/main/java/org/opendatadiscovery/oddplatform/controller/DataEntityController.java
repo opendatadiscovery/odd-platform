@@ -18,6 +18,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntity
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItemList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -103,6 +104,16 @@ public class DataEntityController implements DataEntityApi {
                                                                             final Integer page, final Integer size,
                                                                             final ServerWebExchange exchange) {
         return dataEntityService.getDataEntityGroupsChildren(dataEntityGroupId, page, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityGroupItemList>> getDataEntityGroupsItems(final Long dataEntityGroupId,
+                                                                                  final Integer page,
+                                                                                  final Integer size,
+                                                                                  final String query,
+                                                                                  final ServerWebExchange exchange) {
+        return dataEntityGroupService.listDEGItems(dataEntityGroupId, page, size, query)
             .map(ResponseEntity::ok);
     }
 
