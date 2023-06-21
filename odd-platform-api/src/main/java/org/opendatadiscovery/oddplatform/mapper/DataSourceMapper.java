@@ -30,9 +30,9 @@ public interface DataSourceMapper {
     List<DataSource> mapDtos(final List<DataSourceDto> dtos);
 
     default DataSourceList mapDtoPage(final Page<DataSourceDto> page) {
-        return new DataSourceList()
-            .items(mapDtos(page.getData()))
-            .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
+        final List<DataSource> items = mapDtos(page.getData());
+        final PageInfo pageInfo = new PageInfo(page.getTotal(), page.isHasNext());
+        return new DataSourceList(items, pageInfo);
     }
 
     @Mapping(target = "oddrn", expression = "java(form.getOddrn().trim())")
