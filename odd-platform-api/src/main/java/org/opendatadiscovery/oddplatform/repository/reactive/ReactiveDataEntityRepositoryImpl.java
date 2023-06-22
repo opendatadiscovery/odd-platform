@@ -30,6 +30,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
+import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -226,6 +227,35 @@ public class ReactiveDataEntityRepositoryImpl
                 .dataSource(r.into(DATA_SOURCE).into(DataSourcePojo.class))
                 .namespace(r.into(NAMESPACE).into(NamespacePojo.class))
                 .build());
+    }
+
+    @Override
+    public Mono<List<DataEntityDimensionsDto>> getDataEntityWithOwnership(final Collection<String> oddrns) {
+        if (CollectionUtils.isEmpty(oddrns)) {
+            return Mono.just(List.of());
+        }
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
+        final var query = DSL.select(DATA_ENTITY.fields())
+            .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
+            .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD))
+            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
+            .from(DATA_ENTITY)
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .where(conditions)
+            .groupBy(DATA_ENTITY.fields());
+        return jooqReactiveOperations.flux(query)
+            .map(r -> {
+                final DataEntityPojo dataEntityPojo = r.into(DATA_ENTITY).into(DataEntityPojo.class);
+                final List<OwnershipDto> ownershipDtos = dataEntityDtoMapper.extractOwnershipRelation(r);
+                return DataEntityDimensionsDto.dimensionsBuilder()
+                    .dataEntity(dataEntityPojo)
+                    .ownership(ownershipDtos)
+                    .build();
+            })
+            .collectList();
     }
 
     @Override
