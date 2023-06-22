@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service.activity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -84,8 +83,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Flux<Activity> getActivityList(final LocalDate beginDate,
-                                          final LocalDate endDate,
+    public Flux<Activity> getActivityList(final OffsetDateTime beginDate,
+                                          final OffsetDateTime endDate,
                                           final Integer size,
                                           final Long datasourceId,
                                           final Long namespaceId,
@@ -118,8 +117,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Flux<Activity> getDataEntityActivityList(final LocalDate beginDate,
-                                                    final LocalDate endDate,
+    public Flux<Activity> getDataEntityActivityList(final OffsetDateTime beginDate,
+                                                    final OffsetDateTime endDate,
                                                     final Integer size,
                                                     final Long dataEntityId,
                                                     final List<Long> userIds,
@@ -137,8 +136,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Mono<ActivityCountInfo> getActivityCounts(final LocalDate beginDate,
-                                                     final LocalDate endDate,
+    public Mono<ActivityCountInfo> getActivityCounts(final OffsetDateTime beginDate,
+                                                     final OffsetDateTime endDate,
                                                      final Long datasourceId,
                                                      final Long namespaceId,
                                                      final List<Long> tagIds,
@@ -166,8 +165,8 @@ public class ActivityServiceImpl implements ActivityService {
             ));
     }
 
-    private Flux<Activity> fetchAllActivities(final LocalDate beginDate,
-                                              final LocalDate endDate,
+    private Flux<Activity> fetchAllActivities(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
                                               final Integer size,
                                               final Long datasourceId,
                                               final Long namespaceId,
@@ -182,8 +181,8 @@ public class ActivityServiceImpl implements ActivityService {
             .map(activityMapper::mapToActivity);
     }
 
-    private Flux<Activity> fetchMyActivities(final LocalDate beginDate,
-                                             final LocalDate endDate,
+    private Flux<Activity> fetchMyActivities(final OffsetDateTime beginDate,
+                                             final OffsetDateTime endDate,
                                              final Integer size,
                                              final Long datasourceId,
                                              final Long namespaceId,
@@ -199,8 +198,8 @@ public class ActivityServiceImpl implements ActivityService {
             .switchIfEmpty(Flux.empty());
     }
 
-    private Flux<Activity> fetchDependentActivities(final LocalDate beginDate,
-                                                    final LocalDate endDate,
+    private Flux<Activity> fetchDependentActivities(final OffsetDateTime beginDate,
+                                                    final OffsetDateTime endDate,
                                                     final Integer size,
                                                     final Long datasourceId,
                                                     final Long namespaceId,
@@ -217,8 +216,8 @@ public class ActivityServiceImpl implements ActivityService {
             .switchIfEmpty(Flux.empty());
     }
 
-    private Mono<Long> getTotalCount(final LocalDate beginDate,
-                                     final LocalDate endDate,
+    private Mono<Long> getTotalCount(final OffsetDateTime beginDate,
+                                     final OffsetDateTime endDate,
                                      final Long datasourceId,
                                      final Long namespaceId,
                                      final List<Long> tagIds,
@@ -230,8 +229,8 @@ public class ActivityServiceImpl implements ActivityService {
             .defaultIfEmpty(0L);
     }
 
-    private Mono<Long> getMyObjectActivitiesCount(final LocalDate beginDate,
-                                                  final LocalDate endDate,
+    private Mono<Long> getMyObjectActivitiesCount(final OffsetDateTime beginDate,
+                                                  final OffsetDateTime endDate,
                                                   final Long datasourceId,
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
@@ -244,8 +243,8 @@ public class ActivityServiceImpl implements ActivityService {
             .defaultIfEmpty(0L);
     }
 
-    private Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
-                                                   final LocalDate endDate,
+    private Mono<Long> getDependentActivitiesCount(final OffsetDateTime beginDate,
+                                                   final OffsetDateTime endDate,
                                                    final Long datasourceId,
                                                    final Long namespaceId,
                                                    final List<Long> tagIds,

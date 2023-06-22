@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service.activity;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,8 @@ public interface ActivityService {
                                 final Long dataEntityId,
                                 final ActivityEventTypeDto eventType);
 
-    Flux<Activity> getActivityList(final LocalDate beginDate,
-                                   final LocalDate endDate,
+    Flux<Activity> getActivityList(final OffsetDateTime beginDate,
+                                   final OffsetDateTime endDate,
                                    final Integer size,
                                    final Long datasourceId,
                                    final Long namespaceId,
@@ -43,8 +42,8 @@ public interface ActivityService {
                                    final Long lastEventId,
                                    final OffsetDateTime lastEventDateTime);
 
-    Flux<Activity> getDataEntityActivityList(final LocalDate beginDate,
-                                             final LocalDate endDate,
+    Flux<Activity> getDataEntityActivityList(final OffsetDateTime beginDate,
+                                             final OffsetDateTime endDate,
                                              final Integer size,
                                              final Long dataEntityId,
                                              final List<Long> userIds,
@@ -52,8 +51,8 @@ public interface ActivityService {
                                              final Long lastEventId,
                                              final OffsetDateTime lastEventDateTime);
 
-    Mono<ActivityCountInfo> getActivityCounts(final LocalDate beginDate,
-                                              final LocalDate endDate,
+    Mono<ActivityCountInfo> getActivityCounts(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
                                               final Long datasourceId,
                                               final Long namespaceId,
                                               final List<Long> tagIds,

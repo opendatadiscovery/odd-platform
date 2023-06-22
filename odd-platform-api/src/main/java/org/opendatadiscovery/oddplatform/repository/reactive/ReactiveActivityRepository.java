@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
@@ -14,8 +13,8 @@ public interface ReactiveActivityRepository {
 
     Mono<Void> save(final List<ActivityPojo> pojos);
 
-    Flux<ActivityDto> findAllActivities(final LocalDate beginDate,
-                                        final LocalDate endDate,
+    Flux<ActivityDto> findAllActivities(final OffsetDateTime beginDate,
+                                        final OffsetDateTime endDate,
                                         final Integer size,
                                         final Long datasourceId,
                                         final Long namespaceId,
@@ -26,8 +25,8 @@ public interface ReactiveActivityRepository {
                                         final Long lastEventId,
                                         final OffsetDateTime lastEventDateTime);
 
-    Flux<ActivityDto> findMyActivities(final LocalDate beginDate,
-                                       final LocalDate endDate,
+    Flux<ActivityDto> findMyActivities(final OffsetDateTime beginDate,
+                                       final OffsetDateTime endDate,
                                        final Integer size,
                                        final Long datasourceId,
                                        final Long namespaceId,
@@ -38,8 +37,8 @@ public interface ReactiveActivityRepository {
                                        final Long lastEventId,
                                        final OffsetDateTime lastEventDateTime);
 
-    Flux<ActivityDto> findDependentActivities(final LocalDate beginDate,
-                                              final LocalDate endDate,
+    Flux<ActivityDto> findDependentActivities(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
                                               final Integer size,
                                               final Long datasourceId,
                                               final Long namespaceId,
@@ -50,8 +49,8 @@ public interface ReactiveActivityRepository {
                                               final Long lastEventId,
                                               final OffsetDateTime lastEventDateTime);
 
-    Flux<ActivityDto> findDataEntityActivities(final LocalDate beginDate,
-                                               final LocalDate endDate,
+    Flux<ActivityDto> findDataEntityActivities(final OffsetDateTime beginDate,
+                                               final OffsetDateTime endDate,
                                                final Integer size,
                                                final Long dataEntityId,
                                                final List<Long> userIds,
@@ -59,8 +58,8 @@ public interface ReactiveActivityRepository {
                                                final Long lastEventId,
                                                final OffsetDateTime lastEventDateTime);
 
-    Mono<Long> getTotalActivitiesCount(final LocalDate beginDate,
-                                       final LocalDate endDate,
+    Mono<Long> getTotalActivitiesCount(final OffsetDateTime beginDate,
+                                       final OffsetDateTime endDate,
                                        final Long datasourceId,
                                        final Long namespaceId,
                                        final List<Long> tagIds,
@@ -68,8 +67,8 @@ public interface ReactiveActivityRepository {
                                        final List<Long> userIds,
                                        final ActivityEventTypeDto eventType);
 
-    Mono<Long> getMyObjectsActivitiesCount(final LocalDate beginDate,
-                                           final LocalDate endDate,
+    Mono<Long> getMyObjectsActivitiesCount(final OffsetDateTime beginDate,
+                                           final OffsetDateTime endDate,
                                            final Long datasourceId,
                                            final Long namespaceId,
                                            final List<Long> tagIds,
@@ -77,8 +76,8 @@ public interface ReactiveActivityRepository {
                                            final ActivityEventTypeDto eventType,
                                            final Long currentOwnerId);
 
-    Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
-                                           final LocalDate endDate,
+    Mono<Long> getDependentActivitiesCount(final OffsetDateTime beginDate,
+                                           final OffsetDateTime endDate,
                                            final Long datasourceId,
                                            final Long namespaceId,
                                            final List<Long> tagIds,

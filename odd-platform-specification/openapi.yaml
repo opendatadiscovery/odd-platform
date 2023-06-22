@@ -1414,13 +1414,13 @@ paths:
           required: true
           schema:
             type: string
-            format: date
+            format: date-time
         - name: end_date
           in: query
           required: true
           schema:
             type: string
-            format: date
+            format: date-time
         - name: user_ids
           in: query
           schema:
@@ -2683,13 +2683,13 @@ paths:
           required: true
           schema:
             type: string
-            format: date
+            format: date-time
         - name: end_date
           in: query
           required: true
           schema:
             type: string
-            format: date
+            format: date-time
         - name: datasource_id
           in: query
           schema:
@@ -2763,13 +2763,13 @@ paths:
           required: true
           schema:
             type: string
-            format: date
+            format: date-time
         - name: end_date
           in: query
           required: true
           schema:
             type: string
-            format: date
+            format: date-time
         - name: datasource_id
           in: query
           schema:
