@@ -428,8 +428,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dimensionsDto.getOwnership()))
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
-            .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()));
+            .createdAt(DateTimeUtil.mapUTCDateTime(pojo.getCreatedAt()))
+            .updatedAt(DateTimeUtil.mapUTCDateTime(pojo.getUpdatedAt()));
         item.setDataEntity(dataEntity);
         return item;
     }
