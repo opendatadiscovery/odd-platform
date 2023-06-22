@@ -1,11 +1,10 @@
 import React, { type ChangeEvent, type FC, useCallback, useMemo, useState } from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import {
   AppCircularProgress,
   AppErrorBlock,
   EmptyContentPlaceholder,
   Input,
-  ScrollableContainer,
   Table,
 } from 'components/shared/elements';
 import { useAppParams, useGetDataEntityGroupItems } from 'lib/hooks';
@@ -28,7 +27,7 @@ const OverviewEntityGroupItems: FC = () => {
     hasNextPage,
   } = useGetDataEntityGroupItems({
     dataEntityGroupId: dataEntityId,
-    size: 30,
+    size: 10,
     query,
   });
 
@@ -60,10 +59,10 @@ const OverviewEntityGroupItems: FC = () => {
   };
 
   const flexMap = {
-    name: '1 0 32%',
-    owner: '1 0 23%',
-    createdAt: '0 0 15%',
-    updatedAt: '0 0 15%',
+    name: '1 0 46%',
+    owner: '1 0 20%',
+    createdAt: '0 0 17%',
+    updatedAt: '0 0 17%',
   };
 
   const columnName = (name: string) => <Typography variant='caption'>{name}</Typography>;
@@ -76,9 +75,6 @@ const OverviewEntityGroupItems: FC = () => {
         <S.Container>
           <S.Header>
             <S.HeaderContent>
-              <Typography variant='body1' color='texts.info'>
-                {`${entitiesCount} entities, ${upperGroupsCount} upper groups`}
-              </Typography>
               <Input
                 variant='search-m'
                 maxWidth={320}
@@ -86,6 +82,9 @@ const OverviewEntityGroupItems: FC = () => {
                 value={inputValue}
                 onChange={handleChange}
               />
+              <Typography variant='body1' color='texts.info'>
+                {`${entitiesCount} entities, ${upperGroupsCount} upper groups`}
+              </Typography>
             </S.HeaderContent>
             <Table.HeaderContainer>
               <Table.Cell $flex={flexMap.name}>{columnName('Name')}</Table.Cell>
@@ -98,8 +97,11 @@ const OverviewEntityGroupItems: FC = () => {
               </Table.Cell>
             </Table.HeaderContainer>
           </S.Header>
-          {entities.length > 0 ? (
-            <ScrollableContainer $offsetY={190} id='entity-group-items-list'>
+          <Box
+            sx={{ overflowY: 'scroll', minHeight: '40px' }}
+            id='entity-group-items-list'
+          >
+            {entities.length > 0 ? (
               <InfiniteScroll
                 scrollableTarget='entity-group-items-list'
                 dataLength={entities.length}
@@ -113,8 +115,9 @@ const OverviewEntityGroupItems: FC = () => {
               >
                 {entities.map(({ isUpperGroup, dataEntity }) => (
                   <EntityGroupItem
+                    key={dataEntity.id}
                     isUpperGroup={isUpperGroup}
-                    name={dataEntity.internalName || dataEntity.externalName}
+                    name={dataEntity.internalName ?? dataEntity.externalName}
                     id={dataEntity.id}
                     entityClasses={dataEntity.entityClasses}
                     type={dataEntity.type}
@@ -125,14 +128,16 @@ const OverviewEntityGroupItems: FC = () => {
                   />
                 ))}
               </InfiniteScroll>
-            </ScrollableContainer>
-          ) : (
-            <EmptyContentPlaceholder
-              isContentLoaded={isSuccess}
-              isContentEmpty={!total}
-              offsetTop={190}
-            />
-          )}
+            ) : (
+              <EmptyContentPlaceholder
+                position='horizontal'
+                iconSize={40}
+                fullPage={false}
+                isContentLoaded={isSuccess}
+                isContentEmpty={!total}
+              />
+            )}
+          </Box>
         </S.Container>
       )}
     </>

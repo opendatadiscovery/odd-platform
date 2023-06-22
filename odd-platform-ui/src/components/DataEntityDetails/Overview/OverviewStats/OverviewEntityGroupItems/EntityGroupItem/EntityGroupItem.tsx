@@ -1,9 +1,14 @@
-import React, { type FC } from 'react';
+import React, { type FC, useCallback } from 'react';
 import type { DataEntity, DataEntityBaseObject } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { Box, Grid, Typography } from '@mui/material';
-import { EntityClassItem, Table } from 'components/shared/elements';
-import { DataEntityClassTypeLabelMap } from 'lib/constants';
+import {
+  Button,
+  EntityClassItem,
+  EntityTypeItem,
+  Table,
+  TruncatedList,
+} from 'components/shared/elements';
 import { Link } from 'react-router-dom';
 import { TriangularUnionIcon } from 'components/shared/icons';
 
@@ -33,6 +38,17 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
   const { dataEntityOverviewPath } = useAppPaths();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
+  const ownersEllipsis = useCallback(
+    (isExpanded: boolean) => (
+      <Button
+        buttonType='link-m'
+        text={isExpanded ? 'Hide' : 'Show more'}
+        onClick={e => e.preventDefault()}
+      />
+    ),
+    []
+  );
+
   return (
     <Link to={dataEntityOverviewPath(id)}>
       <Table.RowContainer>
@@ -42,44 +58,43 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
             justifyContent='space-between'
             alignItems='center'
             wrap='nowrap'
+            overflow='hidden'
           >
             <Box
               sx={{
                 overflow: 'hidden',
                 justifyContent: 'flex-start',
+                alignItems: 'center',
                 mr: 1,
                 display: 'flex',
                 flexWrap: 'nowrap',
               }}
             >
-              <Typography variant='body1' noWrap title={name}>
+              {isUpperGroup && <TriangularUnionIcon />}
+              <Typography variant='body1' noWrap title={name} ml={1}>
                 {name}
               </Typography>
               <Box display='flex' flexWrap='nowrap' mr={1} justifyContent='flex-start'>
-                {entityClasses &&
-                  entityClasses.map(entityClass => (
-                    <EntityClassItem
-                      sx={{ ml: 0.5 }}
-                      key={entityClass.id}
-                      entityClassName={entityClass.name}
-                    />
-                  ))}
+                {entityClasses?.map(entityClass => (
+                  <EntityClassItem
+                    sx={{ ml: 0.5 }}
+                    key={entityClass.id}
+                    entityClassName={entityClass.name}
+                  />
+                ))}
               </Box>
             </Box>
-            {isUpperGroup && <TriangularUnionIcon />}
           </Grid>
-        </Table.Cell>
-        <Table.Cell $flex={flexMap.type}>
-          {DataEntityClassTypeLabelMap.get(type.name)!.normal}
+          <EntityTypeItem sx={{ ml: 1 }} entityTypeName={type.name} />
         </Table.Cell>
         <Table.Cell $flex={flexMap.owner}>
-          <Grid container direction='column' alignItems='flex-start'>
-            {ownership?.map(owner => (
+          <TruncatedList items={ownership ?? []} lines={5} ellipsis={ownersEllipsis}>
+            {owner => (
               <Typography key={owner.owner.id} variant='body1'>
                 {owner.owner.name}
               </Typography>
-            ))}
-          </Grid>
+            )}
+          </TruncatedList>
         </Table.Cell>
         <Table.Cell $flex={flexMap.createdAt}>
           {createdAt && (
