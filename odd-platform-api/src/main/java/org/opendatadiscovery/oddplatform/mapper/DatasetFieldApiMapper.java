@@ -4,6 +4,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -29,11 +30,11 @@ public interface DatasetFieldApiMapper {
 
     @Mapping(source = "pojo.type", target = "type", qualifiedByName = "deserializeType")
     DataSetFieldDiffState mapDiffWithParents(final DatasetFieldPojo pojo,
-                                             final Map<String, DatasetFieldPojo> versionPojos);
+                                             @Context final Map<String, DatasetFieldPojo> versionPojos);
 
     @AfterMapping
     default void mapParentId(final DatasetFieldPojo pojo,
-                             final Map<String, DatasetFieldPojo> versionPojos,
+                             @Context final Map<String, DatasetFieldPojo> versionPojos,
                              @MappingTarget final DataSetFieldDiffState diffState) {
         if (pojo != null && StringUtils.isNotEmpty(pojo.getParentFieldOddrn())) {
             final DatasetFieldPojo parentField = versionPojos.get(pojo.getParentFieldOddrn());

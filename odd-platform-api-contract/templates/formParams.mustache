@@ -1,0 +1,4 @@
+{{#isFormParam}}
+    {{^isFile}}{{>paramDoc}}{{#useBeanValidation}} @Valid{{/useBeanValidation}} {{#isModel}}@RequestPart{{/isModel}}{{^isModel}}{{#isArray}}@RequestPart{{/isArray}}{{^isArray}}@RequestParam{{/isArray}}{{/isModel}}(value = "{{baseName}}"{{#required}}, required = true{{/required}}{{^required}}, required = false{{/required}}){{>dateTimeParam}} {{{dataType}}} {{paramName}}{{/isFile}}
+    {{#isFile}}{{>paramDoc}} @RequestPart(value = "{{baseName}}"{{#required}}, required = true{{/required}}{{^required}}, required = false{{/required}}) {{#reactive}}{{#isArray}}Flux{{/isArray}}{{^isArray}}Mono{{/isArray}}<Part>{{/reactive}}{{^reactive}}{{#isArray}}List<{{/isArray}}MultipartFile{{#isArray}}>{{/isArray}}{{/reactive}} {{paramName}}{{/isFile}}
+{{/isFormParam}}

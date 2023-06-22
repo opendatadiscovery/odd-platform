@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.service.attachment.local;
 
+import jakarta.annotation.PostConstruct;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.service.attachment.FilePathConstructor;
 import org.springframework.beans.factory.annotation.Value;

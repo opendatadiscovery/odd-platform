@@ -232,12 +232,14 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
             .assertNext(map -> {
                 assertThat(map).isNotNull();
                 assertThat(map).hasSize(1);
+                final RecursiveComparisonConfiguration configuration = RecursiveComparisonConfiguration.builder()
+                    .withIgnoredFields("id")
+                    .withIgnoreAllOverriddenEquals(false)
+                    .withIgnoredOverriddenEqualsForTypes(DatasetFieldPojo.class)
+                    .build();
                 assertThat(map.get(datasetVersionPojo.getId()))
-                    .usingRecursiveFieldByFieldElementComparator(RecursiveComparisonConfiguration.builder()
-                        .withIgnoredFields("id")
-                        .withIgnoreAllOverriddenEquals(false)
-                        .build())
-                    .containsExactlyElementsOf(datasetFieldPojos);
+                    .usingRecursiveFieldByFieldElementComparator(configuration)
+                    .hasSameElementsAs(datasetFieldPojos);
             })
             .verifyComplete();
     }
