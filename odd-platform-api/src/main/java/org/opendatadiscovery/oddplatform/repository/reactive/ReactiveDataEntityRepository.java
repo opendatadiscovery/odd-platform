@@ -45,6 +45,8 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSourceAndNamespace(final Collection<String> oddrns);
 
+    Mono<List<DataEntityDimensionsDto>> getDataEntityWithOwnership(final Collection<String> oddrns);
+
     Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn);
 
     Mono<Map<String, Set<DataEntityPojo>>> getDEGEntities(final Collection<String> groupOddrns);

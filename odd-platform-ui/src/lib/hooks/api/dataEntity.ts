@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { dataEntityApi } from 'lib/api';
 import { showServerErrorToast } from 'lib/errorHandling';
 import type {
@@ -6,6 +6,9 @@ import type {
   Edge,
   Node,
 } from 'components/DataEntityDetails/Lineage/DEGLineage/lib/interfaces';
+import type { DataEntityGroupList } from 'lib/interfaces';
+import type { ErrorState } from 'redux/interfaces';
+import type { DataEntityApiGetDataEntityGroupsItemsRequest } from 'generated-sources';
 
 interface UseDataEntityMetricsProps {
   dataEntityId: number;
@@ -92,4 +95,41 @@ export function useGetDomains() {
   return useQuery(['domains'], () => dataEntityApi.getDomains(), {
     select: data => data.items,
   });
+}
+
+type UseGetDataEntityGroupItems = Omit<
+  DataEntityApiGetDataEntityGroupsItemsRequest,
+  'page'
+>;
+
+export function useGetDataEntityGroupItems({
+  dataEntityGroupId,
+  size,
+  query,
+}: UseGetDataEntityGroupItems) {
+  return useInfiniteQuery<DataEntityGroupList, ErrorState, DataEntityGroupList>(
+    ['dataEntityGroupItems', { dataEntityGroupId, size, query }],
+    async ({ pageParam = 1 }) => {
+      const response = await dataEntityApi.getDataEntityGroupsItems({
+        dataEntityGroupId,
+        size,
+        query,
+        page: pageParam,
+      });
+
+      const totalItems = response.pageInfo.total;
+      const totalPageCount = Math.ceil(totalItems / size);
+      let nextPage;
+
+      if (pageParam < totalPageCount) {
+        nextPage = pageParam + 1;
+      }
+
+      return {
+        ...response,
+        pageInfo: { ...response.pageInfo, nextPage },
+      };
+    },
+    { getNextPageParam: lastPage => lastPage.pageInfo.nextPage }
+  );
 }

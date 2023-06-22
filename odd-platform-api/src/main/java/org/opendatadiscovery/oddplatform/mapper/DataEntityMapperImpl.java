@@ -17,11 +17,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityBaseObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItem;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
@@ -405,6 +407,31 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .map(dto -> mapToEntityClassUsage(dto, classesAndTypesCount))
                     .toList()
             );
+    }
+
+    @Override
+    public DataEntityGroupItem mapGroupItem(final DataEntityDimensionsDto dimensionsDto,
+                                            final boolean isUpperGroup) {
+        final DataEntityGroupItem item = new DataEntityGroupItem();
+        item.setIsUpperGroup(isUpperGroup);
+
+        final DataEntityPojo pojo = dimensionsDto.getDataEntity();
+        final Set<DataEntityClassDto> entityClasses =
+            DataEntityClassDto.findByIds(dimensionsDto.getDataEntity().getEntityClassIds());
+        final DataEntityType type = getDataEntityType(dimensionsDto.getDataEntity());
+
+        final DataEntityBaseObject dataEntity = new DataEntityBaseObject()
+            .id(pojo.getId())
+            .oddrn(pojo.getOddrn())
+            .externalName(pojo.getExternalName())
+            .internalName(pojo.getInternalName())
+            .ownership(ownershipMapper.mapDtos(dimensionsDto.getOwnership()))
+            .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
+            .type(type)
+            .createdAt(addUTC(pojo.getCreatedAt()))
+            .updatedAt(addUTC(pojo.getUpdatedAt()));
+        item.setDataEntity(dataEntity);
+        return item;
     }
 
     private DataEntityClassUsageInfo mapToEntityClassUsage(final DataEntityClassDto classDto,

@@ -105,29 +105,7 @@ public class DataEntityDtoMapper {
             .build();
     }
 
-    private List<TagDto> extractTags(final Record r) {
-        final Set<TagPojo> tagPojos = jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class);
-        final Map<Long, TagToDataEntityPojo> tagRelations = jooqRecordHelper.extractAggRelation(r,
-                AGG_TAGS_RELATION_FIELD, TagToDataEntityPojo.class).stream()
-            .collect(Collectors.toMap(TagToDataEntityPojo::getTagId, identity()));
-        return tagPojos.stream()
-            .map(pojo -> new TagDto(pojo, null, tagRelations.get(pojo.getId()).getExternal()))
-            .toList();
-    }
-
-    private List<MetadataDto> extractMetadata(final Record r) {
-        final Set<MetadataFieldPojo> metadata =
-            jooqRecordHelper.extractAggRelation(r, AGG_METADATA_FIELD, MetadataFieldPojo.class);
-        final Map<Long, MetadataFieldValuePojo> metadataValues =
-            jooqRecordHelper.extractAggRelation(r, AGG_METADATA_VALUE_FIELD, MetadataFieldValuePojo.class)
-                .stream()
-                .collect(Collectors.toMap(MetadataFieldValuePojo::getMetadataFieldId, identity()));
-        return metadata.stream()
-            .map(pojo -> new MetadataDto(pojo, metadataValues.get(pojo.getId())))
-            .toList();
-    }
-
-    private List<OwnershipDto> extractOwnershipRelation(final Record r) {
+    public List<OwnershipDto> extractOwnershipRelation(final Record r) {
         final Map<Long, OwnerPojo> ownerDict = jooqRecordHelper.extractAggRelation(r, AGG_OWNER_FIELD, OwnerPojo.class)
             .stream()
             .collect(Collectors.toMap(OwnerPojo::getId, identity()));
@@ -158,6 +136,28 @@ public class DataEntityDtoMapper {
                     .build();
             })
             .collect(toList());
+    }
+
+    private List<TagDto> extractTags(final Record r) {
+        final Set<TagPojo> tagPojos = jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class);
+        final Map<Long, TagToDataEntityPojo> tagRelations = jooqRecordHelper.extractAggRelation(r,
+                AGG_TAGS_RELATION_FIELD, TagToDataEntityPojo.class).stream()
+            .collect(Collectors.toMap(TagToDataEntityPojo::getTagId, identity()));
+        return tagPojos.stream()
+            .map(pojo -> new TagDto(pojo, null, tagRelations.get(pojo.getId()).getExternal()))
+            .toList();
+    }
+
+    private List<MetadataDto> extractMetadata(final Record r) {
+        final Set<MetadataFieldPojo> metadata =
+            jooqRecordHelper.extractAggRelation(r, AGG_METADATA_FIELD, MetadataFieldPojo.class);
+        final Map<Long, MetadataFieldValuePojo> metadataValues =
+            jooqRecordHelper.extractAggRelation(r, AGG_METADATA_VALUE_FIELD, MetadataFieldValuePojo.class)
+                .stream()
+                .collect(Collectors.toMap(MetadataFieldValuePojo::getMetadataFieldId, identity()));
+        return metadata.stream()
+            .map(pojo -> new MetadataDto(pojo, metadataValues.get(pojo.getId())))
+            .toList();
     }
 
     private Map<DataEntityClassDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity) {
