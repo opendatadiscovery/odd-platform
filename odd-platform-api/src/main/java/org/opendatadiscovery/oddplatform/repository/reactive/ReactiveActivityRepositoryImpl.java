@@ -22,6 +22,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.ActivityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -270,7 +271,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         final var whereStep = baseQuery.where(conditions)
             .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc());
         if (lastEventDateTime != null && lastEventId != null) {
-            whereStep.seek(lastEventDateTime.toLocalDateTime(), lastEventId);
+            whereStep.seek(DateTimeUtil.mapUTCDateTime(lastEventDateTime), lastEventId);
         }
         whereStep.limit(size);
         return jooqReactiveOperations.flux(whereStep)

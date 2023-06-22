@@ -38,6 +38,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -176,7 +177,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     @Override
     public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId) {
         final var query = DSL.update(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -186,7 +187,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     @Override
     public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId) {
         final var query = DSL.update(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -208,7 +209,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     @Override
     public Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId) {
         final var query = DSL.update(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId).and(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)))
             .returning();
         return jooqReactiveOperations.mono(query)

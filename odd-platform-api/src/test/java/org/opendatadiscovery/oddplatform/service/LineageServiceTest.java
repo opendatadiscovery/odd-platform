@@ -20,13 +20,13 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityRunMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.DateTimeMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.LabelMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapper;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapperImpl;
-import org.opendatadiscovery.oddplatform.mapper.OffsetDateTimeMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.OwnerMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.TagMapperImpl;
@@ -66,7 +66,7 @@ class LineageServiceTest {
             lineageMapper);
         final TermMapperImpl termMapper = new TermMapperImpl(
             new NamespaceMapperImpl(),
-            new OffsetDateTimeMapperImpl(),
+            new DateTimeMapperImpl(),
             new OwnershipMapperImpl(
                 new OwnerMapperImpl(),
                 new TitleMapperImpl()
@@ -77,7 +77,7 @@ class LineageServiceTest {
                 new DataSourceMapperImpl(
                     new NamespaceMapperImpl(),
                     new TokenMapperImpl(
-                        new OffsetDateTimeMapperImpl()
+                        new DateTimeMapperImpl()
                     )
                 ),
                 new OwnershipMapperImpl(
@@ -94,18 +94,19 @@ class LineageServiceTest {
                         new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()),
                         termMapper
                     ),
-                    new OffsetDateTimeMapperImpl()
+                    new DateTimeMapperImpl()
                 ),
                 new DataEntityRunMapperImpl(
-                    new OffsetDateTimeMapperImpl()
+                    new DateTimeMapperImpl()
                 ),
-                termMapper
+                termMapper,
+                new DateTimeMapperImpl()
             )
         );
         lineageMapper.setDataSourceMapper(
             new DataSourceMapperImpl(
                 new NamespaceMapperImpl(),
-                new TokenMapperImpl(new OffsetDateTimeMapperImpl())
+                new TokenMapperImpl(new DateTimeMapperImpl())
             )
         );
     }

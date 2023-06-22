@@ -307,7 +307,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
 
         final var resolveQuery = DSL.update(ALERT)
             .set(ALERT.STATUS, AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode())
-            .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
+            .set(ALERT.STATUS_UPDATED_AT, DateTimeUtil.generateNow())
             .set(ALERT.STATUS_UPDATED_BY, DSL.inline(null, String.class))
             .where(ALERT.ID.in(alertIds));
 

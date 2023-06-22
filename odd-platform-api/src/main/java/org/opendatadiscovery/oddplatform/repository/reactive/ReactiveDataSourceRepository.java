@@ -20,8 +20,6 @@ public interface ReactiveDataSourceRepository extends ReactiveCRUDRepository<Dat
 
     Mono<Boolean> existsByNamespace(final long namespaceId);
 
-    Mono<DataSourcePojo> injectOddrn(final long id, final String oddrn);
-
     Mono<Boolean> existsByCollector(final long collectorId);
 
     Flux<DataSourcePojo> findByPrefix(final String prefix);

@@ -24,6 +24,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveActivityRepository;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.activity.handler.ActivityHandler;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,7 +43,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Mono<Void> createActivityEvent(final ActivityCreateEvent event) {
-        final LocalDateTime activityCreateTime = LocalDateTime.now();
+        final LocalDateTime activityCreateTime = DateTimeUtil.generateNow();
         return authIdentityProvider.getCurrentUser()
             .map(UserDto::username)
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
@@ -53,7 +54,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Mono<Void> createActivityEvents(final List<ActivityCreateEvent> events) {
-        final LocalDateTime activityCreateTime = LocalDateTime.now();
+        final LocalDateTime activityCreateTime = DateTimeUtil.generateNow();
         return authIdentityProvider.getCurrentUser()
             .map(UserDto::username)
             .flatMapMany(username -> Flux.fromStream(mapEventsToPojos(events, activityCreateTime, username)))

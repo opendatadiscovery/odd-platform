@@ -44,6 +44,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final DatasetVersionMapper datasetVersionMapper;
     private final DataEntityRunMapper dataEntityRunMapper;
     private final TermMapper termMapper;
+    private final DateTimeMapper dateTimeMapper;
 
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dto) {
@@ -145,8 +147,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(pojo.getInternalName())
             .externalName(pojo.getExternalName())
             .oddrn(pojo.getOddrn())
-            .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()))
+            .createdAt(dateTimeMapper.mapUTCDateTime(pojo.getCreatedAt()))
+            .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()))
             .viewCount(pojo.getViewCount());
     }
 
@@ -168,7 +170,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
                                     final DataEntityClassDto classDto,
                                     final NamespacePojo namespacePojo) {
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
         return new DataEntityPojo()
             .setInternalName(formData.getName())
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
@@ -192,7 +194,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .setInternalName(formData.getName())
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
             .setTypeId(formData.getType().getId())
-            .setUpdatedAt(LocalDateTime.now());
+            .setUpdatedAt(DateTimeUtil.generateNow());
     }
 
     @Override
@@ -213,8 +215,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .oddrn(pojo.getOddrn())
             .internalDescription(pojo.getInternalDescription())
             .externalDescription(pojo.getExternalDescription())
-            .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()))
+            .createdAt(dateTimeMapper.mapUTCDateTime(pojo.getCreatedAt()))
+            .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()))
             .dataEntityGroups(groups)
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
@@ -483,13 +485,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .map(this::mapType)
             .orElseThrow(() -> new IllegalArgumentException(
                 String.format("No type with id %d for entity %s was found", typeId, pojo.getOddrn())));
-    }
-
-    private OffsetDateTime addUTC(final LocalDateTime time) {
-        if (null == time) {
-            return null;
-        }
-        return time.atOffset(ZoneOffset.UTC);
     }
 
     private PageInfo pageInfo(final long total) {

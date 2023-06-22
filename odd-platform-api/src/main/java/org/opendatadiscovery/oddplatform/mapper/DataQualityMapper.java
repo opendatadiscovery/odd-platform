@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
 
-@Mapper(config = MapperConfig.class, uses = OffsetDateTimeMapper.class)
+@Mapper(config = MapperConfig.class, uses = DateTimeMapper.class)
 public interface DataQualityMapper {
     @Mapping(
         target = "score",

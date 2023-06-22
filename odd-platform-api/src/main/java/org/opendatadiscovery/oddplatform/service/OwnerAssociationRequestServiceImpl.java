@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
@@ -18,8 +17,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerAssociationRequestRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -76,7 +75,8 @@ public class OwnerAssociationRequestServiceImpl implements OwnerAssociationReque
         return ownerAssociationRequestRepository.getDto(id)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("Can't find request with id %s", id)))
             .zipWith(currentUser)
-            .map(function((dto, user) -> mapper.applyToPojo(dto.pojo(), status, user.username(), LocalDateTime.now())))
+            .map(function(
+                (dto, user) -> mapper.applyToPojo(dto.pojo(), status, user.username(), DateTimeUtil.generateNow())))
             .flatMap(ownerAssociationRequestRepository::update)
             .flatMap(this::createMappingForApprovedRequest)
             .flatMap(pojo -> ownerAssociationRequestRepository.getDto(pojo.getId()))

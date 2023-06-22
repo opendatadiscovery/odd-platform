@@ -2,10 +2,10 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import org.mapstruct.Mapper;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfig;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertHaltConfigPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 
 @Mapper(config = MapperConfig.class)
 public interface AlertHaltConfigMapper {
@@ -14,19 +14,13 @@ public interface AlertHaltConfigMapper {
     AlertHaltConfigPojo mapForm(final Long dataEntityId, final DataEntityAlertConfig form);
 
     default OffsetDateTime mapTime(final LocalDateTime untilDateTime) {
-        if (untilDateTime == null
-            || untilDateTime.isBefore(OffsetDateTime.now().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())) {
+        if (untilDateTime == null || untilDateTime.isBefore(DateTimeUtil.generateNow())) {
             return null;
         }
-
-        return untilDateTime.atOffset(ZoneOffset.UTC);
+        return DateTimeUtil.mapUTCDateTime(untilDateTime);
     }
 
-    default LocalDateTime mapTime(final OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null) {
-            return null;
-        }
-
-        return offsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+    default LocalDateTime mapUTCTimestampMillis(final OffsetDateTime timestamp) {
+        return DateTimeUtil.mapUTCDateTime(timestamp);
     }
 }

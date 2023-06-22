@@ -21,7 +21,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(config = MapperConfig.class, uses = OffsetDateTimeMapper.class)
+@Mapper(config = MapperConfig.class, uses = DateTimeMapper.class)
 public abstract class AlertMapper {
 
     @Autowired

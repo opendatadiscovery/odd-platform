@@ -24,6 +24,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.TagToTermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -143,7 +144,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             return Flux.just();
         }
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<TagRecord> records = tags.stream()
             .map(e -> createRecord(e, now))
@@ -240,7 +241,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         }
 
         final var query = DSL.update(TAG_TO_TERM)
-            .set(TAG_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .set(TAG_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
             .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.TAG_ID.in(tagIds)))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -250,7 +251,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     @Override
     public Flux<TagToTermPojo> deleteTermRelations(final long tagId) {
         final var query = DSL.update(TAG_TO_TERM)
-            .set(TAG_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .set(TAG_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
             .where(TAG_TO_TERM.TAG_ID.eq(tagId))
             .returning();
         return jooqReactiveOperations.flux(query)

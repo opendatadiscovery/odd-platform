@@ -39,7 +39,7 @@ class AlertMapperTest {
     AssociatedOwnerMapper associatedOwnerMapper;
 
     @InjectMocks
-    AlertMapper alertMapper = new AlertMapperImpl(new OffsetDateTimeMapperImpl());
+    AlertMapper alertMapper = new AlertMapperImpl(new DateTimeMapperImpl());
 
     @Test
     @DisplayName("mapping list without owner")

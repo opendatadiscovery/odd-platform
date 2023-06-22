@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TermOwnershipRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -55,7 +56,7 @@ public class ReactiveTermOwnershipRepositoryImpl implements ReactiveTermOwnershi
     @Override
     public Mono<TermOwnershipPojo> delete(final long ownershipId) {
         final var query = DSL.update(TERM_OWNERSHIP)
-            .set(TERM_OWNERSHIP.DELETED_AT, LocalDateTime.now())
+            .set(TERM_OWNERSHIP.DELETED_AT, DateTimeUtil.generateNow())
             .where(TERM_OWNERSHIP.ID.eq(ownershipId))
             .returning();
         return jooqReactiveOperations.mono(query)

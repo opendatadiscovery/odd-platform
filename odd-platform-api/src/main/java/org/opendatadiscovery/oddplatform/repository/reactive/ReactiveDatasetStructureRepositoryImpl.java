@@ -7,6 +7,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetStructureRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +30,7 @@ public class ReactiveDatasetStructureRepositoryImpl
             return Mono.empty();
         }
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<DatasetStructureRecord> records = entities.stream()
             .map(e -> createRecord(e, now))

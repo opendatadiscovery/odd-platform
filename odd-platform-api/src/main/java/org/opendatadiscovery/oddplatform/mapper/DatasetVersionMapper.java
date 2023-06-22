@@ -11,7 +11,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 
 @Mapper(config = MapperConfig.class, uses = {
     DatasetFieldApiMapper.class,
-    OffsetDateTimeMapper.class
+    DateTimeMapper.class
 })
 public interface DatasetVersionMapper {
 
