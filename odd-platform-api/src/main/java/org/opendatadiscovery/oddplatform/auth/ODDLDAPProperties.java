@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.auth;
 
+import jakarta.annotation.PostConstruct;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;

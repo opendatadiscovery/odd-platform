@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.MetadataApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldList;

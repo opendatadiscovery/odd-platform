@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.SearchApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;

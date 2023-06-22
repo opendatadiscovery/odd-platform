@@ -1,6 +1,6 @@
 [versions]
-spring-webflux = '5.3.19'
-reactor-extra = '3.4.8'
+spring-webflux = '6.0.9'
+reactor-extra = '3.5.1'
 micrometer-registry-prometheus = '1.9.0'
 ingestion-contract-server = '0.1.24'
 oddrn-generator-java = '0.1.20'
@@ -8,31 +8,31 @@ odd-integration-manifests = '0.0.2'
 apache-collections = '4.4'
 apache-lang = '3.12.0'
 r2dbc-spi = '1.0.0.RELEASE'
-r2dbc-postgresql = '0.9.3.RELEASE'
-r2dbc-pool = '0.8.8.RELEASE'
-jooq = '3.17.5'
-jooq-codegen = '3.14.9'
-flyway-core = '8.5.10'
-psql-driver = '42.4.0'
-javax-validation = '2.0.1.Final'
-javax-annotation = '1.3.2'
-jackson-annotations = '2.13.2'
-jackson-datatype-jsr310 = '2.13.3'
-jackson-databind-nullable = '0.2.2'
-jackson-yaml = '2.13.0'
+r2dbc-postgresql = '1.0.1.RELEASE'
+r2dbc-pool = '1.0.0.RELEASE'
+jooq = '3.18.4'
+jooq-codegen = '3.18.4'
+flyway-core = '9.19.4'
+psql-driver = '42.6.0'
+jakarta-validation = '3.0.2'
+jakarta-annotation = '2.1.1'
+jackson-annotations = '2.15.2'
+jackson-datatype-jsr310 = '2.15.2'
+jackson-yaml = '2.15.2'
+jackson-databind-nullable = '0.2.6'
 jetbrains-annotations = '23.0.0'
-swagger-annotations = '1.5.23'
+swagger-annotations = '2.2.11'
 springfox-core = '3.0.0'
-mapstruct = '1.4.2.Final'
+mapstruct = '1.5.3.Final'
 opentelemetry = '1.6.0'
 opentelemetry-alpha = '1.6.0-alpha'
 slack-api = '1.27.0'
 uuid-generator = '4.0.1'
 shedlock-version = '4.42.0'
-json-schema-validator = '1.0.73'
+json-schema-validator = '1.0.84'
 caffeine = '3.1.1'
 lombok = '1.18.24'
-testcontainers = '1.17.1'
+testcontainers = '1.18.3'
 slf4j-api = '1.7.30'
 logback = '1.2.11'
 easy-random-core = '5.0.0'
@@ -71,14 +71,14 @@ jooq = { module = 'org.jooq:jooq', version.ref = 'jooq' }
 jooq-codegen = { module = 'org.jooq:jooq-codegen', version.ref = 'jooq-codegen' }
 flyway-core = { module = 'org.flywaydb:flyway-core', version.ref = 'flyway-core' }
 psql-driver = { module = 'org.postgresql:postgresql', version.ref = 'psql-driver' }
-javax-validation = { module = 'javax.validation:validation-api', version.ref = 'javax-validation' }
-javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
+jakarta-annotation = { module = 'jakarta.annotation:jakarta.annotation-api', version.ref = 'jakarta-annotation' }
+jakarta-validation = { module = 'jakarta.validation:jakarta.validation-api', version.ref = 'jakarta-validation' }
 jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = 'jackson-datatype-jsr310' }
 jackson-databind-nullable = { module = 'org.openapitools:jackson-databind-nullable', version.ref = 'jackson-databind-nullable' }
 jackson-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations', version.ref = 'jackson-annotations' }
 jackson-yaml = { module = 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml', version.ref = 'jackson-yaml' }
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
-swagger-annotations = { module = 'io.swagger:swagger-annotations', version.ref = 'swagger-annotations' }
+swagger-annotations = { module = 'io.swagger.core.v3:swagger-annotations', version.ref = 'swagger-annotations' }
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
 mapstruct = { module = 'org.mapstruct:mapstruct', version.ref = 'mapstruct' }
 mapstruct-processor = { module = 'org.mapstruct:mapstruct-processor', version.ref = 'mapstruct' }
@@ -160,8 +160,8 @@ testcontainers = [
 ]
 openapi = [
     'spring-webflux',
-    'javax-validation',
-    'javax-annotation',
+    'jakarta-validation',
+    'jakarta-annotation',
     'jackson-databind-nullable',
     'swagger-annotations',
     'springfox-core',
