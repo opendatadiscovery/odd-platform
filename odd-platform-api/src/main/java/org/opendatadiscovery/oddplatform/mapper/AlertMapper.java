@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -72,19 +71,8 @@ public abstract class AlertMapper {
     }
 
     public AlertList mapAlerts(final Page<AlertDto> alerts) {
-        final PageInfo pageInfo = new PageInfo();
-        pageInfo.setTotal(alerts.getTotal());
-        pageInfo.setHasNext(alerts.isHasNext());
-        return new AlertList()
-            .items(alerts.getData().stream().map(this::mapAlert).collect(Collectors.toList()))
-            .pageInfo(pageInfo);
-    }
-
-    public AlertList mapAlerts(final List<AlertDto> alerts) {
-        final PageInfo pageInfo = new PageInfo();
-        pageInfo.setTotal((long) alerts.size());
-        pageInfo.setHasNext(false);
-        return new AlertList().items(alerts.stream().map(this::mapAlert).collect(Collectors.toList()))
-            .pageInfo(pageInfo);
+        final PageInfo pageInfo = new PageInfo(alerts.getTotal(), alerts.isHasNext());
+        final List<Alert> items = alerts.getData().stream().map(this::mapAlert).toList();
+        return new AlertList(items, pageInfo);
     }
 }

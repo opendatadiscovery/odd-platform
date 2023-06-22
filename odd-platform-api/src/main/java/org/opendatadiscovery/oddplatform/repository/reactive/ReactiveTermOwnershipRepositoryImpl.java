@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
