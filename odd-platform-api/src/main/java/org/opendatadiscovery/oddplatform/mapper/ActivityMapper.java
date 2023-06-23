@@ -54,7 +54,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(config = MapperConfig.class, uses = {OffsetDateTimeMapper.class})
+@Mapper(config = MapperConfig.class, uses = {DateTimeMapper.class})
 public abstract class ActivityMapper {
 
     private AssociatedOwnerMapper associatedOwnerMapper;

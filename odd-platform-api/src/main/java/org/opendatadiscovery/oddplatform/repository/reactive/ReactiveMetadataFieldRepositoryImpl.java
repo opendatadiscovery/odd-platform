@@ -20,6 +20,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePo
 import org.opendatadiscovery.oddplatform.model.tables.records.MetadataFieldRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
@@ -75,7 +76,7 @@ public class ReactiveMetadataFieldRepositoryImpl
             return Flux.just();
         }
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<MetadataFieldRecord> records = metadataFields.stream()
             .map(e -> createRecord(e, now))

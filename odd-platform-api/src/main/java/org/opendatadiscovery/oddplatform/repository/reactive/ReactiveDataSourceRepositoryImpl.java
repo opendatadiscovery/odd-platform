@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +12,6 @@ import org.jooq.SelectForUpdateOfStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
-import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
@@ -120,17 +118,6 @@ public class ReactiveDataSourceRepositoryImpl
         );
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
-    }
-
-    @Override
-    public Mono<DataSourcePojo> injectOddrn(final long id, final String oddrn) {
-        final UpdateResultStep<DataSourceRecord> query = DSL.update(DATA_SOURCE)
-            .set(DATA_SOURCE.ODDRN, oddrn)
-            .set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now())
-            .where(DATA_SOURCE.ID.eq(id))
-            .returning();
-
-        return jooqReactiveOperations.mono(query).map(r -> r.into(DataSourcePojo.class));
     }
 
     @Override

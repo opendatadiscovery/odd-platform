@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { maxContentWidth, maxSidebarWidth } from 'lib/constants';
+import { maxSidebarWidth } from 'lib/constants';
 import styled from 'styled-components';
 
 export const Container = styled(Grid)(({ theme }) => ({
@@ -17,5 +17,4 @@ export const SidebarContainer = styled(Grid)(({ theme }) => ({
 
 export const ContentContainer = styled(Grid)(() => ({
   flexGrow: 1,
-  maxWidth: `${maxContentWidth}px`,
 }));

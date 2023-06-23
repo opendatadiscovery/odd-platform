@@ -16,7 +16,7 @@ import org.opendatadiscovery.oddplatform.datacollaboration.dto.MessageUserDto;
 import org.opendatadiscovery.oddplatform.dto.MessageDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MessagePojo;
 
-@Mapper(config = MapperConfig.class)
+@Mapper(config = MapperConfig.class, uses = DateTimeMapper.class)
 public interface MessageMapper {
     @Mapping(target = "channel", source = ".", qualifiedByName = "messageChannel")
     @Mapping(target = "url", source = ".", qualifiedByName = "urlRef")

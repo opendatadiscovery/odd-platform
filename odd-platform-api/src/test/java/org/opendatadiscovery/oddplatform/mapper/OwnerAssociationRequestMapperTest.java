@@ -26,13 +26,13 @@ import static org.mockito.Mockito.when;
 public class OwnerAssociationRequestMapperTest {
     private OwnerAssociationRequestMapper mapper;
     @Mock
-    private OffsetDateTimeMapper offsetDateTimeMapper;
+    private DateTimeMapper dateTimeMapper;
     @Mock
     private AssociatedOwnerMapper associatedOwnerMapper;
 
     @BeforeEach
     public void before() {
-        mapper = new OwnerAssociationRequestMapperImpl(offsetDateTimeMapper, associatedOwnerMapper);
+        mapper = new OwnerAssociationRequestMapperImpl(dateTimeMapper, associatedOwnerMapper);
     }
 
     @Test
@@ -74,7 +74,7 @@ public class OwnerAssociationRequestMapperTest {
         final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, null);
 
         when(associatedOwnerMapper.mapAssociatedOwner(null)).thenReturn(null);
-        when(offsetDateTimeMapper.mapLocalDateTime(null)).thenReturn(null);
+        when(dateTimeMapper.mapUTCDateTime(null)).thenReturn(null);
         final OwnerAssociationRequest request = mapper.mapToOwnerAssociationRequest(dto);
         assertThat(request.getId()).isEqualTo(pojo.getId());
         assertThat(request.getUsername()).isEqualTo(pojo.getUsername());
@@ -98,7 +98,7 @@ public class OwnerAssociationRequestMapperTest {
             .identity(new Identity().username(pojo.getUsername()))
             .owner(new Owner().name(updatedUserOwnerName));
         when(associatedOwnerMapper.mapAssociatedOwner(ownerDto)).thenReturn(identity);
-        when(offsetDateTimeMapper.mapLocalDateTime(pojo.getStatusUpdatedAt())).thenReturn(offsetDateTime);
+        when(dateTimeMapper.mapUTCDateTime(pojo.getStatusUpdatedAt())).thenReturn(offsetDateTime);
         final OwnerAssociationRequest request = mapper.mapToOwnerAssociationRequest(dto);
         assertThat(request.getId()).isEqualTo(pojo.getId());
         assertThat(request.getUsername()).isEqualTo(pojo.getUsername());

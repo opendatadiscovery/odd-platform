@@ -26,6 +26,7 @@ import org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel;
 import org.opendatadiscovery.oddplatform.dto.metric.prometheus.PrometheusMetric;
 import org.opendatadiscovery.oddplatform.dto.metric.prometheus.PrometheusResponse;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetricFamilyPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
 import static org.opendatadiscovery.oddplatform.dto.metric.MetricSeriesValueType.BUCKET;
@@ -225,6 +226,6 @@ public class PrometheusMetricsMapperImpl implements PrometheusMetricsMapper {
         if (timestamp.isNaN()) {
             return null;
         }
-        return OffsetDateTime.ofInstant(Instant.ofEpochSecond(timestamp.longValue()), ZoneOffset.UTC);
+        return DateTimeUtil.mapEpochSeconds(timestamp.intValue());
     }
 }

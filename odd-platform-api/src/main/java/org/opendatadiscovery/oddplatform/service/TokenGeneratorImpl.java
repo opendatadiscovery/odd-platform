@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -31,11 +32,12 @@ public class TokenGeneratorImpl implements TokenGenerator {
     }
 
     private TokenPojo generate(final String username) {
+        final LocalDateTime now = DateTimeUtil.generateNow();
         return new TokenPojo()
-            .setCreatedAt(LocalDateTime.now())
+            .setCreatedAt(now)
             .setCreatedBy(username)
             .setValue(RandomStringUtils.randomAlphanumeric(40))
-            .setUpdatedAt(LocalDateTime.now())
+            .setUpdatedAt(now)
             .setUpdatedBy(username);
     }
 
@@ -45,7 +47,7 @@ public class TokenGeneratorImpl implements TokenGenerator {
         }
         return token
             .setValue(RandomStringUtils.randomAlphanumeric(40))
-            .setUpdatedAt(LocalDateTime.now())
+            .setUpdatedAt(DateTimeUtil.generateNow())
             .setUpdatedBy(username);
     }
 }

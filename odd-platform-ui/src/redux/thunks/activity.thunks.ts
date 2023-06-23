@@ -1,10 +1,10 @@
-import { ActivityType } from 'generated-sources';
 import type {
   ActivityApiGetActivityCountsRequest,
   ActivityApiGetActivityRequest,
   ActivityCountInfo,
   DataEntityApiGetDataEntityActivityRequest,
 } from 'generated-sources';
+import { ActivityType } from 'generated-sources';
 import * as actions from 'redux/actions';
 import type {
   Activity,

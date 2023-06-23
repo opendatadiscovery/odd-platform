@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfi
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.AlertHaltConfigMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertHaltConfigPojo;
 import org.opendatadiscovery.oddplatform.repository.AlertHaltConfigRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
@@ -35,8 +36,9 @@ public class AlertHaltConfigServiceImpl implements AlertHaltConfigService {
     @ActivityLog(event = ActivityEventTypeDto.ALERT_HALT_CONFIG_UPDATED)
     public Mono<DataEntityAlertConfig> saveAlertHaltConfig(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                                            final DataEntityAlertConfig config) {
-        return alertHaltConfigRepository
-            .create(alertHaltConfigMapper.mapForm(dataEntityId, config))
+        final AlertHaltConfigPojo configPojo = alertHaltConfigMapper.mapForm(dataEntityId, config);
+
+        return alertHaltConfigRepository.create(configPojo)
             .map(alertHaltConfigMapper::mapPojo);
     }
 }

@@ -8,7 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
-@Mapper(config = MapperConfig.class, uses = OffsetDateTimeMapper.class)
+@Mapper(config = MapperConfig.class, uses = DateTimeMapper.class)
 public interface DataEntityRunMapper {
     @Mapping(source = "run", target = ".")
     DataEntityRun mapDataEntityRun(final Long dataEntityId, final DataEntityTaskRunPojo run);

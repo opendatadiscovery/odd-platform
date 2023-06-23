@@ -40,7 +40,7 @@ class LineageMapperTest {
     void setUp() {
         final TermMapperImpl termMapper = new TermMapperImpl(
             new NamespaceMapperImpl(),
-            new OffsetDateTimeMapperImpl(),
+            new DateTimeMapperImpl(),
             new OwnershipMapperImpl(
                 new OwnerMapperImpl(),
                 new TitleMapperImpl()
@@ -51,7 +51,7 @@ class LineageMapperTest {
                 new DataSourceMapperImpl(
                     new NamespaceMapperImpl(),
                     new TokenMapperImpl(
-                        new OffsetDateTimeMapperImpl()
+                        new DateTimeMapperImpl()
                     )
                 ),
                 new OwnershipMapperImpl(
@@ -67,18 +67,19 @@ class LineageMapperTest {
                         new LabelMapperImpl(), new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()),
                         termMapper
                     ),
-                    new OffsetDateTimeMapperImpl()
+                    new DateTimeMapperImpl()
                 ),
                 new DataEntityRunMapperImpl(
-                    new OffsetDateTimeMapperImpl()
+                    new DateTimeMapperImpl()
                 ),
-                termMapper
+                termMapper,
+                new DateTimeMapperImpl()
             )
         );
         mapper.setDataSourceMapper(
             new DataSourceMapperImpl(
                 new NamespaceMapperImpl(),
-                new TokenMapperImpl(new OffsetDateTimeMapperImpl())
+                new TokenMapperImpl(new DateTimeMapperImpl())
             )
         );
     }

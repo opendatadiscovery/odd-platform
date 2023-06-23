@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +42,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -360,7 +360,7 @@ public class ReactiveDataEntityRepositoryImpl
         final String newBusinessName = StringUtils.isEmpty(name) ? null : name;
         final var query = DSL.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY.UPDATED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -372,7 +372,7 @@ public class ReactiveDataEntityRepositoryImpl
         final String newDescription = StringUtils.isEmpty(description) ? null : description;
         final var query = DSL.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, newDescription)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY.UPDATED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.mono(query)

@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
 import jakarta.validation.Valid;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -343,8 +342,8 @@ public class DataEntityController implements DataEntityApi {
 
     @Override
     public Mono<ResponseEntity<Flux<Activity>>> getDataEntityActivity(final Long dataEntityId,
-                                                                      final LocalDate beginDate,
-                                                                      final LocalDate endDate,
+                                                                      final OffsetDateTime beginDate,
+                                                                      final OffsetDateTime endDate,
                                                                       final Integer size,
                                                                       final List<Long> userIds,
                                                                       final ActivityEventType eventType,
