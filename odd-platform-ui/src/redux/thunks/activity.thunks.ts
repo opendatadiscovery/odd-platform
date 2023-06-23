@@ -12,7 +12,7 @@ import type {
   RelatedToEntityId,
   SerializeDateToNumber,
 } from 'redux/interfaces';
-import { toDateWithoutOffset } from 'lib/helpers';
+import { toDate } from 'lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { castDatesToTimestamp, setPageInfo } from 'redux/lib/helpers';
 import { activityApi, dataEntityApi } from 'lib/api';
@@ -28,11 +28,10 @@ export const fetchActivityList = handleResponseAsyncThunk<
 >(
   actions.fetchActivityListActionType,
   async ({ beginDate, endDate, lastEventDateTime, isQueryUpdated, ...params }) => {
-    const castedBeginDate = toDateWithoutOffset(beginDate);
-
-    const castedEndDate = toDateWithoutOffset(endDate);
+    const castedBeginDate = toDate(beginDate);
+    const castedEndDate = toDate(endDate);
     const castedLastEventDateTime = lastEventDateTime
-      ? toDateWithoutOffset(lastEventDateTime)
+      ? toDate(lastEventDateTime)
       : undefined;
 
     const activities = await activityApi.getActivity({
@@ -68,10 +67,10 @@ export const fetchDataEntityActivityList = handleResponseAsyncThunk<
     isQueryUpdated,
     ...params
   }) => {
-    const castedBeginDate = toDateWithoutOffset(beginDate);
-    const castedEndDate = toDateWithoutOffset(endDate);
+    const castedBeginDate = toDate(beginDate);
+    const castedEndDate = toDate(endDate);
     const castedLastEventDateTime = lastEventDateTime
-      ? toDateWithoutOffset(lastEventDateTime)
+      ? toDate(lastEventDateTime)
       : undefined;
 
     const activities = await dataEntityApi.getDataEntityActivity({
@@ -98,8 +97,8 @@ export const fetchActivityCounts = handleResponseAsyncThunk<
   async ({ beginDate, endDate, ...params }) =>
     activityApi.getActivityCounts({
       ...params,
-      beginDate: toDateWithoutOffset(beginDate),
-      endDate: toDateWithoutOffset(endDate),
+      beginDate: toDate(beginDate),
+      endDate: toDate(endDate),
     }),
   {}
 );
