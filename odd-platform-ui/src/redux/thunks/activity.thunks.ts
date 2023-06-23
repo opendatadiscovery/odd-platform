@@ -1,10 +1,10 @@
-import { ActivityType } from 'generated-sources';
 import type {
   ActivityApiGetActivityCountsRequest,
   ActivityApiGetActivityRequest,
   ActivityCountInfo,
   DataEntityApiGetDataEntityActivityRequest,
 } from 'generated-sources';
+import { ActivityType } from 'generated-sources';
 import * as actions from 'redux/actions';
 import type {
   Activity,
@@ -12,7 +12,7 @@ import type {
   RelatedToEntityId,
   SerializeDateToNumber,
 } from 'redux/interfaces';
-import { toDate } from 'lib/helpers';
+import { toDateWithoutOffset } from 'lib/helpers';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
 import { castDatesToTimestamp, setPageInfo } from 'redux/lib/helpers';
 import { activityApi, dataEntityApi } from 'lib/api';
@@ -28,10 +28,11 @@ export const fetchActivityList = handleResponseAsyncThunk<
 >(
   actions.fetchActivityListActionType,
   async ({ beginDate, endDate, lastEventDateTime, isQueryUpdated, ...params }) => {
-    const castedBeginDate = toDate(beginDate);
-    const castedEndDate = toDate(endDate);
+    const castedBeginDate = toDateWithoutOffset(beginDate);
+
+    const castedEndDate = toDateWithoutOffset(endDate);
     const castedLastEventDateTime = lastEventDateTime
-      ? toDate(lastEventDateTime)
+      ? toDateWithoutOffset(lastEventDateTime)
       : undefined;
 
     const activities = await activityApi.getActivity({
@@ -67,10 +68,10 @@ export const fetchDataEntityActivityList = handleResponseAsyncThunk<
     isQueryUpdated,
     ...params
   }) => {
-    const castedBeginDate = toDate(beginDate);
-    const castedEndDate = toDate(endDate);
+    const castedBeginDate = toDateWithoutOffset(beginDate);
+    const castedEndDate = toDateWithoutOffset(endDate);
     const castedLastEventDateTime = lastEventDateTime
-      ? toDate(lastEventDateTime)
+      ? toDateWithoutOffset(lastEventDateTime)
       : undefined;
 
     const activities = await dataEntityApi.getDataEntityActivity({
@@ -97,8 +98,8 @@ export const fetchActivityCounts = handleResponseAsyncThunk<
   async ({ beginDate, endDate, ...params }) =>
     activityApi.getActivityCounts({
       ...params,
-      beginDate: toDate(beginDate),
-      endDate: toDate(endDate),
+      beginDate: toDateWithoutOffset(beginDate),
+      endDate: toDateWithoutOffset(endDate),
     }),
   {}
 );

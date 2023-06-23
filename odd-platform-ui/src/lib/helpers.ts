@@ -47,6 +47,10 @@ export const stringFormatted = (
 
 export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
 export const toDate = (dateToCast: number): Date => new Date(dateToCast);
+export const toDateWithoutOffset = (dateToCast: number): Date =>
+  new Date(
+    new Date(dateToCast).getTime() + new Date(dateToCast).getTimezoneOffset() * 60000
+  );
 export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
 
 export const setActivityBackgroundColor = (
