@@ -120,10 +120,9 @@ const DatasetFieldOverview: React.FC = () => {
         <Grid container flexDirection='column' alignItems='flex-start'>
           {field.labels && field.labels?.length > 0 ? (
             <Grid container mt={1}>
-              {field.labels &&
-                field.labels.map(({ name, external }) => (
-                  <LabelItem key={name} labelName={name} systemLabel={external} />
-                ))}
+              {field.labels.map(({ name, external }) => (
+                <LabelItem key={name} labelName={name} systemLabel={external} />
+              ))}
             </Grid>
           ) : (
             <Typography mt={1} variant='subtitle1'>

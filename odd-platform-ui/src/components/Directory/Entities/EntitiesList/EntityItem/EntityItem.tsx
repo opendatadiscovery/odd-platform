@@ -58,14 +58,13 @@ const EntityItem: FC<EntityItemProps> = ({
                 {name}
               </Typography>
               <Box display='flex' flexWrap='nowrap' mr={1} justifyContent='flex-start'>
-                {entityClasses &&
-                  entityClasses.map(entityClass => (
-                    <EntityClassItem
-                      sx={{ ml: 0.5 }}
-                      key={entityClass.id}
-                      entityClassName={entityClass.name}
-                    />
-                  ))}
+                {entityClasses?.map(entityClass => (
+                  <EntityClassItem
+                    sx={{ ml: 0.5 }}
+                    key={entityClass.id}
+                    entityClassName={entityClass.name}
+                  />
+                ))}
               </Box>
             </Box>
             <DataEntityDetailsPreview dataEntityId={id} />

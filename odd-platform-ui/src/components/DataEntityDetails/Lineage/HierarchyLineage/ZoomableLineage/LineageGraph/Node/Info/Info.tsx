@@ -131,9 +131,7 @@ const Info = React.memo<InfoProps>(
                 streamType={streamType}
                 rootNodeId={rootNodeId}
                 openBtnEl={
-                  <ItemsButton
-                    text={`${nodesRelatedWithDEG && nodesRelatedWithDEG.length} entities`}
-                  />
+                  <ItemsButton text={`${nodesRelatedWithDEG.length} entities`} />
                 }
               />
             </>
