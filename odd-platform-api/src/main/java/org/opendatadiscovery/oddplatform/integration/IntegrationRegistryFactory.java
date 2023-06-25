@@ -5,8 +5,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,12 @@ public class IntegrationRegistryFactory {
     public static IntegrationRegistry createResourceFilesIntegrationRegistry() {
         final Map<String, IntegrationOverviewDto> registry = readManifests()
             .stream()
-            .collect(Collectors.toMap(o -> o.integration().id(), identity()));
+            .collect(Collectors.toMap(
+                o -> o.integration().id(),
+                identity(),
+                (o1, o2) -> o2,
+                () -> new TreeMap<>(Comparator.comparing(String::toLowerCase))
+            ));
 
         return new ResourceFilesIntegrationRegistry(registry);
     }
