@@ -13,7 +13,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationPreview;
 import org.opendatadiscovery.oddplatform.api.contract.model.IntegrationPreviewList;
 import org.opendatadiscovery.oddplatform.integration.StaticArgumentMappingContext;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentDto;
-import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentTypeEnum;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetDto;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationContentBlockDto;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationOverviewDto;
