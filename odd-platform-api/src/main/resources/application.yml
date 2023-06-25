@@ -172,7 +172,7 @@ datacollaboration:
 #  slack-oauth-token:
 
 odd:
-  platform-base-url: http://localhost:8080
+#  platform-base-url:
   tenant-id:
   activity:
     partition-period: 30

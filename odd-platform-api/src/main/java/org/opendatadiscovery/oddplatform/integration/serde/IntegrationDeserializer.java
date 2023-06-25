@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import org.apache.commons.lang3.ObjectUtils;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentDto;
 import org.opendatadiscovery.oddplatform.integration.dto.IntegrationCodeSnippetArgumentTypeEnum;
@@ -54,13 +56,15 @@ public class IntegrationDeserializer extends StdDeserializer<IntegrationOverview
 
                 for (final JsonNode argument : snippetArgs) {
                     final String argParameter = argument.get("parameter").asText();
-                    final String argName = argument.get("name").asText();
+                    final String argName = extractNullableProperty(argument, "name", JsonNode::asText);
                     final String type = argument.get("type").asText();
+                    final Boolean isStatic = extractNullableProperty(argument, "static", JsonNode::asBoolean);
 
                     arguments.add(new IntegrationCodeSnippetArgumentDto(
                         argParameter,
                         argName,
-                        IntegrationCodeSnippetArgumentTypeEnum.valueOf(type.toUpperCase())
+                        IntegrationCodeSnippetArgumentTypeEnum.valueOf(type.toUpperCase()),
+                        isStatic
                     ));
                 }
 
@@ -71,5 +75,15 @@ public class IntegrationDeserializer extends StdDeserializer<IntegrationOverview
         }
 
         return new IntegrationOverviewDto(integrationPreviewDto, integrationContentBlockDtos);
+    }
+
+    private <T> T extractNullableProperty(final JsonNode node,
+                                          final String property,
+                                          final Function<JsonNode, T> extractor) {
+        final JsonNode propertyNode = node.get(property);
+
+        return propertyNode != null && !(propertyNode instanceof NullNode)
+            ? extractor.apply(propertyNode)
+            : null;
     }
 }

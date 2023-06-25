@@ -12,7 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class SlackMessageGeneratorConfiguration {
     @Bean
     public SlackMessageGenerator slackNotificationMessageGenerator(
-        @Value("${odd.platform-base-url}") final URL platformBaseUrl
+        @Value("${odd.platform-base-url:http://localhost:8080}")
+        final URL platformBaseUrl
     ) {
         return new SlackMessageGenerator(platformBaseUrl);
     }
