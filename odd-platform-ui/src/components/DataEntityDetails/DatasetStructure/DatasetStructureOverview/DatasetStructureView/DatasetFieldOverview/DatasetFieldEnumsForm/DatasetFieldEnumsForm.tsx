@@ -41,15 +41,17 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
   );
 
   const defaultValues = React.useMemo<DatasetFieldEnumsFormData>(() => {
-    if (defaultEnums && defaultEnums[0] && 'id' in defaultEnums[0]) {
-      const enums = defaultEnums?.map(({ id, name, description, modifiable }) => ({
-        id,
-        name,
-        description,
-        modifiable,
-      }));
+    if (defaultEnums) {
+      if (defaultEnums[0] && 'id' in defaultEnums[0]) {
+        const enums = defaultEnums.map(({ id, name, description, modifiable }) => ({
+          id,
+          name,
+          description,
+          modifiable,
+        }));
 
-      return { enums };
+        return { enums };
+      }
     }
 
     return { enums: [{ name: '', description: '', modifiable: true }] };

@@ -24,7 +24,7 @@ const IntegrationPreviewList: FC = () => {
   );
 
   const filteredIntegrations =
-    data?.items.filter(integration => integration.name.includes(query)) || [];
+    data?.items.filter(integration => integration.name.toLowerCase().includes(query.toLowerCase())) || [];
 
   return (
     <Grid container flexDirection='column' alignItems='center'>

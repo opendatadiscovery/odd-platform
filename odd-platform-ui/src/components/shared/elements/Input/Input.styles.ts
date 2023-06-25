@@ -7,7 +7,7 @@ export const Container = styled(Box)<{ $maxWidth?: number }>(({ $maxWidth }) => 
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  maxWidth: `${$maxWidth}px` ?? 'auto',
+  maxWidth: $maxWidth !== undefined ? `${$maxWidth}px` : 'auto',
 }));
 
 export const Input = styled('input')<{
