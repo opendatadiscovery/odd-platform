@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -43,6 +44,8 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Mono<DataEntityDimensionsDto> getDataEntityWithDataSourceAndNamespace(final long dataEntityId);
 
     Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSourceAndNamespace(final Collection<String> oddrns);
+
+    Mono<List<DataEntityDimensionsDto>> getDataEntityWithOwnership(final Collection<String> oddrns);
 
     Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn);
 
@@ -103,4 +106,6 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     }
 
     Mono<Map<Long, Long>> getCountByDataSources(final Collection<Long> dataSourceIds);
+
+    Flux<DataEntityDomainInfoDto> getDataEntityDomainsInfo();
 }

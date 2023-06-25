@@ -30,9 +30,9 @@ public interface DataSourceMapper {
     List<DataSource> mapDtos(final List<DataSourceDto> dtos);
 
     default DataSourceList mapDtoPage(final Page<DataSourceDto> page) {
-        return new DataSourceList()
-            .items(mapDtos(page.getData()))
-            .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
+        final List<DataSource> items = mapDtos(page.getData());
+        final PageInfo pageInfo = new PageInfo(page.getTotal(), page.isHasNext());
+        return new DataSourceList(items, pageInfo);
     }
 
     @Mapping(target = "oddrn", expression = "java(form.getOddrn().trim())")
@@ -55,6 +55,10 @@ public interface DataSourceMapper {
             .setNamespaceId(namespace != null ? namespace.getId() : null);
     }
 
+    @Mapping(target = "id", source = "pojo.id")
+    @Mapping(target = "name", source = "pojo.name")
+    @Mapping(target = "entitiesCount", source = "entitiesCount")
+    @Mapping(target = "properties", source = "properties")
     DataSourceDirectory mapToDirectoryDataSource(final DataSourcePojo pojo,
                                                  final Map<String, String> properties,
                                                  final Long entitiesCount);

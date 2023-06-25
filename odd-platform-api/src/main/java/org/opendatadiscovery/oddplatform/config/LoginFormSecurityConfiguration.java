@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -42,14 +43,17 @@ public class LoginFormSecurityConfiguration {
             ? (wfe, auth) -> new DefaultServerRedirectStrategy().sendRedirect(wfe.getExchange(), redirectURI)
             : new RedirectServerAuthenticationSuccessHandler("/");
 
+        final String[] permittedPaths = new String[] {
+            "/actuator/health", "/favicon.ico", "/ingestion/entities", "/api/slack/events"
+        };
         return http
-            .csrf().disable()
-            .authorizeExchange()
-            .pathMatchers("/actuator/health", "/favicon.ico", "/ingestion/entities", "/api/slack/events").permitAll()
-            .pathMatchers("/**").authenticated()
-            .and().formLogin().authenticationSuccessHandler(authHandler)
-            .and().logout()
-            .and().build();
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
+                .pathMatchers(permittedPaths).permitAll()
+                .pathMatchers("/**").authenticated())
+            .formLogin(formLoginSpec -> formLoginSpec.authenticationSuccessHandler(authHandler))
+            .logout(Customizer.withDefaults())
+            .build();
     }
 
     @Bean

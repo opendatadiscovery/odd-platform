@@ -1,7 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
+import org.jooq.DatePart;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -22,10 +24,13 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.ActivityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.row;
+import static org.jooq.impl.DSL.trunc;
 import static org.opendatadiscovery.oddplatform.model.Tables.ACTIVITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
@@ -66,8 +71,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Flux<ActivityDto> findAllActivities(final LocalDate beginDate,
-                                               final LocalDate endDate,
+    public Flux<ActivityDto> findAllActivities(final OffsetDateTime beginDate,
+                                               final OffsetDateTime endDate,
                                                final Integer size,
                                                final Long datasourceId,
                                                final Long namespaceId,
@@ -84,8 +89,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Flux<ActivityDto> findMyActivities(final LocalDate beginDate,
-                                              final LocalDate endDate,
+    public Flux<ActivityDto> findMyActivities(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
                                               final Integer size,
                                               final Long datasourceId,
                                               final Long namespaceId,
@@ -102,8 +107,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Flux<ActivityDto> findDependentActivities(final LocalDate beginDate,
-                                                     final LocalDate endDate,
+    public Flux<ActivityDto> findDependentActivities(final OffsetDateTime beginDate,
+                                                     final OffsetDateTime endDate,
                                                      final Integer size,
                                                      final Long datasourceId,
                                                      final Long namespaceId,
@@ -121,8 +126,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Flux<ActivityDto> findDataEntityActivities(final LocalDate beginDate,
-                                                      final LocalDate endDate,
+    public Flux<ActivityDto> findDataEntityActivities(final OffsetDateTime beginDate,
+                                                      final OffsetDateTime endDate,
                                                       final Integer size,
                                                       final Long dataEntityId,
                                                       final List<Long> userIds,
@@ -137,8 +142,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Mono<Long> getTotalActivitiesCount(final LocalDate beginDate,
-                                              final LocalDate endDate,
+    public Mono<Long> getTotalActivitiesCount(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
                                               final Long datasourceId,
                                               final Long namespaceId,
                                               final List<Long> tagIds,
@@ -156,8 +161,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Mono<Long> getMyObjectsActivitiesCount(final LocalDate beginDate,
-                                                  final LocalDate endDate,
+    public Mono<Long> getMyObjectsActivitiesCount(final OffsetDateTime beginDate,
+                                                  final OffsetDateTime endDate,
                                                   final Long datasourceId,
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
@@ -175,8 +180,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     @Override
-    public Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
-                                                  final LocalDate endDate,
+    public Mono<Long> getDependentActivitiesCount(final OffsetDateTime beginDate,
+                                                  final OffsetDateTime endDate,
                                                   final Long datasourceId,
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
@@ -230,8 +235,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         return query;
     }
 
-    private List<Condition> getCommonConditions(final LocalDate beginDate,
-                                                final LocalDate endDate,
+    private List<Condition> getCommonConditions(final OffsetDateTime beginDate,
+                                                final OffsetDateTime endDate,
                                                 final Long datasourceId,
                                                 final Long namespaceId,
                                                 final List<Long> tagIds,
@@ -239,8 +244,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                 final List<Long> userIds,
                                                 final ActivityEventTypeDto eventType) {
         final List<Condition> conditions = new ArrayList<>();
-        conditions.add(ACTIVITY.CREATED_AT.greaterOrEqual(beginDate.atStartOfDay()));
-        conditions.add(ACTIVITY.CREATED_AT.lessThan(endDate.atStartOfDay()));
+        conditions.add(ACTIVITY.CREATED_AT.greaterOrEqual(DateTimeUtil.mapUTCDateTime(beginDate)));
+        conditions.add(ACTIVITY.CREATED_AT.lessThan(DateTimeUtil.mapUTCDateTime(endDate)));
         if (eventType != null) {
             conditions.add(ACTIVITY.EVENT_TYPE.eq(eventType.name()));
         }
@@ -267,13 +272,16 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                              final Long lastEventId,
                                              final OffsetDateTime lastEventDateTime,
                                              final Integer size) {
-        final var whereStep = baseQuery.where(conditions)
-            .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc());
         if (lastEventDateTime != null && lastEventId != null) {
-            whereStep.seek(lastEventDateTime.toLocalDateTime(), lastEventId);
+            final LocalDateTime truncated = DateTimeUtil.mapUTCDateTime(lastEventDateTime)
+                .truncatedTo(ChronoUnit.SECONDS);
+            conditions.add(
+                row(trunc(ACTIVITY.CREATED_AT, DatePart.SECOND), ACTIVITY.ID).lessThan(truncated, lastEventId));
         }
-        whereStep.limit(size);
-        return jooqReactiveOperations.flux(whereStep)
+        final var finalQuery = baseQuery.where(conditions)
+            .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc())
+            .limit(size);
+        return jooqReactiveOperations.flux(finalQuery)
             .map(this::mapDto);
     }
 

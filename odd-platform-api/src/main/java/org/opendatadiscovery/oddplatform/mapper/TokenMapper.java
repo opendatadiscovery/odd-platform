@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.opendatadiscovery.oddplatform.api.contract.model.Token;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 
-@Mapper(config = MapperConfig.class, uses = {OffsetDateTimeMapper.class})
+@Mapper(config = MapperConfig.class, uses = {DateTimeMapper.class})
 public interface TokenMapper {
 
     @Mapping(source = "dto.tokenPojo", target = ".")

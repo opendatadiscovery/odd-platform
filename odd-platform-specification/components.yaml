@@ -412,6 +412,28 @@ components:
         propagate:
           type: boolean
 
+    DataEntityDomainList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityDomain'
+      required:
+        - items
+
+    DataEntityDomain:
+      type: object
+      properties:
+        domain:
+          $ref: '#/components/schemas/DataEntityRef'
+        children_count:
+          type: integer
+          format: int64
+      required:
+        - domain
+        - children_count
+
     DataEntityUsageInfo:
       type: object
       properties:
@@ -977,6 +999,38 @@ components:
         data_entity_group_id:
           type: integer
           format: int64
+
+    DataEntityGroupItemList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityGroupItem'
+        entities_count:
+          type: integer
+          format: int64
+        upper_groups_count:
+          type: integer
+          format: int64
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - entities_count
+        - upper_groups_count
+        - page_info
+
+    DataEntityGroupItem:
+      type: object
+      properties:
+        is_upper_group:
+          type: boolean
+        data_entity:
+          $ref: '#/components/schemas/DataEntityBaseObject'
+      required:
+        - is_upper_group
+        - data_entity
 
     DataSetSLAReport:
       type: object

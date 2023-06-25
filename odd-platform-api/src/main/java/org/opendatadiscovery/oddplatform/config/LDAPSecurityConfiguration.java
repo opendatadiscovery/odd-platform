@@ -24,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -132,14 +133,13 @@ public class LDAPSecurityConfiguration {
                                                 final List<ResourceExtractor> extractors,
                                                 final PermissionService permissionService) {
         return http
-            .cors().and()
-            .csrf().disable()
+            .cors(Customizer.withDefaults())
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
             .authorizeExchange(new AuthorizationCustomizer(permissionService, extractors))
-            .logout()
-            .and()
-            .formLogin()
-            .and().build();
+            .logout(Customizer.withDefaults())
+            .formLogin(Customizer.withDefaults())
+            .build();
     }
 }
 

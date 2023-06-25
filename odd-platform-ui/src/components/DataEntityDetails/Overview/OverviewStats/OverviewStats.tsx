@@ -3,8 +3,8 @@ import { DataEntityClassNameEnum } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
+import OverviewEntityGroupItems from './OverviewEntityGroupItems/OverviewEntityGroupItems';
 import OverviewDataConsumerStats from './OverviewDataConsumerStats/OverviewDataConsumerStats';
-import OverviewEntityGroupStats from './OverviewEntityGroupStats/OverviewEntityGroupStats';
 import OverviewDataInputStats from './OverviewDataInputStats/OverviewDataInputStats';
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
@@ -69,14 +69,7 @@ const OverviewStats: React.FC = () => {
               />
             );
           case DataEntityClassNameEnum.ENTITY_GROUP:
-            return (
-              <OverviewEntityGroupStats
-                key={entityClass.id}
-                dataEntityGroupName={dataEntityName}
-                entities={dataEntityDetails.entities}
-                entityGroups={dataEntityDetails.dataEntityGroups}
-              />
-            );
+            return <OverviewEntityGroupItems />;
           default:
             return null;
         }

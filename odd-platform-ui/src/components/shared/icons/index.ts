@@ -54,3 +54,4 @@ export { default as LinkIcon } from './LinkIcon';
 export { default as ImageIcon } from './ImageIcon';
 export { default as DocumentIcon } from './DocumentIcon';
 export { default as RecursiveIcon } from './RecursiveIcon';
+export { default as FolderIcon } from './FolderIcon';

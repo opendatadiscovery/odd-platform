@@ -1,10 +1,9 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import java.time.LocalDate;
+import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
@@ -16,7 +15,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityAlertConfi
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItemList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -102,6 +103,16 @@ public class DataEntityController implements DataEntityApi {
                                                                             final Integer page, final Integer size,
                                                                             final ServerWebExchange exchange) {
         return dataEntityService.getDataEntityGroupsChildren(dataEntityGroupId, page, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityGroupItemList>> getDataEntityGroupsItems(final Long dataEntityGroupId,
+                                                                                  final Integer page,
+                                                                                  final Integer size,
+                                                                                  final String query,
+                                                                                  final ServerWebExchange exchange) {
+        return dataEntityGroupService.listDEGItems(dataEntityGroupId, page, size, query)
             .map(ResponseEntity::ok);
     }
 
@@ -331,8 +342,8 @@ public class DataEntityController implements DataEntityApi {
 
     @Override
     public Mono<ResponseEntity<Flux<Activity>>> getDataEntityActivity(final Long dataEntityId,
-                                                                      final LocalDate beginDate,
-                                                                      final LocalDate endDate,
+                                                                      final OffsetDateTime beginDate,
+                                                                      final OffsetDateTime endDate,
                                                                       final Integer size,
                                                                       final List<Long> userIds,
                                                                       final ActivityEventType eventType,
@@ -405,6 +416,12 @@ public class DataEntityController implements DataEntityApi {
     public Mono<ResponseEntity<MetricSet>> getDataEntityMetrics(final Long dataEntityId,
                                                                 final ServerWebExchange exchange) {
         return metricService.getLatestMetricsForDataEntity(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityDomainList>> getDomains(final ServerWebExchange exchange) {
+        return dataEntityService.getDomainsInfo()
             .map(ResponseEntity::ok);
     }
 }

@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.dto;
 
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 import lombok.Builder;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;

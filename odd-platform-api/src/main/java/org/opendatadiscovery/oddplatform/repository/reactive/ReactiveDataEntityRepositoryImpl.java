@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,9 +24,12 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
+import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -40,11 +42,13 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
@@ -226,6 +230,35 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<List<DataEntityDimensionsDto>> getDataEntityWithOwnership(final Collection<String> oddrns) {
+        if (CollectionUtils.isEmpty(oddrns)) {
+            return Mono.just(List.of());
+        }
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
+        final var query = DSL.select(DATA_ENTITY.fields())
+            .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
+            .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD))
+            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
+            .from(DATA_ENTITY)
+            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .where(conditions)
+            .groupBy(DATA_ENTITY.fields());
+        return jooqReactiveOperations.flux(query)
+            .map(r -> {
+                final DataEntityPojo dataEntityPojo = r.into(DATA_ENTITY).into(DataEntityPojo.class);
+                final List<OwnershipDto> ownershipDtos = dataEntityDtoMapper.extractOwnershipRelation(r);
+                return DataEntityDimensionsDto.dimensionsBuilder()
+                    .dataEntity(dataEntityPojo)
+                    .ownership(ownershipDtos)
+                    .build();
+            })
+            .collectList();
+    }
+
+    @Override
     public Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn) {
         final SelectConditionStep<Record> query = DSL.select(DATA_ENTITY.fields())
             .from(GROUP_ENTITY_RELATIONS)
@@ -327,7 +360,7 @@ public class ReactiveDataEntityRepositoryImpl
         final String newBusinessName = StringUtils.isEmpty(name) ? null : name;
         final var query = DSL.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY.UPDATED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -339,7 +372,7 @@ public class ReactiveDataEntityRepositoryImpl
         final String newDescription = StringUtils.isEmpty(description) ? null : description;
         final var query = DSL.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, newDescription)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
+            .set(DATA_ENTITY.UPDATED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -722,6 +755,25 @@ public class ReactiveDataEntityRepositoryImpl
             .groupBy(DATA_ENTITY.DATA_SOURCE_ID);
         return jooqReactiveOperations.flux(query)
             .collectMap(Record2::component1, r -> r.component2().longValue());
+    }
+
+    @Override
+    public Flux<DataEntityDomainInfoDto> getDataEntityDomainsInfo() {
+        final String entitiesCountAlias = "entities_count";
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        conditions.add(DATA_ENTITY.TYPE_ID.eq(DataEntityTypeDto.DOMAIN.getId()));
+        final var query = DSL.select(DATA_ENTITY.fields())
+            .select(coalesce(countDistinct(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), 0L).as(entitiesCountAlias))
+            .from(DATA_ENTITY)
+            .leftJoin(GROUP_ENTITY_RELATIONS).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.GROUP_ODDRN))
+            .where(conditions)
+            .groupBy(DATA_ENTITY.fields());
+        return jooqReactiveOperations.flux(query)
+            .map(r -> {
+                final DataEntityPojo domain = r.into(DATA_ENTITY).into(DataEntityPojo.class);
+                final Long entitiesCount = r.get(entitiesCountAlias, Long.class);
+                return new DataEntityDomainInfoDto(domain, entitiesCount);
+            });
     }
 
     @Override

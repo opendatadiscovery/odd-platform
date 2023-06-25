@@ -15,8 +15,8 @@ const colors = {
   black20: '#C1C7D0',
   black15: '#DFE1E6',
   black10: '#EBECF0',
-  black5: '#F4F5F7',
-  black3: '#F7F7F7',
+  black5: '#F0F2F4',
+  black3: '#F6F7F9',
 
   blue65: '#0035A8',
   blue60: '#0044D6',
@@ -91,6 +91,7 @@ export const palette = createPalette({
     darken: colors.black90,
     element: colors.blue50,
     default: colors.white,
+    transparent: colors.transparent,
   },
   info: {
     main: colors.black90,

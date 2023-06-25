@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.config;
 import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +15,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class DataSourceConfiguration {
 
     @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.hikari")
     public DataSource dataSource(final DataSourceProperties dataSourceProperties) {
-        return DataSourceBuilder.create()
+        return DataSourceBuilder.create(dataSourceProperties.getClassLoader())
             .driverClassName(DatabaseDriver.POSTGRESQL.getDriverClassName())
             .url(dataSourceProperties.getUrl())
             .username(dataSourceProperties.getUsername())

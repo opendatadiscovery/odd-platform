@@ -7,6 +7,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItem;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
@@ -56,4 +57,7 @@ public interface DataEntityMapper {
 
     DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
                                      final Long filledEntitiesCount);
+
+    DataEntityGroupItem mapGroupItem(final DataEntityDimensionsDto dimensionsDto,
+                                     final boolean isUpperGroup);
 }

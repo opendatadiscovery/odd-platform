@@ -27,7 +27,7 @@ class DatasetFieldApiMapperTest {
     DatasetFieldApiMapper datasetFieldApiMapper = new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
         new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
         new NamespaceMapperImpl(),
-        new OffsetDateTimeMapperImpl(),
+        new DateTimeMapperImpl(),
         new OwnershipMapperImpl(
             new OwnerMapperImpl(),
             new TitleMapperImpl()

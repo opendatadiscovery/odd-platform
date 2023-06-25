@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
@@ -39,7 +40,7 @@ class AlertMapperTest {
     AssociatedOwnerMapper associatedOwnerMapper;
 
     @InjectMocks
-    AlertMapper alertMapper = new AlertMapperImpl(new OffsetDateTimeMapperImpl());
+    AlertMapper alertMapper = new AlertMapperImpl(new DateTimeMapperImpl());
 
     @Test
     @DisplayName("mapping list without owner")
@@ -64,7 +65,7 @@ class AlertMapperTest {
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, chunks, dataEntityPojo, null));
 
         //when
-        final AlertList alertList = alertMapper.mapAlerts(alertDtos);
+        final AlertList alertList = mapAlerts(alertDtos);
 
         //then
         assertThat(alertList).isNotNull();
@@ -102,7 +103,7 @@ class AlertMapperTest {
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, chunks, dataEntityPojo, updatedByOwner));
 
         //when
-        final AlertList alertList = alertMapper.mapAlerts(alertDtos);
+        final AlertList alertList = mapAlerts(alertDtos);
 
         //then
         assertThat(alertList).isNotNull();
@@ -175,5 +176,11 @@ class AlertMapperTest {
         assertThat(alert.getAlertChunkList())
             .extracting(AlertChunk::getDescription)
             .hasSameElementsAs(chunks.stream().map(AlertChunkPojo::getDescription).toList());
+    }
+
+    private AlertList mapAlerts(final List<AlertDto> alerts) {
+        final PageInfo pageInfo = new PageInfo((long) alerts.size(), false);
+        final List<Alert> items = alerts.stream().map(alertMapper::mapAlert).toList();
+        return new AlertList(items, pageInfo);
     }
 }

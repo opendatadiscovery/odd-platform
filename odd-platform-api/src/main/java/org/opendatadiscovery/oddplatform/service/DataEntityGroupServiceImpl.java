@@ -2,12 +2,18 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItem;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItemList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupItemDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -122,6 +128,40 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                 })
                 .toList())
             .map(entityList -> new CompactDataEntityList().items(entityList));
+    }
+
+    @Override
+    public Mono<DataEntityGroupItemList> listDEGItems(final Long dataEntityGroupId, final Integer page,
+                                                      final Integer size, final String query) {
+        final Mono<Map<String, Boolean>> degItems = reactiveGroupEntityRelationRepository
+            .getDEGItems(dataEntityGroupId, page, size, query)
+            .collectMap(DataEntityGroupItemDto::oddrn, DataEntityGroupItemDto::isUpperGroup);
+        final Mono<Long> degEntitiesCount =
+            reactiveGroupEntityRelationRepository.getDEGEntitiesCount(dataEntityGroupId, query);
+        final Mono<Long> degUpperGroupsCount =
+            reactiveGroupEntityRelationRepository.getDEGUpperGroupsCount(dataEntityGroupId, query);
+        return Mono.zip(degEntitiesCount, degUpperGroupsCount, degItems)
+            .flatMap(function((entitiesCount, upperGroupsCount, items) -> {
+                final Set<String> oddrns = items.keySet();
+                return reactiveDataEntityRepository.getDataEntityWithOwnership(oddrns)
+                    .map(entities -> mapToGroupItemsList(entities, entitiesCount, upperGroupsCount, items));
+            }));
+    }
+
+    private DataEntityGroupItemList mapToGroupItemsList(final List<DataEntityDimensionsDto> entities,
+                                                        final Long entitiesCount,
+                                                        final Long degUpperGroupsCount,
+                                                        final Map<String, Boolean> itemsMap) {
+        final DataEntityGroupItemList result = new DataEntityGroupItemList();
+        result.setEntitiesCount(entitiesCount);
+        result.setUpperGroupsCount(degUpperGroupsCount);
+        final List<DataEntityGroupItem> dataEntityGroupItems = entities.stream()
+            .map(e -> dataEntityMapper.mapGroupItem(e, itemsMap.get(e.getDataEntity().getOddrn())))
+            .sorted((o1, o2) -> Boolean.compare(o1.getIsUpperGroup(), o2.getIsUpperGroup()))
+            .toList();
+        result.setItems(dataEntityGroupItems);
+        result.setPageInfo(new PageInfo().hasNext(true).total(entitiesCount + degUpperGroupsCount));
+        return result;
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,

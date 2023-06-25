@@ -85,9 +85,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <Typography
               variant='body1'
               noWrap
-              title={searchResult.internalName || searchResult.externalName}
+              title={searchResult.internalName ?? searchResult.externalName}
             >
-              {searchResult.internalName || searchResult.externalName}
+              {searchResult.internalName ?? searchResult.externalName}
             </Typography>
             <Box display='flex' flexWrap='nowrap' sx={{ ml: 1 }}>
               {searchQuery && (
@@ -192,7 +192,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
               <DatasourceLogo
                 width={24}
                 padding={0}
-                transparentBackground
+                backgroundColor='transparent'
                 name={searchResult.dataSource?.oddrn}
               />
               <Typography

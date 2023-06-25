@@ -71,7 +71,7 @@ public class ActivityMapperTest {
     AssociatedOwnerMapper associatedOwnerMapper;
 
     @InjectMocks
-    ActivityMapper activityMapper = new ActivityMapperImpl(new OffsetDateTimeMapperImpl());
+    ActivityMapper activityMapper = new ActivityMapperImpl(new DateTimeMapperImpl());
 
     @ParameterizedTest
     @EnumSource(ActivityEventTypeDto.class)

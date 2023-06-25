@@ -22,7 +22,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 @Mapper(config = MapperConfig.class,
     uses = {
         NamespaceMapper.class,
-        OffsetDateTimeMapper.class,
+        DateTimeMapper.class,
         OwnershipMapper.class
     })
 public interface TermMapper {
