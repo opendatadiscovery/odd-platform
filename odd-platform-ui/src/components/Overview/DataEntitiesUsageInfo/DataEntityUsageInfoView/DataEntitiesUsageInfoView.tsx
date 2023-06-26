@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntityUsageInfo } from 'generated-sources';
 import isEmpty from 'lodash/isEmpty';
+import { useTranslation } from 'react-i18next';
 import * as S from './DataEntitiesUsageInfoView.styles';
 import DataEntitiesUsageInfoCard from './DataEntityUsageInfoCard/DataEntitiesUsageInfoCard';
 import type {
@@ -23,40 +24,46 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
   classesUsageInfo,
   handleEntityClassClick,
   handleEntityClassTypeClick,
-}) => (
-  <Grid container sx={{ mt: 4 }}>
-    <Typography variant='h1' mb={1}>
-      Entities
-    </Typography>
-    <S.DataEntitiesUsageContainer>
-      <S.DataEntitiesTotalContainer role='heading'>
-        <Box>
-          <Typography variant='h4'>Total entities: </Typography>
-          <Typography variant='h1'>{totalCount}</Typography>
-        </Box>
-        <Box>
-          <S.UnfilledEntities>{unfilledCount} unfilled entities</S.UnfilledEntities>
-        </Box>
-      </S.DataEntitiesTotalContainer>
-      {!isEmpty(classesUsageInfo) && (
-        <S.ListItemContainer role='list'>
-          {classesUsageInfo.map(
-            ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
-              <DataEntitiesUsageInfoCard
-                key={entityClass.id}
-                entityClass={entityClass}
-                classTotalCount={classTotalCount}
-                classesCount={classesUsageInfo.length}
-                dataEntityTypesInfo={dataEntityTypesInfo}
-                handleEntityClassClick={handleEntityClassClick}
-                handleEntityClassTypeClick={handleEntityClassTypeClick}
-              />
-            )
-          )}
-        </S.ListItemContainer>
-      )}
-    </S.DataEntitiesUsageContainer>
-  </Grid>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Grid container sx={{ mt: 4 }}>
+      <Typography variant='h1' mb={1}>
+        {t('Entities')}
+      </Typography>
+      <S.DataEntitiesUsageContainer>
+        <S.DataEntitiesTotalContainer role='heading'>
+          <Box>
+            <Typography variant='h4'> {t('Total entities:')}</Typography>
+            <Typography variant='h1'>{totalCount}</Typography>
+          </Box>
+          <Box>
+            <S.UnfilledEntities>
+              {unfilledCount} {t('unfilled entities')}
+            </S.UnfilledEntities>
+          </Box>
+        </S.DataEntitiesTotalContainer>
+        {!isEmpty(classesUsageInfo) && (
+          <S.ListItemContainer role='list'>
+            {classesUsageInfo.map(
+              ({ entityClass, totalCount: classTotalCount, dataEntityTypesInfo }) => (
+                <DataEntitiesUsageInfoCard
+                  key={entityClass.id}
+                  entityClass={entityClass}
+                  classTotalCount={classTotalCount}
+                  classesCount={classesUsageInfo.length}
+                  dataEntityTypesInfo={dataEntityTypesInfo}
+                  handleEntityClassClick={handleEntityClassClick}
+                  handleEntityClassTypeClick={handleEntityClassTypeClick}
+                />
+              )
+            )}
+          </S.ListItemContainer>
+        )}
+      </S.DataEntitiesUsageContainer>
+    </Grid>
+  );
+};
 
 export default DataEntitiesUsageInfoView;

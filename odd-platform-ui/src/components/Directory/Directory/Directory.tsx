@@ -7,15 +7,17 @@ import {
   AppLoadingPage,
   ScrollableContainer,
 } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import DirectoryItem from './DirectoryItem/DirectoryItem';
 
 const Directory: FC = () => {
+  const { t } = useTranslation();
   const { isLoading, isError, error, data: dataSourceTypes } = useGetDataSourceTypes();
 
   return (
     <>
       <Grid container justifyContent='flex-start'>
-        <Typography variant='h0'>Directories</Typography>
+        <Typography variant='h0'>{t('Directories')}</Typography>
       </Grid>
       {isLoading && <AppLoadingPage />}
       <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />

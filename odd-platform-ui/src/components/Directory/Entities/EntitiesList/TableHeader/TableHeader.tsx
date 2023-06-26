@@ -2,22 +2,24 @@ import React, { type FC } from 'react';
 import { Table } from 'components/shared/elements';
 import { useAppParams } from 'lib/hooks';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface TableHeaderProps {
   flexMap: Record<string, string>;
 }
 
 const TableHeader: FC<TableHeaderProps> = ({ flexMap }) => {
+  const { t } = useTranslation();
   const { typeId } = useAppParams();
 
   const cells = [
-    { name: 'Name', flex: flexMap.name },
-    { name: 'Owner', flex: flexMap.owner },
-    { name: 'Created', flex: flexMap.createdAt },
-    { name: 'Last update', flex: flexMap.updatedAt },
+    { name: t('Name'), flex: flexMap.name },
+    { name: t('Owner'), flex: flexMap.owner },
+    { name: t('Created'), flex: flexMap.createdAt },
+    { name: t('Last update'), flex: flexMap.updatedAt },
   ];
 
-  if (!typeId) cells.splice(1, 0, { name: 'Type', flex: flexMap.type });
+  if (!typeId) cells.splice(1, 0, { name: t('Type'), flex: flexMap.type });
 
   return (
     <Table.HeaderContainer>

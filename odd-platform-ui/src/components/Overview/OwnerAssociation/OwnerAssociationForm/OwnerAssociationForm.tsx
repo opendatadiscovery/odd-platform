@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { Controller, useForm } from 'react-hook-form';
@@ -21,9 +21,11 @@ import {
 import { usePermissions } from 'lib/hooks';
 import { setProfileOwnerName } from 'redux/slices/profile.slice';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './OwnerAssociationFormStyles';
 
 const OwnerAssociationForm: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isAllowedTo: associateImmediately } = usePermissions();
 
@@ -37,15 +39,15 @@ const OwnerAssociationForm: React.FC = () => {
     mode: 'onChange',
     defaultValues: { name: '' },
   });
-  const [possibleOwners, setPossibleOwners] = React.useState<Owner[]>([]);
+  const [possibleOwners, setPossibleOwners] = useState<Owner[]>([]);
   type FilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
-  const [options, setOptions] = React.useState<FilterOption[]>([]);
-  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [optionsLoading, setOptionsLoading] = React.useState<boolean>(false);
-  const [optionsSearchText, setOptionsSearchText] = React.useState<string>('');
+  const [options, setOptions] = useState<FilterOption[]>([]);
+  const [autocompleteOpen, setAutocompleteOpen] = useState(false);
+  const [optionsLoading, setOptionsLoading] = useState(false);
+  const [optionsSearchText, setOptionsSearchText] = useState('');
   const ownersFilter = createFilterOptions<FilterOption>();
 
-  const handleOwnersSearch = React.useCallback(
+  const handleOwnersSearch = useCallback(
     useDebouncedCallback(() => {
       setOptionsLoading(true);
       dispatch(
@@ -65,7 +67,7 @@ const OwnerAssociationForm: React.FC = () => {
     [searchOwners, setOptionsLoading, setOptions, optionsSearchText]
   );
 
-  const onSearchInputChange = React.useCallback(
+  const onSearchInputChange = useCallback(
     (
       _: React.ChangeEvent<unknown>,
       query: string,
@@ -93,7 +95,7 @@ const OwnerAssociationForm: React.FC = () => {
     return filtered;
   };
 
-  const getOptionLabel = React.useCallback((option: FilterOption | string) => {
+  const getOptionLabel = useCallback((option: FilterOption | string) => {
     if (typeof option === 'string') {
       return option;
     }
@@ -114,7 +116,7 @@ const OwnerAssociationForm: React.FC = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setOptionsLoading(autocompleteOpen);
     if (autocompleteOpen) {
       handleOwnersSearch();
@@ -132,7 +134,7 @@ const OwnerAssociationForm: React.FC = () => {
       });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!identity?.username) return;
 
     const params = { page: 1, size: 30, query: identity?.username, allowedForSync: true };
@@ -152,11 +154,15 @@ const OwnerAssociationForm: React.FC = () => {
       </Grid>
       <Grid item xs={12} container alignItems='center' sx={{ mt: 2 }} direction='column'>
         <Typography variant='h3'>
-          {identity?.username ? <>Hi {identity?.username}.</> : null} Sync your account
-          with existing owner.
+          {identity?.username ? (
+            <>
+              {t('Hi')} {identity?.username}.
+            </>
+          ) : null}{' '}
+          {t('Sync your account with existing owner.')}
         </Typography>
         <Typography variant='subtitle2'>
-          This will allow you to bind existing entities in your account.
+          {t('This will allow you to bind existing entities in your account.')}
         </Typography>
       </Grid>
       <Grid item xs={12} container alignItems='center' direction='column'>
@@ -195,8 +201,8 @@ const OwnerAssociationForm: React.FC = () => {
                       {...params}
                       ref={params.InputProps.ref}
                       name='name'
-                      label='Owner name'
-                      placeholder='Search name'
+                      label={t('Owner name')}
+                      placeholder={t('Search name')}
                       customEndAdornment={{
                         variant: 'loader',
                         showAdornment: optionsLoading,
@@ -211,7 +217,7 @@ const OwnerAssociationForm: React.FC = () => {
                         direction='column'
                         alignItems='flex-start'
                       >
-                        <Typography variant='subtitle2'>Maybe it&apos;s you</Typography>
+                        <Typography variant='subtitle2'>{t("Maybe it's you")}</Typography>
                         {possibleOwners.map(owner => (
                           <S.SuggestedOwnerItem
                             key={owner.id}
@@ -243,7 +249,7 @@ const OwnerAssociationForm: React.FC = () => {
             )}
           />
           <Button
-            text={associateImmediately ? 'Associate' : 'Send a request'}
+            text={associateImmediately ? t('Associate') : t('Send a request')}
             sx={{ mt: 2 }}
             buttonType='main-lg'
             type='submit'

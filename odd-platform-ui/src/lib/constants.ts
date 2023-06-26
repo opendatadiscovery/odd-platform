@@ -8,6 +8,7 @@ import {
   DataEntityClassNameEnum as ClassNameEnum,
   DataEntityTypeNameEnum as TypeNameEnum,
 } from 'generated-sources';
+import type { Lang } from 'lib/interfaces';
 
 export const ORDERED_SEVERITY = [
   DataQualityTestSeverity.CRITICAL,
@@ -140,3 +141,8 @@ export const datedListFormat = 'MMMM dd, yyyy';
 // empty structures
 export const emptyArr = [];
 export const emptyObj = {};
+
+export const LANGUAGES: Lang[] = [
+  { label: 'English', code: 'en' },
+  { label: 'Japanese', code: 'ja' },
+];

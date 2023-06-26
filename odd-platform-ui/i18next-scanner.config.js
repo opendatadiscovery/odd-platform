@@ -15,7 +15,7 @@ module.exports = {
       extensions: ['.js', '.jsx'],
       fallbackKey: false,
     },
-    lngs: ['en', 'bg', 'fr', 'de'],
+    lngs: ['en', 'ja'],
     defaultLng: 'en',
     defaultValue: '',
     resource: {

@@ -12,3 +12,8 @@ export interface InfiniteQueryPageInfo {
   total: number;
   nextPage: number;
 }
+
+export interface Lang {
+  label: string;
+  code: string;
+}
