@@ -1,3 +1,49 @@
 {
-  "Logout": "JA Logout"
+  "Activity": "",
+  "Alerts": "",
+  "Associate": "",
+  "Catalog": "",
+  "Created": "",
+  "Dictionary": "",
+  "Directories": "",
+  "Directory": "",
+  "Domains": "",
+  "Downstream dependents": "",
+  "Entities": "",
+  "Hi": "",
+  "Last update": "",
+  "Logout": "JA Logout",
+  "Management": "",
+  "Maybe it's you": "",
+  "My Objects": "",
+  "Name": "",
+  "No information to display": "",
+  "Owner": "",
+  "Owner name": "",
+  "Popular": "",
+  "Recommended": "",
+  "Request is being checked": "",
+  "Search name": "",
+  "Send a request": "",
+  "Sync your account with existing owner": {
+    "": ""
+  },
+  "This will allow you to bind existing entities in your account": {
+    "": ""
+  },
+  "Type": "",
+  "Upstream dependents": "",
+  "Wait for the administrator to review the request": {
+    "": ""
+  },
+  "Your previous request was rejected": {
+    " Сontact the system administrator, or re-submit your request": {
+      "": ""
+    }
+  },
+  "association request pending": "",
+  "entities": "",
+  "entity": "",
+  "main search placeholder": "",
+  "unfilled entities": ""
 }

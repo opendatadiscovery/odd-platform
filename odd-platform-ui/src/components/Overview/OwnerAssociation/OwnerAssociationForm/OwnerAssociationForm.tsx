@@ -161,9 +161,7 @@ const OwnerAssociationForm: React.FC = () => {
           ) : null}{' '}
           {t('Sync your account with existing owner.')}
         </Typography>
-        <Typography variant='subtitle2'>
-          {t('This will allow you to bind existing entities in your account.')}
-        </Typography>
+        <Typography variant='subtitle2'>{t('bind entities in your account')}</Typography>
       </Grid>
       <Grid item xs={12} container alignItems='center' direction='column'>
         <S.FormContainer

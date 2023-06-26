@@ -52,9 +52,7 @@ const OwnerAssociation: FC = () => {
                 supposedOwnerName,
               })}
             </Typography>
-            <Typography variant='subtitle1'>
-              {t('Wait for the administrator to review the request.')}
-            </Typography>
+            <Typography variant='subtitle1'>{t('association request review')}</Typography>
           </S.PendingContainer>
         </S.Container>
       );
@@ -68,9 +66,7 @@ const OwnerAssociation: FC = () => {
               <Grid container>
                 <S.AlertIcn />
                 <Typography variant='body2'>
-                  {t(
-                    'Your previous request was rejected. Сontact the system administrator, or re-submit your request.'
-                  )}
+                  {t('association request rejected')}
                 </Typography>
               </Grid>
               <Button
