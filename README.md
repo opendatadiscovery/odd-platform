@@ -23,8 +23,7 @@
     <a href="https://demo.oddp.io/"><b>Demo</b></a>
 </p>
 
-<p align="center"><img src="https://opendatadiscovery.org/overview.gif" alt="Next-Gen Data Discovery and Data Observability Platfor" /></p>
-
+![Next-Gen Data Discovery and Data Observability Platform](https://opendatadiscovery.org/overview.gif)
 
 ## Demo
 
