@@ -54,8 +54,7 @@ public class ReactiveTermOwnershipRepositoryImpl implements ReactiveTermOwnershi
 
     @Override
     public Mono<TermOwnershipPojo> delete(final long ownershipId) {
-        final var query = DSL.update(TERM_OWNERSHIP)
-            .set(TERM_OWNERSHIP.DELETED_AT, DateTimeUtil.generateNow())
+        final var query = DSL.deleteFrom(TERM_OWNERSHIP)
             .where(TERM_OWNERSHIP.ID.eq(ownershipId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -77,9 +76,7 @@ public class ReactiveTermOwnershipRepositoryImpl implements ReactiveTermOwnershi
         final var query = jooqQueryHelper.selectExists(
             DSL.selectFrom(TERM_OWNERSHIP)
                 .where(TERM_OWNERSHIP.OWNER_ID.eq(ownerId))
-                .and(TERM_OWNERSHIP.DELETED_AT.isNull())
         );
-
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 }

@@ -516,8 +516,7 @@ public class ReactiveDataEntityRepositoryImpl
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
             .leftJoin(DATA_ENTITY_TO_TERM)
-            .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull());
+            .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)));
 
         final var query = DSL.with(deCteName)
             .asMaterialized(dataEntitySelect)
@@ -634,7 +633,6 @@ public class ReactiveDataEntityRepositoryImpl
             .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
             .leftJoin(DATA_ENTITY_TO_TERM)
             .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
             .leftJoin(GROUP_ENTITY_RELATIONS)
             .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)));
 

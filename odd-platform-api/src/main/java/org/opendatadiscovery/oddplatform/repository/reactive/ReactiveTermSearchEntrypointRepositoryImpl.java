@@ -117,7 +117,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             .select(TERM.ID.as(termIdField))
             .select(vectorFields)
             .from(TERM)
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID))
             .where(TERM.ID.eq(termId));
 
@@ -151,7 +151,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             .select(vectorFields)
             .from(TERM)
             .join(cte).on(cte.field(termIdField).eq(TERM.ID))
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID));
 
         final Insert<? extends Record> insert = jooqFTSHelper.buildVectorUpsert(
@@ -190,7 +190,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             .select(vectorFields)
             .from(TERM)
             .join(cte).on(cte.field(termIdField).eq(TERM.ID))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
 
@@ -232,7 +232,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             .select(vectorFields)
             .from(TERM)
             .join(cte).on(cte.field(termIdField).eq(TERM.ID))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
 

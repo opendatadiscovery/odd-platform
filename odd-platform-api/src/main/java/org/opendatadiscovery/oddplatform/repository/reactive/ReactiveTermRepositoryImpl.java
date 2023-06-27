@@ -37,7 +37,6 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
-import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -160,13 +159,12 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
-            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID)
-                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID))
             .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
         return jooqReactiveOperations.mono(query)
@@ -175,8 +173,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
     @Override
     public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId) {
-        final var query = DSL.update(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
+        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -185,8 +182,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
     @Override
     public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId) {
-        final var query = DSL.update(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
+        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -198,8 +194,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         final var query = DSL.insertInto(DATA_ENTITY_TO_TERM)
             .set(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID, dataEntityId)
             .set(DATA_ENTITY_TO_TERM.TERM_ID, termId)
-            .onDuplicateKeyUpdate()
-            .setNull(DATA_ENTITY_TO_TERM.DELETED_AT)
+            .onDuplicateKeyIgnore()
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityToTermPojo.class));
@@ -207,8 +202,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
     @Override
     public Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId) {
-        final var query = DSL.update(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
+        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId).and(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -299,12 +293,12 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             baseQuery.join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID));
         }
         if (state.getState().get(FacetType.TAGS) != null) {
-            baseQuery.leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            baseQuery.leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
                 .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID));
         }
         if (state.getState().get(FacetType.OWNERS) != null) {
             baseQuery.leftJoin(TERM_OWNERSHIP)
-                .on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+                .on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
                 .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
         }
         baseQuery
@@ -330,12 +324,10 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .from(termCTE.getName())
             .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(termCTE.field(TERM.ID))
-                .and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(termCTE.field(TERM.ID)))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
-            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID))
-                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
             .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(query)
@@ -352,9 +344,9 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         var query = DSL.select(countDistinct(TERM.ID))
             .from(TERM)
             .join(TERM_SEARCH_ENTRYPOINT).on(TERM_SEARCH_ENTRYPOINT.TERM_ID.eq(TERM.ID))
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
             .leftJoin(OWNER).on(TERM_OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .where(jooqFTSHelper.facetStateConditions(state, TERM_CONDITIONS))
             .and(TERM.DELETED_AT.isNull());
@@ -375,8 +367,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .join(DATA_ENTITY_TO_TERM)
-            .on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID).and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
-                .and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)))
+            .on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID).and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)))
             .where(TERM.DELETED_AT.isNull());
         return jooqReactiveOperations.flux(query)
             .map(this::mapRecordToRefDto);

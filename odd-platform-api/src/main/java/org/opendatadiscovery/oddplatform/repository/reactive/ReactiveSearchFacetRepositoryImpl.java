@@ -101,7 +101,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
                                                                final FacetStateDto state) {
         final var select = DSL.select(TAG.ID, TAG.NAME, countDistinct(TERM_SEARCH_ENTRYPOINT.TERM_ID))
             .from(TAG)
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
             .leftJoin(TERM_SEARCH_ENTRYPOINT).on(TERM_SEARCH_ENTRYPOINT.TERM_ID.eq(TAG_TO_TERM.TERM_ID));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
@@ -129,7 +129,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
                                                                  final FacetStateDto state) {
         final var select = DSL.select(OWNER.ID, OWNER.NAME, countDistinct(TERM_SEARCH_ENTRYPOINT.TERM_ID))
             .from(OWNER)
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.OWNER_ID.eq(OWNER.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(TERM_SEARCH_ENTRYPOINT).on(TERM_SEARCH_ENTRYPOINT.TERM_ID.eq(TERM_OWNERSHIP.TERM_ID));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
