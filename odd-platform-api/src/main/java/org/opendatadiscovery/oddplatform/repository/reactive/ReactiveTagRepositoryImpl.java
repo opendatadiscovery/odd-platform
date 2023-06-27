@@ -88,8 +88,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var query = DSL.select(TAG.fields())
             .from(TAG_TO_TERM)
             .join(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID))
-            .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.DELETED_AT.isNull())
-                .and(TAG.DELETED_AT.isNull()));
+            .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG.DELETED_AT.isNull()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagPojo.class));
     }
@@ -240,8 +239,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             return Flux.just();
         }
 
-        final var query = DSL.update(TAG_TO_TERM)
-            .set(TAG_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
+        final var query = DSL.deleteFrom(TAG_TO_TERM)
             .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.TAG_ID.in(tagIds)))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -250,8 +248,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
     @Override
     public Flux<TagToTermPojo> deleteTermRelations(final long tagId) {
-        final var query = DSL.update(TAG_TO_TERM)
-            .set(TAG_TO_TERM.DELETED_AT, DateTimeUtil.generateNow())
+        final var query = DSL.deleteFrom(TAG_TO_TERM)
             .where(TAG_TO_TERM.TAG_ID.eq(tagId))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -277,8 +274,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
         return jooqReactiveOperations.flux(
             insertStep.set(records.get(records.size() - 1))
-                .onDuplicateKeyUpdate()
-                .setNull(TAG_TO_TERM.DELETED_AT)
+                .onDuplicateKeyIgnore()
                 .returning(TAG_TO_TERM.fields())
         ).map(r -> r.into(TagToTermPojo.class));
     }
