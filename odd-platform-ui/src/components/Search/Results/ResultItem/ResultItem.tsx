@@ -14,6 +14,7 @@ import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 import { type GridSizesByBreakpoints, SearchCol } from '../ResultsStyles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
@@ -31,6 +32,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
   searchClassIdPredicate,
   showClassIcons,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityOverviewPath } = useAppPaths();
   const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
   const detailsLink = dataEntityOverviewPath(searchResult.id);
@@ -205,7 +207,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
               </Typography>
             </Grid>
           ) : (
-            <Typography variant='subtitle2'>manually created</Typography>
+            <Typography variant='subtitle2'>{t('manually created')}</Typography>
           )}
         </SearchCol>
         <SearchCol item lg={grid.lg.ow} md={grid.md.ow}>

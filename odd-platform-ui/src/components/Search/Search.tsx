@@ -16,10 +16,12 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import Filters from './Filters/Filters';
 import Results from './Results/Results';
 
 const Search: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { searchId: routerSearchId } = useAppParams();
   const createSearch = useCreateSearch();
@@ -74,7 +76,7 @@ const Search: React.FC = () => {
           <Filters />
         </PageWithLeftSidebar.LeftSidebarContainer>
         <PageWithLeftSidebar.ListContainer item xs={9}>
-          <MainSearch placeholder='Search' disableSuggestions />
+          <MainSearch placeholder={t('Search')} disableSuggestions />
           <WithPermissionsProvider
             allowedPermissions={[Permission.DATA_ENTITY_GROUP_CREATE]}
             resourcePermissions={[]}

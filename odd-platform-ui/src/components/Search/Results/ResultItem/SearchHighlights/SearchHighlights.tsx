@@ -25,6 +25,7 @@ import type {
   Tag,
 } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './SearchHighlightsStyles';
 
 interface SearchHighlightsProps {
@@ -41,6 +42,7 @@ type MultipleHighlightTypes = keyof Pick<
 >;
 
 const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { metadataFormattedDateTime } = useAppDateTime();
   const highlightedStringMaxWidth = 450;
@@ -78,7 +80,8 @@ const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => 
     </S.HighlightText>
   );
 
-  const getTitle = (key: SearchHighlightsTitlesKey) => searchHighlightsTitlesMap.get(key);
+  const getTitle = (key: SearchHighlightsTitlesKey) =>
+    t(searchHighlightsTitlesMap.get(key)!);
 
   const getHighlights = (name: SingleHighlightTypes) => {
     if (highlights && highlights[name]) {
@@ -159,22 +162,22 @@ const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => 
           return (
             <S.StructureItem key={entity.name} container flexDirection='column'>
               {entity.name && (
-                <LabeledInfoItem inline label='Column name' labelWidth={3}>
+                <LabeledInfoItem inline label={t('Column name')} labelWidth={3}>
                   {sliceAndHighlightText(entity.name)}
                 </LabeledInfoItem>
               )}
               {entity.internalDescription && (
-                <LabeledInfoItem inline label='Internal description' labelWidth={3}>
+                <LabeledInfoItem inline label={t('Internal description')} labelWidth={3}>
                   {sliceAndHighlightText(entity.internalDescription)}
                 </LabeledInfoItem>
               )}
               {entity.externalDescription && (
-                <LabeledInfoItem inline label='External description' labelWidth={3}>
+                <LabeledInfoItem inline label={t('External description')} labelWidth={3}>
                   {sliceAndHighlightText(entity.externalDescription)}
                 </LabeledInfoItem>
               )}
               {entity.labels && entity.labels.length > 0 && (
-                <LabeledInfoItem inline label='Labels' labelWidth={3}>
+                <LabeledInfoItem inline label={t('Labels')} labelWidth={3}>
                   <Grid container mt={0.5}>
                     {entity.labels.map(({ id, name: labelName, external }) => (
                       <LabelItem

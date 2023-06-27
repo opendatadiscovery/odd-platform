@@ -11,11 +11,13 @@ import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Button, AppCircularProgress } from 'components/shared/elements';
 import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
+import { useTranslation } from 'react-i18next';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const datasources = useAppSelector(getDataSourcesList);
@@ -34,9 +36,9 @@ const Filters: React.FC = () => {
   return (
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
-        <Typography variant='h4'>Filters</Typography>
+        <Typography variant='h4'>{t('Filters')}</Typography>
         <Button
-          text='Clear All'
+          text={t('Clear All')}
           buttonType='tertiary-m'
           onClick={() => dispatch(clearDataEntitySearchFacets())}
         />
@@ -45,24 +47,24 @@ const Filters: React.FC = () => {
         <SingleFilterItem
           key='ds'
           facetName='datasources'
-          name='Datasource'
+          name={t('Datasource')}
           facetOptions={datasources}
         />
         {typeof searchClass === 'number' && searchClass > 0 ? (
-          <MultipleFilterItem key='st' facetName='types' name='Type' />
+          <MultipleFilterItem key='st' facetName='types' name={t('Type')} />
         ) : null}
         <SingleFilterItem
           key='ns'
           facetName='namespaces'
-          name='Namespace'
+          name={t('Namespace')}
           facetOptions={namespaces}
         />
-        <MultipleFilterItem key='ow' facetName='owners' name='Owner' />
-        <MultipleFilterItem key='tg' facetName='tags' name='Tag' />
-        <MultipleFilterItem key='gr' facetName='groups' name='Groups' />
+        <MultipleFilterItem key='ow' facetName='owners' name={t('Owner')} />
+        <MultipleFilterItem key='tg' facetName='tags' name={t('Tag')} />
+        <MultipleFilterItem key='gr' facetName='groups' name={t('Groups')} />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchUpdating || isDatasourceListFetching) && (
-            <AppCircularProgress size={16} text='Updating filters' />
+            <AppCircularProgress size={16} text={t('Updating filters')} />
           )}
         </S.FacetsLoaderContainer>
       </S.ListContainer>

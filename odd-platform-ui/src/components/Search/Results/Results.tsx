@@ -31,6 +31,7 @@ import { AddIcon } from 'components/shared/icons';
 import findKey from 'lodash/findKey';
 import { WithPermissions } from 'components/shared/contexts';
 import omit from 'lodash/omit';
+import { useTranslation } from 'react-i18next';
 import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
@@ -39,6 +40,7 @@ import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton
 import * as S from './ResultsStyles';
 
 const Results: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const size = 30;
 
@@ -125,7 +127,7 @@ const Results: React.FC = () => {
           <DataEntityGroupForm
             btnCreateEl={
               <Button
-                text='Add group'
+                text={t('Add group')}
                 sx={{ mt: 2 }}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
@@ -159,7 +161,7 @@ const Results: React.FC = () => {
           <EmptyContentPlaceholder
             isContentLoaded={!isSearchFetching}
             isContentEmpty={!total}
-            text='No matches found'
+            text={t('No matches found')}
           />
         </S.ListContainer>
       )}
