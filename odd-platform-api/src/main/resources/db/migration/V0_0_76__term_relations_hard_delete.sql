@@ -21,4 +21,4 @@ DROP INDEX IF EXISTS term_id_owner_id_unique;
 ALTER TABLE term_ownership
     DROP COLUMN IF EXISTS deleted_at;
 
-CREATE INDEX IF NOT EXISTS term_id_owner_id_unique ON term_ownership (term_id, owner_id);
+CREATE UNIQUE INDEX IF NOT EXISTS term_id_owner_id_unique ON term_ownership (term_id, owner_id);

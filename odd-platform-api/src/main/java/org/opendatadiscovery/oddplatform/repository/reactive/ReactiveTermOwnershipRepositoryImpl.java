@@ -10,7 +10,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TitlePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TermOwnershipRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
