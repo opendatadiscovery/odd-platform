@@ -17,6 +17,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnershipTitleList } from 'redux/thunks';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
 import Input from 'components/shared/elements/Input/Input';
+import { useTranslation } from 'react-i18next';
 
 interface OwnershipTitleAutocompleteProps {
   field: ControllerRenderProps<OwnershipFormData, 'titleName'>;
@@ -25,6 +26,7 @@ interface OwnershipTitleAutocompleteProps {
 const OwnershipTitleAutocomplete: React.FC<OwnershipTitleAutocompleteProps> = ({
   field,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const searchTitles = fetchOwnershipTitleList;
 
@@ -106,8 +108,8 @@ const OwnershipTitleAutocomplete: React.FC<OwnershipTitleAutocompleteProps> = ({
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label='Title'
-      placeholder='Search title…'
+      label={t('Title')}
+      placeholder={t('Search title…')}
       isLoading={titlesLoading}
     />
   );
@@ -121,7 +123,7 @@ const OwnershipTitleAutocomplete: React.FC<OwnershipTitleAutocompleteProps> = ({
         {option.id ? (
           option.name
         ) : (
-          <AutocompleteSuggestion optionLabel='title' optionName={option.name} />
+          <AutocompleteSuggestion optionLabel={t('title')} optionName={option.name} />
         )}
       </Typography>
     </li>

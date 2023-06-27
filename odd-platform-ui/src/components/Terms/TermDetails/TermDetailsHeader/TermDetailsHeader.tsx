@@ -12,6 +12,7 @@ import { Permission, type TermDetails } from 'generated-sources';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface TermDetailsHeaderProps {
   name: TermDetails['name'];
@@ -25,6 +26,7 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
   updatedAt,
   handleTermDelete,
 }) => {
+  const { t } = useTranslation();
   const { formatDistanceToNowStrict } = useAppDateTime();
 
   const termUpdatedAt = React.useMemo(
@@ -53,7 +55,7 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
           <TermsForm
             btnCreateEl={
               <Button
-                text='Edit'
+                text={t('Edit')}
                 buttonType='secondary-m'
                 startIcon={<EditIcon />}
                 sx={{ ml: 1 }}
@@ -76,11 +78,15 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
             transformOrigin={{ vertical: -5, horizontal: 67 }}
           >
             <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this term?'
-              actionName='Delete term'
-              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              actionTitle={t('Are you sure you want to delete this term?')}
+              actionName={t('Delete term')}
+              actionText={
+                <>
+                  &quot;{name}&quot; {t('will be deleted permanently.')}
+                </>
+              }
               onConfirm={handleTermDelete(termId)}
-              actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+              actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
             />
           </AppPopover>
         </WithPermissions>

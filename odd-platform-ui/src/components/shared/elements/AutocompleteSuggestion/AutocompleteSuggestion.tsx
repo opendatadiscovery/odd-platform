@@ -5,6 +5,7 @@ import {
   NoResultText,
   CreateNewOptionText,
 } from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestionStyles';
+import { useTranslation } from 'react-i18next';
 
 interface AutocompleteSuggestionProps {
   optionLabel: string;
@@ -16,13 +17,17 @@ const AutocompleteSuggestion: React.FC<AutocompleteSuggestionProps> = ({
   optionLabel,
   optionName,
   sx,
-}) => (
-  <Typography sx={sx} variant='body2' component='span'>
-    <NoResultText>No result.</NoResultText>{' '}
-    <CreateNewOptionText>
-      Create new {optionLabel} &quot;{optionName}&quot;
-    </CreateNewOptionText>
-  </Typography>
-);
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Typography sx={sx} variant='body2' component='span'>
+      <NoResultText>{t('No result.')}</NoResultText>{' '}
+      <CreateNewOptionText>
+        {t('Create new')} {optionLabel} &quot;{optionName}&quot;
+      </CreateNewOptionText>
+    </Typography>
+  );
+};
 
 export default AutocompleteSuggestion;

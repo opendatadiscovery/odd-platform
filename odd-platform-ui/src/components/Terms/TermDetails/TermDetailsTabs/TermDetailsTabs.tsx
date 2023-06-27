@@ -3,8 +3,10 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 const TermDetailsTabs: React.FC = () => {
+  const { t } = useTranslation();
   const { termId, termsViewType } = useAppParams();
   const { termDetailsOverviewPath, termDetailsLinkedItemsPath, TermsRoutes } =
     useAppPaths();
@@ -14,12 +16,12 @@ const TermDetailsTabs: React.FC = () => {
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
       {
-        name: 'Overview',
+        name: t('Overview'),
         link: termDetailsOverviewPath(termId),
         value: TermsRoutes.overview,
       },
       {
-        name: 'Linked items',
+        name: t('Linked items'),
         link: termDetailsLinkedItemsPath(termId),
         hint: termDetails?.entitiesUsingCount,
         hidden: !termDetails?.entitiesUsingCount,

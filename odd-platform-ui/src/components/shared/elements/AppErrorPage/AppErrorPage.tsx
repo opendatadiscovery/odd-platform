@@ -3,6 +3,7 @@ import React from 'react';
 import type { ErrorState } from 'redux/interfaces/loader';
 import { toolbarHeight } from 'lib/constants';
 import Button from 'components/shared/elements/Button/Button';
+import { useTranslation } from 'react-i18next';
 
 interface AppErrorPageProps {
   showError: boolean;
@@ -14,8 +15,10 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
   showError,
   error,
   offsetTop = 32,
-}) =>
-  showError ? (
+}) => {
+  const { t } = useTranslation();
+
+  return showError ? (
     <Grid container height={`calc(100vh - ${toolbarHeight}px - ${offsetTop}px)`}>
       <Grid container alignItems='center' justifyContent='center'>
         <Grid item>
@@ -24,14 +27,15 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
           </Typography>
         </Grid>
         <Grid item alignItems='center'>
-          <Typography variant='h1'>{error?.statusText || 'Unknown Error'}</Typography>
+          <Typography variant='h1'>{error?.statusText || t('Unknown Error')}</Typography>
           <Grid container alignItems='center'>
-            <Typography variant='body1'>Return to the</Typography>
-            <Button text='Home Page' to='/' buttonType='tertiary-m' />
+            <Typography variant='body1'>{t('Return to the')}</Typography>
+            <Button text={t('Home Page')} to='/' buttonType='tertiary-m' />
           </Grid>
         </Grid>
       </Grid>
     </Grid>
   ) : null;
+};
 
 export default AppErrorPage;

@@ -18,12 +18,14 @@ import {
   getTermUpdatingStatuses,
 } from 'redux/selectors';
 import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
 }
 
 const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { termId } = useAppParams();
@@ -75,8 +77,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormTitle = (
     <Typography variant='h4' component='span'>
-      {term.id ? 'Edit ' : 'Add '}
-      term
+      {term.id ? t('Edit') : t('Add')} {t('term')}
     </Typography>
   );
 
@@ -84,7 +85,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
     <form id='term-create-form' onSubmit={handleSubmit(onSubmit)}>
       {!term && (
         <Typography variant='subtitle2' fontSize='0.73rem'>
-          Select a term from the dictionary or create a new term.
+          {t('Select a term from the dictionary or create a new term.')}
         </Typography>
       )}
       <Controller
@@ -97,8 +98,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
         render={({ field }) => (
           <AppInput
             {...field}
-            label='Name'
-            placeholder='Start enter the name'
+            label={t('Name')}
+            placeholder={t('Start enter the name')}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -127,8 +128,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
           <AppInput
             {...field}
             sx={{ mt: 1.25 }}
-            label='Definition'
-            placeholder='Term definition'
+            label={t('Definition')}
+            placeholder={t('Term definition')}
             multiline
             minRows={4}
             maxRows={6}
@@ -146,7 +147,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormActionButtons = () => (
     <Button
-      text={term ? 'Save term' : 'Add term'}
+      text={term ? t('Save term') : t('Add term')}
       buttonType='main-lg'
       type='submit'
       form='term-create-form'
