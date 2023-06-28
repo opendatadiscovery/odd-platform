@@ -11,6 +11,7 @@ import {
 } from 'redux/selectors';
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
+import { useTranslation } from 'react-i18next';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
 import ResolvedAssociationRequest from './ResolvedAssociationRequest/ResolvedAssociationRequest';
 import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
@@ -23,6 +24,7 @@ interface OwnerAssociationsResolvedProps {
 const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   size,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [query] = useAtom(queryAtom);
 
@@ -60,22 +62,22 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
     <Grid container flexDirection='column' alignItems='center'>
       <S.TableHeader container>
         <Grid item lg={3}>
-          {tableCellText('User name')}
+          {tableCellText(t('User name'))}
         </Grid>
         <Grid item lg={2}>
-          {tableCellText('Owner name')}
+          {tableCellText(t('Owner name'))}
         </Grid>
         <Grid item lg={2}>
-          {tableCellText('Provider')}
+          {tableCellText(t('Provider'))}
         </Grid>
         <Grid item lg={2}>
-          {tableCellText('Resolved by')}
+          {tableCellText(t('Resolved by'))}
         </Grid>
         <Grid item lg={1}>
-          {tableCellText('Status')}
+          {tableCellText(t('Status'))}
         </Grid>
         <Grid item lg={2}>
-          {tableCellText('Resolved at')}
+          {tableCellText(t('Resolved at'))}
         </Grid>
       </S.TableHeader>
       <Grid container>

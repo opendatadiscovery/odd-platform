@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { getOwnerAssociationRequestsListFetchingStatuses } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
 
 interface OwnerAssociationsTabsProps {
@@ -16,6 +17,7 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   newRequestsTabHint,
   size,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { associationsViewType } = useAppParams();
   const { ManagementRoutes } = useAppPaths();
@@ -27,18 +29,18 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   const tabs = React.useMemo<AppTabItem<boolean>[]>(
     () => [
       {
-        name: 'New',
+        name: t('New'),
         hint: newRequestsTabHint,
         link: ManagementRoutes.associationsNew,
         value: true,
       },
       {
-        name: 'Resolved',
+        name: t('Resolved'),
         link: ManagementRoutes.associationsResolved,
         value: false,
       },
     ],
-    [newRequestsTabHint]
+    [t, newRequestsTabHint]
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);

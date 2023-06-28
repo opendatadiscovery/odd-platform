@@ -7,6 +7,7 @@ import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import * as S from './PolicyItemStyles';
 
 interface PolicyItemProps {
@@ -15,6 +16,7 @@ interface PolicyItemProps {
 }
 
 const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { hasAccessTo } = usePermissions();
 
@@ -37,7 +39,9 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
         <S.ActionsContainer container item>
           <Button
             text={
-              isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE) ? 'View' : 'Edit'
+              isAdministrator || !hasAccessTo(Permission.POLICY_UPDATE)
+                ? t('View')
+                : t('Edit')
             }
             to={`${policyId}`}
             buttonType='secondary-m'
@@ -51,13 +55,17 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
             extraCheck={!isAdministrator}
           >
             <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this policy?'
-              actionName='Delete Policy'
-              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              actionTitle={t('Are you sure you want to delete this policy?')}
+              actionName={t('Delete Policy')}
+              actionText={
+                <>
+                  &quot;{name}&quot; {t('will be deleted permanently')}.
+                </>
+              }
               onConfirm={handleDelete}
               actionBtn={
                 <Button
-                  text='Delete'
+                  text={t('Delete')}
                   buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />

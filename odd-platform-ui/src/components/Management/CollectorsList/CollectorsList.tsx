@@ -19,12 +19,14 @@ import {
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import CollectorForm from './CollectorForm/CollectorForm';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
 import CollectorItem from './CollectorItem/CollectorItem';
 import { CollectorCaption } from './CollectorsListStyles';
 
 const CollectorsListView: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { page, hasNext, total } = useAppSelector(getCollectorsListPage);
@@ -71,14 +73,14 @@ const CollectorsListView: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <CollectorCaption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Collectors</Typography>
+        <Typography variant='h1'>{t('Collectors')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalCollectors} /> collectors overall
+          <NumberFormatted value={totalCollectors} /> {t('collectors overall')}
         </Typography>
       </CollectorCaption>
       <CollectorCaption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search collector...'
+          placeholder={t('Search collector...')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}
@@ -102,7 +104,7 @@ const CollectorsListView: React.FC = () => {
           <CollectorForm
             btnCreateEl={
               <Button
-                text='Add collector'
+                text={t('Add collector')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />

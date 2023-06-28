@@ -20,12 +20,14 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import LabelsSkeletonItem from './LabelsSkeletonItem/LabelsSkeletonItem';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateForm from './LabelCreateForm/LabelCreateForm';
 import * as S from './LabelsListStyles';
 
 const LabelsListView: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const labelsList = useAppSelector(getLabelsList);
@@ -70,14 +72,14 @@ const LabelsListView: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Labels</Typography>
+        <Typography variant='h1'>{t('Labels')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalLabels} /> labels overall
+          <NumberFormatted value={totalLabels} /> {t('labels overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search label...'
+          placeholder={t('Search label...')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}
@@ -101,7 +103,7 @@ const LabelsListView: React.FC = () => {
           <LabelCreateForm
             btnCreateEl={
               <Button
-                text='Create label'
+                text={t('Create label')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
@@ -112,7 +114,7 @@ const LabelsListView: React.FC = () => {
       <S.TableHeader container>
         <Grid item xs={12}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Name
+            {t('Name')}
           </Typography>
         </Grid>
       </S.TableHeader>

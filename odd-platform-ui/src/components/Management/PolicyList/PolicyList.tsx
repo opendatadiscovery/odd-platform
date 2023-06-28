@@ -19,11 +19,13 @@ import {
 import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import PolicyItem from './PolicyItem/PolicyItem';
 import * as S from './PolicyListStyles';
 import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
 
 const PolicyList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { ManagementRoutes } = useAppPaths();
 
@@ -73,14 +75,14 @@ const PolicyList: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Policies</Typography>
+        <Typography variant='h1'>{t('Policies')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalPolicies} /> policies overall
+          <NumberFormatted value={totalPolicies} /> {t('policies overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search policies...'
+          placeholder={t('Search policies...')}
           value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -102,7 +104,7 @@ const PolicyList: React.FC = () => {
         />
         <WithPermissions permissionTo={Permission.POLICY_CREATE}>
           <Button
-            text='Create policy'
+            text={t('Create policy')}
             to={ManagementRoutes.createPolicy}
             buttonType='secondary-m'
             startIcon={<AddIcon />}
@@ -112,7 +114,7 @@ const PolicyList: React.FC = () => {
       <S.TableHeader container flexWrap='nowrap'>
         <Grid item lg={3.53}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Policy name
+            {t('Policy name')}
           </Typography>
         </Grid>
         <Grid item lg={6.73} />

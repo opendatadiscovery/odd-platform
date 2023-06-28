@@ -13,6 +13,7 @@ import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createRole, updateRole } from 'redux/thunks';
 import { getRoleCreatingStatuses, getRoleUpdatingStatuses } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 
 interface RoleFormProps {
   openBtn: JSX.Element;
@@ -22,6 +23,7 @@ interface RoleFormProps {
 }
 
 const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const isUser = name === 'User';
@@ -71,7 +73,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {roleId ? 'Edit' : 'Create'} role
+      {roleId ? t('Edit role') : t('Create role')}
     </Typography>
   );
 
@@ -86,8 +88,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
           <AppInput
             {...field}
             disabled={isUser}
-            label='Name'
-            placeholder='Enter role name'
+            label={t('Name')}
+            placeholder={t('Enter role name')}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -120,7 +122,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
 
   const formActionButtons = () => (
     <Button
-      text={roleId ? 'Save' : 'Create role'}
+      text={roleId ? t('Save') : t('Create role')}
       type='submit'
       form='role-form'
       buttonType='main-lg'

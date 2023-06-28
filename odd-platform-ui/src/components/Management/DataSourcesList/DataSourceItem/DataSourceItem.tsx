@@ -12,6 +12,7 @@ import {
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';
 import DataSourceItemToken from './DataSourceItemToken/DataSourceItemToken';
 import * as S from './DataSourceItemStyles';
@@ -21,6 +22,7 @@ interface DataSourceItemProps {
 }
 
 const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const onDelete = React.useCallback(
@@ -44,7 +46,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
                 dataSource={dataSource}
                 btnCreateEl={
                   <Button
-                    text='Edit'
+                    text={t('Edit')}
                     buttonType='secondary-m'
                     startIcon={<EditIcon />}
                     sx={{ mr: 1 }}
@@ -54,17 +56,17 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
             </WithPermissions>
             <WithPermissions permissionTo={Permission.DATA_SOURCE_DELETE}>
               <ConfirmationDialog
-                actionTitle='Are you sure you want to delete this datasource?'
-                actionName='Delete'
+                actionTitle={t('Are you sure you want to delete this datasource?')}
+                actionName={t('Delete')}
                 actionText={
                   <Typography variant='subtitle1'>
-                    Delete &quot;{dataSource.name}&quot; datasource?
+                    {t('Delete')} &quot;{dataSource.name}&quot; {t('datasource')}?
                   </Typography>
                 }
                 onConfirm={onDelete}
                 actionBtn={
                   <Button
-                    text='Delete'
+                    text={t('Delete')}
                     buttonType='secondary-m'
                     startIcon={<DeleteIcon />}
                   />
@@ -84,17 +86,17 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
           >
             <AppTooltip title={dataSource.oddrn}>{dataSource.oddrn}</AppTooltip>
           </LabeledInfoItem>
-          <LabeledInfoItem variant='body2' inline label='Description' labelWidth={4}>
+          <LabeledInfoItem variant='body2' inline label={t('Description')} labelWidth={4}>
             {dataSource.description}
           </LabeledInfoItem>
-          <LabeledInfoItem variant='body2' inline label='Namespace' labelWidth={4}>
+          <LabeledInfoItem variant='body2' inline label={t('Namespace')} labelWidth={4}>
             {dataSource.namespace?.name}
           </LabeledInfoItem>
           {dataSource.token?.value && (
             <LabeledInfoItem
               variant='body2'
               inline
-              label='Token'
+              label={t('Token')}
               labelWidth={4}
               valueSx={{ ml: 0 }}
             >

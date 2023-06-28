@@ -9,6 +9,7 @@ import {
   getNamespaceCreatingStatuses,
   getNamespaceUpdatingStatuses,
 } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 
 interface NamespaceFormProps {
   btnEl: JSX.Element;
@@ -16,6 +17,7 @@ interface NamespaceFormProps {
 }
 
 const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isNamespaceCreating, isLoaded: isNamespaceCreated } = useAppSelector(
@@ -50,7 +52,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {namespace ? 'Edit' : 'Add'} Namespace
+      {namespace ? t('Edit namespace') : t('Add namespace')}
     </Typography>
   );
 
@@ -62,7 +64,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <Input {...field} variant='main-m' placeholder='Enter namespace name...' />
+          <Input {...field} variant='main-m' placeholder={t('Enter namespace name...')} />
         )}
       />
     </form>
@@ -70,7 +72,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       type='submit'
       form='namespace-edit-form'
       buttonType='main-lg'

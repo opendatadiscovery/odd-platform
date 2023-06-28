@@ -11,6 +11,7 @@ import { updateLabel } from 'redux/thunks';
 import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
 
 import ClearIcon from 'components/shared/icons/ClearIcon';
+import { useTranslation } from 'react-i18next';
 
 interface LabelEditFormProps {
   editBtn: JSX.Element;
@@ -18,6 +19,7 @@ interface LabelEditFormProps {
 }
 
 const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isLabelDeleting, isLoaded: isLabelDeleted } = useAppSelector(
     getLabelDeletingStatuses
@@ -47,7 +49,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Edit Label
+      {t('Edit Label')}
     </Typography>
   );
 
@@ -61,7 +63,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder='Label Name'
+            placeholder={t('Label Name')}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -76,7 +78,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       type='submit'
       form='label-edit-form'
       buttonType='main-lg'

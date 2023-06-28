@@ -5,6 +5,7 @@ import { FormControlLabel, Grid, Typography } from '@mui/material';
 import { Button, Checkbox, AppInput, Markdown } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 
 interface IntegrationCodeSnippetWithFormProps {
   snippet: IntegrationCodeSnippetType;
@@ -13,6 +14,7 @@ interface IntegrationCodeSnippetWithFormProps {
 const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = ({
   snippet,
 }) => {
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(true);
   const [snippetArgs, setSnippetArgs] = useState({});
 
@@ -73,7 +75,6 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                       <AppInput
                         {...field}
                         type={arg.type === 'STRING' ? 'string' : 'number'}
-                        // label={arg.name}
                         placeholder={`Enter ${arg.name} ...`}
                         customEndAdornment={{
                           variant: 'clear',
@@ -102,7 +103,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
   ) : (
     <Grid container mb={1} justifyContent='flex-end'>
       <Button
-        text='Reconfigure'
+        text={t('Reconfigure')}
         buttonType='main-lg'
         onClick={() => setShowForm(true)}
         sx={{ mb: 1, justifySelf: 'flex-end' }}

@@ -18,12 +18,14 @@ import {
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import RoleForm from './RoleForm/RoleForm';
 import RoleItem from './RoleItem/RoleItem';
 import * as S from './RolesListStyles';
 import RoleSkeletonItem from './RoleSkeletonItem/RoleSkeletonItem';
 
 const RolesList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isRolesFetching } = useAppSelector(getRolesFetchingStatuses);
@@ -72,14 +74,14 @@ const RolesList: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Roles</Typography>
+        <Typography variant='h1'>{t('Roles')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalRoles} /> roles overall
+          <NumberFormatted value={totalRoles} /> {t('roles overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search roles...'
+          placeholder={t('Search roles...')}
           value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -103,7 +105,7 @@ const RolesList: React.FC = () => {
           <RoleForm
             openBtn={
               <Button
-                text='Create role'
+                text={t('Create role')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
@@ -114,12 +116,12 @@ const RolesList: React.FC = () => {
       <S.TableHeader container flexWrap='nowrap'>
         <Grid item lg={3.53}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Role name
+            {t('Role name')}
           </Typography>
         </Grid>
         <Grid item lg={6.73}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Policy
+            {t('Policy')}
           </Typography>
         </Grid>
         <Grid item lg={1.74} />

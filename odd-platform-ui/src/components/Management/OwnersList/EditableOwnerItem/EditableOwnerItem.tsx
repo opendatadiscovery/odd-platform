@@ -7,6 +7,7 @@ import { deleteOwner } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TruncateMarkup from 'react-truncate-markup';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import * as S from './EditableOwnerItemStyles';
 import OwnerForm from '../OwnerForm/OwnerForm';
 
@@ -21,6 +22,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   name,
   roles,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const handleDelete = React.useCallback(
@@ -53,19 +55,27 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             name={name}
             roles={roles}
             btnCreateEl={
-              <Button text='Edit' buttonType='secondary-m' startIcon={<EditIcon />} />
+              <Button
+                text={t('Edit')}
+                buttonType='secondary-m'
+                startIcon={<EditIcon />}
+              />
             }
           />
         </WithPermissions>
         <WithPermissions permissionTo={Permission.OWNER_DELETE}>
           <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this owner?'
-            actionName='Delete Owner'
-            actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+            actionTitle={t('Are you sure you want to delete this owner?')}
+            actionName={t('Delete Owner')}
+            actionText={
+              <>
+                &quot;{name}&quot; {t('will be deleted permanently.')}
+              </>
+            }
             onConfirm={handleDelete}
             actionBtn={
               <Button
-                text='Delete'
+                text={t('Delete')}
                 buttonType='secondary-m'
                 startIcon={<DeleteIcon />}
                 sx={{ ml: 1 }}

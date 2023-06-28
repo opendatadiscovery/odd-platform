@@ -7,6 +7,7 @@ import { updateTag } from 'redux/thunks';
 import { getTagCreatingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
 import { Checkbox, AppInput, Button, DialogWrapper } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 
 interface TagEditFormProps {
   editBtn: JSX.Element;
@@ -14,6 +15,7 @@ interface TagEditFormProps {
 }
 
 const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isTagUpdating, isLoaded: isTagUpdated } =
@@ -38,7 +40,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Edit Tag
+      {t('Edit Tag')}
     </Typography>
   );
 
@@ -52,7 +54,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder='Tag Name'
+            placeholder={t('Tag Name')}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -73,7 +75,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
               sx={{ ml: -0.25 }}
               checked={field.value}
               control={<Checkbox sx={{ mr: 1 }} />}
-              label='Important'
+              label={t('Important')}
             />
           )}
         />
@@ -83,7 +85,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       type='submit'
       form='tag-edit-form'
       buttonType='main-lg'

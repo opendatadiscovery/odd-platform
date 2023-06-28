@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTag } from 'redux/thunks/tags.thunks';
 import { AddIcon } from 'components/shared/icons';
 import { DialogWrapper, Button } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
 
 interface TagCreateFormProps {
@@ -18,6 +19,7 @@ interface TagCreateFormData {
 }
 
 const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isTagCreating, isLoaded: isTagCreated } =
     useAppSelector(getTagCreatingStatuses);
@@ -43,10 +45,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
   };
 
   const handleAppend = React.useCallback(() => {
-    append({
-      name: '',
-      important: false,
-    });
+    append({ name: '', important: false });
   }, [append]);
 
   const handleRemove = (index: number) => () => {
@@ -56,7 +55,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Create Tag
+      {t('Create Tag')}
     </Typography>
   );
 
@@ -72,7 +71,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
           />
         ))}
         <Button
-          text='Add'
+          text={t('Add')}
           buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
@@ -83,7 +82,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Create'
+      text={t('Create')}
       buttonType='main-lg'
       type='submit'
       form='tag-create-form'

@@ -21,12 +21,14 @@ import { fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceForm from './NamespaceForm/NamespaceForm';
 import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
 import * as S from './NamespaceListStyles';
 
 const NamespaceList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const namespacesList = useAppSelector(getNamespaceList);
@@ -91,16 +93,16 @@ const NamespaceList: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Namespaces</Typography>
+        <Typography variant='h1'>{t('Namespaces')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalNamespaces} /> namespaces overall
+          <NumberFormatted value={totalNamespaces} /> {t('namespaces overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <Input
           variant='search-m'
           maxWidth={320}
-          placeholder='Search namespace...'
+          placeholder={t('Search namespace...')}
           value={searchText}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
@@ -109,7 +111,7 @@ const NamespaceList: React.FC = () => {
           <NamespaceForm
             btnEl={
               <Button
-                text='Create namespace'
+                text={t('Create namespace')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
@@ -120,7 +122,7 @@ const NamespaceList: React.FC = () => {
       <S.TableHeader container>
         <Grid item xs={12}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Name
+            {t('Name')}
           </Typography>
         </Grid>
       </S.TableHeader>

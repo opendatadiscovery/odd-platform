@@ -5,6 +5,7 @@ import { Button, ConfirmationDialog, CopyButton } from 'components/shared/elemen
 import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import { Token, TokenContainer } from './CollectorItemTokenStyles';
 
 interface CollectorItemProps {
@@ -12,6 +13,7 @@ interface CollectorItemProps {
 }
 
 const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const [isHidden, setIsHidden] = React.useState(true);
@@ -31,19 +33,21 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
       {isHidden ? (
         <WithPermissions permissionTo={Permission.COLLECTOR_TOKEN_REGENERATE}>
           <ConfirmationDialog
-            actionTitle='Are you sure you want to regenerate token for this collector?'
-            actionName='Regenerate'
+            actionTitle={t(
+              'Are you sure you want to regenerate token for this collector?'
+            )}
+            actionName={t('Regenerate')}
             actionText={
               <Typography variant='subtitle1'>
-                Regenerate token for &quot;{collector.name}&quot;?
+                {t('Regenerate token for')} &quot;{collector.name}&quot;?
               </Typography>
             }
             onConfirm={onTokenRegenerate}
-            actionBtn={<Button text='Regenerate' buttonType='secondary-m' />}
+            actionBtn={<Button text={t('Regenerate')} buttonType='secondary-m' />}
           />
         </WithPermissions>
       ) : (
-        <CopyButton stringToCopy={collector.token.value} text='Copy' />
+        <CopyButton stringToCopy={collector.token.value} text={t('Copy')} />
       )}
     </TokenContainer>
   );

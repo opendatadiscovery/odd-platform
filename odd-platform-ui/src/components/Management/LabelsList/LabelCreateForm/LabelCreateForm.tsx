@@ -7,6 +7,7 @@ import { createLabel } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AddIcon } from 'components/shared/icons';
 import { DialogWrapper, Button } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import LabelCreateFormItem from './LabelCreateFormItem/LabelCreateFormItem';
 
 interface LabelCreateFormProps {
@@ -18,18 +19,13 @@ interface LabelCreateFormData {
 }
 
 const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isLabelCreating, isLoaded: isLabelCreated } = useAppSelector(
     getLabelCreatingStatuses
   );
   const methods = useForm<LabelCreateFormData>({
-    defaultValues: {
-      labels: [
-        {
-          name: '',
-        },
-      ],
-    },
+    defaultValues: { labels: [{ name: '' }] },
     mode: 'onChange',
   });
   const { fields, append, remove } = useFieldArray({
@@ -60,7 +56,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Create Label
+      {t('Create Label')}
     </Typography>
   );
 
@@ -76,7 +72,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({ btnCreateEl }) => {
           />
         ))}
         <Button
-          text='Add'
+          text={t('Add')}
           buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}

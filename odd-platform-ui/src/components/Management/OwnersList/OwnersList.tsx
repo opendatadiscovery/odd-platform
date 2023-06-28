@@ -20,12 +20,14 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
 import * as S from './OwnersListStyles';
 
 const OwnersList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const ownersList = useAppSelector(getOwnersList);
@@ -71,14 +73,14 @@ const OwnersList: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Owners</Typography>
+        <Typography variant='h1'>{t('Owners')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalOwners} /> owners overall
+          <NumberFormatted value={totalOwners} /> {t('owners overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search owner...'
+          placeholder={t('Search owner...')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}
@@ -102,7 +104,7 @@ const OwnersList: React.FC = () => {
           <OwnerForm
             btnCreateEl={
               <Button
-                text='Create Owner'
+                text={t('Create Owner')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
@@ -113,12 +115,12 @@ const OwnersList: React.FC = () => {
       <S.TableHeader container>
         <Grid item lg={3.53}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Name
+            {t('Name')}
           </Typography>
         </Grid>
         <Grid item lg={6.73}>
           <Typography variant='subtitle2' color='texts.hint'>
-            Roles
+            {t('Roles')}
           </Typography>
         </Grid>
         <Grid item lg={1.74} />

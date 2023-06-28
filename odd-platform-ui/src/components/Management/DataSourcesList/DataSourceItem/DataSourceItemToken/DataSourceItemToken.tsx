@@ -5,6 +5,7 @@ import { Button, ConfirmationDialog, CopyButton } from 'components/shared/elemen
 import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import { Token, TokenContainer } from './DataSourceItemTokenStyles';
 
 interface DataSourceItemProps {
@@ -12,6 +13,7 @@ interface DataSourceItemProps {
 }
 
 const DataSourceItemToken: React.FC<DataSourceItemProps> = ({ dataSource }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
@@ -31,19 +33,21 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({ dataSource }) => {
       {isHidden ? (
         <WithPermissions permissionTo={Permission.DATA_SOURCE_TOKEN_REGENERATE}>
           <ConfirmationDialog
-            actionTitle='Are you sure you want to regenerate token for this datasource?'
-            actionName='Regenerate'
+            actionTitle={t(
+              'Are you sure you want to regenerate token for this datasource?'
+            )}
+            actionName={t('Regenerate')}
             actionText={
               <Typography variant='subtitle1'>
-                Regenerate token for &quot;{dataSource.name}&quot;?
+                {t('Regenerate token for')} &quot;{dataSource.name}&quot;?
               </Typography>
             }
             onConfirm={onTokenRegenerate}
-            actionBtn={<Button text='Regenerate' buttonType='secondary-m' />}
+            actionBtn={<Button text={t('Regenerate')} buttonType='secondary-m' />}
           />
         </WithPermissions>
       ) : (
-        <CopyButton stringToCopy={dataSource.token.value} text='Copy' />
+        <CopyButton stringToCopy={dataSource.token.value} text={t('Copy')} />
       )}
     </TokenContainer>
   );

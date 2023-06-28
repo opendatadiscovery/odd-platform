@@ -6,6 +6,7 @@ import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { deleteNamespace } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
 
@@ -14,6 +15,7 @@ interface EditableNamespaceItemProps {
 }
 
 const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const handleDelete = React.useCallback(
@@ -34,7 +36,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
             namespace={namespace}
             btnEl={
               <Button
-                text='Edit'
+                text={t('Edit')}
                 buttonType='secondary-m'
                 startIcon={<EditIcon />}
                 sx={{ mr: 0.5 }}
@@ -44,12 +46,20 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
         </WithPermissions>
         <WithPermissions permissionTo={Permission.NAMESPACE_DELETE}>
           <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this namespace?'
-            actionName='Delete Namespace'
-            actionText={<>&quot;{namespace.name}&quot; will be deleted permanently.</>}
+            actionTitle={t('Are you sure you want to delete this namespace?')}
+            actionName={t('Delete Namespace')}
+            actionText={
+              <>
+                &quot;{namespace.name}&quot; {t('will be deleted permanently.')}
+              </>
+            }
             onConfirm={handleDelete}
             actionBtn={
-              <Button text='Delete' buttonType='secondary-m' startIcon={<DeleteIcon />} />
+              <Button
+                text={t('Delete')}
+                buttonType='secondary-m'
+                startIcon={<DeleteIcon />}
+              />
             }
           />
         </WithPermissions>
