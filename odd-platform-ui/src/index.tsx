@@ -33,6 +33,9 @@ const queryClient = new QueryClient({
       retry: false,
       refetchOnWindowFocus: false,
       async onError(e) {
+        if ((e as Error).message === '401') {
+          window.location.reload();
+        }
         await showServerErrorToast(e as Response);
       },
     },

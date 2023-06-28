@@ -28,7 +28,7 @@ const TermDetailsTabs: React.FC = () => {
         value: TermsRoutes.linkedItems,
       },
     ],
-    [termId, termDetails?.entitiesUsingCount]
+    [termId, termDetails?.entitiesUsingCount, t]
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);

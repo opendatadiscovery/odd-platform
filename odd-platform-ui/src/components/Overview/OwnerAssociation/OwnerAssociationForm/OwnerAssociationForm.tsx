@@ -159,7 +159,7 @@ const OwnerAssociationForm: React.FC = () => {
               {t('Hi')} {identity?.username}.
             </>
           ) : null}{' '}
-          {t('Sync your account with existing owner.')}
+          {t('Sync your account with existing owner')}
         </Typography>
         <Typography variant='subtitle2'>{t('bind entities in your account')}</Typography>
       </Grid>

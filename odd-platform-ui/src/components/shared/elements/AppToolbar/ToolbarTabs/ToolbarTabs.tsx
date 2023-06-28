@@ -65,7 +65,7 @@ const ToolbarTabs: FC = () => {
         value: ActivityRoutes.activity,
       },
     ],
-    [activityQueryString]
+    [activityQueryString, t]
   );
 
   const [selectedTab, setSelectedTab] = useState(-1);
