@@ -17,6 +17,7 @@ import {
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/GroupedEntitiesListModal/GroupedEntitiesListModalStyles';
 import type { LineageQueryParams } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
 import { defaultLineageQuery } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/constants';
+import { useTranslation } from 'react-i18next';
 
 interface GroupedEntitiesListModalProps {
   dataEntityName: string | undefined;
@@ -33,6 +34,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   streamType,
   rootNodeId,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityOverviewPath } = useAppPaths();
   const {
@@ -101,7 +103,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
           ))}
         </Grid>
         <Button
-          text='Load more'
+          text={t('Load more')}
           buttonType='secondary-m'
           onClick={handleLoadMore(item.id)}
         />
@@ -111,9 +113,9 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
 
   const modalTitle = (
     <Grid container justifyContent='space-between' alignItems='center'>
-      <Typography variant='h4'>{`Entities list of ${dataEntityName}`}</Typography>
+      <Typography variant='h4'>{`${t('Entities list of')} ${dataEntityName}`}</Typography>
       <Button
-        text='Show all entities'
+        text={t('Show all entities')}
         sx={{ mr: 1 }}
         buttonType='secondary-m'
         onClick={handleExpandButton}

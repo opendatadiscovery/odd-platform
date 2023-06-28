@@ -4,6 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { Button, AppInput } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import * as S from './DatasetFieldEnumsFormItem.styles';
 
 interface DatasetFieldEnumsFormItemProps {
@@ -21,6 +22,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
   isKeyEditable,
   isValueEditable = true,
 }) => {
+  const { t } = useTranslation();
   const { control, getValues } = useFormContext();
 
   const setTextFieldType = React.useCallback((): HTMLInputTypeAttribute => {
@@ -52,7 +54,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             <AppInput
               {...field}
               disabled={isKeyEditable}
-              placeholder='Name of value'
+              placeholder={t('Name of value')}
               name={`enums.${itemIndex}.name`}
               type={setTextFieldType()}
               customEndAdornment={{
@@ -75,7 +77,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
               {...field}
               sx={{ mr: 1 }}
               disabled={!isValueEditable}
-              placeholder='Description'
+              placeholder={t('Description')}
               name={`enums.${itemIndex}.description`}
               customEndAdornment={{
                 variant: 'clear',
@@ -89,7 +91,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
       />
       {!isKeyEditable && (
         <Button
-          text='Delete'
+          text={t('Delete')}
           buttonType='secondary-sm'
           onClick={onItemRemove}
           sx={{ flexShrink: 0 }}

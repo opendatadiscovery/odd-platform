@@ -5,6 +5,7 @@ import { AppTooltip, Button } from 'components/shared/elements';
 import { ChevronIcon, RecursiveIcon, StrokedInfoIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import type { DataSetField } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import useStructure from '../../../lib/useStructure';
 import TypeFieldLabel from '../../../../shared/TypeFieldLabel/TypeFieldLabel';
 import KeyFieldLabel from '../../../../shared/KeyFieldLabel/KeyFieldLabel';
@@ -33,6 +34,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   versionId,
   rowHeight,
 }) => {
+  const { t } = useTranslation();
   const { selectedFieldId, setSelectedFieldId, setSearchQuery } = useStructure();
 
   const [open, setOpen] = React.useState(initialStateOpen);
@@ -134,7 +136,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >{`${datasetField.enumValueCount} enums`}</Typography>
                   )}
                 <AppTooltip
-                  title={`Logical type: ${datasetField.type.logicalType}`}
+                  title={`${t('Logical type')}: ${datasetField.type.logicalType}`}
                   type='dark'
                   checkForOverflow={false}
                   childSx={{ display: 'flex' }}

@@ -7,6 +7,7 @@ import type { DataSetField, DataSetStats } from 'generated-sources';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import round from 'lodash/round';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './DatasetField.styles';
 
 interface DatasetFieldStatsProps {
@@ -18,6 +19,7 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
   datasetField,
   rowsCount,
 }) => {
+  const { t } = useTranslation();
   const { datasetFieldFormattedDateTime } = useAppDateTime();
 
   let fieldStats = {} as DataSetFormattedStats;
@@ -95,11 +97,11 @@ const DatasetFieldStats: React.FC<DatasetFieldStatsProps> = ({
   return (
     <S.Container container>
       <S.StatCellContainer>
-        <Typography variant='subtitle1'>Unique</Typography>
+        <Typography variant='subtitle1'>{t('Unique')}</Typography>
         {getPredefinedStats(fieldStats?.uniqueCount)}
       </S.StatCellContainer>
       <S.StatCellContainer>
-        <Typography variant='subtitle1'>Missing</Typography>
+        <Typography variant='subtitle1'>{t('Missing')}</Typography>
         {getPredefinedStats(fieldStats?.nullsCount)}
       </S.StatCellContainer>
       {getCustomStat()}

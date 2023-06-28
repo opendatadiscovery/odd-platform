@@ -6,6 +6,7 @@ import { Grid, Typography } from '@mui/material';
 import type { DataSetField, Label } from 'generated-sources';
 import { Button, DialogWrapper, LabelItem } from 'components/shared/elements';
 import { updateDataSetFieldLabels } from 'redux/thunks';
+import { useTranslation } from 'react-i18next';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 
 interface DatasetFieldLabelsFormProps {
@@ -23,6 +24,7 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
   labels,
   btnCreateEl,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading, isLoaded } = useAppSelector(getDatasetFieldLabelsUpdatingStatus);
 
@@ -60,7 +62,7 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {labels && labels?.length > 0 ? 'Edit' : 'Add'} labels
+      {labels && labels?.length > 0 ? t('Edit labels') : t('Add labels')}
     </Typography>
   );
 
@@ -87,7 +89,7 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       buttonType='main-lg'
       type='submit'
       form='dataset-field-labels-form'

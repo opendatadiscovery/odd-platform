@@ -5,6 +5,7 @@ import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/mater
 import { useQueryParams } from 'lib/hooks';
 import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 import type { LineageQueryParams } from '../../lineageLib/interfaces';
 import * as S from './LineageControlsStyles';
 import { defaultLineageQuery, lineageDepth } from '../../lineageLib/constants';
@@ -15,6 +16,8 @@ interface LineageControlsProps {
 }
 const LineageControls = React.memo<LineageControlsProps>(
   ({ handleCenterRoot, rootNodeId }) => {
+    const { t } = useTranslation();
+
     const dispatch = useAppDispatch();
     const {
       queryParams: { full, fn, d, eag },
@@ -64,7 +67,7 @@ const LineageControls = React.memo<LineageControlsProps>(
           }
           label={
             <Typography variant='body1' color='texts.info'>
-              Expand all nested items
+              {t('Expand all nested items')}
             </Typography>
           }
         />
@@ -80,12 +83,12 @@ const LineageControls = React.memo<LineageControlsProps>(
           }
           label={
             <Typography variant='body1' color='texts.info'>
-              Show full names
+              {t('Show full names')}
             </Typography>
           }
         />
         <Button
-          text='Main'
+          text={t('Main')}
           buttonType='secondary-m'
           startIcon={<TargetIcon />}
           onClick={handleCenterRoot}
@@ -93,11 +96,11 @@ const LineageControls = React.memo<LineageControlsProps>(
         <AppTabs
           type='secondarySmall'
           orientation='horizontal'
-          items={[{ name: 'Full' }, { name: 'Compact' }]}
+          items={[{ name: t('Full') }, { name: t('Compact') }]}
           selectedTab={full ? 0 : 1}
           handleTabChange={handleViewChange}
         />
-        <Typography variant='subtitle2'>Depth:</Typography>
+        <Typography variant='subtitle2'>{t('Depth')}:</Typography>
         <AppSelect
           sx={{ width: 48, backgroundColor: 'white' }}
           native
