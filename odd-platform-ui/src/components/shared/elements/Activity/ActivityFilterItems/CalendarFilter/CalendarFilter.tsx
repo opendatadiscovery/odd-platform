@@ -6,8 +6,11 @@ import {
 } from 'components/shared/elements/Activity/common';
 import { toDate } from 'lib/helpers';
 import AppDateRangePicker from 'components/shared/elements/AppDateRangePicker/AppDateRangePicker';
+import { useTranslation } from 'react-i18next';
 
 const CalendarFilter: React.FC = () => {
+  const { t } = useTranslation();
+
   const {
     queryParams: { beginDate, endDate },
     setQueryParams,
@@ -32,7 +35,7 @@ const CalendarFilter: React.FC = () => {
   return (
     <AppDateRangePicker
       defaultRange={defaultRange}
-      label='Period'
+      label={t('Period')}
       setCurrentRange={setQueryDateParams}
     />
   );
