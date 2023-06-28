@@ -4,6 +4,7 @@ import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sourc
 import { UpstreamIcon, DownstreamIcon } from 'components/shared/icons';
 import { EntityClassItem, Button, EntitiesListModal } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import { StatIconContainer } from './OverviewTransformerStatsStyles';
 
 interface OverviewTransformerStatsProps {
@@ -21,6 +22,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   unknownTargetsCount,
   dataEntityName,
 }) => {
+  const { t } = useTranslation();
   const displayedEntitiesNumber = 10;
   const { dataEntityOverviewPath } = useAppPaths();
 
@@ -38,7 +40,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             <Typography variant='h2' sx={{ mr: 0.5 }}>
               {(sources?.length || 0) + (unknownSourcesCount || 0)}
             </Typography>
-            <Typography variant='h4'>sources</Typography>
+            <Typography variant='h4'>{t('sources')}</Typography>
           </Grid>
           <Grid
             item
@@ -59,17 +61,17 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             ))}
             {unknownSourcesCount ? (
               <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-                {unknownSourcesCount} more source
-                {unknownSourcesCount === 1 ? '' : 's'} unknown
+                {unknownSourcesCount} {t('more source')}
+                {unknownSourcesCount === 1 ? '' : 's'} {t('unknown')}
               </Typography>
             ) : null}
             {sources && sources?.length > displayedEntitiesNumber ? (
               <EntitiesListModal
                 entities={sources}
-                labelFor='Sources'
+                labelFor={t('Sources')}
                 dataEntityName={dataEntityName}
                 openBtnEl={
-                  <Button text='Show All' buttonType='tertiary-m' sx={{ mt: 1 }} />
+                  <Button text={t('Show All')} buttonType='tertiary-m' sx={{ mt: 1 }} />
                 }
               />
             ) : null}
@@ -83,7 +85,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             <Typography variant='h2' sx={{ mr: 0.5 }}>
               {(targets?.length || 0) + (unknownTargetsCount || 0)}
             </Typography>
-            <Typography variant='h4'>targets</Typography>
+            <Typography variant='h4'>{t('targets')}</Typography>
           </Grid>
           <Grid
             item
@@ -104,17 +106,17 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             ))}
             {unknownTargetsCount ? (
               <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
-                {unknownTargetsCount} more target
-                {unknownTargetsCount === 1 ? '' : 's'} unknown
+                {unknownTargetsCount} {t('more target')}
+                {unknownTargetsCount === 1 ? '' : 's'} {t('unknown')}
               </Typography>
             ) : null}
             {targets && targets?.length > displayedEntitiesNumber ? (
               <EntitiesListModal
                 entities={targets}
-                labelFor='Targets'
+                labelFor={t('Targets')}
                 dataEntityName={dataEntityName}
                 openBtnEl={
-                  <Button text='Show All' buttonType='tertiary-m' sx={{ my: 1 }} />
+                  <Button text={t('Show All')} buttonType='tertiary-m' sx={{ my: 1 }} />
                 }
               />
             ) : null}

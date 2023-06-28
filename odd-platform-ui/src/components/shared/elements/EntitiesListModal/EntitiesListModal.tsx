@@ -6,6 +6,7 @@ import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import * as S from 'components/shared/elements/EntitiesListModal/EntitiesListModalStyles';
+import { useTranslation } from 'react-i18next';
 
 type LabelForTypes =
   | 'Entities'
@@ -29,6 +30,7 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   entities,
   openBtnEl,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityOverviewPath } = useAppPaths();
 
   const listItem = (item: DataEntityRef) => (
@@ -51,7 +53,7 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   );
 
   const modalTitle = (
-    <Typography variant='h4'>{`${labelFor} for ${dataEntityName}`}</Typography>
+    <Typography variant='h4'>{`${labelFor} ${t('for')} ${dataEntityName}`}</Typography>
   );
 
   const modalContent = () => <div>{entities?.map(entity => listItem(entity))}</div>;

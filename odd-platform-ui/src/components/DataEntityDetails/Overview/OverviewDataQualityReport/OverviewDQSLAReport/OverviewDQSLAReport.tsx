@@ -10,6 +10,7 @@ import { ORDERED_SEVERITY } from 'lib/constants';
 import { useAppSelector } from 'redux/lib/hooks';
 import { SLAColour } from 'generated-sources';
 import { createUrl } from 'lib/helpers';
+import { useTranslation } from 'react-i18next';
 import OverviewDQSLAReportSkeleton from './OverviewDQSLAReportSkeleton/OverviewDQSLAReportSkeleton';
 import * as S from './OverviewDQSLAReportStyles';
 
@@ -18,6 +19,7 @@ interface OverviewDQSLAReportProps {
 }
 
 const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId }) => {
+  const { t } = useTranslation();
   const { isLoading: isSLAReportFetching, isNotLoaded: isSLAReportNotFetched } =
     useAppSelector(getDatasetSLAReportFetchingStatuses);
   const dqSLAReport = useAppSelector(getDatasetSLAReport(dataEntityId));
@@ -74,49 +76,55 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
     return (
       <>
         <S.HintHeader variant='h4'>
-          SLA represents data quality tests weight relations for dataset
+          {t('SLA represents data quality tests weight relations for dataset')}
         </S.HintHeader>
         <S.HintText variant='body1' mt={1}>
-          There are 3 types of tests:
+          {t('There are 3 types of tests')}:
         </S.HintText>
         <S.HintUList>
-          <li>MINOR</li>
-          <li>MAJOR</li>
-          <li>CRITICAL</li>
+          <li>{t('MINOR')}</li>
+          <li>{t('MAJOR')}</li>
+          <li>{t('CRITICAL')}</li>
         </S.HintUList>
         <S.HintText variant='body1'>
-          One minor test has weight of 1. One major test has weight of all minor tests.
-          One critical test has weight of all major tests.
+          {t('One minor test has weight of 1')}.{' '}
+          {t('One major test has weight of all minor tests')}.
+          {t('One critical test has weight of all major tests')}.
         </S.HintText>
         <S.HintHeader variant='h4' mt={2}>
-          SLA colour.
+          {t('SLA colour')}.
         </S.HintHeader>
         <S.HintText variant='body1' mt={1}>
-          There are 3 SLA colours:
+          {t('There are 3 SLA colours')}:
         </S.HintText>
         <S.HintUList>
-          <li>Green</li>
-          <li>Yellow</li>
-          <li>Red</li>
+          <li>{t('Green')}</li>
+          <li>{t('Yellow')}</li>
+          <li>{t('Red')}</li>
         </S.HintUList>
         <S.HintOList $isOList>
-          {orderedLiElement('If at least one critical test is failed > ', SLAColour.RED)}
-          {orderedLiElement('If all major tests are failed > ', SLAColour.RED)}
           {orderedLiElement(
-            'If all major tests except one are failed and all minor test are failed > ',
+            t('If at least one critical test is failed > '),
             SLAColour.RED
           )}
-          {orderedLiElement(`If dataset doesn't have tests > `, SLAColour.YELLOW)}
+          {orderedLiElement(t('If all major tests are failed > '), SLAColour.RED)}
           {orderedLiElement(
-            `If at least one major test failed and all critical are passed > `,
+            t(
+              'If all major tests except one are failed and all minor test are failed > '
+            ),
+            SLAColour.RED
+          )}
+          {orderedLiElement(t(`If dataset doesn't have tests > `), SLAColour.YELLOW)}
+          {orderedLiElement(
+            t(`If at least one major test failed and all critical are passed > `),
             SLAColour.YELLOW
           )}
           {orderedLiElement(
-            `If all minor tests are failed, majors and critical are passed > `,
+            t(`If all minor tests are failed, majors and critical are passed > `),
             SLAColour.YELLOW
           )}
           {orderedLiElement(
-            `If all tests are passed or some of minors are failed >             `,
+            t(`If all tests are passed or some of minors are failed >             `),
             SLAColour.GREEN
           )}
         </S.HintOList>

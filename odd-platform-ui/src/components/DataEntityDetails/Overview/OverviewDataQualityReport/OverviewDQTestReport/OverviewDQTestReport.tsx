@@ -9,6 +9,7 @@ import { Button, NumberFormatted } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import omit from 'lodash/omit';
 import { useAppSelector } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 import OverviewDQReportSkeleton from './OverviewDQReportSkeleton/OverviewDQReportSkeleton';
 import * as S from './OverviewDQTestReportStyles';
 
@@ -17,6 +18,7 @@ interface OverviewDQTestReportProps {
 }
 
 const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityId }) => {
+  const { t } = useTranslation();
   const { dataEntityTestReportPath } = useAppPaths();
 
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
@@ -68,20 +70,22 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
         <Grid container direction='column'>
           <Grid item container wrap='nowrap' justifyContent='space-between'>
             <Grid item>
-              <Typography variant='h4'>Test report</Typography>
+              <Typography variant='h4'>{t('Test report')}</Typography>
             </Grid>
             <Grid item>
               <Button
-                text='See all'
+                text={t('See all')}
                 to={dataEntityTestReportPath(dataEntityId)}
                 buttonType='tertiary-m'
               />
             </Grid>
           </Grid>
           <Grid item container sx={{ mt: 1.25 }} justifyContent='space-between'>
-            <Typography variant='h4'>{datasetQualityTestReport?.score}% score</Typography>
+            <Typography variant='h4'>
+              {datasetQualityTestReport?.score}% {t('score')}
+            </Typography>
             <Typography variant='subtitle1'>
-              {datasetQualityTestReport?.total} tests
+              {datasetQualityTestReport?.total} {t('tests')}
             </Typography>
           </Grid>
           <S.BarContainer container>{renderReportBar}</S.BarContainer>

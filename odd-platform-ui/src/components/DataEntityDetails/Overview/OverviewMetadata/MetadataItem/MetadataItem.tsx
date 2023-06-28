@@ -23,6 +23,7 @@ import {
 } from 'redux/thunks';
 import { WithPermissions } from 'components/shared/contexts';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import MetadataValueEditor from '../../../Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
 
@@ -32,6 +33,7 @@ interface MetadataItemProps {
 }
 
 const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { metadataFormattedDateTime } = useAppDateTime();
 
@@ -104,9 +106,9 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                 size='small'
               />
               <S.FormActionBtns>
-                <Button text='Save' type='submit' buttonType='main-m' />
+                <Button text={t('Save')} type='submit' buttonType='main-m' />
                 <Button
-                  text='Cancel'
+                  text={t('Cancel')}
                   onClick={() => {
                     setEditMode(false);
                   }}
@@ -122,7 +124,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
               <S.Value $isOpened={isExpanded}>{metadataVal}</S.Value>
               {isExpandable && (
                 <Button
-                  text={isExpanded ? 'Hide' : `Show All`}
+                  text={isExpanded ? t('Hide') : t(`Show All`)}
                   buttonType='tertiary-m'
                   sx={{ mt: 1.25 }}
                   onClick={() => setIsExpanded(!isExpanded)}
@@ -152,11 +154,12 @@ const MetadataItem: React.FC<MetadataItemProps> = ({ dataEntityId, metadataItem 
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_DELETE}
                 >
                   <ConfirmationDialog
-                    actionTitle='Are you sure you want to delete this Metadata?'
-                    actionName='Delete Metadata'
+                    actionTitle={t('Are you sure you want to delete this Metadata?')}
+                    actionName={t('Delete Metadata')}
                     actionText={
                       <>
-                        &quot;{metadataItem.field.name}&quot; will be deleted permanently.
+                        &quot;{metadataItem.field.name}&quot;{' '}
+                        {t('will be deleted permanently')}.
                       </>
                     }
                     onConfirm={handleDelete}

@@ -16,6 +16,7 @@ import { type ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermsList } from 'redux/thunks';
 import Input from 'components/shared/elements/Input/Input';
+import { useTranslation } from 'react-i18next';
 
 interface TermsAutocompleteProps {
   setSelectedTerm: (term: TermRef) => void;
@@ -28,6 +29,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
   setSelectedTerm,
   field,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const searchTerms = fetchTermsList;
 
@@ -130,7 +132,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
           variant='main-m'
           inputContainerRef={params.InputProps.ref}
           inputProps={params.inputProps}
-          placeholder='Enter term name…'
+          placeholder={t('Enter term name…')}
           isLoading={loading}
         />
       )}
@@ -144,7 +146,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
           </li>
         ) : (
           <Typography sx={{ py: 0.5, px: 1 }} variant='subtitle2' component='span'>
-            There are no terms
+            {t('There are no terms')}
           </Typography>
         )
       }

@@ -14,6 +14,7 @@ import { getSearchId } from 'redux/selectors';
 import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import DataEntityGroupForm from '../DataEntityGroupForm/DataEntityGroupForm';
 
 interface DataEntityGroupControlsProps {
@@ -25,6 +26,7 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
   internalName,
   externalName,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { dataEntityId } = useAppParams();
@@ -66,21 +68,21 @@ const DataEntityGroupControls: React.FC<DataEntityGroupControlsProps> = ({
         }}
       >
         <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}>
-          <DataEntityGroupForm btnCreateEl={<AppMenuItem>Edit</AppMenuItem>} />
+          <DataEntityGroupForm btnCreateEl={<AppMenuItem>{t('Edit')}</AppMenuItem>} />
         </WithPermissions>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_DELETE}>
           <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this data entity group?'
-            actionName='Delete Data Entity Group'
+            actionTitle={t('Are you sure you want to delete this data entity group?')}
+            actionName={t('Delete Data Entity Group')}
             actionText={
               <>
                 &quot;
                 {internalName || externalName}
-                &quot; will be deleted permanently.
+                &quot; {t('will be deleted permanently')}.
               </>
             }
             onConfirm={handleEntityGroupDelete}
-            actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+            actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
           />
         </WithPermissions>
       </AppPopover>

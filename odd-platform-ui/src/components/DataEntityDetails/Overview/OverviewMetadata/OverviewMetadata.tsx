@@ -10,11 +10,13 @@ import { useAppParams, useCollapse } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import * as S from './OverviewMetadataStyles';
 
 const OverviewMetadata: React.FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
   const { contentRef, containerStyle, toggleCollapse, isCollapsed, controlsStyle } =
     useCollapse({ initialMaxHeight: 200 });
@@ -32,7 +34,7 @@ const OverviewMetadata: React.FC = () => {
             <Grid item xs={12}>
               <S.SubtitleContainer>
                 <Typography variant='h2' sx={{}}>
-                  Metadata
+                  {t('Metadata')}
                 </Typography>
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
@@ -41,7 +43,7 @@ const OverviewMetadata: React.FC = () => {
                     dataEntityId={dataEntityId}
                     btnCreateEl={
                       <Button
-                        text='Add metadata'
+                        text={t('Add metadata')}
                         data-qa='add_metadata'
                         buttonType='secondary-lg'
                         startIcon={<AddIcon />}
@@ -68,7 +70,7 @@ const OverviewMetadata: React.FC = () => {
                 justifyContent='flex-start'
                 wrap='nowrap'
               >
-                <Typography variant='subtitle2'>Not created.</Typography>
+                <Typography variant='subtitle2'>{t('Not created')}</Typography>
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
                 >
@@ -76,7 +78,7 @@ const OverviewMetadata: React.FC = () => {
                     dataEntityId={dataEntityId}
                     btnCreateEl={
                       <Button
-                        text='Add Metadata'
+                        text={t('Add Metadata')}
                         sx={{ ml: 0.5 }}
                         buttonType='tertiary-sm'
                       />
@@ -103,7 +105,7 @@ const OverviewMetadata: React.FC = () => {
       </div>
       <S.CollapseContainer container style={controlsStyle}>
         <Button
-          text={isCollapsed ? 'Show hidden' : `Hide`}
+          text={isCollapsed ? t('Show hidden') : t(`Hide`)}
           endIcon={
             <ChevronIcon
               width={10}

@@ -12,9 +12,11 @@ import {
 import MDEditor from '@uiw/react-md-editor';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import * as S from './OverviewDescriptionStyles';
 
 const OverviewDescription: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
@@ -50,7 +52,7 @@ const OverviewDescription: React.FC = () => {
         setEditMode(false);
       },
       (response: Response) => {
-        setError(response.statusText || 'Unable to update description');
+        setError(response.statusText || t('Unable to update description'));
       }
     );
   }, [internalDescription]);
@@ -70,10 +72,10 @@ const OverviewDescription: React.FC = () => {
     <>
       <div ref={contentRef} style={containerStyle}>
         <S.CaptionContainer>
-          <Typography variant='h2'>About</Typography>
+          <Typography variant='h2'>{t('About')}</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
             <Button
-              text={`${DEInternalDescription ? 'Edit' : 'Add'} info`}
+              text={`${DEInternalDescription ? t('Edit info') : t('Add info')}`}
               data-qa='add_description'
               onClick={onEditClick}
               buttonType='secondary-lg'
@@ -92,13 +94,13 @@ const OverviewDescription: React.FC = () => {
               />
               <S.FormActions>
                 <Button
-                  text='Save'
+                  text={t('Save')}
                   onClick={handleDescriptionUpdate}
                   buttonType='main-m'
                   sx={{ mr: 1 }}
                 />
                 <Button
-                  text='Cancel'
+                  text={t('Cancel')}
                   onClick={() => setEditMode(false)}
                   buttonType='secondary-m'
                 />
@@ -120,12 +122,12 @@ const OverviewDescription: React.FC = () => {
                   justifyContent='flex-start'
                   wrap='nowrap'
                 >
-                  <Typography variant='subtitle2'>Not created.</Typography>
+                  <Typography variant='subtitle2'>{t('Not created')}.</Typography>
                   <WithPermissions
                     permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}
                   >
                     <Button
-                      text='Add Description'
+                      text={t('Add Description')}
                       onClick={onEditClick}
                       buttonType='tertiary-sm'
                     />
@@ -143,7 +145,7 @@ const OverviewDescription: React.FC = () => {
       </div>
       <S.CollapseContainer container style={controlsStyle}>
         <Button
-          text={isCollapsed ? 'Show hidden' : `Hide`}
+          text={isCollapsed ? t('Show hidden') : t(`Hide`)}
           endIcon={
             <ChevronIcon
               width={10}

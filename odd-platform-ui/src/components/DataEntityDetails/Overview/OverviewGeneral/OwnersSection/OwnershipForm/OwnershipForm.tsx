@@ -17,6 +17,7 @@ import {
   getDataEntityOwnerUpdatingStatuses,
 } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 
 interface OwnershipFormProps {
   dataEntityId: number;
@@ -31,6 +32,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   ownerEditBtn,
   isDEG,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isOwnershipCreating, isLoaded: isOwnershipCreated } = useAppSelector(
@@ -73,14 +75,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {dataEntityOwnership ? 'Edit' : 'Add'} owner
+      {dataEntityOwnership ? t('Edit owner') : t('Add owner')}
     </Typography>
   );
 
   const formContent = () => (
     <form id='owner-add-form' onSubmit={methods.handleSubmit(ownershipUpdate)}>
       {dataEntityOwnership ? (
-        <LabeledInfoItem inline label='Owner:' labelWidth={1.7}>
+        <LabeledInfoItem inline label={`${t('Owner')}:`} labelWidth={1.7}>
           {dataEntityOwnership.owner.name}
         </LabeledInfoItem>
       ) : (
@@ -117,7 +119,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               sx={{ ml: -0.25, mt: 1 }}
               checked={field.value}
               control={<Checkbox sx={{ mr: 1 }} />}
-              label='Propogate owner to the whole group'
+              label={t('Propagate owner to the whole group')}
             />
           )}
         />

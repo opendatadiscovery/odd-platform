@@ -12,10 +12,12 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
+import { useTranslation } from 'react-i18next';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId, dataEntityViewType } = useAppParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
   const { defaultQueryString: degLineageQueryString } =
@@ -47,18 +49,18 @@ const DataEntityDetailsTabs: React.FC = () => {
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
       {
-        name: 'Overview',
+        name: t('Overview'),
         link: dataEntityOverviewPath(dataEntityId),
         value: DataEntityRoutes.overview,
       },
       {
-        name: 'Structure',
+        name: t('Structure'),
         link: datasetStructurePath(DataEntityRoutes.overview, dataEntityId),
         hidden: !isDataset,
         value: DataEntityRoutes.structure,
       },
       {
-        name: 'Lineage',
+        name: t('Lineage'),
         link: dataEntityLineagePath(
           dataEntityId,
           isDEG ? degLineageQueryString : lineageQueryString
@@ -67,37 +69,37 @@ const DataEntityDetailsTabs: React.FC = () => {
         value: DataEntityRoutes.lineage,
       },
       {
-        name: 'Test reports',
+        name: t('Test reports'),
         link: dataEntityTestReportPath(dataEntityId),
         hidden: !isDataset || !datasetQualityTestReportTotal,
         value: DataEntityRoutes.testReports,
       },
       {
-        name: 'History',
+        name: t('History'),
         link: dataEntityHistoryPath(dataEntityId),
         hidden: !isQualityTest && !isTransformer,
         value: DataEntityRoutes.history,
       },
       {
-        name: 'Alerts',
+        name: t('Alerts'),
         link: dataEntityAlertsPath(dataEntityId),
         value: DataEntityRoutes.alerts,
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
       },
       {
-        name: 'Linked items',
+        name: t('Linked items'),
         link: dataEntityLinkedItemsPath(dataEntityId),
         hidden: !dataEntityDetails?.hasChildren,
         value: DataEntityRoutes.linkedItems,
       },
       {
-        name: 'Activity',
+        name: t('Activity'),
         link: dataEntityActivityPath(dataEntityId, activityQueryString),
         value: 'activity',
       },
       {
-        name: 'Discussions',
+        name: t('Discussions'),
         link: dataEntityCollaborationPath(dataEntityId),
         value: DataEntityRoutes.discussions,
       },
@@ -114,6 +116,7 @@ const DataEntityDetailsTabs: React.FC = () => {
       isDEG,
       degLineageQueryString,
       lineageQueryString,
+      t,
     ]
   );
 

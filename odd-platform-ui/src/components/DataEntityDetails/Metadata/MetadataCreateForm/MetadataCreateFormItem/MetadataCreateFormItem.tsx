@@ -18,9 +18,11 @@ import {
   AppSelect,
   AutocompleteSuggestion,
 } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import MetadataValueEditField from '../../MetadataValueEditor/MetadataValueEditor';
 
 const MetadataCreateFormItem: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { control, setValue } = useFormContext();
@@ -161,7 +163,7 @@ const MetadataCreateFormItem: React.FC = () => {
                 {...params}
                 dataQAId='add_custom_metadata_input'
                 ref={params.InputProps.ref}
-                placeholder='Metadata Name'
+                placeholder={t('Metadata Name')}
                 customEndAdornment={{
                   variant: 'loader',
                   showAdornment: loading,
@@ -176,7 +178,7 @@ const MetadataCreateFormItem: React.FC = () => {
                     option.name
                   ) : (
                     <AutocompleteSuggestion
-                      optionLabel='custom data'
+                      optionLabel={t('custom data')}
                       optionName={option.name}
                     />
                   )}
@@ -198,8 +200,8 @@ const MetadataCreateFormItem: React.FC = () => {
                 <AppSelect
                   {...field}
                   dataQAId='add_custom_metadata_type_select'
-                  label='Type'
-                  placeholder='Type'
+                  label={t('Type')}
+                  placeholder={t('Type')}
                   disabled={!!selectedField?.type}
                   onChange={e => handleMetadataChange(e, field.onChange)}
                   value={selectedType}
@@ -220,7 +222,7 @@ const MetadataCreateFormItem: React.FC = () => {
               component='span'
               sx={{ mr: 0.5 }}
             >
-              Type:
+              {t('Type')}:
             </Typography>
             {capitalize(selectedType)}
           </Box>

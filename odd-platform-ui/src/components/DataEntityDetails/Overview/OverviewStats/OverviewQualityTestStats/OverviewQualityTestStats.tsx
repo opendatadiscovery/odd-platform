@@ -14,6 +14,7 @@ import {
   TestRunStatusItem,
   TestRunStatusReasonModal,
 } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import * as S from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps {
@@ -31,6 +32,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   qualityTest,
   datasetsList,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityOverviewPath, dataEntityHistoryPath } = useAppPaths();
   const { qualityTestFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
@@ -62,10 +64,10 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           {datasetsList && datasetsList.length > displayedEntitiesNumber ? (
             <EntitiesListModal
               entities={datasetsList}
-              labelFor='Datasets'
+              labelFor={t('Datasets')}
               dataEntityName={dataEntityName}
               openBtnEl={
-                <Button text='Show All' buttonType='tertiary-m' sx={{ my: 0.25 }} />
+                <Button text={t('Show All')} buttonType='tertiary-m' sx={{ my: 0.25 }} />
               }
             />
           ) : null}
@@ -74,7 +76,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           <Grid item lg={4}>
             <Grid container flexDirection='column' alignItems='flex-start'>
               <Typography variant='h4' sx={{ mb: 1 }}>
-                Suite
+                {t('Suite')}
               </Typography>
               <Button
                 text={suiteName || suiteUrl}
@@ -87,11 +89,11 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
         )}
         <S.Overview item lg={4}>
-          <Typography variant='h4'>Last execution</Typography>
+          <Typography variant='h4'>{t('Last execution')}</Typography>
           {qualityTest?.latestRun?.status && (
             <LabeledInfoItem
               inline
-              label='Status'
+              label={t('Status')}
               labelWidth={3}
               runStatus={qualityTest.latestRun?.status}
             >
@@ -102,18 +104,18 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
                 />
                 {qualityTest.latestRun.statusReason && (
                   <TestRunStatusReasonModal
-                    openBtn={<Button text='Status reason' buttonType='link-m' />}
+                    openBtn={<Button text={t('Status reason')} buttonType='link-m' />}
                     statusReason={qualityTest.latestRun.statusReason}
                   />
                 )}
               </Grid>
             </LabeledInfoItem>
           )}
-          <LabeledInfoItem inline label='Date' labelWidth={3}>
+          <LabeledInfoItem inline label={t('Date')} labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
               qualityTestFormattedDateTime(qualityTest?.latestRun?.startTime.getTime())}
           </LabeledInfoItem>
-          <LabeledInfoItem inline label='Duration' labelWidth={3}>
+          <LabeledInfoItem inline label={t('Duration')} labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
               qualityTest?.latestRun?.endTime &&
               formatDistanceStrict(
@@ -124,7 +126,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </LabeledInfoItem>
           <Grid container>
             <Button
-              text='History'
+              text={t('History')}
               buttonType='secondary-m'
               to={dataEntityHistoryPath(qualityTest?.id)}
             />

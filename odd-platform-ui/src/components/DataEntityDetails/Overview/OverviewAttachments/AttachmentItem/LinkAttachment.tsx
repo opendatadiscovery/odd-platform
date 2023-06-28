@@ -5,6 +5,7 @@ import { DeleteIcon, EditIcon, LinkIcon } from 'components/shared/icons';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { useAppParams, useDeleteDataEntityLink } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import EditLinkForm from '../EditLinkForm/EditLinkForm';
 import * as S from './AttachmentItem.styles';
 
@@ -15,6 +16,7 @@ interface LinkAttachmentProps {
 }
 
 const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
   const { mutateAsync: deleteLink } = useDeleteDataEntityLink();
 
@@ -32,9 +34,13 @@ const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
           </WithPermissions>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
             <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this link?'
-              actionName='Delete link'
-              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              actionTitle={t('Are you sure you want to delete this link?')}
+              actionName={t('Delete link')}
+              actionText={
+                <>
+                  &quot;{name}&quot; {t('will be deleted permanently')}.
+                </>
+              }
               onConfirm={() => deleteLink({ dataEntityId, linkId })}
               actionBtn={<Button buttonType='linkGray-m-icon' icon={<DeleteIcon />} />}
             />
