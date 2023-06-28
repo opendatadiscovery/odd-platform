@@ -51,7 +51,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
               actionName={t('Delete Label')}
               actionText={
                 <>
-                  &quot;{label.name}&quot; {t('will be deleted permanently.')}
+                  &quot;{label.name}&quot; {t('will be deleted permanently')}
                 </>
               }
               onConfirm={handleDelete}

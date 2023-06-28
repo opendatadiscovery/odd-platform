@@ -132,7 +132,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
           variant='main-m'
           inputContainerRef={params.InputProps.ref}
           inputProps={params.inputProps}
-          placeholder={t('Enter term name…')}
+          placeholder={t('Enter term name')}
           isLoading={loading}
         />
       )}

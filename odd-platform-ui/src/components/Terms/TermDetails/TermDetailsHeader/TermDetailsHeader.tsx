@@ -82,7 +82,7 @@ const TermDetailsHeader: React.FC<TermDetailsHeaderProps> = ({
               actionName={t('Delete term')}
               actionText={
                 <>
-                  &quot;{name}&quot; {t('will be deleted permanently.')}
+                  &quot;{name}&quot; {t('will be deleted permanently')}
                 </>
               }
               onConfirm={handleTermDelete(termId)}

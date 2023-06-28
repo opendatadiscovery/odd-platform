@@ -82,7 +82,7 @@ const DataSourcesListView: React.FC = () => {
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder={t('Search datasource...')}
+          placeholder={t('Search datasource')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}

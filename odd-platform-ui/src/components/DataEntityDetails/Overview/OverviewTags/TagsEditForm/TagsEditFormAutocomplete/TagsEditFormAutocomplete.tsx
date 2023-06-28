@@ -12,6 +12,7 @@ import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { fetchTagsList as searchTags } from 'redux/thunks';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { useTranslation } from 'react-i18next';
 import { OptionsContainer } from '../TagsEditFormStyles';
 
 type DataEntityTagsFormType = {
@@ -29,6 +30,7 @@ interface TagsEditFormAutocompleteProps {
 const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
   append,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   type FilterOption = Omit<Tag, 'id'> & Partial<Tag>;
@@ -132,7 +134,7 @@ const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
         <AppInput
           {...params}
           ref={params.InputProps.ref}
-          placeholder='Enter tag name…'
+          placeholder={t('Enter tag name')}
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,

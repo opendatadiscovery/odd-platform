@@ -5,6 +5,7 @@ import { Button, EmptyContentPlaceholder } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppPaths } from 'lib/hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import ThreadMessage from './ThreadMessage/ThreadMessage';
 import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
 import ThreadMessageSkeleton from './ThreadMessage/ThreadMessageSkeleton';
@@ -28,6 +29,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
   isRelatedMessagesLoading,
   isRelatedMessagesLoaded,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityCollaborationPath } = useAppPaths();
 
   return (
@@ -40,7 +42,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
     >
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
-          Thread
+          {t('Thread')}
         </Typography>
         <Button
           to={dataEntityCollaborationPath(dataEntityId)}
@@ -64,7 +66,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
           ))}
         </InfiniteScroll>
         {isRelatedMessagesLoaded && !relatedMessages?.length && (
-          <EmptyContentPlaceholder text='No messages' />
+          <EmptyContentPlaceholder text={t('No messages')} />
         )}
       </Grid>
     </Grid>

@@ -13,6 +13,7 @@ import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 
 // lazy elements
 const TestReportDetailsOverview = React.lazy(
@@ -23,6 +24,7 @@ const TestReportDetailsHistory = React.lazy(
 );
 
 const TestReportDetails: React.FC = () => {
+  const { t } = useTranslation();
   const { dataQATestId, dataEntityId, testReportViewType } = useAppParams();
   const {
     dataEntityOverviewPath,
@@ -39,17 +41,17 @@ const TestReportDetails: React.FC = () => {
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
       {
-        name: 'Overview',
+        name: t('Overview'),
         link: testReportDetailsOverviewPath(dataEntityId, dataQATestId),
         value: DataEntityRoutes.overview,
       },
       {
-        name: 'History',
+        name: t('History'),
         link: testReportDetailsHistoryPath(dataEntityId, dataQATestId),
         value: DataEntityRoutes.history,
       },
     ],
-    [dataEntityId, dataQATestId]
+    [dataEntityId, dataQATestId, t]
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
@@ -71,7 +73,7 @@ const TestReportDetails: React.FC = () => {
           </AppTooltip>
         </Grid>
         <Button
-          text='Go to page'
+          text={t('Go to page')}
           to={dataEntityOverviewPath(dataQATestId)}
           buttonType='tertiary-m'
           sx={{ ml: 2, flexShrink: 0 }}

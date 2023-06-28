@@ -35,7 +35,7 @@ const DataEntitiesUsageInfoView: React.FC<DataEntitiesUsageInfoViewProps> = ({
       <S.DataEntitiesUsageContainer>
         <S.DataEntitiesTotalContainer role='heading'>
           <Box>
-            <Typography variant='h4'> {t('Total entities:')}</Typography>
+            <Typography variant='h4'> {t('Total entities')}</Typography>
             <Typography variant='h1'>{totalCount}</Typography>
           </Box>
           <Box>

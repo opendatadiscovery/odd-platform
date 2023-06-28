@@ -17,10 +17,13 @@ import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import SkeletonWrapper from 'components/shared/elements/SkeletonWrapper/SkeletonWrapper';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
+import { useTranslation } from 'react-i18next';
 import TestRunItem from './TestRunItem/TestRunItem';
 import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 
 const TestRunsHistory: React.FC = () => {
+  const { t } = useTranslation();
+
   const pageSize = 100;
 
   const [alertStatus, setAlertStatus] = React.useState<DataEntityRunStatus | 'All'>(
@@ -56,7 +59,7 @@ const TestRunsHistory: React.FC = () => {
     <Grid container sx={{ mt: 2 }}>
       <AppSelect sx={{ minWidth: '200px' }} fullWidth={false} value={alertStatus}>
         <AppMenuItem value='All' onClick={() => setAlertStatus('All')}>
-          Show all statuses
+          {t('Show all statuses')}
         </AppMenuItem>
         {Object.keys(DataEntityRunStatus)?.map(option => (
           <AppMenuItem
@@ -70,16 +73,16 @@ const TestRunsHistory: React.FC = () => {
       </AppSelect>
       <RunsTableHeader container wrap='nowrap' sx={{ mt: 2 }}>
         <ColContainer item $colType='md'>
-          <Typography variant='caption'>Start time</Typography>
+          <Typography variant='caption'>{t('Start time')}</Typography>
         </ColContainer>
         <ColContainer item $colType='sm'>
-          <Typography variant='caption'>Status</Typography>
+          <Typography variant='caption'>{t('Status')}</Typography>
         </ColContainer>
         <ColContainer item $colType='lg'>
-          <Typography variant='caption'>Status reason</Typography>
+          <Typography variant='caption'>{t('Status reason')}</Typography>
         </ColContainer>
         <ColContainer item $colType='sm'>
-          <Typography variant='caption'>Duration</Typography>
+          <Typography variant='caption'>{t('Duration')}</Typography>
         </ColContainer>
       </RunsTableHeader>
       <Grid container>

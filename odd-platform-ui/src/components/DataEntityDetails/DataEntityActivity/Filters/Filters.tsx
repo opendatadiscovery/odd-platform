@@ -12,9 +12,11 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
+import { useTranslation } from 'react-i18next';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {
+  const { t } = useTranslation();
   const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const excludedTypes = [
@@ -42,18 +44,18 @@ const Filters: React.FC = () => {
   return (
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
-        <Typography variant='h4'>Filters</Typography>
-        <Button text='Clear All' buttonType='tertiary-m' onClick={handleClearAll} />
+        <Typography variant='h4'>{t('Filters')}</Typography>
+        <Button text={t('Clear All')} buttonType='tertiary-m' onClick={handleClearAll} />
       </Grid>
       <>
         <CalendarFilter />
         <SingleFilter
           key='at'
           filterName='eventType'
-          name='Event type'
+          name={t('Event type')}
           filterOptions={activityEventTypes}
         />
-        <MultipleFilter key='us' filterName='userIds' name='User' />
+        <MultipleFilter key='us' filterName='userIds' name={t('User')} />
       </>
     </S.Container>
   );

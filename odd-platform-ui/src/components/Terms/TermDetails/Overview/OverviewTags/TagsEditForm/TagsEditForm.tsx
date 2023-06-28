@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchTagsList as searchTags, updateTermDetailsTags } from 'redux/thunks';
 import { getTermDetailsTags, getTermDetailsTagsUpdatingStatuses } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import { OptionsContainer } from './TagsEditFormStyles';
 
 interface TagsEditProps {
@@ -28,6 +29,7 @@ interface TagsEditProps {
 }
 
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
@@ -189,7 +191,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
           <AppInput
             {...params}
             ref={params.InputProps.ref}
-            placeholder='Enter tag name…'
+            placeholder={t('Enter tag name')}
             customEndAdornment={{
               variant: 'loader',
               showAdornment: loading,
@@ -232,7 +234,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       buttonType='main-lg'
       type='submit'
       form='tags-create-form'

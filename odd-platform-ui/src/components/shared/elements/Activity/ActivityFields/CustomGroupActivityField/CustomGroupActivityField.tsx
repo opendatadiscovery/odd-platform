@@ -8,6 +8,7 @@ import Button from 'components/shared/elements/Button/Button';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';
+import { useTranslation } from 'react-i18next';
 
 interface GroupFieldData {
   id?: number;
@@ -33,6 +34,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   newState,
   hideAllDetails,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityOverviewPath } = useAppPaths();
 
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
@@ -113,24 +115,24 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   const renderGroupItem = (state: CustomGroupData) => (
     <Grid sx={{ mb: 0.5 }}>
       <Box sx={{ mb: 1 }}>
-        <Typography variant='subtitle1'>Name</Typography>
+        <Typography variant='subtitle1'>{t('Name')}</Typography>
         <S.ArrayItemWrapper $typeOfChange={state.internalName.typeOfChange}>
           <Box>{state.internalName.name}</Box>
         </S.ArrayItemWrapper>
       </Box>
       <Box sx={{ mb: 1 }}>
-        <Typography variant='subtitle1'>Namespace</Typography>
+        <Typography variant='subtitle1'>{t('Namespace')}</Typography>
         <S.ArrayItemWrapper $typeOfChange={state.namespaceName.typeOfChange}>
           <Box>{state.namespaceName.name}</Box>
         </S.ArrayItemWrapper>
       </Box>
       <Box sx={{ mb: 1 }}>
-        <Typography variant='subtitle1'>Type</Typography>
+        <Typography variant='subtitle1'>{t('Type')}</Typography>
         <S.ArrayItemWrapper $typeOfChange={state.type.typeOfChange}>
           <Box>{state.type.name}</Box>
         </S.ArrayItemWrapper>
       </Box>
-      <Typography variant='subtitle1'>Entities</Typography>
+      <Typography variant='subtitle1'>{t('Entities')}</Typography>
       {state.entities.map(
         item =>
           item.id && (
@@ -153,7 +155,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   return (
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText='Custom group'
+        startText={t('Custom group')}
         activityName={oldValues.internalName.name}
         eventType='updated'
         showDetailsBtn

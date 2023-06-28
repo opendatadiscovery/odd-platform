@@ -129,7 +129,7 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
         <AppInput
           {...params}
           ref={params.InputProps.ref}
-          placeholder={t('Enter label name…')}
+          placeholder={t('Enter label name')}
           label={t('Label')}
           customEndAdornment={{
             variant: 'loader',

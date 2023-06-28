@@ -40,7 +40,7 @@ const IntegrationPreviewList: FC = () => {
       </Grid>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 2 }}>
         <AppInput
-          placeholder={t('Search integrations...')}
+          placeholder={t('Search integrations')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}

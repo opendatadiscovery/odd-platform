@@ -81,7 +81,7 @@ const RolesList: React.FC = () => {
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder={t('Search roles...')}
+          placeholder={t('Search roles')}
           value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}

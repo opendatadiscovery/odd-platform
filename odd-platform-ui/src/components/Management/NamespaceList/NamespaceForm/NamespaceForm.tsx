@@ -64,7 +64,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({ btnEl, namespace }) => {
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <Input {...field} variant='main-m' placeholder={t('Enter namespace name...')} />
+          <Input {...field} variant='main-m' placeholder={t('Enter namespace name')} />
         )}
       />
     </form>

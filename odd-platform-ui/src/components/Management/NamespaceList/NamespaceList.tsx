@@ -102,7 +102,7 @@ const NamespaceList: React.FC = () => {
         <Input
           variant='search-m'
           maxWidth={320}
-          placeholder={t('Search namespace...')}
+          placeholder={t('Search namespace')}
           value={searchText}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}

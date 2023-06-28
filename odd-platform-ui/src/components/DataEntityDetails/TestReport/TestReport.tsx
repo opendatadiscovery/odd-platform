@@ -14,6 +14,7 @@ import { Grid, Typography } from '@mui/material';
 import { AppErrorPage, AppPaper, TestRunStatusItem } from 'components/shared/elements';
 import omit from 'lodash/omit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 import TestReportItem from './TestReportItem/TestReportItem';
 import TestReportDetails from './TestReportDetails/TestReportDetails';
 import TestReportItemSkeleton from './TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
@@ -21,6 +22,7 @@ import TestReportSkeleton from './TestReportSkeleton/TestReportSkeleton';
 import * as S from './TestReportStyles';
 
 const TestReport: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataQATestId, dataEntityId } = useAppParams();
 
@@ -71,7 +73,9 @@ const TestReport: React.FC = () => {
               {renderTestReportItems}
             </S.TestReportContainer>
             <Grid container item justifyContent='flex-end'>
-              <Typography variant='subtitle1'>{` ${datasetTestReport?.total} tests`}</Typography>
+              <Typography variant='subtitle1'>{` ${datasetTestReport?.total} ${t(
+                'tests'
+              )}`}</Typography>
             </Grid>
           </Grid>
         )}

@@ -80,7 +80,7 @@ const TagsListView: React.FC = () => {
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder={t('Search tag...')}
+          placeholder={t('Search tag')}
           value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}

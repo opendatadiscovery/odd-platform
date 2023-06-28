@@ -9,6 +9,7 @@ import isEmpty from 'lodash/isEmpty';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import * as S from 'components/shared/elements/Activity/ActivityFields/EnumsActivityField/EnumsActivityFieldStyles';
+import { useTranslation } from 'react-i18next';
 
 interface ActivityData extends DatasetFieldEnumValuesActivityState {
   typeOfChange?: EventType;
@@ -25,6 +26,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
   newState,
   hideAllDetails,
 }) => {
+  const { t } = useTranslation();
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
@@ -89,7 +91,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
         startText=''
-        activityName='Dataset field values'
+        activityName={t('Dataset field values')}
         eventType={activityEvent}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
@@ -103,7 +105,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
           !isEmpty(oldValues) && (
             <>
               <Typography variant='body1' color='texts.hint'>
-                {`Column: ${oldState?.name}`}
+                {`${t('Column')}: ${oldState?.name}`}
               </Typography>
               {oldValues.map(renderStateItem)}
             </>
@@ -113,7 +115,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
           !isEmpty(newValues) && (
             <>
               <Typography variant='body1' color='texts.hint'>
-                {`Column: ${oldState?.name}`}
+                {`${t('Column')}: ${oldState?.name}`}
               </Typography>
               {newValues.map(renderStateItem)}
             </>

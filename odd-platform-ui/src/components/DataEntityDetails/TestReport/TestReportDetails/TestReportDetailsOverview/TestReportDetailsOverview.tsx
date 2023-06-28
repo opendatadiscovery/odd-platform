@@ -21,11 +21,13 @@ import { ORDERED_SEVERITY } from 'lib/constants';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
 import * as S from './TestReportDetailsOverviewStyles';
 
 const TestReportDetailsOverview: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
@@ -66,7 +68,7 @@ const TestReportDetailsOverview: React.FC = () => {
       ) : (
         <>
           <LabeledInfoItem
-            label='Severity'
+            label={t('Severity')}
             inline
             labelWidth={2.4}
             valueComponent='div'
@@ -92,14 +94,14 @@ const TestReportDetailsOverview: React.FC = () => {
           </LabeledInfoItem>
 
           <S.LatestRunInfoContainer container>
-            <Typography variant='h4'>Last execution</Typography>
+            <Typography variant='h4'>{t('Last execution')}</Typography>
             <LabeledInfoItem label='Date' inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTestRunFormattedDateTime(
                   qualityTest?.latestRun?.startTime.getTime()
                 )}
             </LabeledInfoItem>
-            <LabeledInfoItem label='Duration' inline labelWidth={2.4}>
+            <LabeledInfoItem label={t('Duration')} inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTest?.latestRun.endTime &&
                 formatDistanceStrict(
@@ -109,7 +111,7 @@ const TestReportDetailsOverview: React.FC = () => {
                 )}
             </LabeledInfoItem>
             {qualityTest.latestRun?.status && (
-              <LabeledInfoItem label='Status' inline labelWidth={2.4}>
+              <LabeledInfoItem label={t('Status')} inline labelWidth={2.4}>
                 <Grid container flexWrap='nowrap' alignItems='center'>
                   <TestRunStatusItem
                     sx={{ mr: 1.25 }}
@@ -117,7 +119,7 @@ const TestReportDetailsOverview: React.FC = () => {
                   />
                   {qualityTest.latestRun.statusReason && (
                     <TestRunStatusReasonModal
-                      openBtn={<Button text='Status reason' buttonType='link-m' />}
+                      openBtn={<Button text={t('Status reason')} buttonType='link-m' />}
                       statusReason={qualityTest.latestRun.statusReason}
                     />
                   )}
@@ -128,14 +130,14 @@ const TestReportDetailsOverview: React.FC = () => {
 
           {hasDataQualityTestExpectations(qualityTest?.expectation) && (
             <Grid container sx={{ mt: 2 }} flexDirection='column'>
-              <Typography variant='h4'>Parameters</Typography>
+              <Typography variant='h4'>{t('Parameters')}</Typography>
               <S.Params $isExpandable={showSeeMore} ref={paramsRef} variant='body1'>
                 {stringifyParams}
               </S.Params>
               {showSeeMore && (
                 <Box sx={{ px: 1.5, py: 0.25 }}>
                   <TestReportDetailsOverviewExpectationsModal
-                    openBtnEl={<Button text='See more' buttonType='tertiary-m' />}
+                    openBtnEl={<Button text={t('See more')} buttonType='tertiary-m' />}
                     expectations={qualityTest?.expectation as DataQualityTestExpectation}
                   />
                 </Box>
@@ -145,7 +147,7 @@ const TestReportDetailsOverview: React.FC = () => {
 
           {!!qualityTest?.linkedUrlList?.length && (
             <Grid item sx={{ mt: 2.25 }} xs={12}>
-              <Typography variant='h4'>Links</Typography>
+              <Typography variant='h4'>{t('Links')}</Typography>
               <Grid container sx={{ mt: 1 }}>
                 {qualityTest.linkedUrlList.map(({ name, url }) => (
                   <Button

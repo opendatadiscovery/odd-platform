@@ -80,7 +80,7 @@ const CollectorsListView: React.FC = () => {
       </CollectorCaption>
       <CollectorCaption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder={t('Search collector...')}
+          placeholder={t('Search collector')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}

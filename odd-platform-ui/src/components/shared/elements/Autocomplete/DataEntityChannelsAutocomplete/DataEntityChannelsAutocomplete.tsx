@@ -16,6 +16,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntityChannels } from 'redux/thunks';
 import { type SxProps } from '@mui/system';
 import Input from 'components/shared/elements/Input/Input';
+import { useTranslation } from 'react-i18next';
 
 interface DataEntityChannelsAutocompleteProps {
   dataEntityId: number;
@@ -28,6 +29,7 @@ const DataEntityChannelsAutocomplete: React.FC<DataEntityChannelsAutocompletePro
   sx,
   handleSetChannelId,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const searchChannels = fetchDataEntityChannels;
 
@@ -106,8 +108,8 @@ const DataEntityChannelsAutocomplete: React.FC<DataEntityChannelsAutocompletePro
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label='Channels'
-      placeholder='Search channel...'
+      label={t('Channels')}
+      placeholder={t('Search channel')}
       isLoading={channelsLoading}
     />
   );

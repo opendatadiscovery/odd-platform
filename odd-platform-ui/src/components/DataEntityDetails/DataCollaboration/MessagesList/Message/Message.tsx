@@ -4,6 +4,7 @@ import { Grid, Typography } from '@mui/material';
 import { AppAvatar, Button, WithFeature } from 'components/shared/elements';
 import { Feature } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './MessageStyles';
 
 interface MessageProps {
@@ -26,6 +27,7 @@ const Message: React.FC<MessageProps> = ({
   messageOnClick,
   handleSetMessageDate,
 }) => {
+  const { t } = useTranslation();
   const { formatDistanceToNowStrict, datedListFormattedDateTime } = useAppDateTime();
 
   const messageCreatedAt = formatDistanceToNowStrict(createdAt, { addSuffix: true });
@@ -54,7 +56,7 @@ const Message: React.FC<MessageProps> = ({
           <S.SlackButtonContainer $active={isActive}>
             <WithFeature featureName={Feature.DATA_COLLABORATION}>
               <Button
-                text='Open in Slack'
+                text={t('Open in Slack')}
                 to={url}
                 target='_blank'
                 buttonType='secondary-m'
@@ -73,7 +75,9 @@ const Message: React.FC<MessageProps> = ({
         </Typography>
       </Grid>
       <Grid container justifyContent='flex-start'>
-        <Typography variant='subtitle1'>{`${messagesCount} messages in thread`}</Typography>
+        <Typography variant='subtitle1'>{`${messagesCount} ${t(
+          'messages in thread'
+        )}`}</Typography>
       </Grid>
     </S.Container>
   );

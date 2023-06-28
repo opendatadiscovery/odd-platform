@@ -69,7 +69,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             actionName={t('Delete Owner')}
             actionText={
               <>
-                &quot;{name}&quot; {t('will be deleted permanently.')}
+                &quot;{name}&quot; {t('will be deleted permanently')}
               </>
             }
             onConfirm={handleDelete}

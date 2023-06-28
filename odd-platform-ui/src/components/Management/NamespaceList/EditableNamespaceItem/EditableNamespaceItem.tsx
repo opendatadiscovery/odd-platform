@@ -50,7 +50,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({ namespace
             actionName={t('Delete Namespace')}
             actionText={
               <>
-                &quot;{namespace.name}&quot; {t('will be deleted permanently.')}
+                &quot;{namespace.name}&quot; {t('will be deleted permanently')}
               </>
             }
             onConfirm={handleDelete}

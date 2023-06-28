@@ -6,6 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import * as S from 'components/shared/elements/Activity/ActivityFields/TermActivityField/TermActivityFieldStyles';
+import { useTranslation } from 'react-i18next';
 
 interface ActivityData extends TermActivityState {
   typeOfChange?: EventType;
@@ -26,6 +27,7 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
   eventType,
   stateDirection = 'row',
 }) => {
+  const { t } = useTranslation();
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
@@ -79,7 +81,7 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
   const renderTermItem = ([namespace, terms]: [string, ActivityData[]]) => (
     <Grid sx={{ mb: 0.5 }}>
       <Typography variant='body1' color='texts.hint'>
-        Namespace: {namespace}
+        {t('Namespace')}: {namespace}
       </Typography>
       {terms.map(term => (
         <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
@@ -92,8 +94,8 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
   return (
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText='Term'
-        activityName={`${changedItem.name} in ${changedItem.namespace}`}
+        startText={t('Term')}
+        activityName={`${changedItem.name} ${t('in')} ${changedItem.namespace}`}
         eventType={eventType}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}

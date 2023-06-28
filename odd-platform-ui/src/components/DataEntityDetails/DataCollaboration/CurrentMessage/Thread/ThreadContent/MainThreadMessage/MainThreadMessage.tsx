@@ -3,6 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { AppAvatar, Button, WithFeature } from 'components/shared/elements';
 import { type Message } from 'redux/interfaces';
 import { Feature } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import * as S from './MainThreadMessageStyles';
 
 interface MainThreadMessageProps {
@@ -12,6 +13,7 @@ interface MainThreadMessageProps {
 const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
   mainMessage: { usernameAvatar, username, url, text, channel },
 }) => {
+  const { t } = useTranslation();
   const maxTextLength = 215;
   const [isExpanded, setIsExpanded] = React.useState(false);
   const isExpandable = text?.length > maxTextLength;
@@ -33,7 +35,7 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
         <Grid container alignItems='center' justifyContent='flex-end' flexWrap='nowrap'>
           <WithFeature featureName={Feature.DATA_COLLABORATION}>
             <Button
-              text='Open in Slack'
+              text={t('Open in Slack')}
               to={url}
               target='_blank'
               buttonType='secondary-m'
@@ -47,7 +49,7 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
           {isExpanded ? text : truncatedText}
           {isExpandable && !isExpanded && (
             <Button
-              text='Show more'
+              text={t('Show more')}
               buttonType='tertiary-m'
               sx={{ ml: 0.5 }}
               onClick={() => setIsExpanded(!isExpanded)}
@@ -56,7 +58,7 @@ const MainThreadMessage: React.FC<MainThreadMessageProps> = ({
         </Typography>
         {isExpandable && isExpanded && (
           <Button
-            text='Hide'
+            text={t('Hide')}
             buttonType='tertiary-m'
             sx={{ width: 'fit-content', mt: 0.5 }}
             onClick={() => setIsExpanded(!isExpanded)}

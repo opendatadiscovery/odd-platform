@@ -109,7 +109,7 @@ const OwnershipTitleAutocomplete: React.FC<OwnershipTitleAutocompleteProps> = ({
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
       label={t('Title')}
-      placeholder={t('Search title…')}
+      placeholder={t('Search title')}
       isLoading={titlesLoading}
     />
   );

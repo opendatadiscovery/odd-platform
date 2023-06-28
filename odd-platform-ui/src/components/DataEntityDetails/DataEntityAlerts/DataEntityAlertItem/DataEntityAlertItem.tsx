@@ -9,6 +9,7 @@ import { AlertStatusItem, Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { alertTitlesMap } from 'lib/constants';
+import { useTranslation } from 'react-i18next';
 import * as S from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps {
@@ -26,6 +27,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     alertChunkList,
   },
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
   const { alertFormattedDateTime } = useAppDateTime();
@@ -69,7 +71,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
         <S.Wrapper container sx={{ mr: 1 }}>
           <GearIcon stroke='black' />
           <Typography variant='body1' color='texts.hint' sx={{ mx: 0.5 }}>
-            Automatically
+            {t('Automatically')}
           </Typography>
           {updatedAt}
         </S.Wrapper>
@@ -93,7 +95,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
               )}
               {alertChunkList && alertChunkList?.length > 0 && (
                 <Button
-                  text={`${showHistory ? 'Hide' : 'Show'} history`}
+                  text={`${showHistory ? t('Hide history') : t('Show history')}`}
                   sx={{ ml: 1 }}
                   buttonType='tertiary-m'
                   onClick={() => setShowHistory(prev => !prev)}
@@ -108,7 +110,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_RESOLVE}>
             <Grid>
               <Button
-                text={alertStatus === 'OPEN' ? 'Resolve' : 'Reopen'}
+                text={alertStatus === 'OPEN' ? t('Resolve') : t('Reopen')}
                 sx={{ ml: 2 }}
                 buttonType='secondary-m'
                 onClick={alertStatusHandler}

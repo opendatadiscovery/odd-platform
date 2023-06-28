@@ -3,6 +3,7 @@ import { Typography } from '@mui/material';
 import { type DataEntityRun } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import { Button, TestRunStatusItem } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import TestRunStatusReasonModal from '../TestRunStatusReasonModal/TestRunStatusReasonModal';
 import { Container, StatusReasonModalBtnContainer } from './TestRunItemStyles';
 import { ColContainer } from '../TestRunsHistoryStyles';
@@ -18,6 +19,7 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
   dataQATestName,
   dataQATestRun,
 }) => {
+  const { t } = useTranslation();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   return (
@@ -41,7 +43,7 @@ const TestRunItem: React.FC<QualityTestRunItemProps> = ({
               dataQATestId={dataQATestId}
               dataQATestName={dataQATestName}
               dataQATestRun={dataQATestRun}
-              btnCreateEl={<Button text='See details' buttonType='tertiary-m' />}
+              btnCreateEl={<Button text={t('See details')} buttonType='tertiary-m' />}
             />
           </StatusReasonModalBtnContainer>
         )}

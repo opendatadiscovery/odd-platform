@@ -72,7 +72,7 @@ const OverviewGeneral: React.FC = () => {
                       actionText={
                         <>
                           &quot;{ownershipItem.owner.name}&quot;{' '}
-                          {t('will be deleted permanently.')}
+                          {t('will be deleted permanently')}
                         </>
                       }
                       onConfirm={handleOwnershipDelete(ownershipItem.id)}

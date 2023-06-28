@@ -54,7 +54,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
               actionName={t('Delete Tag')}
               actionText={
                 <>
-                  &quot;{tag.name}&quot; {t('will be deleted permanently.')}
+                  &quot;{tag.name}&quot; {t('will be deleted permanently')}
                 </>
               }
               onConfirm={handleDelete}
