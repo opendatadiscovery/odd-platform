@@ -2444,6 +2444,32 @@ paths:
       tags:
         - term
 
+  /api/terms/namespaces/{namespace_name}/names/{term_name}:
+    get:
+      summary: Get term
+      description: Get term by namespace and name
+      operationId: getTermByNamespaceAndName
+      parameters:
+        - name: namespace_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: term_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRef'
+      tags:
+        - term
+
   /api/terms/{term_id}/linked_items:
     get:
       summary: Get term linked items

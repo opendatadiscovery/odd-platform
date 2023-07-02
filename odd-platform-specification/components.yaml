@@ -576,7 +576,7 @@ components:
         terms:
           type: array
           items:
-            $ref: '#/components/schemas/TermRef'
+            $ref: '#/components/schemas/LinkedTerm'
         tags:
           $ref: '#/components/schemas/TagList'
       required:
@@ -1596,7 +1596,7 @@ components:
         terms:
           type: array
           items:
-            $ref: '#/components/schemas/TermRef'
+            $ref: '#/components/schemas/LinkedTerm'
       required:
         - id
         - oddrn
@@ -1664,8 +1664,13 @@ components:
       properties:
         description:
           type: string
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedTerm'
       required:
         - description
+        - terms
 
     DataSetVersionDiffList:
       type: object
@@ -2009,8 +2014,13 @@ components:
       properties:
         internal_description:
           type: string
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedTerm'
       required:
         - internal_description
+        - terms
 
     InternalDescriptionFormData:
       type: object
@@ -2318,6 +2328,17 @@ components:
       properties:
         projectVersion:
           type: string
+
+    LinkedTerm:
+      type: object
+      properties:
+        term:
+          $ref: '#/components/schemas/TermRef'
+        description_link:
+          type: boolean
+      required:
+        - term
+        - description_link
 
     TermList:
       type: object
