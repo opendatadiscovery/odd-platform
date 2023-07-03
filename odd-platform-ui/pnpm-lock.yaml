@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   minimist: 1.2.6
 
@@ -161,7 +165,7 @@ devDependencies:
     version: 3.1.1
   '@types/d3-zoom':
     specifier: ^3.0.2
-    version: 3.0.2
+    version: 3.0.3
   '@types/hast':
     specifier: ^2.3.4
     version: 2.3.4
@@ -1479,8 +1483,8 @@ packages:
       '@types/d3-selection': 3.0.5
     dev: true
 
-  /@types/d3-zoom@3.0.2:
-    resolution: {integrity: sha512-t09DDJVBI6AkM7N8kuPsnq/3d/ehtRKBN1xSiYjjMCgbiw6HM6Ged5VhvswmhprfKyGvzeTEL/4WBaK9llWvlA==}
+  /@types/d3-zoom@3.0.3:
+    resolution: {integrity: sha512-OWk1yYIIWcZ07+igN6BeoG6rqhnJ/pYe+R1qWFM2DtW49zsoSjgb9G5xB0ZXA8hh2jAzey1XuRmMSoXdKw8MDA==}
     dependencies:
       '@types/d3-interpolate': 3.0.1
       '@types/d3-selection': 3.0.5
@@ -1518,7 +1522,7 @@ packages:
       '@types/d3-time-format': 4.0.0
       '@types/d3-timer': 3.0.0
       '@types/d3-transition': 3.0.3
-      '@types/d3-zoom': 3.0.2
+      '@types/d3-zoom': 3.0.3
     dev: true
 
   /@types/debug@4.1.7:
