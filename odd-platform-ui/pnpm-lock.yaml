@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   minimist: 1.2.6
 
@@ -27,7 +31,7 @@ dependencies:
     version: 4.29.12(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-virtual':
     specifier: ^3.0.0-beta.39
-    version: 3.0.0-beta.39(react@18.2.0)
+    version: 3.0.0-beta.54(react@18.2.0)
   '@uiw/react-md-editor':
     specifier: ^3.19.0
     version: 3.19.0(@types/react@18.0.28)(react-dom@18.2.0)(react@18.2.0)
@@ -1248,17 +1252,17 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/react-virtual@3.0.0-beta.39(react@18.2.0):
-    resolution: {integrity: sha512-odun31XKT4gQyJXw0ipsNmXL7AAO+mbg2omoxZyW+JJyqU5m1S3BeLpZQKMCv+Ek59mPGeGWPZXxaZd7TalnHg==}
+  /@tanstack/react-virtual@3.0.0-beta.54(react@18.2.0):
+    resolution: {integrity: sha512-D1mDMf4UPbrtHRZZriCly5bXTBMhylslm4dhcHqTtDJ6brQcgGmk8YD9JdWBGWfGSWPKoh2x1H3e7eh+hgPXtQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@tanstack/virtual-core': 3.0.0-beta.39
+      '@tanstack/virtual-core': 3.0.0-beta.54
       react: 18.2.0
     dev: false
 
-  /@tanstack/virtual-core@3.0.0-beta.39:
-    resolution: {integrity: sha512-VZ1ESIo+PAPOsxqGzccFPWDD/gsJAViSTU6glhd5pLSMkYDsmtdklfYrE3bWLC3dsbLWI689yzpLgh436v26mQ==}
+  /@tanstack/virtual-core@3.0.0-beta.54:
+    resolution: {integrity: sha512-jtkwqdP2rY2iCCDVAFuaNBH3fiEi29aTn2RhtIoky8DTTiCdc48plpHHreLwmv1PICJ4AJUUESaq3xa8fZH8+g==}
     dev: false
 
   /@testing-library/dom@9.2.0:
