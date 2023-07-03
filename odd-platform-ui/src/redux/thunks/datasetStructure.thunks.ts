@@ -1,12 +1,12 @@
 import type {
-  DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
-  DataSetFieldDescription,
-  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
-  Label,
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetApiGetDataSetStructureLatestRequest,
   DatasetFieldApiCreateEnumValueRequest,
   DatasetFieldApiGetEnumValuesRequest,
+  DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
+  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
+  DataSetFieldDescription,
+  Label,
 } from 'generated-sources';
 import type {
   DataSetFieldEnumsResponse,
@@ -56,16 +56,15 @@ export const fetchDataSetStructure = handleResponseAsyncThunk<
 );
 
 export const updateDataSetFieldDescription = handleResponseAsyncThunk<
-  RelatedToEntityId<DataSetFieldDescription>,
+  RelatedToEntityId<{ dataSetFieldDescription: DataSetFieldDescription }>,
   DatasetFieldApiUpdateDatasetFieldDescriptionRequest
 >(
   actions.updateDataSetFieldDescriptionActionType,
   async params => {
-    const { description } = await datasetFieldApiClient.updateDatasetFieldDescription(
-      params
-    );
+    const dataSetFieldDescription =
+      await datasetFieldApiClient.updateDatasetFieldDescription(params);
 
-    return { entityId: params.datasetFieldId, description };
+    return { entityId: params.datasetFieldId, dataSetFieldDescription };
   },
   {
     setSuccessOptions: ({ datasetFieldId }) => ({

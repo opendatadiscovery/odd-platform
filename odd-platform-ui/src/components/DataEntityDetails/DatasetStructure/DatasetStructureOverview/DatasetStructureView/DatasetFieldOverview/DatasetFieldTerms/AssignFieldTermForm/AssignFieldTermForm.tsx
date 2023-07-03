@@ -1,12 +1,12 @@
 import React, { type FC, useCallback } from 'react';
-import type { DataEntityTermFormData, TermRef } from 'generated-sources';
+import type { DataEntityTermFormData, LinkedTerm } from 'generated-sources';
 import { useAddDatasetFieldTerm } from 'lib/hooks';
 import { AssignTermForm } from 'components/shared/elements';
 
 interface AssignFieldTermFormProps {
   openBtnEl: JSX.Element;
   datasetFieldId: number;
-  handleAddTerm: (term: TermRef) => void;
+  handleAddTerm: (linkedTerm: LinkedTerm) => void;
 }
 
 const AssignFieldTermForm: FC<AssignFieldTermFormProps> = ({
@@ -20,7 +20,7 @@ const AssignFieldTermForm: FC<AssignFieldTermFormProps> = ({
     (clearState: () => void) =>
       ({ termId }: DataEntityTermFormData) => {
         addTerm({ datasetFieldId, termId }).then(term => {
-          handleAddTerm(term);
+          handleAddTerm({ term, descriptionLink: false });
           clearState();
         });
       },
