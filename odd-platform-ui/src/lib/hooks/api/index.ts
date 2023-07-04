@@ -6,3 +6,4 @@ export * from './appInfo';
 export * from './dataEntityAttachments/dataEntityFiles';
 export * from './dataEntityAttachments/dataEntityLinks';
 export * from './directory';
+export * from './terms';

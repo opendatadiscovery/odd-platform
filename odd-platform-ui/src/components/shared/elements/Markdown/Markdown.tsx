@@ -1,4 +1,6 @@
+import type { CSSProperties } from 'react';
 import React, { type FC, type ReactNode } from 'react';
+import type { ContextStore } from '@uiw/react-md-editor';
 import MDEditor from '@uiw/react-md-editor';
 import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import type { Position } from 'unist';
@@ -8,6 +10,14 @@ interface MarkdownProps {
   value: string;
   editor?: boolean;
   disableCopy?: boolean;
+  onChange?:
+    | ((
+        value?: string | undefined,
+        event?: React.ChangeEvent<HTMLTextAreaElement> | undefined,
+        state?: ContextStore | undefined
+      ) => void)
+    | undefined;
+  height?: CSSProperties['height'];
 }
 
 export type ReactMarkdownProps = {
@@ -30,16 +40,24 @@ const MarkdownCopyButton = ({ node, ...props }: MarkdownCopyButtonProps) => (
   </div>
 );
 
-const Markdown: FC<MarkdownProps> = ({ value, editor = false, disableCopy = false }) => {
+const Markdown: FC<MarkdownProps> = ({
+  value,
+  editor = false,
+  disableCopy = false,
+  onChange,
+  height,
+}) => {
   const wrapperElement = { 'data-color-mode': 'light' } as {
     'data-color-mode'?: 'light' | 'dark';
   };
 
   return editor ? (
     <MDEditor
+      height={height}
       value={value}
       preview='edit'
       previewOptions={{ wrapperElement, disableCopy }}
+      onChange={onChange}
     />
   ) : (
     <MDEditor.Markdown
