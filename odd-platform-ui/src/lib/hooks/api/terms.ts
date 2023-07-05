@@ -1,13 +1,21 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { termApi } from 'lib/api';
-import type { TermApiGetTermByNamespaceAndNameRequest } from 'generated-sources';
+import type { TermApiGetTermByNamespaceAndNameRequest, TermRef } from 'generated-sources';
 
-export function useGetTermByNamespaceAndName({
-  namespaceName,
-  termName,
-}: TermApiGetTermByNamespaceAndNameRequest) {
-  return useQuery(['term', namespaceName, termName], () => {
-    const params = { namespaceName, termName };
-    return termApi.getTermByNamespaceAndName(params);
-  });
+export function useGetTermByNamespaceAndName() {
+  const queryClient = useQueryClient();
+
+  return async ({
+    namespaceName,
+    termName,
+  }: TermApiGetTermByNamespaceAndNameRequest): Promise<TermRef | Error> => {
+    try {
+      const params = { namespaceName, termName };
+      return await queryClient.fetchQuery(['term', namespaceName, termName], () =>
+        termApi.getTermByNamespaceAndName(params)
+      );
+    } catch (error) {
+      return error as Error;
+    }
+  };
 }

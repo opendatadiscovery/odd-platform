@@ -1,8 +1,10 @@
 import React, { type FC, useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityInternalDescription } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths, useGetTermByNamespaceAndName } from 'lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
+import { TERM_PATTERN } from 'lib/constants';
+import { useDebouncedCallback } from 'use-debounce';
 import InternalDescriptionHeader from './InternalDescriptionHeader/InternalDescriptionHeader';
 import InternalDescriptionEdit from './InternalDescriptionEdit/InternalDescriptionEdit';
 import InternalDescriptionPreview from './InternalDescriptionPreview/InternalDescriptionPreview';
@@ -10,6 +12,8 @@ import InternalDescriptionPreview from './InternalDescriptionPreview/InternalDes
 const InternalDescription: FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
+  const { termDetailsOverviewPath } = useAppPaths();
+  const fetchTerm = useGetTermByNamespaceAndName();
 
   const [editMode, setEditMode] = useState(false);
 
@@ -33,8 +37,6 @@ const InternalDescription: FC = () => {
       () => {
         setError('');
         setEditMode(false);
-
-        // TODO add function to parse successful terms to links
       },
       (response: Response) => {
         setError(response.statusText || 'Unable to update description');
@@ -51,12 +53,33 @@ const InternalDescription: FC = () => {
     [handleUpdateDescription]
   );
 
-  const handleMarkdownChange = useCallback((val: string | undefined) => {
-    if (!val) return;
+  const handleMarkdownChange = useCallback(
+    async (val: string | undefined) => {
+      if (!val) return;
 
-    // TODO add logic to parse and find terms
-    setInternalDescription(val);
-  }, []);
+      const matches = val.matchAll(TERM_PATTERN);
+
+      for await (const match of matches) {
+        const namespaceName = match[1];
+        const termName = match[2];
+
+        const response = await fetchTerm({ namespaceName, termName });
+
+        if ('id' in response) {
+          const { id, name, definition } = response;
+          const termLink = `[${name}](${termDetailsOverviewPath(id)} "${definition}")`;
+          val = val.replace(match[0], termLink);
+        } else {
+          setError(response.message);
+        }
+
+        setInternalDescription(val);
+      }
+    },
+    [fetchTerm]
+  );
+
+  const debouncedHandleMarkdownChange = useDebouncedCallback(handleMarkdownChange, 500);
 
   return (
     <>
@@ -68,7 +91,7 @@ const InternalDescription: FC = () => {
         <InternalDescriptionEdit
           value={internalDescription}
           handlePressEnter={handleSaveMarkdownOnEnter}
-          handleMarkdownChange={handleMarkdownChange}
+          handleMarkdownChange={debouncedHandleMarkdownChange}
           handleUpdateDescription={handleUpdateDescription}
           handleTurnOffEditMode={handleTurnOffEditMode}
           error={error}
