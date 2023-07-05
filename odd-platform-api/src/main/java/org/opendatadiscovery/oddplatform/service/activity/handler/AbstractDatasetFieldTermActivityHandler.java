@@ -13,11 +13,13 @@ import reactor.core.publisher.Mono;
 public abstract class AbstractDatasetFieldTermActivityHandler {
     private final ReactiveTermRepository reactiveTermRepository;
 
+    //todo activity for description terms
     protected Mono<List<TermActivityStateDto>> getTermsStateByDatasetFieldId(final Long datasetFieldId) {
-        return reactiveTermRepository.getDatasetFieldTerms(datasetFieldId)
-            .map(dto -> new TermActivityStateDto(dto.getTerm().getId(),
-                dto.getTerm().getName(), dto.getNamespace().getName()))
-            .collectList();
+        return Mono.just(List.of());
+//        return reactiveTermRepository.getDatasetFieldTerms(datasetFieldId)
+//            .map(dto -> new TermActivityStateDto(dto.getTerm().getId(),
+//                dto.getTerm().getName(), dto.getNamespace().getName()))
+//            .collectList();
     }
 
     protected String getState(final List<TermActivityStateDto> terms, final DatasetFieldPojo pojo) {

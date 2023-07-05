@@ -28,6 +28,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
@@ -51,13 +52,14 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
-import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
+import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -75,9 +77,9 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFie
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.InternalNameUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TagsAssociationUpdated;
@@ -110,6 +112,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final DataEntityFilledService dataEntityFilledService;
     private final MetadataFieldService metadataFieldService;
     private final DataSourceService dataSourceService;
+    private final TermService termService;
 
     private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
     private final ReactiveMetadataFieldRepository reactiveMetadataFieldRepository;
@@ -117,7 +120,6 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final ReactiveLineageRepository reactiveLineageRepository;
     private final ReactiveDataEntityTaskRunRepository reactiveDataEntityTaskRunRepository;
     private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
-    private final ReactiveTermRepository reactiveTermRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
     private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
@@ -127,6 +129,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final MetadataFieldMapper metadataFieldMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final TagMapper tagMapper;
+    private final TermMapper termMapper;
 
     @Override
     public Mono<DataEntityClassAndTypeDictionary> getDataEntityClassesAndTypes() {
@@ -164,8 +167,7 @@ public class DataEntityServiceImpl implements DataEntityService {
         final Mono<DataEntityList> dataEntityListMono = Mono.zip(enrichedDimensions, count)
             .map(function((dtos, total) -> new Page<>(dtos, total, true)))
             .map(dataEntityMapper::mapPojos);
-        return Mono.zip(dataEntityListMono, dataSourceMono).map(function((dataEntities, dataSource) ->
-            new DataSourceEntityList().dataSource(dataSource).entities(dataEntities)));
+        return Mono.zip(dataEntityListMono, dataSourceMono).map(function(DataSourceEntityList::new));
     }
 
     @Override
@@ -279,7 +281,7 @@ public class DataEntityServiceImpl implements DataEntityService {
                 .thenReturn(fields))
             .flatMap(fields -> dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_METADATA)
                 .thenReturn(fields))
-            .map(fields -> new MetadataFieldValueList().items(fields));
+            .map(MetadataFieldValueList::new);
     }
 
     @Override
@@ -324,8 +326,19 @@ public class DataEntityServiceImpl implements DataEntityService {
     public Mono<InternalDescription> upsertDescription(
         @ActivityParameter(DescriptionUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final InternalDescriptionFormData formData) {
-        return reactiveDataEntityRepository.setInternalDescription(dataEntityId, formData.getInternalDescription())
-            .map(pojo -> new InternalDescription().internalDescription(pojo.getInternalDescription()))
+        final Mono<List<LinkedTermDto>> termsMono = termService
+            .findTermsInDescription(formData.getInternalDescription())
+            .flatMapMany(terms -> termService.updateDataEntityDescriptionTermsState(terms, dataEntityId))
+            .then(termService.getDataEntityTerms(dataEntityId));
+
+        final Mono<DataEntityPojo> pojoMono =
+            reactiveDataEntityRepository.setInternalDescription(dataEntityId, formData.getInternalDescription());
+
+        return Mono.zip(pojoMono, termsMono)
+            .map(function((pojo, terms) -> {
+                final List<LinkedTerm> linkedTerms = terms.stream().map(termMapper::mapToLinkedTerm).toList();
+                return new InternalDescription(pojo.getInternalDescription(), linkedTerms);
+            }))
             .flatMap(in -> reactiveSearchEntrypointRepository.updateDataEntityVectors(dataEntityId)
                 .thenReturn(in))
             .flatMap(in -> {
@@ -346,7 +359,7 @@ public class DataEntityServiceImpl implements DataEntityService {
         @ActivityParameter(InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final InternalNameFormData formData) {
         return reactiveDataEntityRepository.setInternalName(dataEntityId, formData.getInternalName())
-            .map(pojo -> new InternalName().internalName(pojo.getInternalName()))
+            .map(pojo -> new InternalName(pojo.getInternalName()))
             .flatMap(in -> reactiveSearchEntrypointRepository.updateDataEntityVectors(dataEntityId)
                 .thenReturn(in))
             .flatMap(in -> {
@@ -456,10 +469,10 @@ public class DataEntityServiceImpl implements DataEntityService {
         return reactiveDataEntityRepository.getDataEntityDomainsInfo()
             .map(info -> {
                 final DataEntityRef entityRef = dataEntityMapper.mapRef(info.domain());
-                return new DataEntityDomain().domain(entityRef).childrenCount(info.childrenCount());
+                return new DataEntityDomain(entityRef, info.childrenCount());
             })
             .collectList()
-            .map(list -> new DataEntityDomainList().items(list));
+            .map(DataEntityDomainList::new);
     }
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
@@ -607,8 +620,8 @@ public class DataEntityServiceImpl implements DataEntityService {
         final Mono<List<MetadataDto>> metadataDto =
             reactiveMetadataFieldRepository.getDtosByDataEntityId(dto.getDataEntity().getId());
         final Mono<List<DatasetVersionPojo>> datasetVersions = getDatasetVersions(dto);
-        final Mono<List<TermRefDto>> terms =
-            reactiveTermRepository.getDataEntityTerms(dto.getDataEntity().getId()).collectList();
+        final Mono<List<LinkedTermDto>> terms =
+            termService.getDataEntityTerms(dto.getDataEntity().getId());
         final Mono<List<TagDto>> tags = tagRepository.listDataEntityDtos(dto.getDataEntity().getId());
         return Mono.zip(metadataDto, datasetVersions, terms, tags)
             .map(function((metadata, versions, termsList, tagList) -> {

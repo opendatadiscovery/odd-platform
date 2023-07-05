@@ -26,9 +26,11 @@ import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.dataset.DatasetVersionFields;
 import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldMetadataValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
@@ -79,6 +81,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     public static final String METADATA = "metadata";
     public static final String TERMS = "terms";
     public static final String TERM_NAMESPACES = "term_namespaces";
+    public static final String TERM_RELATIONS = "term_relations";
 
     private final JooqRecordHelper jooqRecordHelper;
 
@@ -102,6 +105,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
+            .select(jsonArrayAgg(field(DATASET_FIELD_TO_TERM.asterisk().toString())).as(TERM_RELATIONS))
             .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(TERM_NAMESPACES))
             .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(DATASET_VERSION)
@@ -169,6 +173,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
+            .select(jsonArrayAgg(field(DATASET_FIELD_TO_TERM.asterisk().toString())).as(TERM_RELATIONS))
             .select(jsonArrayAgg(field(NAMESPACE.asterisk().toString())).as(TERM_NAMESPACES))
             .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(subquery)
@@ -333,7 +338,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .toList();
     }
 
-    private List<TermRefDto> extractTerms(final Record record) {
+    private List<LinkedTermDto> extractTerms(final Record record) {
         final Set<TermPojo> terms = jooqRecordHelper.extractAggRelation(record, TERMS, TermPojo.class);
 
         final Map<Long, NamespacePojo> namespaces = jooqRecordHelper
@@ -341,10 +346,21 @@ public class ReactiveDatasetVersionRepositoryImpl
             .stream()
             .collect(Collectors.toMap(NamespacePojo::getId, identity()));
 
-        return terms.stream().map(pojo -> TermRefDto.builder()
-                .term(pojo)
-                .namespace(namespaces.get(pojo.getNamespaceId()))
-                .build())
+        final Map<Long, List<DatasetFieldToTermPojo>> relations = jooqRecordHelper
+            .extractAggRelation(record, TERM_RELATIONS, DatasetFieldToTermPojo.class)
+            .stream()
+            .collect(Collectors.groupingBy(DatasetFieldToTermPojo::getTermId));
+
+        return terms.stream()
+            .map(pojo -> {
+                final TermRefDto termRefDto = TermRefDto.builder()
+                    .term(pojo)
+                    .namespace(namespaces.get(pojo.getNamespaceId()))
+                    .build();
+                final boolean descriptionLink = relations.getOrDefault(pojo.getId(), List.of()).stream()
+                    .anyMatch(r -> Boolean.TRUE.equals(r.getDescriptionLink()));
+                return new LinkedTermDto(termRefDto, descriptionLink);
+            })
             .toList();
     }
 

@@ -11,12 +11,14 @@ import reactor.core.publisher.Mono;
 public abstract class AbstractTermActivityHandler {
     private final ReactiveTermRepository reactiveTermRepository;
 
+    //todo proper activity
     protected Mono<String> getStateByDataEntityId(final Long dataEntityId) {
-        return reactiveTermRepository.getDataEntityTerms(dataEntityId)
-            .map(dto -> new TermActivityStateDto(dto.getTerm().getId(),
-                dto.getTerm().getName(), dto.getNamespace().getName()))
-            .collectList()
-            .map(this::getState);
+        return Mono.just("");
+//        return reactiveTermRepository.getDataEntityTerms(dataEntityId)
+//            .map(dto -> new TermActivityStateDto(dto.getTerm().getId(),
+//                dto.getTerm().getName(), dto.getNamespace().getName()))
+//            .collectList()
+//            .map(this::getState);
     }
 
     private String getState(final List<TermActivityStateDto> state) {

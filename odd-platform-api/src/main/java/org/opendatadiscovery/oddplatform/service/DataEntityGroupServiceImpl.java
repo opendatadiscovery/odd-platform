@@ -30,7 +30,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.TermRelationsRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
@@ -60,7 +60,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
 
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    private final ReactiveTermRepository reactiveTermRepository;
+    private final TermRelationsRepository termRelationsRepository;
     private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
 
@@ -152,16 +152,12 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                                                         final Long entitiesCount,
                                                         final Long degUpperGroupsCount,
                                                         final Map<String, Boolean> itemsMap) {
-        final DataEntityGroupItemList result = new DataEntityGroupItemList();
-        result.setEntitiesCount(entitiesCount);
-        result.setUpperGroupsCount(degUpperGroupsCount);
         final List<DataEntityGroupItem> dataEntityGroupItems = entities.stream()
             .map(e -> dataEntityMapper.mapGroupItem(e, itemsMap.get(e.getDataEntity().getOddrn())))
             .sorted((o1, o2) -> Boolean.compare(o1.getIsUpperGroup(), o2.getIsUpperGroup()))
             .toList();
-        result.setItems(dataEntityGroupItems);
-        result.setPageInfo(new PageInfo().hasNext(true).total(entitiesCount + degUpperGroupsCount));
-        return result;
+        final PageInfo pageInfo = new PageInfo(entitiesCount + degUpperGroupsCount, true);
+        return new DataEntityGroupItemList(dataEntityGroupItems, entitiesCount, degUpperGroupsCount, pageInfo);
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
@@ -219,7 +215,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
         return Flux.zip(
             dataEntityStatisticsService.updateStatistics(-1L,
                 Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), -1L))),
-            reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
+            termRelationsRepository.deleteRelationsWithTerms(pojo.getId()),
             reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
             tagService.deleteRelationsForDataEntity(pojo.getId()),
             ownershipRepository.deleteByDataEntityId(pojo.getId()),

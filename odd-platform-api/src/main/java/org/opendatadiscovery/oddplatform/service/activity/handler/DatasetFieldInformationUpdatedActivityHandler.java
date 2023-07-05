@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
-import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithLabelsDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
@@ -33,7 +32,7 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
         final long datasetFieldId =
             (long) parameters.get(ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID);
-        return Mono.zip(datasetFieldRepository.getDto(datasetFieldId),
+        return Mono.zip(datasetFieldRepository.getDatasetFieldWithLabels(datasetFieldId),
                 datasetFieldRepository.getDataEntityIdByDatasetFieldId(datasetFieldId))
             .map(function((dto, dataEntityId) -> ActivityContextInfo.builder()
                 .oldState(getState(dto))
@@ -46,24 +45,23 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
     public Mono<String> getUpdatedState(final Map<String, Object> parameters, final Long dataEntityId) {
         final long datasetFieldId =
             (long) parameters.get(ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID);
-        return datasetFieldRepository.getDto(datasetFieldId)
+        return datasetFieldRepository.getDatasetFieldWithLabels(datasetFieldId)
             .map(this::getState);
     }
 
-    private String getState(final DatasetFieldDto dto) {
+    private String getState(final DatasetFieldWithLabelsDto dto) {
         final List<DatasetFieldLabelActivityStateDto> labels;
-        if (CollectionUtils.isEmpty(dto.getLabels())) {
+        if (CollectionUtils.isEmpty(dto.labels())) {
             labels = List.of();
         } else {
-            labels = dto.getLabels().stream()
-                .map(LabelDto::pojo)
+            labels = dto.labels().stream()
                 .map(l -> new DatasetFieldLabelActivityStateDto(l.getId(), l.getName()))
                 .toList();
         }
         final DatasetFieldInformationActivityStateDto state =
-            new DatasetFieldInformationActivityStateDto(dto.getDatasetFieldPojo().getId(),
-                dto.getDatasetFieldPojo().getName(), dto.getDatasetFieldPojo().getType(),
-                dto.getDatasetFieldPojo().getInternalDescription(), labels);
+            new DatasetFieldInformationActivityStateDto(dto.datasetFieldPojo().getId(),
+                dto.datasetFieldPojo().getName(), dto.datasetFieldPojo().getType(),
+                dto.datasetFieldPojo().getInternalDescription(), labels);
         return JSONSerDeUtils.serializeJson(state);
     }
 }

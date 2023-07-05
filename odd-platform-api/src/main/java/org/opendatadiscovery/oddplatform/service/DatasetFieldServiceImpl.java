@@ -20,10 +20,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescript
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
@@ -32,6 +34,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
+import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
@@ -44,6 +47,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
@@ -54,6 +58,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +74,8 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final DatasetVersionHashCalculator datasetVersionHashCalculator;
     private final ReactiveEnumValueRepository enumValueRepository;
     private final EnumValueMapper enumValueMapper;
+    private final TermService termService;
+    private final TermMapper termMapper;
 
     @Override
     @ReactiveTransactional
@@ -76,9 +83,20 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     public Mono<DataSetFieldDescription> updateDatasetFieldDescription(
         @ActivityParameter(DatasetFieldInformationUpdated.DATASET_FIELD_ID) final long datasetFieldId,
         final DatasetFieldDescriptionUpdateFormData formData) {
-        return reactiveDatasetFieldRepository.updateDescription(datasetFieldId, formData.getDescription())
-            .switchIfEmpty(Mono.error(new NotFoundException("DatasetField", datasetFieldId)))
-            .map(pojo -> new DataSetFieldDescription().description(pojo.getInternalDescription()))
+        final Mono<List<LinkedTermDto>> termsMono = termService
+            .findTermsInDescription(formData.getDescription())
+            .flatMapMany(terms -> termService.updateDatasetFieldDescriptionTermsState(terms, datasetFieldId))
+            .then(termService.getDatasetFieldTerms(datasetFieldId));
+
+        final Mono<DatasetFieldPojo> datasetFieldMono = reactiveDatasetFieldRepository
+            .updateDescription(datasetFieldId, formData.getDescription())
+            .switchIfEmpty(Mono.error(new NotFoundException("DatasetField", datasetFieldId)));
+
+        return Mono.zip(datasetFieldMono, termsMono)
+            .map(function((pojo, terms) -> {
+                final List<LinkedTerm> linkedTerms = terms.stream().map(termMapper::mapToLinkedTerm).toList();
+                return new DataSetFieldDescription(pojo.getInternalDescription(), linkedTerms);
+            }))
             .flatMap(description -> {
                 if (StringUtils.isEmpty(description.getDescription())) {
                     return dataEntityFilledService.markEntityUnfilledByDatasetFieldId(datasetFieldId,
