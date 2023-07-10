@@ -1,4 +1,4 @@
-import React, { type FC } from 'react';
+import React, { type FC, memo } from 'react';
 import { Button, Markdown } from 'components/shared/elements';
 import { Grid, Typography } from '@mui/material';
 import { WithPermissions } from 'components/shared/contexts';
@@ -6,14 +6,13 @@ import { Permission } from 'generated-sources';
 
 interface InternalDescriptionPreviewProps {
   isDescriptionEmpty: boolean;
-  handleEditClick: () => void;
+  toggleEditMode: () => void;
   value: string;
 }
 
-// TODO check re-renders, memo if needed
 const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
   isDescriptionEmpty,
-  handleEditClick,
+  toggleEditMode,
   value,
 }) => (
   <div>
@@ -32,7 +31,7 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
         <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
           <Button
             text='Add Description'
-            onClick={handleEditClick}
+            onClick={toggleEditMode}
             buttonType='tertiary-sm'
           />
         </WithPermissions>
@@ -41,4 +40,4 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
   </div>
 );
 
-export default InternalDescriptionPreview;
+export default memo(InternalDescriptionPreview);

@@ -8,20 +8,22 @@ interface InternalDescriptionEditProps {
   handlePressEnter: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   handleMarkdownChange: (val: string | undefined) => void;
   handleUpdateDescription: () => void;
-  handleTurnOffEditMode: () => void;
+  toggleEditMode: () => void;
   error?: string;
 }
 
-// TODO check re-renders, memo if needed
 const InternalDescriptionEdit: FC<InternalDescriptionEditProps> = ({
   value,
   handlePressEnter,
   handleMarkdownChange,
   handleUpdateDescription,
-  handleTurnOffEditMode,
+  toggleEditMode,
   error,
 }) => (
-  <Box onKeyDown={handlePressEnter}>
+  <Box onKeyDown={handlePressEnter} sx={{ pt: error ? 0 : 2.5 }}>
+    <Typography mb={0.5} variant='subtitle1' color='error'>
+      {error}
+    </Typography>
     <Markdown editor value={value} onChange={handleMarkdownChange} height={200} />
     <S.ActionsContainer>
       <Button
@@ -30,10 +32,7 @@ const InternalDescriptionEdit: FC<InternalDescriptionEditProps> = ({
         buttonType='main-m'
         sx={{ mr: 1 }}
       />
-      <Button text='Cancel' onClick={handleTurnOffEditMode} buttonType='secondary-m' />
-      <Typography variant='subtitle2' color='error'>
-        {error}
-      </Typography>
+      <Button text='Cancel' onClick={toggleEditMode} buttonType='secondary-m' />
     </S.ActionsContainer>
   </Box>
 );

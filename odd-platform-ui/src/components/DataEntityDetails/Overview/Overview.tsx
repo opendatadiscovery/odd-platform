@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
@@ -42,6 +42,11 @@ const Overview: React.FC = () => {
     getDataEntityDetailsFetchingStatuses
   );
 
+  const termRefs = useMemo(
+    () => dataEntityDetails.terms?.map(linkedTerm => linkedTerm.term),
+    [dataEntityDetails.terms]
+  );
+
   return (
     <>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
@@ -81,7 +86,7 @@ const Overview: React.FC = () => {
               <WithPermissionsProvider
                 allowedPermissions={[Permission.DATA_ENTITY_DESCRIPTION_UPDATE]}
                 resourcePermissions={resourcePermissions}
-                Component={OverviewDescription}
+                render={() => <OverviewDescription termRefs={termRefs} />}
               />
             </SectionContainer>
           </Grid>

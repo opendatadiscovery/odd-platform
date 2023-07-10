@@ -1,4 +1,4 @@
-import React, { type FC } from 'react';
+import React, { type FC, memo } from 'react';
 import { Typography } from '@mui/material';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
@@ -7,13 +7,12 @@ import { AddIcon, EditIcon } from 'components/shared/icons';
 import * as S from './InternalDescriptionHeader.styles';
 
 interface InternalDescriptionHeaderProps {
-  handleEditClick: () => void;
+  toggleEditMode: () => void;
   isDescriptionEmpty: boolean;
 }
 
-// TODO check re-renders, memo if needed
 const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
-  handleEditClick,
+  toggleEditMode,
   isDescriptionEmpty,
 }) => (
   <S.CaptionContainer>
@@ -22,7 +21,7 @@ const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
       <Button
         text={isDescriptionEmpty ? 'Add info' : 'Edit info'}
         data-qa='add_description'
-        onClick={handleEditClick}
+        onClick={toggleEditMode}
         buttonType='secondary-lg'
         startIcon={isDescriptionEmpty ? <AddIcon /> : <EditIcon />}
       />
@@ -30,4 +29,4 @@ const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
   </S.CaptionContainer>
 );
 
-export default InternalDescriptionHeader;
+export default memo(InternalDescriptionHeader);
