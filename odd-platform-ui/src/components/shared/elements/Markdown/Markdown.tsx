@@ -5,6 +5,8 @@ import MDEditor from '@uiw/react-md-editor';
 import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import type { Position } from 'unist';
 import type { Element } from 'hast';
+import { AppTooltip } from 'components/shared/elements/index';
+import * as S from './Markdown.styles';
 
 interface MarkdownProps {
   value: string;
@@ -40,6 +42,34 @@ const MarkdownCopyButton = ({ node, ...props }: MarkdownCopyButtonProps) => (
   </div>
 );
 
+type MarkdownTermLinkProps = Omit<
+  React.DetailedHTMLProps<React.HTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>,
+  'ref'
+> &
+  ReactMarkdownProps;
+
+const TermLink = ({ title, children, node, ...props }: MarkdownTermLinkProps) => {
+  const href = node.properties?.href as string;
+
+  if (!href.includes('terms')) {
+    return (
+      <a href={node.properties?.href as string} title={title} {...props}>
+        {children[0]}
+      </a>
+    );
+  }
+
+  return (
+    <AppTooltip
+      title={`Definition: ${title}`}
+      childSx={{ display: 'inline-block' }}
+      type='termLink'
+    >
+      <S.TermLink href={href}>{children[0]}</S.TermLink>
+    </AppTooltip>
+  );
+};
+
 const Markdown: FC<MarkdownProps> = ({
   value,
   editor = false,
@@ -65,7 +95,7 @@ const Markdown: FC<MarkdownProps> = ({
       style={{ width: '100%' }}
       wrapperElement={wrapperElement}
       disableCopy={disableCopy}
-      components={{ div: MarkdownCopyButton }}
+      components={{ div: MarkdownCopyButton, a: TermLink }}
     />
   );
 };
