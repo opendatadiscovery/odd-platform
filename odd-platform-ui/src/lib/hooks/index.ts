@@ -8,4 +8,5 @@ export { default as useQueryParams } from './useQueryParams';
 export { default as useCreateSearch } from './useCreateSearch';
 export { default as useCollapse } from './useCollapse';
 export { default as usePrevious } from './usePrevious';
+export { default as useTermWiki } from './useTermWiki';
 export * from './api/index';

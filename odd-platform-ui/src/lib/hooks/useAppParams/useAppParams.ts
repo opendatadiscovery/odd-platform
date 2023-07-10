@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import type { AppRouteParams, RouteParams } from './interfaces';
 
-export const useAppParams = (): AppRouteParams => {
+const useAppParams = (): AppRouteParams => {
   const {
     dataEntityId,
     dataQATestId,
