@@ -153,13 +153,13 @@ export const dataEntitiesSlice = createSlice({
     builder.addCase(
       thunks.updateDataEntityInternalDescription.fulfilled,
       (state, { payload }) => {
-        const { dataEntityId, internalDescription } = payload;
+        const { dataEntityId, internalDescription, terms } = payload;
 
         return {
           ...state,
           byId: {
             ...state.byId,
-            [dataEntityId]: { ...state.byId[dataEntityId], internalDescription },
+            [dataEntityId]: { ...state.byId[dataEntityId], internalDescription, terms },
           },
         };
       }

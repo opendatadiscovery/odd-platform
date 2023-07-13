@@ -108,17 +108,18 @@ export const updateDataEntityInternalDescription = handleResponseAsyncThunk<
   {
     dataEntityId: number;
     internalDescription: InternalDescription['internalDescription'];
+    terms: InternalDescription['terms'];
   },
   DataEntityApiUpsertDataEntityInternalDescriptionRequest
 >(
   actions.updateDataEntityInternalDescriptionActionType,
   async ({ dataEntityId, internalDescriptionFormData }) => {
-    const { internalDescription } =
+    const { internalDescription, terms } =
       await dataEntityApi.upsertDataEntityInternalDescription({
         dataEntityId,
         internalDescriptionFormData,
       });
-    return { dataEntityId, internalDescription };
+    return { dataEntityId, internalDescription, terms };
   },
   {
     setSuccessOptions: ({ internalDescriptionFormData: { internalDescription } }) => ({

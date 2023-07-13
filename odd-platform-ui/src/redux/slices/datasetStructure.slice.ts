@@ -134,6 +134,7 @@ export const datasetStructureSlice = createSlice({
             [datasetFieldId]: {
               ...state.fieldById[datasetFieldId],
               internalDescription: dataSetFieldDescription.description,
+              terms: dataSetFieldDescription.terms,
             },
           },
         };
