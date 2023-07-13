@@ -2,14 +2,16 @@ import React, { type FC, useCallback } from 'react';
 import { Permission, type TermRef } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button, CollapsibleInfoContainer, InfoItem } from 'components/shared/elements';
-import { DeleteIcon } from 'components/shared/icons';
+import { DeleteIcon, LockIcon } from 'components/shared/icons';
 import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
+import { Box } from '@mui/material';
 
 interface TermItemProps {
   name: TermRef['name'];
   definition: TermRef['definition'];
   termId: TermRef['id'];
   datasetFieldId: number;
+  descriptionLink: boolean;
   removeTerm: (termId: number) => void;
 }
 
@@ -19,6 +21,7 @@ const TermItem: FC<TermItemProps> = ({
   termId,
   datasetFieldId,
   removeTerm,
+  descriptionLink,
 }) => {
   const { mutateAsync: deleteTerm } = useDeleteDatasetFieldTerm();
 
@@ -38,7 +41,12 @@ const TermItem: FC<TermItemProps> = ({
   return (
     <InfoItem
       labelWidth={4}
-      label={<Button to={termDetailsLink} buttonType='link-m' text={name} />}
+      label={
+        <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center'>
+          <Button to={termDetailsLink} buttonType='link-m' text={name} sx={{ mr: 0.5 }} />
+          {descriptionLink && <LockIcon />}
+        </Box>
+      }
       info={
         <CollapsibleInfoContainer
           content={<>{definition}</>}

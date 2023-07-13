@@ -42,7 +42,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
     () =>
       fieldTerms && fieldTerms.length > 0 ? (
         <Grid container mt={1}>
-          {fieldTerms.map(({ term }) => (
+          {fieldTerms.map(({ term, descriptionLink }) => (
             <TermItem
               key={term.id}
               termId={term.id}
@@ -50,6 +50,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
               definition={term.definition}
               datasetFieldId={datasetFieldId}
               removeTerm={removeTerm}
+              descriptionLink={descriptionLink}
             />
           ))}
         </Grid>

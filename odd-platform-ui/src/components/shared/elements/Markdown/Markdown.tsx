@@ -6,6 +6,8 @@ import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import type { Position } from 'unist';
 import type { Element } from 'hast';
 import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
+import type { TypographyVariant } from '@mui/material/styles';
+import { Typography } from '@mui/material';
 import * as S from './Markdown.styles';
 
 interface MarkdownProps {
@@ -20,6 +22,7 @@ interface MarkdownProps {
       ) => void)
     | undefined;
   height?: CSSProperties['height'];
+  variant?: TypographyVariant;
 }
 
 export type ReactMarkdownProps = {
@@ -30,11 +33,13 @@ export type ReactMarkdownProps = {
   siblingCount?: number;
 };
 
-type MarkdownCopyButtonProps = Omit<
-  React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+type MarkdownElementProps<HTMLElement> = Omit<
+  React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>,
   'ref'
 > &
   ReactMarkdownProps;
+
+type MarkdownCopyButtonProps = MarkdownElementProps<HTMLDivElement>;
 
 const MarkdownCopyButton = ({ node, ...props }: MarkdownCopyButtonProps) => (
   <div {...props} style={{ backgroundColor: 'transparent' }}>
@@ -42,11 +47,7 @@ const MarkdownCopyButton = ({ node, ...props }: MarkdownCopyButtonProps) => (
   </div>
 );
 
-type MarkdownTermLinkProps = Omit<
-  React.DetailedHTMLProps<React.HTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>,
-  'ref'
-> &
-  ReactMarkdownProps;
+type MarkdownTermLinkProps = MarkdownElementProps<HTMLAnchorElement>;
 
 const TermLink = ({ title, children, node, ...props }: MarkdownTermLinkProps) => {
   const href = node.properties?.href as string;
@@ -70,12 +71,20 @@ const TermLink = ({ title, children, node, ...props }: MarkdownTermLinkProps) =>
   );
 };
 
+type MarkdownPreviewProps = MarkdownElementProps<HTMLParagraphElement>;
+
+const Preview =
+  (variant?: TypographyVariant) =>
+  ({ ...props }: MarkdownPreviewProps) =>
+    !variant ? <p {...props} /> : <Typography paragraph variant={variant} {...props} />;
+
 const Markdown: FC<MarkdownProps> = ({
   value,
   editor = false,
   disableCopy = false,
   onChange,
   height,
+  variant,
 }) => {
   const wrapperElement = { 'data-color-mode': 'light' } as {
     'data-color-mode'?: 'light' | 'dark';
@@ -95,7 +104,7 @@ const Markdown: FC<MarkdownProps> = ({
       style={{ width: '100%' }}
       wrapperElement={wrapperElement}
       disableCopy={disableCopy}
-      components={{ div: MarkdownCopyButton, a: TermLink }}
+      components={{ div: MarkdownCopyButton, a: TermLink, p: Preview(variant) }}
     />
   );
 };
