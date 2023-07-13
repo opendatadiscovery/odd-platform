@@ -2,11 +2,12 @@ import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import type { LinkedTerm } from 'generated-sources';
 import { Permission } from 'generated-sources';
-import { Button, TermItem } from 'components/shared/elements';
+import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
 import AssignEntityTermForm from './AssignEntityTermForm/AssignEntityTermForm';
+import TermItem from './TermItem/TermItem';
 
 interface OverviewTermsProps {
   dataEntityId: number;
@@ -38,7 +39,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
             .map(linkedTerm => (
               <TermItem
                 key={linkedTerm.term.id}
-                term={linkedTerm.term}
+                linkedTerm={linkedTerm}
                 dataEntityId={dataEntityId}
               />
             ))}
@@ -52,7 +53,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
                     .map(linkedTerm => (
                       <TermItem
                         key={linkedTerm.term.id}
-                        term={linkedTerm.term}
+                        linkedTerm={linkedTerm}
                         dataEntityId={dataEntityId}
                       />
                     ))}

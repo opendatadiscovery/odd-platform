@@ -20,10 +20,12 @@ const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObjec
 
   if (type === 'termLink') {
     return {
-      padding: theme.spacing(0.5),
+      padding: theme.spacing(1),
+      borderRadius: '8px',
       boxShadow: theme.shadows[6],
       color: theme.palette.texts.info,
       backgroundColor: theme.palette.background.default,
+      border: `1px solid ${theme.palette.border.primary}`,
     };
   }
 

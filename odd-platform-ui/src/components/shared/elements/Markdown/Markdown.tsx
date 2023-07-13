@@ -5,7 +5,7 @@ import MDEditor from '@uiw/react-md-editor';
 import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import type { Position } from 'unist';
 import type { Element } from 'hast';
-import { AppTooltip } from 'components/shared/elements/index';
+import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import * as S from './Markdown.styles';
 
 interface MarkdownProps {
