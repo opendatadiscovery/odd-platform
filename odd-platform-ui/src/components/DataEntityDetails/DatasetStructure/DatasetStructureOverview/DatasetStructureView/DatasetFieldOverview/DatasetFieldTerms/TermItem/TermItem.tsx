@@ -51,14 +51,16 @@ const TermItem: FC<TermItemProps> = ({
         <CollapsibleInfoContainer
           content={<>{definition}</>}
           actions={
-            <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
-              <Button
-                sx={{ mt: 0.25 }}
-                buttonType='link-m'
-                icon={<DeleteIcon />}
-                onClick={handleDelete}
-              />
-            </WithPermissions>
+            !descriptionLink ? (
+              <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
+                <Button
+                  sx={{ mt: 0.25 }}
+                  buttonType='link-m'
+                  icon={<DeleteIcon />}
+                  onClick={handleDelete}
+                />
+              </WithPermissions>
+            ) : undefined
           }
         />
       }

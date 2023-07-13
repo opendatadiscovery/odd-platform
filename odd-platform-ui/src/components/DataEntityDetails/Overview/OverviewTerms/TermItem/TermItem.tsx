@@ -39,16 +39,18 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, linkedTerm }) => {
             {linkedTerm.term.definition}
           </S.TermDefinition>
         </Grid>
-        <S.ActionsContainer>
-          <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_TERM}>
-            <Button
-              sx={{ ml: 0.25 }}
-              buttonType='linkGray-m'
-              icon={<CloseIcon />}
-              onClick={handleDelete}
-            />
-          </WithPermissions>
-        </S.ActionsContainer>
+        {!linkedTerm.descriptionLink && (
+          <S.ActionsContainer>
+            <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_TERM}>
+              <Button
+                sx={{ ml: 0.25 }}
+                buttonType='linkGray-m'
+                icon={<CloseIcon />}
+                onClick={handleDelete}
+              />
+            </WithPermissions>
+          </S.ActionsContainer>
+        )}
       </Grid>
     </S.TermItemContainer>
   );
