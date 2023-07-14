@@ -550,6 +550,8 @@ components:
         view_count:
           type: integer
           format: int64
+        is_stale:
+          type: boolean
       required:
         - id
         - oddrn
@@ -558,6 +560,7 @@ components:
         - type
         - namespace
         - view_count
+        - is_stale
 
     DataEntityDetailsBaseObject:
       type: object
@@ -828,8 +831,11 @@ components:
           type: boolean
         manually_created:
           type: boolean
+        is_stale:
+          type: boolean
       required:
         - id
+        - is_stale
 
     DataEntityRefList:
       type: array
@@ -1843,11 +1849,14 @@ components:
           type: integer
         children_count:
           type: integer
+        is_stale:
+          type: boolean
       required:
         - id
         - oddrn
         - name
         - type
+        - is_stale
 
     DataEntityLineageEdge:
       type: object
