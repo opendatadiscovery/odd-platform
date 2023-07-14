@@ -1071,6 +1071,29 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/statuses:
+    put:
+      summary: Update status to data entity
+      description: Update deprecation status to data entity
+      operationId: updateStatus
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityStatus'
+      tags:
+        - dataEntity
+
   /api/dataentities/{data_entity_id}/terms/{term_id}:
     delete:
       summary: Delete term from Data entity

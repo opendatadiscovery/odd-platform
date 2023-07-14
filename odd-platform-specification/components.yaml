@@ -541,6 +541,8 @@ components:
           $ref: '#/components/schemas/DataEntityType'
         data_entity_groups:
           $ref: '#/components/schemas/DataEntityRefList'
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
         created_at:
           type: string
           format: date-time
@@ -559,6 +561,7 @@ components:
         - data_source
         - type
         - namespace
+        - status
         - view_count
         - is_stale
 
@@ -582,11 +585,17 @@ components:
             $ref: '#/components/schemas/TermRef'
         tags:
           $ref: '#/components/schemas/TagList'
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
+        is_stale:
+          type: boolean
       required:
         - metadata_field_values
         - external_description
         - internal_description
         - view_count
+        - status
+        - is_stale
 
     DataEntityDetails:
       type: object
@@ -737,6 +746,26 @@ components:
         - id
         - name
 
+    DataEntityStatusEnum:
+      type: string
+      enum:
+        - UNASSIGNED
+        - DRAFT
+        - STABLE
+        - DEPRECATED
+        - DELETED
+
+    DataEntityStatus:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityStatusEnum'
+        status_switch_time:
+          type: string
+          format: date-time
+      required:
+        - status
+
     DataSetStats:
       type: object
       properties:
@@ -831,10 +860,13 @@ components:
           type: boolean
         manually_created:
           type: boolean
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
         is_stale:
           type: boolean
       required:
         - id
+        - status
         - is_stale
 
     DataEntityRefList:
@@ -1849,6 +1881,8 @@ components:
           type: integer
         children_count:
           type: integer
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
         is_stale:
           type: boolean
       required:
@@ -1856,6 +1890,7 @@ components:
         - oddrn
         - name
         - type
+        - status
         - is_stale
 
     DataEntityLineageEdge:
