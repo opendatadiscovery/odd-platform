@@ -59,7 +59,7 @@ export default function useTermWiki({
 
   useEffect(() => {
     const fetchMissingTerms = async (desc: string) => {
-      if (desc === undefined) return;
+      if (desc === undefined || desc === null) return;
 
       const matches = desc.matchAll(TERM_PATTERN);
 

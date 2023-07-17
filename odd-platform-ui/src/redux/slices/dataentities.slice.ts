@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import type { DataEntitiesState } from 'redux/interfaces';
 import keyBy from 'lodash/keyBy';
-import type { DataEntityDetails } from 'generated-sources';
+import type { DataEntityDetails, LinkedTerm } from 'generated-sources';
 import omit from 'lodash/omit';
 import { dataEntitiesActionTypePrefix } from 'redux/actions';
 import uniqBy from 'lodash/uniqBy';
@@ -102,15 +102,14 @@ export const dataEntitiesSlice = createSlice({
     builder.addCase(thunks.addDataEntityTerm.fulfilled, (state, { payload }) => {
       const { dataEntityId, term } = payload;
 
+      const terms: Array<LinkedTerm> = [
+        ...(state.byId[dataEntityId].terms || []),
+        { term, descriptionLink: false },
+      ];
+
       return {
         ...state,
-        byId: {
-          ...state.byId,
-          [dataEntityId]: {
-            ...state.byId[dataEntityId],
-            terms: uniqBy([...(state.byId[dataEntityId].terms || []), term], 'id'),
-          },
-        },
+        byId: { ...state.byId, [dataEntityId]: { ...state.byId[dataEntityId], terms } },
       };
     });
 
