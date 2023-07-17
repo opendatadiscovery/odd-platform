@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.service.activity.handler;
 import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -11,8 +11,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class TermAssignmentDeletedActivityHandler extends AbstractTermActivityHandler implements ActivityHandler {
 
-    public TermAssignmentDeletedActivityHandler(final ReactiveTermRepository reactiveTermRepository) {
-        super(reactiveTermRepository);
+    public TermAssignmentDeletedActivityHandler(final TermService termService) {
+        super(termService);
     }
 
     @Override

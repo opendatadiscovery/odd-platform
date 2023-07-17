@@ -328,7 +328,7 @@ public class DataEntityServiceImpl implements DataEntityService {
         final InternalDescriptionFormData formData) {
         final Mono<List<LinkedTermDto>> termsMono = termService
             .findTermsInDescription(formData.getInternalDescription())
-            .flatMapMany(terms -> termService.updateDataEntityDescriptionTermsState(terms, dataEntityId))
+            .flatMap(parsedTerms -> termService.updateDataEntityDescriptionTermsState(parsedTerms, dataEntityId))
             .then(termService.getDataEntityTerms(dataEntityId));
 
         final Mono<DataEntityPojo> pojoMono =

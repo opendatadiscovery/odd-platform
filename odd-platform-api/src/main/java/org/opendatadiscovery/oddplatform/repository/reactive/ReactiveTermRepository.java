@@ -20,7 +20,7 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<TermRefDto> getByNameAndNamespace(final String namespaceName, final String name);
 
-    Mono<List<TermPojo>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos);
+    Mono<List<TermRefDto>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos);
 
     Mono<TermRefDto> getTermRefDto(final Long id);
 
@@ -35,4 +35,6 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Flux<LinkedTermDto> getDataEntityTerms(final long dataEntityId);
 
     Flux<LinkedTermDto> getDatasetFieldTerms(final long datasetFieldId);
+
+    Mono<Boolean> hasDescriptionRelations(final long termId);
 }

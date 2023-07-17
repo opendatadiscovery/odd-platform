@@ -48,6 +48,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
@@ -78,7 +79,7 @@ public class ActivityMapperTest {
     @DisplayName("Test mapping activity create event to activity pojo object")
     void testMapPojo(final ActivityEventTypeDto eventTypeDto) {
         final ActivityCreateEvent event = createEvent(eventTypeDto);
-        final LocalDateTime activityTime = LocalDateTime.now();
+        final LocalDateTime activityTime = DateTimeUtil.generateNow();
         final String createdBy = "username";
         final ActivityPojo activityPojo = activityMapper.mapToPojo(event, activityTime, createdBy);
         assertThat(activityPojo.getCreatedAt()).isEqualTo(activityTime);

@@ -23,7 +23,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
-    public Mono<DataEntityToTermPojo> createRelationWithDataEntity(final Long dataEntityId, final Long termId) {
+    public Mono<DataEntityToTermPojo> createRelationWithDataEntity(final long dataEntityId, final long termId) {
         final var query = DSL.insertInto(DATA_ENTITY_TO_TERM)
             .set(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID, dataEntityId)
             .set(DATA_ENTITY_TO_TERM.TERM_ID, termId)
@@ -56,7 +56,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
     }
 
     @Override
-    public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId) {
+    public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final long dataEntityId) {
         final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId))
             .returning();
@@ -65,7 +65,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
     }
 
     @Override
-    public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId) {
+    public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final long termId) {
         final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
             .returning();
@@ -74,9 +74,20 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
     }
 
     @Override
-    public Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId) {
+    public Flux<DatasetFieldToTermPojo> deleteRelationsWithDatasetFields(final long termId) {
+        final var query = DSL.deleteFrom(DATASET_FIELD_TO_TERM)
+            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(DatasetFieldToTermPojo.class));
+    }
+
+    @Override
+    public Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final long dataEntityId, final long termId) {
         final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId).and(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)))
+            .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)
+                .and(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
+                .and(DATA_ENTITY_TO_TERM.DESCRIPTION_LINK.isFalse()))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityToTermPojo.class));
@@ -137,7 +148,8 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
     public Mono<DatasetFieldToTermPojo> deleteRelationWithDatasetField(final long datasetFieldId, final long termId) {
         final var query = DSL.deleteFrom(DATASET_FIELD_TO_TERM)
             .where(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(datasetFieldId)
-                .and(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId)))
+                .and(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId))
+                .and(DATASET_FIELD_TO_TERM.DESCRIPTION_LINK.isFalse()))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DatasetFieldToTermPojo.class));

@@ -44,14 +44,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_TO_TERM;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
@@ -139,7 +136,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     }
 
     @Override
-    public Mono<List<TermPojo>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos) {
+    public Mono<List<TermRefDto>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos) {
         if (CollectionUtils.isEmpty(termBaseInfoDtos)) {
             return Mono.just(List.of());
         }
@@ -148,12 +145,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .reduce(Condition::or)
             .orElseThrow(() -> new IllegalArgumentException("Can't build condition for terms"));
         final var query = DSL.select(TERM.fields())
+            .select(NAMESPACE.fields())
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .where(condition)
             .and(TERM.DELETED_AT.isNull());
         return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(TermPojo.class))
+            .map(this::mapRecordToRefDto)
             .collectList();
     }
 
@@ -354,6 +352,18 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .where(TERM.DELETED_AT.isNull());
         return jooqReactiveOperations.flux(query)
             .map(this::mapRecordToLinkedTermDto);
+    }
+
+    @Override
+    public Mono<Boolean> hasDescriptionRelations(final long termId) {
+        final Condition dataEntityDescriptionRelations = exists(DSL.selectOne()
+            .from(DATA_ENTITY_TO_TERM)
+            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId).and(DATA_ENTITY_TO_TERM.DESCRIPTION_LINK.isTrue())));
+        final Condition datasetFieldDescriptionRelations = exists(DSL.selectOne()
+            .from(DATASET_FIELD_TO_TERM)
+            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId).and(DATASET_FIELD_TO_TERM.DESCRIPTION_LINK.isTrue())));
+        final var query = DSL.select(dataEntityDescriptionRelations.or(datasetFieldDescriptionRelations));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     private LinkedTermDto mapRecordToLinkedTermDto(final Record record) {

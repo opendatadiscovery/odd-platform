@@ -7,15 +7,17 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface TermRelationsRepository {
-    Mono<DataEntityToTermPojo> createRelationWithDataEntity(final Long dataEntityId, final Long termId);
+    Mono<DataEntityToTermPojo> createRelationWithDataEntity(final long dataEntityId, final long termId);
 
     Flux<DataEntityToTermPojo> createRelationsWithDataEntity(final List<DataEntityToTermPojo> relations);
 
-    Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId);
+    Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final long dataEntityId);
 
-    Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId);
+    Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final long termId);
 
-    Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId);
+    Flux<DatasetFieldToTermPojo> deleteRelationsWithDatasetFields(final long termId);
+
+    Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final long dataEntityId, final long termId);
 
     Flux<DataEntityToTermPojo> deleteTermDataEntityRelations(final List<DataEntityToTermPojo> relations);
 

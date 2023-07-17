@@ -2641,6 +2641,8 @@ components:
           type: string
         namespace:
           type: string
+        description_link:
+          type: boolean
 
     DescriptionActivityState:
       type: object

@@ -4,7 +4,7 @@ import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -17,9 +17,9 @@ public class DatasetFieldTermAssignmentDeletedActivityHandler extends AbstractDa
     implements ActivityHandler {
     private final ReactiveDatasetFieldRepository datasetFieldRepository;
 
-    public DatasetFieldTermAssignmentDeletedActivityHandler(final ReactiveTermRepository reactiveTermRepository,
+    public DatasetFieldTermAssignmentDeletedActivityHandler(final TermService termService,
                                                             final ReactiveDatasetFieldRepository repository) {
-        super(reactiveTermRepository);
+        super(termService);
         this.datasetFieldRepository = repository;
     }
 

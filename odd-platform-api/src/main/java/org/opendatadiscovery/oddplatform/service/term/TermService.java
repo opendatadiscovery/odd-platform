@@ -7,10 +7,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
+import org.opendatadiscovery.oddplatform.dto.term.DescriptionParsedTerms;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -31,15 +29,15 @@ public interface TermService {
 
     Mono<Void> removeTermFromDataEntity(final Long termId, final Long dataEntityId);
 
-    Flux<DataEntityToTermPojo> updateDataEntityDescriptionTermsState(final List<TermPojo> terms,
-                                                                     final long dataEntityId);
+    Mono<Void> updateDataEntityDescriptionTermsState(final DescriptionParsedTerms terms,
+                                                     final long dataEntityId);
 
     Mono<TermRef> linkTermWithDatasetField(final Long termId, final Long datasetFieldId);
 
     Mono<Void> removeTermFromDatasetField(final Long termId, final Long datasetFieldId);
 
-    Flux<DatasetFieldToTermPojo> updateDatasetFieldDescriptionTermsState(final List<TermPojo> terms,
-                                                                         final long datasetFieldId);
+    Mono<Void> updateDatasetFieldDescriptionTermsState(final DescriptionParsedTerms terms,
+                                                       final long datasetFieldId);
 
     Flux<Tag> upsertTags(final Long termId, final TagsFormData tagsFormData);
 
@@ -47,5 +45,5 @@ public interface TermService {
 
     Mono<List<LinkedTermDto>> getDatasetFieldTerms(final long datasetFieldId);
 
-    Mono<List<TermPojo>> findTermsInDescription(final String description);
+    Mono<DescriptionParsedTerms> findTermsInDescription(final String description);
 }
