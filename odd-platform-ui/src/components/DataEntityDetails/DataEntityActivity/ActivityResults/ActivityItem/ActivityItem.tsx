@@ -104,24 +104,24 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && (
-          <TermActivityField
-            oldState={activity.oldState.terms}
-            newState={activity.newState.terms}
-            hideAllDetails={hideAllDetails}
-            eventType='assigned'
-            stateDirection='column'
-          />
-        )}
-        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && (
-          <TermActivityField
-            oldState={activity.oldState.terms}
-            newState={activity.newState.terms}
-            hideAllDetails={hideAllDetails}
-            eventType='deleted'
-            stateDirection='column'
-          />
-        )}
+        {/* {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && ( */}
+        {/*   <TermActivityField */}
+        {/*     oldState={activity.oldState.terms} */}
+        {/*     newState={activity.newState.terms} */}
+        {/*     hideAllDetails={hideAllDetails} */}
+        {/*     eventType='assigned' */}
+        {/*     stateDirection='column' */}
+        {/*   /> */}
+        {/* )} */}
+        {/* {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && ( */}
+        {/*   <TermActivityField */}
+        {/*     oldState={activity.oldState.terms} */}
+        {/*     newState={activity.newState.terms} */}
+        {/*     hideAllDetails={hideAllDetails} */}
+        {/*     eventType='deleted' */}
+        {/*     stateDirection='column' */}
+        {/*   /> */}
+        {/* )} */}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_VALUES_UPDATED]) && (
           <EnumsActivityField
             oldState={activity.oldState.datasetFieldValues}
@@ -129,20 +129,20 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && (
-          <DatasetTermActivityField
-            oldState={activity.oldState.datasetFieldTerms}
-            newState={activity.newState.datasetFieldTerms}
-            hideAllDetails={hideAllDetails}
-          />
-        )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && (
-          <DatasetTermActivityField
-            oldState={activity.oldState.datasetFieldTerms}
-            newState={activity.newState.datasetFieldTerms}
-            hideAllDetails={hideAllDetails}
-          />
-        )}
+        {/* {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && ( */}
+        {/*   <DatasetTermActivityField */}
+        {/*     oldState={activity.oldState.datasetFieldTerms} */}
+        {/*     newState={activity.newState.datasetFieldTerms} */}
+        {/*     hideAllDetails={hideAllDetails} */}
+        {/*   /> */}
+        {/* )} */}
+        {/* {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && ( */}
+        {/*   <DatasetTermActivityField */}
+        {/*     oldState={activity.oldState.datasetFieldTerms} */}
+        {/*     newState={activity.newState.datasetFieldTerms} */}
+        {/*     hideAllDetails={hideAllDetails} */}
+        {/*   /> */}
+        {/* )} */}
         {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
           <ActivityFieldHeader
             eventType='created'

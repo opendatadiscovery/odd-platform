@@ -2,10 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import type { DataEntitiesState } from 'redux/interfaces';
 import keyBy from 'lodash/keyBy';
-import type { DataEntityDetails, LinkedTerm } from 'generated-sources';
+import type { DataEntityDetails } from 'generated-sources';
 import omit from 'lodash/omit';
 import { dataEntitiesActionTypePrefix } from 'redux/actions';
-import uniqBy from 'lodash/uniqBy';
 import filter from 'lodash/filter';
 
 export const initialState: DataEntitiesState = {
@@ -100,12 +99,9 @@ export const dataEntitiesSlice = createSlice({
     });
 
     builder.addCase(thunks.addDataEntityTerm.fulfilled, (state, { payload }) => {
-      const { dataEntityId, term } = payload;
+      const { dataEntityId, linkedTerm } = payload;
 
-      const terms: Array<LinkedTerm> = [
-        ...(state.byId[dataEntityId].terms || []),
-        { term, descriptionLink: false },
-      ];
+      const terms = [...(state.byId[dataEntityId].terms || []), linkedTerm];
 
       return {
         ...state,

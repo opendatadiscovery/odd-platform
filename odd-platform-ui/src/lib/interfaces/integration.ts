@@ -65,7 +65,7 @@ export const DatasourceNames = [
   'druid',
   'duckdb',
   'mariadb',
-  'sqlite'
+  'sqlite',
 ] as const;
 export type DatasourceName = (typeof DatasourceNames)[number];
 

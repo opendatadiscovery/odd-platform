@@ -18,11 +18,11 @@ const AssignFieldTermForm: FC<AssignFieldTermFormProps> = ({
 
   const onSubmit = useCallback(
     (clearState: () => void) =>
-      ({ termId }: DataEntityTermFormData) => {
-        addTerm({ datasetFieldId, termId }).then(term => {
-          handleAddTerm({ term, descriptionLink: false });
-          clearState();
-        });
+      async ({ termId }: DataEntityTermFormData) => {
+        const linkedTerm = await addTerm({ datasetFieldId, termId });
+
+        handleAddTerm(linkedTerm);
+        clearState();
       },
     [addTerm, handleAddTerm]
   );
