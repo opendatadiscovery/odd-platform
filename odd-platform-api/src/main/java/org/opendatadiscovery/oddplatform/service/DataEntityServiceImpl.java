@@ -80,7 +80,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagReposito
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.InternalNameUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TagsAssociationUpdated;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -96,7 +95,6 @@ import static org.apache.commons.lang3.ArrayUtils.contains;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.CUSTOM_GROUP;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_DESCRIPTION;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_METADATA;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_NAME;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_TAGS;
@@ -113,6 +111,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final MetadataFieldService metadataFieldService;
     private final DataSourceService dataSourceService;
     private final TermService termService;
+    private final DataEntityInternalInformationService dataEntityInternalInformationService;
 
     private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
     private final ReactiveMetadataFieldRepository reactiveMetadataFieldRepository;
@@ -321,34 +320,14 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     @Override
-    @ActivityLog(event = ActivityEventTypeDto.DESCRIPTION_UPDATED)
     @ReactiveTransactional
-    public Mono<InternalDescription> upsertDescription(
-        @ActivityParameter(DescriptionUpdated.DATA_ENTITY_ID) final long dataEntityId,
-        final InternalDescriptionFormData formData) {
-        final Mono<List<LinkedTermDto>> termsMono = termService
-            .findTermsInDescription(formData.getInternalDescription())
-            .flatMap(parsedTerms -> termService.updateDataEntityDescriptionTermsState(parsedTerms, dataEntityId))
-            .then(termService.getDataEntityTerms(dataEntityId));
-
-        final Mono<DataEntityPojo> pojoMono =
-            reactiveDataEntityRepository.setInternalDescription(dataEntityId, formData.getInternalDescription());
-
-        return Mono.zip(pojoMono, termsMono)
-            .map(function((pojo, terms) -> {
+    public Mono<InternalDescription> upsertDescription(final long dataEntityId,
+                                                       final InternalDescriptionFormData formData) {
+        return dataEntityInternalInformationService.updateDescription(dataEntityId, formData)
+            .then(termService.handleDataEntityDescriptionTerms(dataEntityId, formData.getInternalDescription()))
+            .map(terms -> {
                 final List<LinkedTerm> linkedTerms = terms.stream().map(termMapper::mapToLinkedTerm).toList();
-                return new InternalDescription(pojo.getInternalDescription(), linkedTerms);
-            }))
-            .flatMap(in -> reactiveSearchEntrypointRepository.updateDataEntityVectors(dataEntityId)
-                .thenReturn(in))
-            .flatMap(in -> {
-                if (StringUtils.isNotEmpty(in.getInternalDescription())) {
-                    return dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_DESCRIPTION)
-                        .thenReturn(in);
-                } else {
-                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_DESCRIPTION)
-                        .thenReturn(in);
-                }
+                return new InternalDescription(formData.getInternalDescription(), linkedTerms);
             });
     }
 

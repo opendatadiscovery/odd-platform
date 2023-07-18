@@ -48,3 +48,10 @@ SET new_state = (SELECT jsonb_set(new_state::jsonb, '{terms}',
 WHERE event_type IN ('DATASET_FIELD_TERM_ASSIGNED', 'DATASET_FIELD_TERM_ASSIGNMENT_DELETED')
   AND jsonb_array_length(new_state -> 'terms') <> 0;
 
+UPDATE activity
+SET event_type = 'TERM_ASSIGNMENT_UPDATED'
+WHERE event_type IN ('TERM_ASSIGNED', 'TERM_ASSIGNMENT_DELETED');
+
+UPDATE activity
+SET event_type = 'DATASET_FIELD_TERM_ASSIGNMENT_UPDATED'
+WHERE event_type IN ('DATASET_FIELD_TERM_ASSIGNED', 'DATASET_FIELD_TERM_ASSIGNMENT_DELETED');

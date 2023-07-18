@@ -92,6 +92,8 @@ public class DataEntityServiceTest {
     private MetadataFieldService metadataFieldService;
     @Mock
     private DataSourceService dataSourceService;
+    @Mock
+    private DataEntityInternalInformationService dataEntityInternalInformationService;
 
     @BeforeEach
     public void beforeAll() {
@@ -102,6 +104,7 @@ public class DataEntityServiceTest {
             metadataFieldService,
             dataSourceService,
             termService,
+            dataEntityInternalInformationService,
             metadataFieldValueRepository,
             metadataFieldRepository,
             reactiveDataEntityRepository,

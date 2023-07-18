@@ -204,7 +204,7 @@ public class ActivityMapperTest {
     private String generateState(final ActivityEventTypeDto eventTypeDto) {
         return switch (eventTypeDto) {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> generateOwnershipState();
-            case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> generateTermsState();
+            case TERM_ASSIGNMENT_UPDATED -> generateTermsState();
             case DATA_ENTITY_CREATED -> generateDataEntityCreatedState();
             case TAG_ASSIGNMENT_UPDATED -> generateTagsState();
             case DESCRIPTION_UPDATED -> generateDescriptionState();
@@ -216,7 +216,7 @@ public class ActivityMapperTest {
             case ALERT_HALT_CONFIG_UPDATED -> generateAlertHaltConfigState();
             case ALERT_STATUS_UPDATED -> generateAlertStatusState();
             case OPEN_ALERT_RECEIVED, RESOLVED_ALERT_RECEIVED -> generateAlertReceivedState();
-            case DATASET_FIELD_TERM_ASSIGNED, DATASET_FIELD_TERM_ASSIGNMENT_DELETED -> generateDatasetFieldTermsState();
+            case DATASET_FIELD_TERM_ASSIGNMENT_UPDATED -> generateDatasetFieldTermsState();
             default -> "";
         };
     }

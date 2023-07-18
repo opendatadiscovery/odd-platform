@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldLabelActivityStateDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -31,7 +31,7 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
         final long datasetFieldId =
-            (long) parameters.get(ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID);
+            (long) parameters.get(DatasetFieldInformationUpdated.DATASET_FIELD_ID);
         return Mono.zip(datasetFieldRepository.getDatasetFieldWithLabels(datasetFieldId),
                 datasetFieldRepository.getDataEntityIdByDatasetFieldId(datasetFieldId))
             .map(function((dto, dataEntityId) -> ActivityContextInfo.builder()
@@ -44,7 +44,7 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
     @Override
     public Mono<String> getUpdatedState(final Map<String, Object> parameters, final Long dataEntityId) {
         final long datasetFieldId =
-            (long) parameters.get(ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID);
+            (long) parameters.get(DatasetFieldInformationUpdated.DATASET_FIELD_ID);
         return datasetFieldRepository.getDatasetFieldWithLabels(datasetFieldId)
             .map(this::getState);
     }

@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.CustomGroupDeleted;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +23,7 @@ public class CustomGroupDeletedActivityHandler extends AbstractCustomGroupActivi
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
-        final long dataEntityId = (long) parameters.get(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID);
+        final long dataEntityId = (long) parameters.get(CustomGroupDeleted.DATA_ENTITY_ID);
         return getCurrentState(dataEntityId)
             .map(state -> ActivityContextInfo.builder().oldState(state).dataEntityId(dataEntityId).build());
     }

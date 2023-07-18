@@ -4,7 +4,7 @@ import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipCreate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +22,7 @@ public class OwnershipCreatedActivityHandler extends AbstractOwnershipActivityHa
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
-        final long dataEntityId = (long) parameters.get(ActivityParameterNames.OwnershipCreate.DATA_ENTITY_ID);
+        final long dataEntityId = (long) parameters.get(OwnershipCreate.DATA_ENTITY_ID);
         return getDataEntityOwnerships(dataEntityId)
             .map(state -> ActivityContextInfo.builder()
                 .oldState(state)

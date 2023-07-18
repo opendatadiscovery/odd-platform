@@ -11,8 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface DatasetFieldService {
-    Mono<DataSetFieldDescription> updateDatasetFieldDescription(final long datasetFieldId,
-                                                                final DatasetFieldDescriptionUpdateFormData formData);
+    Mono<DataSetFieldDescription> updateDescription(final long datasetFieldId,
+                                                    final DatasetFieldDescriptionUpdateFormData formData);
 
     Flux<Label> updateDatasetFieldLabels(final long datasetFieldId,
                                          final DatasetFieldLabelsUpdateFormData formData);

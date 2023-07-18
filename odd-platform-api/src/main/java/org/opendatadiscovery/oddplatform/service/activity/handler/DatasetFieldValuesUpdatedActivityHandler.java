@@ -11,7 +11,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldValuesUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -32,8 +32,7 @@ public class DatasetFieldValuesUpdatedActivityHandler implements ActivityHandler
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
-        final long datasetFieldId =
-            (long) parameters.get(ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID);
+        final long datasetFieldId = (long) parameters.get(DatasetFieldValuesUpdated.DATASET_FIELD_ID);
         return Mono.zip(enumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId).collectList(),
                 datasetFieldRepository.getDataEntityIdByDatasetFieldId(datasetFieldId),
                 datasetFieldRepository.get(datasetFieldId))
@@ -45,8 +44,7 @@ public class DatasetFieldValuesUpdatedActivityHandler implements ActivityHandler
 
     @Override
     public Mono<String> getUpdatedState(final Map<String, Object> parameters, final Long dataEntityId) {
-        final long datasetFieldId =
-            (long) parameters.get(ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID);
+        final long datasetFieldId = (long) parameters.get(DatasetFieldValuesUpdated.DATASET_FIELD_ID);
         return Mono.zip(enumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId).collectList(),
                 datasetFieldRepository.get(datasetFieldId))
             .map(function(this::getState));

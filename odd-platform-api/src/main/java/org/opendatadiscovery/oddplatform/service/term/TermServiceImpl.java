@@ -8,8 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
@@ -43,12 +45,9 @@ import org.opendatadiscovery.oddplatform.service.TagService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.FieldTermAssigned;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.FieldTermAssignmentDeleted;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TermAssigned;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TermAssignmentDeleted;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.FieldTermAssignment;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TermAssignment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -61,14 +60,16 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.TERMS;
 public class TermServiceImpl implements TermService {
     private static final Pattern PATTERN = Pattern.compile("\\[\\[(.*?):(.*?)]]");
 
-    private final ReactiveTermRepository termRepository;
-    private final TermRelationsRepository termRelationsRepository;
     private final NamespaceService namespaceService;
     private final TagService tagService;
+    private final DataEntityFilledService dataEntityFilledService;
+
+    private final ReactiveTermRepository termRepository;
+    private final TermRelationsRepository termRelationsRepository;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final DataEntityDescriptionUnhandledTermRepository dataEntityDescriptionUnhandledTermRepository;
     private final DatasetFieldDescriptionUnhandledTermRepositoryImpl datasetFieldDescriptionUnhandledTermRepository;
-    private final DataEntityFilledService dataEntityFilledService;
+
     private final TermMapper termMapper;
     private final TagMapper tagMapper;
 
@@ -155,22 +156,23 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNED)
-    public Mono<TermRef> linkTermWithDataEntity(final Long termId,
-                                                @ActivityParameter(TermAssigned.DATA_ENTITY_ID)
-                                                final Long dataEntityId) {
+    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNMENT_UPDATED)
+    public Mono<LinkedTerm> linkTermWithDataEntity(final Long termId,
+                                                   @ActivityParameter(TermAssignment.DATA_ENTITY_ID)
+                                                   final Long dataEntityId) {
         return termRelationsRepository.createRelationWithDataEntity(dataEntityId, termId)
             .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Term already assigned to data entity")))
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
+            .map(termRefDto -> new LinkedTermDto(termRefDto, false))
             .flatMap(termRefDto -> dataEntityFilledService.markEntityFilled(dataEntityId, TERMS).thenReturn(termRefDto))
-            .map(termMapper::mapToRef);
+            .map(termMapper::mapToLinkedTerm);
     }
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNMENT_DELETED)
+    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNMENT_UPDATED)
     public Mono<Void> removeTermFromDataEntity(final Long termId,
-                                               @ActivityParameter(TermAssignmentDeleted.DATA_ENTITY_ID)
+                                               @ActivityParameter(TermAssignment.DATA_ENTITY_ID)
                                                final Long dataEntityId) {
         return termRelationsRepository.deleteRelationWithDataEntity(dataEntityId, termId)
             .flatMap(pojo -> getDataEntityTerms(pojo.getDataEntityId()))
@@ -185,51 +187,34 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    public Mono<Void> updateDataEntityDescriptionTermsState(final DescriptionParsedTerms terms,
-                                                            final long dataEntityId) {
-        final Mono<List<LinkedTermDto>> existingDescriptionRelations = termRepository.getDataEntityTerms(dataEntityId)
-            .filter(LinkedTermDto::descriptionLink)
-            .collectList();
-        return existingDescriptionRelations.flatMap(existing -> {
-            final List<DataEntityToTermPojo> relationsToDelete = existing.stream()
-                .map(dto -> dto.term().getTerm())
-                .filter(pojo -> !terms.foundTerms().contains(pojo))
-                .map(pojo -> new DataEntityToTermPojo()
-                    .setDataEntityId(dataEntityId)
-                    .setTermId(pojo.getId())
-                    .setDescriptionLink(true))
-                .toList();
-
-            final List<DataEntityToTermPojo> relations =
-                buildDataEntityDescriptionTermRelations(terms.foundTerms(), dataEntityId);
-            final List<DataEntityDescriptionUnhandledTermPojo> unknownPojos =
-                buildDataEntityUnknownTerms(terms.unknownTerms(), dataEntityId);
-
-            return termRelationsRepository.deleteTermDataEntityRelations(relationsToDelete)
-                .thenMany(termRelationsRepository.createRelationsWithDataEntity(relations))
-                .thenMany(dataEntityDescriptionUnhandledTermRepository.createUnhandledTerms(unknownPojos))
-                .then();
-        });
+    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNMENT_UPDATED)
+    public Mono<List<LinkedTermDto>> handleDataEntityDescriptionTerms(
+        @ActivityParameter(TermAssignment.DATA_ENTITY_ID) final long dataEntityId,
+        final String description) {
+        return findTermsInDescription(description)
+            .flatMap(parsedTerms -> updateDataEntityDescriptionTermsState(parsedTerms, dataEntityId))
+            .then(getDataEntityTerms(dataEntityId));
     }
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNED)
-    public Mono<TermRef> linkTermWithDatasetField(final Long termId,
-                                                  @ActivityParameter(FieldTermAssigned.DATASET_FIELD_ID)
-                                                  final Long datasetFieldId) {
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNMENT_UPDATED)
+    public Mono<LinkedTerm> linkTermWithDatasetField(final Long termId,
+                                                     @ActivityParameter(FieldTermAssignment.DATASET_FIELD_ID)
+                                                     final Long datasetFieldId) {
         return termRelationsRepository.createRelationWithDatasetField(datasetFieldId, termId)
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
+            .map(termRefDto -> new LinkedTermDto(termRefDto, false))
             .flatMap(termRefDto -> dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
                 DATASET_FIELD_TERMS).thenReturn(termRefDto))
-            .map(termMapper::mapToRef);
+            .map(termMapper::mapToLinkedTerm);
     }
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNMENT_DELETED)
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNMENT_UPDATED)
     public Mono<Void> removeTermFromDatasetField(final Long termId,
-                                                 @ActivityParameter(FieldTermAssignmentDeleted.DATASET_FIELD_ID)
+                                                 @ActivityParameter(FieldTermAssignment.DATASET_FIELD_ID)
                                                  final Long datasetFieldId) {
         return termRelationsRepository.deleteRelationWithDatasetField(datasetFieldId, termId)
             .then(termRepository.getDatasetFieldTerms(datasetFieldId).collectList())
@@ -245,32 +230,13 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    public Mono<Void> updateDatasetFieldDescriptionTermsState(final DescriptionParsedTerms terms,
-                                                              final long datasetFieldId) {
-        final Mono<List<LinkedTermDto>> existingDescriptionRelations = termRepository
-            .getDatasetFieldTerms(datasetFieldId)
-            .filter(LinkedTermDto::descriptionLink)
-            .collectList();
-
-        return existingDescriptionRelations.flatMap(existing -> {
-            final List<DatasetFieldToTermPojo> relationsToDelete = existing.stream()
-                .map(dto -> dto.term().getTerm())
-                .filter(pojo -> !terms.foundTerms().contains(pojo))
-                .map(pojo -> new DatasetFieldToTermPojo()
-                    .setDatasetFieldId(datasetFieldId)
-                    .setTermId(pojo.getId())
-                    .setDescriptionLink(true))
-                .toList();
-            final List<DatasetFieldToTermPojo> relations =
-                buildDatasetFieldDescriptionTermRelations(terms.foundTerms(), datasetFieldId);
-            final List<DatasetFieldDescriptionUnhandledTermPojo> unknownPojos =
-                buildDatasetFieldUnknownTerms(terms.unknownTerms(), datasetFieldId);
-
-            return termRelationsRepository.deleteTermDatasetFieldRelations(relationsToDelete)
-                .thenMany(termRelationsRepository.createRelationsWithDatasetField(relations))
-                .thenMany(datasetFieldDescriptionUnhandledTermRepository.createUnhandledTerms(unknownPojos))
-                .then();
-        });
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TERM_ASSIGNMENT_UPDATED)
+    public Mono<List<LinkedTermDto>> handleDatasetFieldDescriptionTerms(
+        @ActivityParameter(FieldTermAssignment.DATASET_FIELD_ID) final long datasetFieldId,
+        final String description) {
+        return findTermsInDescription(description)
+            .flatMap(parsedTerms -> updateDatasetFieldDescriptionTermsState(parsedTerms, datasetFieldId))
+            .then(getDatasetFieldTerms(datasetFieldId));
     }
 
     @Override
@@ -296,32 +262,6 @@ public class TermServiceImpl implements TermService {
     public Mono<List<LinkedTermDto>> getDatasetFieldTerms(final long datasetFieldId) {
         final Flux<LinkedTermDto> datasetFieldTerms = termRepository.getDatasetFieldTerms(datasetFieldId);
         return removeDuplicateNonDescriptionTerms(datasetFieldTerms).collectList();
-    }
-
-    @Override
-    public Mono<DescriptionParsedTerms> findTermsInDescription(final String description) {
-        if (StringUtils.isEmpty(description)) {
-            return Mono.just(new DescriptionParsedTerms(List.of(), List.of()));
-        }
-        final Matcher matcher = PATTERN.matcher(description);
-        final List<TermBaseInfoDto> parsedTerms = new ArrayList<>();
-        while (matcher.find()) {
-            final String namespaceName = matcher.group(1);
-            final String name = matcher.group(2);
-            if (StringUtils.isNotEmpty(namespaceName) && StringUtils.isNotEmpty(name)) {
-                parsedTerms.add(new TermBaseInfoDto(namespaceName, name));
-            }
-        }
-        return termRepository.getByNameAndNamespace(parsedTerms)
-            .map(foundTerms -> {
-                final List<TermBaseInfoDto> unknownTerms = parsedTerms.stream()
-                    .filter(t -> isTermUnknown(foundTerms, t))
-                    .toList();
-                final List<TermPojo> termPojos = foundTerms.stream()
-                    .map(TermRefDto::getTerm)
-                    .toList();
-                return new DescriptionParsedTerms(termPojos, unknownTerms);
-            });
     }
 
     private Mono<TermDetails> update(final TermPojo pojo) {
@@ -350,6 +290,86 @@ public class TermServiceImpl implements TermService {
                                               final TermRefDto existingTerm) {
         return existingTerm.getNamespace().getName().equalsIgnoreCase(formData.getNamespaceName())
             && existingTerm.getTerm().getName().equalsIgnoreCase(formData.getName());
+    }
+
+    private Mono<DescriptionParsedTerms> findTermsInDescription(final String description) {
+        if (StringUtils.isEmpty(description)) {
+            return Mono.just(new DescriptionParsedTerms(List.of(), List.of()));
+        }
+        final Matcher matcher = PATTERN.matcher(description);
+        final List<TermBaseInfoDto> parsedTerms = new ArrayList<>();
+        while (matcher.find()) {
+            final String namespaceName = matcher.group(1);
+            final String name = matcher.group(2);
+            if (StringUtils.isNotEmpty(namespaceName) && StringUtils.isNotEmpty(name)) {
+                parsedTerms.add(new TermBaseInfoDto(namespaceName, name));
+            }
+        }
+        return termRepository.getByNameAndNamespace(parsedTerms)
+            .map(foundTerms -> {
+                final List<TermBaseInfoDto> unknownTerms = parsedTerms.stream()
+                    .filter(t -> isTermUnknown(foundTerms, t))
+                    .toList();
+                final List<TermPojo> termPojos = foundTerms.stream()
+                    .map(TermRefDto::getTerm)
+                    .toList();
+                return new DescriptionParsedTerms(termPojos, unknownTerms);
+            });
+    }
+
+    private Mono<Void> updateDataEntityDescriptionTermsState(final DescriptionParsedTerms terms,
+                                                             final long dataEntityId) {
+        final Mono<List<LinkedTermDto>> existingDescriptionRelations = termRepository.getDataEntityTerms(dataEntityId)
+            .filter(LinkedTermDto::descriptionLink)
+            .collectList();
+        return existingDescriptionRelations.flatMap(existing -> {
+            final List<DataEntityToTermPojo> relationsToDelete = existing.stream()
+                .map(dto -> dto.term().getTerm())
+                .filter(pojo -> !terms.foundTerms().contains(pojo))
+                .map(pojo -> new DataEntityToTermPojo()
+                    .setDataEntityId(dataEntityId)
+                    .setTermId(pojo.getId())
+                    .setDescriptionLink(true))
+                .toList();
+
+            final List<DataEntityToTermPojo> relations =
+                buildDataEntityDescriptionTermRelations(terms.foundTerms(), dataEntityId);
+            final List<DataEntityDescriptionUnhandledTermPojo> unknownPojos =
+                buildDataEntityUnknownTerms(terms.unknownTerms(), dataEntityId);
+
+            return termRelationsRepository.deleteTermDataEntityRelations(relationsToDelete)
+                .thenMany(termRelationsRepository.createRelationsWithDataEntity(relations))
+                .thenMany(dataEntityDescriptionUnhandledTermRepository.createUnhandledTerms(unknownPojos))
+                .then();
+        });
+    }
+
+    private Mono<Void> updateDatasetFieldDescriptionTermsState(final DescriptionParsedTerms terms,
+                                                               final long datasetFieldId) {
+        final Mono<List<LinkedTermDto>> existingDescriptionRelations = termRepository
+            .getDatasetFieldTerms(datasetFieldId)
+            .filter(LinkedTermDto::descriptionLink)
+            .collectList();
+
+        return existingDescriptionRelations.flatMap(existing -> {
+            final List<DatasetFieldToTermPojo> relationsToDelete = existing.stream()
+                .map(dto -> dto.term().getTerm())
+                .filter(pojo -> !terms.foundTerms().contains(pojo))
+                .map(pojo -> new DatasetFieldToTermPojo()
+                    .setDatasetFieldId(datasetFieldId)
+                    .setTermId(pojo.getId())
+                    .setDescriptionLink(true))
+                .toList();
+            final List<DatasetFieldToTermPojo> relations =
+                buildDatasetFieldDescriptionTermRelations(terms.foundTerms(), datasetFieldId);
+            final List<DatasetFieldDescriptionUnhandledTermPojo> unknownPojos =
+                buildDatasetFieldUnknownTerms(terms.unknownTerms(), datasetFieldId);
+
+            return termRelationsRepository.deleteTermDatasetFieldRelations(relationsToDelete)
+                .thenMany(termRelationsRepository.createRelationsWithDatasetField(relations))
+                .thenMany(datasetFieldDescriptionUnhandledTermRepository.createUnhandledTerms(unknownPojos))
+                .then();
+        });
     }
 
     private Mono<Void> resolveUnhandledDescriptionMentions(final TermDetails details) {
