@@ -1067,7 +1067,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/TermRef'
+                $ref: './components.yaml/#/components/schemas/LinkedTerm'
       tags:
         - dataEntity
 
@@ -2232,7 +2232,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/TermRef'
+                $ref: './components.yaml/#/components/schemas/LinkedTerm'
       tags:
         - datasetField
 
