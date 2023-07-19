@@ -3,10 +3,9 @@ import React from 'react';
 import { getIdentityFetchingStatuses, getTagListFetchingStatuses } from 'redux/selectors';
 import { MainSearch, SkeletonWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { DataEntityStatusEnum, Permission } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import Domains from 'components/Overview/Domains/Domains';
-import EntityStatus from 'components/shared/elements/EntityStatus/EntityStatus';
 import DataEntitiesUsageInfo from './DataEntitiesUsageInfo/DataEntitiesUsageInfo';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
@@ -37,35 +36,6 @@ const Overview: React.FC = () => {
     <S.Container>
       <Grid container justifyContent='center' sx={{ pt: 4, pb: 5 }}>
         <MainSearch mainSearch />
-      </Grid>
-      <Grid container sx={{ columnGap: '8px' }}>
-        {/* <EntityStatus entityStatus={{ status: DataEntityStatusEnum.UNASSIGNED }} /> */}
-        <EntityStatus
-          entityStatus={{
-            status: DataEntityStatusEnum.DRAFT,
-            statusSwitchTime: new Date('2023-07-17T03:24:00'),
-          }}
-        />
-        <EntityStatus
-          selectable
-          entityStatus={{
-            status: DataEntityStatusEnum.STABLE,
-            statusSwitchTime: new Date('2023-07-17T03:24:00'),
-          }}
-        />
-        <EntityStatus
-          selectable
-          entityStatus={{
-            status: DataEntityStatusEnum.DEPRECATED,
-            statusSwitchTime: new Date('2023-07-17T03:24:00'),
-          }}
-        />
-        <EntityStatus
-          entityStatus={{
-            status: DataEntityStatusEnum.DELETED,
-            statusSwitchTime: new Date('2023-07-17T03:24:00'),
-          }}
-        />
       </Grid>
       <S.TagsContainer container>
         <TopTagsList />
