@@ -288,4 +288,36 @@ export const palette = createPalette({
     hover: { background: colors.blue5, color: colors.black80 },
     active: { background: colors.blue10, color: colors.black90 },
   },
+  entityStatus: {
+    UNASSIGNED: {
+      normal: { background: colors.blue5, color: colors.black90 },
+      hover: { background: colors.blue10, color: colors.black90 },
+      active: { background: colors.blue20, color: colors.black90 },
+      disabled: { background: colors.blue5, color: colors.blue20 },
+    },
+    DRAFT: {
+      normal: { background: colors.black5, color: colors.black90 },
+      hover: { background: colors.black10, color: colors.black90 },
+      active: { background: colors.black15, color: colors.black90 },
+      disabled: { background: colors.black5, color: colors.black20 },
+    },
+    STABLE: {
+      normal: { background: colors.green5, color: colors.black90 },
+      hover: { background: colors.green10, color: colors.black90 },
+      active: { background: colors.green20, color: colors.black90 },
+      disabled: { background: colors.green5, color: colors.green20 },
+    },
+    DEPRECATED: {
+      normal: { background: colors.orange5, color: colors.black90 },
+      hover: { background: colors.orange10, color: colors.black90 },
+      active: { background: colors.orange20, color: colors.black90 },
+      disabled: { background: colors.orange5, color: colors.orange20 },
+    },
+    DELETED: {
+      normal: { background: colors.red5, color: colors.black90 },
+      hover: { background: colors.red10, color: colors.black90 },
+      active: { background: colors.red20, color: colors.black90 },
+      disabled: { background: colors.red5, color: colors.red20 },
+    },
+  },
 });

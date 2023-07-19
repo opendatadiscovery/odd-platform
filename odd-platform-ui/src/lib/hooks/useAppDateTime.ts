@@ -5,6 +5,7 @@ import {
   formatDuration,
   intervalToDuration,
   minutesToMilliseconds,
+  formatDistanceToNow,
 } from 'date-fns';
 import {
   datedListFormat,
@@ -31,6 +32,7 @@ type TimeZones = 'us' | 'eu';
 type DateTimePatterns = Record<DateTimePatternNames, { [key in TimeZones]: string }>;
 type Helpers = {
   formatDistanceStrict: (...args: Parameters<typeof formatDistanceStrict>) => string;
+  formatDistanceToNow: (...args: Parameters<typeof formatDistanceToNow>) => string;
   formatDistanceToNowStrict: (
     ...args: Parameters<typeof formatDistanceToNowStrict>
   ) => string;
@@ -74,6 +76,7 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
   };
 
   return {
+    formatDistanceToNow,
     formatDistanceToNowStrict,
     formatDistanceStrict,
     formatDuration,
