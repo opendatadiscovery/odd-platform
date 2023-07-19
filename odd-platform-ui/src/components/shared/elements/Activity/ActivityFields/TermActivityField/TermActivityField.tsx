@@ -5,7 +5,8 @@ import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
-import * as S from 'components/shared/elements/Activity/ActivityFields/TermActivityField/TermActivityFieldStyles';
+import { LinkedTermIcon } from 'components/shared/icons';
+import * as S from './TermActivityField.styles';
 
 interface ActivityData extends TermActivityState {
   typeOfChange?: EventType;
@@ -30,15 +31,12 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
-  const [changedItem, setChangedItem] = React.useState<ActivityData>({});
-
   const sortChangedItemsLast = (item: ActivityData) => (item.typeOfChange ? 1 : -1);
 
   const setOldState = () =>
     oldState
       ?.map<ActivityData>(oldItem => {
         if (!newState?.some(newItem => oldItem.id === newItem.id)) {
-          setChangedItem(oldItem);
           return { ...oldItem, typeOfChange: 'deleted' };
         }
         return oldItem;
@@ -49,7 +47,6 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
     newState
       ?.map<ActivityData>(newItem => {
         if (!oldState?.some(oldItem => oldItem.id === newItem.id)) {
-          setChangedItem(newItem);
           return { ...newItem, typeOfChange: 'created' };
         }
         return newItem;
@@ -83,7 +80,8 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
       </Typography>
       {terms.map(term => (
         <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
-          <Box sx={{ p: 0.5 }}>{term.name}</Box>
+          <Box sx={{ mr: 0.5 }}>{term.name}</Box>
+          {term.descriptionLink && <LinkedTermIcon />}
         </S.ArrayItemWrapper>
       ))}
     </Grid>
@@ -92,12 +90,13 @@ const TermActivityField: React.FC<TermActivityFieldProps> = ({
   return (
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText='Term'
-        activityName={`${changedItem.name} in ${changedItem.namespace}`}
+        startText=''
+        activityName='Terms assignment'
         eventType={eventType}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
+        plural
       />
       <ActivityFieldState
         stateDirection={stateDirection}

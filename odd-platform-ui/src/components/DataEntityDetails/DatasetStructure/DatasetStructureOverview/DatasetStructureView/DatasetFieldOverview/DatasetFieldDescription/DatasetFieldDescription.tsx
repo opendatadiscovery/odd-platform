@@ -44,7 +44,7 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
       the pattern [[NamespaceName:TermName]]
       <br />
       <br />
-      <b>Example: [[Finance:User]]</b>
+      <b>Example: This entity describes [[Finance:User]]</b>
     </S.Tooltip>
   );
 

@@ -95,7 +95,7 @@ export default function useTermWiki({
     };
 
     fetchMissingTerms(description).finally();
-  }, []);
+  }, [description]);
 
   const handleMarkdownChange = useCallback(
     async (val: Value) => {
