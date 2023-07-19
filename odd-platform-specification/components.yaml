@@ -585,17 +585,11 @@ components:
             $ref: '#/components/schemas/TermRef'
         tags:
           $ref: '#/components/schemas/TagList'
-        status:
-          $ref: '#/components/schemas/DataEntityStatus'
-        is_stale:
-          type: boolean
       required:
         - metadata_field_values
         - external_description
         - internal_description
         - view_count
-        - status
-        - is_stale
 
     DataEntityDetails:
       type: object
@@ -1328,6 +1322,7 @@ components:
         - tags
         - types
         - groups
+        - statuses
 
     SearchFilter:
       type: object
@@ -1382,6 +1377,10 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
         groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        statuses:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -2147,6 +2146,10 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
             groups:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            statuses:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'
