@@ -1322,6 +1322,7 @@ components:
         - tags
         - types
         - groups
+        - statuses
 
     SearchFilter:
       type: object
@@ -1376,6 +1377,10 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
         groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        statuses:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -2141,6 +2146,10 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
             groups:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            statuses:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'
