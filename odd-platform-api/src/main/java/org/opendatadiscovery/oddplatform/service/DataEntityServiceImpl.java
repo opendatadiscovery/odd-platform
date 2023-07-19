@@ -21,6 +21,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomain;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
@@ -38,6 +40,7 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -78,6 +81,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagReposito
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.InternalNameUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TagsAssociationUpdated;
@@ -98,6 +102,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERN
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_METADATA;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_NAME;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_TAGS;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.STATUS;
 import static org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin.INTERNAL;
 import static reactor.function.TupleUtils.function;
 
@@ -462,6 +467,35 @@ public class DataEntityServiceImpl implements DataEntityService {
             .map(list -> new DataEntityDomainList().items(list));
     }
 
+    @Override
+    public Mono<DataEntityStatus> updateStatus(final Long dataEntityId, final DataEntityStatus status) {
+        if (isSwitchableStatus(status.getStatus()) && status.getStatusSwitchTime() == null) {
+            return Mono.error(() -> new BadUserRequestException(
+                "Status %s must have status switch time".formatted(status.getStatus())));
+        }
+        return reactiveDataEntityRepository.get(dataEntityId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("Data entity", dataEntityId)))
+            .flatMap(pojo -> {
+                final DataEntityStatusDto statusDto = DataEntityStatusDto.valueOf(status.getStatus().getValue());
+                pojo.setStatus(statusDto.getId());
+                pojo.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(status.getStatusSwitchTime()));
+                if (status.getStatus() == DataEntityStatusEnum.DELETED) {
+                    pojo.setDeletedAt(DateTimeUtil.generateNow());
+                } else {
+                    pojo.setDeletedAt(null);
+                }
+                return reactiveDataEntityRepository.update(pojo);
+            })
+            .flatMap(pojo -> {
+                if (status.getStatus() == DataEntityStatusEnum.UNASSIGNED) {
+                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, STATUS).thenReturn(pojo);
+                } else {
+                    return dataEntityFilledService.markEntityFilled(dataEntityId, STATUS).thenReturn(pojo);
+                }
+            })
+            .thenReturn(status);
+    }
+
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
         return pojo.getManuallyCreated()
             && contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
@@ -661,5 +695,9 @@ public class DataEntityServiceImpl implements DataEntityService {
             .filter(dto -> contains(dto.getDataEntity().getEntityClassIds(), entityClassDto.getId()))
             .map(dto -> dto.getDataEntity().getOddrn())
             .collect(Collectors.toSet());
+    }
+
+    private boolean isSwitchableStatus(final DataEntityStatusEnum status) {
+        return status == DataEntityStatusEnum.DRAFT || status == DataEntityStatusEnum.DEPRECATED;
     }
 }

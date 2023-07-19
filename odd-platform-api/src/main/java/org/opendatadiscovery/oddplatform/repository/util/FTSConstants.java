@@ -70,7 +70,8 @@ public class FTSConstants {
                     .from(DATA_ENTITY)
                     .where(DATA_ENTITY.ID.in(extractFilterId(filters)));
                 return GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns);
-            }
+            },
+            FacetType.STATUSES, filters -> DATA_ENTITY.STATUS.in(extractFilterId(filters))
         );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> TERM_CONDITIONS = Map.of(

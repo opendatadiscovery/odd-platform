@@ -18,6 +18,7 @@ import org.jooq.Record3;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
@@ -432,10 +433,102 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             .collect(FACET_COLLECTOR);
     }
 
+    @Override
+    public Mono<Map<SearchFilterId, Long>> getStatusFacetForDataEntity(final String query,
+                                                                       final int page,
+                                                                       final int size,
+                                                                       final FacetStateDto state) {
+        final Long selectedEntityClass = state.selectedDataEntityClass().orElse(null);
+        if (selectedEntityClass == null) {
+            return Mono.empty();
+        }
+        //todo may be need to exclude deleted at here
+        final List<Condition> conditions = getDataEntityDefaultConditions();
+        var select = DSL
+            .select(DATA_ENTITY.STATUS, count(DATA_ENTITY.ID))
+            .from(DATA_ENTITY);
+
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            select.join(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
+            conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
+        }
+
+        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
+        if (!CollectionUtils.isEmpty(dataSourceIds)) {
+            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
+        }
+        final Set<Long> ownerIds = state.getFacetEntitiesIds(FacetType.OWNERS);
+        if (!CollectionUtils.isEmpty(ownerIds)) {
+            select.join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
+            conditions.add(OWNERSHIP.OWNER_ID.in(ownerIds));
+        }
+        final Set<Long> namespaceIds = state.getFacetEntitiesIds(FacetType.NAMESPACES);
+        if (!CollectionUtils.isEmpty(namespaceIds)) {
+            select.leftJoin(DATA_SOURCE)
+                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_ENTITY.NAMESPACE_ID))
+                .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID));
+            conditions.add(NAMESPACE.ID.in(namespaceIds));
+        }
+        final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
+        if (!CollectionUtils.isEmpty(tagIds)) {
+            select = select.join(TAG_TO_DATA_ENTITY)
+                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
+            conditions.add(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
+        }
+
+        final Set<Long> groupIds = state.getFacetEntitiesIds(FacetType.GROUPS);
+        if (!CollectionUtils.isEmpty(groupIds)) {
+            select = select.join(GROUP_ENTITY_RELATIONS)
+                .on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
+
+            final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
+                .from(DATA_ENTITY)
+                .where(DATA_ENTITY.ID.in(groupIds));
+            conditions.add(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns));
+        }
+        conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {selectedEntityClass.intValue()}));
+        final List<Short> statusIds = statusIdsByName(query);
+        if (!statusIds.isEmpty()) {
+            conditions.add(DATA_ENTITY.STATUS.in(statusIds));
+        }
+
+        select
+            .where(conditions)
+            .groupBy(DATA_ENTITY.STATUS)
+            .orderBy(count(DATA_ENTITY.ID).desc())
+            .limit(size)
+            .offset((page - 1) * size);
+
+        final Flux<Pair<SearchFilterId, Long>> existingStatuses = jooqReactiveOperations.flux(select)
+            .map(r -> {
+                final DataEntityStatusDto status = DataEntityStatusDto.findById(r.component1())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("There's no status with id %d", r.component1())));
+
+                return Pair.of(statusToSearchFilter(status), r.component2().longValue());
+            });
+
+        final Flux<Pair<SearchFilterId, Long>> all = Flux.fromStream(Arrays.stream(DataEntityStatusDto.values()))
+            .map(s -> Pair.of(statusToSearchFilter(s), 0L));
+
+        return Flux.concat(existingStatuses, all)
+            .filter(s -> StringUtils.isEmpty(query)
+                || StringUtils.containsIgnoreCase(query, s.getLeft().getName()))
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (t1, t2) -> t1 == 0 ? t2 : t1));
+    }
+
     private List<Integer> typeIdsByName(final String name) {
         return Arrays.stream(DataEntityTypeDto.values())
             .filter(s -> StringUtils.containsIgnoreCase(name, s.name()))
             .map(DataEntityTypeDto::getId)
+            .toList();
+    }
+
+    private List<Short> statusIdsByName(final String name) {
+        return Arrays.stream(DataEntityStatusDto.values())
+            .filter(s -> StringUtils.containsIgnoreCase(name, s.name()))
+            .map(DataEntityStatusDto::getId)
             .toList();
     }
 
@@ -450,6 +543,13 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         return SearchFilterId.builder()
             .entityId(entityClass.getId())
             .name(entityClass.name())
+            .build();
+    }
+
+    private SearchFilterId statusToSearchFilter(final DataEntityStatusDto status) {
+        return SearchFilterId.builder()
+            .entityId(status.getId())
+            .name(status.name())
             .build();
     }
 

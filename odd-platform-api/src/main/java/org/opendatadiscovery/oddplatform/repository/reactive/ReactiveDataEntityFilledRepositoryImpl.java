@@ -117,6 +117,7 @@ public class ReactiveDataEntityFilledRepositoryImpl implements ReactiveDataEntit
             case DATASET_FIELD_ENUMS -> Map.of(DATA_ENTITY_FILLED.DATASET_FIELD_ENUMS_FILLED, isFilled);
             case DATASET_FIELD_TERMS -> Map.of(DATA_ENTITY_FILLED.DATASET_FIELD_TERMS_FILLED, isFilled);
             case MANUALLY_CREATED -> Map.of(DATA_ENTITY_FILLED.MANUALLY_CREATED, isFilled);
+            case STATUS -> Map.of(DATA_ENTITY_FILLED.STATUS_FILLED, isFilled);
         };
     }
 }

@@ -168,6 +168,7 @@ public class SearchServiceImpl implements SearchService {
             case OWNERS -> s -> searchFacetRepository.getOwnerFacetForDataEntity(query, page, size, s);
             case TYPES -> s -> searchFacetRepository.getTypeFacetForDataEntity(query, page, size, s);
             case GROUPS -> s -> searchFacetRepository.getGroupFacetForDataEntity(query, page, size, s);
+            case STATUSES -> s -> searchFacetRepository.getStatusFacetForDataEntity(query, page, size, s);
         };
     }
 

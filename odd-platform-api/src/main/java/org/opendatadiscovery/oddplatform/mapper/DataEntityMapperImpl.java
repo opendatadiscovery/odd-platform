@@ -2,8 +2,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +25,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItem;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
@@ -39,6 +39,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
@@ -151,21 +152,22 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .oddrn(pojo.getOddrn())
             .createdAt(dateTimeMapper.mapUTCDateTime(pojo.getCreatedAt()))
             .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()))
-            .viewCount(pojo.getViewCount());
+            .viewCount(pojo.getViewCount())
+            .status(mapDataEntityStatus(pojo));
     }
 
     @Override
     public DataEntityList mapPojos(final List<DataEntityDimensionsDto> dataEntityDto) {
-        return new DataEntityList()
-            .items(dataEntityDto.stream().map(this::mapPojo).collect(Collectors.toList()))
-            .pageInfo(pageInfo(dataEntityDto.size()));
+        final List<DataEntity> entities = dataEntityDto.stream().map(this::mapPojo).toList();
+        final PageInfo pageInfo = pageInfo(dataEntityDto.size());
+        return new DataEntityList(entities, pageInfo);
     }
 
     @Override
     public DataEntityList mapPojos(final Page<DataEntityDimensionsDto> dataEntityDto) {
-        return new DataEntityList()
-            .items(dataEntityDto.getData().stream().map(this::mapPojo).collect(Collectors.toList()))
-            .pageInfo(pageInfo(dataEntityDto));
+        final List<DataEntity> entities = dataEntityDto.getData().stream().map(this::mapPojo).toList();
+        final PageInfo pageInfo = pageInfo(dataEntityDto);
+        return new DataEntityList(entities, pageInfo);
     }
 
     @Override
@@ -222,6 +224,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataEntityGroups(groups)
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
+            .status(mapDataEntityStatus(pojo))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(tagMapper.mapToTagList(dto.getTags()))
@@ -363,10 +366,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         if (type == null) {
             return null;
         }
-
-        return new DataEntityType()
-            .id(type.getId())
-            .name(DataEntityType.NameEnum.fromValue(type.name()));
+        return new DataEntityType(type.getId(), DataEntityType.NameEnum.fromValue(type.name()));
     }
 
     @Override
@@ -428,6 +428,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dimensionsDto.getOwnership()))
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
+            .status(mapDataEntityStatus(pojo))
             .createdAt(DateTimeUtil.mapUTCDateTime(pojo.getCreatedAt()))
             .updatedAt(DateTimeUtil.mapUTCDateTime(pojo.getUpdatedAt()));
         item.setDataEntity(dataEntity);
@@ -457,9 +458,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private LinkedUrl mapLinkedUrl(final LinkedUrlAttribute linkedUrlAttribute) {
-        return new LinkedUrl()
-            .url(linkedUrlAttribute.url())
-            .name(linkedUrlAttribute.name());
+        return new LinkedUrl(linkedUrlAttribute.url(), linkedUrlAttribute.name());
     }
 
     private List<LinkedUrl> mapLinkedUrlList(final Collection<LinkedUrlAttribute> linkedUrlAttributes) {
@@ -485,6 +484,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(pojo.getInternalName())
             .entityClasses(entityClasses)
             .manuallyCreated(pojo.getManuallyCreated())
+            .status(mapDataEntityStatus(pojo))
             .url("");
     }
 
@@ -515,10 +515,20 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private PageInfo pageInfo(final long total) {
-        return new PageInfo().total(total).hasNext(false);
+        return new PageInfo(total, false);
     }
 
     private PageInfo pageInfo(final Page<?> page) {
-        return new PageInfo().total(page.getTotal()).hasNext(page.isHasNext());
+        return new PageInfo(page.getTotal(), page.isHasNext());
+    }
+
+    private DataEntityStatus mapDataEntityStatus(final DataEntityPojo pojo) {
+        final DataEntityStatusDto statusDto = DataEntityStatusDto.findById(pojo.getStatus())
+            .orElseThrow(() -> new IllegalArgumentException("Status shouldn't be null"));
+        final DataEntityStatus status = new DataEntityStatus(DataEntityStatusEnum.fromValue(statusDto.name()));
+        if (pojo.getStatusSwitchTime() != null) {
+            status.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(pojo.getStatusSwitchTime()));
+        }
+        return status;
     }
 }

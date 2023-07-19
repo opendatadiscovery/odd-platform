@@ -125,7 +125,8 @@ public class JooqFTSHelper {
         final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> cteFilters =
             e -> e.getKey().equals(FacetType.DATA_SOURCES)
                 || e.getKey().equals(FacetType.ENTITY_CLASSES)
-                || e.getKey().equals(FacetType.TYPES);
+                || e.getKey().equals(FacetType.TYPES)
+                || e.getKey().equals(FacetType.STATUSES);
 
         final List<Condition> joinConditions = state.getState().entrySet().stream()
             .filter(not(cteFilters))
