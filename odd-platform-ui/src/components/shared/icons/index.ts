@@ -56,3 +56,4 @@ export { default as DocumentIcon } from './DocumentIcon';
 export { default as RecursiveIcon } from './RecursiveIcon';
 export { default as FolderIcon } from './FolderIcon';
 export { default as LockIcon } from './LockIcon';
+export { default as LinkedTermIcon } from './LinkedTermIcon';

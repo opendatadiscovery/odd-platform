@@ -5,7 +5,7 @@ import { Permission } from 'generated-sources';
 import { deleteDataEntityTerm } from 'redux/thunks/dataentities.thunks';
 import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { CloseIcon, LockIcon } from 'components/shared/icons';
+import { CloseIcon, LinkedTermIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button } from 'components/shared/elements';
 import * as S from './TermItem.styles';
@@ -33,7 +33,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, linkedTerm }) => {
             <Typography variant='body1' color='texts.action' mr={0.25}>
               {linkedTerm.term.name}
             </Typography>
-            {linkedTerm.descriptionLink && <LockIcon />}
+            {linkedTerm.descriptionLink && <LinkedTermIcon />}
           </Box>
           <S.TermDefinition variant='subtitle2'>
             {linkedTerm.term.definition}

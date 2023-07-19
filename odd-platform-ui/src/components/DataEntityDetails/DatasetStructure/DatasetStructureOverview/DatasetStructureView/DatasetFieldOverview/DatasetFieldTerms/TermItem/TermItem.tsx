@@ -2,7 +2,7 @@ import React, { type FC, useCallback } from 'react';
 import { Permission, type TermRef } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button, CollapsibleInfoContainer, InfoItem } from 'components/shared/elements';
-import { DeleteIcon, LockIcon } from 'components/shared/icons';
+import { DeleteIcon, LinkedTermIcon } from 'components/shared/icons';
 import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
 import { Box } from '@mui/material';
 
@@ -44,7 +44,7 @@ const TermItem: FC<TermItemProps> = ({
       label={
         <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center'>
           <Button to={termDetailsLink} buttonType='link-m' text={name} sx={{ mr: 0.5 }} />
-          {descriptionLink && <LockIcon />}
+          {descriptionLink && <LinkedTermIcon />}
         </Box>
       }
       info={
