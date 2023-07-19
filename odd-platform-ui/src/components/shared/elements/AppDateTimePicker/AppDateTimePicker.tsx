@@ -1,25 +1,28 @@
-import React from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { Box, type Theme } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import { CalendarIcon } from 'components/shared/icons';
-import { DatePicker, type DatePickerProps } from '@mui/x-date-pickers';
+import { DateTimePicker, type DateTimePickerProps } from '@mui/x-date-pickers';
 import Input from 'components/shared/elements/Input/Input';
 
-export const metadataDatePickerInputFormat = 'd MMM yyyy';
-export const minDate = new Date(1900, 0, 1);
-export const maxDate = new Date(2099, 11, 31);
+export const metadataDateTimePickerInputFormat = 'd MMM yyyy, HH:mm';
 
-interface AppDatePickerProps
+interface AppDateTimePickerProps
   extends Pick<
-    DatePickerProps<Date, Date>,
-    'onChange' | 'onAccept' | 'label' | 'inputFormat' | 'disableMaskedInput'
+    DateTimePickerProps<Date, Date>,
+    | 'onChange'
+    | 'onAccept'
+    | 'label'
+    | 'inputFormat'
+    | 'disableMaskedInput'
+    | 'value'
+    | 'minDateTime'
   > {
   sx?: SxProps<Theme>;
   errorText?: string;
-  defaultDate: string;
 }
 
-const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
+const AppDateTimePicker: React.FC<AppDateTimePickerProps> = forwardRef(
   (
     {
       onChange,
@@ -28,23 +31,21 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
       inputFormat,
       disableMaskedInput,
       sx,
-      defaultDate,
+      minDateTime,
       errorText,
+      value,
     },
     ref
   ) => {
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(value);
 
-    React.useEffect(() => setSelectedDate(new Date(defaultDate)), [defaultDate]);
-
-    const AppDatePickerIcon = React.useCallback(() => <CalendarIcon />, [CalendarIcon]);
+    const AppDatePickerIcon = useCallback(() => <CalendarIcon />, []);
 
     return (
       <Box sx={sx} width='100%'>
-        <DatePicker
+        <DateTimePicker
           ref={ref as unknown as React.Ref<HTMLDivElement>}
-          minDate={minDate}
-          maxDate={maxDate}
+          minDateTime={minDateTime}
           onChange={date => {
             setSelectedDate(date);
             onChange(date);
@@ -54,17 +55,14 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
             setSelectedDate(date);
             return onAccept;
           }}
-          inputFormat={inputFormat || metadataDatePickerInputFormat}
+          inputFormat={inputFormat || metadataDateTimePickerInputFormat}
           disableMaskedInput={disableMaskedInput}
           label={label}
           value={selectedDate}
-          components={{
-            OpenPickerIcon: AppDatePickerIcon,
-          }}
+          components={{ OpenPickerIcon: AppDatePickerIcon }}
           OpenPickerButtonProps={{ disableRipple: true }}
           renderInput={params => (
             <Input
-              maxWidth={320}
               variant='main-m'
               inputProps={params.inputProps}
               ref={params.inputRef}
@@ -78,4 +76,4 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
     );
   }
 );
-export default AppDatePicker;
+export default AppDateTimePicker;

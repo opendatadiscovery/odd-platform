@@ -6,6 +6,7 @@ import {
   intervalToDuration,
   minutesToMilliseconds,
   formatDistanceToNow,
+  add,
 } from 'date-fns';
 import {
   datedListFormat,
@@ -19,6 +20,7 @@ type DateTimePatternNames =
   | 'datasetStructureVersion'
   | 'alert'
   | 'associationRequest'
+  | 'entityStatus'
   | 'dataEntity'
   | 'term'
   | 'metadata'
@@ -32,6 +34,7 @@ type TimeZones = 'us' | 'eu';
 type DateTimePatterns = Record<DateTimePatternNames, { [key in TimeZones]: string }>;
 type Helpers = {
   formatDistanceStrict: (...args: Parameters<typeof formatDistanceStrict>) => string;
+  add: (...args: Parameters<typeof add>) => Date;
   formatDistanceToNow: (...args: Parameters<typeof formatDistanceToNow>) => string;
   formatDistanceToNowStrict: (
     ...args: Parameters<typeof formatDistanceToNowStrict>
@@ -53,6 +56,7 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
     datasetStructureVersion: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
     alert: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
     associationRequest: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
+    entityStatus: { us: mainUSDateTimeFormat, eu: mainEUDateTimeFormat },
     dataEntity: { us: mainUSDateFormat, eu: mainEUDateFormat },
     term: { us: mainUSDateFormat, eu: mainEUDateFormat },
     metadata: { us: mainUSDateFormat, eu: mainEUDateFormat },
@@ -82,9 +86,11 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
     formatDuration,
     intervalToDuration,
     minutesToMilliseconds,
+    add,
     datasetStructureVersionFormattedDateTime: formatDate('datasetStructureVersion'),
     alertFormattedDateTime: formatDate('alert'),
     associationRequestFormattedDateTime: formatDate('associationRequest'),
+    entityStatusFormattedDateTime: formatDate('entityStatus'),
     dataEntityFormattedDateTime: formatDate('dataEntity'),
     termFormattedDateTime: formatDate('term'),
     metadataFormattedDateTime: formatDate('metadata'),

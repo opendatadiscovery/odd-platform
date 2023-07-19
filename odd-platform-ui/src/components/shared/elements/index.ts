@@ -6,6 +6,7 @@ export { default as AppMenuItem } from './AppMenuItem/AppMenuItem';
 export { default as AppTabs, type AppTabItem } from './AppTabs/AppTabs';
 export { default as BooleanFormatted } from './BooleanFormatted/BooleanFormatted';
 export { default as AppCircularProgress } from './AppCircularProgress/AppCircularProgress';
+export { default as AppDateTimePicker } from './AppDateTimePicker/AppDateTimePicker';
 export { default as LabeledInfoItem } from './LabeledInfoItem/LabeledInfoItem';
 export { default as NumberFormatted } from './NumberFormatted/NumberFormatted';
 export { default as ConfirmationDialog } from './ConfirmationDialog/ConfirmationDialog';

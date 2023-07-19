@@ -2,12 +2,12 @@ import type { MouseEvent } from 'react';
 import React, { type FC, useCallback, useState } from 'react';
 import { Typography } from '@mui/material';
 import ChevronIcon from 'components/shared/icons/ChevronIcon';
-import { formatDistanceToNow } from 'date-fns';
 import { type DataEntityStatus, DataEntityStatusEnum } from 'generated-sources';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
-import { useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
+import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
 import DefaultEntityStatus from '../DefaultEntityStatus/DefaultEntityStatus';
+import StatusSettingsForm from '../StatusSettingsForm/StatusSettingsForm';
 import * as S from '../EntityStatus.styles';
 
 interface SelectableEntityStatusProps {
@@ -15,6 +15,7 @@ interface SelectableEntityStatusProps {
 }
 
 const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus }) => {
+  const { formatDistanceToNow } = useAppDateTime();
   const { dataEntityId } = useAppParams();
   const menuId = 'entity-status-menu';
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
@@ -61,18 +62,26 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {statusList.map(s => (
-          <AppMenuItem
-            key={s}
-            onClick={
-              s === 'DRAFT' || s === 'DELETED' || s === 'DEPRECATED'
-                ? undefined
-                : () => handleOnClick(s)
-            }
-          >
-            <DefaultEntityStatus entityStatus={{ status: s }} disablePointerEvents />
-          </AppMenuItem>
-        ))}
+        {statusList.map(s =>
+          s === 'DRAFT' || s === 'DELETED' || s === 'DEPRECATED' ? (
+            <StatusSettingsForm
+              openBtnEl={
+                <AppMenuItem>
+                  <DefaultEntityStatus
+                    entityStatus={{ status: s }}
+                    disablePointerEvents
+                  />
+                </AppMenuItem>
+              }
+              status={s}
+              key={s}
+            />
+          ) : (
+            <AppMenuItem key={s} onClick={() => handleOnClick(s)}>
+              <DefaultEntityStatus entityStatus={{ status: s }} disablePointerEvents />
+            </AppMenuItem>
+          )
+        )}
       </AppMenu>
     </>
   );
