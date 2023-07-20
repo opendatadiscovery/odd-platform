@@ -1,12 +1,12 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
+import org.opendatadiscovery.oddplatform.dto.term.TermBaseInfoDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
-import org.opendatadiscovery.oddplatform.model.tables.Term;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
@@ -18,23 +18,13 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<Boolean> existsByNamespace(final Long namespaceId);
 
-    Mono<Boolean> existsByNameAndNamespace(final String name, final String namespaceName);
+    Mono<TermRefDto> getByNameAndNamespace(final String namespaceName, final String name);
+
+    Mono<List<TermRefDto>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos);
 
     Mono<TermRefDto> getTermRefDto(final Long id);
 
     Mono<TermDetailsDto> getTermDetailsDto(final Long id);
-
-    Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId);
-
-    Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId);
-
-    Mono<DataEntityToTermPojo> createRelationWithDataEntity(final Long dataEntityId, final Long termId);
-
-    Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId);
-
-    Mono<DatasetFieldToTermPojo> createRelationWithDatasetField(final long datasetFieldId, final long termId);
-
-    Mono<DatasetFieldToTermPojo> deleteRelationWithDatasetField(final long datasetFieldId, final long termId);
 
     Mono<Page<TermRefDto>> getQuerySuggestions(final String query);
 
@@ -42,7 +32,9 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<Long> countByState(final FacetStateDto state);
 
-    Flux<TermRefDto> getDataEntityTerms(final long dataEntityId);
+    Flux<LinkedTermDto> getDataEntityTerms(final long dataEntityId);
 
-    Flux<TermRefDto> getDatasetFieldTerms(final long datasetFieldId);
+    Flux<LinkedTermDto> getDatasetFieldTerms(final long datasetFieldId);
+
+    Mono<Boolean> hasDescriptionRelations(final long termId);
 }

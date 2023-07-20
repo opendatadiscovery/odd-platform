@@ -3,7 +3,7 @@ import type { Theme } from '@mui/material/styles';
 import { Box, Tooltip, tooltipClasses, type TooltipProps } from '@mui/material';
 import styled, { type CSSObject } from 'styled-components';
 
-export type TooltipColorTypes = 'light' | 'dark';
+export type TooltipColorTypes = 'light' | 'dark' | 'termLink';
 
 interface TooltipStyleProps extends TooltipProps {
   $type: TooltipColorTypes;
@@ -17,6 +17,17 @@ const getTooltipStylesByType = (theme: Theme, type: TooltipColorTypes): CSSObjec
       padding: theme.spacing(0.25, 0.5),
       backgroundColor: theme.palette.info.dark,
     };
+
+  if (type === 'termLink') {
+    return {
+      padding: theme.spacing(1),
+      borderRadius: '8px',
+      boxShadow: theme.shadows[6],
+      color: theme.palette.texts.info,
+      backgroundColor: theme.palette.background.default,
+      border: `1px solid ${theme.palette.border.primary}`,
+    };
+  }
 
   return {
     color: theme.palette.texts.info,

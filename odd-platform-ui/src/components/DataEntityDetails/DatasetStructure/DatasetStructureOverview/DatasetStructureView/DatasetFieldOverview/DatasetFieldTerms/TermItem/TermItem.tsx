@@ -2,14 +2,16 @@ import React, { type FC, useCallback } from 'react';
 import { Permission, type TermRef } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button, CollapsibleInfoContainer, InfoItem } from 'components/shared/elements';
-import { DeleteIcon } from 'components/shared/icons';
+import { DeleteIcon, LinkedTermIcon } from 'components/shared/icons';
 import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
+import { Box } from '@mui/material';
 
 interface TermItemProps {
   name: TermRef['name'];
   definition: TermRef['definition'];
   termId: TermRef['id'];
   datasetFieldId: number;
+  isDescriptionLink: boolean;
   removeTerm: (termId: number) => void;
 }
 
@@ -19,6 +21,7 @@ const TermItem: FC<TermItemProps> = ({
   termId,
   datasetFieldId,
   removeTerm,
+  isDescriptionLink,
 }) => {
   const { mutateAsync: deleteTerm } = useDeleteDatasetFieldTerm();
 
@@ -38,19 +41,26 @@ const TermItem: FC<TermItemProps> = ({
   return (
     <InfoItem
       labelWidth={4}
-      label={<Button to={termDetailsLink} buttonType='link-m' text={name} />}
+      label={
+        <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center'>
+          <Button to={termDetailsLink} buttonType='link-m' text={name} sx={{ mr: 0.5 }} />
+          {isDescriptionLink && <LinkedTermIcon />}
+        </Box>
+      }
       info={
         <CollapsibleInfoContainer
           content={<>{definition}</>}
           actions={
-            <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
-              <Button
-                sx={{ mt: 0.25 }}
-                buttonType='link-m'
-                icon={<DeleteIcon />}
-                onClick={handleDelete}
-              />
-            </WithPermissions>
+            !isDescriptionLink ? (
+              <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
+                <Button
+                  sx={{ mt: 0.25 }}
+                  buttonType='link-m'
+                  icon={<DeleteIcon />}
+                  onClick={handleDelete}
+                />
+              </WithPermissions>
+            ) : undefined
           }
         />
       }

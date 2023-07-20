@@ -140,3 +140,6 @@ export const datedListFormat = 'MMMM dd, yyyy';
 // empty structures
 export const emptyArr = [];
 export const emptyObj = {};
+
+// regexp
+export const TERM_PATTERN = /\[\[([^:\]]+):([^\]]+)\]\]/g;

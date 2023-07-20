@@ -33,6 +33,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedUrl;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
@@ -211,6 +212,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .flatMap(Collection::stream)
             .map(this::mapReference)
             .toList();
+        final List<LinkedTerm> linkedTerms = dto.getTerms().stream()
+            .map(termMapper::mapToLinkedTerm)
+            .toList();
 
         final DataEntityDetails details = new DataEntityDetails()
             .id(pojo.getId())
@@ -229,7 +233,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(tagMapper.mapToTagList(dto.getTags()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
-            .terms(termMapper.mapToRefList(dto.getTerms()))
+            .terms(linkedTerms)
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {

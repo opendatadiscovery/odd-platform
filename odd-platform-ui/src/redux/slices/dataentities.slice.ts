@@ -5,14 +5,10 @@ import keyBy from 'lodash/keyBy';
 import type { DataEntityDetails } from 'generated-sources';
 import omit from 'lodash/omit';
 import { dataEntitiesActionTypePrefix } from 'redux/actions';
-import uniqBy from 'lodash/uniqBy';
 import filter from 'lodash/filter';
 
 export const initialState: DataEntitiesState = {
-  classesAndTypesDict: {
-    entityTypes: {},
-    entityClasses: {},
-  },
+  classesAndTypesDict: { entityTypes: {}, entityClasses: {} },
   byId: {},
   allIds: [],
   my: [],
@@ -97,26 +93,19 @@ export const dataEntitiesSlice = createSlice({
         ...state,
         byId: {
           ...state.byId,
-          [dataEntityId]: {
-            ...state.byId[dataEntityId],
-            tags,
-          },
+          [dataEntityId]: { ...state.byId[dataEntityId], tags },
         },
       };
     });
 
     builder.addCase(thunks.addDataEntityTerm.fulfilled, (state, { payload }) => {
-      const { dataEntityId, term } = payload;
+      const { dataEntityId, linkedTerm } = payload;
+
+      const terms = [...(state.byId[dataEntityId].terms || []), linkedTerm];
 
       return {
         ...state,
-        byId: {
-          ...state.byId,
-          [dataEntityId]: {
-            ...state.byId[dataEntityId],
-            terms: uniqBy([...(state.byId[dataEntityId].terms || []), term], 'id'),
-          },
-        },
+        byId: { ...state.byId, [dataEntityId]: { ...state.byId[dataEntityId], terms } },
       };
     });
 
@@ -129,7 +118,10 @@ export const dataEntitiesSlice = createSlice({
           ...state.byId,
           [dataEntityId]: {
             ...state.byId[dataEntityId],
-            terms: filter(state.byId[dataEntityId].terms, term => term.id !== termId),
+            terms: filter(
+              state.byId[dataEntityId].terms,
+              linkedTerm => linkedTerm.term.id !== termId
+            ),
           },
         },
       };
@@ -145,9 +137,7 @@ export const dataEntitiesSlice = createSlice({
           byId: linkedItemsList.reduce(
             (memo, linkedItem) => ({
               ...memo,
-              [linkedItem.id]: {
-                ...linkedItem,
-              },
+              [linkedItem.id]: linkedItem,
             }),
             state.byId
           ),
@@ -158,16 +148,13 @@ export const dataEntitiesSlice = createSlice({
     builder.addCase(
       thunks.updateDataEntityInternalDescription.fulfilled,
       (state, { payload }) => {
-        const { dataEntityId, internalDescription } = payload;
+        const { dataEntityId, internalDescription, terms } = payload;
 
         return {
           ...state,
           byId: {
             ...state.byId,
-            [dataEntityId]: {
-              ...state.byId[dataEntityId],
-              internalDescription,
-            },
+            [dataEntityId]: { ...state.byId[dataEntityId], internalDescription, terms },
           },
         };
       }
@@ -182,42 +169,30 @@ export const dataEntitiesSlice = createSlice({
           ...state,
           byId: {
             ...state.byId,
-            [dataEntityId]: {
-              ...state.byId[dataEntityId],
-              internalName,
-            },
+            [dataEntityId]: { ...state.byId[dataEntityId], internalName },
           },
         };
       }
     );
 
-    builder.addCase(thunks.fetchMyDataEntitiesList.fulfilled, (state, { payload }) => ({
-      ...state,
-      my: payload,
-    }));
+    builder.addCase(
+      thunks.fetchMyDataEntitiesList.fulfilled,
+      (state, { payload: my }) => ({ ...state, my })
+    );
 
     builder.addCase(
       thunks.fetchMyUpstreamDataEntitiesList.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        myUpstream: payload,
-      })
+      (state, { payload: myUpstream }) => ({ ...state, myUpstream })
     );
 
     builder.addCase(
       thunks.fetchMyDownstreamDataEntitiesList.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        myDownstream: payload,
-      })
+      (state, { payload: myDownstream }) => ({ ...state, myDownstream })
     );
 
     builder.addCase(
       thunks.fetchPopularDataEntitiesList.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        popular: payload,
-      })
+      (state, { payload: popular }) => ({ ...state, popular })
     );
 
     // Data Entity Groups
@@ -230,9 +205,7 @@ export const dataEntitiesSlice = createSlice({
           byId: linkedItemsList.reduce(
             (memo: DataEntitiesState['byId'], linkedItem) => ({
               ...memo,
-              [linkedItem.id]: {
-                ...linkedItem,
-              },
+              [linkedItem.id]: linkedItem,
             }),
             state.byId
           ),
@@ -240,16 +213,10 @@ export const dataEntitiesSlice = createSlice({
       }
     );
 
-    builder.addCase(thunks.deleteDataEntityGroup.fulfilled, (state, { payload }) => {
-      const dataEntityGroupId = payload;
-
-      return {
-        ...state,
-        byId: {
-          ...omit(state.byId, dataEntityGroupId),
-        },
-      };
-    });
+    builder.addCase(thunks.deleteDataEntityGroup.fulfilled, (state, { payload }) => ({
+      ...state,
+      byId: { ...omit(state.byId, payload) },
+    }));
   },
 });
 

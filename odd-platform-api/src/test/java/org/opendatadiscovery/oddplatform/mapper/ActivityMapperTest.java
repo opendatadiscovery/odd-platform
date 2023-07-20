@@ -48,6 +48,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
@@ -78,7 +79,7 @@ public class ActivityMapperTest {
     @DisplayName("Test mapping activity create event to activity pojo object")
     void testMapPojo(final ActivityEventTypeDto eventTypeDto) {
         final ActivityCreateEvent event = createEvent(eventTypeDto);
-        final LocalDateTime activityTime = LocalDateTime.now();
+        final LocalDateTime activityTime = DateTimeUtil.generateNow();
         final String createdBy = "username";
         final ActivityPojo activityPojo = activityMapper.mapToPojo(event, activityTime, createdBy);
         assertThat(activityPojo.getCreatedAt()).isEqualTo(activityTime);
@@ -203,7 +204,7 @@ public class ActivityMapperTest {
     private String generateState(final ActivityEventTypeDto eventTypeDto) {
         return switch (eventTypeDto) {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> generateOwnershipState();
-            case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> generateTermsState();
+            case TERM_ASSIGNMENT_UPDATED -> generateTermsState();
             case DATA_ENTITY_CREATED -> generateDataEntityCreatedState();
             case TAG_ASSIGNMENT_UPDATED -> generateTagsState();
             case DESCRIPTION_UPDATED -> generateDescriptionState();
@@ -215,7 +216,7 @@ public class ActivityMapperTest {
             case ALERT_HALT_CONFIG_UPDATED -> generateAlertHaltConfigState();
             case ALERT_STATUS_UPDATED -> generateAlertStatusState();
             case OPEN_ALERT_RECEIVED, RESOLVED_ALERT_RECEIVED -> generateAlertReceivedState();
-            case DATASET_FIELD_TERM_ASSIGNED, DATASET_FIELD_TERM_ASSIGNMENT_DELETED -> generateDatasetFieldTermsState();
+            case DATASET_FIELD_TERM_ASSIGNMENT_UPDATED -> generateDatasetFieldTermsState();
             default -> "";
         };
     }

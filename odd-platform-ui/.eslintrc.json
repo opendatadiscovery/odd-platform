@@ -105,7 +105,10 @@
     ],
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "no-restricted-syntax": "off",
+    "guard-for-in": "off",
+    "react/function-component-definition": "off"
   },
   "overrides": [
     {

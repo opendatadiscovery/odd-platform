@@ -41,7 +41,6 @@ export { default as AppRadio } from './AppRadio/AppRadio';
 export { default as AlertStatusItem } from './AlertStatusItem/AlertStatusItem';
 export { default as AppDatePicker } from './AppDatePicker/AppDatePicker';
 export { default as AppDateRangePicker } from './AppDateRangePicker/AppDateRangePicker';
-export { default as TermItem } from './TermItem/TermItem';
 export {
   maxDate,
   minDate,

@@ -19,8 +19,8 @@ import type {
   DataEntityRef,
   InternalDescription,
   InternalName,
+  LinkedTerm,
   Tag,
-  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -65,16 +65,16 @@ export const updateDataEntityTags = handleResponseAsyncThunk<
 );
 
 export const addDataEntityTerm = handleResponseAsyncThunk<
-  { dataEntityId: number; term: TermRef },
+  { dataEntityId: number; linkedTerm: LinkedTerm },
   DataEntityApiAddDataEntityTermRequest
 >(
   actions.addDataEntityTermActType,
   async ({ dataEntityId, dataEntityTermFormData }) => {
-    const term = await dataEntityApi.addDataEntityTerm({
+    const linkedTerm = await dataEntityApi.addDataEntityTerm({
       dataEntityId,
       dataEntityTermFormData,
     });
-    return { dataEntityId, term };
+    return { dataEntityId, linkedTerm };
   },
   {
     setSuccessOptions: ({ dataEntityTermFormData }) => ({
@@ -108,17 +108,18 @@ export const updateDataEntityInternalDescription = handleResponseAsyncThunk<
   {
     dataEntityId: number;
     internalDescription: InternalDescription['internalDescription'];
+    terms: InternalDescription['terms'];
   },
   DataEntityApiUpsertDataEntityInternalDescriptionRequest
 >(
   actions.updateDataEntityInternalDescriptionActionType,
   async ({ dataEntityId, internalDescriptionFormData }) => {
-    const { internalDescription } =
+    const { internalDescription, terms } =
       await dataEntityApi.upsertDataEntityInternalDescription({
         dataEntityId,
         internalDescriptionFormData,
       });
-    return { dataEntityId, internalDescription };
+    return { dataEntityId, internalDescription, terms };
   },
   {
     setSuccessOptions: ({ internalDescriptionFormData: { internalDescription } }) => ({

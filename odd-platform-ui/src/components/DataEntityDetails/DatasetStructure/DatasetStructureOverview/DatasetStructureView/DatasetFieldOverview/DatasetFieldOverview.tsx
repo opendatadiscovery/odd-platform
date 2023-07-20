@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
@@ -7,12 +7,12 @@ import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';
+import DatasetFieldDescription from './DatasetFieldDescription/DatasetFieldDescription';
 import DatasetFieldTerms from './DatasetFieldTerms/DatasetFieldTerms';
 import useStructure from '../../lib/useStructure';
 import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
-import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import KeyFieldLabel from '../../../shared/KeyFieldLabel/KeyFieldLabel';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverview.styles';
@@ -28,6 +28,11 @@ const DatasetFieldOverview: React.FC = () => {
     isLoading: isMetricsLoading,
     isSuccess: isMetricsLoaded,
   } = useDataSetFieldMetrics({ datasetFieldId: field?.id });
+
+  const terms = useMemo(
+    () => field?.terms?.map(linkedTerm => linkedTerm.term),
+    [field?.terms]
+  );
 
   if (isEmpty(field)) return null;
 
@@ -61,33 +66,11 @@ const DatasetFieldOverview: React.FC = () => {
       {getOverviewSection('DEFAULT VALUE', field.defaultValue)}
       {getOverviewSection('EXTERNAL DESCRIPTION', field.externalDescription)}
       <S.SectionContainer container>
-        <Grid container justifyContent='space-between'>
-          <Typography variant='h5' color='texts.hint'>
-            INTERNAL DESCRIPTION
-          </Typography>
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}
-            renderContent={({ isAllowedTo: editDescription }) => (
-              <DatasetFieldDescriptionForm
-                datasetFieldId={field.id}
-                description={field.internalDescription}
-                btnCreateEl={
-                  <Button
-                    text={
-                      field.internalDescription ? 'Edit description' : 'Add description'
-                    }
-                    disabled={!editDescription}
-                    buttonType='secondary-m'
-                    sx={{ mr: 1 }}
-                  />
-                }
-              />
-            )}
-          />
-        </Grid>
-        <Typography mt={1} variant='subtitle1'>
-          {field?.internalDescription || 'Description is not created yet'}
-        </Typography>
+        <DatasetFieldDescription
+          datasetFieldId={field.id}
+          description={field.internalDescription ?? ''}
+          terms={terms}
+        />
       </S.SectionContainer>
       <S.SectionContainer container>
         <Grid container justifyContent='space-between'>

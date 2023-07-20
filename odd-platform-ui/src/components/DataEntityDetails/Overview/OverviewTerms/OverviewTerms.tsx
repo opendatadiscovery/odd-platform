@@ -1,15 +1,17 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { Permission, type TermRef } from 'generated-sources';
-import { Button, TermItem } from 'components/shared/elements';
+import type { LinkedTerm } from 'generated-sources';
+import { Permission } from 'generated-sources';
+import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
 import AssignEntityTermForm from './AssignEntityTermForm/AssignEntityTermForm';
+import TermItem from './TermItem/TermItem';
 
 interface OverviewTermsProps {
   dataEntityId: number;
-  terms?: TermRef[];
+  terms?: LinkedTerm[];
 }
 
 const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) => {
@@ -34,8 +36,12 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
           {terms
             .slice(0, visibleLimit)
             .sort()
-            .map(term => (
-              <TermItem key={term.id} term={term} dataEntityId={dataEntityId} />
+            .map(linkedTerm => (
+              <TermItem
+                key={linkedTerm.term.id}
+                linkedTerm={linkedTerm}
+                dataEntityId={dataEntityId}
+              />
             ))}
           {terms?.length > visibleLimit && (
             <>
@@ -44,8 +50,12 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
                   terms
                     ?.slice(visibleLimit)
                     .sort()
-                    .map(term => (
-                      <TermItem key={term.id} term={term} dataEntityId={dataEntityId} />
+                    .map(linkedTerm => (
+                      <TermItem
+                        key={linkedTerm.term.id}
+                        linkedTerm={linkedTerm}
+                        dataEntityId={dataEntityId}
+                      />
                     ))}
               </Collapse>
               <Button

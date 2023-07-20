@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -19,12 +20,12 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
+import org.opendatadiscovery.oddplatform.dto.term.TermBaseInfoDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermOwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -44,6 +45,7 @@ import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_TO_TERM;
@@ -69,6 +71,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     private static final String AGG_TITLES_FIELD = "titles";
     private static final String AGG_TAGS_FIELD = "tags";
     private static final String ENTITIES_COUNT = "entities_count";
+    private static final String IS_DESCRIPTION_LINK = "is_description_link";
 
     private final JooqRecordHelper jooqRecordHelper;
     private final JooqFTSHelper jooqFTSHelper;
@@ -121,15 +124,35 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     }
 
     @Override
-    public Mono<Boolean> existsByNameAndNamespace(final String name, final String namespaceName) {
-        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.select()
-                .from(TERM)
-                .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-                .where(TERM.NAME.eq(name).and(TERM.DELETED_AT.isNull())
-                    .and(NAMESPACE.NAME.eq(namespaceName)))
-        );
-        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    public Mono<TermRefDto> getByNameAndNamespace(final String namespaceName, final String name) {
+        final var query = DSL
+            .select(TERM.fields())
+            .select(NAMESPACE.fields())
+            .from(TERM)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
+            .where(TERM.NAME.equalIgnoreCase(name).and(TERM.DELETED_AT.isNull())
+                .and(NAMESPACE.NAME.equalIgnoreCase(namespaceName)));
+        return jooqReactiveOperations.mono(query).map(this::mapRecordToRefDto);
+    }
+
+    @Override
+    public Mono<List<TermRefDto>> getByNameAndNamespace(final List<TermBaseInfoDto> termBaseInfoDtos) {
+        if (CollectionUtils.isEmpty(termBaseInfoDtos)) {
+            return Mono.just(List.of());
+        }
+        final Condition condition = termBaseInfoDtos.stream()
+            .map(dto -> TERM.NAME.equalIgnoreCase(dto.name()).and(NAMESPACE.NAME.equalIgnoreCase(dto.namespaceName())))
+            .reduce(Condition::or)
+            .orElseThrow(() -> new IllegalArgumentException("Can't build condition for terms"));
+        final var query = DSL.select(TERM.fields())
+            .select(NAMESPACE.fields())
+            .from(TERM)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
+            .where(condition)
+            .and(TERM.DELETED_AT.isNull());
+        return jooqReactiveOperations.flux(query)
+            .map(this::mapRecordToRefDto)
+            .collectList();
     }
 
     @Override
@@ -169,65 +192,6 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .groupBy(groupByFields);
         return jooqReactiveOperations.mono(query)
             .map(this::mapRecordToDetailsDto);
-    }
-
-    @Override
-    public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId) {
-        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(DataEntityToTermPojo.class));
-    }
-
-    @Override
-    public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId) {
-        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(DataEntityToTermPojo.class));
-    }
-
-    @Override
-    public Mono<DataEntityToTermPojo> createRelationWithDataEntity(final Long dataEntityId, final Long termId) {
-        final var query = DSL.insertInto(DATA_ENTITY_TO_TERM)
-            .set(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID, dataEntityId)
-            .set(DATA_ENTITY_TO_TERM.TERM_ID, termId)
-            .onDuplicateKeyIgnore()
-            .returning();
-        return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(DataEntityToTermPojo.class));
-    }
-
-    @Override
-    public Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId) {
-        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId).and(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)))
-            .returning();
-        return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(DataEntityToTermPojo.class));
-    }
-
-    @Override
-    public Mono<DatasetFieldToTermPojo> createRelationWithDatasetField(final long datasetFieldId, final long termId) {
-        final var query = DSL.insertInto(DATASET_FIELD_TO_TERM)
-            .set(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID, datasetFieldId)
-            .set(DATASET_FIELD_TO_TERM.TERM_ID, termId)
-            .onDuplicateKeyIgnore()
-            .returning();
-        return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(DatasetFieldToTermPojo.class));
-    }
-
-    @Override
-    public Mono<DatasetFieldToTermPojo> deleteRelationWithDatasetField(final long datasetFieldId, final long termId) {
-        final var query = DSL.deleteFrom(DATASET_FIELD_TO_TERM)
-            .where(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(datasetFieldId)
-                .and(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId)))
-            .returning();
-        return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(DatasetFieldToTermPojo.class));
     }
 
     @Override
@@ -360,24 +324,26 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     }
 
     @Override
-    public Flux<TermRefDto> getDataEntityTerms(final long dataEntityId) {
+    public Flux<LinkedTermDto> getDataEntityTerms(final long dataEntityId) {
         final var query = DSL
             .select(TERM.fields())
             .select(NAMESPACE.fields())
+            .select(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.as(IS_DESCRIPTION_LINK))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .join(DATA_ENTITY_TO_TERM)
             .on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID).and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)))
             .where(TERM.DELETED_AT.isNull());
         return jooqReactiveOperations.flux(query)
-            .map(this::mapRecordToRefDto);
+            .map(this::mapRecordToLinkedTermDto);
     }
 
     @Override
-    public Flux<TermRefDto> getDatasetFieldTerms(final long datasetFieldId) {
+    public Flux<LinkedTermDto> getDatasetFieldTerms(final long datasetFieldId) {
         final var query = DSL
             .select(TERM.fields())
             .select(NAMESPACE.fields())
+            .select(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.as(IS_DESCRIPTION_LINK))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .join(DATASET_FIELD_TO_TERM)
@@ -385,7 +351,24 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                 .and(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(datasetFieldId)))
             .where(TERM.DELETED_AT.isNull());
         return jooqReactiveOperations.flux(query)
-            .map(this::mapRecordToRefDto);
+            .map(this::mapRecordToLinkedTermDto);
+    }
+
+    @Override
+    public Mono<Boolean> hasDescriptionRelations(final long termId) {
+        final Condition dataEntityDescriptionRelations = exists(DSL.selectOne()
+            .from(DATA_ENTITY_TO_TERM)
+            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId).and(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.isTrue())));
+        final Condition datasetFieldDescriptionRelations = exists(DSL.selectOne()
+            .from(DATASET_FIELD_TO_TERM)
+            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId).and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.isTrue())));
+        final var query = DSL.select(dataEntityDescriptionRelations.or(datasetFieldDescriptionRelations));
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
+    private LinkedTermDto mapRecordToLinkedTermDto(final Record record) {
+        final TermRefDto termRefDto = mapRecordToRefDto(record);
+        return new LinkedTermDto(termRefDto, record.get(IS_DESCRIPTION_LINK, Boolean.class));
     }
 
     private TermRefDto mapRecordToRefDto(final Record record) {

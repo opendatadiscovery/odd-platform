@@ -104,42 +104,26 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && (
+        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_UPDATED]) && (
           <TermActivityField
             oldState={activity.oldState.terms}
             newState={activity.newState.terms}
             hideAllDetails={hideAllDetails}
-            eventType='assigned'
+            eventType='updated'
             stateDirection='column'
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && (
-          <TermActivityField
-            oldState={activity.oldState.terms}
-            newState={activity.newState.terms}
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_UPDATED]) && (
+          <DatasetTermActivityField
+            oldState={activity.oldState.datasetFieldTerms}
+            newState={activity.newState.datasetFieldTerms}
             hideAllDetails={hideAllDetails}
-            eventType='deleted'
-            stateDirection='column'
           />
         )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_VALUES_UPDATED]) && (
           <EnumsActivityField
             oldState={activity.oldState.datasetFieldValues}
             newState={activity.newState.datasetFieldValues}
-            hideAllDetails={hideAllDetails}
-          />
-        )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && (
-          <DatasetTermActivityField
-            oldState={activity.oldState.datasetFieldTerms}
-            newState={activity.newState.datasetFieldTerms}
-            hideAllDetails={hideAllDetails}
-          />
-        )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && (
-          <DatasetTermActivityField
-            oldState={activity.oldState.datasetFieldTerms}
-            newState={activity.newState.datasetFieldTerms}
             hideAllDetails={hideAllDetails}
           />
         )}

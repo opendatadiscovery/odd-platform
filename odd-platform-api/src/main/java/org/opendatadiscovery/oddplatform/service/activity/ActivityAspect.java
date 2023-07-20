@@ -83,6 +83,7 @@ public class ActivityAspect {
                                     final boolean isSystemEvent,
                                     final ActivityContextInfo info) {
         return activityService.getUpdatedInfo(activityParameters, info.getDataEntityId(), eventType)
+            .filter(newState -> !info.getOldState().equals(newState))
             .map(newState -> ActivityCreateEvent.builder()
                 .eventType(eventType)
                 .dataEntityId(info.getDataEntityId())
