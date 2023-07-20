@@ -83,7 +83,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagReposito
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.InternalNameUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TagsAssociationUpdated;
