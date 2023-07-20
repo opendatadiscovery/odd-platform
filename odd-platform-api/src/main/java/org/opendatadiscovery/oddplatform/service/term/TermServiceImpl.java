@@ -58,7 +58,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.TERMS;
 @Slf4j
 @RequiredArgsConstructor
 public class TermServiceImpl implements TermService {
-    private static final Pattern PATTERN = Pattern.compile("\\[\\[(.*?):(.*?)]]");
+    private static final Pattern PATTERN = Pattern.compile("\\[\\[([^:]*?):([^\\]]*?)\\]\\]");
 
     private final NamespaceService namespaceService;
     private final TagService tagService;
