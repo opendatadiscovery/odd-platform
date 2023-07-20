@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +42,14 @@ public class TermController implements TermApi {
                                                           final String query,
                                                           final ServerWebExchange exchange) {
         return termService.getTerms(page, size, query)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<TermRef>> getTermByNamespaceAndName(final String namespaceName,
+                                                                   final String termName,
+                                                                   final ServerWebExchange exchange) {
+        return termService.getTermByNamespaceAndName(namespaceName, termName)
             .map(ResponseEntity::ok);
     }
 

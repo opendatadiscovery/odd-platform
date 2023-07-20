@@ -4,8 +4,7 @@ import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipUpdate;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipDelete;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +22,7 @@ public class OwnershipDeletedActivityHandler extends AbstractOwnershipActivityHa
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
-        final long ownershipId = (long) parameters.get(OwnershipUpdate.OWNERSHIP_ID);
+        final long ownershipId = (long) parameters.get(OwnershipDelete.OWNERSHIP_ID);
         return getContextInfoByOwnership(ownershipId);
     }
 

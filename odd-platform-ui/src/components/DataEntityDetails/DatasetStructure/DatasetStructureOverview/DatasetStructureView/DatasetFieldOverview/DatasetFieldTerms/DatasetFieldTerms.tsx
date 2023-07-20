@@ -2,7 +2,7 @@ import React, { type FC, useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
-import type { DataSetField, TermRef } from 'generated-sources';
+import type { DataSetField, LinkedTerm } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
@@ -25,8 +25,8 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
   const dispatch = useAppDispatch();
 
   const handleAddTerm = useCallback(
-    (term: TermRef) => {
-      dispatch(addDatasetFieldTerm({ fieldId: datasetFieldId, term }));
+    (linkedTerm: LinkedTerm) => {
+      dispatch(addDatasetFieldTerm({ fieldId: datasetFieldId, linkedTerm }));
     },
     [datasetFieldId]
   );
@@ -42,14 +42,15 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
     () =>
       fieldTerms && fieldTerms.length > 0 ? (
         <Grid container mt={1}>
-          {fieldTerms.map(({ name, definition, id }) => (
+          {fieldTerms.map(({ term, isDescriptionLink }) => (
             <TermItem
-              key={id}
-              termId={id}
-              name={name}
-              definition={definition}
+              key={term.id}
+              termId={term.id}
+              name={term.name}
+              definition={term.definition}
               datasetFieldId={datasetFieldId}
               removeTerm={removeTerm}
+              isDescriptionLink={isDescriptionLink}
             />
           ))}
         </Grid>

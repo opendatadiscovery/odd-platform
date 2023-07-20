@@ -1067,7 +1067,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/TermRef'
+                $ref: './components.yaml/#/components/schemas/LinkedTerm'
       tags:
         - dataEntity
 
@@ -2232,7 +2232,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/TermRef'
+                $ref: './components.yaml/#/components/schemas/LinkedTerm'
       tags:
         - datasetField
 
@@ -2441,6 +2441,32 @@ paths:
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
+
+  /api/terms/namespaces/{namespace_name}/names/{term_name}:
+    get:
+      summary: Get term
+      description: Get term by namespace and name
+      operationId: getTermByNamespaceAndName
+      parameters:
+        - name: namespace_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: term_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRef'
       tags:
         - term
 

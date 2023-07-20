@@ -5,6 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.Term;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
@@ -12,6 +13,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
@@ -58,6 +60,8 @@ public interface TermMapper {
             .items(mapToList(page.getData()))
             .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
     }
+
+    LinkedTerm mapToLinkedTerm(final LinkedTermDto dto);
 
     @Mapping(source = "dto.termDto.termRefDto.term", target = ".")
     @Mapping(source = "dto.termDto.termRefDto.namespace", target = "namespace")

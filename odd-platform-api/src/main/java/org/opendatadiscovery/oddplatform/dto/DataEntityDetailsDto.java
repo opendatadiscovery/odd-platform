@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
-import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
+import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -22,7 +22,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private Collection<MetadataDto> metadata;
     private Collection<TagDto> tags;
     private Collection<DatasetVersionPojo> datasetVersions;
-    private Collection<TermRefDto> terms;
+    private Collection<LinkedTermDto> terms;
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,

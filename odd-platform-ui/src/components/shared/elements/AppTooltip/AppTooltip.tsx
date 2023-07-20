@@ -12,6 +12,7 @@ interface AppTooltipProps
     | 'disableHoverListener'
     | 'onOpen'
     | 'onClose'
+    | 'sx'
   > {
   title: React.ReactElement | string | undefined | number;
   type?: S.TooltipColorTypes;
@@ -32,6 +33,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   disableHoverListener,
   onOpen,
   onClose,
+  sx,
 }) => {
   const [isOverflowed, setIsOverflow] = useState(checkForOverflow);
   const childrenRef = useRef<HTMLDivElement>(null);
@@ -46,6 +48,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
 
   return (
     <S.AppTooltip
+      sx={sx}
       $type={type}
       title={title || ''}
       placement={placement}

@@ -576,7 +576,7 @@ components:
         terms:
           type: array
           items:
-            $ref: '#/components/schemas/TermRef'
+            $ref: '#/components/schemas/LinkedTerm'
         tags:
           $ref: '#/components/schemas/TagList'
       required:
@@ -1596,7 +1596,7 @@ components:
         terms:
           type: array
           items:
-            $ref: '#/components/schemas/TermRef'
+            $ref: '#/components/schemas/LinkedTerm'
       required:
         - id
         - oddrn
@@ -1664,8 +1664,13 @@ components:
       properties:
         description:
           type: string
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedTerm'
       required:
         - description
+        - terms
 
     DataSetVersionDiffList:
       type: object
@@ -2009,8 +2014,13 @@ components:
       properties:
         internal_description:
           type: string
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedTerm'
       required:
         - internal_description
+        - terms
 
     InternalDescriptionFormData:
       type: object
@@ -2319,6 +2329,17 @@ components:
         projectVersion:
           type: string
 
+    LinkedTerm:
+      type: object
+      properties:
+        term:
+          $ref: '#/components/schemas/TermRef'
+        is_description_link:
+          type: boolean
+      required:
+        - term
+        - is_description_link
+
     TermList:
       type: object
       properties:
@@ -2620,6 +2641,8 @@ components:
           type: string
         namespace:
           type: string
+        is_description_link:
+          type: boolean
 
     DescriptionActivityState:
       type: object
@@ -2815,8 +2838,7 @@ components:
         - DATA_ENTITY_METADATA_UPDATED
         - DATA_ENTITY_SCHEMA_UPDATED
         - DATA_ENTITY_RELATION_UPDATED
-        - TERM_ASSIGNED
-        - TERM_ASSIGNMENT_DELETED
+        - TERM_ASSIGNMENT_UPDATED
         - DESCRIPTION_UPDATED
         - BUSINESS_NAME_UPDATED
         - CUSTOM_METADATA_CREATED
@@ -2825,8 +2847,7 @@ components:
         - DATASET_FIELD_VALUES_UPDATED
         - DATASET_FIELD_DESCRIPTION_UPDATED
         - DATASET_FIELD_LABELS_UPDATED
-        - DATASET_FIELD_TERM_ASSIGNED
-        - DATASET_FIELD_TERM_ASSIGNMENT_DELETED
+        - DATASET_FIELD_TERM_ASSIGNMENT_UPDATED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED

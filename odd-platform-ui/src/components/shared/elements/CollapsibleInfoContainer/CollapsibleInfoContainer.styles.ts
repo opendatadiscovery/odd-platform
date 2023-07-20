@@ -8,10 +8,10 @@ export const ActionsContainer = styled('div')(() => ({
 export const Container = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  padding: theme.spacing(0.75),
   border: `1px solid`,
   borderRadius: `4px`,
   borderColor: 'transparent',
+  padding: theme.spacing(0.75),
 
   '&:hover': {
     borderColor: theme.palette.border.primary,

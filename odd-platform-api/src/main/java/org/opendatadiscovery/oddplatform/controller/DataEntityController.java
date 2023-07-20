@@ -28,6 +28,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
@@ -40,7 +41,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertHaltConfigService;
@@ -148,9 +148,9 @@ public class DataEntityController implements DataEntityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<TermRef>> addDataEntityTerm(final Long dataEntityId,
-                                                           final Mono<DataEntityTermFormData> dataEntityTermFormData,
-                                                           final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<LinkedTerm>> addDataEntityTerm(final Long dataEntityId,
+                                                              final Mono<DataEntityTermFormData> dataEntityTermFormData,
+                                                              final ServerWebExchange exchange) {
         return dataEntityTermFormData
             .flatMap(formData -> termService.linkTermWithDataEntity(formData.getTermId(), dataEntityId))
             .map(ResponseEntity::ok);
