@@ -142,4 +142,4 @@ export const emptyArr = [];
 export const emptyObj = {};
 
 // regexp
-export const TERM_PATTERN = /\[\[([^:]*?):([^\]]*?)\]\]/g;
+export const TERM_PATTERN = /\[\[([^:]+?):([^\]]+?)\]\]/g;
