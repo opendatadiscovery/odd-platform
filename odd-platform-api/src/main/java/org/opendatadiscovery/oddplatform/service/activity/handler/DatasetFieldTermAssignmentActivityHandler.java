@@ -12,7 +12,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
-import org.opendatadiscovery.oddplatform.service.term.TermService;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ import static reactor.function.TupleUtils.function;
 @RequiredArgsConstructor
 public class DatasetFieldTermAssignmentActivityHandler implements ActivityHandler {
     private final ReactiveDatasetFieldRepository datasetFieldRepository;
-    private final TermService termService;
+    private final ReactiveTermRepository termRepository;
 
     @Override
     public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
@@ -52,8 +52,9 @@ public class DatasetFieldTermAssignmentActivityHandler implements ActivityHandle
     }
 
     private Mono<List<TermActivityStateDto>> getTermsStateByDatasetFieldId(final Long datasetFieldId) {
-        return termService.getDatasetFieldTerms(datasetFieldId)
-            .map(this::mapTerms);
+        return termRepository.getDatasetFieldTerms(datasetFieldId)
+            .map(this::mapTerm)
+            .collectList();
     }
 
     private String getState(final List<TermActivityStateDto> terms, final DatasetFieldPojo pojo) {
@@ -62,11 +63,9 @@ public class DatasetFieldTermAssignmentActivityHandler implements ActivityHandle
         return JSONSerDeUtils.serializeJson(state);
     }
 
-    private List<TermActivityStateDto> mapTerms(final List<LinkedTermDto> terms) {
-        return terms.stream().map(dto -> {
-            final TermPojo pojo = dto.term().getTerm();
-            final NamespacePojo namespace = dto.term().getNamespace();
-            return new TermActivityStateDto(pojo.getId(), pojo.getName(), namespace.getName(), dto.isDescriptionLink());
-        }).toList();
+    private TermActivityStateDto mapTerm(final LinkedTermDto dto) {
+        final TermPojo pojo = dto.term().getTerm();
+        final NamespacePojo namespace = dto.term().getNamespace();
+        return new TermActivityStateDto(pojo.getId(), pojo.getName(), namespace.getName(), dto.isDescriptionLink());
     }
 }

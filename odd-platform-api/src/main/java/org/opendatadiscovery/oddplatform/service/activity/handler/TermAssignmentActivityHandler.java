@@ -9,7 +9,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
-import org.opendatadiscovery.oddplatform.service.term.TermService;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TermAssignment;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class TermAssignmentActivityHandler implements ActivityHandler {
-    private final TermService termService;
+    private final ReactiveTermRepository termRepository;
 
     @Override
     public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
@@ -43,8 +43,9 @@ public class TermAssignmentActivityHandler implements ActivityHandler {
     }
 
     private Mono<String> getStateByDataEntityId(final Long dataEntityId) {
-        return termService.getDataEntityTerms(dataEntityId)
-            .map(this::mapTerms)
+        return termRepository.getDataEntityTerms(dataEntityId)
+            .map(this::mapTerm)
+            .collectList()
             .map(this::getState);
     }
 
@@ -52,11 +53,9 @@ public class TermAssignmentActivityHandler implements ActivityHandler {
         return JSONSerDeUtils.serializeJson(state);
     }
 
-    private List<TermActivityStateDto> mapTerms(final List<LinkedTermDto> terms) {
-        return terms.stream().map(dto -> {
-            final TermPojo pojo = dto.term().getTerm();
-            final NamespacePojo namespace = dto.term().getNamespace();
-            return new TermActivityStateDto(pojo.getId(), pojo.getName(), namespace.getName(), dto.isDescriptionLink());
-        }).toList();
+    private TermActivityStateDto mapTerm(final LinkedTermDto dto) {
+        final TermPojo pojo = dto.term().getTerm();
+        final NamespacePojo namespace = dto.term().getNamespace();
+        return new TermActivityStateDto(pojo.getId(), pojo.getName(), namespace.getName(), dto.isDescriptionLink());
     }
 }

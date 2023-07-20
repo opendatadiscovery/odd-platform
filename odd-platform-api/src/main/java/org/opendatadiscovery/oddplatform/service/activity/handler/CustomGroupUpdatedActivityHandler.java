@@ -4,7 +4,6 @@ import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.CustomGroupUpdated;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

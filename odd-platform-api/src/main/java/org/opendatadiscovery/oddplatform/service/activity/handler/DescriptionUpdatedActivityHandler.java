@@ -6,7 +6,6 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;

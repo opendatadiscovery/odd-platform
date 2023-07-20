@@ -8,7 +8,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
-import org.opendatadiscovery.oddplatform.dto.term.DescriptionParsedTerms;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
