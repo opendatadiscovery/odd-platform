@@ -86,7 +86,7 @@ const DatasetStructureHeader: FC = () => {
       container
       flexWrap='nowrap'
     >
-      <Grid item xs={0.8}>
+      <Grid item>
         <Typography variant='h5' sx={{ display: 'flex' }}>
           <ColumnsIcon />
           <NumberFormatted sx={{ mx: 0.5 }} value={datasetFieldFieldsCount} />
@@ -95,7 +95,7 @@ const DatasetStructureHeader: FC = () => {
           </Typography>
         </Typography>
       </Grid>
-      <Grid item container flexWrap='nowrap'>
+      <Grid item container flexWrap='nowrap' ml={1}>
         <DatasetStructureTypeCounts
           fieldsCount={datasetFieldFieldsCount}
           typesCount={datasetFieldTypesCount}
