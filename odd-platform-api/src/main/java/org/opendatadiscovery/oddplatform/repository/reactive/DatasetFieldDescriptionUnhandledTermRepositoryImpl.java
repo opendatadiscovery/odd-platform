@@ -2,6 +2,9 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Condition;
+import org.jooq.Row2;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.term.TermBaseInfoDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldDescriptionUnhandledTermPojo;
@@ -10,6 +13,8 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
+import static org.jooq.impl.DSL.lower;
+import static org.jooq.impl.DSL.row;
 import static org.opendatadiscovery.oddplatform.model.Keys.DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM_UNIQUE_KEY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM;
 
@@ -41,6 +46,27 @@ public class DatasetFieldDescriptionUnhandledTermRepositoryImpl
                 .doNothing()
                 .returning(DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM.fields())
         ).map(r -> r.into(DatasetFieldDescriptionUnhandledTermPojo.class));
+    }
+
+    @Override
+    public Flux<DatasetFieldDescriptionUnhandledTermPojo> deleteForDatasetFieldExceptSpecified(
+        final long datasetFieldId,
+        final List<TermBaseInfoDto> termsToKeep) {
+        final List<Row2<String, String>> termRows = termsToKeep.stream()
+            .map(term -> row(lower(term.name()), lower(term.namespaceName())))
+            .toList();
+        final Condition condition;
+        if (CollectionUtils.isNotEmpty(termRows)) {
+            condition = row(lower(DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM.TERM_NAME),
+                lower(DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM.TERM_NAMESPACE_NAME)).notIn(termRows);
+        } else {
+            condition = DSL.noCondition();
+        }
+        final var query = DSL.deleteFrom(DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM)
+            .where(DATASET_FIELD_DESCRIPTION_UNHANDLED_TERM.DATASET_FIELD_ID.eq(datasetFieldId)).and(condition)
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(DatasetFieldDescriptionUnhandledTermPojo.class));
     }
 
     @Override

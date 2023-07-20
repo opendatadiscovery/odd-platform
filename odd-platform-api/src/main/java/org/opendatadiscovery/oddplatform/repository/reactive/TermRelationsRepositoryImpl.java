@@ -87,7 +87,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
         final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)
                 .and(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))
-                .and(DATA_ENTITY_TO_TERM.DESCRIPTION_LINK.isFalse()))
+                .and(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.isFalse()))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityToTermPojo.class));
@@ -101,7 +101,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
         final Condition condition = relations.stream()
             .map(pojo -> DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(pojo.getDataEntityId())
                 .and(DATA_ENTITY_TO_TERM.TERM_ID.eq(pojo.getTermId()))
-                .and(DATA_ENTITY_TO_TERM.DESCRIPTION_LINK.eq(pojo.getDescriptionLink())))
+                .and(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.eq(pojo.getIsDescriptionLink())))
             .reduce(Condition::or)
             .orElseThrow(() -> new RuntimeException("Couldn't build condition for deletion"));
         final var query = DSL.delete(DATA_ENTITY_TO_TERM)
@@ -149,7 +149,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
         final var query = DSL.deleteFrom(DATASET_FIELD_TO_TERM)
             .where(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(datasetFieldId)
                 .and(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId))
-                .and(DATASET_FIELD_TO_TERM.DESCRIPTION_LINK.isFalse()))
+                .and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.isFalse()))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DatasetFieldToTermPojo.class));
@@ -163,7 +163,7 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
         final Condition condition = pojos.stream()
             .map(pojo -> DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(pojo.getDatasetFieldId())
                 .and(DATASET_FIELD_TO_TERM.TERM_ID.eq(pojo.getTermId()))
-                .and(DATASET_FIELD_TO_TERM.DESCRIPTION_LINK.eq(pojo.getDescriptionLink())))
+                .and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.eq(pojo.getIsDescriptionLink())))
             .reduce(Condition::or)
             .orElseThrow(() -> new RuntimeException("Couldn't build condition for deletion"));
         final var query = DSL.delete(DATASET_FIELD_TO_TERM)

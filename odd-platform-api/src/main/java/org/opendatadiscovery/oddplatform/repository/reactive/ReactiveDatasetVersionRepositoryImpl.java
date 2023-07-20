@@ -357,9 +357,9 @@ public class ReactiveDatasetVersionRepositoryImpl
                     .term(pojo)
                     .namespace(namespaces.get(pojo.getNamespaceId()))
                     .build();
-                final boolean descriptionLink = relations.getOrDefault(pojo.getId(), List.of()).stream()
-                    .anyMatch(r -> Boolean.TRUE.equals(r.getDescriptionLink()));
-                return new LinkedTermDto(termRefDto, descriptionLink);
+                final boolean isDescriptionLink = relations.getOrDefault(pojo.getId(), List.of()).stream()
+                    .anyMatch(r -> Boolean.TRUE.equals(r.getIsDescriptionLink()));
+                return new LinkedTermDto(termRefDto, isDescriptionLink);
             })
             .toList();
     }

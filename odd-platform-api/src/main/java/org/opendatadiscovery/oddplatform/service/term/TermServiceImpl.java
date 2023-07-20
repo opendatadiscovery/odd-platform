@@ -320,7 +320,7 @@ public class TermServiceImpl implements TermService {
     private Mono<Void> updateDataEntityDescriptionTermsState(final DescriptionParsedTerms terms,
                                                              final long dataEntityId) {
         final Mono<List<LinkedTermDto>> existingDescriptionRelations = termRepository.getDataEntityTerms(dataEntityId)
-            .filter(LinkedTermDto::descriptionLink)
+            .filter(LinkedTermDto::isDescriptionLink)
             .collectList();
         return existingDescriptionRelations.flatMap(existing -> {
             final List<DataEntityToTermPojo> relationsToDelete = existing.stream()
@@ -329,7 +329,7 @@ public class TermServiceImpl implements TermService {
                 .map(pojo -> new DataEntityToTermPojo()
                     .setDataEntityId(dataEntityId)
                     .setTermId(pojo.getId())
-                    .setDescriptionLink(true))
+                    .setIsDescriptionLink(true))
                 .toList();
 
             final List<DataEntityToTermPojo> relations =
@@ -339,6 +339,8 @@ public class TermServiceImpl implements TermService {
 
             return termRelationsRepository.deleteTermDataEntityRelations(relationsToDelete)
                 .thenMany(termRelationsRepository.createRelationsWithDataEntity(relations))
+                .thenMany(dataEntityDescriptionUnhandledTermRepository
+                    .deleteForDataEntityExceptSpecified(dataEntityId, terms.unknownTerms()))
                 .thenMany(dataEntityDescriptionUnhandledTermRepository.createUnhandledTerms(unknownPojos))
                 .then();
         });
@@ -348,7 +350,7 @@ public class TermServiceImpl implements TermService {
                                                                final long datasetFieldId) {
         final Mono<List<LinkedTermDto>> existingDescriptionRelations = termRepository
             .getDatasetFieldTerms(datasetFieldId)
-            .filter(LinkedTermDto::descriptionLink)
+            .filter(LinkedTermDto::isDescriptionLink)
             .collectList();
 
         return existingDescriptionRelations.flatMap(existing -> {
@@ -358,7 +360,7 @@ public class TermServiceImpl implements TermService {
                 .map(pojo -> new DatasetFieldToTermPojo()
                     .setDatasetFieldId(datasetFieldId)
                     .setTermId(pojo.getId())
-                    .setDescriptionLink(true))
+                    .setIsDescriptionLink(true))
                 .toList();
             final List<DatasetFieldToTermPojo> relations =
                 buildDatasetFieldDescriptionTermRelations(terms.foundTerms(), datasetFieldId);
@@ -367,6 +369,8 @@ public class TermServiceImpl implements TermService {
 
             return termRelationsRepository.deleteTermDatasetFieldRelations(relationsToDelete)
                 .thenMany(termRelationsRepository.createRelationsWithDatasetField(relations))
+                .thenMany(datasetFieldDescriptionUnhandledTermRepository
+                    .deleteForDatasetFieldExceptSpecified(datasetFieldId, terms.unknownTerms()))
                 .thenMany(datasetFieldDescriptionUnhandledTermRepository.createUnhandledTerms(unknownPojos))
                 .then();
         });
@@ -380,7 +384,7 @@ public class TermServiceImpl implements TermService {
             .map(term -> new DataEntityToTermPojo()
                 .setTermId(details.getId())
                 .setDataEntityId(term.getDataEntityId())
-                .setDescriptionLink(true))
+                .setIsDescriptionLink(true))
             .collectList()
             .flatMapMany(termRelationsRepository::createRelationsWithDataEntity);
 
@@ -389,7 +393,7 @@ public class TermServiceImpl implements TermService {
             .map(term -> new DatasetFieldToTermPojo()
                 .setTermId(details.getId())
                 .setDatasetFieldId(term.getDatasetFieldId())
-                .setDescriptionLink(true))
+                .setIsDescriptionLink(true))
             .collectList()
             .flatMapMany(termRelationsRepository::createRelationsWithDatasetField);
         return Flux.merge(dataEntityTerms, datasetFieldTerms).then();
@@ -398,7 +402,7 @@ public class TermServiceImpl implements TermService {
     private Flux<LinkedTermDto> removeDuplicateNonDescriptionTerms(final Flux<LinkedTermDto> terms) {
         return terms
             .groupBy(dto -> dto.term().getTerm().getId())
-            .flatMap(group -> group.reduce((dto1, dto2) -> dto1.descriptionLink() ? dto1 : dto2));
+            .flatMap(group -> group.reduce((dto1, dto2) -> dto1.isDescriptionLink() ? dto1 : dto2));
     }
 
     private List<DataEntityToTermPojo> buildDataEntityDescriptionTermRelations(final List<TermPojo> terms,
@@ -407,7 +411,7 @@ public class TermServiceImpl implements TermService {
             .map(t -> new DataEntityToTermPojo()
                 .setDataEntityId(dataEntityId)
                 .setTermId(t.getId())
-                .setDescriptionLink(true))
+                .setIsDescriptionLink(true))
             .toList();
     }
 
@@ -417,7 +421,7 @@ public class TermServiceImpl implements TermService {
             .map(t -> new DatasetFieldToTermPojo()
                 .setDatasetFieldId(datasetFieldId)
                 .setTermId(t.getId())
-                .setDescriptionLink(true))
+                .setIsDescriptionLink(true))
             .toList();
     }
 

@@ -11,7 +11,7 @@ interface TermItemProps {
   definition: TermRef['definition'];
   termId: TermRef['id'];
   datasetFieldId: number;
-  descriptionLink: boolean;
+  isDescriptionLink: boolean;
   removeTerm: (termId: number) => void;
 }
 
@@ -21,7 +21,7 @@ const TermItem: FC<TermItemProps> = ({
   termId,
   datasetFieldId,
   removeTerm,
-  descriptionLink,
+  isDescriptionLink,
 }) => {
   const { mutateAsync: deleteTerm } = useDeleteDatasetFieldTerm();
 
@@ -44,14 +44,14 @@ const TermItem: FC<TermItemProps> = ({
       label={
         <Box p={0.75} display='flex' flexWrap='nowrap' alignItems='center'>
           <Button to={termDetailsLink} buttonType='link-m' text={name} sx={{ mr: 0.5 }} />
-          {descriptionLink && <LinkedTermIcon />}
+          {isDescriptionLink && <LinkedTermIcon />}
         </Box>
       }
       info={
         <CollapsibleInfoContainer
           content={<>{definition}</>}
           actions={
-            !descriptionLink ? (
+            !isDescriptionLink ? (
               <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
                 <Button
                   sx={{ mt: 0.25 }}

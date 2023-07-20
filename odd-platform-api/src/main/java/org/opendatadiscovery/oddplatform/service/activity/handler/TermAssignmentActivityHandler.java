@@ -56,7 +56,7 @@ public class TermAssignmentActivityHandler implements ActivityHandler {
         return terms.stream().map(dto -> {
             final TermPojo pojo = dto.term().getTerm();
             final NamespacePojo namespace = dto.term().getNamespace();
-            return new TermActivityStateDto(pojo.getId(), pojo.getName(), namespace.getName(), dto.descriptionLink());
+            return new TermActivityStateDto(pojo.getId(), pojo.getName(), namespace.getName(), dto.isDescriptionLink());
         }).toList();
     }
 }

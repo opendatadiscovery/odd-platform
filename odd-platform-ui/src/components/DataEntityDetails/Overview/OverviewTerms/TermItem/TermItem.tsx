@@ -33,13 +33,13 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, linkedTerm }) => {
             <Typography variant='body1' color='texts.action' mr={0.25}>
               {linkedTerm.term.name}
             </Typography>
-            {linkedTerm.descriptionLink && <LinkedTermIcon />}
+            {linkedTerm.isDescriptionLink && <LinkedTermIcon />}
           </Box>
           <S.TermDefinition variant='subtitle2'>
             {linkedTerm.term.definition}
           </S.TermDefinition>
         </Grid>
-        {!linkedTerm.descriptionLink && (
+        {!linkedTerm.isDescriptionLink && (
           <S.ActionsContainer>
             <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_TERM}>
               <Button

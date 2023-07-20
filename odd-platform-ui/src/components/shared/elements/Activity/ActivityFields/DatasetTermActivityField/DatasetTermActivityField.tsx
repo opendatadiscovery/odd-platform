@@ -88,7 +88,7 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
       {terms.map(term => (
         <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
           <Box sx={{ mr: 0.5 }}>{term.name}</Box>
-          {term.descriptionLink && <LinkedTermIcon />}
+          {term.isDescriptionLink && <LinkedTermIcon />}
         </S.ArrayItemWrapper>
       ))}
     </Grid>

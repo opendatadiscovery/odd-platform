@@ -23,18 +23,18 @@ CREATE TABLE IF NOT EXISTS dataset_field_description_unhandled_term
 );
 
 UPDATE activity
-SET old_state = (SELECT jsonb_agg(elem || '{"description_link": false}') FROM jsonb_array_elements(old_state) AS elem)
+SET old_state = (SELECT jsonb_agg(elem || '{"is_description_link": false}') FROM jsonb_array_elements(old_state) AS elem)
 WHERE event_type IN ('TERM_ASSIGNED', 'TERM_ASSIGNMENT_DELETED')
   AND jsonb_array_length(old_state) <> 0;
 
 UPDATE activity
-SET new_state = (SELECT jsonb_agg(elem || '{"description_link": false}') FROM jsonb_array_elements(new_state) AS elem)
+SET new_state = (SELECT jsonb_agg(elem || '{"is_description_link": false}') FROM jsonb_array_elements(new_state) AS elem)
 WHERE event_type IN ('TERM_ASSIGNED', 'TERM_ASSIGNMENT_DELETED')
   AND jsonb_array_length(new_state) <> 0;
 
 UPDATE activity
 SET old_state = (SELECT jsonb_set(old_state::jsonb, '{terms}',
-                                  (SELECT jsonb_agg(elem || '{"description_link": false}')
+                                  (SELECT jsonb_agg(elem || '{"is_description_link": false}')
                                    FROM jsonb_array_elements(old_state -> 'terms') AS elem)::jsonb
                             ))
 WHERE event_type IN ('DATASET_FIELD_TERM_ASSIGNED', 'DATASET_FIELD_TERM_ASSIGNMENT_DELETED')
@@ -42,7 +42,7 @@ WHERE event_type IN ('DATASET_FIELD_TERM_ASSIGNED', 'DATASET_FIELD_TERM_ASSIGNME
 
 UPDATE activity
 SET new_state = (SELECT jsonb_set(new_state::jsonb, '{terms}',
-                                  (SELECT jsonb_agg(elem || '{"description_link": false}')
+                                  (SELECT jsonb_agg(elem || '{"is_description_link": false}')
                                    FROM jsonb_array_elements(new_state -> 'terms') AS elem)::jsonb
                             ))
 WHERE event_type IN ('DATASET_FIELD_TERM_ASSIGNED', 'DATASET_FIELD_TERM_ASSIGNMENT_DELETED')

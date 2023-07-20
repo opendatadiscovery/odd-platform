@@ -9,5 +9,9 @@ public interface DataEntityDescriptionUnhandledTermRepository {
     Flux<DataEntityDescriptionUnhandledTermPojo> createUnhandledTerms(
         final List<DataEntityDescriptionUnhandledTermPojo> unhandledTerms);
 
+    Flux<DataEntityDescriptionUnhandledTermPojo> deleteForDataEntityExceptSpecified(
+        final long dataEntityId,
+        final List<TermBaseInfoDto> termsToKeep);
+
     Flux<DataEntityDescriptionUnhandledTermPojo> deleteUnhandledTerm(final TermBaseInfoDto dto);
 }

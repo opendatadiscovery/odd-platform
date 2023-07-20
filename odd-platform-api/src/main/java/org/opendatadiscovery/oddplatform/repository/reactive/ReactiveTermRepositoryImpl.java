@@ -71,7 +71,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     private static final String AGG_TITLES_FIELD = "titles";
     private static final String AGG_TAGS_FIELD = "tags";
     private static final String ENTITIES_COUNT = "entities_count";
-    private static final String DESCRIPTION_LINK = "description_link";
+    private static final String IS_DESCRIPTION_LINK = "is_description_link";
 
     private final JooqRecordHelper jooqRecordHelper;
     private final JooqFTSHelper jooqFTSHelper;
@@ -328,7 +328,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         final var query = DSL
             .select(TERM.fields())
             .select(NAMESPACE.fields())
-            .select(DATA_ENTITY_TO_TERM.DESCRIPTION_LINK.as(DESCRIPTION_LINK))
+            .select(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.as(IS_DESCRIPTION_LINK))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .join(DATA_ENTITY_TO_TERM)
@@ -343,7 +343,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         final var query = DSL
             .select(TERM.fields())
             .select(NAMESPACE.fields())
-            .select(DATASET_FIELD_TO_TERM.DESCRIPTION_LINK.as(DESCRIPTION_LINK))
+            .select(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.as(IS_DESCRIPTION_LINK))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .join(DATASET_FIELD_TO_TERM)
@@ -358,17 +358,17 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     public Mono<Boolean> hasDescriptionRelations(final long termId) {
         final Condition dataEntityDescriptionRelations = exists(DSL.selectOne()
             .from(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId).and(DATA_ENTITY_TO_TERM.DESCRIPTION_LINK.isTrue())));
+            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId).and(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.isTrue())));
         final Condition datasetFieldDescriptionRelations = exists(DSL.selectOne()
             .from(DATASET_FIELD_TO_TERM)
-            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId).and(DATASET_FIELD_TO_TERM.DESCRIPTION_LINK.isTrue())));
+            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId).and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.isTrue())));
         final var query = DSL.select(dataEntityDescriptionRelations.or(datasetFieldDescriptionRelations));
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     private LinkedTermDto mapRecordToLinkedTermDto(final Record record) {
         final TermRefDto termRefDto = mapRecordToRefDto(record);
-        return new LinkedTermDto(termRefDto, record.get(DESCRIPTION_LINK, Boolean.class));
+        return new LinkedTermDto(termRefDto, record.get(IS_DESCRIPTION_LINK, Boolean.class));
     }
 
     private TermRefDto mapRecordToRefDto(final Record record) {

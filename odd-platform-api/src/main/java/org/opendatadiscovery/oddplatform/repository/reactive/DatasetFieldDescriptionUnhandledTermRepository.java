@@ -9,5 +9,9 @@ public interface DatasetFieldDescriptionUnhandledTermRepository {
     Flux<DatasetFieldDescriptionUnhandledTermPojo> createUnhandledTerms(
         final List<DatasetFieldDescriptionUnhandledTermPojo> unhandledTerms);
 
+    Flux<DatasetFieldDescriptionUnhandledTermPojo> deleteForDatasetFieldExceptSpecified(
+        final long datasetFieldId,
+        final List<TermBaseInfoDto> termsToKeep);
+
     Flux<DatasetFieldDescriptionUnhandledTermPojo> deleteUnhandledTerm(final TermBaseInfoDto dto);
 }

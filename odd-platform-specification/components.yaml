@@ -2334,11 +2334,11 @@ components:
       properties:
         term:
           $ref: '#/components/schemas/TermRef'
-        description_link:
+        is_description_link:
           type: boolean
       required:
         - term
-        - description_link
+        - is_description_link
 
     TermList:
       type: object
@@ -2641,7 +2641,7 @@ components:
           type: string
         namespace:
           type: string
-        description_link:
+        is_description_link:
           type: boolean
 
     DescriptionActivityState:
