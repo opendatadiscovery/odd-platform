@@ -36,7 +36,7 @@ import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEnt
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';
 import ResultItem from './ResultItem/ResultItem';
 import SearchResultsSkeleton from './SearchResultsSkeleton/SearchResultsSkeleton';
-import * as S from './ResultsStyles';
+import * as S from './Results.styles';
 
 const Results: React.FC = () => {
   const dispatch = useAppDispatch();

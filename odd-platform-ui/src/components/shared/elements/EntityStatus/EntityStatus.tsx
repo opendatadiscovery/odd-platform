@@ -1,10 +1,11 @@
 import React, { type FC } from 'react';
 import type { DataEntityStatus } from 'generated-sources';
+import type { SerializeDateToNumber } from 'redux/interfaces';
 import SelectableEntityStatus from './SelectableEntityStatus/SelectableEntityStatus';
 import DefaultEntityStatus from './DefaultEntityStatus/DefaultEntityStatus';
 
 interface EntityStatusProps {
-  entityStatus: DataEntityStatus;
+  entityStatus: DataEntityStatus | SerializeDateToNumber<DataEntityStatus>;
   selectable?: boolean;
 }
 

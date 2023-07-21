@@ -1,18 +1,19 @@
 import React, { type FC } from 'react';
 import { useAppDateTime } from 'lib/hooks';
-import Tooltip from 'components/shared/elements/Tooltip/Tooltip';
+import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import { Typography } from '@mui/material';
 import type { DataEntityStatus } from 'generated-sources';
+import type { SerializeDateToNumber } from 'redux/interfaces';
 import * as S from '../EntityStatus.styles';
 
 interface DefaultEntityStatusProps {
-  entityStatus: DataEntityStatus;
-  disablePointerEvents?: boolean;
+  entityStatus: DataEntityStatus | SerializeDateToNumber<DataEntityStatus>;
+  active?: boolean;
 }
 
 const DefaultEntityStatus: FC<DefaultEntityStatusProps> = ({
   entityStatus,
-  disablePointerEvents,
+  active = false,
 }) => {
   const { formatDistanceToNow } = useAppDateTime();
   const { status, statusSwitchTime } = entityStatus;
@@ -30,23 +31,22 @@ const DefaultEntityStatus: FC<DefaultEntityStatusProps> = ({
 
   if (isTimeSensitiveStatus) {
     return (
-      <Tooltip
-        content={
+      <AppTooltip
+        title={
           <Typography variant='subtitle2' px={1} py={0.5}>
             {text}
           </Typography>
         }
       >
-        <S.EntityStatus $status={status}>{status}</S.EntityStatus>
-      </Tooltip>
+        <S.EntityStatus $status={status} $active={active} $isPointer>
+          {status}
+        </S.EntityStatus>
+      </AppTooltip>
     );
   }
 
   return (
-    <S.EntityStatus
-      $status={entityStatus.status}
-      $disablePointerEvents={disablePointerEvents}
-    >
+    <S.EntityStatus $status={entityStatus.status} $active={active}>
       {entityStatus.status}
     </S.EntityStatus>
   );

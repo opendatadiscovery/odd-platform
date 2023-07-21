@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SkeletonWrapper } from 'components/shared/elements';
-import { SearchCol, type GridSizesByBreakpoints } from '../ResultsStyles';
+import { SearchCol, type GridSizesByBreakpoints } from '../Results.styles';
 
 interface SearchResultsSkeletonProps {
   grid: GridSizesByBreakpoints;

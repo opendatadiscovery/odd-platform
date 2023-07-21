@@ -8,13 +8,14 @@ import {
   EntityClassItem,
   NumberFormatted,
   TruncatedCell,
+  EntityStatus,
 } from 'components/shared/elements';
 import { ColumnsIcon, QuestionIcon, RowsIcon } from 'components/shared/icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
-import { type GridSizesByBreakpoints, SearchCol } from '../ResultsStyles';
+import { type GridSizesByBreakpoints, SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
 
@@ -224,6 +225,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
             dataList={searchResult.dataEntityGroups}
             externalEntityId={searchResult.id}
           />
+        </SearchCol>
+        <SearchCol item lg={grid.lg.st} md={grid.md.st}>
+          <EntityStatus entityStatus={searchResult.status} />
         </SearchCol>
         <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
           {createdAt}

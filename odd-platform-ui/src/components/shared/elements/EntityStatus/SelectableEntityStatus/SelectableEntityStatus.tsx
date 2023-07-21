@@ -6,12 +6,13 @@ import { type DataEntityStatus, DataEntityStatusEnum } from 'generated-sources';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
+import type { SerializeDateToNumber } from 'redux/interfaces';
 import DefaultEntityStatus from '../DefaultEntityStatus/DefaultEntityStatus';
 import StatusSettingsForm from '../StatusSettingsForm/StatusSettingsForm';
 import * as S from '../EntityStatus.styles';
 
 interface SelectableEntityStatusProps {
-  entityStatus: DataEntityStatus;
+  entityStatus: DataEntityStatus | SerializeDateToNumber<DataEntityStatus>;
 }
 
 const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus }) => {
@@ -44,7 +45,7 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
 
   return (
     <>
-      <S.EntityStatus $status={entityStatus.status} $selectable onClick={handleMenuOpen}>
+      <S.EntityStatus $status={entityStatus.status} $active onClick={handleMenuOpen}>
         <>{entityStatus.status}</>
         {text && (
           <Typography ml={0.5} variant='subtitle2'>
@@ -67,10 +68,7 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
             <StatusSettingsForm
               openBtnEl={
                 <AppMenuItem>
-                  <DefaultEntityStatus
-                    entityStatus={{ status: s }}
-                    disablePointerEvents
-                  />
+                  <DefaultEntityStatus entityStatus={{ status: s }} />
                 </AppMenuItem>
               }
               status={s}
@@ -78,7 +76,7 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
             />
           ) : (
             <AppMenuItem key={s} onClick={() => handleOnClick(s)}>
-              <DefaultEntityStatus entityStatus={{ status: s }} disablePointerEvents />
+              <DefaultEntityStatus entityStatus={{ status: s }} />
             </AppMenuItem>
           )
         )}

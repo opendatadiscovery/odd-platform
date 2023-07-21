@@ -3,8 +3,8 @@ import type { DataEntityStatusEnum } from 'generated-sources';
 
 export const EntityStatus = styled.div<{
   $status: DataEntityStatusEnum;
-  $selectable?: boolean;
-  $disablePointerEvents?: boolean;
+  $active?: boolean;
+  $isPointer?: boolean;
 }>`
   padding: 4px 8px;
   border-radius: 12px;
@@ -12,25 +12,29 @@ export const EntityStatus = styled.div<{
   flex-wrap: nowrap;
   align-items: center;
   width: fit-content;
-  cursor: ${({ $selectable }) => ($selectable ? 'pointer' : 'default')};
-  pointer-events: ${({ $disablePointerEvents }) =>
-    $disablePointerEvents ? 'none' : 'auto'};
+  cursor: ${({ $isPointer }) => ($isPointer ? 'pointer' : 'default')};
 
-  ${({ $status, theme }) => ({
-    backgroundColor: theme.palette.entityStatus[$status].normal.background,
-    color: theme.palette.entityStatus[$status].normal.color,
+  ${({ $status, $active, theme }) => {
+    const activeStyles = {
+      '&:hover': {
+        color: theme.palette.entityStatus[$status].hover.color,
+        backgroundColor: theme.palette.entityStatus[$status].hover.background,
+      },
+      '&:active': {
+        color: theme.palette.entityStatus[$status].active.color,
+        backgroundColor: theme.palette.entityStatus[$status].active.background,
+      },
+      '&:disabled': {
+        color: theme.palette.entityStatus[$status].disabled?.color,
+        backgroundColor: theme.palette.entityStatus[$status].disabled?.background,
+      },
+    };
 
-    '&:hover': {
-      color: theme.palette.entityStatus[$status].hover.color,
-      backgroundColor: theme.palette.entityStatus[$status].hover.background,
-    },
-    '&:active': {
-      color: theme.palette.entityStatus[$status].active.color,
-      backgroundColor: theme.palette.entityStatus[$status].active.background,
-    },
-    '&:disabled': {
-      color: theme.palette.entityStatus[$status].disabled?.color,
-      backgroundColor: theme.palette.entityStatus[$status].disabled?.background,
-    },
-  })}
+    return {
+      backgroundColor: theme.palette.entityStatus[$status].normal.background,
+      color: theme.palette.entityStatus[$status].normal.color,
+
+      ...($active ? activeStyles : {}),
+    };
+  }}
 `;

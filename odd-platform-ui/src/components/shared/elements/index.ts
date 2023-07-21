@@ -12,6 +12,7 @@ export { default as NumberFormatted } from './NumberFormatted/NumberFormatted';
 export { default as ConfirmationDialog } from './ConfirmationDialog/ConfirmationDialog';
 export { default as LabelItem } from './LabelItem/LabelItem';
 export { default as CopyButton } from './CopyButton/CopyButton';
+export { default as EntityStatus } from './EntityStatus/EntityStatus';
 export { default as AppLoadingPage } from './AppLoadingPage/AppLoadingPage';
 export { default as EntityTypeItem } from './EntityTypeItem/EntityTypeItem';
 export { default as AppPopover } from './AppPopover/AppPopover';

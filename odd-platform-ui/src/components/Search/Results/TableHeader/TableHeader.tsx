@@ -2,8 +2,8 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { useScrollBarWidth } from 'lib/hooks';
-import * as S from '../ResultsStyles';
-import type { GridSizesByBreakpoints } from '../ResultsStyles';
+import * as S from '../Results.styles';
+import type { GridSizesByBreakpoints } from '../Results.styles';
 
 interface TableHeaderProps {
   grid: GridSizesByBreakpoints;
@@ -65,6 +65,9 @@ const TableHeader: React.FC<TableHeaderProps> = ({ grid, isCurrentSearchClass })
       </S.SearchCol>
       <S.SearchCol item lg={grid.lg.gr} md={grid.md.gr}>
         <Typography variant='caption'>Groups</Typography>
+      </S.SearchCol>
+      <S.SearchCol item lg={grid.lg.st} md={grid.md.st}>
+        <Typography variant='caption'>Status</Typography>
       </S.SearchCol>
       <S.SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
         <Typography variant='caption'>Created</Typography>
