@@ -8,6 +8,7 @@ export const EntityStatus = styled.div<{
 }>`
   padding: 4px 8px;
   border-radius: 12px;
+  font-size: 12px;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
