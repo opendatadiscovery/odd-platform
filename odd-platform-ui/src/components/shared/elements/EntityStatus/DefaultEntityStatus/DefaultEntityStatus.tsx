@@ -9,11 +9,13 @@ import * as S from '../EntityStatus.styles';
 interface DefaultEntityStatusProps {
   entityStatus: DataEntityStatus | SerializeDateToNumber<DataEntityStatus>;
   active?: boolean;
+  isPointer?: boolean;
 }
 
 const DefaultEntityStatus: FC<DefaultEntityStatusProps> = ({
   entityStatus,
   active = false,
+  isPointer,
 }) => {
   const { formatDistanceToNow } = useAppDateTime();
   const { status, statusSwitchTime } = entityStatus;
@@ -46,7 +48,7 @@ const DefaultEntityStatus: FC<DefaultEntityStatusProps> = ({
   }
 
   return (
-    <S.EntityStatus $status={entityStatus.status} $active={active}>
+    <S.EntityStatus $status={entityStatus.status} $active={active} $isPointer={isPointer}>
       {entityStatus.status}
     </S.EntityStatus>
   );

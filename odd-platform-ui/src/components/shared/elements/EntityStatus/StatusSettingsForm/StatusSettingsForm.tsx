@@ -6,18 +6,26 @@ import type { DataEntityStatusEnum } from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import Button from 'components/shared/elements/Button/Button';
 import AppDateTimePicker from 'components/shared/elements/AppDateTimePicker/AppDateTimePicker';
+import { updateEntityStatus } from 'redux/slices/dataentities.slice';
+import { useAppDispatch } from 'redux/lib/hooks';
 import Option from './Option/Option';
 
 interface StatusSettingsFormProps {
   openBtnEl: JSX.Element;
   status: DataEntityStatusEnum;
+  handleMenuClose?: () => void;
 }
 
 interface FormData {
   switchTime: Date | string;
 }
 
-const StatusSettingsForm: FC<StatusSettingsFormProps> = ({ openBtnEl, status }) => {
+const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
+  openBtnEl,
+  status,
+  handleMenuClose,
+}) => {
+  const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
   const { add, entityStatusFormattedDateTime } = useAppDateTime();
   const {
@@ -58,7 +66,10 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({ openBtnEl, status }) 
         ? settingsMap[data.switchTime as SelectedOption]
         : data.switchTime;
 
-    await updateStatus({ dataEntityId, dataEntityStatus: { status, statusSwitchTime } });
+    const params = { dataEntityId, dataEntityStatus: { status, statusSwitchTime } };
+    const updatedStatus = await updateStatus(params);
+    dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
+    handleMenuClose?.();
   };
 
   const handleDateChange = (date: Date | null) => {

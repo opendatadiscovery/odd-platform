@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import type { DataEntitiesState } from 'redux/interfaces';
 import keyBy from 'lodash/keyBy';
-import type { DataEntityDetails } from 'generated-sources';
+import type { DataEntityDetails, DataEntityStatus } from 'generated-sources';
 import omit from 'lodash/omit';
 import { dataEntitiesActionTypePrefix } from 'redux/actions';
 import filter from 'lodash/filter';
@@ -69,7 +69,19 @@ const updateDataEntity = (
 export const dataEntitiesSlice = createSlice({
   name: dataEntitiesActionTypePrefix,
   initialState,
-  reducers: {},
+  reducers: {
+    updateEntityStatus: (
+      state,
+      { payload }: { payload: { dataEntityId: number; status: DataEntityStatus } }
+    ): DataEntitiesState => {
+      const { dataEntityId, status } = payload;
+
+      return {
+        ...state,
+        byId: { ...state.byId, [dataEntityId]: { ...state.byId[dataEntityId], status } },
+      };
+    },
+  },
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchDataEntitiesClassesAndTypes.fulfilled,
@@ -220,4 +232,5 @@ export const dataEntitiesSlice = createSlice({
   },
 });
 
+export const { updateEntityStatus } = dataEntitiesSlice.actions;
 export default dataEntitiesSlice.reducer;

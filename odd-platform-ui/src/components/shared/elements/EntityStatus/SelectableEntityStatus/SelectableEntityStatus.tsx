@@ -7,6 +7,8 @@ import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
 import type { SerializeDateToNumber } from 'redux/interfaces';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { updateEntityStatus } from 'redux/slices/dataentities.slice';
 import DefaultEntityStatus from '../DefaultEntityStatus/DefaultEntityStatus';
 import StatusSettingsForm from '../StatusSettingsForm/StatusSettingsForm';
 import * as S from '../EntityStatus.styles';
@@ -16,6 +18,7 @@ interface SelectableEntityStatusProps {
 }
 
 const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus }) => {
+  const dispatch = useAppDispatch();
   const { formatDistanceToNow } = useAppDateTime();
   const { dataEntityId } = useAppParams();
   const menuId = 'entity-status-menu';
@@ -36,8 +39,12 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
   const text = isTimeSensitiveStatus ? `${formattedToNowDate} left` : '';
 
   const handleOnClick = useCallback(
-    async (newStatus: DataEntityStatusEnum) =>
-      updateStatus({ dataEntityId, dataEntityStatus: { status: newStatus } }),
+    async (newStatus: DataEntityStatusEnum) => {
+      const params = { dataEntityId, dataEntityStatus: { status: newStatus } };
+      const updatedStatus = await updateStatus(params);
+      dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
+      handleMenuClose();
+    },
     [dataEntityId]
   );
 
@@ -45,10 +52,15 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
 
   return (
     <>
-      <S.EntityStatus $status={entityStatus.status} $active onClick={handleMenuOpen}>
+      <S.EntityStatus
+        $status={entityStatus.status}
+        $active
+        $isPointer
+        onClick={handleMenuOpen}
+      >
         <>{entityStatus.status}</>
         {text && (
-          <Typography ml={0.5} variant='subtitle2'>
+          <Typography ml={0.5} variant='subtitle2' whiteSpace='nowrap'>
             {text}
           </Typography>
         )}
@@ -64,11 +76,12 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
         onClose={handleMenuClose}
       >
         {statusList.map(s =>
-          s === 'DRAFT' || s === 'DELETED' || s === 'DEPRECATED' ? (
+          s === 'DRAFT' || s === 'DEPRECATED' ? (
             <StatusSettingsForm
+              handleMenuClose={handleMenuClose}
               openBtnEl={
                 <AppMenuItem>
-                  <DefaultEntityStatus entityStatus={{ status: s }} />
+                  <DefaultEntityStatus isPointer entityStatus={{ status: s }} />
                 </AppMenuItem>
               }
               status={s}
@@ -76,7 +89,7 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
             />
           ) : (
             <AppMenuItem key={s} onClick={() => handleOnClick(s)}>
-              <DefaultEntityStatus entityStatus={{ status: s }} />
+              <DefaultEntityStatus isPointer entityStatus={{ status: s }} />
             </AppMenuItem>
           )
         )}

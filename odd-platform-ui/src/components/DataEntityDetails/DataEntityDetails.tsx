@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -53,7 +53,7 @@ const DataEntityDetails: React.FC = () => {
     getDataEntityDeleteFromGroupStatuses
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [
     dataEntityId,
@@ -62,7 +62,7 @@ const DataEntityDetails: React.FC = () => {
     isDataEntityDeletedFromGroup,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchDataEntityAlertsCounts({ dataEntityId, status: AlertStatus.OPEN }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
@@ -94,6 +94,7 @@ const DataEntityDetails: React.FC = () => {
                 type={details.type}
                 manuallyCreated={details.manuallyCreated}
                 updatedAt={details.updatedAt}
+                status={details.status}
               />
             )}
           />

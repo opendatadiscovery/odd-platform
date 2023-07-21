@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
   Button,
   EntityClassItem,
+  EntityStatus,
   EntityTypeItem,
   LabelItem,
   WithFeature,
@@ -23,6 +24,7 @@ interface DataEntityDetailsHeaderProps {
   type: DataEntityDetails['type'];
   manuallyCreated: DataEntityDetails['manuallyCreated'];
   updatedAt: DataEntityDetails['updatedAt'];
+  status: DataEntityDetails['status'];
 }
 const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   updatedAt,
@@ -32,15 +34,16 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   internalName,
   type,
   dataEntityId,
+  status,
 }) => {
   const { formatDistanceToNowStrict } = useAppDateTime();
 
-  const entityUpdatedAt = React.useMemo(
+  const entityUpdatedAt = useMemo(
     () =>
       updatedAt && (
         <>
           <TimeGapIcon />
-          <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+          <Typography variant='body1' sx={{ mx: 1, whiteSpace: 'nowrap' }}>
             {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
           </Typography>
         </>
@@ -48,7 +51,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
     [updatedAt]
   );
 
-  const originalName = React.useMemo(
+  const originalName = useMemo(
     () =>
       internalName &&
       externalName && (
@@ -101,6 +104,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           justifyContent='flex-end'
         >
           {entityUpdatedAt}
+          <EntityStatus entityStatus={status} selectable />
           {manuallyCreated && (
             <DataEntityGroupControls
               internalName={internalName}
