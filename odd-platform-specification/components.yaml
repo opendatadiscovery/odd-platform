@@ -1065,6 +1065,14 @@ components:
         - is_upper_group
         - data_entity
 
+    DataEntityStatusFormData:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
+        propagate:
+          type: boolean
+
     DataSetSLAReport:
       type: object
       properties:
