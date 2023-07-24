@@ -1,11 +1,24 @@
 
+#default_pulling_interval: 1
+#token: "b6ZSdZEq5WFTE5bamxNGNqeOcaFh0NedahQ6ozGs"
+#plugins:
+#  - type: postgresql
+#    name: postgresql-step2-test
+#    host: !ENV ${SAMPLE_POSTGRES_HOST}
+#    port: 5432
+#    database: !ENV ${SAMPLE_POSTGRES_DATABASE}
+#    user: !ENV ${SAMPLE_POSTGRES_USER}
+#    password: !ENV ${SAMPLE_POSTGRES_PASSWORD}
+
+
+
 default_pulling_interval: 1
-token: ""
+token: "K6N9QG86FfowqdNF9AjIe9WSzm6adzTSX6O39d3y"
 plugins:
   - type: postgresql
-    name: postgresql-step2-test
-    host: !ENV ${SAMPLE_POSTGRES_HOST}
+    name: traffic
+    host: 172.21.0.2
     port: 5432
-    database: !ENV ${SAMPLE_POSTGRES_DATABASE}
-    user: !ENV ${SAMPLE_POSTGRES_USER}
-    password: !ENV ${SAMPLE_POSTGRES_PASSWORD}
+    user: postgres
+    password: !ENV ${MY_POSTGRES_PASSWORD}
+    database: !ENV ${MY_POSTGRES_DATABASE}
