@@ -40,7 +40,10 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
 
   const handleOnClick = useCallback(
     async (newStatus: DataEntityStatusEnum) => {
-      const params = { dataEntityId, dataEntityStatus: { status: newStatus } };
+      const params = {
+        dataEntityId,
+        dataEntityStatusFormData: { status: { status: newStatus } },
+      };
       const updatedStatus = await updateStatus(params);
       dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
       handleMenuClose();

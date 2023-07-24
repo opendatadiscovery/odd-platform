@@ -66,7 +66,10 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
         ? settingsMap[data.switchTime as SelectedOption]
         : data.switchTime;
 
-    const params = { dataEntityId, dataEntityStatus: { status, statusSwitchTime } };
+    const params = {
+      dataEntityId,
+      dataEntityStatusFormData: { status: { status, statusSwitchTime } },
+    };
     const updatedStatus = await updateStatus(params);
     dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
     handleMenuClose?.();
