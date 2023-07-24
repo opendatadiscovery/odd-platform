@@ -37,6 +37,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_STATUS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_TAGS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_DELETE;
@@ -242,6 +243,11 @@ public final class SecurityConstants {
             DATA_ENTITY,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/links/{link_id}", DELETE),
             DATA_ENTITY_ATTACHMENT_MANAGE
+        ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/statuses", PUT),
+            DATA_ENTITY_STATUS_UPDATE
         ),
         new SecurityRule(DATASET_FIELD,
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/description", PUT),

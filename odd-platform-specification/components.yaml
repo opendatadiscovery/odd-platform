@@ -183,6 +183,7 @@ components:
         - DATA_ENTITY_GROUP_UPDATE
         - DATA_ENTITY_GROUP_DELETE
         - DATA_ENTITY_ATTACHMENT_MANAGE
+        - DATA_ENTITY_STATUS_UPDATE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -2619,6 +2620,8 @@ components:
           $ref: '#/components/schemas/DescriptionActivityState'
         business_name:
           $ref: '#/components/schemas/BusinessNameActivityState'
+        status:
+          $ref: '#/components/schemas/DataEntityStatusActivityState'
         custom_metadata:
           type: array
           items:
@@ -2702,6 +2705,12 @@ components:
       properties:
         internal_name:
           type: string
+
+    DataEntityStatusActivityState:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
 
     CustomMetadataActivityState:
       type: object
@@ -2888,6 +2897,7 @@ components:
         - TERM_ASSIGNMENT_UPDATED
         - DESCRIPTION_UPDATED
         - BUSINESS_NAME_UPDATED
+        - DATA_ENTITY_STATUS_UPDATED
         - CUSTOM_METADATA_CREATED
         - CUSTOM_METADATA_UPDATED
         - CUSTOM_METADATA_DELETED
