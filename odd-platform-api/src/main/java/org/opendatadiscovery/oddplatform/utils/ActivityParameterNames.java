@@ -21,6 +21,10 @@ public interface ActivityParameterNames {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 
+    interface StatusUpdated {
+        String DATA_ENTITY_ID = "dataEntityId";
+    }
+
     interface TermAssignment {
         String DATA_ENTITY_ID = "dataEntityId";
     }

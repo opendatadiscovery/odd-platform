@@ -21,6 +21,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.CustomGroupActivityS
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldInformationActivityState;
@@ -42,6 +45,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.AlertStatusUpdatedActivity
 import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.DataEntityStatusUpdatedDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTermsActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
@@ -51,6 +55,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.TagActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -113,6 +118,7 @@ public abstract class ActivityMapper {
             case TERM_ASSIGNMENT_UPDATED -> mapTermsState(jsonb);
             case DESCRIPTION_UPDATED -> mapDescriptionState(jsonb);
             case BUSINESS_NAME_UPDATED -> mapBusinessNameState(jsonb);
+            case DATA_ENTITY_STATUS_UPDATED -> mapDataEntityStatusState(jsonb);
             case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValuesState(jsonb);
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 mapDatasetFieldInformationState(jsonb);
@@ -188,6 +194,16 @@ public abstract class ActivityMapper {
     }
 
     abstract BusinessNameActivityState mapInternalNameActivityState(final BusinessNameActivityStateDto dto);
+
+    ActivityState mapDataEntityStatusState(final JSONB jsonb) {
+        final DataEntityStatusUpdatedDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), DataEntityStatusUpdatedDto.class);
+        final DataEntityStatusActivityState state = new DataEntityStatusActivityState();
+        final DataEntityStatus status = new DataEntityStatus(DataEntityStatusEnum.fromValue(stateDto.status()));
+        status.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(stateDto.statusSwitchTime()));
+        state.setStatus(status);
+        return new ActivityState().status(state);
+    }
 
     ActivityState mapDatasetFieldValuesState(final JSONB jsonb) {
         final DatasetFieldValuesActivityStateDto stateDto =
