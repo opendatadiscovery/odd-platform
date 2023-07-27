@@ -73,7 +73,7 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
         <EmptyContentPlaceholder
           isContentLoaded={isEntitiesLoaded}
           isContentEmpty={isContentEmpty}
-          offsetTop={190}
+          offsetTop={240}
         />
       )}
     </>

@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { EntityClassItem, LabelItem, TagItem } from 'components/shared/elements';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { Link } from 'react-router-dom';
-import { ActivityEventType } from 'generated-sources';
+import { ActivityEventType, DataEntityStatusEnum } from 'generated-sources';
 import {
   ActivityFieldHeader,
   AlertActivityField,
@@ -17,6 +17,7 @@ import {
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
 import DatasetTermActivityField from 'components/shared/elements/Activity/ActivityFields/DatasetTermActivityField/DatasetTermActivityField';
+import EntityStatusActivityField from 'components/shared/elements/Activity/ActivityFields/EntityStatusActivityField/EntityStatusActivityField';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -206,6 +207,13 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           eventType={activity.eventType}
           oldState={activity.oldState}
           newState={activity.newState}
+        />
+      )}
+      {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_STATUS_UPDATED]) && (
+        <EntityStatusActivityField
+          oldState={activity.oldState.status}
+          newState={activity.newState.status}
+          hideAllDetails={hideAllDetails}
         />
       )}
     </S.Container>

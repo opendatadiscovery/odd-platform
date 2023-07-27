@@ -1,30 +1,29 @@
 import type { MouseEvent } from 'react';
-import React, { type FC, useCallback, useState } from 'react';
+import React, { type FC, useState } from 'react';
 import { Typography } from '@mui/material';
 import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import { type DataEntityStatus, DataEntityStatusEnum } from 'generated-sources';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
-import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import type { SerializeDateToNumber } from 'redux/interfaces';
-import { useAppDispatch } from 'redux/lib/hooks';
-import { updateEntityStatus } from 'redux/slices/dataentities.slice';
+import StatusSettingsForm from 'components/shared/elements/EntityStatus/StatusSettingsForm/StatusSettingsForm';
 import DefaultEntityStatus from '../DefaultEntityStatus/DefaultEntityStatus';
-import StatusSettingsForm from '../StatusSettingsForm/StatusSettingsForm';
 import * as S from '../EntityStatus.styles';
 
 interface SelectableEntityStatusProps {
   entityStatus: DataEntityStatus | SerializeDateToNumber<DataEntityStatus>;
+  isPropagatable: boolean;
 }
 
-const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus }) => {
-  const dispatch = useAppDispatch();
+const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({
+  entityStatus,
+  isPropagatable,
+}) => {
   const { formatDistanceToNow } = useAppDateTime();
-  const { dataEntityId } = useAppParams();
   const menuId = 'entity-status-menu';
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
-  const { mutateAsync: updateStatus } = useUpdateDataEntityStatus();
 
   const handleMenuOpen = (event: MouseEvent) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -37,19 +36,6 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
     ? formatDistanceToNow(statusSwitchTime)
     : '';
   const text = isTimeSensitiveStatus ? `${formattedToNowDate} left` : '';
-
-  const handleOnClick = useCallback(
-    async (newStatus: DataEntityStatusEnum) => {
-      const params = {
-        dataEntityId,
-        dataEntityStatusFormData: { status: { status: newStatus } },
-      };
-      const updatedStatus = await updateStatus(params);
-      dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
-      handleMenuClose();
-    },
-    [dataEntityId]
-  );
 
   const statusList = Object.values(DataEntityStatusEnum);
 
@@ -78,24 +64,21 @@ const SelectableEntityStatus: FC<SelectableEntityStatusProps> = ({ entityStatus 
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {statusList.map(s =>
-          s === 'DRAFT' || s === 'DEPRECATED' ? (
-            <StatusSettingsForm
-              handleMenuClose={handleMenuClose}
-              openBtnEl={
-                <AppMenuItem>
-                  <DefaultEntityStatus isPointer entityStatus={{ status: s }} />
-                </AppMenuItem>
-              }
-              status={s}
-              key={s}
-            />
-          ) : (
-            <AppMenuItem key={s} onClick={() => handleOnClick(s)}>
-              <DefaultEntityStatus isPointer entityStatus={{ status: s }} />
-            </AppMenuItem>
-          )
-        )}
+        {statusList.map(s => (
+          <StatusSettingsForm
+            handleMenuClose={handleMenuClose}
+            openBtnEl={
+              <AppMenuItem>
+                <DefaultEntityStatus isPointer entityStatus={{ status: s }} />
+              </AppMenuItem>
+            }
+            newStatus={s}
+            oldStatus={entityStatus.status}
+            isPropagatable={isPropagatable}
+            isTimeSensitive={s === 'DEPRECATED' || s === 'DRAFT'}
+            key={s}
+          />
+        ))}
       </AppMenu>
     </>
   );

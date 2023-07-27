@@ -12,6 +12,8 @@ import { WithPermissions } from 'components/shared/contexts';
 import { type DataEntityDetails, Feature, Permission } from 'generated-sources';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getIsDataEntityBelongsToClass } from 'redux/selectors';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
@@ -37,6 +39,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   status,
 }) => {
   const { formatDistanceToNowStrict } = useAppDateTime();
+  const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
 
   const entityUpdatedAt = useMemo(
     () =>
@@ -68,7 +71,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
       <Grid container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={9} alignItems='center' flexWrap='nowrap'>
+        <Grid container item lg={7} alignItems='center' flexWrap='nowrap'>
           <Typography variant='h0' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -97,14 +100,23 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
         <Grid
           container
           item
-          lg={3}
+          lg={5}
           sx={{ ml: 1 }}
           alignItems='center'
           flexWrap='nowrap'
           justifyContent='flex-end'
         >
           {entityUpdatedAt}
-          <EntityStatus entityStatus={status} selectable />
+          <WithPermissions
+            permissionTo={Permission.DATA_ENTITY_STATUS_UPDATE}
+            renderContent={({ isAllowedTo }) => (
+              <EntityStatus
+                entityStatus={status}
+                selectable={isAllowedTo}
+                isPropagatable={isDEG}
+              />
+            )}
+          />
           {manuallyCreated && (
             <DataEntityGroupControls
               internalName={internalName}
