@@ -45,7 +45,7 @@ type Helpers = {
 };
 type UseAppDateTimeReturn = Record<
   `${DateTimePatternNames}FormattedDateTime`,
-  (date: number) => string
+  (date: number | Date) => string
 > &
   Helpers;
 
@@ -68,7 +68,7 @@ const useAppDateTime = (): UseAppDateTimeReturn => {
     datedList: { us: datedListFormat, eu: datedListFormat },
   };
 
-  const formatDate = (datePattern: DateTimePatternNames) => (date: number) => {
+  const formatDate = (datePattern: DateTimePatternNames) => (date: number | Date) => {
     let timezone: TimeZones = 'eu';
     if (currentTimezone.startsWith('America')) timezone = 'us';
 

@@ -1,33 +1,42 @@
 import React, { cloneElement, type FC, useCallback, useState } from 'react';
 import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, Typography } from '@mui/material';
+import { Box, FormControlLabel, Typography } from '@mui/material';
 import type { DataEntityStatusEnum } from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import Button from 'components/shared/elements/Button/Button';
 import AppDateTimePicker from 'components/shared/elements/AppDateTimePicker/AppDateTimePicker';
 import { updateEntityStatus } from 'redux/slices/dataentities.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
+import { Checkbox } from 'components/shared/elements/index';
+import DefaultEntityStatus from 'components/shared/elements/EntityStatus/DefaultEntityStatus/DefaultEntityStatus';
 import Option from './Option/Option';
 
 interface StatusSettingsFormProps {
   openBtnEl: JSX.Element;
-  status: DataEntityStatusEnum;
+  oldStatus: DataEntityStatusEnum;
+  newStatus: DataEntityStatusEnum;
+  isPropagatable: boolean;
+  isTimeSensitive: boolean;
   handleMenuClose?: () => void;
 }
 
 interface FormData {
   switchTime: Date | string;
+  propagate: boolean;
 }
 
 const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
   openBtnEl,
-  status,
+  oldStatus,
+  newStatus,
   handleMenuClose,
+  isPropagatable,
+  isTimeSensitive,
 }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const { add, entityStatusFormattedDateTime } = useAppDateTime();
+  const { add } = useAppDateTime();
   const {
     mutateAsync: updateStatus,
     isLoading: isStatusUpdating,
@@ -61,15 +70,21 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
   }, [reset]);
 
   const onSubmit = async (data: FormData) => {
-    const statusSwitchTime =
+    const switchTime =
       typeof data.switchTime === 'string'
         ? settingsMap[data.switchTime as SelectedOption]
         : data.switchTime;
 
+    const statusSwitchTime =
+      newStatus === 'DRAFT' || newStatus === 'DEPRECATED' ? switchTime : undefined;
+
     const params = {
       dataEntityId,
-      dataEntityStatusFormData: { status: { status, statusSwitchTime } },
+      dataEntityStatusFormData: {
+        status: { status: newStatus, statusSwitchTime, propagate: data.propagate },
+      },
     };
+
     const updatedStatus = await updateStatus(params);
     dispatch(updateEntityStatus({ dataEntityId, status: updatedStatus }));
     handleMenuClose?.();
@@ -91,53 +106,87 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Entity status settings
+      Status change settings
     </Typography>
   );
 
   const formContent = () => (
     <form id={formId} onSubmit={handleSubmit(onSubmit)}>
       <Typography variant='body1' color='texts.info'>
-        Change to status “Deleted” after
+        You are changing your status from
       </Typography>
-      <Controller
-        name='switchTime'
-        control={control}
-        render={() => (
-          <Box sx={{ mt: 1 }}>
-            {Object.keys(settingsMap).map(option => (
-              <Option
-                key={option}
-                value={option}
-                selected={option === selectedOption}
-                onClick={() => handleOptionClick(option)}
-              />
-            ))}
-          </Box>
-        )}
-      />
-      <Typography variant='body1' color='texts.info' my={1.5}>
-        or choose exact time
-      </Typography>
-      <Controller
-        name='switchTime'
-        control={control}
-        render={() => (
-          <AppDateTimePicker
-            value={selectedDate}
-            minDateTime={new Date()}
-            onChange={handleDateChange}
-          />
-        )}
-      />
-      <Box sx={{ mt: 1.5, borderTop: '1px solid', borderColor: 'divider' }}>
-        <Typography variant='subtitle2' mt={1.5}>
-          {`On ${entityStatusFormattedDateTime(
-            selectedDate?.getTime() ??
-              settingsMap[selectedOption as SelectedOption].getTime()
-          )}, entity will move to Deleted status`}
-        </Typography>
+      <Box display='flex' flexWrap='nowrap' alignItems='center' mt={0.5}>
+        <DefaultEntityStatus entityStatus={{ status: oldStatus }} />
+        <Box sx={{ mx: 0.5 }}>&gt;</Box>
+        <DefaultEntityStatus entityStatus={{ status: newStatus }} />
       </Box>
+      {isTimeSensitive && (
+        <>
+          <Typography variant='body1' color='texts.info' mt={1.5} mb={0.5}>
+            Change to status “Deleted” after
+          </Typography>
+          <Controller
+            name='switchTime'
+            control={control}
+            render={({ field }) => (
+              <AppDateTimePicker
+                {...field}
+                value={selectedDate}
+                minDateTime={new Date()}
+                onChange={date => {
+                  handleDateChange(date);
+                  field.onChange(date);
+                }}
+              />
+            )}
+          />
+          <Typography variant='body1' color='texts.info' my={1.5}>
+            Or select time interval
+          </Typography>
+          <Controller
+            name='switchTime'
+            control={control}
+            render={() => (
+              <Box sx={{ mt: 1 }}>
+                {Object.keys(settingsMap).map(option => (
+                  <Option
+                    key={option}
+                    value={option}
+                    selected={option === selectedOption}
+                    onClick={() => handleOptionClick(option)}
+                  />
+                ))}
+              </Box>
+            )}
+          />
+        </>
+      )}
+
+      {isPropagatable && (
+        <Box
+          sx={{
+            mt: 1.5,
+            borderTop: '1px solid',
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <Controller
+            name='propagate'
+            defaultValue={false}
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                {...field}
+                sx={{ ml: -0.25, my: 1.5 }}
+                checked={field.value}
+                control={<Checkbox sx={{ mr: 1 }} />}
+                label='Propagate status to the whole group'
+              />
+            )}
+          />
+        </Box>
+      )}
     </form>
   );
 

@@ -10,14 +10,16 @@ interface DefaultEntityStatusProps {
   entityStatus: DataEntityStatus | SerializeDateToNumber<DataEntityStatus>;
   active?: boolean;
   isPointer?: boolean;
+  showSwitchDate?: boolean;
 }
 
 const DefaultEntityStatus: FC<DefaultEntityStatusProps> = ({
   entityStatus,
   active = false,
   isPointer,
+  showSwitchDate,
 }) => {
-  const { formatDistanceToNow } = useAppDateTime();
+  const { formatDistanceToNow, entityStatusFormattedDateTime } = useAppDateTime();
   const { status, statusSwitchTime } = entityStatus;
 
   const isTimeSensitiveStatus =
@@ -30,6 +32,27 @@ const DefaultEntityStatus: FC<DefaultEntityStatusProps> = ({
     status === 'DRAFT' || status === 'DEPRECATED'
       ? `Update to deleted status in ${formattedToNowDate}`
       : `Will be deleted in ${formattedToNowDate}`;
+
+  const switchDateText = statusSwitchTime
+    ? `Status change at ${entityStatusFormattedDateTime(statusSwitchTime)}`
+    : '';
+
+  if (showSwitchDate) {
+    return (
+      <S.EntityStatus
+        $status={entityStatus.status}
+        $active={active}
+        $isPointer={isPointer}
+      >
+        {entityStatus.status}
+        {formattedToNowDate && (
+          <Typography ml={0.5} variant='subtitle2' whiteSpace='nowrap'>
+            {switchDateText}
+          </Typography>
+        )}
+      </S.EntityStatus>
+    );
+  }
 
   if (isTimeSensitiveStatus) {
     return (

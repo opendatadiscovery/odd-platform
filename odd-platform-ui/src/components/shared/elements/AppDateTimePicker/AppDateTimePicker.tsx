@@ -1,11 +1,11 @@
-import React, { forwardRef, useCallback } from 'react';
+import React, { forwardRef } from 'react';
 import { Box, type Theme } from '@mui/material';
 import type { SxProps } from '@mui/system';
 import { CalendarIcon } from 'components/shared/icons';
 import { DateTimePicker, type DateTimePickerProps } from '@mui/x-date-pickers';
 import Input from 'components/shared/elements/Input/Input';
 
-export const metadataDateTimePickerInputFormat = 'd MMM yyyy, HH:mm';
+const dateTimePickerInputFormat = 'd MMM yyyy, HH:mm';
 
 interface AppDateTimePickerProps
   extends Pick<
@@ -36,44 +36,34 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = forwardRef(
       value,
     },
     ref
-  ) => {
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(value);
-
-    const AppDatePickerIcon = useCallback(() => <CalendarIcon />, []);
-
-    return (
-      <Box sx={sx} width='100%'>
-        <DateTimePicker
-          ref={ref as unknown as React.Ref<HTMLDivElement>}
-          minDateTime={minDateTime}
-          onChange={date => {
-            setSelectedDate(date);
-            onChange(date);
-            return onChange;
-          }}
-          onAccept={date => {
-            setSelectedDate(date);
-            return onAccept;
-          }}
-          inputFormat={inputFormat || metadataDateTimePickerInputFormat}
-          disableMaskedInput={disableMaskedInput}
-          label={label}
-          value={selectedDate}
-          components={{ OpenPickerIcon: AppDatePickerIcon }}
-          OpenPickerButtonProps={{ disableRipple: true }}
-          renderInput={params => (
-            <Input
-              variant='main-m'
-              inputProps={params.inputProps}
-              ref={params.inputRef}
-              type='date'
-              error={errorText}
-              calendar={params.InputProps?.endAdornment}
-            />
-          )}
-        />
-      </Box>
-    );
-  }
+  ) => (
+    <Box sx={sx} width='100%'>
+      <DateTimePicker
+        ref={ref as unknown as React.Ref<HTMLDivElement>}
+        minDateTime={minDateTime}
+        onChange={date => {
+          onChange(date);
+          return onChange;
+        }}
+        onAccept={onAccept}
+        inputFormat={inputFormat || dateTimePickerInputFormat}
+        disableMaskedInput={disableMaskedInput}
+        label={label}
+        value={value}
+        components={{ OpenPickerIcon: CalendarIcon }}
+        OpenPickerButtonProps={{ disableRipple: true }}
+        renderInput={params => (
+          <Input
+            variant='main-m'
+            inputProps={params.inputProps}
+            ref={params.inputRef}
+            type='date'
+            error={errorText}
+            calendar={params.InputProps?.endAdornment}
+          />
+        )}
+      />
+    </Box>
+  )
 );
 export default AppDateTimePicker;
