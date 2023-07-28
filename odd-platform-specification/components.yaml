@@ -544,10 +544,13 @@ components:
           $ref: '#/components/schemas/DataEntityRefList'
         status:
           $ref: '#/components/schemas/DataEntityStatus'
-        created_at:
+        source_created_at:
           type: string
           format: date-time
-        updated_at:
+        source_updated_at:
+          type: string
+          format: date-time
+        last_ingested_at:
           type: string
           format: date-time
         view_count:
