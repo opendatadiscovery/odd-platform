@@ -4,6 +4,8 @@ import type { SxProps } from '@mui/system';
 import { CalendarIcon } from 'components/shared/icons';
 import { DateTimePicker, type DateTimePickerProps } from '@mui/x-date-pickers';
 import Input from 'components/shared/elements/Input/Input';
+import ChevronIcon from 'components/shared/icons/ChevronIcon';
+import { dateTimePaperPropsStyles } from './style.overrides';
 
 const dateTimePickerInputFormat = 'd MMM yyyy, HH:mm';
 
@@ -21,6 +23,19 @@ interface AppDateTimePickerProps
   sx?: SxProps<Theme>;
   errorText?: string;
 }
+
+const ChevronLeft = () => <ChevronIcon height={10} transform='rotate(90)' />;
+const ChevronRight = () => <ChevronIcon height={10} transform='rotate(-90)' />;
+
+const weekDayNameMap: Record<string, string> = {
+  Su: 'Sun',
+  Mo: 'Mon',
+  Tu: 'Tue',
+  We: 'Wed',
+  Th: 'Thu',
+  Fr: 'Fri',
+  Sa: 'Sat',
+};
 
 const AppDateTimePicker: React.FC<AppDateTimePickerProps> = forwardRef(
   (
@@ -45,13 +60,20 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = forwardRef(
           onChange(date);
           return onChange;
         }}
+        showDaysOutsideCurrentMonth
         onAccept={onAccept}
         inputFormat={inputFormat || dateTimePickerInputFormat}
         disableMaskedInput={disableMaskedInput}
         label={label}
         value={value}
-        components={{ OpenPickerIcon: CalendarIcon }}
-        OpenPickerButtonProps={{ disableRipple: true }}
+        dayOfWeekFormatter={day => weekDayNameMap[day]}
+        components={{
+          OpenPickerIcon: CalendarIcon,
+          RightArrowIcon: ChevronRight,
+          LeftArrowIcon: ChevronLeft,
+        }}
+        OpenPickerButtonProps={{ disableRipple: true, disableTouchRipple: true }}
+        PaperProps={dateTimePaperPropsStyles}
         renderInput={params => (
           <Input
             variant='main-m'
