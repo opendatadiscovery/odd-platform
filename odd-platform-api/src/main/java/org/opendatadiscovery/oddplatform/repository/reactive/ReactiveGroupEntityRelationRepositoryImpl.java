@@ -36,7 +36,6 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     private final JooqReactiveOperations jooqReactiveOperations;
     private final JooqQueryHelper jooqQueryHelper;
 
-    @Override
     public Flux<GroupEntityRelationsPojo> deleteRelationsForDEG(final String groupOddrn) {
         final var query = DSL.deleteFrom(GROUP_ENTITY_RELATIONS)
             .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
@@ -93,6 +92,28 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
+    public Flux<GroupEntityRelationsPojo> softDeleteRelationsForDeletedDataEntities(final List<String> oddrns) {
+        final var query = DSL.update(GROUP_ENTITY_RELATIONS)
+            .set(GROUP_ENTITY_RELATIONS.IS_DELETED, true)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns)
+                .or(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(oddrns)))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(GroupEntityRelationsPojo.class));
+    }
+
+    @Override
+    public Flux<GroupEntityRelationsPojo> restoreRelationsForDataEntities(final List<String> oddrns) {
+        final var query = DSL.update(GROUP_ENTITY_RELATIONS)
+            .set(GROUP_ENTITY_RELATIONS.IS_DELETED, false)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns)
+                .or(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(oddrns)))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(GroupEntityRelationsPojo.class));
+    }
+
+    @Override
     public Mono<Void> deleteRelations(final List<GroupEntityRelationsPojo> pojos) {
         final List<String> groupOddrns = pojos.stream().map(GroupEntityRelationsPojo::getGroupOddrn).toList();
         final List<String> entityOddrns = pojos.stream().map(GroupEntityRelationsPojo::getDataEntityOddrn).toList();
@@ -109,7 +130,10 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
         final SelectConditionStep<Record> query = DSL.select()
             .from(GROUP_ENTITY_RELATIONS)
             .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(entityOddrn).and(DATA_ENTITY.MANUALLY_CREATED.isTrue()));
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(entityOddrn)
+                .and(DATA_ENTITY.MANUALLY_CREATED.isTrue())
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse())
+            );
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(GroupEntityRelationsPojo.class));
     }
@@ -143,7 +167,8 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
                 GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN
             )
             .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns));
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns)
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()));
         return jooqReactiveOperations.flux(query)
             .collect(Collectors.groupingBy(
                 r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
@@ -163,12 +188,14 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
         final var cte = cteName.as(DSL
             .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
             .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
             .unionAll(
                 DSL
                     .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
                     .from(GROUP_ENTITY_RELATIONS)
                     .join(cteName).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(tDataEntityOddrn))
+                    .where(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse())
             ));
 
         final var query = DSL.withRecursive(cte)
@@ -186,7 +213,8 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
 
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(GROUP_ENTITY_RELATIONS)
-                .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+                .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
+                    .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
         );
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
@@ -207,13 +235,15 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
         final var entitiesSelect = DSL.select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN, DSL.inline(false))
             .from(GROUP_ENTITY_RELATIONS)
             .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN))
-            .where(conditions).and(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+            .where(conditions).and(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
             .orderBy(DATA_ENTITY.ID.desc());
 
         final var upperGroupsSelect = DSL.select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN, DSL.inline(true))
             .from(GROUP_ENTITY_RELATIONS)
             .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
-            .where(conditions).and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(groupOddrn))
+            .where(conditions).and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(groupOddrn)
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
             .orderBy(DATA_ENTITY.ID.desc());
 
         final var resultQuery = entitiesSelect.unionAll(upperGroupsSelect)
@@ -235,7 +265,8 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
         final var result = DSL.selectCount()
             .from(GROUP_ENTITY_RELATIONS)
             .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN))
-            .where(conditions).and(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn));
+            .where(conditions).and(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()));
 
         return jooqReactiveOperations.mono(result)
             .map(r -> r.value1().longValue());
@@ -252,7 +283,8 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
         final var result = DSL.selectCount()
             .from(GROUP_ENTITY_RELATIONS)
             .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
-            .where(conditions).and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(groupOddrn));
+            .where(conditions).and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(groupOddrn)
+                .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()));
 
         return jooqReactiveOperations.mono(result)
             .map(r -> r.value1().longValue());

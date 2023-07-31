@@ -154,14 +154,14 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             .select(LINEAGE.fields())
             .select(startDepth)
             .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.eq(rootDataEntityOddrn))
+            .where(LINEAGE.PARENT_ODDRN.eq(rootDataEntityOddrn).and(LINEAGE.IS_DELETED.isFalse()))
             .unionAll(
                 dslContext
                     .select(LINEAGE.fields())
                     .select(depthField.add(1))
                     .from(LINEAGE)
                     .join(cteName).on(LINEAGE.PARENT_ODDRN.eq(childOddrnField))
-                    .where(depthField.lessThan(downstreamEntitiesDepth + 1))
+                    .where(depthField.lessThan(downstreamEntitiesDepth + 1).and(LINEAGE.IS_DELETED.isFalse()))
             ));
 
         final Set<String> downstreamEntitiesOddrns = dslContext.withRecursive(cte)

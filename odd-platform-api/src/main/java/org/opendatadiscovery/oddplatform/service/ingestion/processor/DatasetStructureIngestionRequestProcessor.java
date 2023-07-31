@@ -83,7 +83,6 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
     private Mono<Void> ingestExistingDatasetStructure(final IngestionRequest request) {
         final Map<String, EnrichedDataEntityIngestionDto> datasetDict = request.getExistingEntities().stream()
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
-            .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getOddrn, identity()));
 
         if (datasetDict.isEmpty()) {

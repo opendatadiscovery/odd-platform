@@ -22,7 +22,7 @@ public interface ActivityParameterNames {
     }
 
     interface StatusUpdated {
-        String DATA_ENTITY_ID = "dataEntityId";
+        String DATA_ENTITY_POJO = "pojo";
     }
 
     interface TermAssignment {

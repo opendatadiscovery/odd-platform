@@ -35,7 +35,7 @@ public class IngestionModelMapper {
                                                                final DataSource dataSource) {
         return new DataEntityDetails()
             .id(entityId)
-            .createdAt(dataEntity.getCreatedAt())
+            .sourceCreatedAt(dataEntity.getCreatedAt())
             .dataSource(dataSource)
             .externalName(dataEntity.getName())
             .oddrn(dataEntity.getOddrn())

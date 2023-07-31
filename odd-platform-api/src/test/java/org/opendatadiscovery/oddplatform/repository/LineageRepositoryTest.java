@@ -133,20 +133,21 @@ class LineageRepositoryTest extends BaseIntegrationTest {
         final var secondRootFirstChildOddrn = "secondRootFirstChildOddrn";
 
         final var firstRootFirstChildLineage =
-            new LineagePojo(firstRootOddrn, firstRootFirstChildOddrn, RandomStringUtils.randomAlphabetic(5));
+            new LineagePojo(firstRootOddrn, firstRootFirstChildOddrn, RandomStringUtils.randomAlphabetic(5), false);
         final var firstRootSecondChildLineage =
-            new LineagePojo(firstRootOddrn, firstRootSecondChildOddrn, RandomStringUtils.randomAlphabetic(5));
+            new LineagePojo(firstRootOddrn, firstRootSecondChildOddrn, RandomStringUtils.randomAlphabetic(5), false);
         final var firstRootFirstChildFirstChildLineage =
             new LineagePojo(firstRootFirstChildOddrn, firstRootFirstChildFirstChildOddrn,
-                RandomStringUtils.randomAlphabetic(5));
+                RandomStringUtils.randomAlphabetic(5), false);
         final var firstRootFirstChildSecondChildLineage =
             new LineagePojo(firstRootFirstChildOddrn, firstRootFirstChildSecondChildOddrn,
-                RandomStringUtils.randomAlphabetic(5));
+                RandomStringUtils.randomAlphabetic(5), false);
         final var firstRootFirstChildFirstChildFirstChildLineage =
             new LineagePojo(firstRootFirstChildFirstChildOddrn, firstRootFirstChildFirstChildFirstChildOddrn,
-                RandomStringUtils.randomAlphabetic(5));
+                RandomStringUtils.randomAlphabetic(5), false);
         final var secondRootFirstChildLineage =
-            new LineagePojo(secondRootOddrn, secondRootFirstChildOddrn, RandomStringUtils.randomAlphabetic(5));
+            new LineagePojo(secondRootOddrn, secondRootFirstChildOddrn,
+                RandomStringUtils.randomAlphabetic(5), false);
         final var randomLineage = generateLineageWithParent(RandomStringUtils.randomAlphabetic(5));
 
         lineageRepository.bulkCreate(
@@ -161,7 +162,7 @@ class LineageRepositoryTest extends BaseIntegrationTest {
                 firstRootFirstChildSecondChildLineage,
                 firstRootFirstChildFirstChildFirstChildLineage,
                 secondRootFirstChildLineage)
-            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null))
+            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null, false))
             .collect(Collectors.toSet());
 
         final var expectedDownstreamWithDepth2 = Stream.of(
@@ -170,32 +171,32 @@ class LineageRepositoryTest extends BaseIntegrationTest {
                 firstRootFirstChildFirstChildLineage,
                 firstRootFirstChildSecondChildLineage,
                 secondRootFirstChildLineage)
-            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null))
+            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null, false))
             .collect(Collectors.toSet());
 
         final var expectedDownstreamWithDepth1 = Stream.of(
                 firstRootFirstChildLineage,
                 firstRootSecondChildLineage,
                 secondRootFirstChildLineage)
-            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null))
+            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null, false))
             .collect(Collectors.toSet());
 
         final var expectedUpstreamWithDepth3 = Stream.of(
                 firstRootFirstChildFirstChildFirstChildLineage,
                 firstRootFirstChildFirstChildLineage,
                 firstRootFirstChildLineage
-            ).map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null))
+            ).map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null, false))
             .collect(Collectors.toSet());
 
         final var expectedUpstreamWithDepth2 = Stream.of(
                 firstRootFirstChildFirstChildFirstChildLineage,
                 firstRootFirstChildFirstChildLineage
-            ).map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null))
+            ).map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null, false))
             .collect(Collectors.toSet());
 
         final var expectedUpstreamWithDepth1 = Stream.of(
                 firstRootFirstChildFirstChildFirstChildLineage)
-            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null))
+            .map(l -> new LineagePojo(l.getParentOddrn(), l.getChildOddrn(), null, false))
             .collect(Collectors.toSet());
 
         lineageRepository.getLineageRelations(Set.of(firstRootOddrn, secondRootOddrn),
@@ -295,12 +296,12 @@ class LineageRepositoryTest extends BaseIntegrationTest {
     private LineagePojo generateLineageWithParent(final String parentOddrn) {
         return new LineagePojo(parentOddrn,
             RandomStringUtils.randomAlphabetic(5),
-            RandomStringUtils.randomAlphabetic(5));
+            RandomStringUtils.randomAlphabetic(5), false);
     }
 
     private LineagePojo generateLineageWithChild(final String childOddrn) {
         return new LineagePojo(RandomStringUtils.randomAlphabetic(5),
             childOddrn,
-            RandomStringUtils.randomAlphabetic(5));
+            RandomStringUtils.randomAlphabetic(5), false);
     }
 }

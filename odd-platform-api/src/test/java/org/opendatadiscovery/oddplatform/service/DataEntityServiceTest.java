@@ -26,7 +26,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
@@ -35,7 +34,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFie
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -83,8 +81,6 @@ public class DataEntityServiceTest {
     @Mock
     private ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
     @Mock
-    private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
-    @Mock
     private ReactiveTagRepository tagRepository;
     @Mock
     private DataEntityFilledService dataEntityFilledService;
@@ -93,7 +89,11 @@ public class DataEntityServiceTest {
     @Mock
     private DataSourceService dataSourceService;
     @Mock
-    private DataEntityInternalInformationService dataEntityInternalInformationService;
+    private DataEntityInternalStateService dataEntityInternalStateService;
+    @Mock
+    private DataEntityStatisticsService dataEntityStatisticsService;
+    @Mock
+    private DataEntityRelationsService dataEntityRelationsService;
 
     @BeforeEach
     public void beforeAll() {
@@ -103,8 +103,10 @@ public class DataEntityServiceTest {
             dataEntityFilledService,
             metadataFieldService,
             dataSourceService,
+            dataEntityStatisticsService,
             termService,
-            dataEntityInternalInformationService,
+            dataEntityInternalStateService,
+            dataEntityRelationsService,
             metadataFieldValueRepository,
             metadataFieldRepository,
             reactiveDataEntityRepository,
@@ -113,7 +115,6 @@ public class DataEntityServiceTest {
             datasetVersionRepository,
             reactiveSearchEntrypointRepository,
             reactiveGroupEntityRelationRepository,
-            dataEntityStatisticsRepository,
             tagRepository,
             dataEntityMapper,
             metadataFieldMapper,

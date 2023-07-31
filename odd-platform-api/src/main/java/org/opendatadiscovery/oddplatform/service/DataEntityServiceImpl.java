@@ -23,6 +23,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
@@ -71,7 +72,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
@@ -82,7 +82,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
-import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.InternalNameUpdated;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TagsAssociationUpdated;
@@ -102,7 +101,6 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.CUSTOM
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_METADATA;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_NAME;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_TAGS;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.STATUS;
 import static org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin.INTERNAL;
 import static reactor.function.TupleUtils.function;
 
@@ -115,8 +113,10 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final DataEntityFilledService dataEntityFilledService;
     private final MetadataFieldService metadataFieldService;
     private final DataSourceService dataSourceService;
+    private final DataEntityStatisticsService dataEntityStatisticsService;
     private final TermService termService;
-    private final DataEntityInternalInformationService dataEntityInternalInformationService;
+    private final DataEntityInternalStateService dataEntityInternalStateService;
+    private final DataEntityRelationsService dataEntityRelationsService;
 
     private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
     private final ReactiveMetadataFieldRepository reactiveMetadataFieldRepository;
@@ -126,7 +126,6 @@ public class DataEntityServiceImpl implements DataEntityService {
     private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
     private final ReactiveTagRepository tagRepository;
 
     private final DataEntityMapper dataEntityMapper;
@@ -215,18 +214,9 @@ public class DataEntityServiceImpl implements DataEntityService {
     public Flux<DataEntityRef> listAssociated(final int page,
                                               final int size,
                                               final LineageStreamKind streamKind) {
-        return this.getDependentDataEntityOddrns(streamKind)
-            .flatMapMany(oddrns -> reactiveDataEntityRepository.listAllByOddrns(oddrns, false, page, size))
+        return dataEntityRelationsService.getDependentDataEntityOddrns(streamKind)
+            .flatMapMany(oddrns -> reactiveDataEntityRepository.listByOddrns(oddrns, false, false, page, size))
             .map(dataEntityMapper::mapRef);
-    }
-
-    @Override
-    public Mono<List<String>> getDependentDataEntityOddrns(final LineageStreamKind streamKind) {
-        return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapMany(o -> reactiveDataEntityRepository.listByOwner(o.getId()))
-            .map(de -> de.getDataEntity().getOddrn())
-            .collect(Collectors.toSet())
-            .flatMap(oddrns -> getDependentOddrns(oddrns, streamKind));
     }
 
     @Override
@@ -328,7 +318,7 @@ public class DataEntityServiceImpl implements DataEntityService {
     @ReactiveTransactional
     public Mono<InternalDescription> upsertDescription(final long dataEntityId,
                                                        final InternalDescriptionFormData formData) {
-        return dataEntityInternalInformationService.updateDescription(dataEntityId, formData)
+        return dataEntityInternalStateService.updateDescription(dataEntityId, formData)
             .then(termService.handleDataEntityDescriptionTerms(dataEntityId, formData.getInternalDescription()))
             .map(terms -> {
                 final List<LinkedTerm> linkedTerms = terms.stream().map(termMapper::mapToLinkedTerm).toList();
@@ -443,7 +433,7 @@ public class DataEntityServiceImpl implements DataEntityService {
 
     @Override
     public Mono<DataEntityUsageInfo> getDataEntityUsageInfo() {
-        return Mono.zip(dataEntityStatisticsRepository.getStatistics(),
+        return Mono.zip(dataEntityStatisticsService.getStatistics(),
                 dataEntityFilledService.getFilledDataEntitiesCount())
             .map(function(dataEntityMapper::mapUsageInfo));
     }
@@ -460,32 +450,28 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     @Override
-    public Mono<DataEntityStatus> updateStatus(final Long dataEntityId, final DataEntityStatus status) {
+    public Mono<DataEntityStatus> updateStatus(final Long dataEntityId,
+                                               final DataEntityStatusFormData statusFormData) {
+        final DataEntityStatus status = statusFormData.getStatus();
         if (isSwitchableStatus(status.getStatus()) && status.getStatusSwitchTime() == null) {
             return Mono.error(() -> new BadUserRequestException(
                 "Status %s must have status switch time".formatted(status.getStatus())));
         }
         return reactiveDataEntityRepository.get(dataEntityId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("Data entity", dataEntityId)))
-            .flatMap(pojo -> {
-                final DataEntityStatusDto statusDto = DataEntityStatusDto.valueOf(status.getStatus().getValue());
-                pojo.setStatus(statusDto.getId());
-                pojo.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(status.getStatusSwitchTime()));
-                if (status.getStatus() == DataEntityStatusEnum.DELETED) {
-                    pojo.setDeletedAt(DateTimeUtil.generateNow());
+            .flatMapMany(pojo -> {
+                if (needToPropagateStatus(pojo, statusFormData)) {
+                    return reactiveGroupEntityRelationRepository.getDEGEntitiesOddrns(dataEntityId)
+                        .collectList()
+                        .flatMapMany(oddrns -> reactiveDataEntityRepository.listByOddrns(oddrns, false, false))
+                        .concatWithValues(pojo);
                 } else {
-                    pojo.setDeletedAt(null);
-                }
-                return reactiveDataEntityRepository.update(pojo);
-            })
-            .flatMap(pojo -> {
-                if (status.getStatus() == DataEntityStatusEnum.UNASSIGNED) {
-                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, STATUS).thenReturn(pojo);
-                } else {
-                    return dataEntityFilledService.markEntityFilled(dataEntityId, STATUS).thenReturn(pojo);
+                    return Flux.just(pojo);
                 }
             })
-            .thenReturn(status);
+            .collectList()
+            .flatMap(pojos -> dataEntityInternalStateService.changeStatusForDataEntities(pojos, status))
+            .thenReturn(statusFormData.getStatus());
     }
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
@@ -508,14 +494,6 @@ public class DataEntityServiceImpl implements DataEntityService {
         return reactiveDataEntityTaskRunRepository.getLatestRunsMap(qualityTests);
     }
 
-    private Mono<List<String>> getDependentOddrns(final Set<String> oddrns, final LineageStreamKind streamKind) {
-        return reactiveLineageRepository.getLineageRelations(oddrns, LineageDepth.empty(), streamKind)
-            .flatMap(lp -> Flux.just(lp.getParentOddrn(), lp.getChildOddrn()))
-            .distinct()
-            .filter(Predicate.not(oddrns::contains))
-            .collectList();
-    }
-
     private Set<String> getSpecificAttributesDependentOddrns(final List<DataEntityDimensionsDto> entities) {
         return entities.stream()
             .map(DataEntityDimensionsDto::getSpecificAttributes)
@@ -531,7 +509,7 @@ public class DataEntityServiceImpl implements DataEntityService {
         final Set<String> dependentOddrns = getSpecificAttributesDependentOddrns(dtos);
 
         final Mono<Map<String, DataEntityPojo>> dependencies = reactiveDataEntityRepository
-            .listAllByOddrns(dependentOddrns, false)
+            .listByOddrns(dependentOddrns, false, false)
             .collectMap(DataEntityPojo::getOddrn, identity());
         final Mono<Map<String, DataEntityTaskRunPojo>> lastTaskRuns = getLastRunsForQualityTests(dtos);
         final Mono<Map<String, Set<DataEntityPojo>>> children = getDEGEntities(dtos);
@@ -666,7 +644,7 @@ public class DataEntityServiceImpl implements DataEntityService {
         if (degOddrns.isEmpty()) {
             return Mono.just(Map.of());
         }
-        return reactiveDataEntityRepository.getChildrenCount(degOddrns);
+        return reactiveDataEntityRepository.getExperimentRunsCount(degOddrns);
     }
 
     private Mono<Map<String, Long>> getConsumersCount(final Collection<DataEntityDimensionsDto> dtos) {
@@ -690,6 +668,12 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     private boolean isSwitchableStatus(final DataEntityStatusEnum status) {
-        return status == DataEntityStatusEnum.DRAFT || status == DataEntityStatusEnum.DEPRECATED;
+        return DataEntityStatusDto.valueOf(status.name()).isSwitchable();
+    }
+
+    private boolean needToPropagateStatus(final DataEntityPojo pojo,
+                                          final DataEntityStatusFormData statusFormData) {
+        return Boolean.TRUE.equals(statusFormData.getPropagate())
+            && contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
     }
 }

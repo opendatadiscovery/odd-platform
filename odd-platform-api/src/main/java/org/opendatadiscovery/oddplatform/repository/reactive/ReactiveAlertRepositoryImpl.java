@@ -28,6 +28,7 @@ import org.jooq.SelectSeekStepN;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
@@ -158,7 +159,8 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())).and(OWNERSHIP.OWNER_ID.eq(ownerId));
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.getCode())).and(OWNERSHIP.OWNER_ID.eq(ownerId)
+                .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId())));
 
         final Pair<Select<?>, String> query = createAlertJoinQuery(baseQuery, (page - 1) * size, size);
 
@@ -242,7 +244,7 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId).and(DATA_ENTITY.DELETED_AT.isNull()));
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId).and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId())));
         return jooqReactiveOperations
             .flux(query)
             .map(r -> r.into(String.class))
@@ -431,13 +433,14 @@ public class ReactiveAlertRepositoryImpl implements ReactiveAlertRepository {
             .join(cteName)
             .on(LINEAGE.CHILD_ODDRN.eq(
                 field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))
-            .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)));
+            .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)))
+            .and(LINEAGE.IS_DELETED.isFalse());
 
         final CommonTableExpression<Record> cte = cteName.as(DSL
             .select(LINEAGE.asterisk())
             .select(parentOddrnArrayField)
             .from(LINEAGE)
-            .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
+            .where(LINEAGE.CHILD_ODDRN.in(ownOddrns).and(LINEAGE.IS_DELETED.isFalse()))
             .unionAll(selectLinage));
 
         return name("t2")

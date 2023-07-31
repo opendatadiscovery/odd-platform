@@ -105,7 +105,7 @@ class DatasetVersionMapperTest {
                 "parentOddrn", null, "structHash", 1L));
         final long expectedVersion = 1L;
         final EnrichedDataEntityIngestionDto dto =
-            new EnrichedDataEntityIngestionDto(expectedVersion, dataEntityIngestionDto);
+            new EnrichedDataEntityIngestionDto(expectedVersion, null, dataEntityIngestionDto);
         final DatasetVersionPojo actualDatasetVersionPojo =
             datasetVersionMapper.mapDatasetVersion(dto.getOddrn(), dto.getDataSet().structureHash(), expectedVersion);
 

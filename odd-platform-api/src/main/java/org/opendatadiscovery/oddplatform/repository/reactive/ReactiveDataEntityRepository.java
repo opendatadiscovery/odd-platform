@@ -33,13 +33,19 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataEntityDetailsDto> getDetails(final long id);
 
-    default Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns, boolean includeHollow) {
-        return listAllByOddrns(oddrns, includeHollow, null, null);
+    default Flux<DataEntityPojo> listByOddrns(final Collection<String> oddrns,
+                                              boolean includeHollow,
+                                              boolean includeDeleted) {
+        return listByOddrns(oddrns, includeHollow, includeDeleted, null, null);
     }
 
-    Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
-                                         boolean includeHollow,
-                                         final Integer page, final Integer size);
+    Flux<DataEntityPojo> listByOddrns(final Collection<String> oddrns,
+                                      boolean includeHollow,
+                                      boolean includeDeleted,
+                                      final Integer page,
+                                      final Integer size);
+
+    Flux<DataEntityPojo> getPojosForStatusSwitch();
 
     Mono<DataEntityDimensionsDto> getDataEntityWithDataSourceAndNamespace(final long dataEntityId);
 
@@ -55,7 +61,7 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
                                                              final Integer page,
                                                              final Integer size);
 
-    Mono<Map<String, Long>> getChildrenCount(final Collection<String> groupOddrns);
+    Mono<Map<String, Long>> getExperimentRunsCount(final Collection<String> groupOddrns);
 
     Mono<Void> createHollow(final Collection<String> hollowOddrns);
 

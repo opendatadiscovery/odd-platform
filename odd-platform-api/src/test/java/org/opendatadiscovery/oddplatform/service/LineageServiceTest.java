@@ -100,7 +100,8 @@ class LineageServiceTest {
                     new DateTimeMapperImpl()
                 ),
                 termMapper,
-                new DateTimeMapperImpl()
+                new DateTimeMapperImpl(),
+                new DataEntityStaleDetector()
             )
         );
         lineageMapper.setDataSourceMapper(
@@ -120,8 +121,8 @@ class LineageServiceTest {
             .setEntityClassIds(new Integer[] {1});
         final var firstChildEntity = new DataEntityPojo().setId(2L).setOddrn(firstChildEntityOddrn);
         final var secondChildEntity = new DataEntityPojo().setId(3L).setOddrn(secondChildEntityOddrn);
-        final var rootToFirstEntityLineage = new LineagePojo(rootEntityOddrn, firstChildEntityOddrn, null);
-        final var rootToSecondEntityLineage = new LineagePojo(rootEntityOddrn, secondChildEntityOddrn, null);
+        final var rootToFirstEntityLineage = new LineagePojo(rootEntityOddrn, firstChildEntityOddrn, null, false);
+        final var rootToSecondEntityLineage = new LineagePojo(rootEntityOddrn, secondChildEntityOddrn, null, false);
         final var dto = DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(rootEntity).build();
 

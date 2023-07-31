@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
@@ -37,6 +39,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransforme
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
@@ -100,8 +103,8 @@ public class IngestionMapperImpl implements IngestionMapper {
             .oddrn(dataEntity.getOddrn())
             .externalDescription(dataEntity.getDescription())
             .dataSourceId(dataSourceId)
-            .createdAt(dataEntity.getCreatedAt())
-            .updatedAt(dataEntity.getUpdatedAt())
+            .sourceCreatedAt(dataEntity.getCreatedAt())
+            .sourceUpdatedAt(dataEntity.getUpdatedAt())
             .entityClasses(entityClasses)
             .type(type)
             .specificAttributesJson(specificAttributesAsString(entityClasses, dataEntity));
@@ -143,8 +146,9 @@ public class IngestionMapperImpl implements IngestionMapper {
 
     @Override
     public <T extends DataEntityIngestionDto> DataEntityPojo dtoToPojo(final T dto) {
-        final OffsetDateTime createdAt = dto.getCreatedAt();
-        final OffsetDateTime updatedAt = dto.getUpdatedAt();
+        final OffsetDateTime createdAt = dto.getSourceCreatedAt();
+        final OffsetDateTime updatedAt = dto.getSourceUpdatedAt();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final Integer[] entityClassesIds = dto.getEntityClasses()
             .stream()
@@ -157,16 +161,36 @@ public class IngestionMapperImpl implements IngestionMapper {
             .setOddrn(dto.getOddrn())
             .setDataSourceId(dto.getDataSourceId())
             .setEntityClassIds(entityClassesIds)
-            .setCreatedAt(createdAt != null ? createdAt.toLocalDateTime() : null)
-            .setUpdatedAt(updatedAt != null ? updatedAt.toLocalDateTime() : null)
+            .setPlatformCreatedAt(now)
+            .setSourceCreatedAt(createdAt != null ? createdAt.toLocalDateTime() : null)
+            .setSourceUpdatedAt(updatedAt != null ? updatedAt.toLocalDateTime() : null)
+            .setLastIngestedAt(now)
             .setTypeId(dto.getType().getId())
             .setHollow(false)
             .setSpecificAttributes(JSONB.jsonb(dto.getSpecificAttributesJson()))
             .setExcludeFromSearch(isExcludedFromSearch(dto))
-            .setManuallyCreated(false);
+            .setManuallyCreated(false)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setStatusUpdatedAt(now);
 
         if (dto instanceof EnrichedDataEntityIngestionDto entityIngestionDto) {
-            pojo.setId(entityIngestionDto.getId());
+            final DataEntityPojo previousVersionPojo = entityIngestionDto.getPreviousVersionPojo();
+            if (previousVersionPojo != null) {
+                pojo.setId(previousVersionPojo.getId());
+                pojo.setInternalName(previousVersionPojo.getInternalName());
+                pojo.setInternalDescription(previousVersionPojo.getInternalDescription());
+                pojo.setViewCount(previousVersionPojo.getViewCount());
+                pojo.setPlatformCreatedAt(previousVersionPojo.getPlatformCreatedAt());
+                final DataEntityStatusDto previousStatus = getStatus(previousVersionPojo.getStatus());
+                if (previousStatus == DataEntityStatusDto.DELETED) {
+                    pojo.setStatus(DataEntityStatusDto.UNASSIGNED.getId());
+                    pojo.setStatusUpdatedAt(now);
+                } else {
+                    pojo.setStatus(previousStatus.getId());
+                    pojo.setStatusUpdatedAt(pojo.getStatusUpdatedAt());
+                    pojo.setStatusSwitchTime(pojo.getStatusSwitchTime());
+                }
+            }
         }
 
         return pojo;
@@ -174,7 +198,7 @@ public class IngestionMapperImpl implements IngestionMapper {
 
     @Override
     public <T extends DataEntityIngestionDto> List<DataEntityPojo> dtoToPojo(final Collection<T> dtos) {
-        return dtos.stream().map(this::dtoToPojo).collect(Collectors.toList());
+        return dtos.stream().map(this::dtoToPojo).toList();
     }
 
     @Override
@@ -383,5 +407,10 @@ public class IngestionMapperImpl implements IngestionMapper {
         }
 
         return true;
+    }
+
+    private DataEntityStatusDto getStatus(final Short statusId) {
+        return DataEntityStatusDto.findById(statusId)
+            .orElseThrow(() -> new IllegalArgumentException("Unknown DE status %s".formatted(statusId)));
     }
 }

@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
@@ -52,8 +53,6 @@ public interface DataEntityService {
 
     Mono<DataEntityDetails> getDetails(final long dataEntityId);
 
-    Mono<List<String>> getDependentDataEntityOddrns(final LineageStreamKind streamKind);
-
     Flux<DataEntityRef> listAssociated(final int page, final int size);
 
     Flux<DataEntityRef> listAssociated(final int page, final int size, final LineageStreamKind streamKind);
@@ -89,5 +88,5 @@ public interface DataEntityService {
 
     Mono<DataEntityDomainList> getDomainsInfo();
 
-    Mono<DataEntityStatus> updateStatus(final Long dataEntityId, final DataEntityStatus status);
+    Mono<DataEntityStatus> updateStatus(final Long dataEntityId, final DataEntityStatusFormData statusFormData);
 }

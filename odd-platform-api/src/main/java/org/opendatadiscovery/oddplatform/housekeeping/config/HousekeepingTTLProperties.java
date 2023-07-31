@@ -8,4 +8,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class HousekeepingTTLProperties {
     private int resolvedAlertsDays;
     private int searchFacetsDays;
+    private int dataEntityDeleteDays;
 }

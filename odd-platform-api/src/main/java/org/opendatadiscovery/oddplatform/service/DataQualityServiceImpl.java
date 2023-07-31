@@ -57,7 +57,7 @@ public class DataQualityServiceImpl implements DataQualityService {
         return reactiveDataEntityRepository.exists(datasetId)
             .filter(e -> e)
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset", datasetId)))
-            .flatMap(ign -> dataQualityRepository.getDatasetTestReport(datasetId))
+            .then(dataQualityRepository.getDatasetTestReport(datasetId))
             .map(dataQualityMapper::mapDatasetTestReport);
     }
 

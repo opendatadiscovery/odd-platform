@@ -200,7 +200,12 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
                 .setDatasetOddrn(dataEntity.getOddrn()))
             .toList();
 
-        final DatasetTestReportDto expected = mapReport(taskRuns.values().stream()
+        final DataEntityPojo dqTestToDelete = dqTests.get(0);
+        dataEntityRepository.delete(dqTestToDelete.getId()).block();
+
+        final DatasetTestReportDto expected = mapReport(taskRuns.entrySet().stream()
+            .filter(e -> !e.getKey().equals(dqTestToDelete.getOddrn()))
+            .map(Map.Entry::getValue)
             .map(dataEntityTaskRunPojos -> dataEntityTaskRunPojos
                 .stream()
                 .min(endTimeComparator)

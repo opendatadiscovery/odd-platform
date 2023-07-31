@@ -96,7 +96,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     public Mono<DatasetStructureDto> getDatasetVersion(final long datasetVersionId) {
         final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
             .flatMap(Arrays::stream)
-            .collect(toList());
+            .toList();
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
@@ -164,7 +164,7 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
             .flatMap(Arrays::stream)
-            .collect(toList());
+            .toList();
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)

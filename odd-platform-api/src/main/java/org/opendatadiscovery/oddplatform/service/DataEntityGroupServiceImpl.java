@@ -163,7 +163,7 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
                                           final NamespacePojo namespace) {
         return Mono.just(formData)
-            .map(fd -> dataEntityMapper.mapToPojo(fd, DATA_ENTITY_GROUP, namespace))
+            .map(fd -> dataEntityMapper.mapCreatedDEGPojo(fd, DATA_ENTITY_GROUP, namespace))
             .flatMap(reactiveDataEntityRepository::create)
             .map(pojo -> {
                 final String oddrn = generateOddrn(pojo);
@@ -215,10 +215,10 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
         return Flux.zip(
             dataEntityStatisticsService.updateStatistics(-1L,
                 Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), -1L))),
-            termRelationsRepository.deleteRelationsWithTerms(pojo.getId()),
-            reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
-            tagService.deleteRelationsForDataEntity(pojo.getId()),
-            ownershipRepository.deleteByDataEntityId(pojo.getId()),
+            //termRelationsRepository.deleteRelationsWithTerms(pojo.getId()),
+            //reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
+            //tagService.deleteRelationsForDataEntity(pojo.getId()),
+            //ownershipRepository.deleteByDataEntityId(pojo.getId()),
             dataEntityFilledService.markEntityUnfilled(pojo.getId(), MANUALLY_CREATED)
         ).then(reactiveDataEntityRepository.delete(pojo.getId()));
     }

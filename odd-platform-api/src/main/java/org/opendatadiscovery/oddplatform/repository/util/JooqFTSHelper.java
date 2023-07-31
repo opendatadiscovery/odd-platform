@@ -118,7 +118,7 @@ public class JooqFTSHelper {
             .filter(e -> !ignoredFacets.contains(e.getKey()))
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), facetTypeFunctionMap))
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state) {

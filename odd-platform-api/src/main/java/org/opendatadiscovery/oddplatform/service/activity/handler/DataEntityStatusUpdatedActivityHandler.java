@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.service.activity.handler;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
@@ -12,6 +14,8 @@ import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.StatusUpda
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import static java.util.Collections.singletonList;
 
 @Component
 @RequiredArgsConstructor
@@ -25,17 +29,29 @@ public class DataEntityStatusUpdatedActivityHandler implements ActivityHandler {
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters) {
-        final long dataEntityId = (long) parameters.get(StatusUpdated.DATA_ENTITY_ID);
-        return dataEntityRepository.get(dataEntityId)
-            .map(pojo -> ActivityContextInfo.builder()
-                .dataEntityId(dataEntityId)
-                .oldState(getState(pojo))
-                .build());
+        final DataEntityPojo pojo = (DataEntityPojo) parameters.get(StatusUpdated.DATA_ENTITY_POJO);
+        return Mono.just(ActivityContextInfo.builder()
+            .dataEntityId(pojo.getId())
+            .oldState(getState(pojo))
+            .build());
     }
 
     @Override
     public Mono<String> getUpdatedState(final Map<String, Object> parameters, final Long dataEntityId) {
-        return dataEntityRepository.get(dataEntityId).map(this::getState);
+        return getUpdatedState(parameters, singletonList(dataEntityId))
+            .handle((map, sink) -> {
+                final String state = map.get(dataEntityId);
+                if (state != null) {
+                    sink.next(state);
+                }
+            });
+    }
+
+    @Override
+    public Mono<Map<Long, String>> getUpdatedState(final Map<String, Object> parameters,
+                                                   final List<Long> dataEntityIds) {
+        return dataEntityRepository.get(dataEntityIds)
+            .collect(Collectors.toMap(DataEntityPojo::getId, this::getState));
     }
 
     private String getState(final DataEntityPojo pojo) {

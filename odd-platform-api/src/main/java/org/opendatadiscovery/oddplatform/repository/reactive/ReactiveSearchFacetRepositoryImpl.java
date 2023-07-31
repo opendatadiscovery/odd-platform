@@ -438,12 +438,10 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
                                                                        final int page,
                                                                        final int size,
                                                                        final FacetStateDto state) {
-        final Long selectedEntityClass = state.selectedDataEntityClass().orElse(null);
-        if (selectedEntityClass == null) {
-            return Mono.empty();
-        }
-        //todo may be need to exclude deleted at here
-        final List<Condition> conditions = getDataEntityDefaultConditions();
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        conditions.addAll(getQueryAndEntityClassConditions(state));
         var select = DSL
             .select(DATA_ENTITY.STATUS, count(DATA_ENTITY.ID))
             .from(DATA_ENTITY);
@@ -487,7 +485,6 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
                 .where(DATA_ENTITY.ID.in(groupIds));
             conditions.add(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns));
         }
-        conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {selectedEntityClass.intValue()}));
         final List<Short> statusIds = statusIdsByName(query);
         if (!statusIds.isEmpty()) {
             conditions.add(DATA_ENTITY.STATUS.in(statusIds));
@@ -556,7 +553,7 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
     private List<Condition> getDataEntityDefaultConditions() {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
         return conditions;
     }

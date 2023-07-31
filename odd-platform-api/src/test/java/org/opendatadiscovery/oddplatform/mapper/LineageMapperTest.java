@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
+import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
@@ -73,7 +74,8 @@ class LineageMapperTest {
                     new DateTimeMapperImpl()
                 ),
                 termMapper,
-                new DateTimeMapperImpl()
+                new DateTimeMapperImpl(),
+                new DataEntityStaleDetector()
             )
         );
         mapper.setDataSourceMapper(
