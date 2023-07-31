@@ -122,8 +122,9 @@ const OverviewEntityGroupItems: FC = () => {
                     entityClasses={dataEntity.entityClasses}
                     type={dataEntity.type}
                     ownership={dataEntity.ownership}
-                    createdAt={dataEntity.createdAt}
-                    updatedAt={dataEntity.updatedAt}
+                    // TODO
+                    // createdAt={dataEntity.createdAt}
+                    // updatedAt={dataEntity.updatedAt}
                     flexMap={flexMap}
                   />
                 ))}

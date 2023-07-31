@@ -43,32 +43,34 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             ))}
           </Grid>
         </ColContainer>
-        <ColContainer item $colType='colxs'>
-          <Typography
-            variant='body1'
-            title={
-              linkedItem.createdAt &&
-              linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())
-            }
-            noWrap
-          >
-            {linkedItem.createdAt &&
-              linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())}
-          </Typography>
-        </ColContainer>
-        <ColContainer item $colType='colxs'>
-          <Typography
-            variant='body1'
-            title={
-              linkedItem.updatedAt &&
-              formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })
-            }
-            noWrap
-          >
-            {linkedItem.updatedAt &&
-              formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })}
-          </Typography>
-        </ColContainer>
+        {/* TODO */}
+        {/* <ColContainer item $colType='colxs'> */}
+        {/*   <Typography */}
+        {/*     variant='body1' */}
+        {/*     title={ */}
+        {/*       linkedItem.createdAt && */}
+        {/*       linkedEntityFormattedDateTime(linkedItem.createdAt.getTime()) */}
+        {/*     } */}
+        {/*     noWrap */}
+        {/*   > */}
+        {/*     {linkedItem.createdAt && */}
+        {/*       linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())} */}
+        {/*   </Typography> */}
+        {/* </ColContainer> */}
+        {/* TODO */}
+        {/* <ColContainer item $colType='colxs'> */}
+        {/*   <Typography */}
+        {/*     variant='body1' */}
+        {/*     title={ */}
+        {/*       linkedItem.updatedAt && */}
+        {/*       formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true }) */}
+        {/*     } */}
+        {/*     noWrap */}
+        {/*   > */}
+        {/*     {linkedItem.updatedAt && */}
+        {/*       formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })} */}
+        {/*   </Typography> */}
+        {/* </ColContainer> */}
       </Container>
     </ItemLink>
   );

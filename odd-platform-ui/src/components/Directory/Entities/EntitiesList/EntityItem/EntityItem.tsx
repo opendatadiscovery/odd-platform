@@ -16,17 +16,18 @@ interface EntityItemProps {
   id: DataEntity['id'];
   entityClasses: DataEntity['entityClasses'];
   ownership: DataEntity['ownership'];
-  createdAt: DataEntity['createdAt'];
-  updatedAt: DataEntity['updatedAt'];
+  // TODO
+  // createdAt: DataEntity['createdAt'];
+  // updatedAt: DataEntity['updatedAt'];
   flexMap: Record<string, string>;
 }
 
 const EntityItem: FC<EntityItemProps> = ({
   name,
   entityClasses,
-  createdAt,
+  // createdAt,
   type,
-  updatedAt,
+  // updatedAt,
   ownership,
   flexMap,
   id,
@@ -84,20 +85,21 @@ const EntityItem: FC<EntityItemProps> = ({
             ))}
           </Grid>
         </Table.Cell>
-        <Table.Cell $flex={flexMap.createdAt}>
-          {createdAt && (
-            <Typography variant='body1'>
-              {dataEntityFormattedDateTime(createdAt.getTime())}
-            </Typography>
-          )}
-        </Table.Cell>
-        <Table.Cell $flex={flexMap.updatedAt}>
-          {updatedAt && (
-            <Typography variant='body1'>
-              {dataEntityFormattedDateTime(updatedAt.getTime())}
-            </Typography>
-          )}
-        </Table.Cell>
+        {/* TODO */}
+        {/* <Table.Cell $flex={flexMap.createdAt}> */}
+        {/*   {createdAt && ( */}
+        {/*     <Typography variant='body1'> */}
+        {/*       {dataEntityFormattedDateTime(createdAt.getTime())} */}
+        {/*     </Typography> */}
+        {/*   )} */}
+        {/* </Table.Cell> */}
+        {/* <Table.Cell $flex={flexMap.updatedAt}> */}
+        {/*   {updatedAt && ( */}
+        {/*     <Typography variant='body1'> */}
+        {/*       {dataEntityFormattedDateTime(updatedAt.getTime())} */}
+        {/*     </Typography> */}
+        {/*   )} */}
+        {/* </Table.Cell> */}
       </Table.RowContainer>
     </Link>
   );

@@ -43,33 +43,35 @@ const ResultItem: React.FC<ResultItemProps> = ({
     [searchResult.id]
   );
 
-  const updatedAt = React.useMemo(
-    () =>
-      searchResult?.updatedAt ? (
-        <Typography
-          variant='body1'
-          title={formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
-          noWrap
-        >
-          {formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
-        </Typography>
-      ) : null,
-    [searchResult]
-  );
+  // TODO
+  // const updatedAt = React.useMemo(
+  //   () =>
+  //     searchResult?.updatedAt ? (
+  //       <Typography
+  //         variant='body1'
+  //         title={formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
+  //         noWrap
+  //       >
+  //         {formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
+  //       </Typography>
+  //     ) : null,
+  //   [searchResult]
+  // );
 
-  const createdAt = React.useMemo(
-    () =>
-      searchResult?.createdAt ? (
-        <Typography
-          variant='body1'
-          title={dataEntityFormattedDateTime(searchResult.createdAt)}
-          noWrap
-        >
-          {dataEntityFormattedDateTime(searchResult.createdAt)}
-        </Typography>
-      ) : null,
-    [searchResult]
-  );
+  // TODO
+  // const createdAt = React.useMemo(
+  //   () =>
+  //     searchResult?.createdAt ? (
+  //       <Typography
+  //         variant='body1'
+  //         title={dataEntityFormattedDateTime(searchResult.createdAt)}
+  //         noWrap
+  //       >
+  //         {dataEntityFormattedDateTime(searchResult.createdAt)}
+  //       </Typography>
+  //     ) : null,
+  //   [searchResult]
+  // );
 
   return (
     <S.ItemLink to={detailsLink}>
@@ -229,12 +231,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
         <SearchCol item lg={grid.lg.st} md={grid.md.st}>
           <EntityStatus entityStatus={searchResult.status} />
         </SearchCol>
-        <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
-          {createdAt}
-        </SearchCol>
-        <SearchCol item lg={grid.lg.up} md={grid.md.up}>
-          {updatedAt}
-        </SearchCol>
+        {/* TODO */}
+        {/* <SearchCol item lg={grid.lg.cr} md={grid.md.cr}> */}
+        {/*   {createdAt} */}
+        {/* </SearchCol> */}
+        {/* <SearchCol item lg={grid.lg.up} md={grid.md.up}> */}
+        {/*   {updatedAt} */}
+        {/* </SearchCol> */}
       </S.Container>
     </S.ItemLink>
   );

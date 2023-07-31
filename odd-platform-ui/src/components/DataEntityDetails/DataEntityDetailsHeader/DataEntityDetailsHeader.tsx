@@ -25,11 +25,12 @@ interface DataEntityDetailsHeaderProps {
   entityClasses: DataEntityDetails['entityClasses'];
   type: DataEntityDetails['type'];
   manuallyCreated: DataEntityDetails['manuallyCreated'];
-  updatedAt: DataEntityDetails['updatedAt'];
+  // TODO
+  // updatedAt: DataEntityDetails['updatedAt'];
   status: DataEntityDetails['status'];
 }
 const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
-  updatedAt,
+  // updatedAt,
   entityClasses,
   manuallyCreated,
   externalName,
@@ -41,18 +42,18 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   const { formatDistanceToNowStrict } = useAppDateTime();
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
 
-  const entityUpdatedAt = useMemo(
-    () =>
-      updatedAt && (
-        <>
-          <TimeGapIcon />
-          <Typography variant='body1' sx={{ mx: 1, whiteSpace: 'nowrap' }}>
-            {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
-          </Typography>
-        </>
-      ),
-    [updatedAt]
-  );
+  // const entityUpdatedAt = useMemo(
+  //   () =>
+  //     updatedAt && (
+  //       <>
+  //         <TimeGapIcon />
+  //         <Typography variant='body1' sx={{ mx: 1, whiteSpace: 'nowrap' }}>
+  //           {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
+  //         </Typography>
+  //       </>
+  //     ),
+  //   [updatedAt]
+  // );
 
   const originalName = useMemo(
     () =>
@@ -106,7 +107,8 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           flexWrap='nowrap'
           justifyContent='flex-end'
         >
-          {entityUpdatedAt}
+          {/* TODO */}
+          {/* {entityUpdatedAt} */}
           <WithPermissions
             permissionTo={Permission.DATA_ENTITY_STATUS_UPDATE}
             renderContent={({ isAllowedTo }) => (

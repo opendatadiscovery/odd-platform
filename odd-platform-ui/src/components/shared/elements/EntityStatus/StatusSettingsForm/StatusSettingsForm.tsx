@@ -8,7 +8,7 @@ import Button from 'components/shared/elements/Button/Button';
 import AppDateTimePicker from 'components/shared/elements/AppDateTimePicker/AppDateTimePicker';
 import { updateEntityStatus } from 'redux/slices/dataentities.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { Checkbox } from 'components/shared/elements/index';
+import Checkbox from 'components/shared/elements/Checkbox/Checkbox';
 import DefaultEntityStatus from 'components/shared/elements/EntityStatus/DefaultEntityStatus/DefaultEntityStatus';
 import Option from './Option/Option';
 

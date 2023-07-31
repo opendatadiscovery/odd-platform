@@ -18,9 +18,10 @@ const OverviewGeneral: React.FC = () => {
 
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
-  const createdAt =
-    dataEntityDetails.createdAt &&
-    dataEntityFormattedDateTime(dataEntityDetails.createdAt.getTime());
+  // TODO
+  // const createdAt =
+  //   dataEntityDetails.createdAt &&
+  //   dataEntityFormattedDateTime(dataEntityDetails.createdAt.getTime());
 
   return (
     <Grid container>
@@ -49,11 +50,12 @@ const OverviewGeneral: React.FC = () => {
             </LabeledInfoItem>
           </Grid>
         )}
-        <Grid item sm={12}>
-          <LabeledInfoItem inline label='Created' labelWidth={4}>
-            {createdAt}
-          </LabeledInfoItem>
-        </Grid>
+        {/* TODO */}
+        {/* <Grid item sm={12}> */}
+        {/*   <LabeledInfoItem inline label='Created' labelWidth={4}> */}
+        {/*     {createdAt} */}
+        {/*   </LabeledInfoItem> */}
+        {/* </Grid> */}
         <Grid item sm={12}>
           <LabeledInfoItem inline label='View count' labelWidth={4}>
             {dataEntityDetails.viewCount}
