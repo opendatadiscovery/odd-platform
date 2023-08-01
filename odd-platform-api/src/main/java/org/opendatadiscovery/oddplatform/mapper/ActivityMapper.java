@@ -123,7 +123,7 @@ public abstract class ActivityMapper {
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 mapDatasetFieldInformationState(jsonb);
             case DATASET_FIELD_TERM_ASSIGNMENT_UPDATED -> mapDatasetFieldTermState(jsonb);
-            case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> mapCustomGroupState(jsonb);
+            case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED -> mapCustomGroupState(jsonb);
             case ALERT_HALT_CONFIG_UPDATED -> mapAlertHaltConfigState(jsonb);
             case ALERT_STATUS_UPDATED -> mapAlertUpdatedStatus(jsonb);
             case OPEN_ALERT_RECEIVED -> mapOpenAlertReceived(jsonb);

@@ -29,8 +29,6 @@ public interface ReactiveGroupEntityRelationRepository {
 
     Flux<String> getDEGEntitiesOddrns(final long dataEntityGroupId);
 
-    Mono<Boolean> degHasEntities(final long dataEntityGroupId);
-
     Flux<DataEntityGroupItemDto> getDEGItems(final Long dataEntityGroupId, final Integer page,
                                              final Integer size, final String query);
 

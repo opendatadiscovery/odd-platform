@@ -31,7 +31,6 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DELETE_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DESCRIPTION_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_CREATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_INTERNAL_NAME_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_CREATE;
@@ -275,9 +274,6 @@ public final class SecurityConstants {
         new SecurityRule(
             AuthorizationManagerType.DEG,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", PUT),
-            DATA_ENTITY_GROUP_UPDATE),
-        new SecurityRule(AuthorizationManagerType.DEG,
-            new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", DELETE),
-            DATA_ENTITY_GROUP_DELETE)
+            DATA_ENTITY_GROUP_UPDATE)
     );
 }

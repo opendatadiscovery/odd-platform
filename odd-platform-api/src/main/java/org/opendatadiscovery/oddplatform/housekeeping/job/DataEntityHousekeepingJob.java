@@ -15,6 +15,8 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.housekeeping.config.HousekeepingTTLProperties;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.FilePojo;
+import org.opendatadiscovery.oddplatform.service.attachment.FileUploadService;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +40,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_SEVERITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
+import static org.opendatadiscovery.oddplatform.model.Tables.FILE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
@@ -59,6 +62,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 @Slf4j
 public class DataEntityHousekeepingJob implements HousekeepingJob {
     private final HousekeepingTTLProperties properties;
+    private final FileUploadService fileUploadService;
 
     @Override
     public void doHousekeeping(final Connection connection) {
@@ -108,6 +112,7 @@ public class DataEntityHousekeepingJob implements HousekeepingJob {
         deleteTaskRuns(dslContext, dataEntityOddrns);
         deleteQTSeverity(dslContext, dataEntityIds);
         deleteQTRelations(dslContext, dataEntityOddrns);
+        deleteFiles(dslContext, dataEntityIds);
 
         final List<DataEntityPojo> datasets = dataEntitiesToDelete.stream()
             .filter(this::isDataset)
@@ -117,6 +122,20 @@ public class DataEntityHousekeepingJob implements HousekeepingJob {
         dslContext.deleteFrom(DATA_ENTITY)
             .where(DATA_ENTITY.ID.in(dataEntityIds))
             .execute();
+    }
+
+    private void deleteFiles(final DSLContext dslContext,
+                             final List<Long> dataEntityIds) {
+        final List<FilePojo> deletedFiles = dslContext.deleteFrom(FILE)
+            .where(FILE.DATA_ENTITY_ID.in(dataEntityIds))
+            .returning()
+            .fetch(r -> r.into(FilePojo.class));
+
+        //here we get files, which were not deleted by user, so we need to delete them from storage
+        final List<FilePojo> filePojos = deletedFiles.stream()
+            .filter(file -> file.getDeletedAt() == null)
+            .toList();
+        fileUploadService.deleteFiles(filePojos).block();
     }
 
     private void deleteQTRelations(final DSLContext dslContext,

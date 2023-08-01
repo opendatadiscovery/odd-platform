@@ -10,8 +10,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ReactiveLineageRepository extends ReactiveCRUDRepository<LineagePojo> {
-
+public interface ReactiveLineageRepository {
     Flux<LineagePojo> batchDeleteByEstablisherOddrn(Collection<String> oddrns);
 
     Flux<LineagePojo> batchInsertLineages(final List<LineagePojo> pojos);

@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.ingestion.utils.IngestionModelGenerator;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
@@ -25,10 +26,6 @@ import reactor.core.publisher.Mono;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataEntityDomainsTest extends BaseIngestionTest {
-
-    @Autowired
-    private DataEntityService dataEntityService;
-
     /**
      * Domains information test.
      *
@@ -82,9 +79,11 @@ public class DataEntityDomainsTest extends BaseIngestionTest {
 
         unAssignEntityFromDeg(ingestedEntities.get(firstChild.getOddrn()), firstDomainRef.getId());
         unAssignEntityFromDeg(ingestedEntities.get(secondChild.getOddrn()), firstDomainRef.getId());
-        deleteDeg(firstDomainRef.getId());
+        changeStatus(firstDomainRef.getId(), new DataEntityStatusFormData()
+            .status(new DataEntityStatus(DataEntityStatusEnum.DELETED)));
 
-        changeStatus(ingestedEntities.get(thirdChild.getOddrn()), new DataEntityStatus(DataEntityStatusEnum.DELETED));
+        changeStatus(ingestedEntities.get(thirdChild.getOddrn()),
+            new DataEntityStatusFormData().status(new DataEntityStatus(DataEntityStatusEnum.DELETED)));
 
         final DataEntityDomainList updatedDomainsInfo = getDomainsInfo();
         assertThat(updatedDomainsInfo.getItems()).hasSize(1);
@@ -114,13 +113,6 @@ public class DataEntityDomainsTest extends BaseIngestionTest {
             .block();
     }
 
-    private void deleteDeg(final Long id) {
-        webTestClient.delete()
-            .uri("/api/dataentitygroups/{id}", id)
-            .exchange()
-            .expectStatus().isNoContent();
-    }
-
     private void unAssignEntityFromDeg(final Long dataEntityId,
                                        final Long dataEntityGroupId) {
         webTestClient.delete()
@@ -132,10 +124,10 @@ public class DataEntityDomainsTest extends BaseIngestionTest {
     }
 
     private void changeStatus(final Long dataEntityId,
-                              final DataEntityStatus status) {
+                              final DataEntityStatusFormData status) {
         webTestClient.put()
             .uri("/api/dataentities/{data_entity_id}/statuses", dataEntityId)
-            .body(Mono.just(status), DataEntityStatus.class)
+            .body(Mono.just(status), DataEntityStatusFormData.class)
             .exchange()
             .expectStatus().isOk();
     }

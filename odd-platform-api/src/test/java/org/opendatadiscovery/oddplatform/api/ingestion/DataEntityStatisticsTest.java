@@ -15,6 +15,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassUsage
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
@@ -128,7 +131,8 @@ public class DataEntityStatisticsTest extends BaseIngestionTest {
         // Delete DEG
         final DataEntityDetails details = getDetails(deg.getId());
         removeEntityFromDEG(details.getEntities().get(0).getId(), deg.getId());
-        deleteDeg(deg.getId());
+        changeStatus(deg.getId(), new DataEntityStatusFormData()
+            .status(new DataEntityStatus(DataEntityStatusEnum.DELETED)));
 
         final List<DataEntity> afterDEGDeleted = new ArrayList<>(dataEntities);
         afterDEGDeleted.add(updatedHollow);
@@ -172,11 +176,13 @@ public class DataEntityStatisticsTest extends BaseIngestionTest {
             .expectStatus().isOk();
     }
 
-    private void deleteDeg(final Long id) {
-        webTestClient.delete()
-            .uri("/api/dataentitygroups/{id}", id)
+    private void changeStatus(final Long dataEntityId,
+                              final DataEntityStatusFormData status) {
+        webTestClient.put()
+            .uri("/api/dataentities/{data_entity_id}/statuses", dataEntityId)
+            .body(Mono.just(status), DataEntityStatusFormData.class)
             .exchange()
-            .expectStatus().isNoContent();
+            .expectStatus().isOk();
     }
 
     private DataEntityDetails getDetails(final Long degId) {

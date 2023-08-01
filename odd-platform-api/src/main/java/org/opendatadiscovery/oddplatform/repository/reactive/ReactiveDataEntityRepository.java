@@ -19,11 +19,11 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataEntityPojo> updateDEG(final DataEntityPojo dataEntityPojo);
 
-    Mono<Boolean> exists(final long dataEntityId);
+    Mono<Boolean> existsIncludingSoftDeleted(final long dataEntityId);
 
-    Mono<Boolean> existsByDataSourceId(final long dataSourceId);
+    Mono<Boolean> existsNonDeletedByDataSourceId(final long dataSourceId);
 
-    Mono<Boolean> existsByNamespaceId(final long namespaceId);
+    Mono<Boolean> existsNonDeletedByNamespaceId(final long namespaceId);
 
     Mono<Long> incrementViewCount(final long id);
 

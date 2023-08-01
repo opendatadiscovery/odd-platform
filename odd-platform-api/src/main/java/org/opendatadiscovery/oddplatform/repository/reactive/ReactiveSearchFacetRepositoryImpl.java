@@ -22,6 +22,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
+import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterId;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchFacetsRecord;
@@ -154,7 +155,12 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
 
     @Override
     public Mono<Map<SearchFilterId, Long>> getEntityClassFacetForDataEntity(final FacetStateDto state) {
-        final List<Condition> conditions = getDataEntityDefaultConditions();
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        if (!deletedEntitiesAreRequested(state.getState())) {
+            conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
+        }
 
         final String entityClassUnnestedField = "entity_class_id";
         final String deCountField = "data_entity_count";
@@ -206,6 +212,11 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         final Set<Long> typeIds = state.getFacetEntitiesIds(FacetType.TYPES);
         if (!CollectionUtils.isEmpty(typeIds)) {
             conditions.add(DATA_ENTITY.TYPE_ID.in(typeIds));
+        }
+
+        final Set<Long> statusIds = state.getFacetEntitiesIds(FacetType.STATUSES);
+        if (!CollectionUtils.isEmpty(statusIds)) {
+            conditions.add(DATA_ENTITY.STATUS.in(statusIds));
         }
 
         select
@@ -568,5 +579,10 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
             conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {selectedEntityClass.intValue()}));
         }
         return conditions;
+    }
+
+    private boolean deletedEntitiesAreRequested(final Map<FacetType, List<SearchFilterDto>> facetStateMap) {
+        return facetStateMap.getOrDefault(FacetType.STATUSES, List.of()).stream()
+            .anyMatch(f -> f.getEntityId() == DataEntityStatusDto.DELETED.getId());
     }
 }

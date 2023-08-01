@@ -14,6 +14,8 @@ import org.assertj.core.util.BigDecimalComparator;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
@@ -148,7 +150,7 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
                         "dataSource.token", "viewCount", "updatedAt",
                         "versionList", "entityClasses", "type.id",
                         "sourceList", "targetList", "datasetsList", "metadataFieldValues",
-                        "latestRun.id", "latestRun.updatedAt", "latestRun.createdAt"
+                        "latestRun.id", "latestRun.updatedAt", "latestRun.createdAt", "lastIngestedAt"
                     )
                     .isEqualTo(expected);
 
@@ -244,7 +246,9 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
             .externalName(ingestedEntity.getName())
             .url("")
             .hasAlerts(null)
-            .manuallyCreated(false);
+            .manuallyCreated(false)
+            .status(new DataEntityStatus(DataEntityStatusEnum.UNASSIGNED))
+            .isStale(false);
     }
 
     private String createSearchId() {

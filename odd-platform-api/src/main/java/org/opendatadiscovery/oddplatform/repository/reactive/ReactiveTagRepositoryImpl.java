@@ -202,15 +202,6 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId) {
-        final var query = DSL.delete(TAG_TO_DATA_ENTITY)
-            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(TagToDataEntityPojo.class));
-    }
-
-    @Override
     public Flux<TagToDataEntityPojo> createDataEntityRelations(final Collection<TagToDataEntityPojo> relations) {
         if (CollectionUtils.isEmpty(relations)) {
             return Flux.just();

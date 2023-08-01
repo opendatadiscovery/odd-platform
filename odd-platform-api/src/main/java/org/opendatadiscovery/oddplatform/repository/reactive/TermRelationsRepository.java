@@ -11,8 +11,6 @@ public interface TermRelationsRepository {
 
     Flux<DataEntityToTermPojo> createRelationsWithDataEntity(final List<DataEntityToTermPojo> relations);
 
-    Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final long dataEntityId);
-
     Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final long termId);
 
     Flux<DatasetFieldToTermPojo> deleteRelationsWithDatasetFields(final long termId);

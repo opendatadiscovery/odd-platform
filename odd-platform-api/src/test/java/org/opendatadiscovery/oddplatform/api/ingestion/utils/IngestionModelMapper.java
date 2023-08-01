@@ -8,6 +8,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.BinaryFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.BooleanFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.ComplexFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
@@ -43,6 +45,8 @@ public class IngestionModelMapper {
             .dataEntityGroups(emptyList())
             .tags(emptyList())
             .terms(emptyList())
+            .status(new DataEntityStatus().status(DataEntityStatusEnum.UNASSIGNED))
+            .isStale(false)
             .type(new DataEntityType().name(DataEntityType.NameEnum.fromValue(dataEntity.getType().getValue())));
     }
 

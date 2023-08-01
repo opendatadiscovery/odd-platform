@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
@@ -28,7 +29,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.apache.commons.lang3.ArrayUtils.contains;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_DESCRIPTION;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.MANUALLY_CREATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated.DATA_ENTITY_ID;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.StatusUpdated.DATA_ENTITY_POJO;
 
@@ -75,21 +79,21 @@ public class DataEntityInternalStateServiceImpl implements DataEntityInternalSta
             return getActivityContextInfos(pojos).flatMap(oldStates -> softDeleteDataEntities(pojos)
                 .then(Mono.defer(() -> logStatusChangeEvents(oldStates, ids))));
         } else {
-            return getActivityContextInfos(pojos).flatMap(oldStates -> Flux.fromIterable(pojos)
-                .collectList()
-                .flatMap(dataEntityPojos -> {
-                    final List<DataEntityPojo> updatedPojos = dataEntityPojos.stream()
-                        .map(pojo -> dataEntityMapper.applyStatus(pojo, newStatus))
-                        .toList();
-                    return dataEntityRepository.bulkUpdate(updatedPojos).then();
-                })
-                .then(Mono.defer(() -> {
-                    final List<DataEntityPojo> entitiesToRestore = pojos.stream()
-                        .filter(pojo -> pojo.getStatus().equals(DataEntityStatusDto.DELETED.getId()))
-                        .toList();
-                    return restore(entitiesToRestore);
-                }))
-                .then(Mono.defer(() -> logStatusChangeEvents(oldStates, ids))));
+            return getActivityContextInfos(pojos).flatMap(oldStates ->
+                Flux.fromIterable(pojos)
+                    .collectList()
+                    .flatMap(dataEntityPojos -> {
+                        final List<DataEntityPojo> entitiesToRestore = dataEntityPojos.stream()
+                            .filter(pojo -> pojo.getStatus().equals(DataEntityStatusDto.DELETED.getId()))
+                            .toList();
+                        final List<DataEntityPojo> updatedPojos = dataEntityPojos.stream()
+                            .map(pojo -> dataEntityMapper.applyStatus(pojo, newStatus))
+                            .toList();
+                        return Mono.when(dataEntityRepository.bulkUpdate(updatedPojos).then(),
+                            restore(entitiesToRestore));
+                    })
+                    .then(Mono.defer(() -> logStatusChangeEvents(oldStates, ids)))
+            );
         }
     }
 
@@ -112,6 +116,13 @@ public class DataEntityInternalStateServiceImpl implements DataEntityInternalSta
                 }));
                 return dataEntityStatisticsService.updateStatistics((long) Math.negateExact(pojos.size()), statistics);
             }))
+            .then(Mono.defer(() -> {
+                final List<Mono<DataEntityFilledPojo>> unfilledMonos = pojos.stream()
+                    .filter(this::isManuallyCreatedDEG)
+                    .map(pojo -> dataEntityFilledService.markEntityUnfilled(pojo.getId(), MANUALLY_CREATED))
+                    .toList();
+                return Mono.when(unfilledMonos);
+            }))
             .then(lineageRepository.softDeleteLineageRelations(oddrns).then())
             .then(groupEntityRelationRepository.softDeleteRelationsForDeletedDataEntities(oddrns).then())
             .then(groupParentGroupRelationRepository.softDeleteRelationsForDeletedDataEntities(oddrns).then());
@@ -130,6 +141,13 @@ public class DataEntityInternalStateServiceImpl implements DataEntityInternalSta
                     typesMap.merge(pojo.getTypeId(), 1L, Long::sum);
                 }));
                 return dataEntityStatisticsService.updateStatistics((long) deletedPojos.size(), statistics);
+            }))
+            .then(Mono.defer(() -> {
+                final List<Mono<DataEntityFilledPojo>> unfilledMonos = deletedPojos.stream()
+                    .filter(this::isManuallyCreatedDEG)
+                    .map(pojo -> dataEntityFilledService.markEntityFilled(pojo.getId(), MANUALLY_CREATED))
+                    .toList();
+                return Mono.when(unfilledMonos);
             }))
             .then();
     }
@@ -161,5 +179,10 @@ public class DataEntityInternalStateServiceImpl implements DataEntityInternalSta
                 .systemEvent(false)
                 .build())
             .toList();
+    }
+
+    private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
+        return pojo.getManuallyCreated()
+            && contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
     }
 }

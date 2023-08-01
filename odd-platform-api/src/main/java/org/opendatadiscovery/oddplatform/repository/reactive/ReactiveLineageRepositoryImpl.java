@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
@@ -18,7 +19,6 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.LineageRecord;
-import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
@@ -35,12 +35,9 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 
 @Repository
-public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepository<LineageRecord, LineagePojo>
-    implements ReactiveLineageRepository {
-    public ReactiveLineageRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                         final JooqQueryHelper jooqQueryHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, LINEAGE, LineagePojo.class);
-    }
+@RequiredArgsConstructor
+public class ReactiveLineageRepositoryImpl implements ReactiveLineageRepository {
+    private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
     public Flux<LineagePojo> batchDeleteByEstablisherOddrn(final Collection<String> establishers) {

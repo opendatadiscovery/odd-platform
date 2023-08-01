@@ -29,7 +29,6 @@ import static reactor.function.TupleUtils.function;
 @Service
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
-
     private final ReactiveTagRepository reactiveTagRepository;
     private final TagMapper tagMapper;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
@@ -119,11 +118,6 @@ public class TagServiceImpl implements TagService {
                     .thenMany(reactiveTagRepository.createDataEntityRelations(updated))
                     .then(reactiveTagRepository.listDataEntityDtos(dataEntityId));
             }));
-    }
-
-    @Override
-    public Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId) {
-        return reactiveTagRepository.deleteRelationsForDataEntity(dataEntityId);
     }
 
     @Override

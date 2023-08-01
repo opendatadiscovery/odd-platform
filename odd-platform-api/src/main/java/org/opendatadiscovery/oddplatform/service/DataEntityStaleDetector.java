@@ -12,6 +12,7 @@ public class DataEntityStaleDetector {
 
     public boolean isDataEntityStale(final DataEntityPojo pojo) {
         return pojo.getLastIngestedAt() != null
+            && stalePeriod != null
             && DateTimeUtil.generateNow().isAfter(pojo.getLastIngestedAt().plusDays(stalePeriod));
     }
 }

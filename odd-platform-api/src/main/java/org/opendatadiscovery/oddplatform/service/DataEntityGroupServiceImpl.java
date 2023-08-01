@@ -18,7 +18,6 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
-import org.opendatadiscovery.oddplatform.exception.CascadeDeleteException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.CompactDataEntityList;
@@ -28,18 +27,14 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.TermRelationsRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
-import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.CustomGroupDeleted;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.CustomGroupUpdated;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
@@ -55,13 +50,10 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
     private final NamespaceService namespaceService;
     private final ActivityService activityService;
     private final DataEntityFilledService dataEntityFilledService;
-    private final TagService tagService;
     private final DataEntityStatisticsService dataEntityStatisticsService;
 
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    private final TermRelationsRepository termRelationsRepository;
-    private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
 
     private final DataEntityMapper dataEntityMapper;
@@ -95,21 +87,6 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                     return updateDEG(pojo, formData, null);
                 }
             });
-    }
-
-    @Override
-    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
-    @ReactiveTransactional
-    public Mono<DataEntityPojo> deleteDataEntityGroup(
-        @ActivityParameter(CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
-        return reactiveGroupEntityRelationRepository.degHasEntities(id)
-            .filter(hasEntities -> !hasEntities)
-            .switchIfEmpty(Mono.error(new CascadeDeleteException("Can't delete data entity group with entities")))
-            .then(reactiveDataEntityRepository.get(id))
-            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group", id)))
-            .filter(DataEntityPojo::getManuallyCreated)
-            .switchIfEmpty(Mono.error(new BadUserRequestException("Can't delete ingested data entity")))
-            .flatMap(this::deleteDEG);
     }
 
     @Override
@@ -209,18 +186,6 @@ public class DataEntityGroupServiceImpl implements DataEntityGroupService {
                     .thenReturn(degPojo);
             })
             .map(dataEntityMapper::mapRef);
-    }
-
-    private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
-        return Flux.zip(
-            dataEntityStatisticsService.updateStatistics(-1L,
-                Map.of(DATA_ENTITY_GROUP.getId(), Map.of(pojo.getTypeId(), -1L))),
-            //termRelationsRepository.deleteRelationsWithTerms(pojo.getId()),
-            //reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
-            //tagService.deleteRelationsForDataEntity(pojo.getId()),
-            //ownershipRepository.deleteByDataEntityId(pojo.getId()),
-            dataEntityFilledService.markEntityUnfilled(pojo.getId(), MANUALLY_CREATED)
-        ).then(reactiveDataEntityRepository.delete(pojo.getId()));
     }
 
     private String generateOddrn(final DataEntityPojo pojo) {

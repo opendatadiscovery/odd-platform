@@ -28,13 +28,14 @@ class LineageMapperTest {
     private static final EasyRandom EASY_RANDOM;
 
     static {
-        final EasyRandomParameters EASY_RANDOMParameters = new EasyRandomParameters()
+        final EasyRandomParameters params = new EasyRandomParameters()
             .scanClasspathForConcreteTypes(true)
             .excludeField(named("hasChildren"))
+            .randomize(f -> f.getName().equals("status") && f.getType().isAssignableFrom(Short.class), () -> (short) 1)
             .randomizationDepth(10)
             .objectFactory(new RecordFactory());
 
-        EASY_RANDOM = new EasyRandom(EASY_RANDOMParameters);
+        EASY_RANDOM = new EasyRandom(params);
     }
 
     @BeforeEach
@@ -75,6 +76,7 @@ class LineageMapperTest {
                 ),
                 termMapper,
                 new DateTimeMapperImpl(),
+                new DataEntityStatusMapper(),
                 new DataEntityStaleDetector()
             )
         );
@@ -84,6 +86,8 @@ class LineageMapperTest {
                 new TokenMapperImpl(new DateTimeMapperImpl())
             )
         );
+        mapper.setDataEntityStaleDetector(new DataEntityStaleDetector());
+        mapper.setDataEntityStatusMapper(new DataEntityStatusMapper());
     }
 
     @Test

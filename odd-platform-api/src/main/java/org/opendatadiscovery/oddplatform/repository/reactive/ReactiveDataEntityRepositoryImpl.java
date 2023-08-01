@@ -146,15 +146,15 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<Boolean> exists(final long dataEntityId) {
+    public Mono<Boolean> existsIncludingSoftDeleted(final long dataEntityId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId))));
+            DSL.selectFrom(DATA_ENTITY).where(DATA_ENTITY.ID.eq(dataEntityId)));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1).defaultIfEmpty(false);
     }
 
     @Override
-    public Mono<Boolean> existsByDataSourceId(final long dataSourceId) {
+    public Mono<Boolean> existsNonDeletedByDataSourceId(final long dataSourceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId))));
 
@@ -162,7 +162,7 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<Boolean> existsByNamespaceId(final long namespaceId) {
+    public Mono<Boolean> existsNonDeletedByNamespaceId(final long namespaceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId))));
 
@@ -182,6 +182,7 @@ public class ReactiveDataEntityRepositoryImpl
     public Mono<DataEntityDimensionsDto> getDimensions(final long id) {
         final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
             .conditions(List.of(DATA_ENTITY.ID.eq(id)))
+            .includeDeleted(true)
             .build();
         final var query = baseDimensionsSelect(cteConfig);
         return jooqReactiveOperations.mono(query)

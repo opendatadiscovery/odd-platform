@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
@@ -77,7 +76,7 @@ public class NamespaceServiceImpl implements NamespaceService {
                 dataSourceRepository.existsByNamespace(id),
                 collectorRepository.existsByNamespace(id),
                 termRepository.existsByNamespace(id),
-                dataEntityRepository.existsByNamespaceId(id)
+                dataEntityRepository.existsNonDeletedByNamespaceId(id)
             )
             .map(t -> BooleanUtils.toBoolean(t.getT1())
                 || BooleanUtils.toBoolean(t.getT2())

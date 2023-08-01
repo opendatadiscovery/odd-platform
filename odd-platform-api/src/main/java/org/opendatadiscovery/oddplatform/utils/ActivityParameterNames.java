@@ -49,10 +49,6 @@ public interface ActivityParameterNames {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    interface CustomGroupDeleted {
-        String DATA_ENTITY_ID = "dataEntityId";
-    }
-
     interface AlertHaltConfigUpdated {
         String DATA_ENTITY_ID = "dataEntityId";
     }

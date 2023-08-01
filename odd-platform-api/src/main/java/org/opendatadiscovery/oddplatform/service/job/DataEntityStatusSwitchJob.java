@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service.job;
 
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
@@ -20,6 +21,7 @@ public class DataEntityStatusSwitchJob {
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     @SchedulerLock(name = "statusSwitchJob", lockAtLeastFor = "9m", lockAtMostFor = "9m")
     public void run() {
+        LockAssert.assertLocked();
         final DataEntityStatus status = new DataEntityStatus(DataEntityStatusEnum.DELETED);
         dataEntityRepository.getPojosForStatusSwitch()
             .collectList()

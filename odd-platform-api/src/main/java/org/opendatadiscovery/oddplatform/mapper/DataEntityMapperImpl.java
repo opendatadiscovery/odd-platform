@@ -70,6 +70,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final DataEntityRunMapper dataEntityRunMapper;
     private final TermMapper termMapper;
     private final DateTimeMapper dateTimeMapper;
+    private final DataEntityStatusMapper dataEntityStatusMapper;
     private final DataEntityStaleDetector dataEntityStaleDetector;
 
     @Override
@@ -157,7 +158,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .sourceUpdatedAt(dateTimeMapper.mapUTCDateTime(pojo.getSourceUpdatedAt()))
             .lastIngestedAt(dateTimeMapper.mapUTCDateTime(pojo.getLastIngestedAt()))
             .viewCount(pojo.getViewCount())
-            .status(mapDataEntityStatus(pojo))
+            .status(dataEntityStatusMapper.mapStatus(pojo))
             .isStale(dataEntityStaleDetector.isDataEntityStale(pojo));
     }
 
@@ -248,7 +249,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataEntityGroups(groups)
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
-            .status(mapDataEntityStatus(pojo))
+            .status(dataEntityStatusMapper.mapStatus(pojo))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(tagMapper.mapToTagList(dto.getTags()))
@@ -418,8 +419,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
                                             final Long filledEntitiesCount) {
         final Map<Integer, Map<Integer, Long>> classesAndTypesCount = pojo.getDataEntityClassesTypesCount() != null
-            ? JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesTypesCount().data(), new TypeReference<>() {
-        })
+            ? JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesTypesCount().data(), new TypeReference<>() {})
             : new HashMap<>();
 
         return new DataEntityUsageInfo()
@@ -453,7 +453,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dimensionsDto.getOwnership()))
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
-            .status(mapDataEntityStatus(pojo))
+            .status(dataEntityStatusMapper.mapStatus(pojo))
             .sourceCreatedAt(DateTimeUtil.mapUTCDateTime(pojo.getSourceCreatedAt()))
             .sourceUpdatedAt(DateTimeUtil.mapUTCDateTime(pojo.getSourceUpdatedAt()))
             .lastIngestedAt(DateTimeUtil.mapUTCDateTime(pojo.getLastIngestedAt()))
@@ -511,7 +511,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(pojo.getInternalName())
             .entityClasses(entityClasses)
             .manuallyCreated(pojo.getManuallyCreated())
-            .status(mapDataEntityStatus(pojo))
+            .status(dataEntityStatusMapper.mapStatus(pojo))
             .isStale(dataEntityStaleDetector.isDataEntityStale(pojo))
             .url("");
     }
@@ -548,15 +548,5 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     private PageInfo pageInfo(final Page<?> page) {
         return new PageInfo(page.getTotal(), page.isHasNext());
-    }
-
-    private DataEntityStatus mapDataEntityStatus(final DataEntityPojo pojo) {
-        final DataEntityStatusDto statusDto = DataEntityStatusDto.findById(pojo.getStatus())
-            .orElseThrow(() -> new IllegalArgumentException("Status shouldn't be null"));
-        final DataEntityStatus status = new DataEntityStatus(DataEntityStatusEnum.fromValue(statusDto.name()));
-        if (pojo.getStatusSwitchTime() != null) {
-            status.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(pojo.getStatusSwitchTime()));
-        }
-        return status;
     }
 }

@@ -85,7 +85,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     @ReactiveTransactional
     public Mono<Long> delete(final long id) {
-        return dataEntityRepository.existsByDataSourceId(id)
+        return dataEntityRepository.existsNonDeletedByDataSourceId(id)
             .flatMap(exists -> {
                 if (!exists) {
                     return dataSourceRepository.delete(id).map(DataSourcePojo::getId);

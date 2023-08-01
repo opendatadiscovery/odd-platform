@@ -16,3 +16,7 @@ ALTER TABLE group_entity_relations
 
 ALTER TABLE group_parent_group_relations
     ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE;
+
+DELETE
+FROM activity
+WHERE event_type = 'CUSTOM_GROUP_DELETED';

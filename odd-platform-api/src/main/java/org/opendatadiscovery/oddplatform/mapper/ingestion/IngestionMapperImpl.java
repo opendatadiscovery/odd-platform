@@ -187,8 +187,8 @@ public class IngestionMapperImpl implements IngestionMapper {
                     pojo.setStatusUpdatedAt(now);
                 } else {
                     pojo.setStatus(previousStatus.getId());
-                    pojo.setStatusUpdatedAt(pojo.getStatusUpdatedAt());
-                    pojo.setStatusSwitchTime(pojo.getStatusSwitchTime());
+                    pojo.setStatusUpdatedAt(previousVersionPojo.getStatusUpdatedAt());
+                    pojo.setStatusSwitchTime(previousVersionPojo.getStatusSwitchTime());
                 }
             }
         }

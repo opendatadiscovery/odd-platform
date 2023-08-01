@@ -12,8 +12,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityGroupItemDto;
@@ -203,20 +201,6 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
             .from(cte.getName());
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(String.class));
-    }
-
-    @Override
-    public Mono<Boolean> degHasEntities(final long dataEntityGroupId) {
-        final var groupOddrn = DSL.select(DATA_ENTITY.ODDRN)
-            .from(DATA_ENTITY)
-            .where(DATA_ENTITY.ID.eq(dataEntityGroupId));
-
-        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.selectFrom(GROUP_ENTITY_RELATIONS)
-                .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
-                    .and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
-        );
-        return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 
     @Override
