@@ -215,8 +215,8 @@ logging:
   level:
     org.springframework.transaction.interceptor: info
     org.jooq.tools.LoggerListener: info
-    io.r2dbc.postgresql.QUERY: debug
-    io.r2dbc.postgresql.PARAM: debug
+    io.r2dbc.postgresql.QUERY: info
+    io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
     org.opendatadiscovery.oddplatform.housekeeping: info
     org.opendatadiscovery.oddplatform.partition: info
