@@ -85,13 +85,6 @@ public class DataEntityController implements DataEntityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteDataEntityGroup(final Long dataEntityGroupId,
-                                                            final ServerWebExchange exchange) {
-        return dataEntityGroupService.deleteDataEntityGroup(dataEntityGroupId)
-            .thenReturn(ResponseEntity.noContent().build());
-    }
-
-    @Override
     public Mono<ResponseEntity<DataEntityRef>> updateDataEntityGroup(final Long dataEntityGroupId,
                                                                      final Mono<DataEntityGroupFormData> formData,
                                                                      final ServerWebExchange exchange) {
