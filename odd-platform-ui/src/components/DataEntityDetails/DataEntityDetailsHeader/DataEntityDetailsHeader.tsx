@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
   Button,
@@ -6,6 +6,7 @@ import {
   EntityStatus,
   EntityTypeItem,
   LabelItem,
+  MetadataStale,
   WithFeature,
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
@@ -25,12 +26,12 @@ interface DataEntityDetailsHeaderProps {
   entityClasses: DataEntityDetails['entityClasses'];
   type: DataEntityDetails['type'];
   manuallyCreated: DataEntityDetails['manuallyCreated'];
-  // TODO
-  // updatedAt: DataEntityDetails['updatedAt'];
+  lastIngestedAt: DataEntityDetails['lastIngestedAt'];
   status: DataEntityDetails['status'];
+  isStale: DataEntityDetails['isStale'];
 }
 const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
-  // updatedAt,
+  lastIngestedAt,
   entityClasses,
   manuallyCreated,
   externalName,
@@ -38,35 +39,31 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   type,
   dataEntityId,
   status,
+  isStale,
 }) => {
   const { formatDistanceToNowStrict } = useAppDateTime();
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
 
-  // const entityUpdatedAt = useMemo(
-  //   () =>
-  //     updatedAt && (
-  //       <>
-  //         <TimeGapIcon />
-  //         <Typography variant='body1' sx={{ mx: 1, whiteSpace: 'nowrap' }}>
-  //           {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
-  //         </Typography>
-  //       </>
-  //     ),
-  //   [updatedAt]
-  // );
+  const entityLastIngestedAt = lastIngestedAt ? (
+    <>
+      {isStale ? (
+        <MetadataStale isStale={isStale} lastIngestedAt={lastIngestedAt} />
+      ) : (
+        <TimeGapIcon />
+      )}
+      <Typography variant='body1' sx={{ mx: 1, whiteSpace: 'nowrap' }}>
+        {formatDistanceToNowStrict(lastIngestedAt, { addSuffix: true })}
+      </Typography>
+    </>
+  ) : null;
 
-  const originalName = useMemo(
-    () =>
-      internalName &&
-      externalName && (
-        <Grid container alignItems='center' width='auto'>
-          <LabelItem labelName='Original' variant='body1' />
-          <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
-            {externalName}
-          </Typography>
-        </Grid>
-      ),
-    [internalName, externalName]
+  const originalName = internalName && externalName && (
+    <Grid container alignItems='center' width='auto'>
+      <LabelItem labelName='Original' variant='body1' />
+      <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+        {externalName}
+      </Typography>
+    </Grid>
   );
 
   return (
@@ -107,8 +104,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
           flexWrap='nowrap'
           justifyContent='flex-end'
         >
-          {/* TODO */}
-          {/* {entityUpdatedAt} */}
+          {entityLastIngestedAt}
           <WithPermissions
             permissionTo={Permission.DATA_ENTITY_STATUS_UPDATE}
             renderContent={({ isAllowedTo }) => (

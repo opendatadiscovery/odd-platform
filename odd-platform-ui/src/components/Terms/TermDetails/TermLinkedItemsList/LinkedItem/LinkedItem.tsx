@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntity } from 'generated-sources';
-import { EntityClassItem } from 'components/shared/elements';
+import { EntityClassItem, MetadataStale } from 'components/shared/elements';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import { TermLinkedItemsColContainer } from '../LinkedItemsListStyles';
 import { Container, ItemLink, NameContainer } from './LinkedItemStyles';
@@ -27,13 +27,20 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
           wrap='nowrap'
         >
           <NameContainer container item>
-            <Typography
-              variant='body1'
-              noWrap
-              title={linkedItem.internalName || linkedItem.externalName}
-            >
-              {linkedItem.internalName || linkedItem.externalName}
-            </Typography>
+            <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
+              <MetadataStale
+                isStale={linkedItem.isStale}
+                lastIngestedAt={linkedItem.lastIngestedAt}
+              />
+              <Typography
+                ml={0.5}
+                variant='body1'
+                noWrap
+                title={linkedItem.internalName || linkedItem.externalName}
+              >
+                {linkedItem.internalName || linkedItem.externalName}
+              </Typography>
+            </Box>
           </NameContainer>
           <Grid container item justifyContent='flex-end' wrap='nowrap' flexBasis={0}>
             {linkedItem.entityClasses?.map(entityClass => (
@@ -70,34 +77,32 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             ))}
           </Grid>
         </TermLinkedItemsColContainer>
-        {/* TODO */}
-        {/* <TermLinkedItemsColContainer item $colType='colxs'> */}
-        {/*   <Typography */}
-        {/*     variant='body1' */}
-        {/*     title={ */}
-        {/*       linkedItem.createdAt && */}
-        {/*       linkedEntityFormattedDateTime(linkedItem.createdAt.getTime()) */}
-        {/*     } */}
-        {/*     noWrap */}
-        {/*   > */}
-        {/*     {linkedItem.createdAt && */}
-        {/*       linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())} */}
-        {/*   </Typography> */}
-        {/* </TermLinkedItemsColContainer> */}
-        {/* TODO */}
-        {/* <TermLinkedItemsColContainer item $colType='colxs'> */}
-        {/*   <Typography */}
-        {/*     variant='body1' */}
-        {/*     title={ */}
-        {/*       linkedItem.updatedAt && */}
-        {/*       formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true }) */}
-        {/*     } */}
-        {/*     noWrap */}
-        {/*   > */}
-        {/*     {linkedItem.updatedAt && */}
-        {/*       formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })} */}
-        {/*   </Typography> */}
-        {/* </TermLinkedItemsColContainer> */}
+        <TermLinkedItemsColContainer item $colType='colxs'>
+          <Typography
+            variant='body1'
+            title={
+              linkedItem.sourceCreatedAt &&
+              linkedEntityFormattedDateTime(linkedItem.sourceCreatedAt.getTime())
+            }
+            noWrap
+          >
+            {linkedItem.sourceCreatedAt &&
+              linkedEntityFormattedDateTime(linkedItem.sourceCreatedAt.getTime())}
+          </Typography>
+        </TermLinkedItemsColContainer>
+        <TermLinkedItemsColContainer item $colType='colxs'>
+          <Typography
+            variant='body1'
+            title={
+              linkedItem.sourceUpdatedAt &&
+              formatDistanceToNowStrict(linkedItem.sourceUpdatedAt, { addSuffix: true })
+            }
+            noWrap
+          >
+            {linkedItem.sourceUpdatedAt &&
+              formatDistanceToNowStrict(linkedItem.sourceUpdatedAt, { addSuffix: true })}
+          </Typography>
+        </TermLinkedItemsColContainer>
       </Container>
     </ItemLink>
   );

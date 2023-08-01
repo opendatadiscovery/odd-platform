@@ -63,9 +63,10 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
                 flexMap={flexMap}
                 ownership={entity.ownership}
                 entityClasses={entity.entityClasses}
-                // TODO
-                // createdAt={entity.createdAt}
-                // updatedAt={entity.updatedAt}
+                createdAtDS={entity.sourceCreatedAt}
+                updatedAtDS={entity.sourceUpdatedAt}
+                lastIngestedAt={entity.lastIngestedAt}
+                isStale={entity.isStale}
               />
             ))}
           </InfiniteScroll>

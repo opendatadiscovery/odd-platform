@@ -11,6 +11,7 @@ import {
 } from 'components/shared/elements';
 import { Link } from 'react-router-dom';
 import { TriangularUnionIcon } from 'components/shared/icons';
+import MetadataStale from 'components/shared/elements/MetadataStale/MetadataStale';
 
 interface EntityGroupItemProps {
   isUpperGroup: boolean;
@@ -19,22 +20,25 @@ interface EntityGroupItemProps {
   entityClasses: DataEntityBaseObject['entityClasses'];
   type: DataEntityBaseObject['type'];
   ownership: DataEntityBaseObject['ownership'];
-  // TODO
-  // createdAt: DataEntityBaseObject['createdAt'];
-  // updatedAt: DataEntityBaseObject['updatedAt'];
+  createdAt: DataEntityBaseObject['sourceUpdatedAt'];
+  updatedAt: DataEntityBaseObject['sourceUpdatedAt'];
+  lastIngestedAt: DataEntityBaseObject['lastIngestedAt'];
+  isStale: DataEntityBaseObject['isStale'];
   flexMap: Record<string, string>;
 }
 
 const EntityGroupItem: FC<EntityGroupItemProps> = ({
   isUpperGroup,
   entityClasses,
-  // createdAt,
+  createdAt,
   type,
-  // updatedAt,
+  updatedAt,
   ownership,
   flexMap,
   id,
   name,
+  lastIngestedAt,
+  isStale,
 }) => {
   const { dataEntityOverviewPath } = useAppPaths();
   const { dataEntityFormattedDateTime } = useAppDateTime();
@@ -71,10 +75,14 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
                 flexWrap: 'nowrap',
               }}
             >
-              {isUpperGroup && <TriangularUnionIcon />}
-              <Typography variant='body1' noWrap title={name} ml={1}>
-                {name}
-              </Typography>
+              <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
+                {isUpperGroup && <TriangularUnionIcon sx={{ mr: 0.5 }} />}
+                <MetadataStale isStale={isStale} lastIngestedAt={lastIngestedAt} />
+                <Typography ml={0.5} variant='body1' noWrap title={name}>
+                  {name}
+                </Typography>
+              </Box>
+
               <Box display='flex' flexWrap='nowrap' mr={1} justifyContent='flex-start'>
                 {entityClasses?.map(entityClass => (
                   <EntityClassItem
@@ -97,21 +105,20 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
             )}
           </TruncatedList>
         </Table.Cell>
-        {/* TODO */}
-        {/* <Table.Cell $flex={flexMap.createdAt}> */}
-        {/*   {createdAt && ( */}
-        {/*     <Typography variant='body1'> */}
-        {/*       {dataEntityFormattedDateTime(createdAt.getTime())} */}
-        {/*     </Typography> */}
-        {/*   )} */}
-        {/* </Table.Cell> */}
-        {/* <Table.Cell $flex={flexMap.updatedAt}> */}
-        {/*   {updatedAt && ( */}
-        {/*     <Typography variant='body1'> */}
-        {/*       {dataEntityFormattedDateTime(updatedAt.getTime())} */}
-        {/*     </Typography> */}
-        {/*   )} */}
-        {/* </Table.Cell> */}
+        <Table.Cell $flex={flexMap.createdAt}>
+          {createdAt && (
+            <Typography variant='body1'>
+              {dataEntityFormattedDateTime(createdAt.getTime())}
+            </Typography>
+          )}
+        </Table.Cell>
+        <Table.Cell $flex={flexMap.updatedAt}>
+          {updatedAt && (
+            <Typography variant='body1'>
+              {dataEntityFormattedDateTime(updatedAt.getTime())}
+            </Typography>
+          )}
+        </Table.Cell>
       </Table.RowContainer>
     </Link>
   );

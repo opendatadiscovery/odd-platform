@@ -1,7 +1,8 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntity } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { MetadataStale } from 'components/shared/elements';
 import { Container, ItemLink, ColContainer } from './LinkedItemStyles';
 
 interface LinkedItemProps {
@@ -23,13 +24,20 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
           justifyContent='space-between'
           wrap='nowrap'
         >
-          <Typography
-            variant='body1'
-            noWrap
-            title={linkedItem.internalName || linkedItem.externalName}
-          >
-            {linkedItem.internalName || linkedItem.externalName}
-          </Typography>
+          <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
+            <MetadataStale
+              isStale={linkedItem.isStale}
+              lastIngestedAt={linkedItem.lastIngestedAt}
+            />
+            <Typography
+              ml={0.5}
+              variant='body1'
+              noWrap
+              title={linkedItem.internalName || linkedItem.externalName}
+            >
+              {linkedItem.internalName || linkedItem.externalName}
+            </Typography>
+          </Box>
         </ColContainer>
         <ColContainer $colType='collg' item container wrap='wrap' />
         <ColContainer item $colType='colsm'>
@@ -43,34 +51,32 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             ))}
           </Grid>
         </ColContainer>
-        {/* TODO */}
-        {/* <ColContainer item $colType='colxs'> */}
-        {/*   <Typography */}
-        {/*     variant='body1' */}
-        {/*     title={ */}
-        {/*       linkedItem.createdAt && */}
-        {/*       linkedEntityFormattedDateTime(linkedItem.createdAt.getTime()) */}
-        {/*     } */}
-        {/*     noWrap */}
-        {/*   > */}
-        {/*     {linkedItem.createdAt && */}
-        {/*       linkedEntityFormattedDateTime(linkedItem.createdAt.getTime())} */}
-        {/*   </Typography> */}
-        {/* </ColContainer> */}
-        {/* TODO */}
-        {/* <ColContainer item $colType='colxs'> */}
-        {/*   <Typography */}
-        {/*     variant='body1' */}
-        {/*     title={ */}
-        {/*       linkedItem.updatedAt && */}
-        {/*       formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true }) */}
-        {/*     } */}
-        {/*     noWrap */}
-        {/*   > */}
-        {/*     {linkedItem.updatedAt && */}
-        {/*       formatDistanceToNowStrict(linkedItem.updatedAt, { addSuffix: true })} */}
-        {/*   </Typography> */}
-        {/* </ColContainer> */}
+        <ColContainer item $colType='colxs'>
+          <Typography
+            variant='body1'
+            title={
+              linkedItem.sourceCreatedAt &&
+              linkedEntityFormattedDateTime(linkedItem.sourceCreatedAt.getTime())
+            }
+            noWrap
+          >
+            {linkedItem.sourceCreatedAt &&
+              linkedEntityFormattedDateTime(linkedItem.sourceCreatedAt.getTime())}
+          </Typography>
+        </ColContainer>
+        <ColContainer item $colType='colxs'>
+          <Typography
+            variant='body1'
+            title={
+              linkedItem.sourceUpdatedAt &&
+              formatDistanceToNowStrict(linkedItem.sourceUpdatedAt, { addSuffix: true })
+            }
+            noWrap
+          >
+            {linkedItem.sourceUpdatedAt &&
+              formatDistanceToNowStrict(linkedItem.sourceUpdatedAt, { addSuffix: true })}
+          </Typography>
+        </ColContainer>
       </Container>
     </ItemLink>
   );

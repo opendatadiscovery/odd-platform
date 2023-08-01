@@ -9,6 +9,7 @@ import {
   NumberFormatted,
   TruncatedCell,
   EntityStatus,
+  MetadataStale,
 } from 'components/shared/elements';
 import { ColumnsIcon, QuestionIcon, RowsIcon } from 'components/shared/icons';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
@@ -43,35 +44,25 @@ const ResultItem: React.FC<ResultItemProps> = ({
     [searchResult.id]
   );
 
-  // TODO
-  // const updatedAt = React.useMemo(
-  //   () =>
-  //     searchResult?.updatedAt ? (
-  //       <Typography
-  //         variant='body1'
-  //         title={formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
-  //         noWrap
-  //       >
-  //         {formatDistanceToNowStrict(searchResult.updatedAt, { addSuffix: true })}
-  //       </Typography>
-  //     ) : null,
-  //   [searchResult]
-  // );
+  const updatedAtDS = searchResult?.sourceUpdatedAt ? (
+    <Typography
+      variant='body1'
+      title={formatDistanceToNowStrict(searchResult.sourceUpdatedAt, { addSuffix: true })}
+      noWrap
+    >
+      {formatDistanceToNowStrict(searchResult.sourceUpdatedAt, { addSuffix: true })}
+    </Typography>
+  ) : null;
 
-  // TODO
-  // const createdAt = React.useMemo(
-  //   () =>
-  //     searchResult?.createdAt ? (
-  //       <Typography
-  //         variant='body1'
-  //         title={dataEntityFormattedDateTime(searchResult.createdAt)}
-  //         noWrap
-  //       >
-  //         {dataEntityFormattedDateTime(searchResult.createdAt)}
-  //       </Typography>
-  //     ) : null,
-  //   [searchResult]
-  // );
+  const createdAtDS = searchResult?.sourceCreatedAt ? (
+    <Typography
+      variant='body1'
+      title={dataEntityFormattedDateTime(searchResult.sourceCreatedAt)}
+      noWrap
+    >
+      {dataEntityFormattedDateTime(searchResult.sourceCreatedAt)}
+    </Typography>
+  ) : null;
 
   return (
     <S.ItemLink to={detailsLink}>
@@ -85,13 +76,20 @@ const ResultItem: React.FC<ResultItemProps> = ({
           wrap='nowrap'
         >
           <S.NameContainer container item>
-            <Typography
-              variant='body1'
-              noWrap
-              title={searchResult.internalName ?? searchResult.externalName}
-            >
-              {searchResult.internalName ?? searchResult.externalName}
-            </Typography>
+            <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
+              <MetadataStale
+                isStale={searchResult.isStale}
+                lastIngestedAt={searchResult.lastIngestedAt}
+              />
+              <Typography
+                ml={0.5}
+                variant='body1'
+                noWrap
+                title={searchResult.internalName ?? searchResult.externalName}
+              >
+                {searchResult.internalName ?? searchResult.externalName}
+              </Typography>
+            </Box>
             <Box display='flex' flexWrap='nowrap' sx={{ ml: 1 }}>
               {searchQuery && (
                 <AppTooltip checkForOverflow={false} title={searchHighlights}>
@@ -231,13 +229,12 @@ const ResultItem: React.FC<ResultItemProps> = ({
         <SearchCol item lg={grid.lg.st} md={grid.md.st}>
           <EntityStatus entityStatus={searchResult.status} />
         </SearchCol>
-        {/* TODO */}
-        {/* <SearchCol item lg={grid.lg.cr} md={grid.md.cr}> */}
-        {/*   {createdAt} */}
-        {/* </SearchCol> */}
-        {/* <SearchCol item lg={grid.lg.up} md={grid.md.up}> */}
-        {/*   {updatedAt} */}
-        {/* </SearchCol> */}
+        <SearchCol item lg={grid.lg.cr} md={grid.md.cr}>
+          {createdAtDS}
+        </SearchCol>
+        <SearchCol item lg={grid.lg.up} md={grid.md.up}>
+          {updatedAtDS}
+        </SearchCol>
       </S.Container>
     </S.ItemLink>
   );

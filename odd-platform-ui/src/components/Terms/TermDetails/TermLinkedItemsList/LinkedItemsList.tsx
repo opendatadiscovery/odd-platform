@@ -126,10 +126,10 @@ const LinkedItemsList: React.FC = () => {
           <Typography variant='caption'>Owner</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colxs'>
-          <Typography variant='caption'>Created</Typography>
+          <Typography variant='caption'>Created at DS</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colxs'>
-          <Typography variant='caption'>Last Update</Typography>
+          <Typography variant='caption'>Updated at DS</Typography>
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching && <LinkedItemsListSkeleton />}

@@ -13,8 +13,8 @@ const TableHeader: FC<TableHeaderProps> = ({ flexMap }) => {
   const cells = [
     { name: 'Name', flex: flexMap.name },
     { name: 'Owner', flex: flexMap.owner },
-    { name: 'Created', flex: flexMap.createdAt },
-    { name: 'Last update', flex: flexMap.updatedAt },
+    { name: 'Created at DS', flex: flexMap.createdAt },
+    { name: 'Updated at DS', flex: flexMap.updatedAt },
   ];
 
   if (!typeId) cells.splice(1, 0, { name: 'Type', flex: flexMap.type });

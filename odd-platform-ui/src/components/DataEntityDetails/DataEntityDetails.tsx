@@ -94,7 +94,8 @@ const DataEntityDetails: React.FC = () => {
                 entityClasses={details.entityClasses}
                 type={details.type}
                 manuallyCreated={details.manuallyCreated}
-                // updatedAt={details.updatedAt}
+                lastIngestedAt={details.lastIngestedAt}
+                isStale={details.isStale}
                 status={details.status}
               />
             )}
