@@ -2,7 +2,10 @@ import React, { cloneElement, type FC, useCallback, useState } from 'react';
 import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
 import { Controller, useForm } from 'react-hook-form';
 import { Box, FormControlLabel, Typography } from '@mui/material';
-import type { DataEntityStatusEnum } from 'generated-sources';
+import type {
+  DataEntityStatusEnum,
+  DataEntityApiUpdateStatusRequest,
+} from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import Button from 'components/shared/elements/Button/Button';
 import AppDateTimePicker from 'components/shared/elements/AppDateTimePicker/AppDateTimePicker';
@@ -78,10 +81,11 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
     const statusSwitchTime =
       newStatus === 'DRAFT' || newStatus === 'DEPRECATED' ? switchTime : undefined;
 
-    const params = {
+    const params: DataEntityApiUpdateStatusRequest = {
       dataEntityId,
       dataEntityStatusFormData: {
-        status: { status: newStatus, statusSwitchTime, propagate: data.propagate },
+        status: { status: newStatus, statusSwitchTime },
+        propagate: data.propagate,
       },
     };
 
