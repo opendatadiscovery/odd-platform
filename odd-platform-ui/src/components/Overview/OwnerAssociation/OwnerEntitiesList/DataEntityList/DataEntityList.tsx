@@ -1,7 +1,11 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import { type DataEntityRef } from 'generated-sources';
-import { EntityClassItem, EmptyContentPlaceholder } from 'components/shared/elements';
+import {
+  EntityClassItem,
+  EmptyContentPlaceholder,
+  MetadataStale,
+} from 'components/shared/elements';
 import { AlertIcon } from 'components/shared/icons';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './DataEntityListStyles';
@@ -30,14 +34,19 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
         {entityListName}
       </S.SectionCaption>
 
-      <S.ListLinksContainer>
+      <S.ListLinksContainer $isListEmpty={!dataEntitiesList.length}>
         {dataEntitiesList.map(item => (
           <li key={item.id}>
             <S.ListLink to={dataEntityOverviewPath(item.id)} $hasAlerts={item.hasAlerts}>
               <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
+                <MetadataStale isStale={item.isStale} />
 
-                <Typography noWrap title={item.internalName || item.externalName}>
+                <Typography
+                  noWrap
+                  ml={0.5}
+                  title={item.internalName || item.externalName}
+                >
                   {item.internalName || item.externalName}
                 </Typography>
               </S.ListLinkInnerItem>
