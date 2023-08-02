@@ -66,6 +66,8 @@ public class DataEntityHousekeepingJob implements HousekeepingJob {
 
     @Override
     public void doHousekeeping(final Connection connection) {
+        log.debug("Running data entity housekeeping job");
+
         DSL.using(connection).transaction(ctx -> {
             final DSLContext dslContext = ctx.dsl();
             final LocalDateTime deleteTime = DateTimeUtil.generateNow().minusDays(properties.getDataEntityDeleteDays());
@@ -122,6 +124,8 @@ public class DataEntityHousekeepingJob implements HousekeepingJob {
         dslContext.deleteFrom(DATA_ENTITY)
             .where(DATA_ENTITY.ID.in(dataEntityIds))
             .execute();
+
+        log.debug("Deleted data entities with ids {}", dataEntityIds);
     }
 
     private void deleteFiles(final DSLContext dslContext,

@@ -38,12 +38,14 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_S
 @Repository
 @RequiredArgsConstructor
 public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRepository {
+    private static final String DATASET = "dataset";
+    private static final String DATA_QA_TEST = "data_quality_test";
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
     public Flux<String> getDataQualityTestOddrnsForDataset(final long datasetId) {
-        final DataEntity dataset = DATA_ENTITY.as("dataset");
-        final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
+        final DataEntity dataset = DATA_ENTITY.as(DATASET);
+        final DataEntity dataQualityTest = DATA_ENTITY.as(DATA_QA_TEST);
 
         final SelectConditionStep<Record1<String>> query = DSL
             .select(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN)
@@ -58,8 +60,8 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
 
     @Override
     public Mono<DatasetTestReportDto> getDatasetTestReport(final long datasetId) {
-        final DataEntity dataset = DATA_ENTITY.as("dataset");
-        final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
+        final DataEntity dataset = DATA_ENTITY.as(DATASET);
+        final DataEntity dataQualityTest = DATA_ENTITY.as(DATA_QA_TEST);
 
         final SelectHavingStep<Record2<String, Long>> query = DSL
             .select(
@@ -101,8 +103,8 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
 
     @Override
     public Flux<TestStatusWithSeverityDto> getSLA(final long datasetId) {
-        final DataEntity dataset = DATA_ENTITY.as("dataset");
-        final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
+        final DataEntity dataset = DATA_ENTITY.as(DATASET);
+        final DataEntity dataQualityTest = DATA_ENTITY.as(DATA_QA_TEST);
 
         // @formatter:off
         final SelectConditionStep<Record2<String, String>> query = DSL
