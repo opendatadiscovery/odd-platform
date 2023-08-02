@@ -55,14 +55,14 @@ const OverviewGeneral: React.FC = () => {
         )}
         {sourceCreatedAt && (
           <Grid item sm={12}>
-            <LabeledInfoItem inline label='Created at DS' labelWidth={4}>
+            <LabeledInfoItem inline label='Created at' labelWidth={4}>
               {sourceCreatedAt}
             </LabeledInfoItem>
           </Grid>
         )}
         {sourceUpdatedAt && (
           <Grid item sm={12}>
-            <LabeledInfoItem inline label='Updated at DS' labelWidth={4}>
+            <LabeledInfoItem inline label='Updated at ' labelWidth={4}>
               {sourceUpdatedAt}
             </LabeledInfoItem>
           </Grid>
