@@ -224,11 +224,6 @@ export const dataEntitiesSlice = createSlice({
         };
       }
     );
-
-    builder.addCase(thunks.deleteDataEntityGroup.fulfilled, (state, { payload }) => ({
-      ...state,
-      byId: { ...omit(state.byId, payload) },
-    }));
   },
 });
 

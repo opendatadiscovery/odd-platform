@@ -82,7 +82,6 @@ const DataEntityDetails: React.FC = () => {
             allowedPermissions={[
               Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE,
               Permission.DATA_ENTITY_GROUP_UPDATE,
-              Permission.DATA_ENTITY_GROUP_DELETE,
               Permission.DATA_ENTITY_STATUS_UPDATE,
             ]}
             resourcePermissions={resourcePermissions}

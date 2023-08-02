@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { EntityClassItem, LabelItem, TagItem } from 'components/shared/elements';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { Link } from 'react-router-dom';
-import { ActivityEventType, DataEntityStatusEnum } from 'generated-sources';
+import { ActivityEventType } from 'generated-sources';
 import {
   ActivityFieldHeader,
   AlertActivityField,
@@ -13,11 +13,11 @@ import {
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
+  DatasetTermActivityField,
+  EntityStatusActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
-import DatasetTermActivityField from 'components/shared/elements/Activity/ActivityFields/DatasetTermActivityField/DatasetTermActivityField';
-import EntityStatusActivityField from 'components/shared/elements/Activity/ActivityFields/EntityStatusActivityField/EntityStatusActivityField';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -179,13 +179,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
       {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
         <ActivityFieldHeader
           eventType='created'
-          startText='Custom group'
-          activityName={`${activity.dataEntity.internalName}`}
-        />
-      )}
-      {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
-        <ActivityFieldHeader
-          eventType='deleted'
           startText='Custom group'
           activityName={`${activity.dataEntity.internalName}`}
         />

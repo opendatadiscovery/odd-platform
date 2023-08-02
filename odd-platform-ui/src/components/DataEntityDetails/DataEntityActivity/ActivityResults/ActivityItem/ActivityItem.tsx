@@ -134,13 +134,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
-          <ActivityFieldHeader
-            eventType='deleted'
-            startText='Custom group'
-            activityName={`${activity.dataEntity.internalName}`}
-          />
-        )}
         {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_UPDATED]) && (
           <CustomGroupActivityField
             oldState={activity.oldState.customGroup}

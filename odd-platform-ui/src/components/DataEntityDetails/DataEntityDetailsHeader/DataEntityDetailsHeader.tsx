@@ -115,12 +115,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
               />
             )}
           />
-          {manuallyCreated && (
-            <DataEntityGroupControls
-              internalName={internalName}
-              externalName={externalName}
-            />
-          )}
+          {manuallyCreated && <DataEntityGroupControls />}
           <WithFeature featureName={Feature.DATA_COLLABORATION}>
             <CreateMessageForm
               dataEntityId={dataEntityId}
