@@ -16,11 +16,13 @@ import AssignFieldTermForm from './AssignFieldTermForm/AssignFieldTermForm';
 interface DatasetFieldTermsProps {
   fieldTerms: DataSetField['terms'];
   datasetFieldId: number;
+  isStatusDeleted: boolean;
 }
 
 const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
   fieldTerms,
   datasetFieldId,
+  isStatusDeleted,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -68,23 +70,25 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
         <Typography variant='h5' color='texts.hint'>
           TERMS
         </Typography>
-        <WithPermissions
-          permissionTo={Permission.DATASET_FIELD_ADD_TERM}
-          renderContent={({ isAllowedTo: addTerm }) => (
-            <AssignFieldTermForm
-              datasetFieldId={datasetFieldId}
-              handleAddTerm={handleAddTerm}
-              openBtnEl={
-                <Button
-                  disabled={!addTerm}
-                  text='Add term'
-                  buttonType='secondary-m'
-                  sx={{ mr: 1 }}
-                />
-              }
-            />
-          )}
-        />
+        {!isStatusDeleted && (
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_ADD_TERM}
+            renderContent={({ isAllowedTo: addTerm }) => (
+              <AssignFieldTermForm
+                datasetFieldId={datasetFieldId}
+                handleAddTerm={handleAddTerm}
+                openBtnEl={
+                  <Button
+                    disabled={!addTerm}
+                    text='Add term'
+                    buttonType='secondary-m'
+                    sx={{ mr: 1 }}
+                  />
+                }
+              />
+            )}
+          />
+        )}
       </Grid>
       <Grid container flexDirection='column' alignItems='flex-start'>
         {content}

@@ -14,6 +14,7 @@ import * as S from './DatasetFieldDescription.styles';
 interface DatasetFieldDescriptionProps {
   datasetFieldId: number;
   description: string;
+  isStatusDeleted: boolean;
   terms: TermRef[] | undefined;
 }
 
@@ -21,6 +22,7 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
   description,
   datasetFieldId,
   terms,
+  isStatusDeleted,
 }) => {
   const {
     error,
@@ -59,18 +61,20 @@ const DatasetFieldDescription: FC<DatasetFieldDescriptionProps> = ({
             <StrokedInfoIcon />
           </AppTooltip>
         </Box>
-        <WithPermissions
-          permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}
-          renderContent={({ isAllowedTo: editDescription }) => (
-            <Button
-              text={description ? 'Edit description' : 'Add description'}
-              disabled={!editDescription}
-              buttonType='secondary-m'
-              sx={{ mr: 1 }}
-              onClick={toggleEditMode}
-            />
-          )}
-        />
+        {!isStatusDeleted && (
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}
+            renderContent={({ isAllowedTo: editDescription }) => (
+              <Button
+                text={description ? 'Edit description' : 'Add description'}
+                disabled={!editDescription}
+                buttonType='secondary-m'
+                sx={{ mr: 1 }}
+                onClick={toggleEditMode}
+              />
+            )}
+          />
+        )}
       </Grid>
       {editMode ? (
         <DatasetFieldDescriptionEdit

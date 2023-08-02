@@ -1,12 +1,17 @@
 import React, { useMemo } from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getDatasetFieldById } from 'redux/selectors';
+import {
+  getDatasetFieldById,
+  getIsEntityStatusDeleted,
+  getResourcePermissions,
+} from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
-import { Permission } from 'generated-sources';
+import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';
+import { useAppParams } from 'lib/hooks';
 import DatasetFieldDescription from './DatasetFieldDescription/DatasetFieldDescription';
 import DatasetFieldTerms from './DatasetFieldTerms/DatasetFieldTerms';
 import useStructure from '../../lib/useStructure';
@@ -18,8 +23,10 @@ import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverview.styles';
 
 const DatasetFieldOverview: React.FC = () => {
+  const { dataEntityId } = useAppParams();
   const { selectedFieldId, datasetFieldRowsCount } = useStructure();
 
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
   const field = useAppSelector(getDatasetFieldById(selectedFieldId));
   const isUniqStatsExists = Object.values(field?.stats || {}).filter(Boolean).length > 0;
 
@@ -70,6 +77,7 @@ const DatasetFieldOverview: React.FC = () => {
           datasetFieldId={field.id}
           description={field.internalDescription ?? ''}
           terms={terms}
+          isStatusDeleted={isStatusDeleted}
         />
       </S.SectionContainer>
       <S.SectionContainer container>
@@ -77,28 +85,30 @@ const DatasetFieldOverview: React.FC = () => {
           <Typography variant='h5' color='texts.hint'>
             LABELS
           </Typography>
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
-            renderContent={({ isAllowedTo: editLabels }) => (
-              <DatasetFieldLabelsForm
-                datasetFieldId={field.id}
-                labels={field.labels}
-                btnCreateEl={
-                  <Button
-                    text={
-                      field.labels && field.labels?.length > 0
-                        ? 'Edit labels'
-                        : 'Add labels'
-                    }
-                    data-qa='edit_labels'
-                    disabled={!editLabels}
-                    buttonType='secondary-m'
-                    sx={{ mr: 1 }}
-                  />
-                }
-              />
-            )}
-          />
+          {!isStatusDeleted && (
+            <WithPermissions
+              permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
+              renderContent={({ isAllowedTo: editLabels }) => (
+                <DatasetFieldLabelsForm
+                  datasetFieldId={field.id}
+                  labels={field.labels}
+                  btnCreateEl={
+                    <Button
+                      text={
+                        field.labels && field.labels?.length > 0
+                          ? 'Edit labels'
+                          : 'Add labels'
+                      }
+                      data-qa='edit_labels'
+                      disabled={!editLabels}
+                      buttonType='secondary-m'
+                      sx={{ mr: 1 }}
+                    />
+                  }
+                />
+              )}
+            />
+          )}
         </Grid>
         <Grid container flexDirection='column' alignItems='flex-start'>
           {field.labels && field.labels?.length > 0 ? (
@@ -114,8 +124,12 @@ const DatasetFieldOverview: React.FC = () => {
           )}
         </Grid>
       </S.SectionContainer>
-      <DatasetFieldOverviewEnums field={field} />
-      <DatasetFieldTerms fieldTerms={field?.terms} datasetFieldId={field.id} />
+      <DatasetFieldOverviewEnums field={field} isStatusDeleted={isStatusDeleted} />
+      <DatasetFieldTerms
+        fieldTerms={field?.terms}
+        datasetFieldId={field.id}
+        isStatusDeleted={isStatusDeleted}
+      />
       {field.metadata &&
         field.metadata?.length > 0 &&
         getOverviewSection(
