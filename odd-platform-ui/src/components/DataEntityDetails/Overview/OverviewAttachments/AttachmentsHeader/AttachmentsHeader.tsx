@@ -5,6 +5,8 @@ import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppParams, useGetUploadOptions } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getIsEntityStatusDeleted } from 'redux/selectors';
 import SaveLinksForm from '../SaveLinksForm/SaveLinksForm';
 import SaveFilesForm from '../SaveFilesForm/SaveFilesForm';
 import * as S from './AttachmentsHeader.styles';
@@ -12,6 +14,8 @@ import * as S from './AttachmentsHeader.styles';
 const AttachmentsHeader: FC = () => {
   const { dataEntityId } = useAppParams();
   const { data } = useGetUploadOptions({ dataEntityId });
+
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   const menuId = 'add-attachments-menu';
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -29,15 +33,17 @@ const AttachmentsHeader: FC = () => {
     <S.Header>
       <Typography variant='h2'>Attachments</Typography>
       <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
-        <Button
-          text='Add attachments'
-          buttonType='secondary-lg'
-          startIcon={<AddIcon />}
-          aria-label={menuId}
-          aria-controls={menuId}
-          aria-haspopup='true'
-          onClick={handleMenuOpen}
-        />
+        {!isStatusDeleted && (
+          <Button
+            text='Add attachments'
+            buttonType='secondary-lg'
+            startIcon={<AddIcon />}
+            aria-label={menuId}
+            aria-controls={menuId}
+            aria-haspopup='true'
+            onClick={handleMenuOpen}
+          />
+        )}
       </WithPermissions>
       <AppMenu
         PaperProps={{ sx: { borderRadius: 2, width: anchorEl?.offsetWidth } }}

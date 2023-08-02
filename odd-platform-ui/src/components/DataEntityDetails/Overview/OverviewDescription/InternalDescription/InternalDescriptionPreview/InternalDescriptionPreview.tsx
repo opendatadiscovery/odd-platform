@@ -6,12 +6,14 @@ import { Permission } from 'generated-sources';
 
 interface InternalDescriptionPreviewProps {
   isDescriptionEmpty: boolean;
+  isStatusDeleted: boolean;
   toggleEditMode: () => void;
   value: string;
 }
 
 const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
   isDescriptionEmpty,
+  isStatusDeleted,
   toggleEditMode,
   value,
 }) => (
@@ -29,11 +31,13 @@ const InternalDescriptionPreview: FC<InternalDescriptionPreviewProps> = ({
       >
         <Typography variant='subtitle2'>Not created.</Typography>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-          <Button
-            text='Add Description'
-            onClick={toggleEditMode}
-            buttonType='tertiary-sm'
-          />
+          {!isStatusDeleted && (
+            <Button
+              text='Add Description'
+              onClick={toggleEditMode}
+              buttonType='tertiary-sm'
+            />
+          )}
         </WithPermissions>
       </Grid>
     )}

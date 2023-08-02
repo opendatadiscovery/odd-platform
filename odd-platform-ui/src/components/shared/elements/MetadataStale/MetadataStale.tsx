@@ -14,7 +14,7 @@ const MetadataStale: FC<MetadataStaleProps> = ({ isStale, lastIngestedAt }) => {
 
   const text =
     lastIngestedAt !== undefined
-      ? `Ingested at platform ${formatDistanceToNow(lastIngestedAt, { addSuffix: true })}`
+      ? `Ingested at ${formatDistanceToNow(lastIngestedAt, { addSuffix: true })}`
       : ``;
 
   return isStale ? (

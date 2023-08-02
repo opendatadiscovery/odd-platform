@@ -60,6 +60,7 @@ const DataEntityDetails: React.FC = () => {
     isDataEntityGroupUpdated,
     isDataEntityAddedToGroup,
     isDataEntityDeletedFromGroup,
+    details.status?.status,
   ]);
 
   useEffect(() => {

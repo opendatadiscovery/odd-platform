@@ -12,6 +12,7 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
+import { isEntityStatusDeleted } from 'lib/helpers';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
@@ -63,19 +64,24 @@ const DataEntityDetailsTabs: React.FC = () => {
           dataEntityId,
           isDEG ? degLineageQueryString : lineageQueryString
         ),
-        hidden: isQualityTest,
+        hidden: isQualityTest || isEntityStatusDeleted(dataEntityDetails.status),
         value: DataEntityRoutes.lineage,
       },
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset || !datasetQualityTestReportTotal,
+        hidden:
+          !isDataset ||
+          !datasetQualityTestReportTotal ||
+          isEntityStatusDeleted(dataEntityDetails.status),
         value: DataEntityRoutes.testReports,
       },
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformer,
+        hidden:
+          (!isQualityTest && !isTransformer) ||
+          isEntityStatusDeleted(dataEntityDetails.status),
         value: DataEntityRoutes.history,
       },
       {
@@ -84,11 +90,14 @@ const DataEntityDetailsTabs: React.FC = () => {
         value: DataEntityRoutes.alerts,
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
+        hidden: isEntityStatusDeleted(dataEntityDetails.status),
       },
       {
         name: 'Linked items',
         link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden: !dataEntityDetails?.hasChildren,
+        hidden:
+          !dataEntityDetails?.hasChildren ||
+          isEntityStatusDeleted(dataEntityDetails.status),
         value: DataEntityRoutes.linkedItems,
       },
       {
@@ -100,6 +109,7 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: 'Discussions',
         link: dataEntityCollaborationPath(dataEntityId),
         value: DataEntityRoutes.discussions,
+        hidden: isEntityStatusDeleted(dataEntityDetails.status),
       },
     ],
     [
@@ -114,6 +124,7 @@ const DataEntityDetailsTabs: React.FC = () => {
       isDEG,
       degLineageQueryString,
       lineageQueryString,
+      dataEntityDetails.status,
     ]
   );
 

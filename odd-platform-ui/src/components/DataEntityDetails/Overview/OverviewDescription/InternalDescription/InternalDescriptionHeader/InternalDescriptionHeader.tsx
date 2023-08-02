@@ -9,11 +9,13 @@ import * as S from './InternalDescriptionHeader.styles';
 interface InternalDescriptionHeaderProps {
   toggleEditMode: () => void;
   isDescriptionEmpty: boolean;
+  isStatusDeleted: boolean;
 }
 
 const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
   toggleEditMode,
   isDescriptionEmpty,
+  isStatusDeleted,
 }) => {
   const tooltipInfoContent = (
     <S.Tooltip>
@@ -36,13 +38,15 @@ const InternalDescriptionHeader: FC<InternalDescriptionHeaderProps> = ({
         </AppTooltip>
       </S.About>
       <WithPermissions permissionTo={Permission.DATA_ENTITY_DESCRIPTION_UPDATE}>
-        <Button
-          text={isDescriptionEmpty ? 'Add info' : 'Edit info'}
-          data-qa='add_description'
-          onClick={toggleEditMode}
-          buttonType='secondary-lg'
-          startIcon={isDescriptionEmpty ? <AddIcon /> : <EditIcon />}
-        />
+        {!isStatusDeleted && (
+          <Button
+            text={isDescriptionEmpty ? 'Add info' : 'Edit info'}
+            data-qa='add_description'
+            onClick={toggleEditMode}
+            buttonType='secondary-lg'
+            startIcon={isDescriptionEmpty ? <AddIcon /> : <EditIcon />}
+          />
+        )}
       </WithPermissions>
     </S.CaptionContainer>
   );

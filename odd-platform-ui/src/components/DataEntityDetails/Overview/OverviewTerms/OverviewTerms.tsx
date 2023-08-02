@@ -5,6 +5,8 @@ import { Permission } from 'generated-sources';
 import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getIsEntityStatusDeleted } from 'redux/selectors';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
 import AssignEntityTermForm from './AssignEntityTermForm/AssignEntityTermForm';
 import TermItem from './TermItem/TermItem';
@@ -18,17 +20,25 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
+
   return (
     <div>
       <TermsCaptionContainer>
         <Typography variant='h4'>Dictionary terms</Typography>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
-          <AssignEntityTermForm
-            dataEntityId={dataEntityId}
-            openBtnEl={
-              <Button text='Add terms' buttonType='secondary-m' startIcon={<AddIcon />} />
-            }
-          />
+          {!isStatusDeleted && (
+            <AssignEntityTermForm
+              dataEntityId={dataEntityId}
+              openBtnEl={
+                <Button
+                  text='Add terms'
+                  buttonType='secondary-m'
+                  startIcon={<AddIcon />}
+                />
+              }
+            />
+          )}
         </WithPermissions>
       </TermsCaptionContainer>
       {terms?.length ? (
@@ -41,6 +51,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
                 key={linkedTerm.term.id}
                 linkedTerm={linkedTerm}
                 dataEntityId={dataEntityId}
+                isStatusDeleted={isStatusDeleted}
               />
             ))}
           {terms?.length > visibleLimit && (
@@ -55,6 +66,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
                         key={linkedTerm.term.id}
                         linkedTerm={linkedTerm}
                         dataEntityId={dataEntityId}
+                        isStatusDeleted={isStatusDeleted}
                       />
                     ))}
               </Collapse>
@@ -78,10 +90,12 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({ terms, dataEntityId }) =>
         >
           <Typography variant='subtitle2'>Not created.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TERM}>
-            <AssignEntityTermForm
-              dataEntityId={dataEntityId}
-              openBtnEl={<Button text='Add terms' buttonType='tertiary-sm' />}
-            />
+            {!isStatusDeleted && (
+              <AssignEntityTermForm
+                dataEntityId={dataEntityId}
+                openBtnEl={<Button text='Add terms' buttonType='tertiary-sm' />}
+              />
+            )}
           </WithPermissions>
         </Grid>
       )}

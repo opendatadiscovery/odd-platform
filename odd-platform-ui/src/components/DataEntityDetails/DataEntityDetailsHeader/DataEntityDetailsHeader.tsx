@@ -15,9 +15,9 @@ import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/ico
 import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsDataEntityBelongsToClass } from 'redux/selectors';
+import DataEntityGroupForm from '../DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
-import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
 
 interface DataEntityDetailsHeaderProps {
   dataEntityId: DataEntityDetails['id'];
@@ -115,7 +115,15 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
               />
             )}
           />
-          {manuallyCreated && <DataEntityGroupControls />}
+          {manuallyCreated && (
+            <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}>
+              <DataEntityGroupForm
+                btnCreateEl={
+                  <Button buttonType='secondary-lg' text='Edit group' sx={{ ml: 2 }} />
+                }
+              />
+            </WithPermissions>
+          )}
           <WithFeature featureName={Feature.DATA_COLLABORATION}>
             <CreateMessageForm
               dataEntityId={dataEntityId}

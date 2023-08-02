@@ -4,14 +4,20 @@ import { Permission, type Tag } from 'generated-sources';
 import { Button, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { AddIcon, EditIcon } from 'components/shared/icons';
-import TagsEditForm from './TagsEditForm/TagsEditForm';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getIsEntityStatusDeleted } from 'redux/selectors';
+import { useAppParams } from 'lib/hooks';
 import { CaptionContainer, TagsContainer } from './OverviewTagsStyles';
+import TagsEditForm from './TagsEditForm/TagsEditForm';
 
 interface OverviewTagsProps {
   tags?: Tag[];
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
+  const { dataEntityId } = useAppParams();
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
+
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -28,15 +34,17 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
       <CaptionContainer>
         <Typography variant='h4'>Tags</Typography>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>
-          <TagsEditForm
-            btnEditEl={
-              <Button
-                text={tags?.length ? 'Edit tags' : 'Add tags'}
-                buttonType='secondary-m'
-                startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
-              />
-            }
-          />
+          {!isStatusDeleted && (
+            <TagsEditForm
+              btnEditEl={
+                <Button
+                  text={tags?.length ? 'Edit tags' : 'Add tags'}
+                  buttonType='secondary-m'
+                  startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
+                />
+              }
+            />
+          )}
         </WithPermissions>
       </CaptionContainer>
       {tags?.length ? (
@@ -91,9 +99,11 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
         >
           <Typography variant='subtitle2'>Not created.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_TAGS_UPDATE}>
-            <TagsEditForm
-              btnEditEl={<Button text='Add tags' buttonType='tertiary-sm' />}
-            />
+            {!isStatusDeleted && (
+              <TagsEditForm
+                btnEditEl={<Button text='Add tags' buttonType='tertiary-sm' />}
+              />
+            )}
           </WithPermissions>
         </Grid>
       )}
