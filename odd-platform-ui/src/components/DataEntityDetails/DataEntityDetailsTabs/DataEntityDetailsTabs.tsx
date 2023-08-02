@@ -6,13 +6,13 @@ import {
   getDataEntityDetails,
   getDatasetTestReportTotal,
   getIsDataEntityBelongsToClass,
+  getIsEntityStatusDeleted,
 } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { isEntityStatusDeleted } from 'lib/helpers';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
@@ -44,6 +44,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   const { isDataset, isQualityTest, isTransformer, isDEG } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
@@ -64,24 +65,19 @@ const DataEntityDetailsTabs: React.FC = () => {
           dataEntityId,
           isDEG ? degLineageQueryString : lineageQueryString
         ),
-        hidden: isQualityTest || isEntityStatusDeleted(dataEntityDetails.status),
+        hidden: isQualityTest || isStatusDeleted,
         value: DataEntityRoutes.lineage,
       },
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
-        hidden:
-          !isDataset ||
-          !datasetQualityTestReportTotal ||
-          isEntityStatusDeleted(dataEntityDetails.status),
+        hidden: !isDataset || !datasetQualityTestReportTotal || isStatusDeleted,
         value: DataEntityRoutes.testReports,
       },
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden:
-          (!isQualityTest && !isTransformer) ||
-          isEntityStatusDeleted(dataEntityDetails.status),
+        hidden: (!isQualityTest && !isTransformer) || isStatusDeleted,
         value: DataEntityRoutes.history,
       },
       {
@@ -90,14 +86,12 @@ const DataEntityDetailsTabs: React.FC = () => {
         value: DataEntityRoutes.alerts,
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
-        hidden: isEntityStatusDeleted(dataEntityDetails.status),
+        hidden: isStatusDeleted,
       },
       {
         name: 'Linked items',
         link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden:
-          !dataEntityDetails?.hasChildren ||
-          isEntityStatusDeleted(dataEntityDetails.status),
+        hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
         value: DataEntityRoutes.linkedItems,
       },
       {
@@ -109,7 +103,7 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: 'Discussions',
         link: dataEntityCollaborationPath(dataEntityId),
         value: DataEntityRoutes.discussions,
-        hidden: isEntityStatusDeleted(dataEntityDetails.status),
+        hidden: isStatusDeleted,
       },
     ],
     [
@@ -125,6 +119,7 @@ const DataEntityDetailsTabs: React.FC = () => {
       degLineageQueryString,
       lineageQueryString,
       dataEntityDetails.status,
+      isStatusDeleted,
     ]
   );
 

@@ -14,7 +14,7 @@ import { type DataEntityDetails, Feature, Permission } from 'generated-sources';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getIsDataEntityBelongsToClass } from 'redux/selectors';
+import { getIsDataEntityBelongsToClass, getIsEntityStatusDeleted } from 'redux/selectors';
 import DataEntityGroupForm from '../DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
@@ -43,6 +43,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
 }) => {
   const { formatDistanceToNowStrict } = useAppDateTime();
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   const entityLastIngestedAt = lastIngestedAt ? (
     <>
@@ -81,19 +82,21 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             />
           ))}
           {type && <EntityTypeItem sx={{ ml: 1 }} entityTypeName={type.name} />}
-          <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
-            <InternalNameFormDialog
-              btnCreateEl={
-                <Button
-                  text={internalName ? 'Edit' : 'Add business name'}
-                  data-qa='add_business_name'
-                  buttonType='tertiary-m'
-                  sx={{ ml: 1 }}
-                  startIcon={internalName ? <EditIcon /> : <AddIcon />}
-                />
-              }
-            />
-          </WithPermissions>
+          {!isStatusDeleted && (
+            <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
+              <InternalNameFormDialog
+                btnCreateEl={
+                  <Button
+                    text={internalName ? 'Edit' : 'Add business name'}
+                    data-qa='add_business_name'
+                    buttonType='tertiary-m'
+                    sx={{ ml: 1 }}
+                    startIcon={internalName ? <EditIcon /> : <AddIcon />}
+                  />
+                }
+              />
+            </WithPermissions>
+          )}
         </Grid>
         <Grid
           container
@@ -115,7 +118,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
               />
             )}
           />
-          {manuallyCreated && (
+          {manuallyCreated && !isStatusDeleted && (
             <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}>
               <DataEntityGroupForm
                 btnCreateEl={
