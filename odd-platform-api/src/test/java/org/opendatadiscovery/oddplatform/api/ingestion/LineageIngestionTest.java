@@ -15,6 +15,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdg
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStream;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.ingestion.utils.IngestionModelGenerator;
@@ -25,6 +27,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static java.util.function.Function.identity;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +45,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
      */
     @Test
     @DisplayName("Simple lineage ingestion test")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void simpleLineageIngestionTest() {
         final DataSource createdDataSource = createDataSource();
 
@@ -253,6 +257,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
      * <p>Inner DEG should not be shown in lineage
      */
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void simpleDEGLineageIngestionTest() {
         final DataSource createdDataSource = createDataSource();
         final DataEntity inputDataset1 = IngestionModelGenerator.generateSimpleDataEntity(DataEntityType.TABLE)
@@ -464,6 +469,8 @@ public class LineageIngestionTest extends BaseIngestionTest {
             .externalName(name)
             .dataSource(dataSource)
             .parentsCount(parentsCount)
-            .childrenCount(childrenCount);
+            .childrenCount(childrenCount)
+            .status(new DataEntityStatus(DataEntityStatusEnum.UNASSIGNED))
+            .isStale(false);
     }
 }

@@ -54,16 +54,12 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
     @Test
     public void testGetDataQualityTestOddrnsForHollowDataset() {
         final DataEntityPojo hollowDataEntity = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setHollow(true).setOddrn(UUID.randomUUID().toString())))
-            .collectList()
-            .block()
-            .get(0);
+            .create(new DataEntityPojo().setHollow(true).setOddrn(UUID.randomUUID().toString()))
+            .block();
 
         final DataEntityPojo dqTest = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
-            .collectList()
-            .block()
-            .get(0);
+            .create(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))
+            .block();
 
         dataQualityTestRelationRepository.createRelations(List.of(
             new DataQualityTestRelationsPojo()

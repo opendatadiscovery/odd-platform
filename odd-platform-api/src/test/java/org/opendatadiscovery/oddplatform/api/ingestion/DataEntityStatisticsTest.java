@@ -105,7 +105,13 @@ public class DataEntityStatisticsTest extends BaseIngestionTest {
             .id(DataEntityTypeDto.DAG.getId())
             .name(org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType.NameEnum.fromValue(
                 DataEntityTypeDto.DAG.name())));
-        formData.setEntities(List.of(new DataEntityRef().id(1L).oddrn(hollowDatasetOddrn)));
+        formData.setEntities(List.of(
+            new DataEntityRef()
+                .id(1L)
+                .oddrn(hollowDatasetOddrn)
+                .isStale(false)
+                .status(new DataEntityStatus(DataEntityStatusEnum.UNASSIGNED))
+        ));
 
         final DataEntityRef deg = createDEG(formData);
 

@@ -50,7 +50,8 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
             .from(DATA_QUALITY_TEST_RELATIONS)
             .join(dataset).on(dataset.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
             .join(dataQualityTest).on(dataQualityTest.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
-            .where(dataset.ID.eq(datasetId).and(dataQualityTest.STATUS.ne(DataEntityStatusDto.DELETED.getId())));
+            .where(dataset.ID.eq(datasetId).and(dataset.HOLLOW.isFalse())
+                .and(dataQualityTest.STATUS.ne(DataEntityStatusDto.DELETED.getId())));
 
         return jooqReactiveOperations.flux(query).map(Record1::value1);
     }
