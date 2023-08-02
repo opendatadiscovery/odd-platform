@@ -115,7 +115,7 @@ const DataEntityDetailsTabs: React.FC = () => {
     [
       dataEntityId,
       activityQueryString,
-      dataEntityDetails,
+      dataEntityDetails?.hasChildren,
       openAlertsCount,
       isDataset,
       isQualityTest,

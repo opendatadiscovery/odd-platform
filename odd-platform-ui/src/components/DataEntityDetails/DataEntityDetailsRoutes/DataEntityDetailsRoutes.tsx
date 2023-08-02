@@ -48,12 +48,21 @@ const DataEntityDetailsRoutes: React.FC = () => {
               <Route path={DataEntityRoutes.versionIdParam} />
             </Route>
           </Route>
-          <Route path={DataEntityRoutes.lineage} element={<Lineage />} />
+          <Route
+            path={DataEntityRoutes.lineage}
+            element={
+              <RestrictedRoute
+                isAllowedTo={!isStatusDeleted}
+                redirectTo={`../${DataEntityRoutes.overview}`}
+                component={Lineage}
+              />
+            }
+          />
           <Route
             path={getNonExactParamPath(DataEntityRoutes.testReports)}
             element={
               <RestrictedRoute
-                isAllowedTo={isStatusDeleted}
+                isAllowedTo={!isStatusDeleted}
                 redirectTo={`../${DataEntityRoutes.overview}`}
                 component={TestReport}
               />
@@ -72,7 +81,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
             path={DataEntityRoutes.alerts}
             element={
               <RestrictedRoute
-                isAllowedTo={isStatusDeleted}
+                isAllowedTo={!isStatusDeleted}
                 redirectTo={`../${DataEntityRoutes.overview}`}
               >
                 <WithPermissionsProvider
@@ -90,7 +99,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
             path={DataEntityRoutes.history}
             element={
               <RestrictedRoute
-                isAllowedTo={isStatusDeleted}
+                isAllowedTo={!isStatusDeleted}
                 redirectTo={`../${DataEntityRoutes.overview}`}
                 component={QualityTestHistory}
               />
@@ -100,7 +109,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
             path={DataEntityRoutes.linkedItems}
             element={
               <RestrictedRoute
-                isAllowedTo={isStatusDeleted}
+                isAllowedTo={!isStatusDeleted}
                 redirectTo={`../${DataEntityRoutes.overview}`}
                 component={LinkedItemsList}
               />
@@ -111,7 +120,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
             path={getNonExactParamPath(DataEntityRoutes.discussions)}
             element={
               <RestrictedRoute
-                isAllowedTo={isStatusDeleted}
+                isAllowedTo={!isStatusDeleted}
                 redirectTo={`../${DataEntityRoutes.overview}`}
                 component={DataCollaboration}
               />
