@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStr
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusEnum;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.ingestion.utils.IngestionModelGenerator;
@@ -28,6 +29,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.springframework.test.annotation.DirtiesContext;
+import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -243,6 +245,38 @@ public class LineageIngestionTest extends BaseIngestionTest {
             );
 
         assertLineage(ingestedEntities.get(dataTransformer1.getOddrn()), expectedDownstream, expectedUpstream);
+
+        changeStatus(ingestedEntities.get(dataTransformer2.getOddrn()), new DataEntityStatusFormData()
+            .status(new DataEntityStatus(DataEntityStatusEnum.DELETED)));
+
+        final DataEntityLineage changedExpectedDownstream = new DataEntityLineage()
+            .root(root)
+            .downstream(
+                new DataEntityLineageStream()
+                    .nodes(List.of(
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(dataTransformer1.getOddrn()),
+                            dataTransformer1.getOddrn(),
+                            dataTransformer1.getName(),
+                            createdDataSource,
+                            3,
+                            2
+                        ),
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(middlewareDataset.getOddrn()),
+                            middlewareDataset.getOddrn(),
+                            middlewareDataset.getName(),
+                            createdDataSource,
+                            1,
+                            0
+                        )
+                    ))
+                    .edges(List.of(
+                        buildExpectedLineageEdge(dataTransformer1, middlewareDataset, ingestedEntities)
+                    ))
+            );
+
+        assertLineage(ingestedEntities.get(dataTransformer1.getOddrn()), changedExpectedDownstream, expectedUpstream);
     }
 
     /**
@@ -440,6 +474,15 @@ public class LineageIngestionTest extends BaseIngestionTest {
                     // indirect sign of hollow entity in the upstream
                     .hasSize(expectedUpstream.getUpstream().getNodes().size() + 1);
             });
+    }
+
+    private void changeStatus(final Long dataEntityId,
+                              final DataEntityStatusFormData status) {
+        webTestClient.put()
+            .uri("/api/dataentities/{data_entity_id}/statuses", dataEntityId)
+            .body(Mono.just(status), DataEntityStatusFormData.class)
+            .exchange()
+            .expectStatus().isOk();
     }
 
     private DataEntityLineageEdge buildExpectedLineageEdge(final DataEntity source,

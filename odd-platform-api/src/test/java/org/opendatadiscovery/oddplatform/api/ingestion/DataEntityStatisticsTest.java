@@ -191,9 +191,9 @@ public class DataEntityStatisticsTest extends BaseIngestionTest {
             .expectStatus().isOk();
     }
 
-    private DataEntityDetails getDetails(final Long degId) {
+    private DataEntityDetails getDetails(final Long id) {
         return webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}", degId)
+            .uri("/api/dataentities/{data_entity_id}", id)
             .exchange()
             .returnResult(DataEntityDetails.class)
             .getResponseBody()
