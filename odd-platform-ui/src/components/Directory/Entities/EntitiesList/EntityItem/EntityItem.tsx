@@ -4,6 +4,7 @@ import {
   EntityClassItem,
   Table,
   DataEntityDetailsPreview,
+  MetadataStale,
 } from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
 import { Box, Grid, Typography } from '@mui/material';
@@ -16,17 +17,21 @@ interface EntityItemProps {
   id: DataEntity['id'];
   entityClasses: DataEntity['entityClasses'];
   ownership: DataEntity['ownership'];
-  createdAt: DataEntity['createdAt'];
-  updatedAt: DataEntity['updatedAt'];
+  createdAtDS: DataEntity['sourceCreatedAt'];
+  updatedAtDS: DataEntity['sourceUpdatedAt'];
+  lastIngestedAt: DataEntity['lastIngestedAt'];
+  isStale: DataEntity['isStale'];
   flexMap: Record<string, string>;
 }
 
 const EntityItem: FC<EntityItemProps> = ({
   name,
   entityClasses,
-  createdAt,
+  createdAtDS,
   type,
-  updatedAt,
+  updatedAtDS,
+  lastIngestedAt,
+  isStale,
   ownership,
   flexMap,
   id,
@@ -54,9 +59,12 @@ const EntityItem: FC<EntityItemProps> = ({
                 flexWrap: 'nowrap',
               }}
             >
-              <Typography variant='body1' noWrap title={name}>
-                {name}
-              </Typography>
+              <Box display='flex' flexWrap='nowrap' alignItems='center' overflow='hidden'>
+                <MetadataStale isStale={isStale} lastIngestedAt={lastIngestedAt} />
+                <Typography ml={0.5} variant='body1' noWrap title={name}>
+                  {name}
+                </Typography>
+              </Box>
               <Box display='flex' flexWrap='nowrap' mr={1} justifyContent='flex-start'>
                 {entityClasses?.map(entityClass => (
                   <EntityClassItem
@@ -85,16 +93,16 @@ const EntityItem: FC<EntityItemProps> = ({
           </Grid>
         </Table.Cell>
         <Table.Cell $flex={flexMap.createdAt}>
-          {createdAt && (
+          {createdAtDS && (
             <Typography variant='body1'>
-              {dataEntityFormattedDateTime(createdAt.getTime())}
+              {dataEntityFormattedDateTime(createdAtDS.getTime())}
             </Typography>
           )}
         </Table.Cell>
         <Table.Cell $flex={flexMap.updatedAt}>
-          {updatedAt && (
+          {updatedAtDS && (
             <Typography variant='body1'>
-              {dataEntityFormattedDateTime(updatedAt.getTime())}
+              {dataEntityFormattedDateTime(updatedAtDS.getTime())}
             </Typography>
           )}
         </Table.Cell>

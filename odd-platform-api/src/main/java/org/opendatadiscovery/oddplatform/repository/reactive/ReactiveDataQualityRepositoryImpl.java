@@ -11,6 +11,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
 import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
@@ -37,21 +38,31 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_S
 @Repository
 @RequiredArgsConstructor
 public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRepository {
+    private static final String DATASET = "dataset";
+    private static final String DATA_QA_TEST = "data_quality_test";
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
     public Flux<String> getDataQualityTestOddrnsForDataset(final long datasetId) {
+        final DataEntity dataset = DATA_ENTITY.as(DATASET);
+        final DataEntity dataQualityTest = DATA_ENTITY.as(DATA_QA_TEST);
+
         final SelectConditionStep<Record1<String>> query = DSL
             .select(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN)
             .from(DATA_QUALITY_TEST_RELATIONS)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-            .where(DATA_ENTITY.ID.eq(datasetId)).and(DATA_ENTITY.HOLLOW.isFalse());
+            .join(dataset).on(dataset.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+            .join(dataQualityTest).on(dataQualityTest.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+            .where(dataset.ID.eq(datasetId).and(dataset.HOLLOW.isFalse())
+                .and(dataQualityTest.STATUS.ne(DataEntityStatusDto.DELETED.getId())));
 
         return jooqReactiveOperations.flux(query).map(Record1::value1);
     }
 
     @Override
     public Mono<DatasetTestReportDto> getDatasetTestReport(final long datasetId) {
+        final DataEntity dataset = DATA_ENTITY.as(DATASET);
+        final DataEntity dataQualityTest = DATA_ENTITY.as(DATA_QA_TEST);
+
         final SelectHavingStep<Record2<String, Long>> query = DSL
             .select(
                 DATA_ENTITY_TASK_LAST_RUN.STATUS,
@@ -60,9 +71,11 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
             .from(DATA_QUALITY_TEST_RELATIONS)
             .join(DATA_ENTITY_TASK_LAST_RUN)
             .on(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
-            .join(DATA_ENTITY)
-            .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-            .where(DATA_ENTITY.ID.eq(datasetId))
+            .join(dataset)
+            .on(dataset.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+            .join(dataQualityTest)
+            .on(dataQualityTest.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+            .where(dataset.ID.eq(datasetId).and(dataQualityTest.STATUS.ne(DataEntityStatusDto.DELETED.getId())))
             .groupBy(DATA_ENTITY_TASK_LAST_RUN.STATUS);
 
         return jooqReactiveOperations.flux(query)
@@ -90,8 +103,8 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
 
     @Override
     public Flux<TestStatusWithSeverityDto> getSLA(final long datasetId) {
-        final DataEntity dataset = DATA_ENTITY.as("dataset");
-        final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
+        final DataEntity dataset = DATA_ENTITY.as(DATASET);
+        final DataEntity dataQualityTest = DATA_ENTITY.as(DATA_QA_TEST);
 
         // @formatter:off
         final SelectConditionStep<Record2<String, String>> query = DSL
@@ -106,7 +119,7 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
             .leftJoin(DATA_QUALITY_TEST_SEVERITY)
                 .on(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(dataset.ID))
                 .and(DATA_QUALITY_TEST_SEVERITY.DATA_QUALITY_TEST_ID.eq(dataQualityTest.ID))
-            .where(dataset.ID.eq(datasetId));
+            .where(dataset.ID.eq(datasetId).and(dataQualityTest.STATUS.ne(DataEntityStatusDto.DELETED.getId())));
         // @formatter:on
 
         return jooqReactiveOperations.flux(query).map(this::mapLastRunDto);

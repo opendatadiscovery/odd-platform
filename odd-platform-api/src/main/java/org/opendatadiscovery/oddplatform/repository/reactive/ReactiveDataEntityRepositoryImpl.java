@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,10 +27,12 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDomainInfoDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
+import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -96,15 +99,38 @@ public class ReactiveDataEntityRepositoryImpl
                                             final JooqFTSHelper jooqFTSHelper,
                                             final DataEntityDtoMapper dataEntityDtoMapper) {
         super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY, DataEntityPojo.class, DATA_ENTITY.EXTERNAL_NAME,
-            DATA_ENTITY.ID, DATA_ENTITY.CREATED_AT, DATA_ENTITY.UPDATED_AT, DATA_ENTITY.DELETED_AT);
+            DATA_ENTITY.ID, DATA_ENTITY.PLATFORM_CREATED_AT, null, null);
         this.jooqFTSHelper = jooqFTSHelper;
         this.jooqRecordHelper = jooqRecordHelper;
         this.dataEntityDtoMapper = dataEntityDtoMapper;
     }
 
     @Override
+    protected Map<Field<?>, Object> getDeleteChangedFields() {
+        final Map<Field<?>, Object> updatedFieldsMap = new HashMap<>();
+        updatedFieldsMap.put(DATA_ENTITY.STATUS, DataEntityStatusDto.DELETED.getId());
+        updatedFieldsMap.put(DATA_ENTITY.STATUS_UPDATED_AT, DateTimeUtil.generateNow());
+        updatedFieldsMap.put(DATA_ENTITY.STATUS_SWITCH_TIME, null);
+        return updatedFieldsMap;
+    }
+
+    @Override
+    protected List<Condition> addSoftDeleteFilter(final List<Condition> conditions) {
+        final List<Condition> conditionsList = new ArrayList<>(conditions);
+        conditionsList.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
+        return conditionsList;
+    }
+
+    @Override
+    public Mono<DataEntityPojo> get(final long id) {
+        return jooqReactiveOperations.mono(DSL.selectFrom(DATA_ENTITY).where(DATA_ENTITY.ID.eq(id)))
+            .map(this::recordToPojo);
+    }
+
+    @Override
     public Flux<DataEntityPojo> get(final List<Long> ids) {
-        return jooqReactiveOperations.flux(DSL.selectFrom(DATA_ENTITY).where(idCondition(ids))).map(this::recordToPojo);
+        return jooqReactiveOperations.flux(DSL.selectFrom(DATA_ENTITY).where(DATA_ENTITY.ID.in(ids)))
+            .map(this::recordToPojo);
     }
 
     @Override
@@ -113,7 +139,6 @@ public class ReactiveDataEntityRepositoryImpl
             .set(DATA_ENTITY.TYPE_ID, dataEntityPojo.getTypeId())
             .set(DATA_ENTITY.NAMESPACE_ID, dataEntityPojo.getNamespaceId())
             .set(DATA_ENTITY.INTERNAL_NAME, dataEntityPojo.getInternalName())
-            .set(DATA_ENTITY.UPDATED_AT, dataEntityPojo.getUpdatedAt())
             .where(DATA_ENTITY.ID.eq(dataEntityPojo.getId()))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -121,15 +146,15 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<Boolean> exists(final long dataEntityId) {
+    public Mono<Boolean> existsIncludingSoftDeleted(final long dataEntityId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId))));
+            DSL.selectFrom(DATA_ENTITY).where(DATA_ENTITY.ID.eq(dataEntityId)));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1).defaultIfEmpty(false);
     }
 
     @Override
-    public Mono<Boolean> existsByDataSourceId(final long dataSourceId) {
+    public Mono<Boolean> existsNonDeletedByDataSourceId(final long dataSourceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId))));
 
@@ -137,7 +162,7 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<Boolean> existsByNamespaceId(final long namespaceId) {
+    public Mono<Boolean> existsNonDeletedByNamespaceId(final long namespaceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId))));
 
@@ -157,6 +182,7 @@ public class ReactiveDataEntityRepositoryImpl
     public Mono<DataEntityDimensionsDto> getDimensions(final long id) {
         final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
             .conditions(List.of(DATA_ENTITY.ID.eq(id)))
+            .includeDeleted(true)
             .build();
         final var query = baseDimensionsSelect(cteConfig);
         return jooqReactiveOperations.mono(query)
@@ -178,6 +204,7 @@ public class ReactiveDataEntityRepositoryImpl
     public Mono<DataEntityDetailsDto> getDetails(final long id) {
         final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
             .conditions(List.of(DATA_ENTITY.ID.eq(id)))
+            .includeDeleted(true)
             .build();
         final var query = baseDimensionsSelect(cteConfig);
         return jooqReactiveOperations.mono(query)
@@ -185,14 +212,21 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
-                                                final boolean includeHollow,
-                                                final Integer page,
-                                                final Integer size) {
+    public Flux<DataEntityPojo> listByOddrns(final Collection<String> oddrns,
+                                             final boolean includeHollow,
+                                             final boolean includeDeleted,
+                                             final Integer page,
+                                             final Integer size) {
         if (CollectionUtils.isEmpty(oddrns)) {
             return Flux.just();
         }
-        final List<Condition> conditions = new ArrayList<>(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+        final List<Condition> conditions;
+        if (!includeDeleted) {
+            conditions = new ArrayList<>(addSoftDeleteFilter(DATA_ENTITY.ODDRN.in(oddrns)));
+        } else {
+            conditions = new ArrayList<>();
+            conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
+        }
         if (!includeHollow) {
             conditions.add(DATA_ENTITY.HOLLOW.eq(false));
         }
@@ -203,6 +237,15 @@ public class ReactiveDataEntityRepositoryImpl
             .offset(page != null && size != null ? DSL.val((page - 1) * size) : DSL.noField(Integer.class));
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(DataEntityPojo.class));
+    }
+
+    @Override
+    public Flux<DataEntityPojo> getPojosForStatusSwitch() {
+        final var query = DSL.selectFrom(DATA_ENTITY)
+            .where(DATA_ENTITY.STATUS_SWITCH_TIME.isNotNull()
+                .and(DATA_ENTITY.STATUS_SWITCH_TIME.lessOrEqual(DateTimeUtil.generateNow())));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(DataEntityPojo.class));
     }
 
     @Override
@@ -263,7 +306,7 @@ public class ReactiveDataEntityRepositoryImpl
         final SelectConditionStep<Record> query = DSL.select(DATA_ENTITY.fields())
             .from(GROUP_ENTITY_RELATIONS)
             .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
-            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn));
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn).and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(DataEntityPojo.class))
             .collectList();
@@ -276,7 +319,7 @@ public class ReactiveDataEntityRepositoryImpl
             .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(dataEntityFields))
             .from(GROUP_ENTITY_RELATIONS)
             .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
-            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns))
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(groupOddrns).and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
             .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
         return jooqReactiveOperations.flux(query).collectMap(
             r -> r.get(GROUP_ENTITY_RELATIONS.GROUP_ODDRN),
@@ -318,7 +361,9 @@ public class ReactiveDataEntityRepositoryImpl
             .from(DATA_ENTITY)
             .where(DATA_ENTITY.ID.eq(dataEntityGroupId));
         final List<Condition> conditions = List.of(
-            GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.eq(dataEntityGroupOddrn));
+            GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.eq(dataEntityGroupOddrn)
+                .and(GROUP_PARENT_GROUP_RELATIONS.IS_DELETED.isFalse())
+        );
 
         final var query = DSL.with(deCteName)
             .asMaterialized(dataEntitySelect)
@@ -337,12 +382,14 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Mono<Map<String, Long>> getChildrenCount(final Collection<String> groupOddrns) {
+    public Mono<Map<String, Long>> getExperimentRunsCount(final Collection<String> groupOddrns) {
         final Field<Long> childrenCountField = field("children_count", Long.class);
         final var query = DSL.select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
             .select(count(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN).cast(Long.class).as(childrenCountField))
             .from(GROUP_PARENT_GROUP_RELATIONS)
-            .where(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.in(groupOddrns))
+            .join(DATA_ENTITY).on(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
+            .where(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.in(groupOddrns)
+                .and(GROUP_PARENT_GROUP_RELATIONS.IS_DELETED.isFalse()))
             .groupBy(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN);
         return jooqReactiveOperations.flux(query).collectMap(
             r -> r.get(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN),
@@ -360,7 +407,6 @@ public class ReactiveDataEntityRepositoryImpl
         final String newBusinessName = StringUtils.isEmpty(name) ? null : name;
         final var query = DSL.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
-            .set(DATA_ENTITY.UPDATED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -372,7 +418,6 @@ public class ReactiveDataEntityRepositoryImpl
         final String newDescription = StringUtils.isEmpty(description) ? null : description;
         final var query = DSL.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, newDescription)
-            .set(DATA_ENTITY.UPDATED_AT, DateTimeUtil.generateNow())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -383,8 +428,10 @@ public class ReactiveDataEntityRepositoryImpl
     public Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner) {
         final List<Condition> conditions = new ArrayList<>(jooqFTSHelper
             .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES)));
+        if (!deletedEntitiesAreRequested(state.getState())) {
+            conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
+        }
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
         conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
         if (StringUtils.isNotEmpty(state.getQuery())) {
             conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
@@ -419,7 +466,7 @@ public class ReactiveDataEntityRepositoryImpl
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query));
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         if (entityClassId != null) {
             conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {entityClassId}));
         }
@@ -597,6 +644,9 @@ public class ReactiveDataEntityRepositoryImpl
         final Pair<List<Condition>, List<Condition>> conditionsPair = jooqFTSHelper.resultFacetStateConditions(state);
         final var builder = DataEntityCTEQueryConfig.builder()
             .conditions(conditionsPair.getLeft());
+        if (deletedEntitiesAreRequested(state.getState())) {
+            builder.includeDeleted(true);
+        }
         if (StringUtils.isNotEmpty(state.getQuery())) {
             builder.fts(new DataEntityCTEQueryConfig.Fts(state.getQuery()));
         }
@@ -621,6 +671,7 @@ public class ReactiveDataEntityRepositoryImpl
             jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD),
             hasAlerts(deCte));
 
+        // DATA_ENTITY_TO_TERM and GROUP_ENTITY_RELATIONS are joint, because they are used in facet filters
         final Table<?> fromTable = DSL.table(deCteName)
             .leftJoin(DATA_SOURCE)
             .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
@@ -661,11 +712,12 @@ public class ReactiveDataEntityRepositoryImpl
         final var cteSelect = DSL.select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
             .select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.as(degOddrnField))
             .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns))
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns).and(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse()))
             .union(DSL.select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
                 .select(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.as(degOddrnField))
                 .from(GROUP_PARENT_GROUP_RELATIONS)
-                .where(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.in(oddrns)));
+                .where(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.in(oddrns)
+                    .and(GROUP_PARENT_GROUP_RELATIONS.IS_DELETED.isFalse())));
 
         final Table<Record> selectTable = cteSelect.asTable(cteName);
         final Field<String> deOddrnField =
@@ -760,6 +812,7 @@ public class ReactiveDataEntityRepositoryImpl
         final String entitiesCountAlias = "entities_count";
         final List<Condition> conditions = getDataEntityDefaultConditions();
         conditions.add(DATA_ENTITY.TYPE_ID.eq(DataEntityTypeDto.DOMAIN.getId()));
+        conditions.add(GROUP_ENTITY_RELATIONS.IS_DELETED.isFalse());
         final var query = DSL.select(DATA_ENTITY.fields())
             .select(coalesce(countDistinct(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN), 0L).as(entitiesCountAlias))
             .from(DATA_ENTITY)
@@ -772,21 +825,6 @@ public class ReactiveDataEntityRepositoryImpl
                 final Long entitiesCount = r.get(entitiesCountAlias, Long.class);
                 return new DataEntityDomainInfoDto(domain, entitiesCount);
             });
-    }
-
-    @Override
-    protected List<Field<?>> getNonUpdatableFields() {
-        final List<Field<?>> dataEntityNonUpdatableFields = List.of(
-            DATA_ENTITY.INTERNAL_NAME,
-            DATA_ENTITY.INTERNAL_DESCRIPTION,
-            DATA_ENTITY.VIEW_COUNT
-        );
-
-        // ad hoc until https://github.com/opendatadiscovery/odd-platform/issues/628 is closed
-        return ListUtils.union(dataEntityNonUpdatableFields, super.getNonUpdatableFields())
-            .stream()
-            .filter(f -> !f.equals(DATA_ENTITY.CREATED_AT))
-            .toList();
     }
 
     private Select<Record> baseDataEntityWithDatasourceAndNamespaceSelect(final List<Condition> conditions) {
@@ -844,7 +882,12 @@ public class ReactiveDataEntityRepositoryImpl
     private Select<Record> cteDataEntitySelect(final DataEntityCTEQueryConfig cteConfig) {
         final List<Field<?>> selectFields = new ArrayList<>(Arrays.stream(DATA_ENTITY.fields()).toList());
         final Table<?> fromTable;
-        final List<Condition> conditions = addSoftDeleteFilter(ListUtils.emptyIfNull(cteConfig.getConditions()));
+        final List<Condition> conditions = new ArrayList<>();
+        if (cteConfig.isIncludeDeleted()) {
+            conditions.addAll(ListUtils.defaultIfNull(cteConfig.getConditions(), new ArrayList<>()));
+        } else {
+            conditions.addAll(addSoftDeleteFilter(ListUtils.emptyIfNull(cteConfig.getConditions())));
+        }
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
         if (cteConfig.getFts() != null) {
             final Field<?> rankField = jooqFTSHelper
@@ -900,8 +943,13 @@ public class ReactiveDataEntityRepositoryImpl
     private List<Condition> getDataEntityDefaultConditions() {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(DATA_ENTITY.HOLLOW.isFalse());
-        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
         return conditions;
+    }
+
+    private boolean deletedEntitiesAreRequested(final Map<FacetType, List<SearchFilterDto>> facetStateMap) {
+        return facetStateMap.getOrDefault(FacetType.STATUSES, List.of()).stream()
+            .anyMatch(f -> f.getEntityId() == DataEntityStatusDto.DELETED.getId());
     }
 }

@@ -9,6 +9,7 @@ import io.minio.RemoveObjectArgs;
 import jakarta.annotation.PostConstruct;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +83,15 @@ public class RemoteFileUploadServiceImpl implements FileUploadService {
             .object(filePojo.getPath())
             .build();
         return removeObject(args);
+    }
+
+    @Override
+    public Mono<Void> deleteFiles(final List<FilePojo> files) {
+        final List<Mono<Void>> deleteMonos = files.stream()
+            .map(file -> RemoveObjectArgs.builder().bucket(bucket).object(file.getPath()).build())
+            .map(this::removeObject)
+            .toList();
+        return Mono.when(deleteMonos);
     }
 
     @Override

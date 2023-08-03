@@ -56,15 +56,6 @@ public class TermRelationsRepositoryImpl implements TermRelationsRepository {
     }
 
     @Override
-    public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final long dataEntityId) {
-        final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(DataEntityToTermPojo.class));
-    }
-
-    @Override
     public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final long termId) {
         final var query = DSL.deleteFrom(DATA_ENTITY_TO_TERM)
             .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId))

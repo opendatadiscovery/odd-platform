@@ -26,6 +26,7 @@ export const StyledAppMenuItem = styled(MenuItem)<AppMenuItemStyleProps>(
       maxWidth: $maxWidth ? `${$maxWidth}px` : 'none',
     },
     [`&.${menuItemClasses.divider}`]: { padding: 0 },
+    [`&.${menuItemClasses.focusVisible}`]: { backgroundColor: 'transparent' },
   })
 );
 

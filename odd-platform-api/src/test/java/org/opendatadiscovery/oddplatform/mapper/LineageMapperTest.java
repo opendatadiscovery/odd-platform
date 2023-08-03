@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
+import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
@@ -27,13 +28,14 @@ class LineageMapperTest {
     private static final EasyRandom EASY_RANDOM;
 
     static {
-        final EasyRandomParameters EASY_RANDOMParameters = new EasyRandomParameters()
+        final EasyRandomParameters params = new EasyRandomParameters()
             .scanClasspathForConcreteTypes(true)
             .excludeField(named("hasChildren"))
+            .randomize(f -> f.getName().equals("status") && f.getType().isAssignableFrom(Short.class), () -> (short) 1)
             .randomizationDepth(10)
             .objectFactory(new RecordFactory());
 
-        EASY_RANDOM = new EasyRandom(EASY_RANDOMParameters);
+        EASY_RANDOM = new EasyRandom(params);
     }
 
     @BeforeEach
@@ -73,7 +75,9 @@ class LineageMapperTest {
                     new DateTimeMapperImpl()
                 ),
                 termMapper,
-                new DateTimeMapperImpl()
+                new DateTimeMapperImpl(),
+                new DataEntityStatusMapper(),
+                new DataEntityStaleDetector()
             )
         );
         mapper.setDataSourceMapper(
@@ -82,6 +86,8 @@ class LineageMapperTest {
                 new TokenMapperImpl(new DateTimeMapperImpl())
             )
         );
+        mapper.setDataEntityStaleDetector(new DataEntityStaleDetector());
+        mapper.setDataEntityStatusMapper(new DataEntityStatusMapper());
     }
 
     @Test

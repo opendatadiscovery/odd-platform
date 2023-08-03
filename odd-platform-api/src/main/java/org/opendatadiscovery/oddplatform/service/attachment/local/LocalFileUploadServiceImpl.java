@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service.attachment.local;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.FilePojo;
@@ -54,6 +55,16 @@ public class LocalFileUploadServiceImpl implements FileUploadService {
     public Mono<Void> deleteFile(final FilePojo filePojo) {
         return blockingOperation(() -> {
             Files.delete(Paths.get(filePojo.getPath()));
+            return null;
+        });
+    }
+
+    @Override
+    public Mono<Void> deleteFiles(final List<FilePojo> files) {
+        return blockingOperation(() -> {
+            for (final FilePojo file : files) {
+                Files.delete(Paths.get(file.getPath()));
+            }
             return null;
         });
     }

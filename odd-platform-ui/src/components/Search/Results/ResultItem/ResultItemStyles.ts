@@ -25,6 +25,7 @@ export const NameContainer = styled(Grid)(({ theme }) => ({
   flexWrap: 'nowrap',
   paddingRight: theme.spacing(1),
   justifyContent: 'space-between',
+  alignItems: 'center',
 }));
 
 export const RCContainer = styled(Typography)(() => ({

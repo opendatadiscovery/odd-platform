@@ -8,6 +8,7 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import { emptyArr, emptyObj } from 'lib/constants';
+import { isEntityStatusDeleted } from 'lib/helpers';
 
 const dataEntitiesState = ({ dataEntities }: RootState): DataEntitiesState =>
   dataEntities;
@@ -51,6 +52,13 @@ export const getDataEntityClassesList = createSelector(
   (dataEntities): DataEntityClass[] =>
     Object.values(dataEntities.classesAndTypesDict.entityClasses)
 );
+
+export const getIsEntityStatusDeleted = (dataEntityId: number | string) =>
+  createSelector(dataEntitiesState, (dataEntities): boolean => {
+    const entityStatus = dataEntities.byId[dataEntityId]?.status;
+
+    return isEntityStatusDeleted(entityStatus);
+  });
 
 export const getDataEntityClassesDict = createSelector(
   dataEntitiesState,

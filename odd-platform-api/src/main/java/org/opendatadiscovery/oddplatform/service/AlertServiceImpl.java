@@ -325,7 +325,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     private Mono<Long> checkDataEntityExistence(final long dataEntityId) {
-        return dataEntityRepository.exists(dataEntityId).handle((exists, sink) -> {
+        return dataEntityRepository.existsIncludingSoftDeleted(dataEntityId).handle((exists, sink) -> {
             if (!exists) {
                 sink.error(new NotFoundException("Data Entity", dataEntityId));
                 return;

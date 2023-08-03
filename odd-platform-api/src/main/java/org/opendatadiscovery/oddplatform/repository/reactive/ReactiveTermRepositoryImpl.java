@@ -18,6 +18,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
@@ -48,7 +49,11 @@ import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD_TO_TERM;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
@@ -358,10 +363,21 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     public Mono<Boolean> hasDescriptionRelations(final long termId) {
         final Condition dataEntityDescriptionRelations = exists(DSL.selectOne()
             .from(DATA_ENTITY_TO_TERM)
-            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId).and(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.isTrue())));
+            .join(DATA_ENTITY).on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .where(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)
+                .and(DATA_ENTITY_TO_TERM.IS_DESCRIPTION_LINK.isTrue())
+                .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()))
+            ));
         final Condition datasetFieldDescriptionRelations = exists(DSL.selectOne()
             .from(DATASET_FIELD_TO_TERM)
-            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId).and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.isTrue())));
+            .join(DATASET_FIELD).on(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+            .join(DATASET_STRUCTURE).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .join(DATASET_VERSION).on(DATASET_VERSION.ID.eq(DATASET_STRUCTURE.DATASET_VERSION_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+            .where(DATASET_FIELD_TO_TERM.TERM_ID.eq(termId)
+                .and(DATASET_FIELD_TO_TERM.IS_DESCRIPTION_LINK.isTrue())
+                .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()))
+            ));
         final var query = DSL.select(dataEntityDescriptionRelations.or(datasetFieldDescriptionRelations));
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }

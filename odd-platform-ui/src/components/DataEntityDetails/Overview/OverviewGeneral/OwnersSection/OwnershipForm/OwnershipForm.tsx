@@ -117,7 +117,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               sx={{ ml: -0.25, mt: 1 }}
               checked={field.value}
               control={<Checkbox sx={{ mr: 1 }} />}
-              label='Propogate owner to the whole group'
+              label='Propagate owner to the whole group'
             />
           )}
         />

@@ -14,9 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityRunMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.DataEntityStatusMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapperImpl;
@@ -100,7 +102,9 @@ class LineageServiceTest {
                     new DateTimeMapperImpl()
                 ),
                 termMapper,
-                new DateTimeMapperImpl()
+                new DateTimeMapperImpl(),
+                new DataEntityStatusMapper(),
+                new DataEntityStaleDetector()
             )
         );
         lineageMapper.setDataSourceMapper(
@@ -109,6 +113,8 @@ class LineageServiceTest {
                 new TokenMapperImpl(new DateTimeMapperImpl())
             )
         );
+        lineageMapper.setDataEntityStatusMapper(new DataEntityStatusMapper());
+        lineageMapper.setDataEntityStaleDetector(new DataEntityStaleDetector());
     }
 
     @Test
@@ -116,12 +122,21 @@ class LineageServiceTest {
         final var rootEntityOddrn = "root";
         final var firstChildEntityOddrn = "firstChild";
         final var secondChildEntityOddrn = "secondChild";
-        final var rootEntity = new DataEntityPojo().setOddrn(rootEntityOddrn).setId(1L)
-            .setEntityClassIds(new Integer[] {1});
-        final var firstChildEntity = new DataEntityPojo().setId(2L).setOddrn(firstChildEntityOddrn);
-        final var secondChildEntity = new DataEntityPojo().setId(3L).setOddrn(secondChildEntityOddrn);
-        final var rootToFirstEntityLineage = new LineagePojo(rootEntityOddrn, firstChildEntityOddrn, null);
-        final var rootToSecondEntityLineage = new LineagePojo(rootEntityOddrn, secondChildEntityOddrn, null);
+        final var rootEntity = new DataEntityPojo()
+            .setOddrn(rootEntityOddrn)
+            .setId(1L)
+            .setEntityClassIds(new Integer[] {1})
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId());
+        final var firstChildEntity = new DataEntityPojo()
+            .setId(2L)
+            .setOddrn(firstChildEntityOddrn)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId());
+        final var secondChildEntity = new DataEntityPojo()
+            .setId(3L)
+            .setOddrn(secondChildEntityOddrn)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId());
+        final var rootToFirstEntityLineage = new LineagePojo(rootEntityOddrn, firstChildEntityOddrn, null, false);
+        final var rootToSecondEntityLineage = new LineagePojo(rootEntityOddrn, secondChildEntityOddrn, null, false);
         final var dto = DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(rootEntity).build();
 

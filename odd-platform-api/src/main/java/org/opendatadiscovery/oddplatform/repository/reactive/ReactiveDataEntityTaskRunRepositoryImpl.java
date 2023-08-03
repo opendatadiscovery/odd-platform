@@ -163,7 +163,6 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
                                                                final int size) {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(DATA_ENTITY.ID.eq(dataQualityTestId));
-        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
         if (status != null) {
             conditions.add(DATA_ENTITY_TASK_RUN.STATUS.eq(status.name()));
         }

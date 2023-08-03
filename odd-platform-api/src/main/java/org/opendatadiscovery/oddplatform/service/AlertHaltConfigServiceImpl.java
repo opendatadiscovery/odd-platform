@@ -24,7 +24,7 @@ public class AlertHaltConfigServiceImpl implements AlertHaltConfigService {
 
     @Override
     public Mono<DataEntityAlertConfig> getAlertHaltConfig(final long dataEntityId) {
-        return dataEntityRepository.exists(dataEntityId)
+        return dataEntityRepository.existsIncludingSoftDeleted(dataEntityId)
             .filter(exists -> exists)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("data entity", dataEntityId)))
             .then(alertHaltConfigRepository.get(dataEntityId))

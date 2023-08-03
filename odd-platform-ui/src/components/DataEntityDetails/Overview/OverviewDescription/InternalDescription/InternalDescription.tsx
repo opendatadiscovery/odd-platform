@@ -1,6 +1,9 @@
 import React, { type FC } from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getDataEntityInternalDescription } from 'redux/selectors';
+import {
+  getDataEntityInternalDescription,
+  getIsEntityStatusDeleted,
+} from 'redux/selectors';
 import { useAppParams, useTermWiki } from 'lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import type { TermRef } from 'generated-sources';
@@ -16,6 +19,7 @@ const InternalDescription: FC<InternalDescriptionProps> = ({ terms = [] }) => {
   const { dataEntityId } = useAppParams();
 
   const description = useAppSelector(getDataEntityInternalDescription(dataEntityId));
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   const {
     error,
@@ -38,6 +42,7 @@ const InternalDescription: FC<InternalDescriptionProps> = ({ terms = [] }) => {
       <InternalDescriptionHeader
         isDescriptionEmpty={!description}
         toggleEditMode={toggleEditMode}
+        isStatusDeleted={isStatusDeleted}
       />
       {editMode ? (
         <InternalDescriptionEdit
@@ -53,6 +58,7 @@ const InternalDescription: FC<InternalDescriptionProps> = ({ terms = [] }) => {
           value={transformDescriptionToMarkdown(description)}
           isDescriptionEmpty={!description}
           toggleEditMode={toggleEditMode}
+          isStatusDeleted={isStatusDeleted}
         />
       )}
     </>

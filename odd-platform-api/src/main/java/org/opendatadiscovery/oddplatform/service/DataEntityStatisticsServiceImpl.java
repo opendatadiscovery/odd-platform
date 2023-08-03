@@ -29,6 +29,11 @@ public class DataEntityStatisticsServiceImpl implements DataEntityStatisticsServ
             });
     }
 
+    @Override
+    public Mono<DataEntityStatisticsPojo> getStatistics() {
+        return dataEntityStatisticsRepository.getStatistics();
+    }
+
     private Map<Integer, Map<Integer, Long>> getUpdatedCounts(final DataEntityStatisticsPojo existing,
                                                               final Map<Integer, Map<Integer, Long>> deltaMap) {
         final Map<Integer, Map<Integer, Long>> existingStatistics = Optional.of(existing)

@@ -14,10 +14,12 @@ import DatasetFieldEnumsForm from '../DatasetFieldEnumsForm/DatasetFieldEnumsFor
 
 interface DatasetFieldOverviewEnumsProps {
   field: DataSetField;
+  isStatusDeleted: boolean;
 }
 
 const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
   field,
+  isStatusDeleted,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -70,26 +72,28 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
         <Typography variant='h5' color='texts.hint'>
           ENUMS
         </Typography>
-        <WithPermissions
-          permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
-          renderContent={({ isAllowedTo: editEnums }) => (
-            <DatasetFieldEnumsForm
-              isExternal={datasetFieldEnums?.external}
-              datasetFieldId={field.id}
-              datasetFieldName={field.name}
-              datasetFieldType={field.type.type}
-              defaultEnums={datasetFieldEnums?.items}
-              btnCreateEl={
-                <Button
-                  disabled={!editEnums}
-                  text={field.enumValueCount ? 'Edit enums' : 'Add enums'}
-                  buttonType='secondary-m'
-                  sx={{ mr: 1 }}
-                />
-              }
-            />
-          )}
-        />
+        {!isStatusDeleted && (
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_ENUMS_UPDATE}
+            renderContent={({ isAllowedTo: editEnums }) => (
+              <DatasetFieldEnumsForm
+                isExternal={datasetFieldEnums?.external}
+                datasetFieldId={field.id}
+                datasetFieldName={field.name}
+                datasetFieldType={field.type.type}
+                defaultEnums={datasetFieldEnums?.items}
+                btnCreateEl={
+                  <Button
+                    disabled={!editEnums}
+                    text={field.enumValueCount ? 'Edit enums' : 'Add enums'}
+                    buttonType='secondary-m'
+                    sx={{ mr: 1 }}
+                  />
+                }
+              />
+            )}
+          />
+        )}
       </Grid>
       <Grid container flexDirection='column' alignItems='flex-start'>
         {content}

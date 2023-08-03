@@ -1,6 +1,6 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { dataEntityApi } from 'lib/api';
-import { showServerErrorToast } from 'lib/errorHandling';
+import { showServerErrorToast, showSuccessToast } from 'lib/errorHandling';
 import type {
   DataEntityGroupLineage,
   Edge,
@@ -8,7 +8,10 @@ import type {
 } from 'components/DataEntityDetails/Lineage/DEGLineage/lib/interfaces';
 import type { DataEntityGroupList } from 'lib/interfaces';
 import type { ErrorState } from 'redux/interfaces';
-import type { DataEntityApiGetDataEntityGroupsItemsRequest } from 'generated-sources';
+import type {
+  DataEntityApiGetDataEntityGroupsItemsRequest,
+  DataEntityApiUpdateStatusRequest,
+} from 'generated-sources';
 
 interface UseDataEntityMetricsProps {
   dataEntityId: number;
@@ -51,6 +54,8 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
                 internalName: node.internalName,
                 dataSource: node.dataSource,
                 entityClasses: node.entityClasses,
+                status: node.status,
+                isStale: node.isStale,
               },
             }));
             const edges = lineage.edges.map<Edge>(({ sourceId, targetId }) => ({
@@ -131,5 +136,16 @@ export function useGetDataEntityGroupItems({
       };
     },
     { getNextPageParam: lastPage => lastPage.pageInfo.nextPage }
+  );
+}
+
+export function useUpdateDataEntityStatus() {
+  return useMutation(
+    (params: DataEntityApiUpdateStatusRequest) => dataEntityApi.updateStatus(params),
+    {
+      onSuccess: () => {
+        showSuccessToast({ message: 'Status successfully updated!' });
+      },
+    }
   );
 }

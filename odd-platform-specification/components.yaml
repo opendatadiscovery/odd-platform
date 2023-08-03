@@ -181,8 +181,8 @@ components:
         - DATASET_FIELD_DELETE_TERM
         - DATA_ENTITY_GROUP_CREATE
         - DATA_ENTITY_GROUP_UPDATE
-        - DATA_ENTITY_GROUP_DELETE
         - DATA_ENTITY_ATTACHMENT_MANAGE
+        - DATA_ENTITY_STATUS_UPDATE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -541,15 +541,22 @@ components:
           $ref: '#/components/schemas/DataEntityType'
         data_entity_groups:
           $ref: '#/components/schemas/DataEntityRefList'
-        created_at:
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
+        source_created_at:
           type: string
           format: date-time
-        updated_at:
+        source_updated_at:
+          type: string
+          format: date-time
+        last_ingested_at:
           type: string
           format: date-time
         view_count:
           type: integer
           format: int64
+        is_stale:
+          type: boolean
       required:
         - id
         - oddrn
@@ -557,7 +564,9 @@ components:
         - data_source
         - type
         - namespace
+        - status
         - view_count
+        - is_stale
 
     DataEntityDetailsBaseObject:
       type: object
@@ -734,6 +743,26 @@ components:
         - id
         - name
 
+    DataEntityStatusEnum:
+      type: string
+      enum:
+        - UNASSIGNED
+        - DRAFT
+        - STABLE
+        - DEPRECATED
+        - DELETED
+
+    DataEntityStatus:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityStatusEnum'
+        status_switch_time:
+          type: string
+          format: date-time
+      required:
+        - status
+
     DataSetStats:
       type: object
       properties:
@@ -828,8 +857,14 @@ components:
           type: boolean
         manually_created:
           type: boolean
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
+        is_stale:
+          type: boolean
       required:
         - id
+        - status
+        - is_stale
 
     DataEntityRefList:
       type: array
@@ -1031,6 +1066,14 @@ components:
       required:
         - is_upper_group
         - data_entity
+
+    DataEntityStatusFormData:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
+        propagate:
+          type: boolean
 
     DataSetSLAReport:
       type: object
@@ -1290,6 +1333,7 @@ components:
         - tags
         - types
         - groups
+        - statuses
 
     SearchFilter:
       type: object
@@ -1344,6 +1388,10 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
         groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        statuses:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -1848,11 +1896,17 @@ components:
           type: integer
         children_count:
           type: integer
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
+        is_stale:
+          type: boolean
       required:
         - id
         - oddrn
         - name
         - type
+        - status
+        - is_stale
 
     DataEntityLineageEdge:
       type: object
@@ -2113,6 +2167,10 @@ components:
               items:
                 $ref: '#/components/schemas/SearchFilterState'
             groups:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            statuses:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'
@@ -2572,6 +2630,8 @@ components:
           $ref: '#/components/schemas/DescriptionActivityState'
         business_name:
           $ref: '#/components/schemas/BusinessNameActivityState'
+        status:
+          $ref: '#/components/schemas/DataEntityStatusActivityState'
         custom_metadata:
           type: array
           items:
@@ -2655,6 +2715,12 @@ components:
       properties:
         internal_name:
           type: string
+
+    DataEntityStatusActivityState:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityStatus'
 
     CustomMetadataActivityState:
       type: object
@@ -2841,6 +2907,7 @@ components:
         - TERM_ASSIGNMENT_UPDATED
         - DESCRIPTION_UPDATED
         - BUSINESS_NAME_UPDATED
+        - DATA_ENTITY_STATUS_UPDATED
         - CUSTOM_METADATA_CREATED
         - CUSTOM_METADATA_UPDATED
         - CUSTOM_METADATA_DELETED
@@ -2850,7 +2917,6 @@ components:
         - DATASET_FIELD_TERM_ASSIGNMENT_UPDATED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
-        - CUSTOM_GROUP_DELETED
         - ALERT_HALT_CONFIG_UPDATED
         - ALERT_STATUS_UPDATED
         - OPEN_ALERT_RECEIVED

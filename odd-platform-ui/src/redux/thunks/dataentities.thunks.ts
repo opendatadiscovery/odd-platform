@@ -4,7 +4,6 @@ import type {
   DataEntityApiCreateDataEntityGroupRequest,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
   DataEntityApiDeleteDataEntityFromDataEntityGroupRequest,
-  DataEntityApiDeleteDataEntityGroupRequest,
   DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApiGetDataEntityDetailsRequest,
   DataEntityApiGetMyObjectsRequest,
@@ -215,23 +214,6 @@ export const updateDataEntityGroup = handleResponseAsyncThunk<
     setSuccessOptions: ({ dataEntityGroupFormData: { name } }) => ({
       id: `DataEntityGroup-updating-${name}`,
       message: `Data entity group ${name} successfully updated.`,
-    }),
-  }
-);
-
-export const deleteDataEntityGroup = handleResponseAsyncThunk<
-  number,
-  DataEntityApiDeleteDataEntityGroupRequest
->(
-  actions.deleteDataEntityGroupActionType,
-  async ({ dataEntityGroupId }) => {
-    await dataEntityApi.deleteDataEntityGroup({ dataEntityGroupId });
-    return dataEntityGroupId;
-  },
-  {
-    setSuccessOptions: ({ dataEntityGroupId }) => ({
-      id: `DataEntityGroup-deleting-${dataEntityGroupId}`,
-      message: `Data entity group successfully deleted.`,
     }),
   }
 );

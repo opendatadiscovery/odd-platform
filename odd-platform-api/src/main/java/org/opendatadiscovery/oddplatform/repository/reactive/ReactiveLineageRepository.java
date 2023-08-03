@@ -10,8 +10,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ReactiveLineageRepository extends ReactiveCRUDRepository<LineagePojo> {
-
+public interface ReactiveLineageRepository {
     Flux<LineagePojo> batchDeleteByEstablisherOddrn(Collection<String> oddrns);
 
     Flux<LineagePojo> batchInsertLineages(final List<LineagePojo> pojos);
@@ -30,4 +29,8 @@ public interface ReactiveLineageRepository extends ReactiveCRUDRepository<Lineag
     Mono<Map<String, Integer>> getChildrenCount(final Set<String> oddrns);
 
     Mono<Map<String, Integer>> getParentCount(final Set<String> oddrns);
+
+    Flux<LineagePojo> softDeleteLineageRelations(final List<String> dataEntityOddrns);
+
+    Flux<LineagePojo> restoreLineageRelations(final List<String> dataEntityOddrns);
 }

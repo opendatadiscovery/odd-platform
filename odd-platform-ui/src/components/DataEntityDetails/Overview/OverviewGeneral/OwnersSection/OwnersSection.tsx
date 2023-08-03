@@ -3,7 +3,11 @@ import { Grid, Typography } from '@mui/material';
 import { Button, LabeledInfoItem, LabelItem } from 'components/shared/elements';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getDataEntityOwnership, getIsDataEntityBelongsToClass } from 'redux/selectors';
+import {
+  getDataEntityOwnership,
+  getIsDataEntityBelongsToClass,
+  getIsEntityStatusDeleted,
+} from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
@@ -16,6 +20,7 @@ const OwnersSection: FC = () => {
 
   const ownership = useAppSelector(getDataEntityOwnership(dataEntityId));
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   return (
     <Grid item sm={12} sx={{ mt: 2 }}>
@@ -32,26 +37,30 @@ const OwnersSection: FC = () => {
               />
               <S.OwnerActionBtns>
                 <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_UPDATE}>
-                  <OwnershipForm
-                    dataEntityId={dataEntityId}
-                    dataEntityOwnership={ownershipItem}
-                    isDEG={isDEG}
-                    ownerEditBtn={
-                      <Button
-                        buttonType='tertiary-m'
-                        icon={<EditIcon />}
-                        sx={{ ml: 1 }}
-                      />
-                    }
-                  />
+                  {!isStatusDeleted && (
+                    <OwnershipForm
+                      dataEntityId={dataEntityId}
+                      dataEntityOwnership={ownershipItem}
+                      isDEG={isDEG}
+                      ownerEditBtn={
+                        <Button
+                          buttonType='tertiary-m'
+                          icon={<EditIcon />}
+                          sx={{ ml: 1 }}
+                        />
+                      }
+                    />
+                  )}
                 </WithPermissions>
                 <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_DELETE}>
-                  <OwnershipDeleteForm
-                    ownerName={ownershipItem.owner.name}
-                    ownershipId={ownershipItem.id}
-                    dataEntityId={dataEntityId}
-                    isDEG={isDEG}
-                  />
+                  {!isStatusDeleted && (
+                    <OwnershipDeleteForm
+                      ownerName={ownershipItem.owner.name}
+                      ownershipId={ownershipItem.id}
+                      dataEntityId={dataEntityId}
+                      isDEG={isDEG}
+                    />
+                  )}
                 </WithPermissions>
               </S.OwnerActionBtns>
             </S.OwnerItem>
@@ -60,19 +69,21 @@ const OwnersSection: FC = () => {
           <Typography variant='subtitle2'>Not created.</Typography>
         )}
         <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_CREATE}>
-          <OwnershipForm
-            dataEntityId={dataEntityId}
-            isDEG={isDEG}
-            ownerEditBtn={
-              <Button
-                text='Add Owner'
-                data-qa='add_owner'
-                sx={{ mt: 0.25 }}
-                buttonType='tertiary-m'
-                startIcon={<AddIcon />}
-              />
-            }
-          />
+          {!isStatusDeleted && (
+            <OwnershipForm
+              dataEntityId={dataEntityId}
+              isDEG={isDEG}
+              ownerEditBtn={
+                <Button
+                  text='Add Owner'
+                  data-qa='add_owner'
+                  sx={{ mt: 0.25 }}
+                  buttonType='tertiary-m'
+                  startIcon={<AddIcon />}
+                />
+              }
+            />
+          )}
         </WithPermissions>
       </LabeledInfoItem>
     </Grid>

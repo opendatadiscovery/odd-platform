@@ -54,10 +54,10 @@ const LinkedItemsList: React.FC = () => {
           <Typography variant='caption'>Owners</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType='colxs'>
-          <Typography variant='caption'>Created</Typography>
+          <Typography variant='caption'>Created at</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType='colxs'>
-          <Typography variant='caption'>Last Update</Typography>
+          <Typography variant='caption'>Updated at </Typography>
         </S.ColContainer>
       </S.ResultsTableHeader>
       {isLinkedListFetching ? (

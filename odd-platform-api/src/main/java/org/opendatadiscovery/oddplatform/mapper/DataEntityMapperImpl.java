@@ -25,6 +25,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItem;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
@@ -38,6 +39,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
@@ -45,6 +47,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -66,6 +69,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final DataEntityRunMapper dataEntityRunMapper;
     private final TermMapper termMapper;
     private final DateTimeMapper dateTimeMapper;
+    private final DataEntityStatusMapper dataEntityStatusMapper;
+    private final DataEntityStaleDetector dataEntityStaleDetector;
 
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dto) {
@@ -148,37 +153,41 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(pojo.getInternalName())
             .externalName(pojo.getExternalName())
             .oddrn(pojo.getOddrn())
-            .createdAt(dateTimeMapper.mapUTCDateTime(pojo.getCreatedAt()))
-            .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()))
-            .viewCount(pojo.getViewCount());
+            .sourceCreatedAt(dateTimeMapper.mapUTCDateTime(pojo.getSourceCreatedAt()))
+            .sourceUpdatedAt(dateTimeMapper.mapUTCDateTime(pojo.getSourceUpdatedAt()))
+            .lastIngestedAt(dateTimeMapper.mapUTCDateTime(pojo.getLastIngestedAt()))
+            .viewCount(pojo.getViewCount())
+            .status(dataEntityStatusMapper.mapStatus(pojo))
+            .isStale(dataEntityStaleDetector.isDataEntityStale(pojo));
     }
 
     @Override
     public DataEntityList mapPojos(final List<DataEntityDimensionsDto> dataEntityDto) {
-        return new DataEntityList()
-            .items(dataEntityDto.stream().map(this::mapPojo).collect(Collectors.toList()))
-            .pageInfo(pageInfo(dataEntityDto.size()));
+        final List<DataEntity> entities = dataEntityDto.stream().map(this::mapPojo).toList();
+        final PageInfo pageInfo = pageInfo(dataEntityDto.size());
+        return new DataEntityList(entities, pageInfo);
     }
 
     @Override
     public DataEntityList mapPojos(final Page<DataEntityDimensionsDto> dataEntityDto) {
-        return new DataEntityList()
-            .items(dataEntityDto.getData().stream().map(this::mapPojo).collect(Collectors.toList()))
-            .pageInfo(pageInfo(dataEntityDto));
+        final List<DataEntity> entities = dataEntityDto.getData().stream().map(this::mapPojo).toList();
+        final PageInfo pageInfo = pageInfo(dataEntityDto);
+        return new DataEntityList(entities, pageInfo);
     }
 
     @Override
-    public DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
-                                    final DataEntityClassDto classDto,
-                                    final NamespacePojo namespacePojo) {
+    public DataEntityPojo mapCreatedDEGPojo(final DataEntityGroupFormData formData,
+                                            final DataEntityClassDto classDto,
+                                            final NamespacePojo namespacePojo) {
         final LocalDateTime now = DateTimeUtil.generateNow();
         return new DataEntityPojo()
             .setInternalName(formData.getName())
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
             .setEntityClassIds(new Integer[] {classDto.getId()})
             .setTypeId(formData.getType().getId())
-            .setCreatedAt(now)
-            .setUpdatedAt(now)
+            .setPlatformCreatedAt(now)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setStatusUpdatedAt(now)
             .setManuallyCreated(true)
             .setHollow(false)
             .setExcludeFromSearch(false);
@@ -194,8 +203,21 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return pojo
             .setInternalName(formData.getName())
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
-            .setTypeId(formData.getType().getId())
-            .setUpdatedAt(DateTimeUtil.generateNow());
+            .setTypeId(formData.getType().getId());
+    }
+
+    @Override
+    public DataEntityPojo applyStatus(final DataEntityPojo pojo, final DataEntityStatus status) {
+        if (pojo == null) {
+            return null;
+        }
+        final DataEntityStatusDto statusDto = DataEntityStatusDto.valueOf(status.getStatus().getValue());
+        pojo.setStatus(statusDto.getId());
+        pojo.setStatusSwitchTime(DateTimeUtil.mapUTCDateTime(status.getStatusSwitchTime()));
+        if (statusDto.getId() != pojo.getStatus()) {
+            pojo.setStatusUpdatedAt(DateTimeUtil.generateNow());
+        }
+        return pojo;
     }
 
     @Override
@@ -219,11 +241,14 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .oddrn(pojo.getOddrn())
             .internalDescription(pojo.getInternalDescription())
             .externalDescription(pojo.getExternalDescription())
-            .createdAt(dateTimeMapper.mapUTCDateTime(pojo.getCreatedAt()))
-            .updatedAt(dateTimeMapper.mapUTCDateTime(pojo.getUpdatedAt()))
+            .sourceCreatedAt(dateTimeMapper.mapUTCDateTime(pojo.getSourceCreatedAt()))
+            .sourceUpdatedAt(dateTimeMapper.mapUTCDateTime(pojo.getSourceUpdatedAt()))
+            .lastIngestedAt(dateTimeMapper.mapUTCDateTime(pojo.getLastIngestedAt()))
+            .isStale(dataEntityStaleDetector.isDataEntityStale(pojo))
             .dataEntityGroups(groups)
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
+            .status(dataEntityStatusMapper.mapStatus(pojo))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(tagMapper.mapToTagList(dto.getTags()))
@@ -365,10 +390,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         if (type == null) {
             return null;
         }
-
-        return new DataEntityType()
-            .id(type.getId())
-            .name(DataEntityType.NameEnum.fromValue(type.name()));
+        return new DataEntityType(type.getId(), DataEntityType.NameEnum.fromValue(type.name()));
     }
 
     @Override
@@ -430,8 +452,11 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dimensionsDto.getOwnership()))
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
-            .createdAt(DateTimeUtil.mapUTCDateTime(pojo.getCreatedAt()))
-            .updatedAt(DateTimeUtil.mapUTCDateTime(pojo.getUpdatedAt()));
+            .status(dataEntityStatusMapper.mapStatus(pojo))
+            .sourceCreatedAt(DateTimeUtil.mapUTCDateTime(pojo.getSourceCreatedAt()))
+            .sourceUpdatedAt(DateTimeUtil.mapUTCDateTime(pojo.getSourceUpdatedAt()))
+            .lastIngestedAt(DateTimeUtil.mapUTCDateTime(pojo.getLastIngestedAt()))
+            .isStale(dataEntityStaleDetector.isDataEntityStale(pojo));
         item.setDataEntity(dataEntity);
         return item;
     }
@@ -459,9 +484,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private LinkedUrl mapLinkedUrl(final LinkedUrlAttribute linkedUrlAttribute) {
-        return new LinkedUrl()
-            .url(linkedUrlAttribute.url())
-            .name(linkedUrlAttribute.name());
+        return new LinkedUrl(linkedUrlAttribute.url(), linkedUrlAttribute.name());
     }
 
     private List<LinkedUrl> mapLinkedUrlList(final Collection<LinkedUrlAttribute> linkedUrlAttributes) {
@@ -487,6 +510,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(pojo.getInternalName())
             .entityClasses(entityClasses)
             .manuallyCreated(pojo.getManuallyCreated())
+            .status(dataEntityStatusMapper.mapStatus(pojo))
+            .isStale(dataEntityStaleDetector.isDataEntityStale(pojo))
             .url("");
     }
 
@@ -517,10 +542,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private PageInfo pageInfo(final long total) {
-        return new PageInfo().total(total).hasNext(false);
+        return new PageInfo(total, false);
     }
 
     private PageInfo pageInfo(final Page<?> page) {
-        return new PageInfo().total(page.getTotal()).hasNext(page.isHasNext());
+        return new PageInfo(page.getTotal(), page.isHasNext());
     }
 }

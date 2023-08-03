@@ -13,10 +13,11 @@ import {
   OwnerActivityField,
   StringActivityField,
   TermActivityField,
+  DatasetTermActivityField,
+  EntityStatusActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
-import DatasetTermActivityField from 'components/shared/elements/Activity/ActivityFields/DatasetTermActivityField/DatasetTermActivityField';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -182,13 +183,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           activityName={`${activity.dataEntity.internalName}`}
         />
       )}
-      {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
-        <ActivityFieldHeader
-          eventType='deleted'
-          startText='Custom group'
-          activityName={`${activity.dataEntity.internalName}`}
-        />
-      )}
       {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_UPDATED]) && (
         <CustomGroupActivityField
           oldState={activity.oldState.customGroup}
@@ -206,6 +200,13 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           eventType={activity.eventType}
           oldState={activity.oldState}
           newState={activity.newState}
+        />
+      )}
+      {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_STATUS_UPDATED]) && (
+        <EntityStatusActivityField
+          oldState={activity.oldState.status}
+          newState={activity.newState.status}
+          hideAllDetails={hideAllDetails}
         />
       )}
     </S.Container>

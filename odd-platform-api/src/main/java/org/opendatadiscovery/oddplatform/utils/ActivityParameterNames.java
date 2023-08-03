@@ -21,6 +21,10 @@ public interface ActivityParameterNames {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 
+    interface StatusUpdated {
+        String DATA_ENTITY_POJO = "pojo";
+    }
+
     interface TermAssignment {
         String DATA_ENTITY_ID = "dataEntityId";
     }
@@ -42,10 +46,6 @@ public interface ActivityParameterNames {
     }
 
     interface CustomGroupUpdated {
-        String DATA_ENTITY_ID = "dataEntityId";
-    }
-
-    interface CustomGroupDeleted {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 

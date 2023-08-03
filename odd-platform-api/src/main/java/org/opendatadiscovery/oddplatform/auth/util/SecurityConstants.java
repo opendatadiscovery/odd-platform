@@ -31,12 +31,12 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DELETE_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_DESCRIPTION_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_CREATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_GROUP_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_INTERNAL_NAME_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_OWNERSHIP_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_STATUS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_TAGS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_DELETE;
@@ -243,6 +243,11 @@ public final class SecurityConstants {
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/links/{link_id}", DELETE),
             DATA_ENTITY_ATTACHMENT_MANAGE
         ),
+        new SecurityRule(
+            DATA_ENTITY,
+            new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/statuses", PUT),
+            DATA_ENTITY_STATUS_UPDATE
+        ),
         new SecurityRule(DATASET_FIELD,
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/description", PUT),
             DATASET_FIELD_DESCRIPTION_UPDATE),
@@ -269,9 +274,6 @@ public final class SecurityConstants {
         new SecurityRule(
             AuthorizationManagerType.DEG,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", PUT),
-            DATA_ENTITY_GROUP_UPDATE),
-        new SecurityRule(AuthorizationManagerType.DEG,
-            new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", DELETE),
-            DATA_ENTITY_GROUP_DELETE)
+            DATA_ENTITY_GROUP_UPDATE)
     );
 }

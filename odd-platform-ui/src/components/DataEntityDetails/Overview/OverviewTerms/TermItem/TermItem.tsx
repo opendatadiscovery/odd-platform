@@ -13,9 +13,14 @@ import * as S from './TermItem.styles';
 interface TermItemProps {
   dataEntityId: number;
   linkedTerm: LinkedTerm;
+  isStatusDeleted?: boolean;
 }
 
-const TermItem: React.FC<TermItemProps> = ({ dataEntityId, linkedTerm }) => {
+const TermItem: React.FC<TermItemProps> = ({
+  dataEntityId,
+  linkedTerm,
+  isStatusDeleted,
+}) => {
   const dispatch = useAppDispatch();
   const { termDetailsOverviewPath } = useAppPaths();
   const termDetailsLink = termDetailsOverviewPath(linkedTerm.term.id);
@@ -39,7 +44,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, linkedTerm }) => {
             {linkedTerm.term.definition}
           </S.TermDefinition>
         </Grid>
-        {!linkedTerm.isDescriptionLink && (
+        {!linkedTerm.isDescriptionLink && !isStatusDeleted && (
           <S.ActionsContainer>
             <WithPermissions permissionTo={Permission.DATA_ENTITY_DELETE_TERM}>
               <Button

@@ -219,7 +219,7 @@ class NamespaceServiceImplTest {
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
-        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsNonDeletedByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
         when(namespaceRepository.delete(eq(namespaceId))).thenReturn(Mono.just(namespace));
 
         namespaceService.delete(namespaceId)
@@ -231,7 +231,7 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
-        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsNonDeletedByNamespaceId(eq(namespaceId));
     }
 
     @Test
@@ -242,7 +242,7 @@ class NamespaceServiceImplTest {
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
-        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsNonDeletedByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -252,7 +252,7 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
-        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsNonDeletedByNamespaceId(eq(namespaceId));
     }
 
     @Test
@@ -263,7 +263,7 @@ class NamespaceServiceImplTest {
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
-        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsNonDeletedByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -272,7 +272,7 @@ class NamespaceServiceImplTest {
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
-        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsNonDeletedByNamespaceId(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
     }
 
@@ -283,7 +283,7 @@ class NamespaceServiceImplTest {
 
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
-        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsNonDeletedByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
 
         namespaceService.delete(namespaceId)
@@ -294,7 +294,7 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
-        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsNonDeletedByNamespaceId(eq(namespaceId));
     }
 
     @Test
@@ -305,7 +305,7 @@ class NamespaceServiceImplTest {
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
-        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(true));
+        when(dataEntityRepository.existsNonDeletedByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(true));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -315,6 +315,6 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
-        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsNonDeletedByNamespaceId(eq(namespaceId));
     }
 }

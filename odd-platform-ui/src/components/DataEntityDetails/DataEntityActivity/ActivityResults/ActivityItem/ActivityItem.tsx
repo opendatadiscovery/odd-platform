@@ -13,6 +13,7 @@ import {
   StringActivityField,
   TermActivityField,
   DatasetTermActivityField,
+  EntityStatusActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
@@ -134,13 +135,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
-          <ActivityFieldHeader
-            eventType='deleted'
-            startText='Custom group'
-            activityName={`${activity.dataEntity.internalName}`}
-          />
-        )}
         {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_UPDATED]) && (
           <CustomGroupActivityField
             oldState={activity.oldState.customGroup}
@@ -158,6 +152,13 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             eventType={activity.eventType}
             oldState={activity.oldState}
             newState={activity.newState}
+          />
+        )}
+        {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_STATUS_UPDATED]) && (
+          <EntityStatusActivityField
+            oldState={activity.oldState.status}
+            newState={activity.newState.status}
+            hideAllDetails={hideAllDetails}
           />
         )}
         <S.InfoContainer>

@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -53,16 +53,17 @@ const DataEntityDetails: React.FC = () => {
     getDataEntityDeleteFromGroupStatuses
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [
     dataEntityId,
     isDataEntityGroupUpdated,
     isDataEntityAddedToGroup,
     isDataEntityDeletedFromGroup,
+    details.status?.status,
   ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchDataEntityAlertsCounts({ dataEntityId, status: AlertStatus.OPEN }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
@@ -82,7 +83,7 @@ const DataEntityDetails: React.FC = () => {
             allowedPermissions={[
               Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE,
               Permission.DATA_ENTITY_GROUP_UPDATE,
-              Permission.DATA_ENTITY_GROUP_DELETE,
+              Permission.DATA_ENTITY_STATUS_UPDATE,
             ]}
             resourcePermissions={resourcePermissions}
             render={() => (
@@ -93,7 +94,9 @@ const DataEntityDetails: React.FC = () => {
                 entityClasses={details.entityClasses}
                 type={details.type}
                 manuallyCreated={details.manuallyCreated}
-                updatedAt={details.updatedAt}
+                lastIngestedAt={details.lastIngestedAt}
+                isStale={details.isStale}
+                status={details.status}
               />
             )}
           />

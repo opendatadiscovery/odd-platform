@@ -3,6 +3,7 @@ import { type Theme } from '@mui/material';
 import type { EventType } from 'lib/interfaces';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
+import type { DataEntityStatus } from 'generated-sources';
 import {
   DataSetFieldTypeTypeEnum,
   MetadataFieldType,
@@ -279,4 +280,8 @@ export async function asyncPool(
 
 export function pluralize(count: number, text: string, pluralText: string) {
   return `${count} ${count === 1 ? text : pluralText}`;
+}
+
+export function isEntityStatusDeleted(entityStatus: DataEntityStatus) {
+  return entityStatus?.status === 'DELETED';
 }

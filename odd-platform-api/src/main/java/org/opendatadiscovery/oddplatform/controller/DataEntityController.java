@@ -22,6 +22,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLinea
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
@@ -80,13 +82,6 @@ public class DataEntityController implements DataEntityApi {
         return formData
             .flatMap(dataEntityGroupService::createDataEntityGroup)
             .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<Void>> deleteDataEntityGroup(final Long dataEntityGroupId,
-                                                            final ServerWebExchange exchange) {
-        return dataEntityGroupService.deleteDataEntityGroup(dataEntityGroupId)
-            .thenReturn(ResponseEntity.noContent().build());
     }
 
     @Override
@@ -188,6 +183,15 @@ public class DataEntityController implements DataEntityApi {
                                                            final ServerWebExchange exchange) {
         return ownershipUpdateFormData
             .flatMap(form -> ownershipService.update(ownershipId, form))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityStatus>> updateStatus(final Long dataEntityId,
+                                                               final Mono<DataEntityStatusFormData> dataEntityStatus,
+                                                               final ServerWebExchange exchange) {
+        return dataEntityStatus
+            .flatMap(status -> dataEntityService.updateStatus(dataEntityId, status))
             .map(ResponseEntity::ok);
     }
 
