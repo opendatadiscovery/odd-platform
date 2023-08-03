@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.api;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
@@ -38,7 +39,7 @@ public class DataEntityStatusChangeTest extends BaseIngestionTest {
         assertThat(details.getStatus().getStatus()).isEqualTo(DataEntityStatusEnum.STABLE);
         assertThat(details.getStatus().getStatusSwitchTime()).isNull();
 
-        final OffsetDateTime statusSwitchTime = OffsetDateTime.now();
+        final OffsetDateTime statusSwitchTime = OffsetDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
         changeStatus(foundEntityId,
             createStatusFormData(false, DataEntityStatusEnum.DEPRECATED, statusSwitchTime));
