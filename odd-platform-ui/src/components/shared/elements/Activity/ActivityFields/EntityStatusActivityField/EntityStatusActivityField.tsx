@@ -43,8 +43,8 @@ const EntityStatusActivityField: FC<EntityStatusActivityFieldProps> = ({
       <ActivityFieldState
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
-          oldState &&
-          oldState.status && (
+          oldState !== undefined &&
+          oldState.status !== undefined && (
             <Box display='flex' flexDirection='column'>
               <EntityStatus entityStatus={oldState.status} />
               <Typography mt={0.5} variant='subtitle2' whiteSpace='nowrap'>
@@ -54,8 +54,8 @@ const EntityStatusActivityField: FC<EntityStatusActivityFieldProps> = ({
           )
         }
         newStateChildren={
-          newState &&
-          newState.status && (
+          newState !== undefined &&
+          newState.status !== undefined && (
             <Box display='flex' flexDirection='column'>
               <EntityStatus entityStatus={newState.status} />
               <Typography mt={0.5} variant='subtitle2' whiteSpace='nowrap'>

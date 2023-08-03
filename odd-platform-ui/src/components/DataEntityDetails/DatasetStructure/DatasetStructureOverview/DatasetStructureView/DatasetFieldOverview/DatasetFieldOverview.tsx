@@ -1,13 +1,9 @@
 import React, { useMemo } from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
-import {
-  getDatasetFieldById,
-  getIsEntityStatusDeleted,
-  getResourcePermissions,
-} from 'redux/selectors';
+import { getDatasetFieldById, getIsEntityStatusDeleted } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
-import { Permission, PermissionResourceType } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';

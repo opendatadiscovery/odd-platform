@@ -61,6 +61,7 @@ const AppDateTimePicker: React.FC<AppDateTimePickerProps> = forwardRef(
           return onChange;
         }}
         showDaysOutsideCurrentMonth
+        ampm={false}
         onAccept={onAccept}
         inputFormat={inputFormat || dateTimePickerInputFormat}
         disableMaskedInput={disableMaskedInput}
