@@ -37,7 +37,7 @@ import static org.opendatadiscovery.oddplatform.dto.metric.SystemMetricLabel.QUA
 @Component
 @RequiredArgsConstructor
 public class MetricsMapperImpl implements MetricsMapper {
-    private final OffsetDateTimeMapper offsetDateTimeMapper;
+    private final DateTimeMapper dateTimeMapper;
 
     @Override
     public MetricFamily mapFromSeries(final MetricFamilyPojo family,
@@ -120,7 +120,7 @@ public class MetricsMapperImpl implements MetricsMapper {
         final MetricPointPojo valuePoint = pointsBySeriesValueType.get(0);
         gaugeValue.setValue(BigDecimal.valueOf(valuePoint.getValue()));
         point.setGaugeValue(gaugeValue);
-        point.setTimestamp(offsetDateTimeMapper.mapLocalDateTime(valuePoint.getTimestamp()));
+        point.setTimestamp(dateTimeMapper.mapUTCDateTime(valuePoint.getTimestamp()));
         return point;
     }
 
@@ -140,11 +140,11 @@ public class MetricsMapperImpl implements MetricsMapper {
         if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)) {
             final MetricPointPojo createdPoint = pointsBySeriesCreatedType.get(0);
             if (createdPoint.getValue() != null) {
-                counterValue.setCreated(offsetDateTimeMapper.mapEpochSeconds(createdPoint.getValue().intValue()));
+                counterValue.setCreated(dateTimeMapper.mapEpochSeconds(createdPoint.getValue().intValue()));
             }
         }
         point.setCounterValue(counterValue);
-        point.setTimestamp(offsetDateTimeMapper.mapLocalDateTime(valuePoint.getTimestamp()));
+        point.setTimestamp(dateTimeMapper.mapUTCDateTime(valuePoint.getTimestamp()));
         return point;
     }
 
@@ -168,7 +168,7 @@ public class MetricsMapperImpl implements MetricsMapper {
         if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)
             && pointsBySeriesCreatedType.get(0).getValue() != null) {
             histogramValue.setCreated(
-                offsetDateTimeMapper.mapEpochSeconds(pointsBySeriesCreatedType.get(0).getValue().intValue()));
+                dateTimeMapper.mapEpochSeconds(pointsBySeriesCreatedType.get(0).getValue().intValue()));
         }
         final List<MetricPointPojo> pointsBySeriesBucketType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.BUCKET);
@@ -191,7 +191,7 @@ public class MetricsMapperImpl implements MetricsMapper {
             .toList();
         histogramValue.setBuckets(buckets);
         point.setHistogramValue(histogramValue);
-        point.setTimestamp(offsetDateTimeMapper.mapLocalDateTime(pointsBySeriesBucketType.get(0).getTimestamp()));
+        point.setTimestamp(dateTimeMapper.mapUTCDateTime(pointsBySeriesBucketType.get(0).getTimestamp()));
         return point;
     }
 
@@ -215,7 +215,7 @@ public class MetricsMapperImpl implements MetricsMapper {
         if (CollectionUtils.isNotEmpty(pointsBySeriesCreatedType)
             && pointsBySeriesCreatedType.get(0).getValue() != null) {
             summaryValue.setCreated(
-                offsetDateTimeMapper.mapEpochSeconds(pointsBySeriesCreatedType.get(0).getValue().intValue()));
+                dateTimeMapper.mapEpochSeconds(pointsBySeriesCreatedType.get(0).getValue().intValue()));
         }
         final List<MetricPointPojo> pointsBySeriesQuantileType =
             getPointsBySeriesValueType(points, seriesByType, MetricSeriesValueType.QUANTILE);
@@ -238,7 +238,7 @@ public class MetricsMapperImpl implements MetricsMapper {
             .toList();
         summaryValue.setQuantile(quantiles);
         point.setSummaryValue(summaryValue);
-        point.setTimestamp(offsetDateTimeMapper.mapLocalDateTime(pointsBySeriesQuantileType.get(0).getTimestamp()));
+        point.setTimestamp(dateTimeMapper.mapUTCDateTime(pointsBySeriesQuantileType.get(0).getTimestamp()));
         return point;
     }
 

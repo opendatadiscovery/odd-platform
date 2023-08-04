@@ -1,0 +1,22 @@
+ALTER TABLE data_entity
+    ADD COLUMN IF NOT EXISTS status SMALLINT DEFAULT 1 NOT NULL;
+
+UPDATE data_entity
+SET status = 5
+WHERE deleted_at IS NOT NULL;
+
+ALTER TABLE data_entity
+    ADD COLUMN IF NOT EXISTS status_switch_time TIMESTAMP WITHOUT TIME ZONE;
+
+ALTER TABLE lineage
+    ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE group_entity_relations
+    ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE group_parent_group_relations
+    ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN NOT NULL DEFAULT FALSE;
+
+DELETE
+FROM activity
+WHERE event_type = 'CUSTOM_GROUP_DELETED';

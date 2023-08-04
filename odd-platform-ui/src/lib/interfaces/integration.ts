@@ -58,6 +58,14 @@ export const DatasourceNames = [
   'azure',
   'fivetran',
   'lambda',
+  'spark',
+  'cockroachdb',
+  'couchbase',
+  'databricks',
+  'druid',
+  'duckdb',
+  'mariadb',
+  'sqlite',
 ] as const;
 export type DatasourceName = (typeof DatasourceNames)[number];
 

@@ -2,8 +2,7 @@ import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
 import { FormControlLabel, Grid, Typography } from '@mui/material';
-import { Button, Checkbox, AppInput, Markdown } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { Button, Checkbox, Input, Markdown } from 'components/shared/elements';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
 import { useTranslation } from 'react-i18next';
 
@@ -18,9 +17,11 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
   const [showForm, setShowForm] = useState(true);
   const [snippetArgs, setSnippetArgs] = useState({});
 
-  const { handleSubmit, control, formState } = useForm({ mode: 'onChange' });
+  const { handleSubmit, control, formState, register } = useForm({});
 
-  const compiledTemplate = Handlebars.compile(snippet.template);
+  const compiledTemplate = useCallback(Handlebars.compile(snippet.template), [
+    snippet.template,
+  ]);
 
   const templateWithArguments = compiledTemplate(snippetArgs);
 
@@ -44,12 +45,34 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                   render={({ field }) => (
                     <FormControlLabel
                       {...field}
-                      sx={{ ml: -0.25 }}
+                      sx={{
+                        ml: 0,
+                        mb: 1,
+                        width: '100%',
+                        justifyContent: 'flex-end',
+                      }}
+                      labelPlacement='start'
                       checked={field.value}
                       control={<Checkbox sx={{ mr: 1 }} />}
-                      label={arg.name}
+                      disableTypography
+                      label={
+                        <Grid item lg={4}>
+                          <Typography variant='body1'>{arg.name}</Typography>
+                        </Grid>
+                      }
                     />
                   )}
+                />
+              );
+            }
+
+            if (arg.staticValue) {
+              return (
+                <input
+                  key={arg.name}
+                  {...register(arg.parameter)}
+                  value={arg.staticValue}
+                  style={{ display: 'none' }}
                 />
               );
             }
@@ -72,16 +95,12 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
                       <Typography variant='body1'>{arg.name}</Typography>
                     </Grid>
                     <Grid item lg={8}>
-                      <AppInput
+                      <Input
                         {...field}
+                        variant='main-m'
                         type={arg.type === 'STRING' ? 'string' : 'number'}
                         placeholder={`Enter ${arg.name} ...`}
-                        customEndAdornment={{
-                          variant: 'clear',
-                          showAdornment: !!field.value,
-                          onCLick: () => field.onChange(''),
-                          icon: <ClearIcon />,
-                        }}
+                        handleCleanUp={() => field.onChange('')}
                       />
                     </Grid>
                   </Grid>

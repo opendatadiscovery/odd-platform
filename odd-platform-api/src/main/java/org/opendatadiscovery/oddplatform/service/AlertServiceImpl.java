@@ -45,6 +45,7 @@ import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction;
 import org.opendatadiscovery.oddplatform.service.ingestion.alert.AlertAction.AlertUniqueConstraint;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.AlertStatusUpdated;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Service;
@@ -158,7 +159,7 @@ public class AlertServiceImpl implements AlertService {
             MultiMapUtils.newSetValuedHashMap();
 
         final List<AlertPojo> alerts = new ArrayList<>();
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         for (final ExternalAlert externalAlert : externalAlerts) {
             final String alertTime = URLEncoder
@@ -324,7 +325,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     private Mono<Long> checkDataEntityExistence(final long dataEntityId) {
-        return dataEntityRepository.exists(dataEntityId).handle((exists, sink) -> {
+        return dataEntityRepository.existsIncludingSoftDeleted(dataEntityId).handle((exists, sink) -> {
             if (!exists) {
                 sink.error(new NotFoundException("Data Entity", dataEntityId));
                 return;

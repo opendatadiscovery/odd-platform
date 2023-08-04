@@ -5,6 +5,7 @@ import {
   AppErrorPage,
   AppLoadingPage,
   DatasourceLogo,
+  EmptyContentPlaceholder,
   getCapitalizedDatasourceNameFromPrefix,
   ScrollableContainer,
 } from 'components/shared/elements';
@@ -28,6 +29,7 @@ const DataSourceList: FC = () => {
     isLoading,
     isError,
     error,
+    isSuccess,
   } = useGetDirectoryDataSources({ prefix });
 
   const dataSourceTypeName = getCapitalizedDatasourceNameFromPrefix(prefix);
@@ -124,6 +126,10 @@ const DataSourceList: FC = () => {
             {rows.map(row => (
               <Table.Row key={row.id} row={row} />
             ))}
+            <EmptyContentPlaceholder
+              isContentLoaded={isSuccess}
+              isContentEmpty={!rows.length}
+            />
           </ScrollableContainer>
         </S.Container>
       )}

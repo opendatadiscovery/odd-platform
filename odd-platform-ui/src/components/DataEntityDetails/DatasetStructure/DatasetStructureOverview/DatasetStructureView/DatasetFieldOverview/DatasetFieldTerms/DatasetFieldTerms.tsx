@@ -2,7 +2,7 @@ import React, { type FC, useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
-import type { DataSetField, TermRef } from 'generated-sources';
+import type { DataSetField, LinkedTerm } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
 import {
@@ -17,18 +17,20 @@ import AssignFieldTermForm from './AssignFieldTermForm/AssignFieldTermForm';
 interface DatasetFieldTermsProps {
   fieldTerms: DataSetField['terms'];
   datasetFieldId: number;
+  isStatusDeleted: boolean;
 }
 
 const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
   fieldTerms,
   datasetFieldId,
+  isStatusDeleted,
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const handleAddTerm = useCallback(
-    (term: TermRef) => {
-      dispatch(addDatasetFieldTerm({ fieldId: datasetFieldId, term }));
+    (linkedTerm: LinkedTerm) => {
+      dispatch(addDatasetFieldTerm({ fieldId: datasetFieldId, linkedTerm }));
     },
     [datasetFieldId]
   );
@@ -44,14 +46,15 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
     () =>
       fieldTerms && fieldTerms.length > 0 ? (
         <Grid container mt={1}>
-          {fieldTerms.map(({ name, definition, id }) => (
+          {fieldTerms.map(({ term, isDescriptionLink }) => (
             <TermItem
-              key={id}
-              termId={id}
-              name={name}
-              definition={definition}
+              key={term.id}
+              termId={term.id}
+              name={term.name}
+              definition={term.definition}
               datasetFieldId={datasetFieldId}
               removeTerm={removeTerm}
+              isDescriptionLink={isDescriptionLink}
             />
           ))}
         </Grid>
@@ -69,23 +72,25 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
         <Typography variant='h5' color='texts.hint'>
           {t('TERMS')}
         </Typography>
-        <WithPermissions
-          permissionTo={Permission.DATASET_FIELD_ADD_TERM}
-          renderContent={({ isAllowedTo: addTerm }) => (
-            <AssignFieldTermForm
-              datasetFieldId={datasetFieldId}
-              handleAddTerm={handleAddTerm}
-              openBtnEl={
-                <Button
-                  disabled={!addTerm}
-                  text={t('Add term')}
-                  buttonType='secondary-m'
-                  sx={{ mr: 1 }}
-                />
-              }
-            />
-          )}
-        />
+        {!isStatusDeleted && (
+          <WithPermissions
+            permissionTo={Permission.DATASET_FIELD_ADD_TERM}
+            renderContent={({ isAllowedTo: addTerm }) => (
+              <AssignFieldTermForm
+                datasetFieldId={datasetFieldId}
+                handleAddTerm={handleAddTerm}
+                openBtnEl={
+                  <Button
+                    disabled={!addTerm}
+                    text={t('Add term')}
+                    buttonType='secondary-m'
+                    sx={{ mr: 1 }}
+                  />
+                }
+              />
+            )}
+          />
+        )}
       </Grid>
       <Grid container flexDirection='column' alignItems='flex-start'>
         {content}

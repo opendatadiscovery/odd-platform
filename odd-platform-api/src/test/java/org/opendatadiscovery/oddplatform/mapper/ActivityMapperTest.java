@@ -26,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
@@ -36,6 +37,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.AlertStatusUpdatedActivity
 import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.DataEntityStatusUpdatedDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldEnumValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldLabelActivityStateDto;
@@ -48,6 +50,8 @@ import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
@@ -71,14 +75,17 @@ public class ActivityMapperTest {
     AssociatedOwnerMapper associatedOwnerMapper;
 
     @InjectMocks
-    ActivityMapper activityMapper = new ActivityMapperImpl(new OffsetDateTimeMapperImpl());
+    ActivityMapper activityMapper = new ActivityMapperImpl(new DateTimeMapperImpl());
+
+    DataEntityStatusMapper statusMapper = new DataEntityStatusMapper();
+    DataEntityStaleDetector staleDetector = new DataEntityStaleDetector();
 
     @ParameterizedTest
     @EnumSource(ActivityEventTypeDto.class)
     @DisplayName("Test mapping activity create event to activity pojo object")
     void testMapPojo(final ActivityEventTypeDto eventTypeDto) {
         final ActivityCreateEvent event = createEvent(eventTypeDto);
-        final LocalDateTime activityTime = LocalDateTime.now();
+        final LocalDateTime activityTime = DateTimeUtil.generateNow();
         final String createdBy = "username";
         final ActivityPojo activityPojo = activityMapper.mapToPojo(event, activityTime, createdBy);
         assertThat(activityPojo.getCreatedAt()).isEqualTo(activityTime);
@@ -100,7 +107,7 @@ public class ActivityMapperTest {
             .setName(UUID.randomUUID().toString());
         final ActivityPojo activityPojo = createPojo(eventTypeDto);
         final DataEntityPojo dataEntityPojo = createDataEntityPojo(activityPojo.getDataEntityId());
-        final DataEntityType dataEntityType = new DataEntityType().id(1).name(DataEntityType.NameEnum.TABLE);
+        final DataEntityType dataEntityType = new DataEntityType(1, DataEntityType.NameEnum.TABLE);
         final DataEntityClass dataEntityClass = new DataEntityClass()
             .id(1)
             .name(DataEntityClass.NameEnum.SET);
@@ -124,6 +131,8 @@ public class ActivityMapperTest {
             .internalName(dataEntityPojo.getInternalName())
             .entityClasses(List.of(dataEntityClass))
             .manuallyCreated(dataEntityPojo.getManuallyCreated())
+            .status(statusMapper.mapStatus(dataEntityPojo))
+            .isStale(staleDetector.isDataEntityStale(dataEntityPojo))
             .url("");
         lenient().when(dataEntityMapper.mapRef(dataEntityPojo)).thenReturn(ref);
 
@@ -187,7 +196,8 @@ public class ActivityMapperTest {
             .setEntityClassIds(new Integer[] {1, 2, 3})
             .setTypeId(1)
             .setExternalName(UUID.randomUUID().toString())
-            .setOddrn(UUID.randomUUID().toString());
+            .setOddrn(UUID.randomUUID().toString())
+            .setStatus((short) 1);
     }
 
     private ActivityCreateEvent createEvent(final ActivityEventTypeDto eventTypeDto) {
@@ -203,7 +213,7 @@ public class ActivityMapperTest {
     private String generateState(final ActivityEventTypeDto eventTypeDto) {
         return switch (eventTypeDto) {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> generateOwnershipState();
-            case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> generateTermsState();
+            case TERM_ASSIGNMENT_UPDATED -> generateTermsState();
             case DATA_ENTITY_CREATED -> generateDataEntityCreatedState();
             case TAG_ASSIGNMENT_UPDATED -> generateTagsState();
             case DESCRIPTION_UPDATED -> generateDescriptionState();
@@ -211,13 +221,22 @@ public class ActivityMapperTest {
             case DATASET_FIELD_VALUES_UPDATED -> generateDatasetFieldValuesState();
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 generateDatasetFieldInformationState();
-            case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> generateCustomGroupState();
+            case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED -> generateCustomGroupState();
             case ALERT_HALT_CONFIG_UPDATED -> generateAlertHaltConfigState();
             case ALERT_STATUS_UPDATED -> generateAlertStatusState();
             case OPEN_ALERT_RECEIVED, RESOLVED_ALERT_RECEIVED -> generateAlertReceivedState();
-            case DATASET_FIELD_TERM_ASSIGNED, DATASET_FIELD_TERM_ASSIGNMENT_DELETED -> generateDatasetFieldTermsState();
+            case DATASET_FIELD_TERM_ASSIGNMENT_UPDATED -> generateDatasetFieldTermsState();
+            case DATA_ENTITY_STATUS_UPDATED -> generateDataEntityStatusState();
             default -> "";
         };
+    }
+
+    private String generateDataEntityStatusState() {
+        final DataEntityStatusUpdatedDto state = new DataEntityStatusUpdatedDto(
+            DataEntityStatusDto.STABLE.name(),
+            DateTimeUtil.generateNow()
+        );
+        return JSONSerDeUtils.serializeJson(state);
     }
 
     private String generateAlertReceivedState() {

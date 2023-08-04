@@ -5,6 +5,7 @@ import { Button } from 'components/shared/elements';
 import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
+  getIsEntityStatusDeleted,
 } from 'redux/selectors';
 import { useAppParams, useCollapse } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
@@ -25,6 +26,7 @@ const OverviewMetadata: React.FC = () => {
     getDataEntityPredefinedMetadataList(dataEntityId)
   );
   const customMetadata = useAppSelector(getDataEntityCustomMetadataList(dataEntityId));
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   return (
     <>
@@ -39,17 +41,19 @@ const OverviewMetadata: React.FC = () => {
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
                 >
-                  <MetadataCreateForm
-                    dataEntityId={dataEntityId}
-                    btnCreateEl={
-                      <Button
-                        text={t('Add metadata')}
-                        data-qa='add_metadata'
-                        buttonType='secondary-lg'
-                        startIcon={<AddIcon />}
-                      />
-                    }
-                  />
+                  {!isStatusDeleted && (
+                    <MetadataCreateForm
+                      dataEntityId={dataEntityId}
+                      btnCreateEl={
+                        <Button
+                          text={t('Add metadata')}
+                          data-qa='add_metadata'
+                          buttonType='secondary-lg'
+                          startIcon={<AddIcon />}
+                        />
+                      }
+                    />
+                  )}
                 </WithPermissions>
               </S.SubtitleContainer>
             </Grid>
@@ -74,16 +78,18 @@ const OverviewMetadata: React.FC = () => {
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
                 >
-                  <MetadataCreateForm
-                    dataEntityId={dataEntityId}
-                    btnCreateEl={
-                      <Button
-                        text={t('Add Metadata')}
-                        sx={{ ml: 0.5 }}
-                        buttonType='tertiary-sm'
-                      />
-                    }
-                  />
+                  {!isStatusDeleted && (
+                    <MetadataCreateForm
+                      dataEntityId={dataEntityId}
+                      btnCreateEl={
+                        <Button
+                          text={t('Add Metadata')}
+                          sx={{ ml: 0.5 }}
+                          buttonType='tertiary-sm'
+                        />
+                      }
+                    />
+                  )}
                 </WithPermissions>
               </Grid>
             )}

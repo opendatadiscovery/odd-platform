@@ -7,6 +7,7 @@ import org.jooq.InsertResultStep;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertHaltConfigPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.AlertHaltConfigRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -37,7 +38,7 @@ public class AlertHaltConfigRepositoryImpl implements AlertHaltConfigRepository 
             .select(ALERT_HALT_CONFIG.fields())
             .from(ALERT_HALT_CONFIG)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT_HALT_CONFIG.DATA_ENTITY_ID))
-            .where(DATA_ENTITY.DELETED_AT.isNull())
+            .where(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.ODDRN.in(dataEntityOddrns));
 

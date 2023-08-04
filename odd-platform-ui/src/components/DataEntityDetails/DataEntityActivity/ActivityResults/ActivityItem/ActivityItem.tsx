@@ -13,6 +13,7 @@ import {
   StringActivityField,
   TermActivityField,
   DatasetTermActivityField,
+  EntityStatusActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
@@ -110,22 +111,20 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && (
+        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_UPDATED]) && (
           <TermActivityField
             oldState={activity.oldState.terms}
             newState={activity.newState.terms}
             hideAllDetails={hideAllDetails}
-            eventType='assigned'
+            eventType='updated'
             stateDirection='column'
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && (
-          <TermActivityField
-            oldState={activity.oldState.terms}
-            newState={activity.newState.terms}
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_UPDATED]) && (
+          <DatasetTermActivityField
+            oldState={activity.oldState.datasetFieldTerms}
+            newState={activity.newState.datasetFieldTerms}
             hideAllDetails={hideAllDetails}
-            eventType='deleted'
-            stateDirection='column'
           />
         )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_VALUES_UPDATED]) && (
@@ -135,30 +134,9 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && (
-          <DatasetTermActivityField
-            oldState={activity.oldState.datasetFieldTerms}
-            newState={activity.newState.datasetFieldTerms}
-            hideAllDetails={hideAllDetails}
-          />
-        )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && (
-          <DatasetTermActivityField
-            oldState={activity.oldState.datasetFieldTerms}
-            newState={activity.newState.datasetFieldTerms}
-            hideAllDetails={hideAllDetails}
-          />
-        )}
         {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
           <ActivityFieldHeader
             eventType='created'
-            startText={t('Custom group')}
-            activityName={`${activity.dataEntity.internalName}`}
-          />
-        )}
-        {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
-          <ActivityFieldHeader
-            eventType='deleted'
             startText={t('Custom group')}
             activityName={`${activity.dataEntity.internalName}`}
           />
@@ -180,6 +158,13 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             eventType={activity.eventType}
             oldState={activity.oldState}
             newState={activity.newState}
+          />
+        )}
+        {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_STATUS_UPDATED]) && (
+          <EntityStatusActivityField
+            oldState={activity.oldState.status}
+            newState={activity.newState.status}
+            hideAllDetails={hideAllDetails}
           />
         )}
         <S.InfoContainer>

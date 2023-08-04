@@ -27,6 +27,7 @@ public class DataEntityCTEQueryConfig {
     private LimitOffset limitOffset;
     private SortField<?> orderBy;
     private Fts fts;
+    private boolean includeDeleted;
 
     public record LimitOffset(int limit, int offset) {
     }

@@ -20,12 +20,12 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
+import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
@@ -34,7 +34,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFie
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -65,6 +65,8 @@ public class DataEntityServiceTest {
     @Mock
     private TagMapper tagMapper;
     @Mock
+    private TermMapper termMapper;
+    @Mock
     private ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     @Mock
     private ReactiveDataEntityRepository reactiveDataEntityRepository;
@@ -75,11 +77,9 @@ public class DataEntityServiceTest {
     @Mock
     private ReactiveDatasetVersionRepository datasetVersionRepository;
     @Mock
-    private ReactiveTermRepository reactiveTermRepository;
+    private TermService termService;
     @Mock
     private ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
-    @Mock
-    private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
     @Mock
     private ReactiveTagRepository tagRepository;
     @Mock
@@ -88,6 +88,12 @@ public class DataEntityServiceTest {
     private MetadataFieldService metadataFieldService;
     @Mock
     private DataSourceService dataSourceService;
+    @Mock
+    private DataEntityInternalStateService dataEntityInternalStateService;
+    @Mock
+    private DataEntityStatisticsService dataEntityStatisticsService;
+    @Mock
+    private DataEntityRelationsService dataEntityRelationsService;
 
     @BeforeEach
     public void beforeAll() {
@@ -97,21 +103,24 @@ public class DataEntityServiceTest {
             dataEntityFilledService,
             metadataFieldService,
             dataSourceService,
+            dataEntityStatisticsService,
+            termService,
+            dataEntityInternalStateService,
+            dataEntityRelationsService,
             metadataFieldValueRepository,
             metadataFieldRepository,
             reactiveDataEntityRepository,
             reactiveLineageRepository,
             reactiveDataEntityTaskRunRepository,
             datasetVersionRepository,
-            reactiveTermRepository,
             reactiveSearchEntrypointRepository,
             reactiveGroupEntityRelationRepository,
-            dataEntityStatisticsRepository,
             tagRepository,
             dataEntityMapper,
             metadataFieldMapper,
             metadataFieldValueMapper,
-            tagMapper);
+            tagMapper,
+            termMapper);
     }
 
     @Test

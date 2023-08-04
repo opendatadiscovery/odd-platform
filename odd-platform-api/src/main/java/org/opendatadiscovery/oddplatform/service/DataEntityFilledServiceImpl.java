@@ -70,6 +70,7 @@ public class DataEntityFilledServiceImpl implements DataEntityFilledService {
             && !pojo.getDatasetFieldDescriptionFilled()
             && !pojo.getDatasetFieldLabelsFilled()
             && !pojo.getDatasetFieldEnumsFilled()
-            && !pojo.getManuallyCreated();
+            && !pojo.getManuallyCreated()
+            && !pojo.getDatasetFieldTermsFilled();
     }
 }

@@ -63,8 +63,10 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
                 flexMap={flexMap}
                 ownership={entity.ownership}
                 entityClasses={entity.entityClasses}
-                createdAt={entity.createdAt}
-                updatedAt={entity.updatedAt}
+                createdAtDS={entity.sourceCreatedAt}
+                updatedAtDS={entity.sourceUpdatedAt}
+                lastIngestedAt={entity.lastIngestedAt}
+                isStale={entity.isStale}
               />
             ))}
           </InfiniteScroll>
@@ -73,7 +75,7 @@ const EntitiesResultsList: FC<EntitiesResultsListProps> = ({
         <EmptyContentPlaceholder
           isContentLoaded={isEntitiesLoaded}
           isContentEmpty={isContentEmpty}
-          offsetTop={190}
+          offsetTop={240}
         />
       )}
     </>

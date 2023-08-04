@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
-import com.nimbusds.jose.shaded.json.JSONArray;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +44,9 @@ public abstract class AbstractOIDCUserHandler implements OAuthUserHandler<OidcUs
         final String groupsClaim = StringUtils.isNotEmpty(provider.getGroupsClaim())
             ? provider.getGroupsClaim() : getDefaultGroupsClaim();
         if (StringUtils.isNotEmpty(groupsClaim) && CollectionUtils.isNotEmpty(provider.getAdminGroups())) {
-            final JSONArray groups = oidcUser.getAttribute(groupsClaim);
-            if (groups != null) {
+            final List<String> groups = oidcUser.getAttribute(groupsClaim);
+            if (CollectionUtils.isNotEmpty(groups)) {
                 final boolean containsGroup = groups.stream()
-                    .filter(String.class::isInstance)
-                    .map(String.class::cast)
                     .anyMatch(g -> containsIgnoreCase(provider.getAdminGroups(), g));
                 if (containsGroup) {
                     isAdmin = true;

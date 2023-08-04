@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
@@ -18,7 +19,6 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.LineageRecord;
-import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
@@ -35,12 +35,9 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 
 @Repository
-public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepository<LineageRecord, LineagePojo>
-    implements ReactiveLineageRepository {
-    public ReactiveLineageRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                                         final JooqQueryHelper jooqQueryHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, LINEAGE, LineagePojo.class);
-    }
+@RequiredArgsConstructor
+public class ReactiveLineageRepositoryImpl implements ReactiveLineageRepository {
+    private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
     public Flux<LineagePojo> batchDeleteByEstablisherOddrn(final Collection<String> establishers) {
@@ -65,7 +62,7 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
         final var query = DSL.select(LINEAGE.PARENT_ODDRN)
             .select(count(one()).cast(Long.class))
             .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns))
+            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.IS_DELETED.isFalse()))
             .groupBy(LINEAGE.PARENT_ODDRN);
         return jooqReactiveOperations.flux(query)
             .collectMap(r -> r.get(0, String.class), r -> r.get(1, Long.class));
@@ -76,7 +73,7 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
         final Field<Integer> childrenCount = countDistinct(LINEAGE.CHILD_ODDRN).as("children_count");
         final var query = DSL.select(LINEAGE.PARENT_ODDRN, childrenCount)
             .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns))
+            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.IS_DELETED.isFalse()))
             .groupBy(LINEAGE.PARENT_ODDRN);
         return jooqReactiveOperations.flux(query).collectMap(Record2::value1, Record2::value2);
     }
@@ -86,17 +83,38 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
         final Field<Integer> parentsCount = countDistinct(LINEAGE.PARENT_ODDRN).as("parents_count");
         final var query = DSL.select(LINEAGE.CHILD_ODDRN, parentsCount)
             .from(LINEAGE)
-            .where(LINEAGE.CHILD_ODDRN.in(oddrns))
+            .where(LINEAGE.CHILD_ODDRN.in(oddrns).and(LINEAGE.IS_DELETED.isFalse()))
             .groupBy(LINEAGE.CHILD_ODDRN);
         return jooqReactiveOperations.flux(query).collectMap(Record2::value1, Record2::value2);
+    }
+
+    @Override
+    public Flux<LineagePojo> softDeleteLineageRelations(final List<String> dataEntityOddrns) {
+        final var query = DSL.update(LINEAGE)
+            .set(LINEAGE.IS_DELETED, true)
+            .where(LINEAGE.CHILD_ODDRN.in(dataEntityOddrns).or(LINEAGE.PARENT_ODDRN.in(dataEntityOddrns)))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(LineagePojo.class));
+    }
+
+    @Override
+    public Flux<LineagePojo> restoreLineageRelations(final List<String> dataEntityOddrns) {
+        final var query = DSL.update(LINEAGE)
+            .set(LINEAGE.IS_DELETED, false)
+            .where(LINEAGE.CHILD_ODDRN.in(dataEntityOddrns).or(LINEAGE.PARENT_ODDRN.in(dataEntityOddrns)))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(LineagePojo.class));
     }
 
     @Override
     public Flux<LineagePojo> getLineageRelations(final List<String> oddrns) {
         final var query = DSL.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
             .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns))
-                .or(LINEAGE.CHILD_ODDRN.in(oddrns).and(LINEAGE.PARENT_ODDRN.in(oddrns))));
+            .where(LINEAGE.IS_DELETED.isFalse()
+                .and(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns))
+                    .or(LINEAGE.CHILD_ODDRN.in(oddrns).and(LINEAGE.PARENT_ODDRN.in(oddrns)))));
         return jooqReactiveOperations.flux(query).map(r -> r.into(LineagePojo.class));
     }
 
@@ -124,7 +142,7 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
         final var query = DSL.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
             .from(LINEAGE)
             .join(DATA_ENTITY).on(joinCondition)
-            .where(DATA_ENTITY.ID.in(rootIds));
+            .where(DATA_ENTITY.ID.in(rootIds).and(LINEAGE.IS_DELETED.isFalse()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(LineagePojo.class));
     }
@@ -146,14 +164,14 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
             .select(LINEAGE.asterisk())
             .select(startDepth)
             .from(LINEAGE)
-            .where(conditions.getLeft().in(oddrns))
+            .where(conditions.getLeft().in(oddrns).and(LINEAGE.IS_DELETED.isFalse()))
             .unionAll(
                 DSL
                     .select(LINEAGE.asterisk())
                     .select(tDepth.add(1))
                     .from(LINEAGE)
                     .join(cteName).on(conditions.getLeft().eq(conditions.getRight()))
-                    .where(tDepth.lessThan(lineageDepth.getDepth()))
+                    .where(tDepth.lessThan(lineageDepth.getDepth()).and(LINEAGE.IS_DELETED.isFalse()))
             ));
     }
 }

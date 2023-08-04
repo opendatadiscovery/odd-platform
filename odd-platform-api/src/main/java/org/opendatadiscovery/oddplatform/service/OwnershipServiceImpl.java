@@ -135,7 +135,7 @@ public class OwnershipServiceImpl implements OwnershipService {
                                                          final OwnershipPropagateAction action) {
         return groupEntityRelationRepository.getDEGEntitiesOddrns(ownership.getDataEntityId())
             .collectList()
-            .flatMapMany(childrenOddrns -> dataEntityRepository.listAllByOddrns(childrenOddrns, false))
+            .flatMapMany(childrenOddrns -> dataEntityRepository.listByOddrns(childrenOddrns, false, false))
             .map(child -> new OwnershipPojo()
                 .setDataEntityId(child.getId())
                 .setOwnerId(ownership.getOwnerId())

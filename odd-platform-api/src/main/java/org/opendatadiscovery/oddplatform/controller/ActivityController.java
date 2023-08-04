@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,8 @@ public class ActivityController implements ActivityApi {
     private final ActivityService activityService;
 
     @Override
-    public Mono<ResponseEntity<Flux<Activity>>> getActivity(final LocalDate beginDate,
-                                                            final LocalDate endDate,
+    public Mono<ResponseEntity<Flux<Activity>>> getActivity(final OffsetDateTime beginDate,
+                                                            final OffsetDateTime endDate,
                                                             final Integer size,
                                                             final Long datasourceId,
                                                             final Long namespaceId,
@@ -42,8 +41,8 @@ public class ActivityController implements ActivityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<ActivityCountInfo>> getActivityCounts(final LocalDate beginDate,
-                                                                     final LocalDate endDate,
+    public Mono<ResponseEntity<ActivityCountInfo>> getActivityCounts(final OffsetDateTime beginDate,
+                                                                     final OffsetDateTime endDate,
                                                                      final Long datasourceId,
                                                                      final Long namespaceId,
                                                                      final List<Long> tagIds,

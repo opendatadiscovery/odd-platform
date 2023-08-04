@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.config;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

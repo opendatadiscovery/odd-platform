@@ -24,6 +24,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.TagToTermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -87,8 +88,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var query = DSL.select(TAG.fields())
             .from(TAG_TO_TERM)
             .join(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID))
-            .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.DELETED_AT.isNull())
-                .and(TAG.DELETED_AT.isNull()));
+            .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG.DELETED_AT.isNull()));
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagPojo.class));
     }
@@ -143,7 +143,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             return Flux.just();
         }
 
-        final LocalDateTime now = LocalDateTime.now();
+        final LocalDateTime now = DateTimeUtil.generateNow();
 
         final List<TagRecord> records = tags.stream()
             .map(e -> createRecord(e, now))
@@ -202,15 +202,6 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId) {
-        final var query = DSL.delete(TAG_TO_DATA_ENTITY)
-            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(TagToDataEntityPojo.class));
-    }
-
-    @Override
     public Flux<TagToDataEntityPojo> createDataEntityRelations(final Collection<TagToDataEntityPojo> relations) {
         if (CollectionUtils.isEmpty(relations)) {
             return Flux.just();
@@ -239,8 +230,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             return Flux.just();
         }
 
-        final var query = DSL.update(TAG_TO_TERM)
-            .set(TAG_TO_TERM.DELETED_AT, LocalDateTime.now())
+        final var query = DSL.deleteFrom(TAG_TO_TERM)
             .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.TAG_ID.in(tagIds)))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -249,8 +239,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
     @Override
     public Flux<TagToTermPojo> deleteTermRelations(final long tagId) {
-        final var query = DSL.update(TAG_TO_TERM)
-            .set(TAG_TO_TERM.DELETED_AT, LocalDateTime.now())
+        final var query = DSL.deleteFrom(TAG_TO_TERM)
             .where(TAG_TO_TERM.TAG_ID.eq(tagId))
             .returning();
         return jooqReactiveOperations.flux(query)
@@ -276,8 +265,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
         return jooqReactiveOperations.flux(
             insertStep.set(records.get(records.size() - 1))
-                .onDuplicateKeyUpdate()
-                .setNull(TAG_TO_TERM.DELETED_AT)
+                .onDuplicateKeyIgnore()
                 .returning(TAG_TO_TERM.fields())
         ).map(r -> r.into(TagToTermPojo.class));
     }

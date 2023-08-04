@@ -17,6 +17,7 @@ import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
@@ -35,6 +36,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRela
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.service.DataEntityInternalStateService;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.ingestion.processor.IngestionProcessorChain;
 import org.opendatadiscovery.oddplatform.service.metric.OTLPMetricService;
@@ -53,6 +55,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final IngestionProcessorChain ingestionProcessorChain;
     private final OTLPMetricService otlpMetricService;
     private final DatasetFieldService datasetFieldService;
+    private final DataEntityInternalStateService dataEntityInternalStateService;
 
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final ReactiveDataSourceRepository dataSourceRepository;
@@ -87,7 +90,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(ingestionMapper::mapTaskRun)
             .toList();
 
-        return dataEntityRepository.listAllByOddrns(ingestionDtoMap.keySet(), true)
+        return dataEntityRepository.listByOddrns(ingestionDtoMap.keySet(), true, true)
             .collect(Collectors.toMap(DataEntityPojo::getOddrn, identity()))
             .flatMap(existingPojoDict -> {
                 final Map<Boolean, List<DataEntityIngestionDto>> ingestionDtoPartitions = ingestionDtoMap.values()
@@ -113,29 +116,35 @@ public class IngestionServiceImpl implements IngestionService {
                     .stream()
                     .map(existingDto -> {
                         final DataEntityPojo existingPojo = existingPojoDict.get(existingDto.getOddrn());
-                        final boolean isEntityUpdated = isEntityUpdated(existingDto, existingPojo);
-
-                        return new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingDto, isEntityUpdated);
+                        return new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingPojo, existingDto);
                     })
                     .toList();
 
                 final List<DataEntityPojo> entitiesToUpdate = enrichedExistingDtos.stream()
-                    .filter(EnrichedDataEntityIngestionDto::isUpdated)
                     .map(ingestionMapper::dtoToPojo)
                     .toList();
 
-                final List<DataEntityPojo> pojosToCreate = ingestionMapper.dtoToPojo(ingestionDtoPartitions.get(false));
+                final List<DataEntityPojo> entitiesToRestore = enrichedExistingDtos.stream()
+                    .map(EnrichedDataEntityIngestionDto::getPreviousVersionPojo)
+                    .filter(previousVersionPojo -> previousVersionPojo.getStatus()
+                        .equals(DataEntityStatusDto.DELETED.getId()))
+                    .toList();
 
+                final List<DataEntityPojo> pojosToCreate = ingestionMapper.dtoToPojo(ingestionDtoPartitions.get(false));
                 final Flux<DataEntityPojo> updated = dataEntityRepository.bulkUpdate(entitiesToUpdate);
+                final Mono<Void> restoredEntities = dataEntityInternalStateService
+                    .restoreDeletedDataEntityRelations(entitiesToRestore);
 
                 final DataEntityTotalDelta totalDelta =
                     calculateTotalDeltaCount(pojosToCreate, entitiesToUpdate, existingPojoDict);
 
                 final Flux<EnrichedDataEntityIngestionDto> enrichedNewDtos = dataEntityRepository
                     .bulkCreate(pojosToCreate)
-                    .map(d -> new EnrichedDataEntityIngestionDto(d.getId(), ingestionDtoMap.get(d.getOddrn())));
+                    .map(d -> new EnrichedDataEntityIngestionDto(d.getId(), null, ingestionDtoMap.get(d.getOddrn())));
 
-                return updated.thenMany(enrichedNewDtos)
+                return updated
+                    .then(restoredEntities)
+                    .thenMany(enrichedNewDtos)
                     .collectList()
                     .map(newEntities -> buildIngestionRequest(newEntities, enrichedExistingDtos, taskRuns,
                         specificAttributesDeltas, totalDelta));
@@ -194,7 +203,7 @@ public class IngestionServiceImpl implements IngestionService {
         }
 
         return dto.getDataEntityGroup().entitiesOddrns().stream()
-            .map(entityOddrn -> new GroupEntityRelationsPojo(dto.getOddrn(), entityOddrn))
+            .map(entityOddrn -> new GroupEntityRelationsPojo(dto.getOddrn(), entityOddrn, false))
             .toList();
     }
 
@@ -217,7 +226,8 @@ public class IngestionServiceImpl implements IngestionService {
             return Optional.empty();
         }
 
-        return Optional.of(new GroupParentGroupRelationsPojo(dto.getOddrn(), dto.getDataEntityGroup().groupOddrn()));
+        return Optional.of(
+            new GroupParentGroupRelationsPojo(dto.getOddrn(), dto.getDataEntityGroup().groupOddrn(), false));
     }
 
     private List<LineagePojo> extractLineageRelations(final DataEntityIngestionDto dto) {
@@ -261,13 +271,6 @@ public class IngestionServiceImpl implements IngestionService {
         }
 
         return result;
-    }
-
-    private boolean isEntityUpdated(final DataEntityIngestionDto dto, final DataEntityPojo dePojo) {
-        return dePojo.getHollow()
-            || dePojo.getUpdatedAt() == null
-            || dto.getUpdatedAt() == null
-            || !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
 
     private DataEntityTotalDelta calculateTotalDeltaCount(final List<DataEntityPojo> newPojos,

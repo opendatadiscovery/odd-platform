@@ -161,7 +161,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     protected Mono<R> updateOne(final R record) {
         if (updatedAtField != null) {
-            record.set(updatedAtField, LocalDateTime.now());
+            record.set(updatedAtField, DateTimeUtil.generateNow());
         }
         final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
         record.fieldStream()

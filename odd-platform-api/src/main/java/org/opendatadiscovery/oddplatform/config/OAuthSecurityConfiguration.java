@@ -22,7 +22,7 @@ import org.opendatadiscovery.oddplatform.dto.security.UserProviderRole;
 import org.opendatadiscovery.oddplatform.service.permission.PermissionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesRegistrationAdapter;
+import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientPropertiesMapper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,7 +56,9 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.spring5.context.webflux.SpringWebFluxContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring6.web.webflux.ISpringWebFluxWebExchange;
+import org.thymeleaf.spring6.web.webflux.SpringWebFluxWebApplication;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.security.UserProviderRole.USER;
@@ -86,14 +88,12 @@ public class OAuthSecurityConfiguration {
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
 
         ServerHttpSecurity sec = http
-            .cors().and()
-            .csrf().disable()
+            .cors(withDefaults())
+            .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
             .authorizeExchange(new AuthorizationCustomizer(permissionService, extractors))
             .oauth2Login(withDefaults())
-            .logout()
-            .logoutSuccessHandler(logoutHandler)
-            .and();
+            .logout(logoutSpec -> logoutSpec.logoutSuccessHandler(logoutHandler));
 
         if (clientRegistrations.size() > 1) {
             sec = sec
@@ -152,20 +152,20 @@ public class OAuthSecurityConfiguration {
     @Bean
     public InMemoryReactiveClientRegistrationRepository clientRegistrationRepository() {
         final OAuth2ClientProperties props = ODDOAuth2PropertiesConverter.convertOddProperties(properties);
-        final List<ClientRegistration> registrations =
-            OAuth2ClientPropertiesRegistrationAdapter.getClientRegistrations(props).values().stream()
-                .map(cr -> {
-                    final ODDOAuth2Properties.OAuth2Provider provider =
-                        properties.getClient().get(cr.getRegistrationId());
-                    if (provider.getProvider().equalsIgnoreCase(Provider.GOOGLE.name())
-                        && StringUtils.isNotEmpty(provider.getAllowedDomain())) {
-                        final String newUri =
-                            cr.getProviderDetails().getAuthorizationUri() + "?hd=" + provider.getAllowedDomain();
-                        return ClientRegistration.withClientRegistration(cr).authorizationUri(newUri).build();
-                    } else {
-                        return cr;
-                    }
-                }).toList();
+        final List<ClientRegistration> registrations = new OAuth2ClientPropertiesMapper(props)
+            .asClientRegistrations().values().stream()
+            .map(cr -> {
+                final ODDOAuth2Properties.OAuth2Provider provider =
+                    properties.getClient().get(cr.getRegistrationId());
+                if (provider.getProvider().equalsIgnoreCase(Provider.GOOGLE.name())
+                    && StringUtils.isNotEmpty(provider.getAllowedDomain())) {
+                    final String newUri =
+                        cr.getProviderDetails().getAuthorizationUri() + "?hd=" + provider.getAllowedDomain();
+                    return ClientRegistration.withClientRegistration(cr).authorizationUri(newUri).build();
+                } else {
+                    return cr;
+                }
+            }).toList();
         return new InMemoryReactiveClientRegistrationRepository(registrations);
     }
 
@@ -229,9 +229,10 @@ public class OAuthSecurityConfiguration {
         }
 
         protected Mono<byte[]> response(final ServerWebExchange exchange) {
-            final SpringWebFluxContext context =
-                new SpringWebFluxContext(exchange, null, resolveContextVariables(exchange));
-
+            final SpringWebFluxWebApplication app = SpringWebFluxWebApplication.buildApplication(null);
+            final ISpringWebFluxWebExchange webExchange = app.buildExchange(exchange,
+                exchange.getLocaleContext().getLocale(), MediaType.TEXT_HTML, StandardCharsets.UTF_8);
+            final WebContext context = new WebContext(webExchange, null, resolveContextVariables(exchange));
             return Mono.just(
                 this.templateEngine.process("oauth2_login.html", context).getBytes(StandardCharsets.UTF_8)
             );

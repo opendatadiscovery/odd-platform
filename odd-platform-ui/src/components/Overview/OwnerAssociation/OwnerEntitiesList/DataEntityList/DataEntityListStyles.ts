@@ -2,15 +2,17 @@ import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const ListLinksContainer = styled('ul')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  padding: 0,
-  listStyle: 'none',
-  height: '100%',
-  justifyContent: 'center',
-  '& li': { marginBottom: theme.spacing(1) },
-}));
+export const ListLinksContainer = styled('ul')<{ $isListEmpty: boolean }>(
+  ({ theme, $isListEmpty }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    padding: 0,
+    listStyle: 'none',
+    height: '100%',
+    justifyContent: $isListEmpty ? 'center' : 'flex-start',
+    '& li': { marginBottom: theme.spacing(1) },
+  })
+);
 
 export const ListLink = styled(Link)<{ $hasAlerts?: boolean }>(
   ({ theme, $hasAlerts }) => ({

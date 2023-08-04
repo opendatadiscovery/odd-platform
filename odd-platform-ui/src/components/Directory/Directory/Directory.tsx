@@ -5,6 +5,7 @@ import type { ErrorState } from 'redux/interfaces';
 import {
   AppErrorPage,
   AppLoadingPage,
+  EmptyContentPlaceholder,
   ScrollableContainer,
 } from 'components/shared/elements';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +13,13 @@ import DirectoryItem from './DirectoryItem/DirectoryItem';
 
 const Directory: FC = () => {
   const { t } = useTranslation();
-  const { isLoading, isError, error, data: dataSourceTypes } = useGetDataSourceTypes();
+  const {
+    isLoading,
+    isError,
+    error,
+    data: dataSourceTypes,
+    isSuccess,
+  } = useGetDataSourceTypes();
 
   return (
     <>
@@ -33,6 +40,10 @@ const Directory: FC = () => {
               />
             ))}
           </Grid>
+          <EmptyContentPlaceholder
+            isContentLoaded={isSuccess}
+            isContentEmpty={!dataSourceTypes?.length}
+          />
         </ScrollableContainer>
       )}
     </>

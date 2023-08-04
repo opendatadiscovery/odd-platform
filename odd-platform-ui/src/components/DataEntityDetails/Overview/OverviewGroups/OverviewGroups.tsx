@@ -5,6 +5,8 @@ import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getIsEntityStatusDeleted } from 'redux/selectors';
 import AddDataEntityToGroupForm from './AddDataEntityToGroupForm/AddDataEntityToGroupForm';
 import GroupItem from './GroupItem/GroupItem';
 import { GroupsCaptionContainer } from './OverviewGroupsStyles';
@@ -21,22 +23,25 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
   const { t } = useTranslation();
   const visibleLimit = 10;
   const [viewAll, setViewAll] = React.useState(false);
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   return (
     <div>
       <GroupsCaptionContainer>
         <Typography variant='h4'>{t('Data entity groups')}</Typography>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
-          <AddDataEntityToGroupForm
-            dataEntityId={dataEntityId}
-            btnCreateEl={
-              <Button
-                text={t('Add to group')}
-                buttonType='secondary-m'
-                startIcon={<AddIcon />}
-              />
-            }
-          />
+          {!isStatusDeleted && (
+            <AddDataEntityToGroupForm
+              dataEntityId={dataEntityId}
+              btnCreateEl={
+                <Button
+                  text={t('Add to group')}
+                  buttonType='secondary-m'
+                  startIcon={<AddIcon />}
+                />
+              }
+            />
+          )}
         </WithPermissions>
       </GroupsCaptionContainer>
       {dataEntityGroups?.length ? (
@@ -84,10 +89,12 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
         >
           <Typography variant='subtitle2'>{t('Not created')}.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
-            <AddDataEntityToGroupForm
-              dataEntityId={dataEntityId}
-              btnCreateEl={<Button text={t('Add to group')} buttonType='tertiary-sm' />}
-            />
+            {!isStatusDeleted && (
+              <AddDataEntityToGroupForm
+                dataEntityId={dataEntityId}
+                btnCreateEl={<Button text={t('Add to group')} buttonType='tertiary-sm' />}
+              />
+            )}
           </WithPermissions>
         </Grid>
       )}

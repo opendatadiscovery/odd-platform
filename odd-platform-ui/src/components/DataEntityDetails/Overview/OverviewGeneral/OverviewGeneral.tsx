@@ -20,9 +20,13 @@ const OverviewGeneral: React.FC = () => {
 
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
-  const createdAt =
-    dataEntityDetails.createdAt &&
-    dataEntityFormattedDateTime(dataEntityDetails.createdAt.getTime());
+  const sourceCreatedAt =
+    dataEntityDetails.sourceCreatedAt &&
+    dataEntityFormattedDateTime(dataEntityDetails.sourceCreatedAt.getTime());
+
+  const sourceUpdatedAt =
+    dataEntityDetails.sourceUpdatedAt &&
+    dataEntityFormattedDateTime(dataEntityDetails.sourceUpdatedAt.getTime());
 
   return (
     <Grid container>
@@ -51,11 +55,20 @@ const OverviewGeneral: React.FC = () => {
             </LabeledInfoItem>
           </Grid>
         )}
-        <Grid item sm={12}>
-          <LabeledInfoItem inline label={t('Created')} labelWidth={4}>
-            {createdAt}
-          </LabeledInfoItem>
-        </Grid>
+        {sourceCreatedAt && (
+          <Grid item sm={12}>
+            <LabeledInfoItem inline label={t('Created at')} labelWidth={4}>
+              {sourceCreatedAt}
+            </LabeledInfoItem>
+          </Grid>
+        )}
+        {sourceUpdatedAt && (
+          <Grid item sm={12}>
+            <LabeledInfoItem inline label={t('Updated at')} labelWidth={4}>
+              {sourceUpdatedAt}
+            </LabeledInfoItem>
+          </Grid>
+        )}
         <Grid item sm={12}>
           <LabeledInfoItem inline label={t('View count')} labelWidth={4}>
             {dataEntityDetails.viewCount}

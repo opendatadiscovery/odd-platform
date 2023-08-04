@@ -19,9 +19,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRepository;
 import org.opendatadiscovery.oddplatform.service.sla.SLACalculator;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.function.TupleUtils;
 
 import static reactor.function.TupleUtils.consumer;
 import static reactor.function.TupleUtils.function;
@@ -54,10 +52,10 @@ public class DataQualityServiceImpl implements DataQualityService {
 
     @Override
     public Mono<DataSetTestReport> getDatasetTestReport(final long datasetId) {
-        return reactiveDataEntityRepository.exists(datasetId)
+        return reactiveDataEntityRepository.existsIncludingSoftDeleted(datasetId)
             .filter(e -> e)
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset", datasetId)))
-            .flatMap(ign -> dataQualityRepository.getDatasetTestReport(datasetId))
+            .then(dataQualityRepository.getDatasetTestReport(datasetId))
             .map(dataQualityMapper::mapDatasetTestReport);
     }
 
@@ -66,8 +64,8 @@ public class DataQualityServiceImpl implements DataQualityService {
     public Mono<DataEntity> setDataQualityTestSeverity(final long dataQualityTest,
                                                        final long datasetId,
                                                        final DataQualityTestSeverity severity) {
-        return reactiveDataEntityRepository.exists(datasetId)
-            .zipWith(reactiveDataEntityRepository.exists(dataQualityTest))
+        return reactiveDataEntityRepository.existsIncludingSoftDeleted(datasetId)
+            .zipWith(reactiveDataEntityRepository.existsIncludingSoftDeleted(dataQualityTest))
             .doOnNext(consumer((datasetExists, dqTestExists) -> {
                 if (!datasetExists) {
                     throw new NotFoundException("Dataset", datasetId);
@@ -95,7 +93,7 @@ public class DataQualityServiceImpl implements DataQualityService {
     }
 
     private Mono<List<TestStatusWithSeverityDto>> getDatasetSLA(final long datasetId) {
-        return reactiveDataEntityRepository.exists(datasetId)
+        return reactiveDataEntityRepository.existsIncludingSoftDeleted(datasetId)
             .filter(e -> e)
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset", datasetId)))
             .thenMany(dataQualityRepository.getSLA(datasetId))

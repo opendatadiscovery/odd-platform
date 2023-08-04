@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getDatasetFieldById } from 'redux/selectors';
+import { getDatasetFieldById, getIsEntityStatusDeleted } from 'redux/selectors';
 import { Grid, Typography } from '@mui/material';
 import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
@@ -8,20 +8,23 @@ import { WithPermissions } from 'components/shared/contexts';
 import isEmpty from 'lodash/isEmpty';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';
 import { useTranslation } from 'react-i18next';
+import { useAppParams } from 'lib/hooks';
+import DatasetFieldDescription from './DatasetFieldDescription/DatasetFieldDescription';
 import DatasetFieldTerms from './DatasetFieldTerms/DatasetFieldTerms';
 import useStructure from '../../lib/useStructure';
 import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
 import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
-import DatasetFieldDescriptionForm from './DatasetFieldDescriptionForm/DatasetFieldDescriptionForm';
 import KeyFieldLabel from '../../../shared/KeyFieldLabel/KeyFieldLabel';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverview.styles';
 
 const DatasetFieldOverview: React.FC = () => {
   const { t } = useTranslation();
+  const { dataEntityId } = useAppParams();
   const { selectedFieldId, datasetFieldRowsCount } = useStructure();
 
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
   const field = useAppSelector(getDatasetFieldById(selectedFieldId));
   const isUniqStatsExists = Object.values(field?.stats || {}).filter(Boolean).length > 0;
 
@@ -30,6 +33,11 @@ const DatasetFieldOverview: React.FC = () => {
     isLoading: isMetricsLoading,
     isSuccess: isMetricsLoaded,
   } = useDataSetFieldMetrics({ datasetFieldId: field?.id });
+
+  const terms = useMemo(
+    () => field?.terms?.map(linkedTerm => linkedTerm.term),
+    [field?.terms]
+  );
 
   if (isEmpty(field)) return null;
 
@@ -63,71 +71,49 @@ const DatasetFieldOverview: React.FC = () => {
       {getOverviewSection(t('DEFAULT VALUE'), field.defaultValue)}
       {getOverviewSection(t('EXTERNAL DESCRIPTION'), field.externalDescription)}
       <S.SectionContainer container>
-        <Grid container justifyContent='space-between'>
-          <Typography variant='h5' color='texts.hint'>
-            {t('INTERNAL DESCRIPTION')}
-          </Typography>
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}
-            renderContent={({ isAllowedTo: editDescription }) => (
-              <DatasetFieldDescriptionForm
-                datasetFieldId={field.id}
-                description={field.internalDescription}
-                btnCreateEl={
-                  <Button
-                    text={
-                      field.internalDescription
-                        ? t('Edit description')
-                        : t('Add description')
-                    }
-                    disabled={!editDescription}
-                    buttonType='secondary-m'
-                    sx={{ mr: 1 }}
-                  />
-                }
-              />
-            )}
-          />
-        </Grid>
-        <Typography mt={1} variant='subtitle1'>
-          {field?.internalDescription || t('Description is not created yet')}
-        </Typography>
+        <DatasetFieldDescription
+          datasetFieldId={field.id}
+          description={field.internalDescription ?? ''}
+          terms={terms}
+          isStatusDeleted={isStatusDeleted}
+        />
       </S.SectionContainer>
       <S.SectionContainer container>
         <Grid container justifyContent='space-between'>
           <Typography variant='h5' color='texts.hint'>
             {t('LABELS')}
           </Typography>
-          <WithPermissions
-            permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
-            renderContent={({ isAllowedTo: editLabels }) => (
-              <DatasetFieldLabelsForm
-                datasetFieldId={field.id}
-                labels={field.labels}
-                btnCreateEl={
-                  <Button
-                    text={
-                      field.labels && field.labels?.length > 0
-                        ? t('Edit labels')
-                        : t('Add labels')
-                    }
-                    data-qa='edit_labels'
-                    disabled={!editLabels}
-                    buttonType='secondary-m'
-                    sx={{ mr: 1 }}
-                  />
-                }
-              />
-            )}
-          />
+          {!isStatusDeleted && (
+            <WithPermissions
+              permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
+              renderContent={({ isAllowedTo: editLabels }) => (
+                <DatasetFieldLabelsForm
+                  datasetFieldId={field.id}
+                  labels={field.labels}
+                  btnCreateEl={
+                    <Button
+                      text={
+                        field.labels && field.labels?.length > 0
+                          ? t('Edit labels')
+                          : t('Add labels')
+                      }
+                      data-qa='edit_labels'
+                      disabled={!editLabels}
+                      buttonType='secondary-m'
+                      sx={{ mr: 1 }}
+                    />
+                  }
+                />
+              )}
+            />
+          )}
         </Grid>
         <Grid container flexDirection='column' alignItems='flex-start'>
           {field.labels && field.labels?.length > 0 ? (
             <Grid container mt={1}>
-              {field.labels &&
-                field.labels.map(({ name, external }) => (
-                  <LabelItem key={name} labelName={name} systemLabel={external} />
-                ))}
+              {field.labels.map(({ name, external }) => (
+                <LabelItem key={name} labelName={name} systemLabel={external} />
+              ))}
             </Grid>
           ) : (
             <Typography mt={1} variant='subtitle1'>
@@ -136,8 +122,12 @@ const DatasetFieldOverview: React.FC = () => {
           )}
         </Grid>
       </S.SectionContainer>
-      <DatasetFieldOverviewEnums field={field} />
-      <DatasetFieldTerms fieldTerms={field?.terms} datasetFieldId={field.id} />
+      <DatasetFieldOverviewEnums field={field} isStatusDeleted={isStatusDeleted} />
+      <DatasetFieldTerms
+        fieldTerms={field?.terms}
+        datasetFieldId={field.id}
+        isStatusDeleted={isStatusDeleted}
+      />
       {field.metadata &&
         field.metadata?.length > 0 &&
         getOverviewSection(

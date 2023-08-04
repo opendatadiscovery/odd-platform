@@ -1,10 +1,9 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import java.time.LocalDate;
+import jakarta.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
@@ -18,16 +17,20 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntity
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDomainList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItemList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageChannelList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MessageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
@@ -40,7 +43,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertHaltConfigService;
@@ -83,13 +85,6 @@ public class DataEntityController implements DataEntityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteDataEntityGroup(final Long dataEntityGroupId,
-                                                            final ServerWebExchange exchange) {
-        return dataEntityGroupService.deleteDataEntityGroup(dataEntityGroupId)
-            .thenReturn(ResponseEntity.noContent().build());
-    }
-
-    @Override
     public Mono<ResponseEntity<DataEntityRef>> updateDataEntityGroup(final Long dataEntityGroupId,
                                                                      final Mono<DataEntityGroupFormData> formData,
                                                                      final ServerWebExchange exchange) {
@@ -103,6 +98,16 @@ public class DataEntityController implements DataEntityApi {
                                                                             final Integer page, final Integer size,
                                                                             final ServerWebExchange exchange) {
         return dataEntityService.getDataEntityGroupsChildren(dataEntityGroupId, page, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityGroupItemList>> getDataEntityGroupsItems(final Long dataEntityGroupId,
+                                                                                  final Integer page,
+                                                                                  final Integer size,
+                                                                                  final String query,
+                                                                                  final ServerWebExchange exchange) {
+        return dataEntityGroupService.listDEGItems(dataEntityGroupId, page, size, query)
             .map(ResponseEntity::ok);
     }
 
@@ -138,9 +143,9 @@ public class DataEntityController implements DataEntityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<TermRef>> addDataEntityTerm(final Long dataEntityId,
-                                                           final Mono<DataEntityTermFormData> dataEntityTermFormData,
-                                                           final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<LinkedTerm>> addDataEntityTerm(final Long dataEntityId,
+                                                              final Mono<DataEntityTermFormData> dataEntityTermFormData,
+                                                              final ServerWebExchange exchange) {
         return dataEntityTermFormData
             .flatMap(formData -> termService.linkTermWithDataEntity(formData.getTermId(), dataEntityId))
             .map(ResponseEntity::ok);
@@ -178,6 +183,15 @@ public class DataEntityController implements DataEntityApi {
                                                            final ServerWebExchange exchange) {
         return ownershipUpdateFormData
             .flatMap(form -> ownershipService.update(ownershipId, form))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityStatus>> updateStatus(final Long dataEntityId,
+                                                               final Mono<DataEntityStatusFormData> dataEntityStatus,
+                                                               final ServerWebExchange exchange) {
+        return dataEntityStatus
+            .flatMap(status -> dataEntityService.updateStatus(dataEntityId, status))
             .map(ResponseEntity::ok);
     }
 
@@ -332,8 +346,8 @@ public class DataEntityController implements DataEntityApi {
 
     @Override
     public Mono<ResponseEntity<Flux<Activity>>> getDataEntityActivity(final Long dataEntityId,
-                                                                      final LocalDate beginDate,
-                                                                      final LocalDate endDate,
+                                                                      final OffsetDateTime beginDate,
+                                                                      final OffsetDateTime endDate,
                                                                       final Integer size,
                                                                       final List<Long> userIds,
                                                                       final ActivityEventType eventType,

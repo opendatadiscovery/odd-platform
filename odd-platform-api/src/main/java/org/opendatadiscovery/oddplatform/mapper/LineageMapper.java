@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStream;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -23,6 +24,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
+import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,6 +35,8 @@ public abstract class LineageMapper {
 
     private DataEntityMapper dataEntityMapper;
     private DataSourceMapper dataSourceMapper;
+    private DataEntityStatusMapper dataEntityStatusMapper;
+    private DataEntityStaleDetector dataEntityStaleDetector;
 
     @Autowired
     public void setDataEntityMapper(final DataEntityMapper dataEntityMapper) {
@@ -42,6 +46,16 @@ public abstract class LineageMapper {
     @Autowired
     public void setDataSourceMapper(final DataSourceMapper dataSourceMapper) {
         this.dataSourceMapper = dataSourceMapper;
+    }
+
+    @Autowired
+    public void setDataEntityStatusMapper(final DataEntityStatusMapper dataEntityStatusMapper) {
+        this.dataEntityStatusMapper = dataEntityStatusMapper;
+    }
+
+    @Autowired
+    public void setDataEntityStaleDetector(final DataEntityStaleDetector dataEntityStaleDetector) {
+        this.dataEntityStaleDetector = dataEntityStaleDetector;
     }
 
     @Mapping(target = "root", source = "dataEntityDto")
@@ -99,6 +113,8 @@ public abstract class LineageMapper {
     @Mapping(target = "internalName", source = "dto.entity.dataEntity.internalName")
     @Mapping(target = "entityClasses", source = "dto", qualifiedByName = "entityClassesNamed")
     @Mapping(target = "dataSource", source = "dto", qualifiedByName = "dtoToDataSourceNamed")
+    @Mapping(target = "status", source = "dto", qualifiedByName = "dtoToDataEntityStatusNamed")
+    @Mapping(target = "isStale", source = "dto", qualifiedByName = "dtoToDataEntityIsStaleNamed")
     abstract DataEntityLineageNode mapNode(final LineageNodeDto dto, final List<Long> groupIds);
 
     @Named("entityClassesNamed")
@@ -115,6 +131,16 @@ public abstract class LineageMapper {
             ? dataSourceMapper.mapDto(new DataSourceDto(dto.entity().getDataSource(),
             dto.entity().getNamespace(), null))
             : null;
+    }
+
+    @Named("dtoToDataEntityStatusNamed")
+    DataEntityStatus mapStatus(final LineageNodeDto dto) {
+        return dataEntityStatusMapper.mapStatus(dto.entity().getDataEntity());
+    }
+
+    @Named("dtoToDataEntityIsStaleNamed")
+    Boolean mapIsStale(final LineageNodeDto dto) {
+        return dataEntityStaleDetector.isDataEntityStale(dto.entity().getDataEntity());
     }
 }
 

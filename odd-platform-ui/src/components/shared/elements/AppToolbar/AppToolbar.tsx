@@ -10,8 +10,8 @@ import { useAppPaths } from 'lib/hooks';
 import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/ToolbarTabs';
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
 import Button from 'components/shared/elements/Button/Button';
+import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
-import { AppSelect } from 'components/shared/elements/index';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGES } from 'lib/constants';
 

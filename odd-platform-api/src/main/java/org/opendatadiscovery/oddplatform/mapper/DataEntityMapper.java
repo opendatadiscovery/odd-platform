@@ -7,8 +7,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItem;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
@@ -29,13 +31,16 @@ public interface DataEntityMapper {
 
     DataEntityList mapPojos(final Page<DataEntityDimensionsDto> dataEntityDto);
 
-    DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
-                             final DataEntityClassDto classDto,
-                             final NamespacePojo namespacePojo);
+    DataEntityPojo mapCreatedDEGPojo(final DataEntityGroupFormData formData,
+                                     final DataEntityClassDto classDto,
+                                     final NamespacePojo namespacePojo);
 
     DataEntityPojo applyToPojo(final DataEntityGroupFormData formData,
                                final NamespacePojo namespacePojo,
                                final DataEntityPojo pojo);
+
+    DataEntityPojo applyStatus(final DataEntityPojo pojo,
+                               final DataEntityStatus status);
 
     DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dataEntityDetailsDto);
 
@@ -56,4 +61,7 @@ public interface DataEntityMapper {
 
     DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
                                      final Long filledEntitiesCount);
+
+    DataEntityGroupItem mapGroupItem(final DataEntityDimensionsDto dimensionsDto,
+                                     final boolean isUpperGroup);
 }

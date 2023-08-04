@@ -15,3 +15,4 @@ export { default as SelectedFilterOption } from 'components/shared/elements/Acti
 export { default as ActivityResultsList } from 'components/shared/elements/Activity/ActivityResultsList/ActivityResultsList';
 export { default as AlertActivityField } from 'components/shared/elements/Activity/ActivityFields/AlertActivityField/AlertActivityField';
 export { default as DatasetTermActivityField } from 'components/shared/elements/Activity/ActivityFields/DatasetTermActivityField/DatasetTermActivityField';
+export { default as EntityStatusActivityField } from 'components/shared/elements/Activity/ActivityFields/EntityStatusActivityField/EntityStatusActivityField';

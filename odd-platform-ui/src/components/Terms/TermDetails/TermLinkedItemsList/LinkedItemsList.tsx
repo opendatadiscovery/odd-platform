@@ -131,7 +131,7 @@ const LinkedItemsList: React.FC = () => {
           <Typography variant='caption'>{t('Created')}</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colxs'>
-          <Typography variant='caption'>{t('Last Update')}</Typography>
+          <Typography variant='caption'>{t('Updated')}</Typography>
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching && <LinkedItemsListSkeleton />}

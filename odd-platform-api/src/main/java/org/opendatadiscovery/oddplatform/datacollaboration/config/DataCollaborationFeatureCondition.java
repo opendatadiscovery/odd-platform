@@ -1,7 +1,5 @@
 package org.opendatadiscovery.oddplatform.datacollaboration.config;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import org.opendatadiscovery.oddplatform.service.feature.FeatureResolver;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -12,8 +10,6 @@ public class DataCollaborationFeatureCondition implements Condition {
     @SuppressWarnings("ConstantConditions")
     @Override
     public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        final OffsetDateTime offsetDateTime = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC);
-
         final MultiValueMap<String, Object> attributes =
             metadata.getAllAnnotationAttributes(ConditionalOnDataCollaboration.class.getName());
 

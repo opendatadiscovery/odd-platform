@@ -19,11 +19,11 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataEntityPojo> updateDEG(final DataEntityPojo dataEntityPojo);
 
-    Mono<Boolean> exists(final long dataEntityId);
+    Mono<Boolean> existsIncludingSoftDeleted(final long dataEntityId);
 
-    Mono<Boolean> existsByDataSourceId(final long dataSourceId);
+    Mono<Boolean> existsNonDeletedByDataSourceId(final long dataSourceId);
 
-    Mono<Boolean> existsByNamespaceId(final long namespaceId);
+    Mono<Boolean> existsNonDeletedByNamespaceId(final long namespaceId);
 
     Mono<Long> incrementViewCount(final long id);
 
@@ -33,17 +33,25 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataEntityDetailsDto> getDetails(final long id);
 
-    default Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns, boolean includeHollow) {
-        return listAllByOddrns(oddrns, includeHollow, null, null);
+    default Flux<DataEntityPojo> listByOddrns(final Collection<String> oddrns,
+                                              boolean includeHollow,
+                                              boolean includeDeleted) {
+        return listByOddrns(oddrns, includeHollow, includeDeleted, null, null);
     }
 
-    Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns,
-                                         boolean includeHollow,
-                                         final Integer page, final Integer size);
+    Flux<DataEntityPojo> listByOddrns(final Collection<String> oddrns,
+                                      boolean includeHollow,
+                                      boolean includeDeleted,
+                                      final Integer page,
+                                      final Integer size);
+
+    Flux<DataEntityPojo> getPojosForStatusSwitch();
 
     Mono<DataEntityDimensionsDto> getDataEntityWithDataSourceAndNamespace(final long dataEntityId);
 
     Flux<DataEntityDimensionsDto> getDataEntitiesWithDataSourceAndNamespace(final Collection<String> oddrns);
+
+    Mono<List<DataEntityDimensionsDto>> getDataEntityWithOwnership(final Collection<String> oddrns);
 
     Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn);
 
@@ -53,7 +61,7 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
                                                              final Integer page,
                                                              final Integer size);
 
-    Mono<Map<String, Long>> getChildrenCount(final Collection<String> groupOddrns);
+    Mono<Map<String, Long>> getExperimentRunsCount(final Collection<String> groupOddrns);
 
     Mono<Void> createHollow(final Collection<String> hollowOddrns);
 

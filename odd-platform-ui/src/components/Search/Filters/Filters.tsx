@@ -62,6 +62,7 @@ const Filters: React.FC = () => {
         <MultipleFilterItem key='ow' facetName='owners' name={t('Owner')} />
         <MultipleFilterItem key='tg' facetName='tags' name={t('Tag')} />
         <MultipleFilterItem key='gr' facetName='groups' name={t('Groups')} />
+        <MultipleFilterItem key='st' facetName='statuses' name='Statuses' />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text={t('Updating filters')} />

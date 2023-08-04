@@ -6,6 +6,7 @@ import {
   getDataEntityDetails,
   getDatasetTestReportTotal,
   getIsDataEntityBelongsToClass,
+  getIsEntityStatusDeleted,
 } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import {
@@ -45,6 +46,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   const { isDataset, isQualityTest, isTransformer, isDEG } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
@@ -65,19 +67,19 @@ const DataEntityDetailsTabs: React.FC = () => {
           dataEntityId,
           isDEG ? degLineageQueryString : lineageQueryString
         ),
-        hidden: isQualityTest,
+        hidden: isQualityTest || isStatusDeleted,
         value: DataEntityRoutes.lineage,
       },
       {
         name: t('Test reports'),
         link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset || !datasetQualityTestReportTotal,
+        hidden: !isDataset || !datasetQualityTestReportTotal || isStatusDeleted,
         value: DataEntityRoutes.testReports,
       },
       {
         name: t('History'),
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformer,
+        hidden: (!isQualityTest && !isTransformer) || isStatusDeleted,
         value: DataEntityRoutes.history,
       },
       {
@@ -86,11 +88,12 @@ const DataEntityDetailsTabs: React.FC = () => {
         value: DataEntityRoutes.alerts,
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
+        hidden: isStatusDeleted,
       },
       {
         name: t('Linked items'),
         link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden: !dataEntityDetails?.hasChildren,
+        hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
         value: DataEntityRoutes.linkedItems,
       },
       {
@@ -102,12 +105,13 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: t('Discussions'),
         link: dataEntityCollaborationPath(dataEntityId),
         value: DataEntityRoutes.discussions,
+        hidden: isStatusDeleted,
       },
     ],
     [
       dataEntityId,
       activityQueryString,
-      dataEntityDetails,
+      dataEntityDetails?.hasChildren,
       openAlertsCount,
       isDataset,
       isQualityTest,
@@ -116,6 +120,8 @@ const DataEntityDetailsTabs: React.FC = () => {
       isDEG,
       degLineageQueryString,
       lineageQueryString,
+      dataEntityDetails.status,
+      isStatusDeleted,
       t,
     ]
   );

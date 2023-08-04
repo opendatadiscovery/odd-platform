@@ -8,6 +8,7 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.housekeeping.config.HousekeepingTTLProperties;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT_CHUNK;
@@ -29,7 +30,7 @@ public class AlertHousekeepingJob implements HousekeepingJob {
                 .where(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED.getCode()))
                 .or(ALERT.STATUS.eq(AlertStatusEnum.RESOLVED_AUTOMATICALLY.getCode()))
                 .and(ALERT.STATUS_UPDATED_AT.lessOrEqual(
-                    DSL.currentLocalDateTime().minus(housekeepingTTLProperties.getResolvedAlertsDays())))
+                    DateTimeUtil.generateNow().minusDays(housekeepingTTLProperties.getResolvedAlertsDays())))
                 .fetch(ALERT.ID);
 
             dslContext.deleteFrom(ALERT_CHUNK)

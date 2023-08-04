@@ -37,13 +37,13 @@ class DatasetVersionMapperTest {
             new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
                 new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
                 new NamespaceMapperImpl(),
-                new OffsetDateTimeMapperImpl(),
+                new DateTimeMapperImpl(),
                 new OwnershipMapperImpl(
                     new OwnerMapperImpl(),
                     new TitleMapperImpl()
                 )
             )),
-            new OffsetDateTimeMapperImpl());
+            new DateTimeMapperImpl());
     private static final EasyRandom EASY_RANDOM;
 
     static {
@@ -105,7 +105,7 @@ class DatasetVersionMapperTest {
                 "parentOddrn", null, "structHash", 1L));
         final long expectedVersion = 1L;
         final EnrichedDataEntityIngestionDto dto =
-            new EnrichedDataEntityIngestionDto(expectedVersion, dataEntityIngestionDto);
+            new EnrichedDataEntityIngestionDto(expectedVersion, null, dataEntityIngestionDto);
         final DatasetVersionPojo actualDatasetVersionPojo =
             datasetVersionMapper.mapDatasetVersion(dto.getOddrn(), dto.getDataSet().structureHash(), expectedVersion);
 

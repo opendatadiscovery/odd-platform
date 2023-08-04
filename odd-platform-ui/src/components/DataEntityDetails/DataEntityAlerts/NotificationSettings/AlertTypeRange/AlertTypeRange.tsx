@@ -7,7 +7,7 @@ import { getDataEntityAlertConfig } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { type FormData } from '../NotificationSettings';
 
-type TimeRange = (30 | 60 | 180 | 1440 | 10080) | number;
+type TimeRange = number;
 type StringTimeRange = 'Half an hour' | 'Hour' | '3 hours' | '1 day' | 'Week';
 
 interface AlertTypeRangeProps {
@@ -47,7 +47,7 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
   });
 
   const getEndTimeInMs = (value: string | number) => {
-    const rangeInMinutes = Number(value) ?? 0;
+    const rangeInMinutes = Number(value ?? 0);
     const rangeInMs = minutesToMilliseconds(rangeInMinutes);
     const currentDateInMs = new Date().getTime();
 
@@ -83,7 +83,7 @@ const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
   );
 
   const handleRadioChange = (value: string, onChange: (val: unknown) => void) => {
-    const rangeInMinutes = Number(value) ?? 0;
+    const rangeInMinutes = Number(value ?? 0);
     const endDateInMs = getEndTimeInMs(value);
 
     setTimeRange(rangeInMinutes);

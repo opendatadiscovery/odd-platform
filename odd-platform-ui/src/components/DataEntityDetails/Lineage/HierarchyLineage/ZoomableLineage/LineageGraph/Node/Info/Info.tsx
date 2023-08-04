@@ -134,11 +134,7 @@ const Info = React.memo<InfoProps>(
                 streamType={streamType}
                 rootNodeId={rootNodeId}
                 openBtnEl={
-                  <ItemsButton
-                    text={`${nodesRelatedWithDEG && nodesRelatedWithDEG.length} ${t(
-                      'entities'
-                    )}`}
-                  />
+                  <ItemsButton text={`${nodesRelatedWithDEG.length} ${t('entities')}`} />
                 }
               />
             </>

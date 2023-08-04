@@ -7,4 +7,6 @@ import reactor.core.publisher.Mono;
 public interface DataEntityStatisticsService {
     Mono<DataEntityStatisticsPojo> updateStatistics(final Long totalDelta,
                                                     final Map<Integer, Map<Integer, Long>> entityDelta);
+
+    Mono<DataEntityStatisticsPojo> getStatistics();
 }

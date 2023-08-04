@@ -3,18 +3,22 @@ import { Grid, Typography } from '@mui/material';
 import {
   Button,
   EntityClassItem,
+  EntityStatus,
   EntityTypeItem,
   LabelItem,
+  MetadataStale,
   WithFeature,
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { type DataEntityDetails, Feature, Permission } from 'generated-sources';
 import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getIsDataEntityBelongsToClass, getIsEntityStatusDeleted } from 'redux/selectors';
 import { useTranslation } from 'react-i18next';
+import DataEntityGroupForm from '../DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
-import DataEntityGroupControls from '../DataEntityGroup/DataEntityGroupControls/DataEntityGroupControls';
 
 interface DataEntityDetailsHeaderProps {
   dataEntityId: DataEntityDetails['id'];
@@ -23,51 +27,52 @@ interface DataEntityDetailsHeaderProps {
   entityClasses: DataEntityDetails['entityClasses'];
   type: DataEntityDetails['type'];
   manuallyCreated: DataEntityDetails['manuallyCreated'];
-  updatedAt: DataEntityDetails['updatedAt'];
+  lastIngestedAt: DataEntityDetails['lastIngestedAt'];
+  status: DataEntityDetails['status'];
+  isStale: DataEntityDetails['isStale'];
 }
 const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
-  updatedAt,
+  lastIngestedAt,
   entityClasses,
   manuallyCreated,
   externalName,
   internalName,
   type,
   dataEntityId,
+  status,
+  isStale,
 }) => {
   const { t } = useTranslation();
   const { formatDistanceToNowStrict } = useAppDateTime();
+  const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
+  const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
-  const entityUpdatedAt = React.useMemo(
-    () =>
-      updatedAt && (
-        <>
-          <TimeGapIcon />
-          <Typography variant='body1' sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-            {formatDistanceToNowStrict(updatedAt, { addSuffix: true })}
-          </Typography>
-        </>
-      ),
-    [updatedAt]
-  );
+  const entityLastIngestedAt = lastIngestedAt ? (
+    <>
+      {isStale ? (
+        <MetadataStale isStale={isStale} lastIngestedAt={lastIngestedAt} />
+      ) : (
+        <TimeGapIcon />
+      )}
+      <Typography variant='body1' sx={{ mx: 1, whiteSpace: 'nowrap' }}>
+        {formatDistanceToNowStrict(lastIngestedAt, { addSuffix: true })}
+      </Typography>
+    </>
+  ) : null;
 
-  const originalName = React.useMemo(
-    () =>
-      internalName &&
-      externalName && (
-        <Grid container alignItems='center' width='auto'>
-          <LabelItem labelName={t('Original')} variant='body1' />
-          <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
-            {externalName}
-          </Typography>
-        </Grid>
-      ),
-    [internalName, externalName]
+  const originalName = internalName && externalName && (
+    <Grid container alignItems='center' width='auto'>
+      <LabelItem labelName={t('Original')} variant='body1' />
+      <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+        {externalName}
+      </Typography>
+    </Grid>
   );
 
   return (
     <Grid container flexDirection='column' alignItems='flex-start'>
       <Grid container alignItems='center' flexWrap='nowrap'>
-        <Grid container item lg={9} alignItems='center' flexWrap='nowrap'>
+        <Grid container item lg={7} alignItems='center' flexWrap='nowrap'>
           <Typography variant='h0' noWrap sx={{ mr: 1 }}>
             {internalName || externalName}
           </Typography>
@@ -79,35 +84,50 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
             />
           ))}
           {type && <EntityTypeItem sx={{ ml: 1 }} entityTypeName={type.name} />}
-          <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
-            <InternalNameFormDialog
-              btnCreateEl={
-                <Button
-                  text={internalName ? t('Edit') : t('Add business name')}
-                  data-qa='add_business_name'
-                  buttonType='tertiary-m'
-                  sx={{ ml: 1 }}
-                  startIcon={internalName ? <EditIcon /> : <AddIcon />}
-                />
-              }
-            />
-          </WithPermissions>
+          {!isStatusDeleted && (
+            <WithPermissions permissionTo={Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE}>
+              <InternalNameFormDialog
+                btnCreateEl={
+                  <Button
+                    text={internalName ? t('Edit') : t('Add business name')}
+                    data-qa='add_business_name'
+                    buttonType='tertiary-m'
+                    sx={{ ml: 1 }}
+                    startIcon={internalName ? <EditIcon /> : <AddIcon />}
+                  />
+                }
+              />
+            </WithPermissions>
+          )}
         </Grid>
         <Grid
           container
           item
-          lg={3}
+          lg={5}
           sx={{ ml: 1 }}
           alignItems='center'
           flexWrap='nowrap'
           justifyContent='flex-end'
         >
-          {entityUpdatedAt}
-          {manuallyCreated && (
-            <DataEntityGroupControls
-              internalName={internalName}
-              externalName={externalName}
-            />
+          {entityLastIngestedAt}
+          <WithPermissions
+            permissionTo={Permission.DATA_ENTITY_STATUS_UPDATE}
+            renderContent={({ isAllowedTo }) => (
+              <EntityStatus
+                entityStatus={status}
+                selectable={isAllowedTo}
+                isPropagatable={isDEG}
+              />
+            )}
+          />
+          {manuallyCreated && !isStatusDeleted && (
+            <WithPermissions permissionTo={Permission.DATA_ENTITY_GROUP_UPDATE}>
+              <DataEntityGroupForm
+                btnCreateEl={
+                  <Button buttonType='secondary-lg' text='Edit group' sx={{ ml: 2 }} />
+                }
+              />
+            </WithPermissions>
           )}
           <WithFeature featureName={Feature.DATA_COLLABORATION}>
             <CreateMessageForm

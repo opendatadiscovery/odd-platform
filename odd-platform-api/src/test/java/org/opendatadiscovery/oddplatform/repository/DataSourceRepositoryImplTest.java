@@ -278,31 +278,6 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
-    @Test
-    @DisplayName("Updates oddrn for datasource")
-    public void testInjectOddrn() {
-        final var token = tokenRepository.create(new TokenPojo().setValue(UUID.randomUUID().toString()))
-            .blockOptional()
-            .orElseThrow();
-        final DataSourcePojo createdDatasource = dataSourceRepository
-            .create(createDataSourcePojo(null, token.tokenPojo().getId()))
-            .blockOptional()
-            .orElseThrow();
-
-        final String newOddrn = UUID.randomUUID().toString();
-        dataSourceRepository.injectOddrn(createdDatasource.getId(), newOddrn)
-            .as(StepVerifier::create)
-            .assertNext(pojo -> {
-                assertThat(pojo)
-                    .usingRecursiveComparison()
-                    .ignoringFields("oddrn", "updatedAt")
-                    .isEqualTo(createdDatasource);
-                assertThat(pojo.getOddrn()).isEqualTo(newOddrn);
-                assertThat(pojo.getUpdatedAt()).isNotEqualTo(createdDatasource.getUpdatedAt());
-            })
-            .verifyComplete();
-    }
-
     private Map<String, DataSourceDto> generateDataSources(final NamespacePojo namespace1,
                                                            final NamespacePojo namespace2,
                                                            final TokenDto token) {

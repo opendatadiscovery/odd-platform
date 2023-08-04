@@ -21,19 +21,15 @@ public interface ActivityParameterNames {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    interface TermAssigned {
+    interface StatusUpdated {
+        String DATA_ENTITY_POJO = "pojo";
+    }
+
+    interface TermAssignment {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 
-    interface TermAssignmentDeleted {
-        String DATA_ENTITY_ID = "dataEntityId";
-    }
-
-    interface FieldTermAssigned {
-        String DATASET_FIELD_ID = "datasetFieldId";
-    }
-
-    interface FieldTermAssignmentDeleted {
+    interface FieldTermAssignment {
         String DATASET_FIELD_ID = "datasetFieldId";
     }
 
@@ -50,10 +46,6 @@ public interface ActivityParameterNames {
     }
 
     interface CustomGroupUpdated {
-        String DATA_ENTITY_ID = "dataEntityId";
-    }
-
-    interface CustomGroupDeleted {
         String DATA_ENTITY_ID = "dataEntityId";
     }
 

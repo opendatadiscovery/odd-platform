@@ -49,7 +49,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   const handleSetRange = React.useCallback(([beginDate, endDate]: Date[]) => {
     setIsRangeCorrect(true);
     if (!endDate) setIsRangeCorrect(false);
-    setRange({ rangeStart: beginDate, rangeEnd: endDate });
+    setRange({ rangeStart: startOfDay(beginDate), rangeEnd: startOfDay(endDate) });
   }, []);
 
   type DisableSelectedDateParams = {
@@ -88,9 +88,9 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         numberOfMonths={2}
         mapDays={disableSelectedDate}
         render={<S.AppDateRangeInputIcon />}
-        onChange={([begin, end]: DateObject[]) =>
-          handleSetRange([begin?.toDate(), end?.toDate()])
-        }
+        onChange={([begin, end]: DateObject[]) => {
+          handleSetRange([begin?.toDate(), end?.toDate()]);
+        }}
         value={[rangeStart, rangeEnd]}
         plugins={[
           <AppDateRangePickerFooter

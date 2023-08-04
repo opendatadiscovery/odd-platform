@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
@@ -54,8 +53,7 @@ public class ReactiveTermOwnershipRepositoryImpl implements ReactiveTermOwnershi
 
     @Override
     public Mono<TermOwnershipPojo> delete(final long ownershipId) {
-        final var query = DSL.update(TERM_OWNERSHIP)
-            .set(TERM_OWNERSHIP.DELETED_AT, LocalDateTime.now())
+        final var query = DSL.deleteFrom(TERM_OWNERSHIP)
             .where(TERM_OWNERSHIP.ID.eq(ownershipId))
             .returning();
         return jooqReactiveOperations.mono(query)
@@ -77,9 +75,7 @@ public class ReactiveTermOwnershipRepositoryImpl implements ReactiveTermOwnershi
         final var query = jooqQueryHelper.selectExists(
             DSL.selectFrom(TERM_OWNERSHIP)
                 .where(TERM_OWNERSHIP.OWNER_ID.eq(ownerId))
-                .and(TERM_OWNERSHIP.DELETED_AT.isNull())
         );
-
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
 }

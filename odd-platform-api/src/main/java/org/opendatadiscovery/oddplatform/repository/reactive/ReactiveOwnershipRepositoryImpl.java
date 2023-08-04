@@ -127,15 +127,6 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
     }
 
     @Override
-    public Flux<OwnershipPojo> deleteByDataEntityId(final long dataEntityId) {
-        final var query = DSL.deleteFrom(OWNERSHIP)
-            .where(OWNERSHIP.DATA_ENTITY_ID.eq(dataEntityId))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(OwnershipPojo.class));
-    }
-
-    @Override
     public Flux<OwnershipDto> getOwnershipsByDataEntityId(final long dataEntityId) {
         final var query = DSL.select(OWNERSHIP.asterisk())
             .select(TITLE.asterisk())

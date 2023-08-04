@@ -1,6 +1,5 @@
 import React from 'react';
 import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
-import { isComplexField } from 'lib/helpers';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
 import TruncateMarkup from 'react-truncate-markup';
 import { Button } from 'components/shared/elements';
@@ -22,17 +21,16 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
 }) => {
   const typesCountList = Object.entries(typesCount);
 
-  const getTruncateMarkupAtom = ([type, count]: [string, number]) =>
-    isComplexField(type as DataSetFieldTypeTypeEnum) ? null : (
-      <TruncateMarkup.Atom key={type}>
-        <DatasetStructureTypeCountLabel
-          sx={{ mx: 0.5 }}
-          typeName={type as DataSetFieldTypeTypeEnum}
-          count={count}
-          fieldsCount={fieldsCount}
-        />
-      </TruncateMarkup.Atom>
-    );
+  const getTruncateMarkupAtom = ([type, count]: [string, number]) => (
+    <TruncateMarkup.Atom key={type}>
+      <DatasetStructureTypeCountLabel
+        sx={{ mx: 0.5 }}
+        typeName={type as DataSetFieldTypeTypeEnum}
+        count={count}
+        fieldsCount={fieldsCount}
+      />
+    </TruncateMarkup.Atom>
+  );
 
   const truncateButton = (
     showOrHide: boolean,
@@ -42,7 +40,7 @@ const DatasetStructureTypeCounts: React.FC<DatasetStructureTypeCountsProps> = ({
     <Button
       text={
         !showOrHide && listLength && renderedListLength
-          ? `Show ${listLength - renderedListLength - 1} hidden`
+          ? `Show ${listLength - renderedListLength} hidden`
           : 'Hide'
       }
       buttonType='tertiary-m'

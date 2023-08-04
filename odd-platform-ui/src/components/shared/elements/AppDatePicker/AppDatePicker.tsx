@@ -6,7 +6,6 @@ import { DatePicker, type DatePickerProps } from '@mui/x-date-pickers';
 import Input from 'components/shared/elements/Input/Input';
 
 export const metadataDatePickerInputFormat = 'd MMM yyyy';
-export const metadataBackendDateFormat = "yyyy-MM-dd'T'HH:mm:ss";
 export const minDate = new Date(1900, 0, 1);
 export const maxDate = new Date(2099, 11, 31);
 

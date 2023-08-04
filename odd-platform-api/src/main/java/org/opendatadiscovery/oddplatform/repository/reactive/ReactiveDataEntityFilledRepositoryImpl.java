@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,11 @@ public class ReactiveDataEntityFilledRepositoryImpl implements ReactiveDataEntit
 
     @Override
     public Mono<Long> getFilledDataEntitiesCount() {
-        return jooqReactiveOperations.mono(DSL.selectCount().from(DATA_ENTITY_FILLED))
+        final var query = DSL.selectCount()
+            .from(DATA_ENTITY_FILLED)
+            .join(DATA_ENTITY).on(DATA_ENTITY_FILLED.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .where(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
+        return jooqReactiveOperations.mono(query)
             .map(r -> r.into(Long.class));
     }
 

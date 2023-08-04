@@ -146,3 +146,6 @@ export const LANGUAGES: Lang[] = [
   { label: 'English', code: 'en' },
   { label: 'Japanese', code: 'ja' },
 ];
+
+// regexp
+export const TERM_PATTERN = /\[\[([^:\]]+):([^\]]+)\]\]/g;

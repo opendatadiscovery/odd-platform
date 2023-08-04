@@ -22,8 +22,8 @@ public class DataEntityIngestionDto {
     protected String oddrn;
     protected long dataSourceId;
     protected String externalDescription;
-    protected OffsetDateTime createdAt;
-    protected OffsetDateTime updatedAt;
+    protected OffsetDateTime sourceCreatedAt;
+    protected OffsetDateTime sourceUpdatedAt;
     protected Set<DataEntityClassDto> entityClasses;
     protected DataEntityTypeDto type;
     protected Map<String, Object> metadata;

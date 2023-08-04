@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
+import org.opendatadiscovery.oddplatform.service.DataEntityStaleDetector;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 
@@ -27,20 +28,21 @@ class LineageMapperTest {
     private static final EasyRandom EASY_RANDOM;
 
     static {
-        final EasyRandomParameters EASY_RANDOMParameters = new EasyRandomParameters()
+        final EasyRandomParameters params = new EasyRandomParameters()
             .scanClasspathForConcreteTypes(true)
             .excludeField(named("hasChildren"))
+            .randomize(f -> f.getName().equals("status") && f.getType().isAssignableFrom(Short.class), () -> (short) 1)
             .randomizationDepth(10)
             .objectFactory(new RecordFactory());
 
-        EASY_RANDOM = new EasyRandom(EASY_RANDOMParameters);
+        EASY_RANDOM = new EasyRandom(params);
     }
 
     @BeforeEach
     void setUp() {
         final TermMapperImpl termMapper = new TermMapperImpl(
             new NamespaceMapperImpl(),
-            new OffsetDateTimeMapperImpl(),
+            new DateTimeMapperImpl(),
             new OwnershipMapperImpl(
                 new OwnerMapperImpl(),
                 new TitleMapperImpl()
@@ -51,7 +53,7 @@ class LineageMapperTest {
                 new DataSourceMapperImpl(
                     new NamespaceMapperImpl(),
                     new TokenMapperImpl(
-                        new OffsetDateTimeMapperImpl()
+                        new DateTimeMapperImpl()
                     )
                 ),
                 new OwnershipMapperImpl(
@@ -67,20 +69,25 @@ class LineageMapperTest {
                         new LabelMapperImpl(), new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()),
                         termMapper
                     ),
-                    new OffsetDateTimeMapperImpl()
+                    new DateTimeMapperImpl()
                 ),
                 new DataEntityRunMapperImpl(
-                    new OffsetDateTimeMapperImpl()
+                    new DateTimeMapperImpl()
                 ),
-                termMapper
+                termMapper,
+                new DateTimeMapperImpl(),
+                new DataEntityStatusMapper(),
+                new DataEntityStaleDetector()
             )
         );
         mapper.setDataSourceMapper(
             new DataSourceMapperImpl(
                 new NamespaceMapperImpl(),
-                new TokenMapperImpl(new OffsetDateTimeMapperImpl())
+                new TokenMapperImpl(new DateTimeMapperImpl())
             )
         );
+        mapper.setDataEntityStaleDetector(new DataEntityStaleDetector());
+        mapper.setDataEntityStatusMapper(new DataEntityStatusMapper());
     }
 
     @Test

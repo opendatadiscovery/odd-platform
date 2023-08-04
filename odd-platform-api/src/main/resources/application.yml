@@ -145,6 +145,7 @@ housekeeping:
   ttl:
     resolved_alerts_days: 30
     search_facets_days: 30
+    data_entity_delete_days: 30
 
 notifications:
   enabled: false
@@ -172,8 +173,9 @@ datacollaboration:
 #  slack-oauth-token:
 
 odd:
-  platform-base-url: http://localhost:8080
+#  platform-base-url:
   tenant-id:
+  data-entity-stale-period: 7 # days
   activity:
     partition-period: 30
 

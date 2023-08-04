@@ -1,21 +1,15 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.SelectHavingStep;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
-import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
+import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithLabelsDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetFieldRecord;
@@ -98,39 +92,25 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    public Mono<DatasetFieldDto> getDto(final long datasetFieldId) {
-        final DatasetField df = DATASET_FIELD.as("df");
-        final DatasetField df2 = DATASET_FIELD.as("df2");
-
-        final List<Field<?>> selectFields = Stream.of(df.fields(), new Field<?>[] {df2.ID.as("parent_field_id")})
-            .flatMap(Arrays::stream)
-            .toList();
-
-        final SelectHavingStep<Record> query = DSL.select(selectFields)
+    public Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithLabels(final long datasetFieldId) {
+        final var query = DSL.select(DATASET_FIELD.fields())
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
-            .from(df)
-            .leftJoin(df2).on(df.PARENT_FIELD_ODDRN.eq(df2.ODDRN))
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(df.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
+            .from(DATASET_FIELD)
+            .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
-            .where(df.ID.eq(datasetFieldId))
-            .groupBy(selectFields);
+            .where(DATASET_FIELD.ID.eq(datasetFieldId))
+            .groupBy(DATASET_FIELD.fields());
 
         return jooqReactiveOperations.mono(query)
-            .map(this::mapRecordToDatasetFieldDto);
+            .map(this::mapRecordToDatasetFieldWithLabels);
     }
 
     @NotNull
-    private DatasetFieldDto mapRecordToDatasetFieldDto(final Record datasetFieldRecord) {
+    private DatasetFieldWithLabelsDto mapRecordToDatasetFieldWithLabels(final Record datasetFieldRecord) {
         final DatasetFieldPojo pojo = datasetFieldRecord.into(DatasetFieldPojo.class);
-        final Long parentFieldId = datasetFieldRecord.get("parent_field_id", Long.class);
-
         final Set<LabelPojo> labels = jooqRecordHelper
             .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
 
-        return DatasetFieldDto.builder()
-            .datasetFieldPojo(pojo)
-            .labels(labels.stream().map(l -> new LabelDto(l, false)).toList())
-            .parentFieldId(parentFieldId)
-            .build();
+        return new DatasetFieldWithLabelsDto(pojo, labels);
     }
 }

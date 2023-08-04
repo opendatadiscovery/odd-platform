@@ -9,8 +9,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUp
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
-import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.EnumValueService;
 import org.opendatadiscovery.oddplatform.service.MetricService;
@@ -36,7 +36,7 @@ public class DatasetFieldController implements DatasetFieldApi {
         final Mono<DatasetFieldDescriptionUpdateFormData> formDataMono,
         final ServerWebExchange exchange) {
         return formDataMono
-            .flatMap(formData -> datasetFieldService.updateDatasetFieldDescription(datasetFieldId, formData))
+            .flatMap(formData -> datasetFieldService.updateDescription(datasetFieldId, formData))
             .map(ResponseEntity::ok);
     }
 
@@ -74,9 +74,9 @@ public class DatasetFieldController implements DatasetFieldApi {
     }
 
     @Override
-    public Mono<ResponseEntity<TermRef>> addDatasetFieldTerm(final Long datasetFieldId,
-                                                             final Mono<DatasetFieldTermFormData> formData,
-                                                             final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<LinkedTerm>> addDatasetFieldTerm(final Long datasetFieldId,
+                                                                final Mono<DatasetFieldTermFormData> formData,
+                                                                final ServerWebExchange exchange) {
         return formData
             .flatMap(fd -> termService.linkTermWithDatasetField(fd.getTermId(), datasetFieldId))
             .map(ResponseEntity::ok);

@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service.activity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -22,8 +21,9 @@ import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.mapper.ActivityMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveActivityRepository;
-import org.opendatadiscovery.oddplatform.service.DataEntityService;
+import org.opendatadiscovery.oddplatform.service.DataEntityRelationsService;
 import org.opendatadiscovery.oddplatform.service.activity.handler.ActivityHandler;
+import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,14 +35,14 @@ import static reactor.function.TupleUtils.function;
 @Slf4j
 public class ActivityServiceImpl implements ActivityService {
     private final ReactiveActivityRepository activityRepository;
-    private final DataEntityService dataEntityService;
+    private final DataEntityRelationsService dataEntityRelationsService;
     private final AuthIdentityProvider authIdentityProvider;
     private final ActivityMapper activityMapper;
     private final List<ActivityHandler> handlers;
 
     @Override
     public Mono<Void> createActivityEvent(final ActivityCreateEvent event) {
-        final LocalDateTime activityCreateTime = LocalDateTime.now();
+        final LocalDateTime activityCreateTime = DateTimeUtil.generateNow();
         return authIdentityProvider.getCurrentUser()
             .map(UserDto::username)
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
@@ -53,7 +53,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Mono<Void> createActivityEvents(final List<ActivityCreateEvent> events) {
-        final LocalDateTime activityCreateTime = LocalDateTime.now();
+        final LocalDateTime activityCreateTime = DateTimeUtil.generateNow();
         return authIdentityProvider.getCurrentUser()
             .map(UserDto::username)
             .flatMapMany(username -> Flux.fromStream(mapEventsToPojos(events, activityCreateTime, username)))
@@ -83,8 +83,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Flux<Activity> getActivityList(final LocalDate beginDate,
-                                          final LocalDate endDate,
+    public Flux<Activity> getActivityList(final OffsetDateTime beginDate,
+                                          final OffsetDateTime endDate,
                                           final Integer size,
                                           final Long datasourceId,
                                           final Long namespaceId,
@@ -117,8 +117,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Flux<Activity> getDataEntityActivityList(final LocalDate beginDate,
-                                                    final LocalDate endDate,
+    public Flux<Activity> getDataEntityActivityList(final OffsetDateTime beginDate,
+                                                    final OffsetDateTime endDate,
                                                     final Integer size,
                                                     final Long dataEntityId,
                                                     final List<Long> userIds,
@@ -136,8 +136,8 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Mono<ActivityCountInfo> getActivityCounts(final LocalDate beginDate,
-                                                     final LocalDate endDate,
+    public Mono<ActivityCountInfo> getActivityCounts(final OffsetDateTime beginDate,
+                                                     final OffsetDateTime endDate,
                                                      final Long datasourceId,
                                                      final Long namespaceId,
                                                      final List<Long> tagIds,
@@ -165,8 +165,8 @@ public class ActivityServiceImpl implements ActivityService {
             ));
     }
 
-    private Flux<Activity> fetchAllActivities(final LocalDate beginDate,
-                                              final LocalDate endDate,
+    private Flux<Activity> fetchAllActivities(final OffsetDateTime beginDate,
+                                              final OffsetDateTime endDate,
                                               final Integer size,
                                               final Long datasourceId,
                                               final Long namespaceId,
@@ -181,8 +181,8 @@ public class ActivityServiceImpl implements ActivityService {
             .map(activityMapper::mapToActivity);
     }
 
-    private Flux<Activity> fetchMyActivities(final LocalDate beginDate,
-                                             final LocalDate endDate,
+    private Flux<Activity> fetchMyActivities(final OffsetDateTime beginDate,
+                                             final OffsetDateTime endDate,
                                              final Integer size,
                                              final Long datasourceId,
                                              final Long namespaceId,
@@ -198,8 +198,8 @@ public class ActivityServiceImpl implements ActivityService {
             .switchIfEmpty(Flux.empty());
     }
 
-    private Flux<Activity> fetchDependentActivities(final LocalDate beginDate,
-                                                    final LocalDate endDate,
+    private Flux<Activity> fetchDependentActivities(final OffsetDateTime beginDate,
+                                                    final OffsetDateTime endDate,
                                                     final Integer size,
                                                     final Long datasourceId,
                                                     final Long namespaceId,
@@ -209,15 +209,15 @@ public class ActivityServiceImpl implements ActivityService {
                                                     final Long lastEventId,
                                                     final OffsetDateTime lastEventDateTime,
                                                     final LineageStreamKind lineageStreamKind) {
-        return dataEntityService.getDependentDataEntityOddrns(lineageStreamKind)
+        return dataEntityRelationsService.getDependentDataEntityOddrns(lineageStreamKind)
             .flatMapMany(oddrns -> activityRepository.findDependentActivities(beginDate, endDate, size, datasourceId,
                 namespaceId, tagIds, userIds, eventType, oddrns, lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
             .switchIfEmpty(Flux.empty());
     }
 
-    private Mono<Long> getTotalCount(final LocalDate beginDate,
-                                     final LocalDate endDate,
+    private Mono<Long> getTotalCount(final OffsetDateTime beginDate,
+                                     final OffsetDateTime endDate,
                                      final Long datasourceId,
                                      final Long namespaceId,
                                      final List<Long> tagIds,
@@ -229,8 +229,8 @@ public class ActivityServiceImpl implements ActivityService {
             .defaultIfEmpty(0L);
     }
 
-    private Mono<Long> getMyObjectActivitiesCount(final LocalDate beginDate,
-                                                  final LocalDate endDate,
+    private Mono<Long> getMyObjectActivitiesCount(final OffsetDateTime beginDate,
+                                                  final OffsetDateTime endDate,
                                                   final Long datasourceId,
                                                   final Long namespaceId,
                                                   final List<Long> tagIds,
@@ -243,15 +243,15 @@ public class ActivityServiceImpl implements ActivityService {
             .defaultIfEmpty(0L);
     }
 
-    private Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
-                                                   final LocalDate endDate,
+    private Mono<Long> getDependentActivitiesCount(final OffsetDateTime beginDate,
+                                                   final OffsetDateTime endDate,
                                                    final Long datasourceId,
                                                    final Long namespaceId,
                                                    final List<Long> tagIds,
                                                    final List<Long> userIds,
                                                    final ActivityEventTypeDto eventType,
                                                    final LineageStreamKind lineageStreamKind) {
-        return dataEntityService.getDependentDataEntityOddrns(lineageStreamKind)
+        return dataEntityRelationsService.getDependentDataEntityOddrns(lineageStreamKind)
             .flatMap(oddrns -> activityRepository.getDependentActivitiesCount(beginDate, endDate, datasourceId,
                 namespaceId, tagIds, userIds, eventType, oddrns))
             .defaultIfEmpty(0L);

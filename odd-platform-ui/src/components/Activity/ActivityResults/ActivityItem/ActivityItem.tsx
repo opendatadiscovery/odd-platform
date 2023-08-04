@@ -14,6 +14,7 @@ import {
   StringActivityField,
   TermActivityField,
   DatasetTermActivityField,
+  EntityStatusActivityField,
 } from 'components/shared/elements/Activity';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
@@ -152,32 +153,16 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           plural
         />
       )}
-      {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNED]) && (
+      {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_UPDATED]) && (
         <TermActivityField
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
           hideAllDetails={hideAllDetails}
-          eventType='assigned'
+          eventType='updated'
           stateDirection='column'
         />
       )}
-      {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_DELETED]) && (
-        <TermActivityField
-          oldState={activity.oldState.terms}
-          newState={activity.newState.terms}
-          hideAllDetails={hideAllDetails}
-          eventType='deleted'
-          stateDirection='column'
-        />
-      )}
-      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNED]) && (
-        <DatasetTermActivityField
-          oldState={activity.oldState.datasetFieldTerms}
-          newState={activity.newState.datasetFieldTerms}
-          hideAllDetails={hideAllDetails}
-        />
-      )}
-      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_DELETED]) && (
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TERM_ASSIGNMENT_UPDATED]) && (
         <DatasetTermActivityField
           oldState={activity.oldState.datasetFieldTerms}
           newState={activity.newState.datasetFieldTerms}
@@ -194,13 +179,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
       {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
         <ActivityFieldHeader
           eventType='created'
-          startText='Custom group'
-          activityName={`${activity.dataEntity.internalName}`}
-        />
-      )}
-      {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_DELETED]) && (
-        <ActivityFieldHeader
-          eventType='deleted'
           startText='Custom group'
           activityName={`${activity.dataEntity.internalName}`}
         />
@@ -222,6 +200,13 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           eventType={activity.eventType}
           oldState={activity.oldState}
           newState={activity.newState}
+        />
+      )}
+      {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_STATUS_UPDATED]) && (
+        <EntityStatusActivityField
+          oldState={activity.oldState.status}
+          newState={activity.newState.status}
+          hideAllDetails={hideAllDetails}
         />
       )}
     </S.Container>

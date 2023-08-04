@@ -450,8 +450,8 @@
         "DATASET_FIELD_ADD_TERM",
         "DATASET_FIELD_DELETE_TERM",
         "DATA_ENTITY_GROUP_UPDATE",
-        "DATA_ENTITY_GROUP_DELETE",
-        "DATA_ENTITY_ATTACHMENT_MANAGE"
+        "DATA_ENTITY_ATTACHMENT_MANAGE",
+        "DATA_ENTITY_STATUS_UPDATE"
       ]
     },
     "term_permissions": {

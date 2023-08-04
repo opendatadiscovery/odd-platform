@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupItemDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,9 +15,11 @@ public interface ReactiveGroupEntityRelationRepository {
 
     Flux<GroupEntityRelationsPojo> createRelationsReturning(final String groupOddrn, final List<String> entityOddrns);
 
-    Mono<Void> deleteRelations(final List<GroupEntityRelationsPojo> pojos);
+    Flux<GroupEntityRelationsPojo> softDeleteRelationsForDeletedDataEntities(final List<String> oddrns);
 
-    Flux<GroupEntityRelationsPojo> deleteRelationsForDEG(final String groupOddrn);
+    Flux<GroupEntityRelationsPojo> restoreRelationsForDataEntities(final List<String> oddrns);
+
+    Mono<Void> deleteRelations(final List<GroupEntityRelationsPojo> pojos);
 
     Flux<GroupEntityRelationsPojo> deleteRelationsExcept(final String groupOddrn, final List<String> oddrnsToKeep);
 
@@ -26,5 +29,10 @@ public interface ReactiveGroupEntityRelationRepository {
 
     Flux<String> getDEGEntitiesOddrns(final long dataEntityGroupId);
 
-    Mono<Boolean> degHasEntities(final long dataEntityGroupId);
+    Flux<DataEntityGroupItemDto> getDEGItems(final Long dataEntityGroupId, final Integer page,
+                                             final Integer size, final String query);
+
+    Mono<Long> getDEGEntitiesCount(final Long dataEntityGroupId, final String query);
+
+    Mono<Long> getDEGUpperGroupsCount(Long dataEntityGroupId, String query);
 }

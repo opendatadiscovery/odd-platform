@@ -9,6 +9,7 @@ import ActivityFieldState from 'components/shared/elements/Activity/ActivityFiel
 import isEmpty from 'lodash/isEmpty';
 import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { LinkedTermIcon } from 'components/shared/icons';
 import * as S from './DatasetTermActivityField.styles';
 
 interface DatasetTermActivityFieldProps {
@@ -31,15 +32,12 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
-  const [changedItem, setChangedItem] = React.useState<ActivityData>({});
-
   const sortChangedItemsLast = (item: ActivityData) => (item.typeOfChange ? 1 : -1);
 
   const setOldState = () =>
     oldState?.terms
       ?.map<ActivityData>(oldItem => {
         if (!newState?.terms?.some(newItem => oldItem.id === newItem.id)) {
-          setChangedItem(oldItem);
           return { ...oldItem, typeOfChange: 'deleted' };
         }
         return oldItem;
@@ -50,7 +48,6 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
     newState?.terms
       ?.map<ActivityData>(newItem => {
         if (!oldState?.terms?.some(oldItem => oldItem.id === newItem.id)) {
-          setChangedItem(newItem);
           return { ...newItem, typeOfChange: 'assigned' };
         }
         return newItem;
@@ -92,7 +89,8 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
       </Typography>
       {terms.map(term => (
         <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
-          <Box sx={{ p: 0.5 }}>{term.name}</Box>
+          <Box sx={{ mr: 0.5 }}>{term.name}</Box>
+          {term.isDescriptionLink && <LinkedTermIcon />}
         </S.ArrayItemWrapper>
       ))}
     </Grid>
@@ -113,14 +111,13 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
   return (
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText={t('Term')}
-        activityName={`${changedItem.name} in ${changedItem.namespace} ${t(
-          'for column'
-        )} ${oldState?.name || newState?.name}`}
+        startText='Terms'
+        activityName={`${t('for column')} ${oldState?.name || newState?.name}`}
         eventType={activityEvent}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
+        plural
       />
       <ActivityFieldState
         stateDirection='column'

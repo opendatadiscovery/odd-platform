@@ -7,11 +7,19 @@ import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import { type Values } from 'components/shared/elements/TruncatedCell/TruncatedCell';
 import Button from 'components/shared/elements/Button/Button';
+import type { SerializeDateToNumber } from 'redux/interfaces';
 
 interface TruncatedCellMenuProps {
-  dataList: DataEntityRef[] | string[] | LinkedUrl[] | undefined;
+  dataList:
+    | DataEntityRef[]
+    | string[]
+    | LinkedUrl[]
+    | undefined
+    | SerializeDateToNumber<DataEntityRef[]>;
   menuId: number;
-  getValues: (item: DataEntityRef | LinkedUrl | string) => Values;
+  getValues: (
+    item: DataEntityRef | LinkedUrl | string | SerializeDateToNumber<DataEntityRef>
+  ) => Values;
 }
 
 const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
@@ -54,26 +62,34 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
         maxHeight={300}
         maxWidth={240}
       >
-        {dataList?.map((item: DataEntityRef | LinkedUrl | string) => {
-          const { key, linkTo, linkContent } = getValues(item);
+        {dataList?.map(
+          (
+            item:
+              | DataEntityRef
+              | LinkedUrl
+              | string
+              | SerializeDateToNumber<DataEntityRef>
+          ) => {
+            const { key, linkTo, linkContent } = getValues(item);
 
-          return typeof item === 'string' ? (
-            <AppMenuItem key={key}>{linkContent}</AppMenuItem>
-          ) : (
-            <Link key={key} to={linkTo} target='_blank' onClick={handleMenuClose}>
-              <AppMenuItem>
-                <Typography
-                  variant='body1'
-                  color='texts.action'
-                  noWrap
-                  title={linkContent}
-                >
-                  {linkContent}
-                </Typography>
-              </AppMenuItem>
-            </Link>
-          );
-        })}
+            return typeof item === 'string' ? (
+              <AppMenuItem key={key}>{linkContent}</AppMenuItem>
+            ) : (
+              <Link key={key} to={linkTo} target='_blank' onClick={handleMenuClose}>
+                <AppMenuItem>
+                  <Typography
+                    variant='body1'
+                    color='texts.action'
+                    noWrap
+                    title={linkContent}
+                  >
+                    {linkContent}
+                  </Typography>
+                </AppMenuItem>
+              </Link>
+            );
+          }
+        )}
       </AppMenu>
     </>
   );

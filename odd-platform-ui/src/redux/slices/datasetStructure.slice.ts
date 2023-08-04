@@ -7,7 +7,7 @@ import type {
 import * as thunks from 'redux/thunks';
 import { createSlice } from '@reduxjs/toolkit';
 import { datasetStructureActionTypePrefix } from 'redux/actions';
-import type { TermRef } from 'generated-sources';
+import type { LinkedTerm } from 'generated-sources';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
@@ -96,21 +96,24 @@ export const datasetStructureSlice = createSlice({
   reducers: {
     addDatasetFieldTerm: (
       state,
-      { payload }: { payload: { fieldId: number; term: TermRef } }
+      { payload }: { payload: { fieldId: number; linkedTerm: LinkedTerm } }
     ) => {
-      const { fieldId, term } = payload;
+      const { fieldId, linkedTerm } = payload;
 
-      state.fieldById[fieldId].terms = [...(state.fieldById[fieldId].terms || []), term];
+      state.fieldById[fieldId].terms = [
+        ...(state.fieldById[fieldId].terms || []),
+        linkedTerm,
+      ];
     },
 
     deleteDatasetFieldTerm: (
       state,
-      { payload }: { payload: { fieldId: number; termId: TermRef['id'] } }
+      { payload }: { payload: { fieldId: number; termId: LinkedTerm['term']['id'] } }
     ) => {
       const { fieldId, termId } = payload;
 
       state.fieldById[fieldId].terms = state.fieldById[fieldId].terms?.filter(
-        term => term.id !== termId
+        linkedTerm => linkedTerm.term.id !== termId
       );
     },
   },
@@ -122,13 +125,17 @@ export const datasetStructureSlice = createSlice({
     builder.addCase(
       thunks.updateDataSetFieldDescription.fulfilled,
       (state, { payload }): DatasetStructureState => {
-        const { entityId: datasetFieldId, description: internalDescription } = payload;
+        const { entityId: datasetFieldId, dataSetFieldDescription } = payload;
 
         return {
           ...state,
           fieldById: {
             ...state.fieldById,
-            [datasetFieldId]: { ...state.fieldById[datasetFieldId], internalDescription },
+            [datasetFieldId]: {
+              ...state.fieldById[datasetFieldId],
+              internalDescription: dataSetFieldDescription.description,
+              terms: dataSetFieldDescription.terms,
+            },
           },
         };
       }

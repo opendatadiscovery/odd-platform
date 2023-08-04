@@ -14,7 +14,7 @@ import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
-@Mapper(config = MapperConfig.class, uses = {OffsetDateTimeMapper.class, AssociatedOwnerMapper.class})
+@Mapper(config = MapperConfig.class, uses = {DateTimeMapper.class, AssociatedOwnerMapper.class})
 public interface OwnerAssociationRequestMapper {
 
     @Mapping(target = "status", expression = "java(OwnerAssociationRequestStatus.PENDING.getValue())")
@@ -38,8 +38,8 @@ public interface OwnerAssociationRequestMapper {
                                             final LocalDateTime statusUpdatedAt);
 
     default OwnerAssociationRequestList mapPage(final Page<OwnerAssociationRequestDto> page) {
-        return new OwnerAssociationRequestList()
-            .items(mapList(page.getData()))
-            .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
+        final List<OwnerAssociationRequest> items = mapList(page.getData());
+        final PageInfo pageInfo = new PageInfo(page.getTotal(), page.isHasNext());
+        return new OwnerAssociationRequestList(items, pageInfo);
     }
 }

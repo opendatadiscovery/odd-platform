@@ -1,4 +1,4 @@
-import React, { type FC, useMemo, useState } from 'react';
+import React, { type FC, useCallback, useMemo, useState } from 'react';
 import { InformationIcon } from 'components/shared/icons';
 import { Grid, Typography } from '@mui/material';
 import MDEditor from '@uiw/react-md-editor';
@@ -44,6 +44,15 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
     );
   }, [dataEntityDetails?.metadataFieldValues]);
 
+  const tagsEllipsis = useCallback(
+    () => (
+      <Typography variant='body1' color='texts.hint' sx={{ ml: 1 }} component='span'>
+        {t('few tags more')}
+      </Typography>
+    ),
+    []
+  );
+
   const content = useMemo(
     () => (
       <S.Container>
@@ -68,20 +77,8 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
                     {t('tags')}
                   </Typography>
                 </Grid>
-                {dataEntityDetails && dataEntityDetails?.tags?.length ? (
-                  <TruncatedList
-                    items={dataEntityDetails.tags}
-                    ellipsis={
-                      <Typography
-                        variant='body1'
-                        color='texts.hint'
-                        sx={{ ml: 1 }}
-                        component='span'
-                      >
-                        {t('few tags more')}
-                      </Typography>
-                    }
-                  >
+                {dataEntityDetails?.tags?.length ? (
+                  <TruncatedList items={dataEntityDetails.tags} ellipsis={tagsEllipsis}>
                     {tag => (
                       <TagItem
                         sx={{ mr: 0.5 }}

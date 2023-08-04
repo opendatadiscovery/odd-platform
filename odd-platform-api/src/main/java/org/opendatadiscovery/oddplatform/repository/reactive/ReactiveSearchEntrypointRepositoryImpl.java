@@ -17,6 +17,7 @@ import org.jooq.Table;
 import org.jooq.UpdateConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
@@ -110,7 +111,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         final SelectConditionStep<Record> vectorSelect = DSL
             .select(DATA_ENTITY.ID.as(dataEntityIdField))
             .select(vectorFields)
-            .from(Tables.DATA_SOURCE)
+            .from(DATA_SOURCE)
             .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(Tables.DATA_SOURCE.ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
@@ -128,6 +129,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         return jooqReactiveOperations.mono(insertQuery);
     }
 
+    @Override
     public Mono<Integer> updateNamespaceVectorForDataEntity(final long dataEntityId) {
         return updateNamespaceVectorForDataEntities(singletonList(dataEntityId));
     }
@@ -171,10 +173,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .select(vectorFields)
             .from(NAMESPACE)
             .join(DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.DELETED_AT.isNull())
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
+            .or(DATA_ENTITY.NAMESPACE_ID.eq(NAMESPACE.ID))
             .where(NAMESPACE.ID.eq(namespaceId))
-            .and(NAMESPACE.DELETED_AT.isNull());
+            .and(NAMESPACE.DELETED_AT.isNull())
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
+            .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
 
         final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
@@ -355,7 +360,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .join(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.DELETED_AT.isNull())
+            .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()))
             .where(OWNER.ID.eq(ownerId));
 
         final Insert<? extends Record> ownerQuery = jooqFTSHelper.buildVectorUpsert(
