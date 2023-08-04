@@ -13,11 +13,14 @@ export const StyledAppMenu = styled(Menu)<AppMenuStyleProps>(
     maxWidth: $maxWidth ? `${$maxWidth}px !important` : 'none',
     minWidth: $minWidth ? `${$minWidth}px !important` : 0,
 
-    [`&.${menuClasses.paper}`]: {
-      padding: theme.spacing(1, 0),
-      border: ' 1px solid',
-      borderColor: theme.palette.backgrounds.secondary,
-      borderRadius: '4px',
+    '& .MuiPaper-root': {
+      [`&.${menuClasses.paper}`]: {
+        padding: theme.spacing(1),
+        border: ' 1px solid',
+        borderColor: theme.palette.backgrounds.secondary,
+        borderRadius: '4px',
+      },
     },
+    '& .MuiList-root': { padding: 0 },
   })
 );

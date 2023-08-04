@@ -1,6 +1,5 @@
-import React, { type FC, type MouseEvent, useCallback, useEffect, useState } from 'react';
-import type { SelectChangeEvent } from '@mui/material';
-import { Grid, Typography, useScrollTrigger } from '@mui/material';
+import React, { type FC, type MouseEvent, useEffect, useState } from 'react';
+import { Box, Grid, Typography, useScrollTrigger } from '@mui/material';
 import { getIdentity, getOwnership } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/icons';
@@ -10,10 +9,12 @@ import { useAppPaths } from 'lib/hooks';
 import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/ToolbarTabs';
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
 import Button from 'components/shared/elements/Button/Button';
-import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
 import { useTranslation } from 'react-i18next';
-import { LANGUAGES } from 'lib/constants';
+import { LANGUAGES_MAP } from 'lib/constants';
+import SelectLanguage from 'components/shared/elements/AppToolbar/SelectLanguage/SelectLanguage';
+import ChevronIcon from 'components/shared/icons/ChevronIcon';
+import type { Lang } from 'lib/interfaces';
 
 const AppToolbar: FC = () => {
   const { basePath } = useAppPaths();
@@ -46,12 +47,7 @@ const AppToolbar: FC = () => {
 
   useEffect(() => setElevation(trigger ? 3 : 0), [trigger]);
 
-  const handleLangChange = useCallback(
-    async (e: SelectChangeEvent<unknown>) => {
-      await i18n.changeLanguage(e.target.value as string);
-    },
-    [i18n.changeLanguage]
-  );
+  const currentLanguage = LANGUAGES_MAP[i18n.language as Lang];
 
   return (
     <S.Bar position='fixed' elevation={elevation}>
@@ -70,17 +66,6 @@ const AppToolbar: FC = () => {
               <ToolbarTabs />
             </Grid>
             <S.SectionDesktop item>
-              <AppSelect
-                defaultValue='en'
-                containerSx={{ mr: 1 }}
-                onChange={handleLangChange}
-              >
-                {LANGUAGES.map(({ code, label }) => (
-                  <AppMenuItem key={code} value={code}>
-                    {label}
-                  </AppMenuItem>
-                ))}
-              </AppSelect>
               <AppInfoMenu />
               <S.UserName>{owner?.name ?? identity?.username}</S.UserName>
               <Button
@@ -96,6 +81,7 @@ const AppToolbar: FC = () => {
         </S.ContentContainer>
       </S.Container>
       <AppMenu
+        PaperProps={{ sx: { width: '240px' } }}
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
@@ -104,6 +90,27 @@ const AppToolbar: FC = () => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
+        {false && (
+          <SelectLanguage
+            openBtn={
+              <AppMenuItem>
+                <S.LanguageContainer>
+                  <div>{t('Select language')}</div>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>{currentLanguage}</div>{' '}
+                    <ChevronIcon transform='rotate(-90)' sx={{ ml: 0.5 }} />
+                  </Box>
+                </S.LanguageContainer>
+              </AppMenuItem>
+            }
+          />
+        )}
         <AppMenuItem onClick={handleLogout}>{t('Logout')}</AppMenuItem>
       </AppMenu>
     </S.Bar>

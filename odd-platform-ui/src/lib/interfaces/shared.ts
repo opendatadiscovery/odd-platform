@@ -1,4 +1,5 @@
 import type { DataSetVersionDiff as GeneratedDataSetVersionDiff } from 'generated-sources';
+import type { LANGUAGES_MAP } from 'lib/constants';
 
 export type EventType = 'created' | 'added' | 'assigned' | 'updated' | 'deleted';
 
@@ -13,7 +14,4 @@ export interface InfiniteQueryPageInfo {
   nextPage: number;
 }
 
-export interface Lang {
-  label: string;
-  code: string;
-}
+export type Lang = keyof typeof LANGUAGES_MAP;

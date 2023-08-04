@@ -1,14 +1,13 @@
 import {
+  type AlertHaltConfigActivityState,
   AlertType,
+  DataEntityClassNameEnum as ClassNameEnum,
+  type DataEntityHighlight,
+  type DataEntitySearchHighlight,
+  DataEntityTypeNameEnum as TypeNameEnum,
   DataQualityTestSeverity,
   type DataSourceHighlight,
-  type AlertHaltConfigActivityState,
-  type DataEntitySearchHighlight,
-  type DataEntityHighlight,
-  DataEntityClassNameEnum as ClassNameEnum,
-  DataEntityTypeNameEnum as TypeNameEnum,
 } from 'generated-sources';
-import type { Lang } from 'lib/interfaces';
 
 export const ORDERED_SEVERITY = [
   DataQualityTestSeverity.CRITICAL,
@@ -142,10 +141,9 @@ export const datedListFormat = 'MMMM dd, yyyy';
 export const emptyArr = [];
 export const emptyObj = {};
 
-export const LANGUAGES: Lang[] = [
-  { label: 'English', code: 'en' },
-  { label: 'Japanese', code: 'ja' },
-];
+export const LANGUAGES_MAP = {
+  en: 'English',
+} as const;
 
 // regexp
 export const TERM_PATTERN = /\[\[([^:\]]+):([^\]]+)\]\]/g;

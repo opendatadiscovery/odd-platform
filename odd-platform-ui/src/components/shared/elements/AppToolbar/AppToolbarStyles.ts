@@ -78,3 +78,10 @@ export const UserName = styled('p')(({ theme }) => ({
   color: theme.palette.text.primary,
   margin: theme.spacing(0, 1),
 }));
+
+export const LanguageContainer = styled('div')(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+}));
