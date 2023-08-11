@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilte
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
@@ -103,7 +104,8 @@ public class SearchServiceImpl implements SearchService {
                 final FacetStateDto state = facetStateMapper.pojoToState(pojo);
                 if (state.isMyObjects()) {
                     return authIdentityProvider.fetchAssociatedOwner()
-                        .flatMap(owner -> dataEntityService.findByState(state, page, size, owner));
+                        .flatMap(owner -> dataEntityService.findByState(state, page, size, owner))
+                        .switchIfEmpty(Mono.just(new DataEntityList(List.of(), new PageInfo(0L, false))));
                 }
                 return dataEntityService.findByState(state, page, size);
             });
