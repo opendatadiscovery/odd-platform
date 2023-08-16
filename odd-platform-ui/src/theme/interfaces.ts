@@ -1,17 +1,16 @@
 import type { TypeBackground } from '@mui/material/styles/createPalette';
+import type { ToastType } from 'react-hot-toast';
 import type {
   AlertStatus,
   DataEntityClassNameEnum,
   DataEntityRunStatus,
+  DataEntityStatusEnum,
   DataQualityTestSeverity,
   DataSetFieldTypeTypeEnum,
-  SLAColour,
+  MessageState,
   OwnerAssociationRequestStatus,
-  DataEntityStatusEnum,
+  SLAColour,
 } from 'generated-sources';
-import type { TypographyStyle } from '@mui/material';
-import type { TypographyStyleOptions } from '@mui/material/styles/createTypography';
-import type { ToastType } from 'react-hot-toast';
 import type { DatasetFieldKey as DatasetFieldKeyType } from 'lib/interfaces';
 import type {
   ButtonColor,
@@ -89,6 +88,8 @@ interface Tag {
 
 type Alert = Record<AlertStatus, ItemColors>;
 
+type DiscussionsMessageStatus = Record<MessageState, ItemColors>;
+
 type DatasetFieldKey = Record<DatasetFieldKeyType, ItemColors>;
 
 interface ActivityEvent {
@@ -128,6 +129,7 @@ declare module '@mui/material/styles' {
     fileInput: ItemCondition;
     input: Input;
     entityStatus: EntityStatus;
+    discussionsMessageStatus: DiscussionsMessageStatus;
   }
 
   interface PaletteOptions {
@@ -152,6 +154,7 @@ declare module '@mui/material/styles' {
     attachment: ItemCondition;
     fileInput: ItemCondition;
     entityStatus: EntityStatus;
+    discussionsMessageStatus: DiscussionsMessageStatus;
   }
 }
 
