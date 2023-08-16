@@ -175,6 +175,7 @@ components:
         - DATA_ENTITY_ALERT_CONFIG_UPDATE
         - DATASET_TEST_RUN_SET_SEVERITY
         - DATASET_FIELD_DESCRIPTION_UPDATE
+        - DATASET_FIELD_INTERNAL_NAME_UPDATE
         - DATASET_FIELD_LABELS_UPDATE
         - DATASET_FIELD_ENUMS_UPDATE
         - DATASET_FIELD_ADD_TERM
@@ -2787,6 +2788,8 @@ components:
           format: int64
         name:
           type: string
+        internal_name:
+          type: string
         type:
           $ref: '#/components/schemas/DataSetFieldType'
         description:
@@ -2913,6 +2916,7 @@ components:
         - CUSTOM_METADATA_DELETED
         - DATASET_FIELD_VALUES_UPDATED
         - DATASET_FIELD_DESCRIPTION_UPDATED
+        - DATASET_FIELD_INTERNAL_NAME_UPDATED
         - DATASET_FIELD_LABELS_UPDATED
         - DATASET_FIELD_TERM_ASSIGNMENT_UPDATED
         - CUSTOM_GROUP_CREATED

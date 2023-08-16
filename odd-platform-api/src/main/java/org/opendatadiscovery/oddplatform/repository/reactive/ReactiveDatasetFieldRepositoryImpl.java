@@ -57,6 +57,16 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
+    public Mono<DatasetFieldPojo> updateInternalName(final long datasetFieldId,
+                                                     final String internalName) {
+        final String newName = StringUtils.isEmpty(internalName) ? null : internalName;
+        final var updateQuery = DSL.update(DATASET_FIELD)
+            .set(DATASET_FIELD.INTERNAL_NAME, newName)
+            .where(DATASET_FIELD.ID.eq(datasetFieldId)).returning();
+        return jooqReactiveOperations.mono(updateQuery).map(this::recordToPojo);
+    }
+
+    @Override
     public Flux<DatasetFieldPojo> getLastVersionDatasetFieldsByOddrns(final List<String> oddrns) {
         return jooqReactiveOperations.executeInPartitionReturning(oddrns, partitionedOddrns -> {
             final String version = "version";

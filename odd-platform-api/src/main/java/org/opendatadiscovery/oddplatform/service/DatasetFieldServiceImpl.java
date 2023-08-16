@@ -13,16 +13,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
+import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
+import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
 import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
@@ -85,6 +90,26 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 final List<LinkedTerm> linkedTerms = terms.stream().map(termMapper::mapToLinkedTerm).toList();
                 return new DataSetFieldDescription(formData.getDescription(), linkedTerms);
             });
+    }
+
+    @Override
+    @ReactiveTransactional
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_INTERNAL_NAME_UPDATED)
+    public Mono<InternalName> updateInternalName(
+        @ActivityParameter(DatasetFieldInformationUpdated.DATASET_FIELD_ID) final long datasetFieldId,
+        final InternalNameFormData formData) {
+        return reactiveDatasetFieldRepository.updateInternalName(datasetFieldId, formData.getInternalName())
+            .switchIfEmpty(Mono.error(new NotFoundException("DatasetField", datasetFieldId)))
+            .flatMap(pojo -> {
+                if (StringUtils.isEmpty(pojo.getInternalName())) {
+                    return dataEntityFilledService.markEntityUnfilledByDatasetFieldId(datasetFieldId,
+                        DataEntityFilledField.DATASET_FIELD_INTERNAL_NAME);
+                }
+                return dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
+                    DataEntityFilledField.DATASET_FIELD_INTERNAL_NAME);
+            })
+            .then(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId))
+            .thenReturn(new InternalName(formData.getInternalName()));
     }
 
     @Override

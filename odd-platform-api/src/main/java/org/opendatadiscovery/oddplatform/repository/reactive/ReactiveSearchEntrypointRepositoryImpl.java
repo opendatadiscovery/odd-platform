@@ -500,6 +500,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
 
         final List<Field<?>> vectorFields = List.of(
             DATASET_FIELD.NAME,
+            DATASET_FIELD.INTERNAL_NAME,
             DATASET_FIELD.INTERNAL_DESCRIPTION,
             DATASET_FIELD.EXTERNAL_DESCRIPTION,
             labelName

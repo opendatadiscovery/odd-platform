@@ -25,7 +25,8 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
     @Override
     public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
         return activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED
-            || activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED;
+            || activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED
+            || activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_INTERNAL_NAME_UPDATED;
     }
 
     @Override
@@ -60,7 +61,8 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
         }
         final DatasetFieldInformationActivityStateDto state =
             new DatasetFieldInformationActivityStateDto(dto.datasetFieldPojo().getId(),
-                dto.datasetFieldPojo().getName(), dto.datasetFieldPojo().getType(),
+                dto.datasetFieldPojo().getName(), dto.datasetFieldPojo().getInternalName(),
+                dto.datasetFieldPojo().getType(),
                 dto.datasetFieldPojo().getInternalDescription(), labels);
         return JSONSerDeUtils.serializeJson(state);
     }

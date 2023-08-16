@@ -42,6 +42,7 @@ public class FTSConstants {
         Map.entry(DATASET_FIELD.NAME, "C"),
         Map.entry(DATASET_FIELD.INTERNAL_DESCRIPTION, "C"),
         Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
+        Map.entry(DATASET_FIELD.INTERNAL_NAME, "C"),
         Map.entry(LABEL.NAME, "C"),
         Map.entry(TITLE.NAME, "D"),
         Map.entry(OWNER.NAME, "C")

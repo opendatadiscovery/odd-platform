@@ -18,6 +18,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_DELETE_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_DESCRIPTION_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_ENUMS_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_INTERNAL_NAME_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_LABELS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_TEST_RUN_SET_SEVERITY;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TERM;
@@ -248,6 +249,9 @@ public final class SecurityConstants {
             new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/statuses", PUT),
             DATA_ENTITY_STATUS_UPDATE
         ),
+        new SecurityRule(DATASET_FIELD,
+            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/name", PUT),
+            DATASET_FIELD_INTERNAL_NAME_UPDATE),
         new SecurityRule(DATASET_FIELD,
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/description", PUT),
             DATASET_FIELD_DESCRIPTION_UPDATE),
