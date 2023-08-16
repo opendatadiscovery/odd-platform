@@ -320,4 +320,11 @@ export const palette = createPalette({
       disabled: { background: colors.red5, color: colors.red20 },
     },
   },
+  discussionsMessageStatus: {
+    PENDING_SEND: { background: colors.black5, color: colors.black50 },
+    SENT: { background: colors.green5, color: colors.green50 },
+    EXTERNAL: { background: colors.blue5, color: colors.blue50 },
+    DELETED: { background: colors.orange5, color: colors.orange50 },
+    ERROR_SENDING: { background: colors.red5, color: colors.red50 },
+  },
 });
