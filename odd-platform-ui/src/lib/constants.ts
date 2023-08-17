@@ -143,6 +143,7 @@ export const emptyObj = {};
 
 export const LANGUAGES_MAP = {
   en: 'English',
+  es: 'Spanish',
 } as const;
 
 // regexp

@@ -90,27 +90,25 @@ const AppToolbar: FC = () => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {false && (
-          <SelectLanguage
-            openBtn={
-              <AppMenuItem>
-                <S.LanguageContainer>
-                  <div>{t('Select language')}</div>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div>{currentLanguage}</div>{' '}
-                    <ChevronIcon transform='rotate(-90)' sx={{ ml: 0.5 }} />
-                  </Box>
-                </S.LanguageContainer>
-              </AppMenuItem>
-            }
-          />
-        )}
+        <SelectLanguage
+          openBtn={
+            <AppMenuItem>
+              <S.LanguageContainer>
+                <div>{t('Select language')}</div>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>{currentLanguage}</div>{' '}
+                  <ChevronIcon transform='rotate(-90)' sx={{ ml: 0.5 }} />
+                </Box>
+              </S.LanguageContainer>
+            </AppMenuItem>
+          }
+        />
         <AppMenuItem onClick={handleLogout}>{t('Logout')}</AppMenuItem>
       </AppMenu>
     </S.Bar>
