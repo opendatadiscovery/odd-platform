@@ -33,9 +33,7 @@ const OverviewMetadata: React.FC = () => {
           <Grid container>
             <Grid item xs={12}>
               <S.SubtitleContainer>
-                <Typography variant='h2' sx={{}}>
-                  Metadata
-                </Typography>
+                <Typography variant='h2'>Metadata</Typography>
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
                 >
