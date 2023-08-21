@@ -1616,6 +1616,8 @@ components:
           type: string
         name:
           type: string
+        internal_name:
+          type: string
         type:
           $ref: '#/components/schemas/DataSetFieldType'
         stats:
@@ -1754,6 +1756,8 @@ components:
           type: integer
           format: int64
         name:
+          type: string
+        internal_name:
           type: string
         type:
           $ref: '#/components/schemas/DataSetFieldType'
