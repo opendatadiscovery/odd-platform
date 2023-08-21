@@ -1,3 +1,4 @@
+import { createSlice } from '@reduxjs/toolkit';
 import type {
   DataSetFieldEnumsResponse,
   DataSetStructureResponse,
@@ -5,7 +6,6 @@ import type {
   DataSetStructureTypesCount,
 } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
-import { createSlice } from '@reduxjs/toolkit';
 import { datasetStructureActionTypePrefix } from 'redux/actions';
 import type { LinkedTerm } from 'generated-sources';
 
@@ -116,6 +116,14 @@ export const datasetStructureSlice = createSlice({
         linkedTerm => linkedTerm.term.id !== termId
       );
     },
+    updateDatasetFieldInternalName: (
+      state,
+      { payload }: { payload: { fieldId: number; internalName: string } }
+    ) => {
+      const { fieldId, internalName } = payload;
+
+      state.fieldById[fieldId].internalName = internalName;
+    },
   },
   extraReducers: builder => {
     builder.addCase(thunks.fetchDataSetStructureLatest.fulfilled, updateDatasetStructure);
@@ -157,6 +165,9 @@ export const datasetStructureSlice = createSlice({
   },
 });
 
-export const { addDatasetFieldTerm, deleteDatasetFieldTerm } =
-  datasetStructureSlice.actions;
+export const {
+  addDatasetFieldTerm,
+  deleteDatasetFieldTerm,
+  updateDatasetFieldInternalName,
+} = datasetStructureSlice.actions;
 export default datasetStructureSlice.reducer;
