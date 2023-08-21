@@ -1,9 +1,9 @@
 import React from 'react';
 import type { TextFieldProps } from '@mui/material';
 import { CircularProgress } from '@mui/material';
+import type { SxProps, Theme } from '@mui/system';
 import type { AppInputSizes } from 'components/shared/elements/AppInput/AppInputStyles';
 import { StyledAppInput } from 'components/shared/elements/AppInput/AppInputStyles';
-import type { SxProps, Theme } from '@mui/system';
 import Button from 'components/shared/elements/Button/Button';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
