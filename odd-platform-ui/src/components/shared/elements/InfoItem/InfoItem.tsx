@@ -1,8 +1,7 @@
-import type { ReactElement } from 'react';
-import React, { type FC } from 'react';
+import React, { type FC, type ReactElement } from 'react';
 import type { GridSize } from '@mui/material';
-import type { SxProps } from '@mui/system';
 import { Grid } from '@mui/material';
+import type { SxProps } from '@mui/system';
 
 interface InfoItemProps {
   label: ReactElement;

@@ -1,5 +1,4 @@
-import type { MouseEvent } from 'react';
-import React, { type FC, useState } from 'react';
+import React, { type FC, useState, type MouseEvent } from 'react';
 import { Typography } from '@mui/material';
 import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import { type DataEntityStatus, DataEntityStatusEnum } from 'generated-sources';

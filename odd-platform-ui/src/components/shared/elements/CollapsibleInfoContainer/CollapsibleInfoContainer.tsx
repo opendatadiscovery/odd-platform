@@ -1,5 +1,4 @@
-import type { ReactElement } from 'react';
-import React, { type FC } from 'react';
+import React, { type FC, type ReactElement } from 'react';
 import { useCollapse } from 'lib/hooks';
 import { ChevronIcon } from 'components/shared/icons';
 import Button from 'components/shared/elements/Button/Button';

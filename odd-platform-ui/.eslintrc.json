@@ -108,7 +108,8 @@
     "consistent-return": "off",
     "no-restricted-syntax": "off",
     "guard-for-in": "off",
-    "react/function-component-definition": "off"
+    "react/function-component-definition": "off",
+    "import/order": "warn"
   },
   "overrides": [
     {
