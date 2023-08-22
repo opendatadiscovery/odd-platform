@@ -77,6 +77,18 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             hideAllDetails={hideAllDetails}
           />
         )}
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_INTERNAL_NAME_UPDATED]) && (
+          <StringActivityField
+            startText={`The dataset field's "${
+              activity.oldState.datasetFieldInformation?.name ||
+              activity.newState.datasetFieldInformation?.name
+            }" `}
+            activityName='business name'
+            oldState={activity.oldState.datasetFieldInformation?.internalName}
+            newState={activity.newState.datasetFieldInformation?.internalName}
+            hideAllDetails={hideAllDetails}
+          />
+        )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED]) && (
           <StringActivityField
             activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`}
