@@ -1,10 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import type { DataSetField } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { Button, LabelItem } from 'components/shared/elements';
 import { AddIcon, EditIcon } from 'components/shared/icons';
-import DatasetFieldInternalNameForm from './DatasetFieldInternalNameForm/DatasetFieldInternalNameForm';
+import { WithPermissions } from 'components/shared/contexts';
 import KeyFieldLabel from '../../../../shared/KeyFieldLabel/KeyFieldLabel';
+import DatasetFieldInternalNameForm from './DatasetFieldInternalNameForm/DatasetFieldInternalNameForm';
 
 type DatasetFieldHeaderProps = { field: DataSetField };
 
@@ -27,16 +29,22 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
         {field?.isPrimaryKey && <KeyFieldLabel sx={{ ml: 1 }} keyType='primary' />}
         {field?.isSortKey && <KeyFieldLabel sx={{ ml: 1 }} keyType='sort' />}
         {field?.type.isNullable && <KeyFieldLabel sx={{ ml: 1 }} keyType='nullable' />}
-        <DatasetFieldInternalNameForm
-          openBtnEl={
-            <Button
-              text={field.internalName ? 'Edit' : 'Add business name'}
-              buttonType='tertiary-m'
-              sx={{ ml: 1, minWidth: 'fit-content' }}
-              startIcon={field.internalName ? <EditIcon /> : <AddIcon />}
+        <WithPermissions
+          permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
+          renderContent={({ isAllowedTo: editInternalName }) => (
+            <DatasetFieldInternalNameForm
+              datasetFieldId={field.id}
+              openBtnEl={
+                <Button
+                  text={field.internalName ? 'Edit' : 'Add business name'}
+                  buttonType='tertiary-m'
+                  sx={{ ml: 1, minWidth: 'fit-content' }}
+                  startIcon={field.internalName ? <EditIcon /> : <AddIcon />}
+                  disabled={!editInternalName}
+                />
+              }
             />
-          }
-          datasetFieldId={field.id}
+          )}
         />
       </Grid>
       {originalName}
