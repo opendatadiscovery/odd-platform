@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { getDatasetFieldName, getDatasetStructure } from 'redux/selectors';
-import { AppTooltip, Button } from 'components/shared/elements';
+import { AppTooltip, Button, LabelItem } from 'components/shared/elements';
 import { ChevronIcon, RecursiveIcon, StrokedInfoIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import type { DataSetField } from 'generated-sources';
@@ -35,7 +35,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
 }) => {
   const { selectedFieldId, setSelectedFieldId, setSearchQuery } = useStructure();
 
-  const [open, setOpen] = React.useState(initialStateOpen);
+  const [open, setOpen] = useState(initialStateOpen);
 
   const childFields = useAppSelector(
     getDatasetStructure({
@@ -49,42 +49,36 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     getDatasetFieldName(datasetField.referenceFieldId)
   );
 
-  const collapseBlock = useMemo(
-    () => (
-      <S.CollapseContainer $visibility={!!childFields?.length}>
-        <Button
-          buttonType='linkGray-m'
-          icon={
-            <ChevronIcon
-              width={10}
-              height={5}
-              transform={open ? 'rotate(0)' : 'rotate(-90)'}
-            />
-          }
-          aria-label='expand row'
-          onClick={() => setOpen(!open)}
-        />
-      </S.CollapseContainer>
-    ),
-    [open, childFields?.length]
+  const collapseBlock = (
+    <S.CollapseContainer $visibility={!!childFields?.length}>
+      <Button
+        buttonType='linkGray-m'
+        icon={
+          <ChevronIcon
+            width={10}
+            height={5}
+            transform={open ? 'rotate(0)' : 'rotate(-90)'}
+          />
+        }
+        aria-label='expand row'
+        onClick={() => setOpen(!open)}
+      />
+    </S.CollapseContainer>
   );
 
-  const handleRowClick = React.useCallback(() => {
+  const handleRowClick = () => {
     setSelectedFieldId(datasetField.id);
     setSearchQuery('');
-  }, [datasetField.id]);
+  };
 
-  const handleReferenceFieldClick = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
+  const handleReferenceFieldClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
 
-      if (!datasetField.referenceFieldId) return;
+    if (!datasetField.referenceFieldId) return;
 
-      setSelectedFieldId(datasetField.referenceFieldId);
-      setSearchQuery('');
-    },
-    [datasetField.referenceFieldId]
-  );
+    setSelectedFieldId(datasetField.referenceFieldId);
+    setSearchQuery('');
+  };
 
   const isRowSelected = selectedFieldId === datasetField.id;
 
@@ -100,28 +94,39 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         <Grid container item sx={{ py: 1.75 }} flexWrap='nowrap'>
           <S.RowInfoWrapper container $nesting={nesting} item sx={{ px: 1 }}>
             {collapseBlock}
-            <Grid container justifyContent='space-between' flexWrap='nowrap'>
-              <Grid display='flex' minWidth={0} flexWrap='nowrap' alignItems='center'>
-                <Typography variant='h4' noWrap title={datasetField.name}>
-                  {(datasetField.isKey && 'Key') ||
-                    (datasetField.isValue && 'Value') ||
-                    datasetField.name}
-                </Typography>
-                {datasetField?.type.type === 'TYPE_REFERENCE' &&
-                  datasetField.referenceFieldId && (
-                    <Button
-                      sx={{ ml: 1 }}
-                      text={referenceFieldName}
-                      buttonType='link-m'
-                      startIcon={<RecursiveIcon />}
-                      onClick={handleReferenceFieldClick}
-                    />
+            <Grid container minWidth={0} justifyContent='space-between' flexWrap='nowrap'>
+              <Grid container minWidth={0} flexDirection='column'>
+                <Grid container flexWrap='nowrap' alignItems='center'>
+                  <Typography variant='h4' noWrap title={datasetField.name}>
+                    {(datasetField.isKey && 'Key') ||
+                      (datasetField.isValue && 'Value') ||
+                      datasetField.internalName ||
+                      datasetField.name}
+                  </Typography>
+                  {datasetField?.type.type === 'TYPE_REFERENCE' &&
+                    datasetField.referenceFieldId && (
+                      <Button
+                        sx={{ ml: 1 }}
+                        text={referenceFieldName}
+                        buttonType='link-m'
+                        startIcon={<RecursiveIcon />}
+                        onClick={handleReferenceFieldClick}
+                      />
+                    )}
+                  {datasetField.isPrimaryKey && (
+                    <KeyFieldLabel sx={{ ml: 0.5 }} keyType='primary' />
                   )}
-                {datasetField.isPrimaryKey && (
-                  <KeyFieldLabel sx={{ ml: 0.5 }} keyType='primary' />
-                )}
-                {datasetField.isSortKey && (
-                  <KeyFieldLabel sx={{ ml: 0.5 }} keyType='sort' />
+                  {datasetField.isSortKey && (
+                    <KeyFieldLabel sx={{ ml: 0.5 }} keyType='sort' />
+                  )}
+                </Grid>
+                {datasetField.internalName && (
+                  <Grid container alignItems='center' width='auto'>
+                    <LabelItem labelName='Original' variant='body2' />
+                    <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+                      {datasetField.name}
+                    </Typography>
+                  </Grid>
                 )}
               </Grid>
               <Grid display='flex' flexWrap='nowrap' alignItems='center'>
