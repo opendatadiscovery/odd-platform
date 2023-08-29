@@ -1,10 +1,10 @@
-import { palette } from 'theme/palette';
-import { breakpoints } from 'theme/breakpoints';
 import createTypography, {
   type TypographyOptions,
 } from '@mui/material/styles/createTypography';
 import { createTheme } from '@mui/material/styles';
 import type { CSSObject } from 'styled-components';
+import { breakpoints } from 'theme/breakpoints';
+import { palette } from 'theme/palette';
 import { mapKeysToValue } from 'lib/helpers';
 import { getButtonFontType } from 'components/shared/elements/Button/helpers';
 

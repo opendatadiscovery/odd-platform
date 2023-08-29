@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { cloneElement, type FC, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import type { TermDetails, TermFormData } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import type { TermDetails, TermFormData } from 'generated-sources';
 import {
   Button,
-  AppInput,
   DialogWrapper,
+  Input,
+  Markdown,
   NamespaceAutocomplete,
 } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTerm, updateTerm } from 'redux/thunks';
 import {
@@ -23,7 +23,7 @@ interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
 }
 
-const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
+const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { termId } = useAppParams();
@@ -37,11 +37,11 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
     getTermUpdatingStatuses
   );
 
-  const getDefaultValues = React.useCallback(
-    (): TermFormData => ({
-      name: term?.name || '',
-      namespaceName: term?.namespace?.name || '',
-      definition: term?.definition || '',
+  const defaultValues = useMemo(
+    () => ({
+      name: term?.name ?? '',
+      namespaceName: term?.namespace?.name ?? '',
+      definition: term?.definition ?? '',
     }),
     [term]
   );
@@ -49,12 +49,12 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const { handleSubmit, control, reset, formState } = useForm<TermFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: getDefaultValues(),
+    defaultValues,
   });
 
-  React.useEffect(() => {
-    reset(getDefaultValues());
-  }, [term]);
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues]);
 
   const clearState = () => {
     reset();
@@ -82,29 +82,16 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormContent = () => (
     <form id='term-create-form' onSubmit={handleSubmit(onSubmit)}>
-      {!term && (
-        <Typography variant='subtitle2' fontSize='0.73rem'>
-          Select a term from the dictionary or create a new term.
-        </Typography>
-      )}
       <Controller
         name='name'
         control={control}
-        rules={{
-          required: true,
-          validate: value => !!value.trim(),
-        }}
+        rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
-            label='Name'
+            variant='main-m'
             placeholder='Start enter the name'
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
+            label='Name'
           />
         )}
       />
@@ -119,26 +106,19 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
         name='definition'
         control={control}
         defaultValue={term?.definition}
-        rules={{
-          required: true,
-          validate: value => !!value.trim(),
-        }}
+        rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            sx={{ mt: 1.25 }}
-            label='Definition'
-            placeholder='Term definition'
-            multiline
-            minRows={4}
-            maxRows={6}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <Grid container flexDirection='column' mt={1.25}>
+            <Typography
+              fontWeight={500}
+              variant='body2'
+              color='input.label.color'
+              mb={0.125}
+            >
+              Definition
+            </Typography>
+            <Markdown {...field} editor height={200} />
+          </Grid>
         )}
       />
     </form>
@@ -157,8 +137,9 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   return (
     <DialogWrapper
+      maxWidth='xl'
       renderOpenBtn={({ handleOpen }) =>
-        React.cloneElement(btnCreateEl, { onClick: handleOpen })
+        cloneElement(btnCreateEl, { onClick: handleOpen })
       }
       title={termFormTitle}
       renderContent={termFormContent}

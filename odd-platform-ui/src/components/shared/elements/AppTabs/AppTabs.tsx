@@ -1,12 +1,12 @@
-import React, { type SyntheticEvent } from 'react';
+import React, { type FC, type SyntheticEvent, useEffect, useState } from 'react';
 import { type TabsProps } from '@mui/material';
-import type { HintType, TabType } from 'components/shared/elements/AppTabs/interfaces';
 import { Link } from 'react-router-dom';
+import type { SxProps, Theme } from '@mui/system';
+import type { HintType, TabType } from 'components/shared/elements/AppTabs/interfaces';
 import AppTab from 'components/shared/elements/AppTabs/AppTab/AppTab';
 import AppLinkTab from 'components/shared/elements/AppTabs/AppTab/AppLinkTab';
 import AppTabLabel from 'components/shared/elements/AppTabs/AppTabLabel/AppTabLabel';
 import { TabsContainer } from 'components/shared/elements/AppTabs/AppTabsStyles';
-import type { SxProps, Theme } from '@mui/system';
 
 export type AppTabItem<ValueT = number | string | boolean> = {
   name: string;
@@ -24,30 +24,32 @@ interface AppTabsProps
   selectedTab?: number | boolean;
   type: TabType;
   isHintUpdating?: boolean;
+  scrollButtons?: boolean;
   tabSx?: SxProps<Theme>;
 }
 
-const AppTabs: React.FC<AppTabsProps> = ({
+const AppTabs: FC<AppTabsProps> = ({
   items,
   handleTabChange,
   selectedTab,
   type,
   orientation,
   isHintUpdating = false,
+  scrollButtons = false,
   sx,
   tabSx,
 }) => {
   const selectedTabState = selectedTab === -1 ? false : selectedTab;
-  const [currentTab, setCurrent] = React.useState<number | boolean | undefined>(
+  const [currentTab, setCurrent] = useState<number | boolean | undefined>(
     selectedTabState
   );
 
-  const handleChange = (event: SyntheticEvent, newTab: number) => {
+  const handleChange = (_: SyntheticEvent, newTab: number) => {
     setCurrent(newTab);
     handleTabChange(newTab);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrent(selectedTabState);
   }, [selectedTab]);
 
@@ -58,7 +60,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
       onChange={handleChange}
       variant='scrollable'
       orientation={orientation}
-      scrollButtons='auto'
+      scrollButtons={scrollButtons}
       sx={sx}
     >
       {items.map(item => {

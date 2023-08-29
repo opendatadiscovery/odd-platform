@@ -1,9 +1,10 @@
 import React from 'react';
-import type { Message as MessageModel } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
+import type { Message as MessageModel } from 'redux/interfaces';
 import { AppAvatar, Button, WithFeature } from 'components/shared/elements';
 import { Feature } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
+import MessageStatus from './MessageStatus/MessageStatus';
 import * as S from './MessageStyles';
 
 interface MessageProps {
@@ -21,6 +22,7 @@ const Message: React.FC<MessageProps> = ({
     url,
     channel,
     childrenMessagesCount,
+    state,
   },
   isActive,
   messageOnClick,
@@ -62,9 +64,10 @@ const Message: React.FC<MessageProps> = ({
               />
             </WithFeature>
           </S.SlackButtonContainer>
-          <Typography variant='body1' color='texts.hint'>
+          <Typography variant='body1' color='texts.hint' mr={1}>
             {channel.name}
           </Typography>
+          <MessageStatus status={state} />
         </Grid>
       </Grid>
       <Grid container justifyContent='flex-start'>

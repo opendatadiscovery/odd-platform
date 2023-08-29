@@ -1,27 +1,35 @@
-import { Grid } from '@mui/material';
-import AppPaper from 'components/shared/elements/AppPaper/AppPaper';
 import styled from 'styled-components';
+import { AppPaper } from 'components/shared/elements';
 
-export const ActionsContainer = styled(Grid)(() => ({
+export const Actions = styled('div')(() => ({
   opacity: 0,
   display: 'flex',
   justifyContent: 'flex-end',
 }));
 
-export const DescriptionContainer = styled(Grid)(({ theme }) => ({
+export const Description = styled('div')(({ theme }) => ({
+  width: '100%',
   paddingLeft: theme.spacing(7),
   '& > *': { marginBottom: theme.spacing(1) },
   '& > *:last-child': { marginBottom: theme.spacing(0) },
 }));
 
-export const Container = styled(AppPaper)(({ theme }) => ({
+export const Header = styled('div')(({ theme }) => ({
   display: 'flex',
   width: '100%',
-  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: theme.spacing(1.5),
+}));
+
+export const Container = styled(AppPaper)(({ theme }) => ({
+  width: '100%',
   padding: theme.spacing(2),
-  alignItems: 'flex-start',
+  display: 'flex',
+  flexDirection: 'column',
+
   '&:hover': {
     boxShadow: theme.shadows[8],
-    [`${ActionsContainer}`]: { opacity: 1 },
+    [`${Actions}`]: { opacity: 1 },
   },
 }));

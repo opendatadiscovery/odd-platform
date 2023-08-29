@@ -1,21 +1,21 @@
 import { Grid, Typography } from '@mui/material';
-import React from 'react';
-import { SkeletonWrapper } from 'components/shared/elements';
+import React, { type FC } from 'react';
+import { Markdown, SkeletonWrapper } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
+  getResourcePermissions,
   getTermDetails,
   getTermDetailsFetchingStatuses,
-} from 'redux/selectors/terms.selectors';
+} from 'redux/selectors';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { getResourcePermissions } from 'redux/selectors';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
-import { SectionContainer, SectionFlexContainer } from './OverviewStyles';
 import OverviewTags from './OverviewTags/OverviewTags';
+import * as S from './OverviewStyles';
 
-const Overview: React.FC = () => {
+const Overview: FC = () => {
   const { termId } = useAppParams();
 
   const termDetails = useAppSelector(getTermDetails(termId));
@@ -32,14 +32,15 @@ const Overview: React.FC = () => {
       {termDetails && !isTermDetailsFetching && (
         <Grid container spacing={2} sx={{ mt: 0 }}>
           <Grid item xs={8}>
-            <SectionFlexContainer elevation={9}>
-              <Typography variant='h4'>{termDetails.name}</Typography>
-              <Typography variant='body1'>-</Typography>
-              <Typography variant='body1'>{termDetails.definition}</Typography>
-            </SectionFlexContainer>
+            <S.DefinitionContainer elevation={9}>
+              <Typography variant='h2' mb={1}>
+                Definition
+              </Typography>
+              <Markdown value={termDetails.definition} />
+            </S.DefinitionContainer>
           </Grid>
           <Grid item xs={4}>
-            <SectionContainer square elevation={0}>
+            <S.Container square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[
                   Permission.TERM_OWNERSHIP_CREATE,
@@ -49,14 +50,14 @@ const Overview: React.FC = () => {
                 resourcePermissions={termPermissions}
                 Component={OverviewGeneral}
               />
-            </SectionContainer>
-            <SectionContainer square elevation={0}>
+            </S.Container>
+            <S.Container square elevation={0}>
               <WithPermissionsProvider
                 allowedPermissions={[Permission.TERM_TAGS_UPDATE]}
                 resourcePermissions={termPermissions}
                 render={() => <OverviewTags tags={termDetails.tags} />}
               />
-            </SectionContainer>
+            </S.Container>
           </Grid>
         </Grid>
       )}
