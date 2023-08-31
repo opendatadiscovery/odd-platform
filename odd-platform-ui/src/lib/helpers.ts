@@ -1,14 +1,14 @@
 import capitalize from 'lodash/capitalize';
 import { type Theme } from '@mui/material';
-import type { EventType } from 'lib/interfaces';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
-import type { DataEntityStatus } from 'generated-sources';
+import type { EventType } from 'lib/interfaces';
 import {
   DataSetFieldTypeTypeEnum,
   MetadataFieldType,
   type DataQualityTestExpectation,
   type MetadataField,
+  type DataEntityStatus,
 } from 'generated-sources';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>

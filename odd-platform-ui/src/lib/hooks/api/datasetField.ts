@@ -1,7 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { datasetFieldApiClient } from 'lib/api';
 import { showServerErrorToast, showSuccessToast } from 'lib/errorHandling';
-import type { DatasetFieldApiDeleteTermFromDatasetFieldRequest } from 'generated-sources';
+import type {
+  DatasetFieldApiDeleteTermFromDatasetFieldRequest,
+  DatasetFieldApiUpdateDatasetFieldInternalNameRequest,
+} from 'generated-sources';
 
 interface UseDataEntityMetricsProps {
   datasetFieldId: number;
@@ -52,6 +55,18 @@ export function useDeleteDatasetFieldTerm() {
     {
       onSuccess: () => {
         showSuccessToast({ message: 'Term successfully deleted!' });
+      },
+    }
+  );
+}
+
+export function useUpdateDatasetFieldInternalName() {
+  return useMutation(
+    async (params: DatasetFieldApiUpdateDatasetFieldInternalNameRequest) =>
+      datasetFieldApiClient.updateDatasetFieldInternalName(params),
+    {
+      onSuccess: () => {
+        showSuccessToast({ message: 'Internal name successfully updated!' });
       },
     }
   );

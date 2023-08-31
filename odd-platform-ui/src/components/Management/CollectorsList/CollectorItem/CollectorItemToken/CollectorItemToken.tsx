@@ -1,31 +1,33 @@
-import React from 'react';
+import React, { type Dispatch, type FC, type SetStateAction, useEffect } from 'react';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type Collector, Permission } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
 import { Button, ConfirmationDialog, CopyButton } from 'components/shared/elements';
-import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import { Token, TokenContainer } from './CollectorItemTokenStyles';
 
 interface CollectorItemProps {
   collector: Collector;
+  isHidden: boolean;
+  setIsHidden: Dispatch<SetStateAction<boolean>>;
 }
 
-const CollectorItemToken: React.FC<CollectorItemProps> = ({ collector }) => {
+const CollectorItemToken: FC<CollectorItemProps> = ({
+  collector,
+  setIsHidden,
+  isHidden,
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const [isHidden, setIsHidden] = React.useState(true);
-
-  React.useEffect(() => {
+  useEffect(() => {
     setIsHidden(collector.token.value.substring(0, 6) === '******');
   }, [collector.token.value]);
 
-  const onTokenRegenerate = React.useCallback(
-    () => dispatch(regenerateCollectorToken({ collectorId: collector.id })),
-    [collector]
-  );
+  const onTokenRegenerate = () =>
+    dispatch(regenerateCollectorToken({ collectorId: collector.id }));
 
   return (
     <TokenContainer>

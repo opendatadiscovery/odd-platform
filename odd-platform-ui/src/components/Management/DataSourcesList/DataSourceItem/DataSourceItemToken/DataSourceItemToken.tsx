@@ -1,31 +1,33 @@
-import React from 'react';
+import React, { useEffect, type Dispatch, type FC, type SetStateAction } from 'react';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type DataSource, Permission } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
 import { Button, ConfirmationDialog, CopyButton } from 'components/shared/elements';
-import { Typography } from '@mui/material';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import { Token, TokenContainer } from './DataSourceItemTokenStyles';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
+  isHidden: boolean;
+  setIsHidden: Dispatch<SetStateAction<boolean>>;
 }
 
-const DataSourceItemToken: React.FC<DataSourceItemProps> = ({ dataSource }) => {
+const DataSourceItemToken: FC<DataSourceItemProps> = ({
+  dataSource,
+  setIsHidden,
+  isHidden,
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const [isHidden, setIsHidden] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
+  useEffect(() => {
     setIsHidden(dataSource.token.value.substring(0, 6) === '******');
   }, [dataSource.token.value]);
 
-  const onTokenRegenerate = React.useCallback(
-    () => dispatch(regenerateDataSourceToken({ dataSourceId: dataSource.id })),
-    [dataSource]
-  );
+  const onTokenRegenerate = () =>
+    dispatch(regenerateDataSourceToken({ dataSourceId: dataSource.id }));
 
   return (
     <TokenContainer>

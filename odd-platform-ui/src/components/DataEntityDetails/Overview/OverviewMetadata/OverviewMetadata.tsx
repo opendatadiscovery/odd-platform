@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { AddIcon, ChevronIcon } from 'components/shared/icons';
 import { Button } from 'components/shared/elements';
 import {
@@ -11,7 +12,6 @@ import { useAppParams, useCollapse } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import * as S from './OverviewMetadataStyles';
@@ -35,9 +35,7 @@ const OverviewMetadata: React.FC = () => {
           <Grid container>
             <Grid item xs={12}>
               <S.SubtitleContainer>
-                <Typography variant='h2' sx={{}}>
-                  {t('Metadata')}
-                </Typography>
+                <Typography variant='h2'>{t('Metadata')}</Typography>
                 <WithPermissions
                   permissionTo={Permission.DATA_ENTITY_CUSTOM_METADATA_CREATE}
                 >

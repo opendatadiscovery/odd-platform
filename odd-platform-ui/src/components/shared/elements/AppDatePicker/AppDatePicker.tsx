@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, type Theme } from '@mui/material';
 import type { SxProps } from '@mui/system';
-import { CalendarIcon } from 'components/shared/icons';
 import { DatePicker, type DatePickerProps } from '@mui/x-date-pickers';
+import { CalendarIcon } from 'components/shared/icons';
 import Input from 'components/shared/elements/Input/Input';
 
 export const metadataDatePickerInputFormat = 'd MMM yyyy';

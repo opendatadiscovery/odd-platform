@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
-import { AppSuspenseWrapper } from 'components/shared/elements';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { AppSuspenseWrapper } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
@@ -35,6 +35,7 @@ const DatasetStructure: FC = () => {
                 Permission.DATASET_FIELD_DESCRIPTION_UPDATE,
                 Permission.DATASET_FIELD_ADD_TERM,
                 Permission.DATASET_FIELD_DELETE_TERM,
+                Permission.DATASET_FIELD_INTERNAL_NAME_UPDATE,
               ]}
               resourcePermissions={resourcePermissions}
               Component={DatasetStructureOverview}

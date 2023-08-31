@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
 import { LabelItem, TagItem } from 'components/shared/elements';
@@ -17,7 +18,6 @@ import {
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
-import { useTranslation } from 'react-i18next';
 import * as S from './ActivityItemStyles';
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
@@ -76,6 +76,18 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             activityName={t('Business name')}
             oldState={activity.oldState.businessName?.internalName}
             newState={activity.newState.businessName?.internalName}
+            hideAllDetails={hideAllDetails}
+          />
+        )}
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_INTERNAL_NAME_UPDATED]) && (
+          <StringActivityField
+            startText={`The dataset field's "${
+              activity.oldState.datasetFieldInformation?.name ||
+              activity.newState.datasetFieldInformation?.name
+            }" `}
+            activityName='business name'
+            oldState={activity.oldState.datasetFieldInformation?.internalName}
+            newState={activity.newState.datasetFieldInformation?.internalName}
             hideAllDetails={hideAllDetails}
           />
         )}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { EntityClassItem, LabelItem, TagItem } from 'components/shared/elements';
 import { GearIcon, UserIcon } from 'components/shared/icons';
-import { Link } from 'react-router-dom';
 import { ActivityEventType } from 'generated-sources';
 import {
   ActivityFieldHeader,
@@ -122,6 +122,18 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           activityName='Business name'
           oldState={activity.oldState.businessName?.internalName}
           newState={activity.newState.businessName?.internalName}
+          hideAllDetails={hideAllDetails}
+        />
+      )}
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_INTERNAL_NAME_UPDATED]) && (
+        <StringActivityField
+          startText={`The dataset field's "${
+            activity.oldState.datasetFieldInformation?.name ||
+            activity.newState.datasetFieldInformation?.name
+          }" `}
+          activityName='business name'
+          oldState={activity.oldState.datasetFieldInformation?.internalName}
+          newState={activity.newState.datasetFieldInformation?.internalName}
           hideAllDetails={hideAllDetails}
         />
       )}

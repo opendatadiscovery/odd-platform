@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { type FC, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type DataSource, Permission } from 'generated-sources';
 import { deleteDataSource } from 'redux/thunks';
 import {
-  Button,
   AppTooltip,
+  Button,
   ConfirmationDialog,
-  LabeledInfoItem,
   DatasourceLogo,
+  InfoItem,
+  LabeledInfoItem,
 } from 'components/shared/elements';
-import { DeleteIcon, EditIcon } from 'components/shared/icons';
+import { AlertIcon, DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';
 import DataSourceItemToken from './DataSourceItemToken/DataSourceItemToken';
 import * as S from './DataSourceItemStyles';
@@ -21,14 +22,13 @@ interface DataSourceItemProps {
   dataSource: DataSource;
 }
 
-const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
+const DataSourceItem: FC<DataSourceItemProps> = ({ dataSource }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const onDelete = React.useCallback(
-    () => dispatch(deleteDataSource({ dataSourceId: dataSource.id })),
-    [dataSource]
-  );
+  const [isHidden, setIsHidden] = useState(true);
+
+  const onDelete = () => dispatch(deleteDataSource({ dataSourceId: dataSource.id }));
 
   return (
     <S.Container elevation={0}>
@@ -40,7 +40,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
               {dataSource.name}
             </Typography>
           </Grid>
-          <S.ActionsContainer item sm={4}>
+          <S.Actions>
             <WithPermissions permissionTo={Permission.DATA_SOURCE_UPDATE}>
               <DataSourceFormDialog
                 dataSource={dataSource}
@@ -73,10 +73,10 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
                 }
               />
             </WithPermissions>
-          </S.ActionsContainer>
+          </S.Actions>
         </Grid>
 
-        <S.DescriptionContainer item container>
+        <S.Description>
           <LabeledInfoItem
             variant='body2'
             inline
@@ -100,10 +100,27 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
               labelWidth={4}
               valueSx={{ ml: 0 }}
             >
-              <DataSourceItemToken dataSource={dataSource} />
+              <DataSourceItemToken
+                dataSource={dataSource}
+                isHidden={isHidden}
+                setIsHidden={setIsHidden}
+              />
             </LabeledInfoItem>
           )}
-        </S.DescriptionContainer>
+          {!isHidden && (
+            <InfoItem
+              sx={{ p: 1, backgroundColor: 'warning.light', borderRadius: 1 }}
+              labelWidth={0.4}
+              label={<AlertIcon fill='#E59900' width={24} height={24} />}
+              info={
+                <Typography variant='body1'>
+                  Save token in a secure location. You will not be able to retrieve it
+                  again.
+                </Typography>
+              }
+            />
+          )}
+        </S.Description>
       </Grid>
     </S.Container>
   );
