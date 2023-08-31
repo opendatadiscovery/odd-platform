@@ -1,20 +1,20 @@
-import type { ReactElement } from 'react';
-import React, { cloneElement, type FC, useState } from 'react';
+import React, { type FC, type ReactElement, cloneElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import { LANGUAGES_MAP } from 'lib/constants';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import type { Lang } from 'lib/interfaces';
-import { Input } from 'components/shared/elements/index';
+import Input from 'components/shared/elements/Input/Input';
 
 interface SelectLanguageProps {
   openBtn: ReactElement;
+  handleMenuClose: () => void;
 }
 
 type HandleClose = () => void;
 
-const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn }) => {
+const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn, handleMenuClose }) => {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
 
@@ -27,6 +27,7 @@ const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn }) => {
   const handleLangChange = async (lang: string, handleClose: HandleClose) => {
     await i18n.changeLanguage(lang);
     handleClose();
+    handleMenuClose();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>

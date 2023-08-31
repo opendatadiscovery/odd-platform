@@ -145,6 +145,7 @@ export const LANGUAGES_MAP = {
   en: 'English',
   es: 'Spanish',
   ch: 'Chinese',
+  fr: 'French',
 } as const;
 
 // regexp

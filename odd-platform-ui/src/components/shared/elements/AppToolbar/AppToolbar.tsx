@@ -1,5 +1,6 @@
 import React, { type FC, type MouseEvent, useEffect, useState } from 'react';
 import { Box, Grid, Typography, useScrollTrigger } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { getIdentity, getOwnership } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/icons';
@@ -10,7 +11,6 @@ import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/Toolb
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
 import Button from 'components/shared/elements/Button/Button';
 import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
-import { useTranslation } from 'react-i18next';
 import { LANGUAGES_MAP } from 'lib/constants';
 import SelectLanguage from 'components/shared/elements/AppToolbar/SelectLanguage/SelectLanguage';
 import ChevronIcon from 'components/shared/icons/ChevronIcon';
@@ -91,6 +91,7 @@ const AppToolbar: FC = () => {
         onClose={handleMenuClose}
       >
         <SelectLanguage
+          handleMenuClose={handleMenuClose}
           openBtn={
             <AppMenuItem>
               <S.LanguageContainer>
