@@ -304,6 +304,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 copyNew.setId(pair.lastExistingVersion().getId());
             }
             copyNew.setInternalDescription(pair.lastExistingVersion().getInternalDescription());
+            copyNew.setInternalName(pair.lastExistingVersion().getInternalName());
             if (copyNew.getStats() == null || copyNew.getStats().data().equals("{}")) {
                 copyNew.setStats(pair.lastExistingVersion().getStats());
             }
