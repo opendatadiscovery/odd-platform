@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 public interface ReactiveDatasetFieldRepository extends ReactiveCRUDRepository<DatasetFieldPojo> {
     Mono<DatasetFieldPojo> updateDescription(final long datasetFieldId, final String description);
 
+    Mono<DatasetFieldPojo> updateInternalName(final long datasetFieldId, final String internalName);
+
     Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithLabels(final long datasetFieldId);
 
     Flux<DatasetFieldPojo> getLastVersionDatasetFieldsByOddrns(final List<String> oddrns);

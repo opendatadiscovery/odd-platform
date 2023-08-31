@@ -1,13 +1,12 @@
-import type { CSSProperties } from 'react';
-import React, { type FC, type ReactNode } from 'react';
+import React, { type FC, type ReactNode, type CSSProperties } from 'react';
 import type { ContextStore } from '@uiw/react-md-editor';
 import MDEditor from '@uiw/react-md-editor';
-import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import type { Position } from 'unist';
 import type { Element } from 'hast';
-import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import type { TypographyVariant } from '@mui/material/styles';
 import { Typography } from '@mui/material';
+import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
+import CopyButton from 'components/shared/elements/CopyButton/CopyButton';
 import * as S from './Markdown.styles';
 
 interface MarkdownProps {

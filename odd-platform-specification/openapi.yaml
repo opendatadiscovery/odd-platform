@@ -2147,6 +2147,29 @@ paths:
       tags:
         - datasetField
 
+  /api/datasetfields/{dataset_field_id}/name:
+    put:
+      summary: Update DatasetField's internal name
+      description: Updates DatasetField's internal name
+      operationId: updateDatasetFieldInternalName
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/InternalNameFormData'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/InternalName'
+      tags:
+        - datasetField
+
   /api/datasetfields/{dataset_field_id}/labels:
     put:
       summary: Update DatasetField's labels

@@ -8,6 +8,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescript
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
+import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
+import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
@@ -37,6 +39,16 @@ public class DatasetFieldController implements DatasetFieldApi {
         final ServerWebExchange exchange) {
         return formDataMono
             .flatMap(formData -> datasetFieldService.updateDescription(datasetFieldId, formData))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<InternalName>> updateDatasetFieldInternalName(
+        final Long datasetFieldId,
+        final Mono<InternalNameFormData> formDataMono,
+        final ServerWebExchange exchange) {
+        return formDataMono
+            .flatMap(formData -> datasetFieldService.updateInternalName(datasetFieldId, formData))
             .map(ResponseEntity::ok);
     }
 

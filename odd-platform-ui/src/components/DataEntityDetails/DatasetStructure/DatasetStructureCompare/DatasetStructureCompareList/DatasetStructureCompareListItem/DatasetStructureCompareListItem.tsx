@@ -1,7 +1,7 @@
-import React, { type FC, useMemo } from 'react';
+import React, { type FC, useState } from 'react';
+import { Collapse, Grid, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
-import { Collapse, Typography } from '@mui/material';
-import { Button } from 'components/shared/elements';
+import { Button, LabelItem } from 'components/shared/elements';
 import { ChevronIcon } from 'components/shared/icons';
 import type { DataSetVersionDiff } from 'lib/interfaces';
 import type { DataSetFieldDiffState } from 'generated-sources';
@@ -35,45 +35,54 @@ const DatasetStructureCompareListItem: FC<DatasetStructureCompareListItemProps> 
   const isIsNullableChanged = from?.type.isNullable !== to?.type.isNullable;
   const isPrimaryKeyChanged = from?.isPrimaryKey !== to?.isPrimaryKey;
 
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
 
-  const collapseBlock = useMemo(
-    () =>
-      isNested ? (
-        <S.CollapseContainer $visibility={!!fieldDiff.childFields?.length}>
-          <Button
-            aria-label='expand row'
-            buttonType='tertiary-m'
-            sx={{ width: '20px' }}
-            icon={
-              <ChevronIcon
-                width={10}
-                height={5}
-                transform={open ? 'rotate(0)' : 'rotate(-90)'}
-              />
-            }
-            onClick={() => setOpen(!open)}
+  const collapseBlock = isNested ? (
+    <S.CollapseContainer $visibility={!!fieldDiff.childFields?.length}>
+      <Button
+        aria-label='expand row'
+        buttonType='tertiary-m'
+        sx={{ width: '20px' }}
+        icon={
+          <ChevronIcon
+            width={10}
+            height={5}
+            transform={open ? 'rotate(0)' : 'rotate(-90)'}
           />
-        </S.CollapseContainer>
-      ) : null,
-    [fieldDiff.childFields?.length, open, isNested]
-  );
+        }
+        onClick={() => setOpen(!open)}
+      />
+    </S.CollapseContainer>
+  ) : null;
 
   const getFieldContent = (state: DataSetFieldDiffState, isFrom: boolean) =>
     state ? (
       <S.FieldContentWrapper $isFrom={isFrom}>
-        <S.FieldNameWrapper>
-          {collapseBlock}
-          <Typography variant='h4' title={state.name} noWrap>
-            {(state.isKey && 'Key') || (state.isValue && 'Value') || state.name}
-          </Typography>
-          {isPrimaryKeyChanged && state.isPrimaryKey && (
-            <KeyFieldLabel keyType='primary' />
+        <Grid container flexDirection='column'>
+          <S.FieldNameWrapper>
+            {collapseBlock}
+            <Typography variant='h4' title={state.name} noWrap>
+              {(state.isKey && 'Key') ||
+                (state.isValue && 'Value') ||
+                state.internalName ||
+                state.name}
+            </Typography>
+            {isPrimaryKeyChanged && state.isPrimaryKey && (
+              <KeyFieldLabel keyType='primary' />
+            )}
+            {isIsNullableChanged && state.type.isNullable && (
+              <KeyFieldLabel keyType='nullable' />
+            )}
+          </S.FieldNameWrapper>
+          {state.internalName && (
+            <Grid container alignItems='center' width='auto'>
+              <LabelItem labelName='Original' variant='body2' />
+              <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
+                {state.name}
+              </Typography>
+            </Grid>
           )}
-          {isIsNullableChanged && state.type.isNullable && (
-            <KeyFieldLabel keyType='nullable' />
-          )}
-        </S.FieldNameWrapper>
+        </Grid>
         {isTypeChanged && <TypeFieldLabel typeName={state.type.type} />}
       </S.FieldContentWrapper>
     ) : null;
