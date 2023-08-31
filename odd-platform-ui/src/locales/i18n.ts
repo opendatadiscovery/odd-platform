@@ -3,10 +3,12 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './translations/en.json';
 import es from './translations/es.json';
+import ch from './translations/ch.json';
 
 const resources = {
   en: { translation: en },
   es: { translation: es },
+  ch: { translation: ch },
 };
 
 i18n
@@ -14,7 +16,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: ['en', 'es'],
+    fallbackLng: ['en', 'es', 'ch'],
     debug: true,
   });
 

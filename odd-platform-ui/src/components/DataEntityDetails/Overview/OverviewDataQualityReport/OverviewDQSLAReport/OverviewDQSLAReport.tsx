@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   getDatasetSLAReport,
   getDatasetSLAReportFetchingStatuses,
@@ -10,7 +11,6 @@ import { ORDERED_SEVERITY } from 'lib/constants';
 import { useAppSelector } from 'redux/lib/hooks';
 import { SLAColour } from 'generated-sources';
 import { createUrl } from 'lib/helpers';
-import { useTranslation } from 'react-i18next';
 import OverviewDQSLAReportSkeleton from './OverviewDQSLAReportSkeleton/OverviewDQSLAReportSkeleton';
 import * as S from './OverviewDQSLAReportStyles';
 
@@ -76,7 +76,9 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
     return (
       <>
         <S.HintHeader variant='h4'>
-          {t('SLA represents data quality tests weight relations for dataset')}
+          {t(
+            'SLA represents weight relations among data quality tests for a said dataset'
+          )}
         </S.HintHeader>
         <S.HintText variant='body1' mt={1}>
           {t('There are 3 types of tests')}:
@@ -104,27 +106,31 @@ const OverviewDQSLAReport: React.FC<OverviewDQSLAReportProps> = ({ dataEntityId 
         </S.HintUList>
         <S.HintOList $isOList>
           {orderedLiElement(
-            t('If at least one critical test is failed > '),
+            t('If at least one critical test have failed > '),
             SLAColour.RED
           )}
           {orderedLiElement(t('If all major tests are failed > '), SLAColour.RED)}
           {orderedLiElement(
             t(
-              'If all major tests except one are failed and all minor test are failed > '
+              'If all major tests except one have failed and all minor tests have failed > '
             ),
             SLAColour.RED
           )}
           {orderedLiElement(t(`If dataset doesn't have tests > `), SLAColour.YELLOW)}
           {orderedLiElement(
-            t(`If at least one major test failed and all critical are passed > `),
+            t(
+              `If at least one major test failed and all critical have been successful > `
+            ),
             SLAColour.YELLOW
           )}
           {orderedLiElement(
-            t(`If all minor tests are failed, majors and critical are passed > `),
+            t(
+              `If all minor tests have failed, but majors and critical have been successful > `
+            ),
             SLAColour.YELLOW
           )}
           {orderedLiElement(
-            t(`If all tests are passed or some of minors are failed >             `),
+            t(`If all tests have passed or some of minors have failed > `),
             SLAColour.GREEN
           )}
         </S.HintOList>
