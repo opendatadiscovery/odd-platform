@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
 const entityNameWithAlphabeticChars = 'Book_ETL_aqa';
