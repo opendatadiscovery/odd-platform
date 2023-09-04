@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldEnums, getDatasetFieldEnumsFetchingError } from 'redux/selectors';
 import { resetLoaderByAction } from 'redux/slices/loader.slice';
 import { fetchDataSetFieldEnumActionType } from 'redux/actions';
+import { useTranslation } from 'react-i18next';
 import * as S from '../DatasetFieldOverview.styles';
 import DatasetFieldEnumsForm from '../DatasetFieldEnumsForm/DatasetFieldEnumsForm';
 
@@ -21,6 +22,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
   field,
   isStatusDeleted,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { type: fieldType } = field.type;
@@ -47,7 +49,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
     if (error)
       return (
         <Typography mt={1} variant='body1' color='warning.main'>
-          There was an error while loading enums, please, try again later.
+          {t('There was an error while loading enums, please, try again later.')}
         </Typography>
       );
 
@@ -61,7 +63,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
       </Grid>
     ) : (
       <Typography mt={1} variant='subtitle1'>
-        Enums are not created yet
+        {t('Enums are not created yet')}
       </Typography>
     );
   }, [error, field.enumValueCount, datasetFieldEnums?.items]);
@@ -70,7 +72,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
     <S.SectionContainer container>
       <Grid container justifyContent='space-between'>
         <Typography variant='h5' color='texts.hint'>
-          ENUMS
+          {t('ENUMS')}
         </Typography>
         {!isStatusDeleted && (
           <WithPermissions
@@ -85,7 +87,7 @@ const DatasetFieldOverviewEnums: React.FC<DatasetFieldOverviewEnumsProps> = ({
                 btnCreateEl={
                   <Button
                     disabled={!editEnums}
-                    text={field.enumValueCount ? 'Edit enums' : 'Add enums'}
+                    text={field.enumValueCount ? t('Edit enums') : t('Add enums')}
                     buttonType='secondary-m'
                     sx={{ mr: 1 }}
                   />

@@ -1,5 +1,6 @@
-import React, { type MouseEvent } from 'react';
-import { Grid, Typography, useScrollTrigger } from '@mui/material';
+import React, { type FC, type MouseEvent, useEffect, useState } from 'react';
+import { Box, Grid, Typography, useScrollTrigger } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { getIdentity, getOwnership } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/icons';
@@ -10,14 +11,19 @@ import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/Toolb
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
 import Button from 'components/shared/elements/Button/Button';
 import * as S from 'components/shared/elements/AppToolbar/AppToolbarStyles';
+import { LANGUAGES_MAP } from 'lib/constants';
+import SelectLanguage from 'components/shared/elements/AppToolbar/SelectLanguage/SelectLanguage';
+import ChevronIcon from 'components/shared/icons/ChevronIcon';
+import type { Lang } from 'lib/interfaces';
 
-const AppToolbar: React.FC = () => {
+const AppToolbar: FC = () => {
   const { basePath } = useAppPaths();
+  const { i18n, t } = useTranslation();
   const identity = useAppSelector(getIdentity);
   const owner = useAppSelector(getOwnership);
 
   const menuId = 'primary-search-account-menu';
-  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
 
   const handleProfileMenuOpen = (event: MouseEvent) => {
@@ -32,14 +38,16 @@ const AppToolbar: React.FC = () => {
     window.location.href = '/logout';
   };
 
-  const [elevation, setElevation] = React.useState(0);
+  const [elevation, setElevation] = useState(0);
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 10,
     target: window,
   });
 
-  React.useEffect(() => setElevation(trigger ? 3 : 0), [trigger]);
+  useEffect(() => setElevation(trigger ? 3 : 0), [trigger]);
+
+  const currentLanguage = LANGUAGES_MAP[i18n.language as Lang];
 
   return (
     <S.Bar position='fixed' elevation={elevation}>
@@ -59,7 +67,7 @@ const AppToolbar: React.FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <AppInfoMenu />
-              <S.UserName>{owner?.name || identity?.username}</S.UserName>
+              <S.UserName>{owner?.name ?? identity?.username}</S.UserName>
               <Button
                 buttonType='linkGray-m'
                 icon={<DropdownIcon />}
@@ -73,6 +81,7 @@ const AppToolbar: React.FC = () => {
         </S.ContentContainer>
       </S.Container>
       <AppMenu
+        PaperProps={{ sx: { width: '240px' } }}
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
@@ -81,7 +90,27 @@ const AppToolbar: React.FC = () => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
+        <SelectLanguage
+          handleMenuClose={handleMenuClose}
+          openBtn={
+            <AppMenuItem>
+              <S.LanguageContainer>
+                <div>{t('Select language')}</div>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div>{currentLanguage}</div>{' '}
+                  <ChevronIcon transform='rotate(-90)' sx={{ ml: 0.5 }} />
+                </Box>
+              </S.LanguageContainer>
+            </AppMenuItem>
+          }
+        />
+        <AppMenuItem onClick={handleLogout}>{t('Logout')}</AppMenuItem>
       </AppMenu>
     </S.Bar>
   );

@@ -1,42 +1,44 @@
-import React from 'react';
+import React, { type FC, useEffect, useMemo, useState } from 'react';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
-const ManagementTabs: React.FC = () => {
+const ManagementTabs: FC = () => {
+  const { t } = useTranslation();
   const { managementViewType } = useAppParams();
   const { ManagementRoutes } = useAppPaths();
   const { hasAccessTo } = usePermissions();
 
-  const [selectedTab, setSelectedTab] = React.useState(0);
+  const [selectedTab, setSelectedTab] = useState(0);
 
-  const hideAssociations = React.useMemo(
+  const hideAssociations = useMemo(
     () => !hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE),
     [hasAccessTo]
   );
 
-  const tabs = React.useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem[]>(
     () => [
-      { name: 'Namespaces', link: ManagementRoutes.namespaces },
-      { name: 'Datasources', link: ManagementRoutes.datasources },
-      { name: 'Integrations', link: ManagementRoutes.integrations },
-      { name: 'Collectors', link: ManagementRoutes.collectors },
-      { name: 'Owners', link: ManagementRoutes.owners },
-      { name: 'Tags', link: ManagementRoutes.tags },
-      { name: 'Labels', link: ManagementRoutes.labels },
+      { name: t('Namespaces'), link: ManagementRoutes.namespaces },
+      { name: t('Datasources'), link: ManagementRoutes.datasources },
+      { name: t('Integrations'), link: ManagementRoutes.integrations },
+      { name: t('Collectors'), link: ManagementRoutes.collectors },
+      { name: t('Owners'), link: ManagementRoutes.owners },
+      { name: t('Tags'), link: ManagementRoutes.tags },
+      { name: t('Labels'), link: ManagementRoutes.labels },
       {
-        name: 'Associations',
+        name: t('Associations'),
         link: ManagementRoutes.associations,
         hidden: hideAssociations,
       },
-      { name: 'Roles', link: ManagementRoutes.roles },
-      { name: 'Policies', link: ManagementRoutes.policies },
+      { name: t('Roles'), link: ManagementRoutes.roles },
+      { name: t('Policies'), link: ManagementRoutes.policies },
     ],
-    [hideAssociations]
+    [hideAssociations, t]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectedTab(
       managementViewType
         ? tabs.findIndex(tab => tab.name.toLowerCase() === managementViewType)

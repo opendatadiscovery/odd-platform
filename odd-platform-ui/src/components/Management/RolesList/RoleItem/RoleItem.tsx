@@ -7,6 +7,7 @@ import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import TruncateMarkup from 'react-truncate-markup';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import RoleForm from '../RoleForm/RoleForm';
 import * as S from './RoleItemStyles';
 
@@ -17,6 +18,7 @@ interface RoleItemProps {
 }
 
 const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const isUser = name === 'User';
@@ -59,7 +61,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
               policies={policies}
               openBtn={
                 <Button
-                  text='Edit'
+                  text={t('Edit')}
                   buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
@@ -72,13 +74,17 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
             extraCheck={!(isUser || isAdministrator)}
           >
             <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this role?'
-              actionName='Delete Role'
-              actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+              actionTitle={t('Are you sure you want to delete this role?')}
+              actionName={t('Delete Role')}
+              actionText={
+                <>
+                  &quot;{name}&quot; {t('will be deleted permanently')}.
+                </>
+              }
               onConfirm={handleDelete}
               actionBtn={
                 <Button
-                  text='Delete'
+                  text={t('Delete')}
                   buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />

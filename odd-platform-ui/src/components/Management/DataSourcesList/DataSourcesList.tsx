@@ -19,12 +19,14 @@ import {
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import DataSourceForm from './DataSourceForm/DataSourceForm';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItem from './DataSourceItem/DataSourceItem';
 import * as S from './DataSourcesListStyles';
 
 const DataSourcesListView: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const dataSourcesList = useAppSelector(getDataSourcesList);
@@ -73,14 +75,14 @@ const DataSourcesListView: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Datasources</Typography>
+        <Typography variant='h1'>{t('Datasources')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalDataSources} /> datasources overall
+          <NumberFormatted value={totalDataSources} /> {t('datasources overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search datasource...'
+          placeholder={t('Search datasource')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}
@@ -106,7 +108,7 @@ const DataSourcesListView: React.FC = () => {
               <Button
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
-                text='Add datasource'
+                text={t('Add datasource')}
               />
             }
           />

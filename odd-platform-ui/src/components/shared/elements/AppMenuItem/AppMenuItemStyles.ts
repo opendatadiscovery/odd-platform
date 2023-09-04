@@ -20,6 +20,8 @@ interface AppListItemTextProps {
 export const StyledAppMenuItem = styled(MenuItem)<AppMenuItemStyleProps>(
   ({ theme, $minWidth, $maxWidth }) => ({
     [`&.${menuItemClasses.root}`]: {
+      padding: theme.spacing(0.75, 1),
+      borderRadius: '4px',
       '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
       width: '100%',
       minWidth: $minWidth ? `${$minWidth}px` : 0,

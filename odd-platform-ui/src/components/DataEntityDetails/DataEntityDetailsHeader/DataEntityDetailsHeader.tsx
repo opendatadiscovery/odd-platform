@@ -15,6 +15,7 @@ import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/ico
 import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsDataEntityBelongsToClass, getIsEntityStatusDeleted } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 import DataEntityGroupForm from '../DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';
@@ -41,6 +42,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
   status,
   isStale,
 }) => {
+  const { t } = useTranslation();
   const { formatDistanceToNowStrict } = useAppDateTime();
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
@@ -60,7 +62,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
 
   const originalName = internalName && externalName && (
     <Grid container alignItems='center' width='auto'>
-      <LabelItem labelName='Original' variant='body1' />
+      <LabelItem labelName={t('Original')} variant='body1' />
       <Typography variant='body1' sx={{ ml: 0.5 }} noWrap>
         {externalName}
       </Typography>
@@ -87,7 +89,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
               <InternalNameFormDialog
                 btnCreateEl={
                   <Button
-                    text={internalName ? 'Edit' : 'Add business name'}
+                    text={internalName ? t('Edit') : t('Add business name')}
                     data-qa='add_business_name'
                     buttonType='tertiary-m'
                     sx={{ ml: 1 }}
@@ -132,7 +134,7 @@ const DataEntityDetailsHeader: React.FC<DataEntityDetailsHeaderProps> = ({
               dataEntityId={dataEntityId}
               btnCreateEl={
                 <Button
-                  text='Share'
+                  text={t('Share')}
                   buttonType='secondary-lg'
                   startIcon={<SlackIcon />}
                   sx={{ ml: 2 }}

@@ -1,12 +1,12 @@
 import {
+  type AlertHaltConfigActivityState,
   AlertType,
+  DataEntityClassNameEnum as ClassNameEnum,
+  type DataEntityHighlight,
+  type DataEntitySearchHighlight,
+  DataEntityTypeNameEnum as TypeNameEnum,
   DataQualityTestSeverity,
   type DataSourceHighlight,
-  type AlertHaltConfigActivityState,
-  type DataEntitySearchHighlight,
-  type DataEntityHighlight,
-  DataEntityClassNameEnum as ClassNameEnum,
-  DataEntityTypeNameEnum as TypeNameEnum,
 } from 'generated-sources';
 
 export const ORDERED_SEVERITY = [
@@ -140,6 +140,13 @@ export const datedListFormat = 'MMMM dd, yyyy';
 // empty structures
 export const emptyArr = [];
 export const emptyObj = {};
+
+export const LANGUAGES_MAP = {
+  en: 'English',
+  es: 'Spanish',
+  ch: 'Chinese',
+  fr: 'French',
+} as const;
 
 // regexp
 export const TERM_PATTERN = /\[\[([^:\]]+):([^\]]+)\]\]/g;

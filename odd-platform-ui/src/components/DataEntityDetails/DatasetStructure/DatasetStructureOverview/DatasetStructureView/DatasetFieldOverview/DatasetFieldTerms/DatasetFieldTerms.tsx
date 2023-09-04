@@ -9,6 +9,7 @@ import {
   addDatasetFieldTerm,
   deleteDatasetFieldTerm,
 } from 'redux/slices/datasetStructure.slice';
+import { useTranslation } from 'react-i18next';
 import * as S from '../DatasetFieldOverview.styles';
 import TermItem from './TermItem/TermItem';
 import AssignFieldTermForm from './AssignFieldTermForm/AssignFieldTermForm';
@@ -24,6 +25,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
   datasetFieldId,
   isStatusDeleted,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const handleAddTerm = useCallback(
@@ -58,7 +60,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
         </Grid>
       ) : (
         <Typography mt={1} variant='subtitle1'>
-          Terms are not added yet
+          {t('Terms are not added yet')}
         </Typography>
       ),
     [fieldTerms?.length, fieldTerms]
@@ -68,7 +70,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
     <S.SectionContainer container>
       <Grid container justifyContent='space-between'>
         <Typography variant='h5' color='texts.hint'>
-          TERMS
+          {t('TERMS')}
         </Typography>
         {!isStatusDeleted && (
           <WithPermissions
@@ -80,7 +82,7 @@ const DatasetFieldTerms: FC<DatasetFieldTermsProps> = ({
                 openBtnEl={
                   <Button
                     disabled={!addTerm}
-                    text='Add term'
+                    text={t('Add term')}
                     buttonType='secondary-m'
                     sx={{ mr: 1 }}
                   />

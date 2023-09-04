@@ -4,6 +4,7 @@ import { type DataEntityRef, Permission } from 'generated-sources';
 import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
 import AddDataEntityToGroupForm from './AddDataEntityToGroupForm/AddDataEntityToGroupForm';
@@ -19,6 +20,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
   dataEntityGroups,
   dataEntityId,
 }) => {
+  const { t } = useTranslation();
   const visibleLimit = 10;
   const [viewAll, setViewAll] = React.useState(false);
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
@@ -26,14 +28,14 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
   return (
     <div>
       <GroupsCaptionContainer>
-        <Typography variant='h4'>Data entity groups</Typography>
+        <Typography variant='h4'>{t('Data entity groups')}</Typography>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
           {!isStatusDeleted && (
             <AddDataEntityToGroupForm
               dataEntityId={dataEntityId}
               btnCreateEl={
                 <Button
-                  text='Add to group'
+                  text={t('Add to group')}
                   buttonType='secondary-m'
                   startIcon={<AddIcon />}
                 />
@@ -66,7 +68,9 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
                     ))}
               </Collapse>
               <Button
-                text={viewAll ? 'Hide' : `View All (${dataEntityGroups?.length})`}
+                text={
+                  viewAll ? t('Hide') : `${t('View All')} (${dataEntityGroups?.length})`
+                }
                 buttonType='tertiary-m'
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
@@ -83,12 +87,12 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
           justifyContent='flex-start'
           wrap='nowrap'
         >
-          <Typography variant='subtitle2'>Not created.</Typography>
+          <Typography variant='subtitle2'>{t('Not created')}.</Typography>
           <WithPermissions permissionTo={Permission.DATA_ENTITY_ADD_TO_GROUP}>
             {!isStatusDeleted && (
               <AddDataEntityToGroupForm
                 dataEntityId={dataEntityId}
-                btnCreateEl={<Button text='Add to group' buttonType='tertiary-sm' />}
+                btnCreateEl={<Button text={t('Add to group')} buttonType='tertiary-sm' />}
               />
             )}
           </WithPermissions>

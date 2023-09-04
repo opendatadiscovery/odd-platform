@@ -6,6 +6,7 @@ import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
+import { useTranslation } from 'react-i18next';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
 import * as S from './OwnerAssociationsHeaderStyles';
 
@@ -20,6 +21,7 @@ const OwnerAssociationsHeader: React.FC<OwnerAssociationsHeaderProps> = ({
   size,
   active,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const [query, setQuery] = useAtom(queryAtom);
@@ -54,14 +56,14 @@ const OwnerAssociationsHeader: React.FC<OwnerAssociationsHeaderProps> = ({
   return (
     <>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Owner associations</Typography>
+        <Typography variant='h1'>{t('Owner associations')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={total} /> requests overall
+          <NumberFormatted value={total} /> {t('requests overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search requests...'
+          placeholder={t('Search requests')}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
           value={query}

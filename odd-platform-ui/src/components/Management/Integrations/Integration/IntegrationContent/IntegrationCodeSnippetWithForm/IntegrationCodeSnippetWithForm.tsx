@@ -4,6 +4,7 @@ import Handlebars from 'handlebars';
 import { FormControlLabel, Grid, Typography } from '@mui/material';
 import { Button, Checkbox, Input, Markdown } from 'components/shared/elements';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 
 interface IntegrationCodeSnippetWithFormProps {
   snippet: IntegrationCodeSnippetType;
@@ -12,6 +13,7 @@ interface IntegrationCodeSnippetWithFormProps {
 const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = ({
   snippet,
 }) => {
+  const { t } = useTranslation();
   const [showForm, setShowForm] = useState(true);
   const [snippetArgs, setSnippetArgs] = useState({});
 
@@ -120,7 +122,7 @@ const IntegrationCodeSnippetWithForm: FC<IntegrationCodeSnippetWithFormProps> = 
   ) : (
     <Grid container mb={1} justifyContent='flex-end'>
       <Button
-        text='Reconfigure'
+        text={t('Reconfigure')}
         buttonType='main-lg'
         onClick={() => setShowForm(true)}
         sx={{ mb: 1, justifySelf: 'flex-end' }}

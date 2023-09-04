@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const OwnerActionBtns = styled('div')(() => ({ opacity: 0 }));
+export const OwnerActionBtns = styled('div')(() => ({ display: 'flex', opacity: 0 }));
 
 export const OwnerItem = styled('span')(({ theme }) => ({
   display: 'flex',

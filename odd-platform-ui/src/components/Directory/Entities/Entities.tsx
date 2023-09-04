@@ -9,12 +9,14 @@ import { AppErrorPage, AppLoadingPage, DatasourceLogo } from 'components/shared/
 import { Typography } from '@mui/material';
 import { pluralize } from 'lib/helpers';
 import type { ErrorState } from 'redux/interfaces';
+import { useTranslation } from 'react-i18next';
 import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import EntitiesTabs from './EntitiesTabs/EntitiesTabs';
 import EntitiesList from './EntitiesList/EntitiesList';
 import * as S from '../shared/styles';
 
 const Entities: FC = () => {
+  const { t } = useTranslation();
   const { dataSourceTypePrefix: prefix, dataSourceId, typeId } = useAppParams();
 
   const {
@@ -71,7 +73,7 @@ const Entities: FC = () => {
           </S.LogoContainer>
           <S.CountContainer>
             <Typography variant='body1' color='texts.hint'>
-              {pluralize(total, 'entity', 'entities')}
+              {pluralize(total, t('entity'), t('entities'))}
             </Typography>
           </S.CountContainer>
         </S.Header>

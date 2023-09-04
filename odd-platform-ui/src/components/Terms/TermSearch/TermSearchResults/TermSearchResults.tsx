@@ -15,11 +15,13 @@ import {
 } from 'redux/selectors';
 import { fetchTermsSearchResults } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 import TermSearchResultItem from './TermSearchResultItem/TermSearchResultItem';
 import * as S from './TermSearchResultsStyles';
 import TermSearchResultsSkeleton from './TermSearchResultsSkeleton/TermSearchResultsSkeleton';
 
 const TermSearchResults: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const scrollbarWidth = useScrollBarWidth();
 
@@ -62,22 +64,22 @@ const TermSearchResults: React.FC = () => {
     <Grid sx={{ mt: 2 }}>
       <S.TermSearchResultsTableHeader container $scrollbarWidth={scrollbarWidth}>
         <S.TermSearchResultsColContainer item $colType='collg'>
-          <Typography variant='caption'>Term name</Typography>
+          <Typography variant='caption'>{t('Term name')}</Typography>
         </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='collg'>
-          <Typography variant='caption'>Namespace</Typography>
+          <Typography variant='caption'>{t('Namespace')}</Typography>
         </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='collg'>
-          <Typography variant='caption'>Owner</Typography>
+          <Typography variant='caption'>{t('Owner')}</Typography>
         </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='colxs'>
-          <Typography variant='caption'>Using</Typography>
+          <Typography variant='caption'>{t('Using')}</Typography>
         </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='colsm'>
-          <Typography variant='caption'>Created</Typography>
+          <Typography variant='caption'>{t('Created')}</Typography>
         </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='colsm'>
-          <Typography variant='caption'>Last update</Typography>
+          <Typography variant='caption'>{t('Last update')}</Typography>
         </S.TermSearchResultsColContainer>
         <S.TermSearchResultsColContainer item $colType='colxs' />
       </S.TermSearchResultsTableHeader>
@@ -101,7 +103,7 @@ const TermSearchResults: React.FC = () => {
             ))}
           </InfiniteScroll>
           {!isTermSearchFetching && !total && (
-            <EmptyContentPlaceholder text='No matches found' />
+            <EmptyContentPlaceholder text={t('No matches found')} />
           )}
         </S.TermSearchListContainer>
       )}

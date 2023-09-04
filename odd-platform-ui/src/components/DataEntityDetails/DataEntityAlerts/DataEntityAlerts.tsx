@@ -17,12 +17,14 @@ import { WithPermissions } from 'components/shared/contexts';
 import { fetchDataEntityAlerts } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
 import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
 import * as S from './DataEntityAlertsStyles';
 
 const DataEntityAlerts: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
@@ -51,7 +53,9 @@ const DataEntityAlerts: React.FC = () => {
       <WithPermissions permissionTo={Permission.DATA_ENTITY_ALERT_CONFIG_UPDATE}>
         <Grid container justifyContent='flex-end' sx={{ py: 0.75 }}>
           <NotificationSettings
-            btnCreateEl={<Button text='Notification settings' buttonType='tertiary-m' />}
+            btnCreateEl={
+              <Button text={t('Notification settings')} buttonType='tertiary-m' />
+            }
           />
         </Grid>
       </WithPermissions>

@@ -2,10 +2,12 @@ import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { AppCircularProgress, AppErrorBlock } from 'components/shared/elements';
 import { useAppParams, useDataEntityAttachments } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import AttachmentsList from './AttachmentsList/AttachmentsList';
 import AttachmentsHeader from './AttachmentsHeader/AttachmentsHeader';
 
 const OverviewAttachments: FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
 
   const { data, isError, isLoading } = useDataEntityAttachments({ dataEntityId });
@@ -28,7 +30,9 @@ const OverviewAttachments: FC = () => {
             mt={1}
           >
             <Typography variant='subtitle1'>
-              No attachments yet. You can add attachments via the button on the right
+              {t(
+                'No attachments yet. You can add attachments via the button on the right'
+              )}
             </Typography>
           </Grid>
         )}

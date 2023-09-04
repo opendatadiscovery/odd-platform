@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type FC, useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntitiesSearch } from 'redux/thunks';
 import { useCreateSearch } from 'lib/hooks';
@@ -6,6 +6,7 @@ import { getSearchId, getSearchQuery } from 'redux/selectors';
 import { Box } from '@mui/material';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 import SearchSuggestionsAutocomplete from 'components/shared/elements/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+import { useTranslation } from 'react-i18next';
 
 interface AppSearchProps {
   placeholder?: string;
@@ -13,18 +14,19 @@ interface AppSearchProps {
   mainSearch?: boolean;
 }
 
-const MainSearchInput: React.FC<AppSearchProps> = ({
+const MainSearchInput: FC<AppSearchProps> = ({
   placeholder,
   disableSuggestions,
   mainSearch,
 }) => {
   const dispatch = useAppDispatch();
   const createSearch = useCreateSearch();
+  const { t } = useTranslation();
 
   const storedSearchId = useAppSelector(getSearchId);
   const searchQuery = useAppSelector(getSearchQuery);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const clearSearchQuery = () => {
       if (mainSearch) dispatch(updateSearchQuery(''));
     };
@@ -32,12 +34,12 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     return clearSearchQuery();
   }, [mainSearch]);
 
-  const handleCreateSearch = React.useCallback((query: string) => {
+  const handleCreateSearch = useCallback((query: string) => {
     const searchFormData = { query, pageSize: 30, filters: {} };
     createSearch(searchFormData);
   }, []);
 
-  const handleUpdateSearch = React.useCallback(
+  const handleUpdateSearch = useCallback(
     (query: string) => {
       const searchFormData = { query, pageSize: 30, filters: {} };
       dispatch(updateDataEntitiesSearch({ searchId: storedSearchId, searchFormData }));
@@ -45,7 +47,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     [storedSearchId, updateDataEntitiesSearch]
   );
 
-  const handleKeyDown = React.useCallback(
+  const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => (query: string) => {
       if (event.key === 'Enter') {
         if (mainSearch) {
@@ -58,8 +60,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
     [handleUpdateSearch, handleCreateSearch, mainSearch]
   );
 
-  const defaultPlaceholder =
-    'Search data tables, feature groups, jobs and ML models via keywords';
+  const mainSearchPlaceholder = t('main search placeholder');
 
   return (
     <Box sx={{ width: '100%', maxWidth: '640px' }}>
@@ -67,7 +68,7 @@ const MainSearchInput: React.FC<AppSearchProps> = ({
         linkedOption
         inputParams={{
           variant: 'search-lg',
-          placeholder: placeholder || defaultPlaceholder,
+          placeholder: placeholder ?? mainSearchPlaceholder,
           searchAdornmentHandler: mainSearch ? handleCreateSearch : handleUpdateSearch,
           onKeyDownHandler: handleKeyDown,
         }}

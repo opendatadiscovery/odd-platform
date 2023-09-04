@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { NoDataIcon } from 'components/shared/icons';
 import type { SxProps, Theme } from '@mui/system';
+import { useTranslation } from 'react-i18next';
 
 interface EmptyContentPlaceholderProps {
   position?: 'vertical' | 'horizontal';
@@ -14,17 +15,19 @@ interface EmptyContentPlaceholderProps {
   sx?: SxProps<Theme>;
 }
 
-const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
+const EmptyContentPlaceholder: FC<EmptyContentPlaceholderProps> = ({
   position = 'vertical',
-  text = 'No information to display',
+  text,
   iconSize = 70,
   isContentLoaded = true,
   isContentEmpty = true,
   offsetTop = 32,
   fullPage = true,
   sx,
-}) =>
-  isContentLoaded && isContentEmpty ? (
+}) => {
+  const { t } = useTranslation();
+
+  return isContentLoaded && isContentEmpty ? (
     <Grid
       container
       sx={{ height: fullPage ? `calc(100vh - ${offsetTop}px)` : 'auto', ...sx }}
@@ -39,10 +42,13 @@ const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
           <NoDataIcon width={iconSize} height={iconSize} />
         </Grid>
         <Grid item alignItems='center'>
-          <Typography variant={fullPage ? 'h2' : 'h4'}>{text}</Typography>
+          <Typography variant={fullPage ? 'h2' : 'h4'}>
+            {text ?? t('No information to display')}
+          </Typography>
         </Grid>
       </Grid>
     </Grid>
   ) : null;
+};
 
 export default EmptyContentPlaceholder;

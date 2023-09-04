@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { getDatasetFieldName, getDatasetStructure } from 'redux/selectors';
 import { AppTooltip, Button, LabelItem } from 'components/shared/elements';
 import { ChevronIcon, RecursiveIcon, StrokedInfoIcon } from 'components/shared/icons';
@@ -33,6 +34,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   versionId,
   rowHeight,
 }) => {
+  const { t } = useTranslation();
   const { selectedFieldId, setSelectedFieldId, setSearchQuery } = useStructure();
 
   const [open, setOpen] = useState(initialStateOpen);
@@ -139,7 +141,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >{`${datasetField.enumValueCount} enums`}</Typography>
                   )}
                 <AppTooltip
-                  title={`Logical type: ${datasetField.type.logicalType}`}
+                  title={`${t('Logical type')}: ${datasetField.type.logicalType}`}
                   type='dark'
                   checkForOverflow={false}
                   childSx={{ display: 'flex' }}

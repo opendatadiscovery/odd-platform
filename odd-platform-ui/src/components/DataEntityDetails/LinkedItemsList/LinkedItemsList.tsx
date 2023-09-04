@@ -10,11 +10,13 @@ import {
   getDEGLinkedListFetchingStatuses,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useTranslation } from 'react-i18next';
 import LinkedItem from './LinkedItem/LinkedItem';
 import * as S from './LinkedItemsListStyles';
 import LinkedListSkeleton from './LinkedListSkeleton/LinkedListSkeleton';
 
 const LinkedItemsList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityId: dataEntityGroupId } = useAppParams();
 
@@ -45,19 +47,19 @@ const LinkedItemsList: React.FC = () => {
     <S.Container>
       <S.ResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
         <S.ColContainer item $colType='colmd'>
-          <Typography variant='caption'>Name</Typography>
+          <Typography variant='caption'>{t('Name')}</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType='collg'>
-          <Typography variant='caption'>Entities</Typography>
+          <Typography variant='caption'>{t('Entities')}</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType='colsm'>
-          <Typography variant='caption'>Owners</Typography>
+          <Typography variant='caption'>{t('Owners')}</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType='colxs'>
-          <Typography variant='caption'>Created at</Typography>
+          <Typography variant='caption'>{t('Created')}</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType='colxs'>
-          <Typography variant='caption'>Updated at </Typography>
+          <Typography variant='caption'>{t('Updated')}</Typography>
         </S.ColContainer>
       </S.ResultsTableHeader>
       {isLinkedListFetching ? (
@@ -81,7 +83,7 @@ const LinkedItemsList: React.FC = () => {
         </S.ListContainer>
       )}
       {isLinkedListFetching && !pageInfo?.total ? (
-        <EmptyContentPlaceholder text='No linked items' />
+        <EmptyContentPlaceholder text={t('No linked items')} />
       ) : null}
     </S.Container>
   );

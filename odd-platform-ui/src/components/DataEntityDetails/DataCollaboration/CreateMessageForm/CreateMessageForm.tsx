@@ -14,6 +14,7 @@ import { ClearIcon } from 'components/shared/icons';
 import { type MessageRequest } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 
 interface CreateMessageFormProps {
   dataEntityId: number;
@@ -24,6 +25,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   dataEntityId,
   btnCreateEl,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { dataEntityCollaborationPath } = useAppPaths();
@@ -59,7 +61,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Create new message
+      {t('Create new message')}
     </Typography>
   );
 
@@ -81,8 +83,8 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
             sx={{ mt: 2 }}
             multiline
             minRows={4}
-            label='Message'
-            placeholder='Start typing...'
+            label={t('Message')}
+            placeholder={t('Start typing...')}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -97,7 +99,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Send message'
+      text={t('Send message')}
       buttonType='main-lg'
       type='submit'
       form='message-to-slack-form'

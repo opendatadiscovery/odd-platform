@@ -21,6 +21,7 @@ import {
   getTermLinkedListPageInfo,
 } from 'redux/selectors';
 import { fetchTermLinkedList } from 'redux/thunks';
+import { useTranslation } from 'react-i18next';
 import LinkedItem from './LinkedItem/LinkedItem';
 import {
   TermLinkedItemsColContainer,
@@ -30,6 +31,7 @@ import {
 import LinkedItemsListSkeleton from './LinkedItemsListSkeleton/LinkedItemsListSkeleton';
 
 const LinkedItemsList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
@@ -74,7 +76,7 @@ const LinkedItemsList: React.FC = () => {
         <Grid item xs={3} sx={{ mr: 1 }}>
           <AppInput
             size='medium'
-            placeholder='Search'
+            placeholder={t('Search')}
             onKeyDown={handleKeyDownSearch}
             onChange={e => setQuery(e.target.value)}
             value={query}
@@ -114,22 +116,22 @@ const LinkedItemsList: React.FC = () => {
       </Grid>
       <TermLinkedItemsResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
         <TermLinkedItemsColContainer item $colType='colmd'>
-          <Typography variant='caption'>Name</Typography>
+          <Typography variant='caption'>{t('Name')}</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='collg'>
-          <Typography variant='caption'>Namespace</Typography>
+          <Typography variant='caption'>{t('Namespace')}</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colsm'>
-          <Typography variant='caption'>Datasource</Typography>
+          <Typography variant='caption'>{t('Datasource')}</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colsm'>
-          <Typography variant='caption'>Owner</Typography>
+          <Typography variant='caption'>{t('Owner')}</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colxs'>
-          <Typography variant='caption'>Created at</Typography>
+          <Typography variant='caption'>{t('Created')}</Typography>
         </TermLinkedItemsColContainer>
         <TermLinkedItemsColContainer item $colType='colxs'>
-          <Typography variant='caption'>Updated at </Typography>
+          <Typography variant='caption'>{t('Updated')}</Typography>
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching && <LinkedItemsListSkeleton />}
@@ -153,7 +155,7 @@ const LinkedItemsList: React.FC = () => {
         )}
       </TermLinkedItemsListContainer>
       <EmptyContentPlaceholder
-        text='No linked items'
+        text={t('No linked items')}
         isContentLoaded={isLinkedListFetched}
         isContentEmpty={!total}
       />

@@ -4,6 +4,7 @@ import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { AlertTotals } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 
 interface AlertsTabsProps {
   totals: AlertTotals;
@@ -11,6 +12,7 @@ interface AlertsTabsProps {
 }
 
 const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { alertsViewType } = useAppParams();
   const { AlertsRoutes } = useAppPaths();
@@ -20,27 +22,27 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
   const tabs = React.useMemo<AppTabItem[]>(
     () => [
       {
-        name: 'All',
+        name: t('All'),
         hint: totals?.total || 0,
         value: AlertsRoutes.all,
         link: AlertsRoutes.all,
       },
       {
-        name: 'My Objects',
+        name: t('My Objects'),
         hint: totals?.myTotal || 0,
         value: AlertsRoutes.my,
         link: AlertsRoutes.my,
         hidden: !showMyAndDepends,
       },
       {
-        name: 'Dependents',
+        name: t('Dependents'),
         hint: totals?.dependentTotal || 0,
         value: AlertsRoutes.dependents,
         link: AlertsRoutes.dependents,
         hidden: !showMyAndDepends,
       },
     ],
-    [totals, showMyAndDepends]
+    [totals, showMyAndDepends, t]
   );
 
   React.useEffect(() => {

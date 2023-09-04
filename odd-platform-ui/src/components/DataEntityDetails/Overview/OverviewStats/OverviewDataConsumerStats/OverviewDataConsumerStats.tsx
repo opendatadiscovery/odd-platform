@@ -3,6 +3,7 @@ import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sourc
 import { Grid, Typography } from '@mui/material';
 import { EntitiesListModal, Button, EntityClassItem } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface OverviewDataConsumerStatsProps {
   inputs: DataEntityDetails['inputList'];
@@ -15,6 +16,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
   unknownInputsCount,
   dataEntityName,
 }) => {
+  const { t } = useTranslation();
   const displayedEntitiesNumber = 10;
   const { dataEntityOverviewPath } = useAppPaths();
 
@@ -29,7 +31,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
             {(inputs?.length || 0) + (unknownInputsCount || 0)}
           </Typography>
           <Typography sx={{ ml: 0.5 }} variant='h4'>
-            inputs
+            {t('inputs')}
           </Typography>
         </Grid>
         <Grid item container xs={12} direction='column' alignItems='flex-start'>
@@ -45,17 +47,17 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
           ))}
           {unknownInputsCount ? (
             <Typography sx={{ ml: 0.5 }} variant='subtitle1'>
-              {unknownInputsCount} more source
-              {unknownInputsCount === 1 ? '' : 's'} unknown
+              {unknownInputsCount} {t('more source')}
+              {unknownInputsCount === 1 ? '' : 's'} {t('unknown')}
             </Typography>
           ) : null}
           {inputs && inputs?.length > displayedEntitiesNumber ? (
             <EntitiesListModal
               entities={inputs}
-              labelFor='Inputs'
+              labelFor={t('Inputs')}
               dataEntityName={dataEntityName}
               openBtnEl={
-                <Button text='Show All' buttonType='tertiary-m' sx={{ my: 0.25 }} />
+                <Button text={t('Show All')} buttonType='tertiary-m' sx={{ my: 0.25 }} />
               }
             />
           ) : null}

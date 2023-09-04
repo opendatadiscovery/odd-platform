@@ -4,6 +4,7 @@ import { Permission, type Tag } from 'generated-sources';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import { Button, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer } from './OverviewTagsStyles';
 
@@ -12,6 +13,7 @@ interface OverviewTagsProps {
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
+  const { t } = useTranslation();
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -26,12 +28,12 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   return (
     <div>
       <CaptionContainer>
-        <Typography variant='h3'>Tags</Typography>
+        <Typography variant='h3'>{t('Tags')}</Typography>
         <WithPermissions permissionTo={Permission.TERM_TAGS_UPDATE}>
           <TagsEditForm
             btnEditEl={
               <Button
-                text={tags?.length ? 'Edit tags' : 'Add tags'}
+                text={tags?.length ? t('Edit tags') : t('Add tags')}
                 buttonType='secondary-m'
                 onClick={() => {}}
                 startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
@@ -71,7 +73,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
                   : null}
               </Collapse>
               <Button
-                text={viewAll ? 'Hide' : `View All (${tags?.length})`}
+                text={viewAll ? t('Hide') : `${t('View All')} (${tags?.length})`}
                 buttonType='tertiary-m'
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
@@ -88,10 +90,10 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           justifyContent='flex-start'
           wrap='nowrap'
         >
-          <Typography variant='subtitle2'>Not created.</Typography>
+          <Typography variant='subtitle2'>{t('Not created.')}</Typography>
           <WithPermissions permissionTo={Permission.TERM_TAGS_UPDATE}>
             <TagsEditForm
-              btnEditEl={<Button text='Add tags' buttonType='tertiary-sm' />}
+              btnEditEl={<Button text={t('Add tags')} buttonType='tertiary-sm' />}
             />
           </WithPermissions>
         </Grid>

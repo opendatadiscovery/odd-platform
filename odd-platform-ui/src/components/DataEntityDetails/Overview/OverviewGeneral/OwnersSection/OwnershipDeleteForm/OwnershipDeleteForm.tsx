@@ -4,6 +4,7 @@ import { DeleteIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityOwnership } from 'redux/thunks';
 import { FormControlLabel } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface OwnershipDeleteFormProps {
   ownerName: string;
@@ -18,6 +19,7 @@ const OwnershipDeleteForm: FC<OwnershipDeleteFormProps> = ({
   dataEntityId,
   isDEG,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [propagate, setPropagate] = useState(false);
 
@@ -26,9 +28,13 @@ const OwnershipDeleteForm: FC<OwnershipDeleteFormProps> = ({
 
   return (
     <ConfirmationDialog
-      actionTitle='Are you sure you want to delete this owner?'
-      actionName='Delete Owner'
-      actionText={<>&quot;{ownerName}&quot; will be deleted permanently.</>}
+      actionTitle={t('Are you sure you want to delete this owner?')}
+      actionName={t('Delete Owner')}
+      actionText={
+        <>
+          &quot;{ownerName}&quot; {t('will be deleted permanently')}.
+        </>
+      }
       onConfirm={handleOwnershipDelete}
       actionBtn={
         <Button buttonType='tertiary-m' icon={<DeleteIcon />} sx={{ ml: 0.5 }} />
@@ -40,7 +46,7 @@ const OwnershipDeleteForm: FC<OwnershipDeleteFormProps> = ({
             checked={propagate}
             control={<Checkbox sx={{ mr: 1 }} />}
             onChange={() => setPropagate(prev => !prev)}
-            label='Remove the owner binding in the nested entities'
+            label={t('Remove the owner binding in the nested entities')}
           />
         ) : null
       }

@@ -15,6 +15,7 @@ import {
   DialogWrapper,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 import { Asterisk } from './CollectorFormStyles';
 
 interface CollectorFormDialogProps {
@@ -26,6 +27,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   collector,
   btnCreateEl,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isCollectorCreating, isLoaded: isCollectorCreated } = useAppSelector(
     getCollectorCreatingStatuses
@@ -79,15 +81,15 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
 
   const collectorFormTitle = (
     <Typography variant='h4' component='span'>
-      {collector ? 'Edit ' : 'Add '}
-      Collector
+      {collector ? t('Edit collector') : t('Add collector')}
     </Typography>
   );
 
   const collectorFormContent = () => (
     <form id='collector-create-form' onSubmit={handleSubmit(onSubmit)}>
       <Typography variant='subtitle2' fontSize='0.73rem'>
-        Fields with the <Asterisk>*</Asterisk> symbol are required to save the Collector
+        {t('Fields with the')} <Asterisk>*</Asterisk>{' '}
+        {t('symbol are required to save the Collector')}
       </Typography>
       <Controller
         name='name'
@@ -100,7 +102,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.5 }}
-            label='Name'
+            label={t('Name')}
             placeholder='e.g. Data Tower'
             required
             customEndAdornment={{
@@ -125,8 +127,8 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.25 }}
-            label='Description'
-            placeholder='Collector description'
+            label={t('Description')}
+            placeholder={t('Collector description')}
             multiline
             maxRows={4}
             customEndAdornment={{
@@ -143,7 +145,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
 
   const collectorFormActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       type='submit'
       form='collector-create-form'
       buttonType='main-lg'

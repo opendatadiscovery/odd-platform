@@ -6,6 +6,7 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
+import { useTranslation } from 'react-i18next';
 
 interface ActivityTabsProps {
   counts: ActivityCountInfo;
@@ -16,6 +17,7 @@ const ActivityTabs: React.FC<ActivityTabsProps> = ({
   counts: { totalCount, myObjectsCount, downstreamCount, upstreamCount },
   isCountsFetching,
 }) => {
+  const { t } = useTranslation();
   const {
     queryParams: { type },
     setQueryParams,
@@ -27,27 +29,27 @@ const ActivityTabs: React.FC<ActivityTabsProps> = ({
   React.useEffect(() => {
     setTabs([
       {
-        name: 'All',
+        name: t('All'),
         hint: totalCount,
         value: ActivityType.ALL,
       },
       {
-        name: 'My Objects',
+        name: t('My Objects'),
         hint: myObjectsCount,
         value: ActivityType.MY_OBJECTS,
       },
       {
-        name: 'Downstream',
+        name: t('Downstream'),
         hint: downstreamCount,
         value: ActivityType.DOWNSTREAM,
       },
       {
-        name: 'Upstream',
+        name: t('Upstream'),
         hint: upstreamCount,
         value: ActivityType.UPSTREAM,
       },
     ]);
-  }, [totalCount, myObjectsCount, downstreamCount, upstreamCount]);
+  }, [totalCount, myObjectsCount, downstreamCount, upstreamCount, t]);
 
   React.useEffect(() => {
     setSelectedTab(type ? tabs.findIndex(tab => tab.value === type) : 0);

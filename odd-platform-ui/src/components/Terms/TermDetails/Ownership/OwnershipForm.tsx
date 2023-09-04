@@ -17,6 +17,7 @@ import {
   getTermDetailsOwnerUpdatingStatuses,
 } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 
 interface OwnershipFormProps {
   termDetailsOwnership?: Ownership;
@@ -27,6 +28,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   termDetailsOwnership,
   ownerEditBtn,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
 
@@ -63,7 +65,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {termDetailsOwnership ? 'Edit' : 'Add'} owner
+      {termDetailsOwnership ? t('Edit') : t('Add')} {t('owner')}
     </Typography>
   );
 
@@ -101,7 +103,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const ownerEditDialogActions = () => (
     <Button
-      text={termDetailsOwnership ? 'Edit owner' : 'Add owner'}
+      text={termDetailsOwnership ? t('Edit owner') : t('Add owner')}
       buttonType='main-lg'
       type='submit'
       form='term-owner-add-form'

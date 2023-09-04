@@ -8,6 +8,7 @@ import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFie
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import isEmpty from 'lodash/isEmpty';
 import { Box, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { LinkedTermIcon } from 'components/shared/icons';
 import * as S from './DatasetTermActivityField.styles';
 
@@ -26,6 +27,7 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
   newState,
   hideAllDetails,
 }) => {
+  const { t } = useTranslation();
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
@@ -83,7 +85,7 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
   const renderTermItem = ([namespace, terms]: [string, ActivityData[]]) => (
     <Grid sx={{ mb: 0.5 }}>
       <Typography variant='body1' color='texts.hint'>
-        Namespace: {namespace}
+        {t('Namespace')}: {namespace}
       </Typography>
       {terms.map(term => (
         <S.ArrayItemWrapper key={term.id} $typeOfChange={term.typeOfChange}>
@@ -110,7 +112,7 @@ const DatasetTermActivityField: FC<DatasetTermActivityFieldProps> = ({
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
         startText='Terms'
-        activityName={`for column ${oldState?.name || newState?.name}`}
+        activityName={`${t('for column')} ${oldState?.name || newState?.name}`}
         eventType={activityEvent}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}

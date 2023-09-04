@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Grid, Typography } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById, getIsEntityStatusDeleted } from 'redux/selectors';
 import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
@@ -19,6 +20,7 @@ import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverview.styles';
 
 const DatasetFieldOverview: React.FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
   const { selectedFieldId, datasetFieldRowsCount } = useStructure();
 
@@ -59,8 +61,8 @@ const DatasetFieldOverview: React.FC = () => {
           <DatasetFieldStats datasetField={field} rowsCount={datasetFieldRowsCount} />
         )}
       </Grid>
-      {getOverviewSection('DEFAULT VALUE', field.defaultValue)}
-      {getOverviewSection('EXTERNAL DESCRIPTION', field.externalDescription)}
+      {getOverviewSection(t('DEFAULT VALUE'), field.defaultValue)}
+      {getOverviewSection(t('EXTERNAL DESCRIPTION'), field.externalDescription)}
       <S.SectionContainer container>
         <DatasetFieldDescription
           datasetFieldId={field.id}
@@ -72,7 +74,7 @@ const DatasetFieldOverview: React.FC = () => {
       <S.SectionContainer container>
         <Grid container justifyContent='space-between'>
           <Typography variant='h5' color='texts.hint'>
-            LABELS
+            {t('LABELS')}
           </Typography>
           {!isStatusDeleted && (
             <WithPermissions
@@ -85,8 +87,8 @@ const DatasetFieldOverview: React.FC = () => {
                     <Button
                       text={
                         field.labels && field.labels?.length > 0
-                          ? 'Edit labels'
-                          : 'Add labels'
+                          ? t('Edit labels')
+                          : t('Add labels')
                       }
                       data-qa='edit_labels'
                       disabled={!editLabels}
@@ -108,7 +110,7 @@ const DatasetFieldOverview: React.FC = () => {
             </Grid>
           ) : (
             <Typography mt={1} variant='subtitle1'>
-              Labels are not created yet
+              {t('Labels are not created yet')}
             </Typography>
           )}
         </Grid>
@@ -122,7 +124,7 @@ const DatasetFieldOverview: React.FC = () => {
       {field.metadata &&
         field.metadata?.length > 0 &&
         getOverviewSection(
-          'METADATA',
+          t('METADATA'),
           field.metadata?.map(metadata => (
             <MetadataItem key={metadata.field.id} metadata={metadata} />
           ))

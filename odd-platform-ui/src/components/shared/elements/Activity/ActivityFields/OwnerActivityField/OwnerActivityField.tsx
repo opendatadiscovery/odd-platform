@@ -10,6 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import OwnerWithTitle from 'components/shared/elements/Activity/ActivityFields/OwnerActivityField/OwnerWithTitle/OwnerWithTitle';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import { useTranslation } from 'react-i18next';
 
 type OwnerItem = OwnershipActivityState & {
   typeOfChange?: EventType;
@@ -28,6 +29,7 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
   eventType,
   hideAllDetails,
 }) => {
+  const { t } = useTranslation();
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
@@ -129,7 +131,7 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
   return (
     <Grid container flexDirection='column'>
       <ActivityFieldHeader
-        startText='Owner'
+        startText={t('Owner')}
         activityName={
           <OwnerWithTitle
             ownerName={changedOwner.ownerName}

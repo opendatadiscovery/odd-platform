@@ -6,6 +6,7 @@ import { Button, DialogWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks';
 import { getDataEntityMetadataCreatingStatuses } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormItem';
 
 interface MetadataCreateFormProps {
@@ -17,6 +18,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   dataEntityId,
   btnCreateEl,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isMetadataCreating, isLoaded: isMetadataCreated } = useAppSelector(
     getDataEntityMetadataCreatingStatuses
@@ -44,7 +46,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Add Custom Metadata
+      {t('Add Custom Metadata')}
     </Typography>
   );
 
@@ -58,7 +60,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Add'
+      text={t('Add')}
       buttonType='main-lg'
       type='submit'
       form='metadata-create-form'

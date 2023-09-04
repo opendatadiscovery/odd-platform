@@ -4,6 +4,7 @@ import { useAppPaths } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import { EntityClassItem, LabeledInfoItem } from 'components/shared/elements';
 import { EmptyIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 import * as S from './Node.styles';
 import type { Node as NodeType } from '../../lib/interfaces';
 
@@ -23,6 +24,7 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(
     { x, y, id, handleOnNodeMouseEnter, handleOnNodeMouseLeave, data, hidden, fullView },
     ref
   ) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { dataEntityLineagePath, dataEntityOverviewPath } = useAppPaths();
 
@@ -60,10 +62,10 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(
             </S.TitleContainer>
             {fullView && (
               <S.SourceContainer>
-                <LabeledInfoItem label='Space' inline labelWidth={2}>
+                <LabeledInfoItem label={t('Space')} inline labelWidth={2}>
                   {data?.dataSource?.namespace?.name}
                 </LabeledInfoItem>
-                <LabeledInfoItem label='Source' inline labelWidth={2}>
+                <LabeledInfoItem label={t('Source')} inline labelWidth={2}>
                   {data?.dataSource?.name}
                 </LabeledInfoItem>
               </S.SourceContainer>

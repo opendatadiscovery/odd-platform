@@ -2,6 +2,7 @@ import React, { cloneElement, type FC, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { TermDetails, TermFormData } from 'generated-sources';
 import {
   Button,
@@ -24,6 +25,7 @@ interface TermsFormDialogProps {
 }
 
 const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { termId } = useAppParams();
@@ -75,8 +77,7 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormTitle = (
     <Typography variant='h4' component='span'>
-      {term.id ? 'Edit ' : 'Add '}
-      term
+      {term.id ? t('Edit') : t('Add')} {t('term')}
     </Typography>
   );
 
@@ -90,8 +91,8 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
           <Input
             {...field}
             variant='main-m'
-            placeholder='Start enter the name'
-            label='Name'
+            label={t('Name')}
+            placeholder={t('Start enter the name')}
           />
         )}
       />
@@ -115,7 +116,7 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
               color='input.label.color'
               mb={0.125}
             >
-              Definition
+              {t('Definition')}
             </Typography>
             <Markdown {...field} editor height={200} />
           </Grid>
@@ -126,7 +127,7 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
 
   const termFormActionButtons = () => (
     <Button
-      text={term ? 'Save term' : 'Add term'}
+      text={term ? t('Save term') : t('Add term')}
       buttonType='main-lg'
       type='submit'
       form='term-create-form'

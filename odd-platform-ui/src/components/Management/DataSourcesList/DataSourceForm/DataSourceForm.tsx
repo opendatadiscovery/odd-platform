@@ -15,6 +15,7 @@ import {
   NamespaceAutocomplete,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 import { Asterisk } from './DataSourceFormStyles';
 
 interface DataSourceFormDialogProps {
@@ -30,6 +31,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   dataSource,
   btnCreateEl,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isDataSourceCreating, isLoaded: isDataSourceCreated } =
     useAppSelector(getDatasourceCreatingStatuses);
@@ -82,15 +84,15 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {dataSource ? 'Edit ' : 'Add '}
-      Datasource
+      {dataSource ? t('Edit datasource') : t('Add datasource')}
     </Typography>
   );
 
   const formContent = () => (
     <form id='datasource-create-form' onSubmit={handleSubmit(onSubmit)}>
       <Typography variant='subtitle2' fontSize='0.73rem'>
-        Fields with the <Asterisk>*</Asterisk> symbol are required to save the Datasource
+        {t('Fields with the')} <Asterisk>*</Asterisk>{' '}
+        {t('symbol are required to save the datasource')}
       </Typography>
       <Controller
         name='name'
@@ -103,7 +105,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.5 }}
-            label='Name'
+            label={t('Name')}
             placeholder='e.g. Data Tower'
             required
             customEndAdornment={{
@@ -153,8 +155,8 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           <AppInput
             {...field}
             sx={{ mt: 1.25 }}
-            label='Description'
-            placeholder='Datasource description'
+            label={t('Description')}
+            placeholder={t('Datasource description')}
             multiline
             maxRows={4}
             customEndAdornment={{
@@ -171,7 +173,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Save'
+      text={t('Save')}
       type='submit'
       form='datasource-create-form'
       buttonType='main-lg'

@@ -2,6 +2,7 @@ import React from 'react';
 import { DialogWrapper } from 'components/shared/elements';
 import { Typography } from '@mui/material';
 import type { DataQualityTestExpectation } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 
 interface TestReportDetailsOverviewParametersModalProps {
   openBtnEl: JSX.Element;
@@ -11,9 +12,11 @@ interface TestReportDetailsOverviewParametersModalProps {
 const TestReportDetailsOverviewParametersModal: React.FC<
   TestReportDetailsOverviewParametersModalProps
 > = ({ openBtnEl, expectations }) => {
+  const { t } = useTranslation();
+
   const modalTitle = (
     <Typography variant='h3' component='span'>
-      Parameters
+      {t('Parameters')}
     </Typography>
   );
 

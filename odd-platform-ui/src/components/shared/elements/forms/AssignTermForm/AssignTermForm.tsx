@@ -5,6 +5,7 @@ import Button from 'components/shared/elements/Button/Button';
 import TermsAutocomplete from 'components/shared/elements/Autocomplete/TermsAutocomplete/TermsAutocomplete';
 import type { TermRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
+import { useTranslation } from 'react-i18next';
 
 interface AssignTermFormData {
   termId: number;
@@ -23,6 +24,7 @@ const AssignTermForm: FC<AssignTermFormProps> = ({
   handleCloseSubmittedForm,
   isLoading,
 }) => {
+  const { t } = useTranslation();
   const formId = 'assign-term-form';
 
   const { handleSubmit, control, reset, formState } = useForm<AssignTermFormData>({
@@ -44,14 +46,14 @@ const AssignTermForm: FC<AssignTermFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Add term
+      {t('Add term')}
     </Typography>
   );
 
   const formContent = () => (
     <form id={formId} onSubmit={handleSubmit(onSubmit(clearState))}>
       <Typography variant='subtitle2' fontSize='0.73rem'>
-        Select a term from the dictionary.
+        {t('Select a term from the dictionary')}.
       </Typography>
       <Controller
         name='termId'
@@ -65,13 +67,13 @@ const AssignTermForm: FC<AssignTermFormProps> = ({
         <>
           <Grid container flexDirection='column' sx={{ mt: 2 }}>
             <Typography variant='body2' color='texts.secondary' component='span'>
-              Namespace:
+              {t('Namespace')}:
             </Typography>
             {selectedTerm.namespace.name}
           </Grid>
           <Grid container flexDirection='column' sx={{ mt: 2 }}>
             <Typography variant='body2' color='texts.secondary' component='span'>
-              Definition:
+              {t('Definition')}:
             </Typography>
             {selectedTerm.definition}
           </Grid>
@@ -82,7 +84,7 @@ const AssignTermForm: FC<AssignTermFormProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Add term'
+      text={t('Add term')}
       buttonType='main-lg'
       type='submit'
       form={formId}

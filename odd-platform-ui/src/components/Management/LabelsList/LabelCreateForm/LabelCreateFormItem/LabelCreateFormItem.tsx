@@ -2,6 +2,7 @@ import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { Button, AppInput } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 import * as S from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps {
@@ -15,6 +16,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
   onItemRemove,
   fieldsLength,
 }) => {
+  const { t } = useTranslation();
   const { control } = useFormContext();
 
   return (
@@ -27,7 +29,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder='Label Name'
+            placeholder={t('Label Name')}
             name={`labels.${itemIndex}.name`}
             customEndAdornment={{
               variant: 'clear',
@@ -40,7 +42,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       />
       <S.LabelItemButtons sx={{ mt: 1, mb: 1.5 }}>
         {fieldsLength && fieldsLength > 1 && (
-          <Button text='Delete' buttonType='secondary-sm' onClick={onItemRemove} />
+          <Button text={t('Delete')} buttonType='secondary-sm' onClick={onItemRemove} />
         )}
       </S.LabelItemButtons>
     </>

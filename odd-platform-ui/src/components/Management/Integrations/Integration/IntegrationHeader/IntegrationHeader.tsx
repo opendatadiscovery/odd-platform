@@ -3,6 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { Button, DatasourceLogo } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
 import { useAppPaths } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface IntegrationHeaderProps {
   id: Integration['id'];
@@ -11,6 +12,7 @@ interface IntegrationHeaderProps {
 }
 
 const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }) => {
+  const { t } = useTranslation();
   const { ManagementRoutes } = useAppPaths();
 
   return (
@@ -26,7 +28,7 @@ const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }
       </Grid>
       <Button
         sx={{ flexShrink: 0 }}
-        text='Back to integrations'
+        text={t('Back to integrations')}
         to={`../../${ManagementRoutes.integrations}`}
         buttonType='secondary-m'
       />

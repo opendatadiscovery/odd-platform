@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type FC, useEffect } from 'react';
 import {
   getIsOwnerEntitiesFetching,
   getMyDataEntitiesFetchingStatuses,
@@ -25,11 +25,13 @@ import {
 import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
 
-const OwnerEntitiesList: React.FC = () => {
+const OwnerEntitiesList: FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const myEntities = useAppSelector(getMyEntities);
@@ -53,7 +55,7 @@ const OwnerEntitiesList: React.FC = () => {
   } = useAppSelector(getPopularDataEntitiesFetchingStatuses);
   const isOwnerEntitiesListFetching = useAppSelector(getIsOwnerEntitiesFetching);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const params = { page: 1, size: 5 };
     dispatch(fetchMyDataEntitiesList(params));
     dispatch(fetchMyUpstreamDataEntitiesList(params));
@@ -71,32 +73,32 @@ const OwnerEntitiesList: React.FC = () => {
         />
       ) : (
         <S.Container>
-          <Typography variant='h1'>Recommended</Typography>
+          <Typography variant='h1'>{t('Recommended')}</Typography>
           <S.DataEntityContainer container>
             <DataEntityList
               dataEntitiesList={myEntities}
-              entityListName='My Objects'
+              entityListName={t('My Objects')}
               entityListIcon={<CatalogIcon />}
               isFetching={isMyDataEntitiesFetching}
               isNotFetched={isMyDataEntitiesNotFetched}
             />
             <DataEntityList
               dataEntitiesList={myEntitiesUpstream}
-              entityListName='Upstream dependents'
+              entityListName={t('Upstream dependents')}
               entityListIcon={<UpstreamIcon />}
               isFetching={isUpstreamDataEntitiesFetching}
               isNotFetched={isUpstreamDataEntitiesNotFetched}
             />
             <DataEntityList
               dataEntitiesList={myEntitiesDownstream}
-              entityListName='Downstream dependents'
+              entityListName={t('Downstream dependents')}
               entityListIcon={<DownstreamIcon />}
               isFetching={isDownstreamDataEntitiesFetching}
               isNotFetched={isDownstreamDataEntitiesNotFetched}
             />
             <DataEntityList
               dataEntitiesList={popularEntities}
-              entityListName='Popular'
+              entityListName={t('Popular')}
               entityListIcon={<StarIcon />}
               isFetching={isPopularDataEntitiesFetching}
               isNotFetched={isPopularDataEntitiesNotFetched}

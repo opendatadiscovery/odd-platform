@@ -1,6 +1,7 @@
 import type { FC } from 'react';
 import React, { useState } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type Collector, Permission } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
 import {
@@ -21,6 +22,7 @@ interface CollectorItemProps {
 }
 
 const CollectorItem: FC<CollectorItemProps> = ({ collector }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const [isHidden, setIsHidden] = useState(true);
@@ -39,7 +41,7 @@ const CollectorItem: FC<CollectorItemProps> = ({ collector }) => {
               collector={collector}
               btnCreateEl={
                 <Button
-                  text='Edit'
+                  text={t('Edit')}
                   buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
@@ -49,17 +51,17 @@ const CollectorItem: FC<CollectorItemProps> = ({ collector }) => {
           </WithPermissions>
           <WithPermissions permissionTo={Permission.COLLECTOR_DELETE}>
             <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this collector?'
-              actionName='Delete'
+              actionTitle={t('Are you sure you want to delete this collector?')}
+              actionName={t('Delete')}
               actionText={
                 <Typography variant='subtitle1'>
-                  Delete &quot;{collector.name}&quot; collector?
+                  {t('Delete')} &quot;{collector.name}&quot; {t('collector')}?
                 </Typography>
               }
               onConfirm={onDelete}
               actionBtn={
                 <Button
-                  text='Delete'
+                  text={t('Delete')}
                   buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />
@@ -69,13 +71,13 @@ const CollectorItem: FC<CollectorItemProps> = ({ collector }) => {
         </S.Actions>
       </S.Header>
       <S.Description>
-        <LabeledInfoItem variant='body2' inline label='Description' labelWidth={4}>
+        <LabeledInfoItem variant='body2' inline label={t('Description')} labelWidth={4}>
           {collector.description}
         </LabeledInfoItem>
-        <LabeledInfoItem variant='body2' inline label='Namespace' labelWidth={4}>
+        <LabeledInfoItem variant='body2' inline label={t('Namespace')} labelWidth={4}>
           {collector.namespace?.name}
         </LabeledInfoItem>
-        <LabeledInfoItem variant='body2' inline label='Token' labelWidth={4}>
+        <LabeledInfoItem variant='body2' inline label={t('Token')} labelWidth={4}>
           <CollectorItemToken
             collector={collector}
             isHidden={isHidden}

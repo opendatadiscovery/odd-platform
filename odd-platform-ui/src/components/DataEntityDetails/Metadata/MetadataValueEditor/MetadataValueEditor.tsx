@@ -11,6 +11,7 @@ import {
   minDate,
 } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface MetadataValueEditFieldProps {
   metadataType: MetadataFieldType | '';
@@ -27,6 +28,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   labeled,
   size,
 }) => {
+  const { t } = useTranslation();
   const { control } = useFormContext();
   const { metadataFormattedDateTime } = useAppDateTime();
 
@@ -45,13 +47,13 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         rules={{
           required: true,
           validate: {
-            isValid: d => isValid(d) || 'Date is invalid',
+            isValid: d => isValid(d) || t('Date is invalid'),
             greaterThan: v =>
               isAfter(new Date(v), minDate) ||
-              `Date should be greater than ${minDate.toDateString()}`,
+              `${t('Date should be greater than')} ${minDate.toDateString()}`,
             lessThan: v =>
               isBefore(new Date(v), maxDate) ||
-              `Date should be less than ${maxDate.toDateString()}`,
+              `${t('Date should be less than')} ${maxDate.toDateString()}`,
           },
         }}
         render={({ field, fieldState }) => (
@@ -84,13 +86,13 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
                 key='true'
                 value='true'
                 control={<AppRadio dataQAId='add_custom_metadata_radio_button_true' />}
-                label='Yes'
+                label={t('Yes')}
               />
               <FormControlLabel
                 key='false'
                 value='false'
                 control={<AppRadio dataQAId='add_custom_metadata_radio_button_false' />}
-                label='No'
+                label={t('No')}
               />
             </Grid>
           </RadioGroup>
@@ -109,7 +111,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           {...field}
           sx={{ mt: 1 }}
           variant='main-m'
-          label={labeled ? 'Value' : undefined}
+          label={labeled ? t('Value') : undefined}
           placeholder={labeled ? '' : defaultText}
           type={
             metadataType &&
@@ -118,7 +120,6 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
               : 'text'
           }
           step={metadataType === MetadataFieldType.FLOAT ? 'any' : '1'}
-          lang='en'
         />
       )}
     />

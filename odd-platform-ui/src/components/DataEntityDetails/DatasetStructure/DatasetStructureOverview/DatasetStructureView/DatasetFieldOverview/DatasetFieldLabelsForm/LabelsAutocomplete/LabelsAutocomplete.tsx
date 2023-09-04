@@ -12,6 +12,7 @@ import type { Label } from 'generated-sources';
 import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import type { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { useTranslation } from 'react-i18next';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 type DatasetFieldLabelsFormData = {
@@ -23,6 +24,7 @@ interface LabelsAutocompleteProps {
 }
 
 const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
@@ -127,8 +129,8 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
         <AppInput
           {...params}
           ref={params.InputProps.ref}
-          placeholder='Enter label name…'
-          label='Label'
+          placeholder={t('Enter label name')}
+          label={t('Label')}
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,

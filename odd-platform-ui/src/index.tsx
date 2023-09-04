@@ -20,6 +20,7 @@ import { showServerErrorToast } from 'lib/errorHandling';
 import theme from './theme/mui.theme';
 
 import App from './components/App';
+import 'locales/i18n';
 
 declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

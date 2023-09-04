@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 import { getOwnerCreatingStatuses, getOwnerUpdatingStatuses } from 'redux/selectors';
 import RoleAutocomplete from 'components/shared/elements/Autocomplete/RoleAutocomplete/RoleAutocomplete';
+import { useTranslation } from 'react-i18next';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;
@@ -17,6 +18,7 @@ interface OwnerFormProps {
 }
 
 const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { isLoading: isOwnerCreating, isLoaded: isOwnerCreated } = useAppSelector(
     getOwnerCreatingStatuses
@@ -63,7 +65,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      {ownerId ? 'Edit' : 'Add'} Owner
+      {ownerId ? t('Edit owner') : t('Add owner')}
     </Typography>
   );
 
@@ -77,8 +79,8 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
         render={({ field }) => (
           <AppInput
             {...field}
-            label='Name'
-            placeholder='Owner Name'
+            label={t('Name')}
+            placeholder={t('Owner Name')}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -111,7 +113,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
 
   const formActionButtons = () => (
     <Button
-      text={ownerId ? 'Save' : 'Add new owner'}
+      text={ownerId ? t('Save') : t('Add new owner')}
       type='submit'
       form='owner-create-form'
       buttonType='main-lg'

@@ -6,6 +6,7 @@ import { useAppPaths } from 'lib/hooks';
 import { IntegratedIcon } from 'components/shared/icons';
 import type { DatasourceName } from 'lib/interfaces';
 import { DatasourceLogo } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
 import * as S from './IntegrationPreviewItem.styles';
 
 interface IntegrationPreviewItemProps {
@@ -21,6 +22,7 @@ const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
   description,
   installed,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { integrationPath } = useAppPaths();
 
@@ -45,7 +47,7 @@ const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
         <S.IntegratedContainer>
           <IntegratedIcon />
           <Typography variant='h5' ml={0.5}>
-            Integrated
+            {t('Integrated')}
           </Typography>
         </S.IntegratedContainer>
       )}

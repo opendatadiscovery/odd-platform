@@ -3,6 +3,7 @@ import { InformationIcon } from 'components/shared/icons';
 import { Grid, Typography } from '@mui/material';
 import MDEditor from '@uiw/react-md-editor';
 import { useDataEntityDetails } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './DataEntityDetailsPreview.styles';
 import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import NumberFormatted from '../NumberFormatted/NumberFormatted';
@@ -18,6 +19,7 @@ interface DataEntityDetailsPreviewProps {
 const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
   dataEntityId,
 }) => {
+  const { t } = useTranslation();
   const [enabled, setEnabled] = useState(false);
   const { isLoading, data: dataEntityDetails } = useDataEntityDetails({
     dataEntityId,
@@ -45,7 +47,7 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
   const tagsEllipsis = useCallback(
     () => (
       <Typography variant='body1' color='texts.hint' sx={{ ml: 1 }} component='span'>
-        few tags more
+        {t('few tags more')}
       </Typography>
     ),
     []
@@ -68,10 +70,11 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
               <S.BlockContainer>
                 <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
                   <Typography variant='h4' color='text.primary'>
-                    Tags
+                    {t('Tags')}
                   </Typography>
                   <Typography variant='subtitle1' color='texts.info'>
-                    <NumberFormatted value={dataEntityDetails?.tags?.length} /> tags
+                    <NumberFormatted value={dataEntityDetails?.tags?.length} />{' '}
+                    {t('tags')}
                   </Typography>
                 </Grid>
                 {dataEntityDetails?.tags?.length ? (
@@ -87,17 +90,17 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
                   </TruncatedList>
                 ) : (
                   <Typography variant='body1' color='texts.secondary'>
-                    No tags
+                    {t('No tags')}
                   </Typography>
                 )}
               </S.BlockContainer>
               <S.BlockContainer>
                 <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
                   <Typography variant='h4' color='text.primary'>
-                    Custom metadata
+                    {t('Custom metadata')}
                   </Typography>
                   <Typography variant='subtitle1' color='texts.info'>
-                    <NumberFormatted value={customMetadata.length} /> fields
+                    <NumberFormatted value={customMetadata.length} /> {t('fields')}
                   </Typography>
                 </Grid>
                 {customMetadata.length ? (
@@ -112,7 +115,7 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
                     ))
                 ) : (
                   <Typography variant='body1' color='texts.secondary'>
-                    No custom metadata
+                    {t('No custom metadata')}
                   </Typography>
                 )}
               </S.BlockContainer>
@@ -120,10 +123,10 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
             <Grid container>
               <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
                 <Typography variant='h4' color='text.primary'>
-                  Predefined metadata
+                  {t('Predefined metadata')}
                 </Typography>
                 <Typography variant='subtitle1' color='texts.info'>
-                  <NumberFormatted value={predefinedMetadata.length} /> fields
+                  <NumberFormatted value={predefinedMetadata.length} /> {t('fields')}
                 </Typography>
               </Grid>
               {predefinedMetadata.length ? (
@@ -138,21 +141,21 @@ const DataEntityDetailsPreview: FC<DataEntityDetailsPreviewProps> = ({
                   ))
               ) : (
                 <Typography variant='body1' color='texts.secondary'>
-                  No predefined metadata
+                  {t('No predefined metadata')}
                 </Typography>
               )}
             </Grid>
             <S.AboutContainer container sx={{ mt: 2 }} data-color-mode='light'>
               <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
                 <Typography variant='h4' color='text.primary'>
-                  About
+                  {t('About')}
                 </Typography>
               </Grid>
               <S.AboutText variant='body1' color='texts.secondary'>
                 {dataEntityDetails?.internalDescription ? (
                   <MDEditor.Markdown source={dataEntityDetails?.internalDescription} />
                 ) : (
-                  'Not created'
+                  t('Not created')
                 )}
               </S.AboutText>
             </S.AboutContainer>

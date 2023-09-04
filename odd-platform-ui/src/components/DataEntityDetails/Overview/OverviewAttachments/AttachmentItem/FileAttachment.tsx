@@ -10,6 +10,7 @@ import {
 } from 'lib/hooks';
 import { isImageFile } from 'lib/helpers';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import * as S from './AttachmentItem.styles';
 
 interface FileAttachmentProps {
@@ -18,6 +19,7 @@ interface FileAttachmentProps {
 }
 
 const FileAttachment: FC<FileAttachmentProps> = ({ fileId, name }) => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
   const { mutateAsync: deleteFile } = useDeleteDataEntityFile();
   const { refetch: downloadFile } = useDownloadDataEntityFile({ dataEntityId, fileId });
@@ -41,9 +43,13 @@ const FileAttachment: FC<FileAttachmentProps> = ({ fileId, name }) => {
       <S.ActionsContainer>
         <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
           <ConfirmationDialog
-            actionTitle='Are you sure you want to delete this file?'
-            actionName='Delete file'
-            actionText={<>&quot;{name}&quot; will be deleted permanently.</>}
+            actionTitle={t('Are you sure you want to delete this file?')}
+            actionName={t('Delete file')}
+            actionText={
+              <>
+                &quot;{name}&quot; {t('will be deleted permanently')}.
+              </>
+            }
             onConfirm={() => deleteFile({ dataEntityId, fileId })}
             actionBtn={<Button buttonType='linkGray-m-icon' icon={<DeleteIcon />} />}
           />

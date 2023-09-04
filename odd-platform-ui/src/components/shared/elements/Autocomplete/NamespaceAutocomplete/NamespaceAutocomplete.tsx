@@ -19,6 +19,7 @@ import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import type { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
 import Input from 'components/shared/elements/Input/Input';
+import { useTranslation } from 'react-i18next';
 
 type FilterOption = Omit<Namespace, 'id' | 'name'> & Partial<Namespace>;
 
@@ -33,6 +34,7 @@ interface NamespaceAutocompleteProps {
 const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
   controllerProps,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   type FilterChangeOption = FilterOption | string | { inputValue: string };
@@ -153,8 +155,8 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
           variant='main-m'
           inputContainerRef={params.InputProps.ref}
           inputProps={params.inputProps}
-          label='Namespace'
-          placeholder='Namespace'
+          label={t('Namespace')}
+          placeholder={t('Namespace')}
           isLoading={loading}
         />
       )}
@@ -165,7 +167,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
               option.name
             ) : (
               <AutocompleteSuggestion
-                optionLabel='custom namespace'
+                optionLabel={t('custom namespace')}
                 optionName={option.name}
               />
             )}

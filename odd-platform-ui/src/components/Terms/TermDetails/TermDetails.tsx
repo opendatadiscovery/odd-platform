@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type FC, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
@@ -19,7 +19,7 @@ import TermDetailsTabs from './TermDetailsTabs/TermDetailsTabs';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
 import TermDetailsRoutes from './TermDetailsRoutes/TermDetailsRoutes';
 
-const TermDetailsView: React.FC = () => {
+const TermDetailsView: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
@@ -35,7 +35,7 @@ const TermDetailsView: React.FC = () => {
     getResourcePermissions(PermissionResourceType.TERM, termId)
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchTermDetails({ termId }));
     dispatch(
       fetchResourcePermissions({
@@ -45,7 +45,7 @@ const TermDetailsView: React.FC = () => {
     );
   }, [termId]);
 
-  const handleTermDelete = React.useCallback(
+  const handleTermDelete = useCallback(
     (id: number) => () =>
       dispatch(deleteTerm({ termId: id })).then(() =>
         navigate(termSearchPath(termSearchId))

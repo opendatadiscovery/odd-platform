@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
 import { LabelItem, TagItem } from 'components/shared/elements';
@@ -20,6 +21,7 @@ import { type ActivityItemProps } from 'components/shared/elements/Activity/comm
 import * as S from './ActivityItemStyles';
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails }) => {
+  const { t } = useTranslation();
   const { activityFormattedDateTime } = useAppDateTime();
 
   const tagStateItem = React.useCallback(
@@ -54,7 +56,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.DATA_ENTITY_CREATED]) && (
           <StringActivityField
-            startText='Data entity with'
+            startText={t('Data entity with')}
             activityName='ODDRN'
             oldState={activity.oldState.dataEntity?.oddrn}
             newState={activity.newState.dataEntity?.oddrn}
@@ -63,7 +65,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.DESCRIPTION_UPDATED]) && (
           <StringActivityField
-            activityName='Description'
+            activityName={t('Description')}
             oldState={activity.oldState.description?.description}
             newState={activity.newState.description?.description}
             hideAllDetails={hideAllDetails}
@@ -71,7 +73,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.BUSINESS_NAME_UPDATED]) && (
           <StringActivityField
-            activityName='Business name'
+            activityName={t('Business name')}
             oldState={activity.oldState.businessName?.internalName}
             newState={activity.newState.businessName?.internalName}
             hideAllDetails={hideAllDetails}
@@ -91,7 +93,9 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED]) && (
           <StringActivityField
-            activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`}
+            activityName={`${t('Dataset field')} ${
+              activity.oldState.datasetFieldInformation?.name
+            } ${t('description')}`}
             oldState={activity.oldState.datasetFieldInformation?.description}
             newState={activity.newState.datasetFieldInformation?.description}
             hideAllDetails={hideAllDetails}
@@ -99,7 +103,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.TAG_ASSIGNMENT_UPDATED]) && (
           <ArrayActivityField
-            activityName='Tags'
+            activityName={t('Tags')}
             oldState={activity.oldState.tags}
             newState={activity.newState.tags}
             hideAllDetails={hideAllDetails}
@@ -109,7 +113,9 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         )}
         {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_LABELS_UPDATED]) && (
           <ArrayActivityField
-            activityName={`Labels in ${activity.oldState.datasetFieldInformation?.name} column`}
+            activityName={`${t('Labels')} ${t('in')} ${
+              activity.oldState.datasetFieldInformation?.name
+            } ${t('column')}`}
             oldState={activity.oldState.datasetFieldInformation?.labels}
             newState={activity.newState.datasetFieldInformation?.labels}
             hideAllDetails={hideAllDetails}
@@ -143,7 +149,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
         {isTypeRelatedTo([ActivityEventType.CUSTOM_GROUP_CREATED]) && (
           <ActivityFieldHeader
             eventType='created'
-            startText='Custom group'
+            startText={t('Custom group')}
             activityName={`${activity.dataEntity.internalName}`}
           />
         )}

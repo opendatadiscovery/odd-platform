@@ -3,6 +3,7 @@ import { FormControlLabel } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Button, AppInput, Checkbox } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 import { TagItemBtnsContainer } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps {
@@ -16,6 +17,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
   onItemRemove,
   fieldsLength,
 }) => {
+  const { t } = useTranslation();
   const { control } = useFormContext();
 
   return (
@@ -28,7 +30,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
         render={({ field }) => (
           <AppInput
             {...field}
-            placeholder='Tag Name'
+            placeholder={t('Tag Name')}
             name={`tags.${itemIndex}.name`}
             customEndAdornment={{
               variant: 'clear',
@@ -50,12 +52,12 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
               sx={{ ml: -0.25 }}
               checked={field.value}
               control={<Checkbox sx={{ mr: 1 }} />}
-              label='Important'
+              label={t('Important')}
             />
           )}
         />
         {fieldsLength && fieldsLength > 1 && (
-          <Button text='Delete' buttonType='secondary-sm' onClick={onItemRemove} />
+          <Button text={t('Delete')} buttonType='secondary-sm' onClick={onItemRemove} />
         )}
       </TagItemBtnsContainer>
     </>

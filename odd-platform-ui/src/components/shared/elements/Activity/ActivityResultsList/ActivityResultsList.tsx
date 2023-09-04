@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { type ComponentType, type FC, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid, List, ListSubheader, Typography } from '@mui/material';
-import { SkeletonWrapper } from 'components/shared/elements/index';
+import { SkeletonWrapper, Button } from 'components/shared/elements';
 import type { ActivitiesState } from 'redux/interfaces';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
-import Button from 'components/shared/elements/Button/Button';
+import { useTranslation } from 'react-i18next';
 import ActivityResultsItemSkeleton from '../ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsListStyles';
 
@@ -15,10 +15,10 @@ interface ActivityResultsListProps {
   isActivitiesFetching: boolean;
   activitiesByDate: ActivitiesState['activities']['activitiesByType']['ALL']['itemsByDate'];
   heightOffset?: number;
-  activityItem: React.ComponentType<ActivityItemProps>;
+  activityItem: ComponentType<ActivityItemProps>;
 }
 
-const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
+const ActivityResultsList: FC<ActivityResultsListProps> = ({
   activitiesLength,
   fetchNextPage,
   isActivitiesFetching,
@@ -27,9 +27,11 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
   heightOffset,
   activityItem: ActivityItem,
 }) => {
-  const [hideAllDetails, setHideAllDetails] = React.useState(false);
+  const { t } = useTranslation();
 
-  const activityItemSkeleton = React.useMemo(
+  const [hideAllDetails, setHideAllDetails] = useState(false);
+
+  const activityItemSkeleton = useMemo(
     () => (
       <SkeletonWrapper
         length={10}
@@ -68,7 +70,7 @@ const ActivityResultsList: React.FC<ActivityResultsListProps> = ({
                         {activityDate}
                       </Typography>
                       <Button
-                        text='Hide all details'
+                        text={t('Hide all details')}
                         buttonType='tertiary-m'
                         onClick={() => setHideAllDetails(!hideAllDetails)}
                       />

@@ -8,6 +8,7 @@ import {
   TestRunStatusItem,
 } from 'components/shared/elements';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import { StatsContainer, StatusReasonContainer } from './TestRunStatusReasonModalStyles';
 
 interface TestRunStatusReasonModalProps {
@@ -23,6 +24,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
   dataQATestName,
   dataQATestRun,
 }) => {
+  const { t } = useTranslation();
   const { dataEntityOverviewPath } = useAppPaths();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
@@ -33,7 +35,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
       </Typography>
       <Button
         to={dataEntityOverviewPath(dataQATestId)}
-        text='Go to page'
+        text={t('Go to page')}
         buttonType='tertiary-m'
       />
     </Grid>
@@ -59,18 +61,18 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
   const modalContent = () => (
     <>
       <StatsContainer container>
-        <LabeledInfoItem label='Date' valueLineHeight={26}>
+        <LabeledInfoItem label={t('Date')} valueLineHeight={26}>
           {runDate}
         </LabeledInfoItem>
-        <LabeledInfoItem label='Duration' valueLineHeight={26}>
+        <LabeledInfoItem label={t('Duration')} valueLineHeight={26}>
           {runDuration}
         </LabeledInfoItem>
-        <LabeledInfoItem label='Status'>
+        <LabeledInfoItem label={t('Status')}>
           <TestRunStatusItem sx={{ ml: -0.5 }} typeName={dataQATestRun.status} />
         </LabeledInfoItem>
       </StatsContainer>
       <StatusReasonContainer>
-        <LabeledInfoItem label='Status reason' valueWrap>
+        <LabeledInfoItem label={t('Status reason')} valueWrap>
           {dataQATestRun.statusReason}
         </LabeledInfoItem>
       </StatusReasonContainer>

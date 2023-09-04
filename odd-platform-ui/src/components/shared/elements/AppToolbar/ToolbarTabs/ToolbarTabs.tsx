@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
@@ -8,9 +8,11 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
+import { useTranslation } from 'react-i18next';
 
-const ToolbarTabs: React.FC = () => {
+const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const createSearch = useCreateSearch();
@@ -30,45 +32,45 @@ const ToolbarTabs: React.FC = () => {
     updatePath,
   } = useAppPaths();
 
-  const tabs = React.useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem[]>(
     () => [
       {
-        name: 'Catalog',
+        name: t('Catalog'),
         link: updatePath(SearchRoutes.search),
         value: SearchRoutes.search,
       },
       {
-        name: 'Directory',
+        name: t('Directory'),
         link: updatePath(DirectoryRoutes.directory),
         value: DirectoryRoutes.directory,
       },
       {
-        name: 'Management',
+        name: t('Management'),
         link: updatePath(ManagementRoutes.management),
         value: ManagementRoutes.management,
       },
       {
-        name: 'Dictionary',
+        name: t('Dictionary'),
         link: updatePath(TermsRoutes.termSearch),
         value: TermsRoutes.termSearch,
       },
       {
-        name: 'Alerts',
+        name: t('Alerts'),
         link: updatePath(AlertsRoutes.alerts),
         value: AlertsRoutes.alerts,
       },
       {
-        name: 'Activity',
+        name: t('Activity'),
         link: activityPath(activityQueryString),
         value: ActivityRoutes.activity,
       },
     ],
-    [activityQueryString]
+    [activityQueryString, t, updatePath]
   );
 
-  const [selectedTab, setSelectedTab] = React.useState(-1);
+  const [selectedTab, setSelectedTab] = useState(-1);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let newTabIdx = -1;
     tabs.forEach((tab, idx) => {
       if (
@@ -81,13 +83,13 @@ const ToolbarTabs: React.FC = () => {
     setSelectedTab(newTabIdx);
   }, [tabs, location]);
 
-  const handleTabClick = React.useCallback(
+  const handleTabClick = useCallback(
     (idx: number) => {
       setSelectedTab(idx);
 
       const initialParams = { query: '', pageSize: 30, filters: {} };
 
-      if (tabs[idx].name === 'Dictionary') {
+      if (tabs[idx].name === t('Dictionary')) {
         dispatch(createTermSearch({ termSearchFormData: initialParams }))
           .unwrap()
           .then(termSearch => {
@@ -97,7 +99,7 @@ const ToolbarTabs: React.FC = () => {
         return;
       }
 
-      if (tabs[idx].name === 'Catalog') {
+      if (tabs[idx].name === t('Catalog')) {
         createSearch(initialParams);
       }
     },

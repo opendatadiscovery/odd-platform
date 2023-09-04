@@ -11,6 +11,7 @@ import {
   getOwnerAssociationRequestsListFetchingError,
   getOwnerAssociationRequestsListFetchingStatuses,
 } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 import ActiveAssociationRequest from './ActiveAssociationRequest/ActiveAssociationRequest';
 import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
@@ -21,6 +22,7 @@ interface OwnerAssociationsNewProps {
 }
 
 const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [query] = useAtom(queryAtom);
 
@@ -57,13 +59,13 @@ const OwnerAssociationsNew: React.FC<OwnerAssociationsNewProps> = ({ size }) => 
     <Grid container flexDirection='column' alignItems='center'>
       <S.TableHeader container>
         <Grid item lg={4}>
-          {tableCellText('User name')}
+          {tableCellText(t('User name'))}
         </Grid>
         <Grid item lg={2.5}>
-          {tableCellText('Owner name')}
+          {tableCellText(t('Owner name'))}
         </Grid>
         <Grid item lg={2.5}>
-          {tableCellText('Provider')}
+          {tableCellText(t('Provider'))}
         </Grid>
         <Grid item lg={3} />
       </S.TableHeader>

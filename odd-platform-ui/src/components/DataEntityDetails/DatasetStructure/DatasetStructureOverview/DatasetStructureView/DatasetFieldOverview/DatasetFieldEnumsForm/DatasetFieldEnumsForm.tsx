@@ -11,6 +11,7 @@ import { createDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Button, DialogWrapper } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
 import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 
 interface DataSetFieldEnumsFormProps {
@@ -34,6 +35,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
   datasetFieldType,
   defaultEnums,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isEnumsCreating, isLoaded: isEnumsCreated } = useAppSelector(
@@ -116,14 +118,14 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
   const formTitle = (
     <Grid justifyContent='space-between' alignItems='center' flexWrap='nowrap' container>
       <Grid flexDirection='column' flexWrap='nowrap' width='auto' container>
-        <Typography variant='h3'>{`Values for ${datasetFieldName}`}</Typography>
+        <Typography variant='h3'>{`${t('Values for')} ${datasetFieldName}`}</Typography>
         <Typography variant='body2' color='texts.secondary'>
-          Custom values
+          {t('Custom values')}
         </Typography>
       </Grid>
       {!isExternal && (
         <Button
-          text='Add value'
+          text={t('Add value')}
           buttonType='secondary-m'
           startIcon={<AddIcon />}
           onClick={handleAppend}
@@ -155,7 +157,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
   const formActionButtons = (handleClose: () => void) => (
     <Grid container justifyContent='flex-start'>
       <Button
-        text='Save'
+        text={t('Save')}
         buttonType='main-lg'
         type='submit'
         form='dataset-field-enums-form'
@@ -163,7 +165,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
         isLoading={isEnumsCreating}
         sx={{ mr: 1, minWidth: '64px !important' }}
       />
-      <Button text='Cancel' buttonType='secondary-lg' onClick={handleClose} />
+      <Button text={t('Cancel')} buttonType='secondary-lg' onClick={handleClose} />
     </Grid>
   );
 

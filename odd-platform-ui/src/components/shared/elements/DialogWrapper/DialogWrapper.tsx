@@ -95,14 +95,16 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           <S.Content id={dialogContentId}>
             {renderContent({ handleOpen, handleClose })}
           </S.Content>
-          <S.Actions disableSpacing>
-            {errorText && (
-              <S.ErrorText variant='subtitle2' color='error'>
-                {errorText}
-              </S.ErrorText>
-            )}
-            {renderActions && renderActions({ handleOpen, handleClose })}
-          </S.Actions>
+          {renderActions && (
+            <S.Actions disableSpacing>
+              {errorText && (
+                <S.ErrorText variant='subtitle2' color='error'>
+                  {errorText}
+                </S.ErrorText>
+              )}
+              {renderActions({ handleOpen, handleClose })}
+            </S.Actions>
+          )}
         </S.MainDialog>
       ) : null}
     </>

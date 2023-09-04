@@ -17,6 +17,7 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
 import Input from 'components/shared/elements/Input/Input';
+import { useTranslation } from 'react-i18next';
 
 interface OwnerAutocompleteProps {
   disableOwnerCreating?: boolean;
@@ -27,6 +28,7 @@ const OwnerAutocomplete: React.FC<OwnerAutocompleteProps> = ({
   field,
   disableOwnerCreating = false,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const searchOwners = fetchOwnersList;
 
@@ -107,8 +109,8 @@ const OwnerAutocomplete: React.FC<OwnerAutocompleteProps> = ({
       variant='main-m'
       inputContainerRef={params.InputProps.ref}
       inputProps={params.inputProps}
-      label='Owner name'
-      placeholder='Search name'
+      label={t('Owner name')}
+      placeholder={t('Search name')}
       isLoading={ownersLoading}
     />
   );

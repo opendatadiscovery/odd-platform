@@ -8,6 +8,7 @@ import { Button, AppInput, AppJSONEditor } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -17,6 +18,7 @@ interface PolicyFormProps {
 }
 
 const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { ManagementRoutes } = useAppPaths();
@@ -65,8 +67,10 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
       <Grid container justifyContent='space-between' alignItems='center'>
         <Typography variant='h1' component='span'>
           {policyId
-            ? `${isAdministrator || !canUpdatePolicy ? 'View' : 'Edit'} policy ${name}`
-            : 'Create policy'}
+            ? `${
+                isAdministrator || !canUpdatePolicy ? t('View policy') : t('Edit policy')
+              } ${name}`
+            : t('Create policy')}
         </Typography>
         <Button
           to={toPolicies}
@@ -85,8 +89,8 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
               {...field}
               disabled={isAdministrator || !canUpdatePolicy}
               sx={{ mt: 3 }}
-              label='Name'
-              placeholder='Enter policy name'
+              label={t('Name')}
+              placeholder={t('Enter policy name')}
               customEndAdornment={{
                 variant: 'clear',
                 showAdornment: !!field.value,
@@ -117,7 +121,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
       </form>
       {canUpdatePolicy && !isAdministrator && (
         <Button
-          text={policyId ? 'Save changes' : 'Create'}
+          text={policyId ? t('Save changes') : t('Create')}
           type='submit'
           form='policy-form'
           buttonType='main-lg'

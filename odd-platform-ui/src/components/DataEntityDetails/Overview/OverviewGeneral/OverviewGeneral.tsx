@@ -9,10 +9,12 @@ import {
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './OverviewGeneralStyles';
 import OwnersSection from './OwnersSection/OwnersSection';
 
 const OverviewGeneral: React.FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
@@ -30,7 +32,7 @@ const OverviewGeneral: React.FC = () => {
     <Grid container>
       <Grid item container sm={12}>
         <Grid item sm={12}>
-          <LabeledInfoItem inline label='Namespace' labelWidth={4}>
+          <LabeledInfoItem inline label={t('Namespace')} labelWidth={4}>
             {dataEntityDetails.dataSource?.namespace?.name}
           </LabeledInfoItem>
         </Grid>
@@ -55,20 +57,20 @@ const OverviewGeneral: React.FC = () => {
         )}
         {sourceCreatedAt && (
           <Grid item sm={12}>
-            <LabeledInfoItem inline label='Created at' labelWidth={4}>
+            <LabeledInfoItem inline label={t('Created at')} labelWidth={4}>
               {sourceCreatedAt}
             </LabeledInfoItem>
           </Grid>
         )}
         {sourceUpdatedAt && (
           <Grid item sm={12}>
-            <LabeledInfoItem inline label='Updated at ' labelWidth={4}>
+            <LabeledInfoItem inline label={t('Updated at')} labelWidth={4}>
               {sourceUpdatedAt}
             </LabeledInfoItem>
           </Grid>
         )}
         <Grid item sm={12}>
-          <LabeledInfoItem inline label='View count' labelWidth={4}>
+          <LabeledInfoItem inline label={t('View count')} labelWidth={4}>
             {dataEntityDetails.viewCount}
           </LabeledInfoItem>
         </Grid>

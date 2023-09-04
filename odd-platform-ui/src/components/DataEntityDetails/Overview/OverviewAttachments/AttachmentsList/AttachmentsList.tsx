@@ -3,6 +3,7 @@ import { Collapse } from '@mui/material';
 import { Button } from 'components/shared/elements';
 import { ChevronIcon } from 'components/shared/icons';
 import type { DataEntityFile, DataEntityLink } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import FileAttachment from '../AttachmentItem/FileAttachment';
 import LinkAttachment from '../AttachmentItem/LinkAttachment';
 import * as S from './AttachmentsList.styles';
@@ -12,6 +13,7 @@ interface AttachmentsListProps {
 }
 
 const AttachmentsList: FC<AttachmentsListProps> = ({ data }) => {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +54,7 @@ const AttachmentsList: FC<AttachmentsListProps> = ({ data }) => {
       {data && data.length > visibleLimit && (
         <S.CollapseFooter container>
           <Button
-            text={collapsed ? `Hide` : 'Show hidden'}
+            text={collapsed ? t(`Hide`) : t('Show hidden')}
             endIcon={<ChevronIcon transform={collapsed ? 'rotate(180)' : 'rotate(0)'} />}
             buttonType='service-m'
             onClick={() => setCollapsed(prev => !prev)}

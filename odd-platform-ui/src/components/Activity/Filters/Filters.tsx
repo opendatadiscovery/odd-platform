@@ -15,9 +15,11 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
+import { useTranslation } from 'react-i18next';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { setQueryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
@@ -50,14 +52,14 @@ const Filters: React.FC = () => {
   return (
     <S.Container>
       <Grid container justifyContent='space-between' sx={{ mb: 1 }}>
-        <Typography variant='h4'>Filters</Typography>
-        <Button text='Clear All' buttonType='tertiary-m' onClick={handleClearAll} />
+        <Typography variant='h4'>{t('Filters')}</Typography>
+        <Button text={t('Clear All')} buttonType='tertiary-m' onClick={handleClearAll} />
       </Grid>
       <S.ListContainer>
         <CalendarFilter />
         <SingleFilter
           key='ds'
-          name='Datasource'
+          name={t('Datasource')}
           filterName='datasourceId'
           filterOptions={datasources}
           dataQA='datasource_filter'
@@ -65,25 +67,35 @@ const Filters: React.FC = () => {
         <SingleFilter
           key='ns'
           filterName='namespaceId'
-          name='Namespace'
+          name={t('Namespace')}
           filterOptions={namespaces}
           dataQA='namespace_filter'
         />
         <SingleFilter
           key='at'
           filterName='eventType'
-          name='Event type'
+          name={t('Event type')}
           filterOptions={activityEventTypes}
           dataQA='event_type_filter'
         />
-        <MultipleFilter key='tg' filterName='tagIds' name='Tag' dataQA='tag_filter' />
+        <MultipleFilter
+          key='tg'
+          filterName='tagIds'
+          name={t('Tag')}
+          dataQA='tag_filter'
+        />
         <MultipleFilter
           key='ow'
           filterName='ownerIds'
-          name='Owner'
+          name={t('Owner')}
           dataQA='owner_filter'
         />
-        <MultipleFilter key='us' filterName='userIds' name='User' dataQA='user_filter' />
+        <MultipleFilter
+          key='us'
+          filterName='userIds'
+          name={t('User')}
+          dataQA='user_filter'
+        />
       </S.ListContainer>
     </S.Container>
   );

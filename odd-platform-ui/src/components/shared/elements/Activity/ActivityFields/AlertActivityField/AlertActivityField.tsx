@@ -5,6 +5,7 @@ import { Grid, Typography } from '@mui/material';
 import { stringFormatted } from 'lib/helpers';
 import { alertTitlesMap } from 'lib/constants';
 import { useAppDateTime } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface AlertActivityFieldProps {
   eventType: ActivityEventType;
@@ -17,6 +18,7 @@ const AlertActivityField: React.FC<AlertActivityFieldProps> = ({
   oldState,
   newState,
 }) => {
+  const { t } = useTranslation();
   const { alertFormattedDateTime } = useAppDateTime();
 
   const alertLayout = (type: string | undefined, text: string) => (
@@ -58,7 +60,7 @@ const AlertActivityField: React.FC<AlertActivityFieldProps> = ({
 
   const alertConfigLayout = (type: string | undefined, text: string, date?: number) => (
     <Grid container mt={0.5}>
-      Alerts for
+      {t('Alerts for')}
       <Typography variant='body1' fontWeight={500} mx={0.5}>
         {type}
       </Typography>
@@ -83,12 +85,12 @@ const AlertActivityField: React.FC<AlertActivityFieldProps> = ({
         if (date)
           return alertConfigLayout(
             alertTitlesMap.get(alertConfigType),
-            'was disabled until',
+            t('was disabled until'),
             date
           );
 
         if (oldState.alertHaltConfig?.[alertConfigType] && !date)
-          return alertConfigLayout(alertTitlesMap.get(alertConfigType), 'was enabled');
+          return alertConfigLayout(alertTitlesMap.get(alertConfigType), t('was enabled'));
 
         return null;
       })}

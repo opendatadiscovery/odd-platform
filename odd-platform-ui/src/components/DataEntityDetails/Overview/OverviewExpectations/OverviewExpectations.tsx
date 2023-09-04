@@ -4,6 +4,7 @@ import { Grid, Typography } from '@mui/material';
 import { Button } from 'components/shared/elements';
 import { ChevronIcon, DropdownIcon } from 'components/shared/icons';
 import { useCollapse } from 'lib/hooks';
+import { useTranslation } from 'react-i18next';
 import * as S from './OverviewExpectationsStyles';
 
 interface OverviewExpectationsProps {
@@ -15,6 +16,7 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
   parameters,
   linkedUrlList,
 }) => {
+  const { t } = useTranslation();
   const { contentRef, containerStyle, toggleCollapse, isCollapsed, controlsStyle } =
     useCollapse({ initialMaxHeight: 230 });
 
@@ -33,15 +35,15 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
         flexWrap='nowrap'
       >
         <Typography variant='h2' sx={{ mb: 1 }}>
-          Expectations
+          {t('Expectations')}
         </Typography>
-        <Typography variant='h4'>Parameters</Typography>
+        <Typography variant='h4'>{t('Parameters')}</Typography>
         <S.Params variant='body1' $isOpened={isExpanded} $isExpandable={isExpandable}>
           {stringifyParams}
         </S.Params>
         {isExpandable && (
           <Button
-            text={isExpanded ? 'Hide' : `Show All`}
+            text={isExpanded ? t('Hide') : t(`Show All`)}
             buttonType='tertiary-m'
             sx={{ mt: 1.25 }}
             onClick={() => setIsExpanded(!isExpanded)}
@@ -53,7 +55,7 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
         {linkedUrlList && linkedUrlList?.length > 0 && (
           <>
             <S.Divider />
-            <Typography variant='h4'>Links</Typography>
+            <Typography variant='h4'>{t('Links')}</Typography>
             <Grid container flexDirection='column'>
               {linkedUrlList?.map(({ name, url }) => (
                 <Button
@@ -71,7 +73,7 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
       </Grid>
       <Grid container style={controlsStyle}>
         <Button
-          text={isCollapsed ? 'Show hidden' : `Hide`}
+          text={isCollapsed ? t('Show hidden') : t(`Hide`)}
           endIcon={
             <ChevronIcon
               width={10}

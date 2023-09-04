@@ -7,11 +7,13 @@ import { Permission } from 'generated-sources';
 import { useAppParams, useGetUploadOptions } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
+import { useTranslation } from 'react-i18next';
 import SaveLinksForm from '../SaveLinksForm/SaveLinksForm';
 import SaveFilesForm from '../SaveFilesForm/SaveFilesForm';
 import * as S from './AttachmentsHeader.styles';
 
 const AttachmentsHeader: FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
   const { data } = useGetUploadOptions({ dataEntityId });
 
@@ -31,11 +33,11 @@ const AttachmentsHeader: FC = () => {
 
   return (
     <S.Header>
-      <Typography variant='h2'>Attachments</Typography>
+      <Typography variant='h2'>{t('Attachments')}</Typography>
       <WithPermissions permissionTo={Permission.DATA_ENTITY_ATTACHMENT_MANAGE}>
         {!isStatusDeleted && (
           <Button
-            text='Add attachments'
+            text={t('Add attachments')}
             buttonType='secondary-lg'
             startIcon={<AddIcon />}
             aria-label={menuId}
@@ -57,9 +59,9 @@ const AttachmentsHeader: FC = () => {
         onClose={handleMenuClose}
         onClick={handleMenuClose}
       >
-        <SaveLinksForm openBtn={<AppMenuItem>Add links</AppMenuItem>} />
+        <SaveLinksForm openBtn={<AppMenuItem>{t('Add links')}</AppMenuItem>} />
         <SaveFilesForm
-          openBtn={<AppMenuItem>Add file</AppMenuItem>}
+          openBtn={<AppMenuItem>{t('Add file')}</AppMenuItem>}
           maxSize={data?.maxSize}
         />
       </AppMenu>

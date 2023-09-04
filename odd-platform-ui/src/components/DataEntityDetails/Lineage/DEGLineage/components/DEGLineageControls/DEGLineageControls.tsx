@@ -3,12 +3,14 @@ import { AppTabs, Button } from 'components/shared/elements';
 import { TargetIcon } from 'components/shared/icons';
 import { useQueryParams } from 'lib/hooks';
 import { useSetAtom } from 'jotai';
+import { useTranslation } from 'react-i18next';
 import type { DEGLineageQueryParams } from '../../lib/interfaces';
 import { defaultDEGLineageQuery } from '../../lib/constants';
 import { isFitClickedAtom, isLayoutedAtom } from '../../lib/atoms';
 import * as S from './DEGLineageControls.styles';
 
 const DEGLineageControls: FC = () => {
+  const { t } = useTranslation();
   const {
     queryParams: { full },
     setQueryParams,
@@ -32,7 +34,7 @@ const DEGLineageControls: FC = () => {
   return (
     <S.ControlsContainer>
       <Button
-        text='Fit'
+        text={t('Fit')}
         buttonType='secondary-m'
         startIcon={<TargetIcon />}
         onClick={handleFitClick}
@@ -40,7 +42,7 @@ const DEGLineageControls: FC = () => {
       <AppTabs
         type='secondarySmall'
         orientation='horizontal'
-        items={[{ name: 'Full' }, { name: 'Compact' }]}
+        items={[{ name: t('Full') }, { name: t('Compact') }]}
         selectedTab={full ? 0 : 1}
         handleTabChange={handleViewChange}
       />

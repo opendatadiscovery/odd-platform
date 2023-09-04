@@ -13,6 +13,7 @@ import {
   getDataEntityClassesList,
 } from 'redux/selectors';
 import { addDataEntityToGroup } from 'redux/thunks';
+import { useTranslation } from 'react-i18next';
 
 interface AddDataEntityToGroupFormProps {
   btnCreateEl: JSX.Element;
@@ -27,6 +28,7 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
   btnCreateEl,
   dataEntityId,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isDataEntityAddingToGroup, isLoaded: isDataEntityAddedToGroup } =
@@ -62,7 +64,7 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
 
   const formTitle = (
     <Typography variant='h4' component='span'>
-      Add to group
+      {t('Add to group')}
     </Typography>
   );
 
@@ -87,7 +89,7 @@ const AddDataEntityToGroupForm: React.FC<AddDataEntityToGroupFormProps> = ({
 
   const formActionButtons = () => (
     <Button
-      text='Add'
+      text={t('Add')}
       buttonType='main-lg'
       type='submit'
       form='add-entity-to-group-form'

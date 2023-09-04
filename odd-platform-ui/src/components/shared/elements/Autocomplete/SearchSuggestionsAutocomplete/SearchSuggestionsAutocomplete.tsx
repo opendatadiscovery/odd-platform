@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type FC, useEffect, useState } from 'react';
 import {
   Autocomplete,
   type AutocompleteRenderInputParams,
@@ -25,6 +25,7 @@ import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import Button from 'components/shared/elements/Button/Button';
 import Input, { type InputProps } from 'components/shared/elements/Input/Input';
+import { useTranslation } from 'react-i18next';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
@@ -40,7 +41,7 @@ interface SearchSuggestionsAutocompleteProps {
   searchQuery?: string;
 }
 
-const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps> = ({
+const SearchSuggestionsAutocomplete: FC<SearchSuggestionsAutocompleteProps> = ({
   addEntities,
   append,
   searchParams,
@@ -50,6 +51,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
   disableSuggestions,
   searchQuery,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { dataEntityOverviewPath } = useAppPaths();
 
@@ -58,10 +60,10 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     getSearchSuggestionsFetchingStatuses
   );
 
-  const [searchText, setSearchText] = React.useState('');
-  const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>([]);
-  const [selectedOption, setSelectedOption] = React.useState<DataEntityRef | null>(null);
-  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [options, setOptions] = useState<Partial<DataEntityRef>[]>([]);
+  const [selectedOption, setSelectedOption] = useState<DataEntityRef | null>(null);
+  const [autocompleteOpen, setAutocompleteOpen] = useState(false);
 
   const handleInputChange = (
     _: React.ChangeEvent<unknown>,
@@ -76,10 +78,10 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
     dispatch(fetchSearchSuggestions({ query: searchText, ...searchParams }));
   }, 500);
 
-  React.useEffect(() => setSearchText(searchQuery || ''), [searchQuery]);
-  React.useEffect(() => setOptions(searchSuggestions), [searchSuggestions]);
+  useEffect(() => setSearchText(searchQuery || ''), [searchQuery]);
+  useEffect(() => setOptions(searchSuggestions), [searchSuggestions]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!searchText) {
       setAutocompleteOpen(false);
       return;
@@ -169,7 +171,7 @@ const SearchSuggestionsAutocomplete: React.FC<SearchSuggestionsAutocompleteProps
       />
       {addEntities && (
         <Button
-          text='Add'
+          text={t('Add')}
           sx={{ mt: 2, ml: 0.5, flexShrink: 0 }}
           buttonType='secondary-lg'
           onClick={handleAddEntity}

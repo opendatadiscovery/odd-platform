@@ -11,11 +11,13 @@ import {
 import { useAppParams } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import OwnershipDeleteForm from './OwnershipDeleteForm/OwnershipDeleteForm';
 import * as S from './OwnersSectionStyles';
 import OwnershipForm from './OwnershipForm/OwnershipForm';
 
 const OwnersSection: FC = () => {
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
 
   const ownership = useAppSelector(getDataEntityOwnership(dataEntityId));
@@ -24,7 +26,7 @@ const OwnersSection: FC = () => {
 
   return (
     <Grid item sm={12} sx={{ mt: 2 }}>
-      <LabeledInfoItem label='Owners'>
+      <LabeledInfoItem label={t('Owners')}>
         {ownership?.length ? (
           ownership?.map(ownershipItem => (
             <S.OwnerItem key={ownershipItem.id}>
@@ -66,7 +68,7 @@ const OwnersSection: FC = () => {
             </S.OwnerItem>
           ))
         ) : (
-          <Typography variant='subtitle2'>Not created.</Typography>
+          <Typography variant='subtitle2'>{t('Not created')}.</Typography>
         )}
         <WithPermissions permissionTo={Permission.DATA_ENTITY_OWNERSHIP_CREATE}>
           {!isStatusDeleted && (
@@ -75,7 +77,7 @@ const OwnersSection: FC = () => {
               isDEG={isDEG}
               ownerEditBtn={
                 <Button
-                  text='Add Owner'
+                  text={t('Add Owner')}
                   data-qa='add_owner'
                   sx={{ mt: 0.25 }}
                   buttonType='tertiary-m'

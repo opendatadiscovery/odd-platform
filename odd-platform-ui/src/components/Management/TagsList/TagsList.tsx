@@ -20,12 +20,14 @@ import {
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
 import * as S from './TagsListStyles';
 
 const TagsListView: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const { isLoading: isTagCreating } = useAppSelector(getTagCreatingStatuses);
@@ -71,14 +73,14 @@ const TagsListView: React.FC = () => {
   return (
     <Grid container flexDirection='column' alignItems='center'>
       <S.Caption container sx={{ mb: 1 }}>
-        <Typography variant='h1'>Tags</Typography>
+        <Typography variant='h1'>{t('Tags')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
-          <NumberFormatted value={totalTags} /> tags overall
+          <NumberFormatted value={totalTags} /> {t('tags overall')}
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
         <AppInput
-          placeholder='Search tag...'
+          placeholder={t('Search tag')}
           value={query}
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -102,7 +104,7 @@ const TagsListView: React.FC = () => {
           <TagCreateForm
             btnCreateEl={
               <Button
-                text='Create tag'
+                text={t('Create tag')}
                 buttonType='secondary-m'
                 startIcon={<AddIcon />}
               />
@@ -113,12 +115,12 @@ const TagsListView: React.FC = () => {
       <S.TableHeader container>
         <S.Col item>
           <Typography variant='subtitle2' color='texts.hint'>
-            Name
+            {t('Name')}
           </Typography>
         </S.Col>
         <S.Col item>
           <Typography variant='subtitle2' color='texts.hint'>
-            Priority
+            {t('Priority')}
           </Typography>
         </S.Col>
       </S.TableHeader>

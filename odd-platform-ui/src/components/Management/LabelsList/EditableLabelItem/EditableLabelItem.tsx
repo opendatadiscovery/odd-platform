@@ -6,6 +6,7 @@ import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { deleteLabel } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTranslation } from 'react-i18next';
 import LabelEditForm from '../LabelEditForm/LabelEditForm';
 import * as S from './EditableLabelItemStyles';
 
@@ -14,6 +15,7 @@ interface EditableLabelItemProps {
 }
 
 const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const handleDelete = React.useCallback(
@@ -35,7 +37,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
               label={label}
               editBtn={
                 <Button
-                  text='Edit'
+                  text={t('Edit')}
                   buttonType='secondary-m'
                   startIcon={<EditIcon />}
                   sx={{ mr: 1 }}
@@ -45,13 +47,17 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({ label }) => {
           </WithPermissions>
           <WithPermissions permissionTo={Permission.LABEL_DELETE}>
             <ConfirmationDialog
-              actionTitle='Are you sure you want to delete this label?'
-              actionName='Delete Label'
-              actionText={<>&quot;{label.name}&quot; will be deleted permanently.</>}
+              actionTitle={t('Are you sure you want to delete this label?')}
+              actionName={t('Delete Label')}
+              actionText={
+                <>
+                  &quot;{label.name}&quot; {t('will be deleted permanently')}
+                </>
+              }
               onConfirm={handleDelete}
               actionBtn={
                 <Button
-                  text='Delete'
+                  text={t('Delete')}
                   buttonType='secondary-m'
                   startIcon={<DeleteIcon />}
                 />

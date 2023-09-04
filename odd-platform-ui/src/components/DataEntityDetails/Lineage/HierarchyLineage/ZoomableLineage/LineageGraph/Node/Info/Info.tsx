@@ -11,6 +11,7 @@ import {
 import GroupedEntitiesListModal from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/GroupedEntitiesListModal/GroupedEntitiesListModal';
 import ItemsButton from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/ItemsButton/ItemsButton';
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/InfoStyles';
+import { useTranslation } from 'react-i18next';
 
 interface InfoProps {
   id: number;
@@ -40,12 +41,14 @@ const Info = React.memo<InfoProps>(
     fullNames,
     full,
   }) => {
+    const { t } = useTranslation();
+
     if (!full && !externalName) {
       return (
         <Group top={nodeSize.content.info.y} left={nodeSize.content.info.x}>
           <S.Attribute>
             <S.Placeholder x={0} y={0}>
-              No Information
+              {t('No Information')}
             </S.Placeholder>
           </S.Attribute>
         </Group>
@@ -72,7 +75,7 @@ const Info = React.memo<InfoProps>(
               y={0}
               width={nodeSize.content.info.labelWidth}
             >
-              Space
+              {t('Space')}
             </S.AttributeLabel>
             {dataSource?.namespace ? (
               <TruncatedSVGText
@@ -84,7 +87,7 @@ const Info = React.memo<InfoProps>(
               />
             ) : (
               <S.Placeholder x={nodeSize.content.info.labelWidth} y={0}>
-                No Information
+                {t('No Information')}
               </S.Placeholder>
             )}
           </S.Attribute>
@@ -95,7 +98,7 @@ const Info = React.memo<InfoProps>(
               y={nodeSize.content.info.lineHeight}
               width={nodeSize.content.info.labelWidth}
             >
-              Source
+              {t('Source')}
             </S.AttributeLabel>
             {dataSource ? (
               <TruncatedSVGText
@@ -110,7 +113,7 @@ const Info = React.memo<InfoProps>(
                 x={nodeSize.content.info.labelWidth}
                 y={nodeSize.content.info.lineHeight}
               >
-                No Information
+                {t('No Information')}
               </S.Placeholder>
             )}
           </S.Attribute>
@@ -122,7 +125,7 @@ const Info = React.memo<InfoProps>(
                   x={0}
                   y={nodeSize.content.info.lineHeight * 2}
                 >
-                  Items
+                  {t('Items')}
                 </S.AttributeLabel>
               </S.Attribute>
               <GroupedEntitiesListModal
@@ -131,7 +134,7 @@ const Info = React.memo<InfoProps>(
                 streamType={streamType}
                 rootNodeId={rootNodeId}
                 openBtnEl={
-                  <ItemsButton text={`${nodesRelatedWithDEG.length} entities`} />
+                  <ItemsButton text={`${nodesRelatedWithDEG.length} ${t('entities')}`} />
                 }
               />
             </>

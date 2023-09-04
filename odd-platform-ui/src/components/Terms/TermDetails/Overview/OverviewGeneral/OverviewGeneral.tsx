@@ -14,10 +14,12 @@ import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useTranslation } from 'react-i18next';
 import OwnershipForm from '../../Ownership/OwnershipForm';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 
 const OverviewGeneral: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
   const { termFormattedDateTime } = useAppDateTime();
@@ -35,21 +37,21 @@ const OverviewGeneral: React.FC = () => {
     <Grid container>
       <Grid item container sm={12}>
         <Grid item sm={12}>
-          <LabeledInfoItem inline label='Namespace' labelWidth={4}>
+          <LabeledInfoItem inline label={t('Namespace')} labelWidth={4}>
             {termDetails.namespace?.name}
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12}>
-          <LabeledInfoItem inline label='Created' labelWidth={4}>
+          <LabeledInfoItem inline label={t('Created')} labelWidth={4}>
             {createdAt}
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12} sx={{ mt: 2 }}>
-          <LabeledInfoItem label='Owners'>
+          <LabeledInfoItem label={t('Owners')}>
             {ownership?.map(ownershipItem => (
               <OwnerItem key={ownershipItem.id}>
                 {ownershipItem.owner.name}
-                <LabelItem labelName={ownershipItem.title?.name} />
+                <LabelItem sx={{ ml: 0.5 }} labelName={ownershipItem.title?.name} />
                 <OwnerActionBtns>
                   <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_UPDATE}>
                     <OwnershipForm
@@ -65,12 +67,12 @@ const OverviewGeneral: React.FC = () => {
                   </WithPermissions>
                   <WithPermissions permissionTo={Permission.TERM_OWNERSHIP_DELETE}>
                     <ConfirmationDialog
-                      actionTitle='Are you sure you want to delete this owner?'
-                      actionName='Delete Owner'
+                      actionTitle={t('Are you sure you want to delete this owner?')}
+                      actionName={t('Delete Owner')}
                       actionText={
                         <>
-                          &quot;{ownershipItem.owner.name}&quot; will be deleted
-                          permanently.
+                          &quot;{ownershipItem.owner.name}&quot;{' '}
+                          {t('will be deleted permanently')}
                         </>
                       }
                       onConfirm={handleOwnershipDelete(ownershipItem.id)}
@@ -90,7 +92,7 @@ const OverviewGeneral: React.FC = () => {
               <OwnershipForm
                 ownerEditBtn={
                   <Button
-                    text='Add Owner'
+                    text={t('Add Owner')}
                     sx={{ mt: 0.25 }}
                     buttonType='tertiary-m'
                     startIcon={<AddIcon />}
