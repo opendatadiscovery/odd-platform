@@ -5,11 +5,11 @@ ALTER TABLE data_entity_filled
     ADD COLUMN IF NOT EXISTS dataset_field_internal_name_filled BOOLEAN NOT NULL DEFAULT FALSE;
 
 UPDATE activity
-SET old_state = (SELECT jsonb_agg(elem || '{"internal_name": null}') FROM jsonb_array_elements(old_state) AS elem)
+SET old_state = old_state || '{"internal_name": null}'::jsonb
 WHERE event_type IN ('DATASET_FIELD_DESCRIPTION_UPDATED', 'DATASET_FIELD_LABELS_UPDATED')
-  AND jsonb_array_length(old_state) <> 0;
+  AND old_state IS NOT NULL AND exists(SELECT 1 FROM jsonb_object_keys(old_state));
 
 UPDATE activity
-SET new_state = (SELECT jsonb_agg(elem || '{"internal_name": null}') FROM jsonb_array_elements(new_state) AS elem)
+SET new_state = new_state || '{"internal_name": null}'::jsonb
 WHERE event_type IN ('DATASET_FIELD_DESCRIPTION_UPDATED', 'DATASET_FIELD_LABELS_UPDATED')
-  AND jsonb_array_length(old_state) <> 0;
+  AND new_state IS NOT NULL AND exists(SELECT 1 FROM jsonb_object_keys(new_state));
