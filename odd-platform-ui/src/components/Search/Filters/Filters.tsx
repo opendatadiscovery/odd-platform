@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   getDataSourcesList,
   getIsDataSourcesListFetching,
@@ -11,7 +12,6 @@ import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Button, AppCircularProgress } from 'components/shared/elements';
 import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
-import { useTranslation } from 'react-i18next';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';
@@ -62,7 +62,7 @@ const Filters: React.FC = () => {
         <MultipleFilterItem key='ow' facetName='owners' name={t('Owner')} />
         <MultipleFilterItem key='tg' facetName='tags' name={t('Tag')} />
         <MultipleFilterItem key='gr' facetName='groups' name={t('Groups')} />
-        <MultipleFilterItem key='st' facetName='statuses' name='Statuses' />
+        <MultipleFilterItem key='st' facetName='statuses' name={t('Statuses')} />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text={t('Updating filters')} />

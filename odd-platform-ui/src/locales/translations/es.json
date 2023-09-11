@@ -354,14 +354,13 @@
   "association request pending": "Su solicitud para asociar el usuario ${username} con el propietario ${ownerName}.",
   "association request review": "Su solicitud anterior fue rechazada. Contacte al administrador del sistema, o re-envíe su solicitud.",
   "association request rejected": "Espere a que el administrador revise su solicitud.",
-  "bind entities in your account": "Asociar entidades a su cuenta",
   "collector": "recolector",
   "collectors overall": "todo sobre recolectores",
   "column": "columna",
   "custom data": "datos personalizados",
   "custom namespace": "namespace personalizado",
   "datasource": "fuente de datos",
-  "datasources overall": "todo sobre duende de datos",
+  "datasources overall": "todo sobre fuente de datos",
   "description": "descripción",
   "entities": "entidades",
   "entity": "entidad",
@@ -408,7 +407,10 @@
   "will be deleted permanently": "se borrará permanentemente",
   "will be mapped to owner": "se asignará al propietario",
   "will be rejected": "se rechazará",
+  "Statuses": "Estado",
+  "Updated": "Actualizado",
+  "This will allow you to bind existing entities in your account.": "This will allow you to bind existing entities in your account.",
+  "No attachments yet. You can add attachments via the button on the right": "No attachments yet. You can add attachments via the button on the right",
   "Select language": "Select language",
-  "Total entities": "Total entities",
-  "No attachments yet. You can add attachments via the button on the right": "No attachments yet. You can add attachments via the button on the right"
+  "Total entities": "Total entities"
 }

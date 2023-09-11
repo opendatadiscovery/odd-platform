@@ -354,7 +354,7 @@
   "association request pending": "association request pending",
   "association request rejected": "association request rejected",
   "association request review": "association request review",
-  "bind entities in your account": "bind entities in your account",
+  "This will allow you to bind existing entities in your account.": "This will allow you to bind existing entities in your account.",
   "collector": "collector",
   "collectors overall": "collectors overall",
   "column": "column",
@@ -410,5 +410,6 @@
   "will be mapped to owner": "will be mapped to owner",
   "will be rejected": "will be rejected",
   "Select language": "Select language",
+  "Statuses": "Statuses",
   "No attachments yet. You can add attachments via the button on the right": "No attachments yet. You can add attachments via the button on the right"
 }
