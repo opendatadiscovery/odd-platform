@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { toolbarHeight } from 'lib/constants';
 import { AppSuspenseWrapper, AppToolbar } from 'components/shared/elements';
 import { useAppDispatch } from 'redux/lib/hooks';
@@ -10,7 +11,6 @@ import {
   fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { Toaster } from 'react-hot-toast';
 
 // lazy elements
 const Management = React.lazy(() => import('./Management/Management'));

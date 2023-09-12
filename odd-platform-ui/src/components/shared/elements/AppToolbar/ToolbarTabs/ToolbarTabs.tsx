@@ -1,4 +1,6 @@
 import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
@@ -6,9 +8,7 @@ import {
 } from 'components/shared/elements/Activity/common';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
-import { useLocation, useNavigate } from 'react-router-dom';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
-import { useTranslation } from 'react-i18next';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
@@ -76,8 +76,9 @@ const ToolbarTabs: FC = () => {
       if (
         location.pathname.includes(tab.value as string) &&
         !location.pathname.includes(DataEntityRoutes.dataentities)
-      )
+      ) {
         newTabIdx = idx;
+      }
     });
 
     setSelectedTab(newTabIdx);
@@ -99,7 +100,10 @@ const ToolbarTabs: FC = () => {
         return;
       }
 
-      if (tabs[idx].name === t('Catalog')) {
+      if (
+        tabs[idx].name === t('Catalog') &&
+        tabs[idx].link?.includes(SearchRoutes.search)
+      ) {
         createSearch(initialParams);
       }
     },
