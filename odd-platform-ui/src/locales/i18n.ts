@@ -16,7 +16,13 @@ const resources = {
   hy: { translation: hy },
 };
 
-const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
+const languages = Object.keys(resources);
+const defaultLanguage = 'en';
+
+const storedLanguage = localStorage.getItem('i18nextLng') || defaultLanguage;
+const savedLanguage = languages.includes(storedLanguage)
+  ? storedLanguage
+  : defaultLanguage;
 
 i18n.use(initReactI18next).init({
   resources,
