@@ -80,7 +80,7 @@ const AppTabs: FC<AppTabsProps> = ({
             $orientation={orientation}
             type={type}
             hidden={item.hidden}
-            key={item.name}
+            key={item.link}
             sx={tabSx}
             label={
               <AppTabLabel
@@ -99,7 +99,7 @@ const AppTabs: FC<AppTabsProps> = ({
             $orientation={orientation}
             type={type}
             hidden={item.hidden}
-            key={item.name}
+            key={item.link}
             sx={tabSx}
             label={
               <AppTabLabel
