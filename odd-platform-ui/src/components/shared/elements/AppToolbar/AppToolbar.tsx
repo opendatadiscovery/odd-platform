@@ -67,15 +67,21 @@ const AppToolbar: FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <AppInfoMenu />
-              <S.UserName>{owner?.name ?? identity?.username}</S.UserName>
-              <Button
-                buttonType='linkGray-m'
-                icon={<DropdownIcon />}
-                aria-label='account of current user'
-                aria-controls={menuId}
-                aria-haspopup='true'
+              <Box
+                display='flex'
+                alignItems='center'
+                sx={{ '&:hover': { cursor: 'pointer' } }}
                 onClick={handleProfileMenuOpen}
-              />
+              >
+                <S.UserName>{owner?.name ?? identity?.username}</S.UserName>
+                <Button
+                  buttonType='linkGray-m'
+                  icon={<DropdownIcon />}
+                  aria-label='account of current user'
+                  aria-controls={menuId}
+                  aria-haspopup='true'
+                />
+              </Box>
             </S.SectionDesktop>
           </S.ActionsContainer>
         </S.ContentContainer>

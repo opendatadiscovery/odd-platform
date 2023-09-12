@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   AppTooltip,
   CopyButton,
@@ -9,7 +10,6 @@ import {
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from './OverviewGeneralStyles';
 import OwnersSection from './OwnersSection/OwnersSection';
 
@@ -64,7 +64,7 @@ const OverviewGeneral: React.FC = () => {
         )}
         {sourceUpdatedAt && (
           <Grid item sm={12}>
-            <LabeledInfoItem inline label={t('Updated at')} labelWidth={4}>
+            <LabeledInfoItem inline label={t('Updated')} labelWidth={4}>
               {sourceUpdatedAt}
             </LabeledInfoItem>
           </Grid>

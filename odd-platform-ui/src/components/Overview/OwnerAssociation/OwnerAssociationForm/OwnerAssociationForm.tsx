@@ -3,12 +3,13 @@ import { Autocomplete, Grid, Typography } from '@mui/material';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { Controller, useForm } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
-import { getIdentity, getOwnerAssociationRequestCreatingStatuses } from 'redux/selectors';
 import type {
   AutocompleteInputChangeReason,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
+import { useTranslation } from 'react-i18next';
+import { getIdentity, getOwnerAssociationRequestCreatingStatuses } from 'redux/selectors';
 import type { Owner, OwnerFormData } from 'generated-sources';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/icons';
@@ -21,7 +22,6 @@ import {
 import { usePermissions } from 'lib/hooks';
 import { setProfileOwnerName } from 'redux/slices/profile.slice';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from './OwnerAssociationFormStyles';
 
 const OwnerAssociationForm: React.FC = () => {
@@ -161,7 +161,9 @@ const OwnerAssociationForm: React.FC = () => {
           ) : null}{' '}
           {t('Sync your account with existing owner')}
         </Typography>
-        <Typography variant='subtitle2'>{t('bind entities in your account')}</Typography>
+        <Typography variant='subtitle2'>
+          {t('This will allow you to bind existing entities in your account.')}
+        </Typography>
       </Grid>
       <Grid item xs={12} container alignItems='center' direction='column'>
         <S.FormContainer

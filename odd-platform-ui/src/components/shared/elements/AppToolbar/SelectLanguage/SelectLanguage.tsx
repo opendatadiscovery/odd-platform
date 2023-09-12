@@ -1,8 +1,9 @@
 import React, { type FC, type ReactElement, cloneElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import ReactCountryFlag from 'react-country-flag';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import { LANGUAGES_MAP } from 'lib/constants';
+import { LANG_TO_COUNTRY_CODE_MAP, LANGUAGES_MAP } from 'lib/constants';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import type { Lang } from 'lib/interfaces';
 import Input from 'components/shared/elements/Input/Input';
@@ -26,6 +27,7 @@ const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn, handleMenuClose }) =
 
   const handleLangChange = async (lang: string, handleClose: HandleClose) => {
     await i18n.changeLanguage(lang);
+    localStorage.setItem('i18nextLng', lang);
     handleClose();
     handleMenuClose();
   };
@@ -53,7 +55,13 @@ const SelectLanguage: FC<SelectLanguageProps> = ({ openBtn, handleMenuClose }) =
             value={lang}
             onClick={() => handleLangChange(lang, handleClose)}
           >
-            {LANGUAGES_MAP[lang as Lang]}
+            <Box display='flex' alignItems='center'>
+              <ReactCountryFlag
+                countryCode={LANG_TO_COUNTRY_CODE_MAP[lang as Lang]}
+                style={{ fontSize: '1.25em' }}
+              />
+              <Box sx={{ ml: 1 }}>{LANGUAGES_MAP[lang as Lang]}</Box>
+            </Box>
           </AppMenuItem>
         ))}
     </div>

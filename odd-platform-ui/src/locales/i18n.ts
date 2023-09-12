@@ -4,17 +4,24 @@ import en from './translations/en.json';
 import es from './translations/es.json';
 import ch from './translations/ch.json';
 import fr from './translations/fr.json';
+import ua from './translations/ua.json';
+import hy from './translations/hy.json';
 
 const resources = {
   en: { translation: en },
   es: { translation: es },
   ch: { translation: ch },
   fr: { translation: fr },
+  ua: { translation: ua },
+  hy: { translation: hy },
 };
+
+const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
 
 i18n.use(initReactI18next).init({
   resources,
-  fallbackLng: ['en', 'es', 'ch', 'fr'],
+  lng: savedLanguage,
+  fallbackLng: ['en', 'es', 'ch', 'fr', 'ua', 'hy'],
   debug: true,
 });
 

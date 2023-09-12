@@ -146,6 +146,17 @@ export const LANGUAGES_MAP = {
   es: 'Spanish',
   ch: 'Chinese',
   fr: 'French',
+  ua: 'Ukrainian',
+  hy: 'Armenian',
+} as const;
+
+export const LANG_TO_COUNTRY_CODE_MAP = {
+  en: 'gb',
+  es: 'es',
+  ch: 'cn',
+  fr: 'fr',
+  ua: 'ua',
+  hy: 'am',
 } as const;
 
 // regexp
