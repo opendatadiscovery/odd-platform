@@ -150,5 +150,14 @@ export const LANGUAGES_MAP = {
   hy: 'Armenian',
 } as const;
 
+export const LANG_TO_COUNTRY_CODE_MAP = {
+  en: 'gb',
+  es: 'es',
+  ch: 'cn',
+  fr: 'fr',
+  ua: 'ua',
+  hy: 'am',
+} as const;
+
 // regexp
 export const TERM_PATTERN = /\[\[([^:\]]+):([^\]]+)\]\]/g;
