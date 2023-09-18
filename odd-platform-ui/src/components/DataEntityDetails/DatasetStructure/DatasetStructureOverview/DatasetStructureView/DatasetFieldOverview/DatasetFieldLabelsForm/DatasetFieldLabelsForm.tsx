@@ -1,12 +1,12 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { getDatasetFieldLabelsUpdatingStatus } from 'redux/selectors';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { getDatasetFieldLabelsUpdatingStatus } from 'redux/selectors';
 import type { DataSetField, Label } from 'generated-sources';
 import { Button, DialogWrapper, LabelItem } from 'components/shared/elements';
 import { updateDataSetFieldLabels } from 'redux/thunks';
-import { useTranslation } from 'react-i18next';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 
 interface DatasetFieldLabelsFormProps {
@@ -108,6 +108,7 @@ const DatasetFieldLabelsForm: React.FC<DatasetFieldLabelsFormProps> = ({
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isLoaded}
       formSubmitHandler={methods.handleSubmit(handleFormSubmit)}
+      confirmOnClose
     />
   );
 };

@@ -4,20 +4,11 @@ import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 import type { EventType } from 'lib/interfaces';
 import {
-  DataSetFieldTypeTypeEnum,
-  MetadataFieldType,
+  type DataEntityStatus,
   type DataQualityTestExpectation,
   type MetadataField,
-  type DataEntityStatus,
+  MetadataFieldType,
 } from 'generated-sources';
-
-export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
-  [
-    DataSetFieldTypeTypeEnum.STRUCT,
-    DataSetFieldTypeTypeEnum.LIST,
-    DataSetFieldTypeTypeEnum.MAP,
-    DataSetFieldTypeTypeEnum.UNION,
-  ].includes(fieldType);
 
 export const stringFormatted = (
   value: string,

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import {
   DataEntityClassNameEnum,
   type DataEntityDetails,
@@ -26,8 +28,6 @@ import {
   getDataEntityTypesByClassName,
 } from 'redux/selectors';
 import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
-import { useNavigate } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 
@@ -198,6 +198,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
         dataEntityGroupDetails ? isDataEntityGroupUpdating : isDataEntityGroupCreating
       }
       clearState={clearState}
+      confirmOnClose
     />
   );
 };

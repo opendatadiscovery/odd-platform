@@ -1,5 +1,7 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { Collector, CollectorFormData } from 'generated-sources';
 import { registerCollector, updateCollector } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -7,7 +9,6 @@ import {
   getCollectorCreatingStatuses,
   getCollectorsUpdatingStatuses,
 } from 'redux/selectors';
-import { Typography } from '@mui/material';
 import {
   Button,
   AppInput,
@@ -15,7 +16,6 @@ import {
   DialogWrapper,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import { Asterisk } from './CollectorFormStyles';
 
 interface CollectorFormDialogProps {
@@ -165,6 +165,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       handleCloseSubmittedForm={collector ? isCollectorUpdated : isCollectorCreated}
       isLoading={collector ? isCollectorUpdating : isCollectorCreating}
       clearState={clearState}
+      confirmOnClose
     />
   );
 };
