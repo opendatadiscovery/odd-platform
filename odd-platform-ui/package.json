@@ -82,7 +82,7 @@
     "react-router-dom": "^6.14.2",
     "react-truncate-markup": "^5.1.2",
     "styled-components": "^5.3.11",
-    "use-debounce": "^8.0.4",
+    "use-debounce": "^9.0.4",
     "uuid": "^9.0.0",
     "vanilla-jsoneditor": "^0.7.11"
   },

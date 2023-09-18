@@ -134,8 +134,8 @@ dependencies:
     specifier: ^5.3.11
     version: 5.3.11(@babel/core@7.22.11)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
   use-debounce:
-    specifier: ^8.0.4
-    version: 8.0.4(react@18.2.0)
+    specifier: ^9.0.4
+    version: 9.0.4(react@18.2.0)
   uuid:
     specifier: ^9.0.0
     version: 9.0.0
@@ -7142,8 +7142,8 @@ packages:
       requires-port: 1.0.0
     dev: true
 
-  /use-debounce@8.0.4(react@18.2.0):
-    resolution: {integrity: sha512-fGqsYQzl8kLHF2QpQSgIwgOgJmnh6j5L6SIzQiHdLfwp3q1egUL3btq5Bg2SJysH6A0ILLgT2IqXZKoNJr0nFw==}
+  /use-debounce@9.0.4(react@18.2.0):
+    resolution: {integrity: sha512-6X8H/mikbrt0XE8e+JXRtZ8yYVvKkdYRfmIhWZYsP8rcNs9hk3APV8Ua2mFkKRLcJKVdnX2/Vwrmg2GWKUQEaQ==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
       react: '>=16.8.0'
