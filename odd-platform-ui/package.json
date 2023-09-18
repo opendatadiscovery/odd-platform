@@ -101,7 +101,7 @@
     "@types/hast": "^2.3.5",
     "@types/jest": "^27.5.2",
     "@types/lodash": "^4.14.197",
-    "@types/node": "^18.17.4",
+    "@types/node": "^20.6.2",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/react-redux": "^7.1.25",
@@ -139,5 +139,10 @@
   "engines": {
     "node": "v18.16.0",
     "pnpm": "^8.4.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "glob-parent@<5.1.2": ">=5.1.2"
+    }
   }
 }
