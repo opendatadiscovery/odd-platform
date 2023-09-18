@@ -46,7 +46,7 @@
     "@mui/x-date-pickers": "^5.0.20",
     "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-query": "^4.32.6",
-    "@tanstack/react-virtual": "3.0.0-beta.54",
+    "@tanstack/react-virtual": "3.0.0-beta.60",
     "@uiw/react-md-editor": "^3.23.5",
     "@visx/curve": "^3.3.0",
     "@visx/event": "^3.3.0",
@@ -64,7 +64,7 @@
     "date-fns-tz": "^2.0.0",
     "elkjs": "^0.8.2",
     "handlebars": "^4.7.8",
-    "html-react-parser": "^3.0.16",
+    "html-react-parser": "^4.2.2",
     "i18next": "^23.2.0",
     "i18next-browser-languagedetector": "^7.0.2",
     "jotai": "^2.3.1",
@@ -82,7 +82,7 @@
     "react-router-dom": "^6.14.2",
     "react-truncate-markup": "^5.1.2",
     "styled-components": "^5.3.11",
-    "use-debounce": "^8.0.4",
+    "use-debounce": "^9.0.4",
     "uuid": "^9.0.0",
     "vanilla-jsoneditor": "^0.7.11"
   },
@@ -96,12 +96,12 @@
     "@types/d3-hierarchy": "^3.1.2",
     "@types/d3-selection": "^3.0.5",
     "@types/d3-shape": "^3.1.1",
-    "@types/d3-zoom": "^3.0.3",
+    "@types/d3-zoom": "^3.0.4",
     "@types/glob": "^8.1.0",
     "@types/hast": "^2.3.5",
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^29.5.5",
     "@types/lodash": "^4.14.197",
-    "@types/node": "^18.17.4",
+    "@types/node": "^20.6.2",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/react-redux": "^7.1.25",
@@ -111,7 +111,7 @@
     "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@vitejs/plugin-react": "^3.1.0",
+    "@vitejs/plugin-react": "^4.0.4",
     "eslint": "8.22.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
@@ -124,7 +124,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
     "i18next-scanner": "^4.2.0",
-    "jsdom": "^21.1.2",
+    "jsdom": "^22.1.0",
     "lint-staged": "^13.2.3",
     "prettier": "^2.8.8",
     "typescript": "^5.1.6",
@@ -139,5 +139,10 @@
   "engines": {
     "node": "v18.16.0",
     "pnpm": "^8.4.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "glob-parent@<5.1.2": ">=5.1.2"
+    }
   }
 }
