@@ -99,7 +99,7 @@
     "@types/d3-zoom": "^3.0.3",
     "@types/glob": "^8.1.0",
     "@types/hast": "^2.3.5",
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^29.5.5",
     "@types/lodash": "^4.14.197",
     "@types/node": "^20.6.2",
     "@types/react": "^18.2.20",
