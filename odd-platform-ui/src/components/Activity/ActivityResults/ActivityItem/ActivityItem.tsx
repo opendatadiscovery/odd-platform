@@ -155,16 +155,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           plural
         />
       )}
-      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_LABELS_UPDATED]) && (
-        <ArrayActivityField
-          activityName={`Labels in ${activity.oldState.datasetFieldInformation?.name} column`}
-          oldState={activity.oldState.datasetFieldInformation?.labels}
-          newState={activity.newState.datasetFieldInformation?.labels}
-          hideAllDetails={hideAllDetails}
-          stateItem={labelStateItem}
-          plural
-        />
-      )}
       {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_UPDATED]) && (
         <TermActivityField
           oldState={activity.oldState.terms}

@@ -111,18 +111,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_LABELS_UPDATED]) && (
-          <ArrayActivityField
-            activityName={`${t('Labels')} ${t('in')} ${
-              activity.oldState.datasetFieldInformation?.name
-            } ${t('column')}`}
-            oldState={activity.oldState.datasetFieldInformation?.labels}
-            newState={activity.newState.datasetFieldInformation?.labels}
-            hideAllDetails={hideAllDetails}
-            stateItem={labelStateItem}
-            plural
-          />
-        )}
         {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_UPDATED]) && (
           <TermActivityField
             oldState={activity.oldState.terms}
