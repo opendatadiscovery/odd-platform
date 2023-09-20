@@ -1,4 +1,7 @@
 import React from 'react';
+import { Grid, Typography } from '@mui/material';
+import parse from 'html-react-parser';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntitySearchHighlights,
@@ -6,8 +9,6 @@ import {
   getSearchId,
 } from 'redux/selectors';
 import { fetchDataEntitySearchHighlights } from 'redux/thunks';
-import { Grid, Typography } from '@mui/material';
-import parse from 'html-react-parser';
 import {
   AppCircularProgress,
   LabeledInfoItem,
@@ -25,7 +26,6 @@ import type {
   Tag,
 } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from './SearchHighlightsStyles';
 
 interface SearchHighlightsProps {
@@ -176,15 +176,15 @@ const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => 
                   {sliceAndHighlightText(entity.externalDescription)}
                 </LabeledInfoItem>
               )}
-              {entity.labels && entity.labels.length > 0 && (
-                <LabeledInfoItem inline label={t('Labels')} labelWidth={3}>
+              {entity.tags && entity.tags.length > 0 && (
+                <LabeledInfoItem inline label={t('Tags')} labelWidth={3}>
                   <Grid container mt={0.5}>
-                    {entity.labels.map(({ id, name: labelName, external }) => (
+                    {entity.tags.map(({ id, name: tagName, external }) => (
                       <LabelItem
                         key={id}
                         sx={{ ml: 0.5 }}
                         systemLabel={external}
-                        labelName={highlightText(labelName)}
+                        labelName={highlightText(tagName)}
                       />
                     ))}
                   </Grid>

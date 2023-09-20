@@ -22,7 +22,6 @@ export { type AppInputProps } from './AppInput/AppInput';
 export { default as AppSelect } from './AppSelect/AppSelect';
 export { default as TagItem } from './TagItem/TagItem';
 export { default as TruncatedCell } from './TruncatedCell/TruncatedCell';
-export { default as TruncatedLabel } from './TruncatedLabel/TruncatedLabel';
 export { default as AppTooltip } from './AppTooltip/AppTooltip';
 export { default as Checkbox } from 'components/shared/elements/Checkbox/Checkbox';
 export { default as EmptyContentPlaceholder } from './EmptyContentPlaceholder/EmptyContentPlaceholder';
