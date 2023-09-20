@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
 import {
   getLabelCreatingStatuses,
   getLabelDeletingStatuses,
@@ -10,17 +11,16 @@ import {
   getLabelsListPage,
 } from 'redux/selectors';
 import { fetchLabelsList } from 'redux/thunks';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import LabelsSkeletonItem from './LabelsSkeletonItem/LabelsSkeletonItem';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateForm from './LabelCreateForm/LabelCreateForm';
@@ -78,26 +78,14 @@ const LabelsListView: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search label')}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          value={query}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
         <WithPermissions permissionTo={Permission.LABEL_CREATE}>
           <LabelCreateForm

@@ -1,21 +1,20 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { DataSource, DataSourceFormData } from 'generated-sources';
 import { registerDataSource, updateDataSource } from 'redux/thunks';
-import { Typography } from '@mui/material';
 import {
   getDatasourceCreatingStatuses,
   getDatasourceUpdatingStatuses,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  AppInput,
   Button,
   DialogWrapper,
+  Input,
   NamespaceAutocomplete,
 } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import { Asterisk } from './DataSourceFormStyles';
 
 interface DataSourceFormDialogProps {
@@ -52,7 +51,6 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
     handleSubmit,
     control,
     reset,
-    setValue,
     formState: { isValid },
   } = useForm<DataSourceFormData>({
     mode: 'all',
@@ -102,19 +100,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            sx={{ mt: 1.5 }}
-            label={t('Name')}
-            placeholder='e.g. Data Tower'
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <Input {...field} variant='main-m' sx={{ mt: 1.5 }} label={t('Name')} />
         )}
       />
       <Controller
@@ -126,19 +112,12 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value?.trim(),
         }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             sx={{ mt: 1.5 }}
             label='ODDRN'
-            placeholder='e.g. //kafka/'
-            required
             disabled={!!dataSource?.oddrn}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />
@@ -152,19 +131,12 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         name='description'
         control={control}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             sx={{ mt: 1.25 }}
             label={t('Description')}
             placeholder={t('Datasource description')}
-            multiline
-            maxRows={4}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => setValue('description', ''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />

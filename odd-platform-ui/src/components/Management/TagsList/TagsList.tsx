@@ -1,5 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getTagCreatingStatuses,
@@ -8,19 +11,16 @@ import {
   getTagsList,
   getTagsListPage,
 } from 'redux/selectors';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebouncedCallback } from 'use-debounce';
 import { fetchTagsList } from 'redux/thunks';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
@@ -79,26 +79,14 @@ const TagsListView: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search tag')}
-          value={query}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
         <WithPermissions permissionTo={Permission.TAG_CREATE}>
           <TagCreateForm

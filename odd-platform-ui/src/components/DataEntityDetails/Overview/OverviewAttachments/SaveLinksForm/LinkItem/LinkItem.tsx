@@ -1,10 +1,10 @@
 import React, { type FC } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { AppInput, Button } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import { Grid, Typography } from '@mui/material';
-import type { DataEntityLinkListFormData } from 'generated-sources';
 import { ErrorMessage } from '@hookform/error-message';
+import { useTranslation } from 'react-i18next';
+import { Button, Input } from 'components/shared/elements';
+import type { DataEntityLinkListFormData } from 'generated-sources';
 
 interface LinkItemProps {
   idx: number;
@@ -13,6 +13,7 @@ interface LinkItemProps {
 }
 
 const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
+  const { t } = useTranslation();
   const { control, formState } = useFormContext<DataEntityLinkListFormData>();
 
   const isLastLink = idx + 1 === fieldsCount;
@@ -37,17 +38,11 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
         }}
         render={({ field }) => (
           <>
-            <AppInput
+            <Input
               {...field}
-              placeholder='Place link here'
-              label='URL'
-              required
-              customEndAdornment={{
-                variant: 'clear',
-                showAdornment: !!field.value,
-                onCLick: () => field.onChange(''),
-                icon: <ClearIcon />,
-              }}
+              variant='main-m'
+              sx={{ mt: 1.5 }}
+              placeholder={t('Place link here')}
             />
             <ErrorMessage
               errors={formState.errors}
@@ -66,18 +61,12 @@ const LinkItem: FC<LinkItemProps> = ({ idx, onItemRemove, fieldsCount }) => {
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             sx={{ mt: 1, mb: 2 }}
-            placeholder='Enter custom name'
-            label='Custom name'
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
+            placeholder={t('Enter custom name')}
+            label={t('Custom name')}
           />
         )}
       />

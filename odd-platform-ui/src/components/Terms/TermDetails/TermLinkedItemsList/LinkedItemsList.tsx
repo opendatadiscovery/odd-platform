@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { type FC, useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {
-  EmptyContentPlaceholder,
-  AppSelect,
-  AppInput,
-  AppMenuItem,
-  AppErrorPage,
-} from 'components/shared/elements';
-import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
+import {
+  AppErrorPage,
+  AppMenuItem,
+  AppSelect,
+  EmptyContentPlaceholder,
+  Input,
+} from 'components/shared/elements';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
@@ -21,7 +21,6 @@ import {
   getTermLinkedListPageInfo,
 } from 'redux/selectors';
 import { fetchTermLinkedList } from 'redux/thunks';
-import { useTranslation } from 'react-i18next';
 import LinkedItem from './LinkedItem/LinkedItem';
 import {
   TermLinkedItemsColContainer,
@@ -30,7 +29,7 @@ import {
 } from './LinkedItemsListStyles';
 import LinkedItemsListSkeleton from './LinkedItemsListSkeleton/LinkedItemsListSkeleton';
 
-const LinkedItemsList: React.FC = () => {
+const LinkedItemsList: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
@@ -46,8 +45,8 @@ const LinkedItemsList: React.FC = () => {
   const linkedListFetchingError = useAppSelector(getTermLinkedListFetchingErrors);
   const { hasNext, page, total } = useAppSelector(getTermLinkedListPageInfo);
 
-  const [query, setQuery] = React.useState('');
-  const [entityClassId, setEntityClassId] = React.useState<number | undefined>(undefined);
+  const [query, setQuery] = useState('');
+  const [entityClassId, setEntityClassId] = useState<number | undefined>(undefined);
 
   const size = 50;
 
@@ -56,7 +55,7 @@ const LinkedItemsList: React.FC = () => {
     dispatch(fetchTermLinkedList({ termId, page: page + 1, size, query, entityClassId }));
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     dispatch(fetchTermLinkedList({ termId, page: 1, size, query, entityClassId }));
   }, []);
 
@@ -74,27 +73,14 @@ const LinkedItemsList: React.FC = () => {
     <Grid>
       <Grid container flexWrap='nowrap' justifyContent='flex-start' sx={{ mt: 2 }}>
         <Grid item xs={3} sx={{ mr: 1 }}>
-          <AppInput
-            size='medium'
+          <Input
+            variant='search-m'
             placeholder={t('Search')}
+            maxWidth={640}
             onKeyDown={handleKeyDownSearch}
             onChange={e => setQuery(e.target.value)}
             value={query}
-            customStartAdornment={{
-              variant: 'search',
-              showAdornment: true,
-              onCLick: handleOnClickSearch,
-              icon: <SearchIcon />,
-            }}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!query,
-              onCLick: () => {
-                setQuery('');
-                handleOnClickSearch();
-              },
-              icon: <ClearIcon />,
-            }}
+            handleSearchClick={handleOnClickSearch}
           />
         </Grid>
         <Grid item xs={2}>

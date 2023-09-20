@@ -2,11 +2,12 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import { fetchOwnersList } from 'redux/thunks';
@@ -20,7 +21,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
@@ -79,26 +79,14 @@ const OwnersList: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search owner')}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          value={query}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
         <WithPermissions permissionTo={Permission.OWNER_CREATE}>
           <OwnerForm

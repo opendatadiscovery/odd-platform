@@ -1,25 +1,25 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getPoliciesFetchingStatuses,
   getPoliciesList,
   getPoliciesListPageInfo,
 } from 'redux/selectors';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebouncedCallback } from 'use-debounce';
 import { fetchPolicyList } from 'redux/thunks';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import PolicyItem from './PolicyItem/PolicyItem';
 import * as S from './PolicyListStyles';
 import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
@@ -81,26 +81,14 @@ const PolicyList: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search policies')}
-          value={query}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
         <WithPermissions permissionTo={Permission.POLICY_CREATE}>
           <Button

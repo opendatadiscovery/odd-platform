@@ -1,24 +1,24 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getRolesFetchingStatuses,
   getRolesList,
   getRolesPageInfo,
 } from 'redux/selectors';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebouncedCallback } from 'use-debounce';
 import { fetchRolesList } from 'redux/thunks';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import RoleForm from './RoleForm/RoleForm';
 import RoleItem from './RoleItem/RoleItem';
 import * as S from './RolesListStyles';
@@ -80,26 +80,14 @@ const RolesList: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search roles')}
-          value={query}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
         <WithPermissions permissionTo={Permission.ROLE_CREATE}>
           <RoleForm
