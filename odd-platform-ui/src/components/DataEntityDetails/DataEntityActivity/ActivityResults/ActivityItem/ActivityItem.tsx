@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
-import { LabelItem, TagItem } from 'components/shared/elements';
+import { TagItem } from 'components/shared/elements';
 import {
   ActivityFieldHeader,
   AlertActivityField,
@@ -28,11 +28,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
     (name: string, important: boolean | undefined) => (
       <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
     ),
-    []
-  );
-
-  const labelStateItem = React.useCallback(
-    (name: string) => <LabelItem labelName={name} />,
     []
   );
 

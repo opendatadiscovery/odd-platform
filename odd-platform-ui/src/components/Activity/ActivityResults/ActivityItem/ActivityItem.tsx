@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { EntityClassItem, LabelItem, TagItem } from 'components/shared/elements';
+import { EntityClassItem, TagItem } from 'components/shared/elements';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
 import {
@@ -38,11 +38,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
     (name: string, important: boolean | undefined) => (
       <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
     ),
-    []
-  );
-
-  const labelStateItem = React.useCallback(
-    (name: string) => <LabelItem labelName={name} />,
     []
   );
 
