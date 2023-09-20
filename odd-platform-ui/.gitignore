@@ -29,3 +29,6 @@ yarn-error.log*
 src/generated-sources
 
 /tmp
+
+# env
+.env

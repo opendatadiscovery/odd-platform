@@ -7,7 +7,6 @@ import { useAppPaths, usePermissions } from 'lib/hooks';
 
 const NamespaceList = React.lazy(() => import('../NamespaceList/NamespaceList'));
 const OwnersList = React.lazy(() => import('../OwnersList/OwnersList'));
-const LabelsList = React.lazy(() => import('../LabelsList/LabelsList'));
 const TagsList = React.lazy(() => import('../TagsList/TagsList'));
 const DataSourcesList = React.lazy(() => import('../DataSourcesList/DataSourcesList'));
 const CollectorsList = React.lazy(() => import('../CollectorsList/CollectorsList'));
@@ -97,20 +96,6 @@ const ManagementRoutes: React.FC = () => {
               ]}
               resourcePermissions={[]}
               Component={TagsList}
-            />
-          }
-        />
-        <Route
-          path={ManagementRoutesEnum.labels}
-          element={
-            <WithPermissionsProvider
-              allowedPermissions={[
-                Permission.LABEL_CREATE,
-                Permission.LABEL_UPDATE,
-                Permission.LABEL_DELETE,
-              ]}
-              resourcePermissions={[]}
-              Component={LabelsList}
             />
           }
         />

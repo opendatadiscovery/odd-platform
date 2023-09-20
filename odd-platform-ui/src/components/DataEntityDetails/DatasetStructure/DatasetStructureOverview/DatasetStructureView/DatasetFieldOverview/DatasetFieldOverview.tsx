@@ -4,9 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById, getIsEntityStatusDeleted } from 'redux/selectors';
-import { Button, LabelItem, MetadataItem } from 'components/shared/elements';
-import { Permission } from 'generated-sources';
-import { WithPermissions } from 'components/shared/contexts';
+import { MetadataItem } from 'components/shared/elements';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';
 import { useAppParams } from 'lib/hooks';
 import DatasetFieldHeader from './DatasetFieldHeader/DatasetFieldHeader';
@@ -15,7 +13,6 @@ import DatasetFieldTerms from './DatasetFieldTerms/DatasetFieldTerms';
 import useStructure from '../../lib/useStructure';
 import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
-import DatasetFieldLabelsForm from './DatasetFieldLabelsForm/DatasetFieldLabelsForm';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverview.styles';
 
@@ -70,50 +67,6 @@ const DatasetFieldOverview: React.FC = () => {
           terms={terms}
           isStatusDeleted={isStatusDeleted}
         />
-      </S.SectionContainer>
-      <S.SectionContainer container>
-        <Grid container justifyContent='space-between'>
-          <Typography variant='h5' color='texts.hint'>
-            {t('LABELS')}
-          </Typography>
-          {!isStatusDeleted && (
-            <WithPermissions
-              permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
-              renderContent={({ isAllowedTo: editLabels }) => (
-                <DatasetFieldLabelsForm
-                  datasetFieldId={field.id}
-                  labels={field.labels}
-                  btnCreateEl={
-                    <Button
-                      text={
-                        field.labels && field.labels?.length > 0
-                          ? t('Edit labels')
-                          : t('Add labels')
-                      }
-                      data-qa='edit_labels'
-                      disabled={!editLabels}
-                      buttonType='secondary-m'
-                      sx={{ mr: 1 }}
-                    />
-                  }
-                />
-              )}
-            />
-          )}
-        </Grid>
-        <Grid container flexDirection='column' alignItems='flex-start'>
-          {field.labels && field.labels?.length > 0 ? (
-            <Grid container mt={1}>
-              {field.labels.map(({ name, external }) => (
-                <LabelItem key={name} labelName={name} systemLabel={external} />
-              ))}
-            </Grid>
-          ) : (
-            <Typography mt={1} variant='subtitle1'>
-              {t('Labels are not created yet')}
-            </Typography>
-          )}
-        </Grid>
       </S.SectionContainer>
       <DatasetFieldOverviewEnums field={field} isStatusDeleted={isStatusDeleted} />
       <DatasetFieldTerms
