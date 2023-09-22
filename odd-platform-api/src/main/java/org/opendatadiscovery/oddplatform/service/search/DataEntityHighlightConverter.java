@@ -12,7 +12,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntitySearchHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructureHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceHighlight;
-import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceHighlight;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipHighlight;
@@ -20,12 +19,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
-import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
-import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -47,7 +44,6 @@ public class DataEntityHighlightConverter {
 
     private final TagMapper tagMapper;
     private final MetadataFieldValueMapper metadataMapper;
-    private final LabelMapper labelMapper;
 
     public String convert(final DataEntityDetailsDto detailsDto,
                           final DatasetStructureDto structureDto) {
@@ -172,18 +168,18 @@ public class DataEntityHighlightConverter {
                 final String name = searchableString(f.getDatasetFieldPojo().getName());
                 final String internalDescription = searchableString(f.getDatasetFieldPojo().getInternalDescription());
                 final String externalDescription = searchableString(f.getDatasetFieldPojo().getExternalDescription());
-                final String labels = mapDatasetFieldLabels(f.getLabels());
-                return String.join(RECORD_DELIMITER, name, internalDescription, externalDescription, labels);
+                final String tags = mapDatasetFieldTags(f.getTags());
+                return String.join(RECORD_DELIMITER, name, internalDescription, externalDescription, tags);
             })
             .collect(Collectors.joining(GROUP_DELIMITER));
     }
 
-    private String mapDatasetFieldLabels(final List<LabelDto> labels) {
-        if (CollectionUtils.isEmpty(labels)) {
+    private String mapDatasetFieldTags(final List<TagDto> tags) {
+        if (CollectionUtils.isEmpty(tags)) {
             return "";
         }
-        return labels.stream()
-            .map(l -> searchableString(l.pojo().getName()))
+        return tags.stream()
+            .map(l -> searchableString(l.tagPojo().getName()))
             .collect(Collectors.joining(DELIMITER));
     }
 
@@ -333,8 +329,8 @@ public class DataEntityHighlightConverter {
                         .filter(f -> f.getDatasetFieldPojo().getName().equals(datasetFieldName))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Dataset field not found"));
-                    final List<Label> labels = parseLabels(highlightedLabels, dataSetFieldDto);
-                    dataSetStructureHighlightDto.setLabels(labels);
+                    final List<Tag> labels = parseTags(highlightedLabels, dataSetFieldDto);
+                    dataSetStructureHighlightDto.setTags(labels);
                 }
                 dataSetStructureHighlights.add(dataSetStructureHighlightDto);
             }
@@ -342,21 +338,21 @@ public class DataEntityHighlightConverter {
         return dataSetStructureHighlights;
     }
 
-    private List<Label> parseLabels(final String highlightedLabels,
+    private List<Tag> parseTags(final String highlightedLabels,
                                     final DatasetFieldDto dataSetFieldDto) {
-        final List<Label> labels = new ArrayList<>();
-        final String[] rawLabels = highlightedLabels.split(DELIMITER);
-        for (final String rawLabel : rawLabels) {
-            if (isHighlighted(rawLabel)) {
-                final String name = rawLabel.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
-                final LabelDto labelDto = dataSetFieldDto.getLabels().stream()
-                    .filter(l -> l.pojo().getName().equals(name))
+        final List<Tag> tags = new ArrayList<>();
+        final String[] rawTags = highlightedLabels.split(DELIMITER);
+        for (final String rawTag : rawTags) {
+            if (isHighlighted(rawTag)) {
+                final String name = rawTag.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
+                final TagDto tagDto = dataSetFieldDto.getTags().stream()
+                    .filter(l -> l.tagPojo().getName().equals(name))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Label not found"));
-                labels.add(labelMapper.mapToHighlightedLabel(labelDto, rawLabel));
+                tags.add(tagMapper.mapToHighlightedTag(tagDto, rawTag));
             }
         }
-        return labels;
+        return tags;
     }
 
     private boolean isHighlighted(final String field) {

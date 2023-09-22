@@ -28,8 +28,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 
 @Repository
 @Slf4j
@@ -102,12 +102,12 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    public Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithLabels(final long datasetFieldId) {
+    public Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithTags(final long datasetFieldId) {
         final var query = DSL.select(DATASET_FIELD.fields())
-            .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
+            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as("tags"))
             .from(DATASET_FIELD)
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
+            .leftJoin(TAG_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID))
+            .leftJoin(TAG).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(TAG.ID)).and(TAG.DELETED_AT.isNull())
             .where(DATASET_FIELD.ID.eq(datasetFieldId))
             .groupBy(DATASET_FIELD.fields());
 

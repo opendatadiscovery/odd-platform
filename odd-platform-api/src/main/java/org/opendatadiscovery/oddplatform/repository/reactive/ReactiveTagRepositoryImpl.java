@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
+import org.jooq.DeleteResultStep;
 import org.jooq.Field;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
@@ -17,9 +18,11 @@ import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.model.Indexes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TagRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.TagToDataEntityRecord;
+import org.opendatadiscovery.oddplatform.model.tables.records.TagToDatasetFieldRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.TagToTermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -32,6 +35,7 @@ import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 
@@ -40,6 +44,8 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     implements ReactiveTagRepository {
     private static final String COUNT_FIELD = "count";
     private static final String EXTERNAL_FIELD = "external";
+    private static final String HAS_EXTERNAL_RELATIONS_FIELD = "has_external_relations";
+
 
     public ReactiveTagRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                      final JooqQueryHelper jooqQueryHelper) {
@@ -73,6 +79,42 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         return jooqReactiveOperations.flux(query)
             .map(this::mapTag)
             .collectList();
+    }
+
+    @Override
+    public Mono<List<TagDto>> listDatasetFieldDtos(long datasetFieldId) {
+        final var query = DSL.select(TAG.fields())
+            .select(DSL
+                .coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.EXTERNAL.ne(false)), false)
+                .as(HAS_EXTERNAL_RELATIONS_FIELD))
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
+            .from(TAG)
+            .leftJoin(TAG_TO_DATASET_FIELD).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(TAG.ID))
+            .where(addSoftDeleteFilter(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)))
+            .groupBy(TAG.fields());
+
+        return jooqReactiveOperations.flux(query)
+            .map(this::mapTag)
+            .collectList();
+    }
+
+    @Override
+    public Flux<TagToDatasetFieldPojo> listTagsRelations(Collection<Long> datasetFieldIds, boolean isAny, boolean isExternal) {
+        if (CollectionUtils.isEmpty(datasetFieldIds)) {
+            return Flux.just();
+        }
+
+        var query = DSL.select(TAG_TO_DATASET_FIELD.fields())
+            .from(TAG_TO_DATASET_FIELD)
+            .join(TAG).on(TAG.ID.eq(TAG_TO_DATASET_FIELD.TAG_ID))
+            .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds).and(TAG.DELETED_AT.isNull()));
+
+        if (!isAny) {
+            query = query.and(TAG_TO_DATASET_FIELD.EXTERNAL.eq(isExternal));
+        }
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
     }
 
     @Override
@@ -247,6 +289,43 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
+    public Flux<TagToDatasetFieldPojo> deleteDataFieldInternalRelations(long datasetFieldId) {
+        final var query = DSL.delete(TAG_TO_DATASET_FIELD)
+            .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId))
+            .and(TAG_TO_DATASET_FIELD.EXTERNAL.eq(false))
+            .returning();
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
+    }
+
+    @Override
+    public Flux<TagToDatasetFieldPojo> deleteDataFieldRelations(long tagId) {
+        final DeleteResultStep<TagToDatasetFieldRecord> query = DSL
+            .delete(TAG_TO_DATASET_FIELD)
+            .where(TAG_TO_DATASET_FIELD.TAG_ID.eq(tagId))
+            .returning();
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
+    }
+
+    @Override
+    public Flux<TagToDatasetFieldPojo> deleteDataFieldRelations(List<TagToDatasetFieldPojo> pojos) {
+        if (pojos.isEmpty()) {
+            return Flux.just();
+        }
+        final Condition condition = pojos.stream()
+            .map(pojo -> TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(pojo.getDatasetFieldId())
+                .and(TAG_TO_DATASET_FIELD.TAG_ID.eq(pojo.getTagId())))
+            .reduce(Condition::or)
+            .orElseThrow(() -> new RuntimeException("Couldn't build condition for tag deletion"));
+        final var query = DSL.delete(TAG_TO_DATASET_FIELD)
+            .where(condition)
+            .returning();
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
+    }
+
+    @Override
     public Flux<TagToTermPojo> createTermRelations(final long termId, final Collection<Long> tagIds) {
         if (tagIds.isEmpty()) {
             return Flux.just();
@@ -269,6 +348,31 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
                 .returning(TAG_TO_TERM.fields())
         ).map(r -> r.into(TagToTermPojo.class));
     }
+
+    @Override
+    public Flux<TagToDatasetFieldPojo> createDataFieldRelations(Collection<TagToDatasetFieldPojo> pojos) {
+        if (pojos.isEmpty()) {
+            return Flux.just();
+        }
+
+        final List<TagToDatasetFieldRecord> records = pojos.stream()
+            .map(p -> jooqReactiveOperations.newRecord(TAG_TO_DATASET_FIELD, p))
+            .toList();
+
+        final InsertSetStep<TagToDatasetFieldRecord> insertStep = DSL.insertInto(TAG_TO_DATASET_FIELD);
+
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep.set(records.get(i)).newRecord();
+        }
+
+        final InsertResultStep<TagToDatasetFieldRecord> query = insertStep
+            .set(records.get(records.size() - 1))
+            .onDuplicateKeyIgnore()
+            .returning();
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
+    }
+
 
     private TagDto mapTag(final Record jooqRecord) {
         return new TagDto(

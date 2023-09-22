@@ -11,7 +11,7 @@ public interface ReactiveDatasetFieldRepository extends ReactiveCRUDRepository<D
 
     Mono<DatasetFieldPojo> updateInternalName(final long datasetFieldId, final String internalName);
 
-    Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithLabels(final long datasetFieldId);
+    Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithTags(final long datasetFieldId);
 
     Flux<DatasetFieldPojo> getLastVersionDatasetFieldsByOddrns(final List<String> oddrns);
 

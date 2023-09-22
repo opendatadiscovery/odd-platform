@@ -77,11 +77,12 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames) {
+    public Flux<TagPojo> getOrCreateTagsByName(final Set<String> tagNames) {
         return divideTagsByExistence(tagNames).flatMap(function((existingTags, tagsToCreate) ->
             reactiveTagRepository.bulkCreate(tagsToCreate)
                 .collectList()
-                .map(createdTags -> ListUtils.union(createdTags, existingTags))));
+                .map(createdTags -> ListUtils.union(createdTags, existingTags))))
+            .flatMapMany(Flux::fromIterable);
     }
 
     @Override
@@ -102,12 +103,11 @@ public class TagServiceImpl implements TagService {
             .collectList();
 
         final Mono<List<TagToDataEntityPojo>> updatedRelations = getOrCreateTagsByName(tagNames)
-            .map(tags -> tags.stream()
                 .map(t -> new TagToDataEntityPojo()
                     .setTagId(t.getId())
                     .setDataEntityId(dataEntityId)
                     .setExternal(false))
-                .toList());
+                .collectList();
 
         return Mono.zip(currentRelations, updatedRelations)
             .flatMap(function((current, updated) -> {

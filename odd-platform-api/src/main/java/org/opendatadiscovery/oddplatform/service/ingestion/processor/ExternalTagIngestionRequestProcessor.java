@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
@@ -28,6 +30,8 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
     @ReactiveTransactional
     public Mono<Void> process(final IngestionRequest request) {
         final Set<String> tagNames = getTagNames(request);
+        tagNames.addAll(getTagsDatasetFieldsNames(request));
+
         final Mono<List<TagToDataEntityPojo>> currentExternalRelations = reactiveTagRepository
             .listTagRelations(request.getAllIds())
             .filter(TagToDataEntityPojo::getExternal)
@@ -72,4 +76,16 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
             .flatMap(e -> e.getTags().stream())
             .collect(Collectors.toSet());
     }
+
+    private Set<String> getTagsDatasetFieldsNames(final IngestionRequest dataStructure) {
+       return dataStructure.getAllEntities().stream()
+            .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
+            .map(DataEntityIngestionDto::getDataSet)
+            .filter(ds -> CollectionUtils.isNotEmpty(ds.fieldList()))
+            .flatMap(ds -> ds.fieldList().stream())
+            .filter(field -> CollectionUtils.isNotEmpty(field.tags()))
+            .flatMap(field -> field.tags().stream())
+            .collect(Collectors.toSet());
+    }
+
 }

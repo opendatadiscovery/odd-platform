@@ -66,7 +66,6 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
             .switchIfEmpty(
                 Mono.error(new BadUserRequestException("Can't update label which has external relations")))
             .flatMap(dto -> labelRepository.update(labelMapper.applyToPojo(dto.pojo(), form)))
-            .flatMap(label -> searchEntrypointRepository.updateChangedLabelVector(label.getId()).thenReturn(label))
             .map(labelMapper::mapToLabel);
     }
 

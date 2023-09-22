@@ -4,9 +4,11 @@ import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTagsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import reactor.core.publisher.Flux;
@@ -19,8 +21,8 @@ public interface DatasetFieldService {
     Mono<InternalName> updateInternalName(final long datasetFieldId,
                                           final InternalNameFormData formData);
 
-    Flux<Label> updateDatasetFieldLabels(final long datasetFieldId,
-                                         final DatasetFieldLabelsUpdateFormData formData);
+    Flux<Tag> updateDatasetFieldTags(final long datasetFieldId,
+                                     final DatasetFieldTagsUpdateFormData formData);
 
     Mono<List<DatasetFieldPojo>> createOrUpdateDatasetFields(final List<DatasetFieldPojo> fields);
 

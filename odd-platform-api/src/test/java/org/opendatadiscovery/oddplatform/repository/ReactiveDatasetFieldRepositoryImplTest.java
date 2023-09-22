@@ -44,7 +44,7 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
         final DatasetFieldPojo expectedDatasetFieldPojo = datasetFieldPojos.get(0);
 
-        reactiveDatasetFieldRepository.getDatasetFieldWithLabels(expectedDatasetFieldPojo.getId())
+        reactiveDatasetFieldRepository.getDatasetFieldWithTags(expectedDatasetFieldPojo.getId())
             .as(StepVerifier::create)
             .assertNext(dto -> {
                 assertNotNull(dto);

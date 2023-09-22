@@ -18,33 +18,31 @@ import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTagsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
-import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
-import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
+import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
@@ -64,19 +62,19 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASE
 @RequiredArgsConstructor
 @Slf4j
 public class DatasetFieldServiceImpl implements DatasetFieldService {
-    private final ReactiveLabelService labelService;
+    private final TagService tagService;
     private final DataEntityFilledService dataEntityFilledService;
     private final TermService termService;
     private final DatasetFieldInternalInformationService datasetFieldInternalInformationService;
     private final DatasetVersionHashCalculator datasetVersionHashCalculator;
 
     private final ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
-    private final ReactiveLabelRepository reactiveLabelRepository;
+    private final ReactiveTagRepository reactiveTagRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final ReactiveEnumValueRepository enumValueRepository;
 
     private final DatasetFieldApiMapper datasetFieldApiMapper;
-    private final LabelMapper labelMapper;
+    private final TagMapper tagMapper;
     private final EnumValueMapper enumValueMapper;
     private final TermMapper termMapper;
 
@@ -114,19 +112,19 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED)
-    public Flux<Label> updateDatasetFieldLabels(
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_TAGS_UPDATED)
+    public Flux<Tag> updateDatasetFieldTags(
         @ActivityParameter(DatasetFieldInformationUpdated.DATASET_FIELD_ID) final long datasetFieldId,
-        final DatasetFieldLabelsUpdateFormData formData) {
-        final Set<String> names = new HashSet<>(formData.getLabels());
-        return reactiveLabelRepository.deleteInternalRelations(datasetFieldId)
+        final DatasetFieldTagsUpdateFormData formData) {
+        final Set<String> names = new HashSet<>(formData.getTags());
+        return reactiveTagRepository.deleteDataFieldInternalRelations(datasetFieldId)
             .then(getUpdatedRelations(names, datasetFieldId))
-            .flatMapMany(reactiveLabelRepository::createRelations)
+            .flatMapMany(reactiveTagRepository::createDataFieldRelations)
             .then(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId))
-            .then(markDataEntityByLabels(formData.getLabels(), datasetFieldId))
-            .then(reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId))
+            .then(markDataEntityByLabels(formData.getTags(), datasetFieldId))
+            .then(reactiveTagRepository.listDatasetFieldDtos(datasetFieldId))
             .flatMapMany(Flux::fromIterable)
-            .map(labelMapper::mapToLabel);
+            .map(tagMapper::mapToTag);
     }
 
     @Override
@@ -172,30 +170,30 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .collectList()
             .flatMap(existingFields -> Mono.zipDelayError(
                 updateFieldsStatistics(statistics, existingFields),
-                updateFieldsLabels(statistics, existingFields)
+                updateFieldsTags(statistics, existingFields)
             ))
             .then(reactiveSearchEntrypointRepository.updateStructureVectorForDataEntitiesByOddrns(datasetOddrns))
             .then();
     }
 
-    private Mono<Void> updateFieldsLabels(final Map<String, DataSetFieldStat> statisticsDict,
-                                          final List<DatasetFieldPojo> existingFields) {
+    private Mono<Void> updateFieldsTags(final Map<String, DataSetFieldStat> statisticsDict,
+                                        final List<DatasetFieldPojo> existingFields) {
         final Set<String> labelNames = statisticsDict.values().stream()
             .flatMap(stat -> stat.getTags() != null ? stat.getTags().stream() : Stream.empty())
-            .map(Tag::getName)
+            .map(org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag::getName)
             .collect(toSet());
 
         final Map<String, DatasetFieldPojo> datasetFieldDict = existingFields.stream()
             .collect(toMap(DatasetFieldPojo::getOddrn, identity()));
 
-        return labelService
-            .getOrCreateLabelsByName(labelNames)
-            .collectMap(LabelPojo::getName, identity())
-            .flatMap(labels -> {
-                final Set<LabelToDatasetFieldPojo> relationsToCreate = transposeDatasetStatisticsDict(statisticsDict)
+        return tagService
+            .getOrCreateTagsByName(labelNames)
+            .collectMap(TagPojo::getName, identity())
+            .flatMap(tags -> {
+                final Set<TagToDatasetFieldPojo> relationsToCreate = transposeDatasetStatisticsDict(statisticsDict)
                     .entries().stream()
                     .map(e -> createExternalStatisticsRelation(
-                        labels.get(e.getKey()).getId(),
+                        tags.get(e.getKey()).getId(),
                         datasetFieldDict.get(e.getValue()).getId()
                     ))
                     .collect(toSet());
@@ -204,17 +202,17 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                     .map(DatasetFieldPojo::getId)
                     .toList();
 
-                return reactiveLabelRepository
-                    .listLabelRelations(datasetFieldIds, LabelOrigin.EXTERNAL_STATISTICS)
+                return reactiveTagRepository
+                    .listTagsRelations(datasetFieldIds, false, true)
                     .collectList()
                     .flatMap(existingRelations -> {
-                        final List<LabelToDatasetFieldPojo> relationsToDelete = existingRelations.stream()
+                        final List<TagToDatasetFieldPojo> relationsToDelete = existingRelations.stream()
                             .filter(r -> !relationsToCreate.contains(r))
                             .toList();
 
-                        return reactiveLabelRepository
-                            .deleteRelations(relationsToDelete)
-                            .then(reactiveLabelRepository.createRelations(relationsToCreate).collectList());
+                        return reactiveTagRepository
+                            .deleteDataFieldRelations(relationsToDelete)
+                            .then(reactiveTagRepository.createDataFieldRelations(relationsToCreate).collectList());
                     });
             })
             .then();
@@ -251,21 +249,20 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         }
     }
 
-    private Mono<List<LabelToDatasetFieldPojo>> getUpdatedRelations(final Set<String> labelNames,
-                                                                    final long datasetFieldId) {
-        return labelService.getOrCreateLabelsByName(labelNames)
-            .map(pojo -> new LabelToDatasetFieldPojo()
-                .setLabelId(pojo.getId())
-                .setDatasetFieldId(datasetFieldId)
-                .setOrigin(LabelOrigin.INTERNAL.toString()))
+    private Mono<List<TagToDatasetFieldPojo>> getUpdatedRelations(final Set<String> tagsName,
+                                                                  final long datasetFieldId) {
+        return tagService.getOrCreateTagsByName(tagsName)
+            .map(pojo -> new TagToDatasetFieldPojo()
+                .setTagId(pojo.getId())
+                .setDatasetFieldId(datasetFieldId))
             .collectList();
     }
 
-    private LabelToDatasetFieldPojo createExternalStatisticsRelation(final long labelId, final long datasetFieldId) {
-        return new LabelToDatasetFieldPojo()
-            .setLabelId(labelId)
+    private TagToDatasetFieldPojo createExternalStatisticsRelation(final long tagId, final long datasetFieldId) {
+        return new TagToDatasetFieldPojo()
+            .setTagId(tagId)
             .setDatasetFieldId(datasetFieldId)
-            .setOrigin(LabelOrigin.EXTERNAL_STATISTICS.toString());
+            .setExternal(true);
     }
 
     private MultiValuedMap<String, String> transposeDatasetStatisticsDict(
@@ -275,7 +272,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
         statisticsDict.forEach((datasetOddrn, stat) -> {
             if (stat.getTags() != null) {
-                for (final Tag tag : stat.getTags()) {
+                for (final org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag tag : stat.getTags()) {
                     result.put(tag.getName(), datasetOddrn);
                 }
             }
@@ -318,7 +315,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         if (lastVersionToNewVersion.isEmpty()) {
             return Flux.fromIterable(createdPojos);
         }
-        final Flux<LabelToDatasetFieldPojo> copyLabels = copyInternalLabelsToNewFieldVersion(lastVersionToNewVersion);
+        final Flux<TagToDatasetFieldPojo> copyLabels = copyInternalTagsToNewFieldVersion(lastVersionToNewVersion);
         final Flux<EnumValuePojo> copyEnumValues = copyInternalEnumValuesToNewFieldVersion(lastVersionToNewVersion);
         return copyLabels
             .thenMany(copyEnumValues)
@@ -340,15 +337,15 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         return lastVersionToNewVersion;
     }
 
-    private Flux<LabelToDatasetFieldPojo> copyInternalLabelsToNewFieldVersion(
+    private Flux<TagToDatasetFieldPojo> copyInternalTagsToNewFieldVersion(
         final Map<Long, Long> lastVersionToNewVersion) {
-        return reactiveLabelRepository.listLabelRelations(lastVersionToNewVersion.keySet(), LabelOrigin.INTERNAL)
-            .map(relation -> new LabelToDatasetFieldPojo()
-                .setLabelId(relation.getLabelId())
-                .setOrigin(relation.getOrigin())
+        return reactiveTagRepository.listTagsRelations(lastVersionToNewVersion.keySet(), false, false)
+            .map(relation -> new TagToDatasetFieldPojo()
+                .setTagId(relation.getTagId())
+                .setExternal(relation.getExternal())
                 .setDatasetFieldId(lastVersionToNewVersion.get(relation.getDatasetFieldId())))
             .collectList()
-            .flatMapMany(reactiveLabelRepository::createRelations);
+            .flatMapMany(reactiveTagRepository::createDataFieldRelations);
     }
 
     private Flux<EnumValuePojo> copyInternalEnumValuesToNewFieldVersion(final Map<Long, Long> lastVersionToNewVersion) {
