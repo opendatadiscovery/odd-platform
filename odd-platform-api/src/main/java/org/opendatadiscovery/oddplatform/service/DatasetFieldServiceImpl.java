@@ -56,7 +56,7 @@ import reactor.core.publisher.Mono;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_TAGS;
 
 @Service
 @RequiredArgsConstructor
@@ -121,7 +121,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .then(getUpdatedRelations(names, datasetFieldId))
             .flatMapMany(reactiveTagRepository::createDataFieldRelations)
             .then(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId))
-            .then(markDataEntityByLabels(formData.getTags(), datasetFieldId))
+            .then(markDataEntityByTags(formData.getTags(), datasetFieldId))
             .then(reactiveTagRepository.listDatasetFieldDtos(datasetFieldId))
             .flatMapMany(Flux::fromIterable)
             .map(tagMapper::mapToTag);
@@ -178,7 +178,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     private Mono<Void> updateFieldsTags(final Map<String, DataSetFieldStat> statisticsDict,
                                         final List<DatasetFieldPojo> existingFields) {
-        final Set<String> labelNames = statisticsDict.values().stream()
+        final Set<String> tagNames = statisticsDict.values().stream()
             .flatMap(stat -> stat.getTags() != null ? stat.getTags().stream() : Stream.empty())
             .map(org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag::getName)
             .collect(toSet());
@@ -187,7 +187,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .collect(toMap(DatasetFieldPojo::getOddrn, identity()));
 
         return tagService
-            .getOrCreateTagsByName(labelNames)
+            .getOrCreateTagsByName(tagNames)
             .collectMap(TagPojo::getName, identity())
             .flatMap(tags -> {
                 final Set<TagToDatasetFieldPojo> relationsToCreate = transposeDatasetStatisticsDict(statisticsDict)
@@ -238,14 +238,14 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         return reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate).then();
     }
 
-    private Mono<DataEntityFilledPojo> markDataEntityByLabels(final List<String> internalLabels,
-                                                              final long datasetFieldId) {
-        if (CollectionUtils.isEmpty(internalLabels)) {
+    private Mono<DataEntityFilledPojo> markDataEntityByTags(final List<String> internalTags,
+                                                            final long datasetFieldId) {
+        if (CollectionUtils.isEmpty(internalTags)) {
             return dataEntityFilledService
-                .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS);
+                .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_TAGS);
         } else {
             return dataEntityFilledService
-                .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS);
+                .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_TAGS);
         }
     }
 
@@ -315,9 +315,9 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         if (lastVersionToNewVersion.isEmpty()) {
             return Flux.fromIterable(createdPojos);
         }
-        final Flux<TagToDatasetFieldPojo> copyLabels = copyInternalTagsToNewFieldVersion(lastVersionToNewVersion);
+        final Flux<TagToDatasetFieldPojo> copyTags = copyInternalTagsToNewFieldVersion(lastVersionToNewVersion);
         final Flux<EnumValuePojo> copyEnumValues = copyInternalEnumValuesToNewFieldVersion(lastVersionToNewVersion);
-        return copyLabels
+        return copyTags
             .thenMany(copyEnumValues)
             .thenMany(Flux.fromIterable(createdPojos));
     }

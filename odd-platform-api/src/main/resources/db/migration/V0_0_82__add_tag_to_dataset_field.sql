@@ -1,3 +1,6 @@
+ALTER TABLE data_entity_filled 
+RENAME COLUMN dataset_field_labels_filled TO dataset_field_tags_filled;
+
 create TABLE IF NOT EXISTS tag_to_dataset_field
 (
     tag_id     bigint NOT NULL,

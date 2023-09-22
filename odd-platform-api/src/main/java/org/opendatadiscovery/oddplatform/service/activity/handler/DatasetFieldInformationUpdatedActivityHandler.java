@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithLabelsDto;
+import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithTagsDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
@@ -50,12 +50,12 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
             .map(this::getState);
     }
 
-    private String getState(final DatasetFieldWithLabelsDto dto) {
-        final List<DatasetFieldTagActivityStateDto> labels;
-        if (CollectionUtils.isEmpty(dto.labels())) {
-            labels = List.of();
+    private String getState(final DatasetFieldWithTagsDto dto) {
+        final List<DatasetFieldTagActivityStateDto> tags;
+        if (CollectionUtils.isEmpty(dto.tags())) {
+            tags = List.of();
         } else {
-            labels = dto.labels().stream()
+            tags = dto.tags().stream()
                 .map(l -> new DatasetFieldTagActivityStateDto(l.getId(), l.getName()))
                 .toList();
         }
@@ -63,7 +63,7 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
             new DatasetFieldInformationActivityStateDto(dto.datasetFieldPojo().getId(),
                 dto.datasetFieldPojo().getName(), dto.datasetFieldPojo().getInternalName(),
                 dto.datasetFieldPojo().getType(),
-                dto.datasetFieldPojo().getInternalDescription(), labels);
+                dto.datasetFieldPojo().getInternalDescription(), tags);
         return JSONSerDeUtils.serializeJson(state);
     }
 }

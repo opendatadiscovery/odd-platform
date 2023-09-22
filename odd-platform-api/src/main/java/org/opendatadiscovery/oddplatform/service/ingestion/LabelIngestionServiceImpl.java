@@ -17,8 +17,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
-import org.opendatadiscovery.oddplatform.service.ReactiveLabelService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

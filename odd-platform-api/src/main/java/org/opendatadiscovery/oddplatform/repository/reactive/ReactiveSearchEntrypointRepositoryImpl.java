@@ -33,7 +33,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -436,13 +435,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
 
         final Field<Long> deId = subquery.field(DATA_ENTITY.ID);
 
-        final Field<String> labelName = LABEL.NAME.as("label_name");
+        final Field<String> tagName = TAG.NAME.as("tag_name");
 
         final List<Field<?>> vectorFields = List.of(
             DATASET_FIELD.NAME,
             DATASET_FIELD.INTERNAL_DESCRIPTION,
             DATASET_FIELD.EXTERNAL_DESCRIPTION,
-            labelName
+            tagName
         );
 
         final SelectConditionStep<Record> vectorSelect = DSL
@@ -465,7 +464,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
             true,
-            Map.of(labelName, TAG.NAME)
+            Map.of(tagName, TAG.NAME)
         );
 
         return jooqReactiveOperations.mono(datasetFieldQuery);
@@ -496,14 +495,14 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
 
         final Field<Long> deId = subquery.field(DATA_ENTITY.ID);
 
-        final Field<String> labelName = LABEL.NAME.as("label_name");
+        final Field<String> tagName = TAG.NAME.as("tag_name");
 
         final List<Field<?>> vectorFields = List.of(
             DATASET_FIELD.NAME,
             DATASET_FIELD.INTERNAL_NAME,
             DATASET_FIELD.INTERNAL_DESCRIPTION,
             DATASET_FIELD.EXTERNAL_DESCRIPTION,
-            labelName
+            tagName
         );
 
         final SelectOnConditionStep<Record> vectorSelect = DSL
@@ -525,7 +524,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
             true,
-            Map.of(labelName, LABEL.NAME)
+            Map.of(tagName, TAG.NAME)
         );
 
         return jooqReactiveOperations.mono(datasetFieldQuery);
@@ -583,13 +582,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
 
         final Field<Long> dataEntityIdField = subquery.field(DATA_ENTITY.ID);
 
-        final Field<String> labelName = LABEL.NAME.as("label_name");
+        final Field<String> tagName = TAG.NAME.as("tag_name");
 
         final List<Field<?>> vectorFields = List.of(
             DATASET_FIELD.NAME,
             DATASET_FIELD.INTERNAL_DESCRIPTION,
             DATASET_FIELD.EXTERNAL_DESCRIPTION,
-            labelName
+            tagName
         );
 
         final SelectOnConditionStep<Record> vectorSelect = DSL
@@ -611,7 +610,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
             true,
-            Map.of(labelName, LABEL.NAME)
+            Map.of(tagName, TAG.NAME)
         );
 
         return jooqReactiveOperations.mono(insertQuery);

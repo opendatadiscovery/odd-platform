@@ -43,9 +43,6 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_TOKEN_REGENERATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_CREATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_DELETE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_UPDATE;
@@ -120,11 +117,6 @@ public final class SecurityConstants {
             TAG_UPDATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/tags/{tag_id}", DELETE),
             TAG_DELETE),
-        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels", POST), LABEL_CREATE),
-        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels/{label_id}", PUT),
-            LABEL_UPDATE),
-        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels/{label_id}", DELETE),
-            LABEL_DELETE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners", POST), OWNER_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners/{owner_id}", PUT),
             OWNER_UPDATE),

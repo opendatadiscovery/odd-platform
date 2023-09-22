@@ -7,5 +7,5 @@ import org.jooq.JSONB;
 public record DatasetFieldInformationActivityStateDto(Long id, String name,
                                                       @JsonProperty("internal_name") String internalName,
                                                       JSONB type, String description,
-                                                      List<DatasetFieldTagActivityStateDto> labels) {
+                                                      List<DatasetFieldTagActivityStateDto> tags) {
 }

@@ -311,9 +311,9 @@ public class DataEntityHighlightConverter {
             final String highlightedName = fields[0];
             final String highlightedIntDescription = fields[1];
             final String highlightedExtDescription = fields[2];
-            final String highlightedLabels = fields[3];
+            final String highlightedTags = fields[3];
             if (isHighlighted(highlightedName) || isHighlighted(highlightedIntDescription)
-                || isHighlighted(highlightedExtDescription) || isHighlighted(highlightedLabels)) {
+                || isHighlighted(highlightedExtDescription) || isHighlighted(highlightedTags)) {
                 final DataSetStructureHighlight dataSetStructureHighlightDto = new DataSetStructureHighlight();
                 dataSetStructureHighlightDto.setName(highlightedName);
                 if (isHighlighted(highlightedIntDescription)) {
@@ -322,15 +322,15 @@ public class DataEntityHighlightConverter {
                 if (isHighlighted(highlightedExtDescription)) {
                     dataSetStructureHighlightDto.setExternalDescription(highlightedExtDescription);
                 }
-                if (isHighlighted(highlightedLabels)) {
+                if (isHighlighted(highlightedTags)) {
                     final String datasetFieldName =
                         highlightedName.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
                     final DatasetFieldDto dataSetFieldDto = structureDto.getDatasetFields().stream()
                         .filter(f -> f.getDatasetFieldPojo().getName().equals(datasetFieldName))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Dataset field not found"));
-                    final List<Tag> labels = parseTags(highlightedLabels, dataSetFieldDto);
-                    dataSetStructureHighlightDto.setTags(labels);
+                    final List<Tag> tags = parseTags(highlightedTags, dataSetFieldDto);
+                    dataSetStructureHighlightDto.setTags(tags);
                 }
                 dataSetStructureHighlights.add(dataSetStructureHighlightDto);
             }
@@ -338,17 +338,17 @@ public class DataEntityHighlightConverter {
         return dataSetStructureHighlights;
     }
 
-    private List<Tag> parseTags(final String highlightedLabels,
+    private List<Tag> parseTags(final String highlightedTags,
                                     final DatasetFieldDto dataSetFieldDto) {
         final List<Tag> tags = new ArrayList<>();
-        final String[] rawTags = highlightedLabels.split(DELIMITER);
+        final String[] rawTags = highlightedTags.split(DELIMITER);
         for (final String rawTag : rawTags) {
             if (isHighlighted(rawTag)) {
                 final String name = rawTag.replace(HIGHLIGHT_TAG, "").replace(HIGHLIGHT_TAG_END, "");
                 final TagDto tagDto = dataSetFieldDto.getTags().stream()
                     .filter(l -> l.tagPojo().getName().equals(name))
                     .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Label not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("Tag not found"));
                 tags.add(tagMapper.mapToHighlightedTag(tagDto, rawTag));
             }
         }
