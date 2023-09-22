@@ -78,7 +78,7 @@ export const updateDataSetFieldTags = handleResponseAsyncThunk<
   RelatedToEntityId<{ tags: Tag[] }>,
   DatasetFieldApiUpdateDatasetFieldTagsRequest
 >(
-  actions.updateDataSetFieldLabelsActionType,
+  actions.updateDataSetFieldTagsActionType,
   async params => {
     const tags = await datasetFieldApiClient.updateDatasetFieldTags(params);
 

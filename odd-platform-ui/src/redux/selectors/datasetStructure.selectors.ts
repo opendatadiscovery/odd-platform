@@ -25,8 +25,8 @@ export const getDataSetStructureLatestFetchingError = createErrorSelector(
   actions.fetchDataSetStructureLatestActionType
 );
 
-export const getDatasetFieldLabelsUpdatingStatus = createStatusesSelector(
-  actions.updateDataSetFieldLabelsActionType
+export const getDatasetFieldTagsUpdatingStatus = createStatusesSelector(
+  actions.updateDataSetFieldTagsActionType
 );
 
 export const getDatasetFieldEnumsFetchingError = createErrorSelector(
@@ -106,4 +106,9 @@ export const getDatasetFieldName = (datasetFieldId: number | undefined) =>
 export const getDatasetFieldInternalName = (datasetFieldId: number | undefined) =>
   createSelector(getDatasetStructureState, datasetStructureState =>
     datasetFieldId ? datasetStructureState.fieldById[datasetFieldId].internalName : ''
+  );
+
+export const getDatasetFieldTags = (datasetFieldId: number | undefined) =>
+  createSelector(getDatasetStructureState, datasetStructureState =>
+    datasetFieldId ? datasetStructureState.fieldById[datasetFieldId].tags : undefined
   );

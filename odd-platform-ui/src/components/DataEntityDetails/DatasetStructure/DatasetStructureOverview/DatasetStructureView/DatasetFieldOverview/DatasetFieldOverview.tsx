@@ -15,6 +15,7 @@ import DatasetFieldMetrics from './DatasetFieldMetrics/DatasetFieldMetrics';
 import DatasetFieldOverviewEnums from './DatasetFieldOverviewEnums/DatasetFieldOverviewEnums';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 import * as S from './DatasetFieldOverview.styles';
+import DatasetFieldTags from './DatasetFieldTags/DatasetFieldTags';
 
 const DatasetFieldOverview: React.FC = () => {
   const { t } = useTranslation();
@@ -68,6 +69,11 @@ const DatasetFieldOverview: React.FC = () => {
           isStatusDeleted={isStatusDeleted}
         />
       </S.SectionContainer>
+      <DatasetFieldTags
+        tags={field.tags}
+        datasetFieldId={field.id}
+        isStatusDeleted={isStatusDeleted}
+      />
       <DatasetFieldOverviewEnums field={field} isStatusDeleted={isStatusDeleted} />
       <DatasetFieldTerms
         fieldTerms={field?.terms}
