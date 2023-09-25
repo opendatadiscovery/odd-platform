@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   glob-parent@<5.1.2: '>=5.1.2'
 
@@ -161,7 +165,7 @@ devDependencies:
     version: 14.4.3(@testing-library/dom@9.3.1)
   '@types/d3':
     specifier: ^7.4.0
-    version: 7.4.0
+    version: 7.4.1
   '@types/d3-hierarchy':
     specifier: ^3.1.2
     version: 3.1.2
@@ -1550,8 +1554,8 @@ packages:
       '@types/d3-selection': 3.0.5
     dev: true
 
-  /@types/d3@7.4.0:
-    resolution: {integrity: sha512-jIfNVK0ZlxcuRDKtRS/SypEyOQ6UHaFQBKv032X45VvxSJ6Yi5G9behy9h6tNTHTDGh5Vq+KbmBjUWLgY4meCA==}
+  /@types/d3@7.4.1:
+    resolution: {integrity: sha512-lBpYmbHTCtFKO1DB1R7E9dXp9/g1F3JXSGOF7iKPZ+wRmYg/Q6tCRHODGOc5Qk25fJRe2PI60EDRf2HLPUncMA==}
     dependencies:
       '@types/d3-array': 3.0.7
       '@types/d3-axis': 3.0.3
