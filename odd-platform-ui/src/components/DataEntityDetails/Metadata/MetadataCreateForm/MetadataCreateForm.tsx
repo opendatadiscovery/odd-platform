@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { type MetadataObject } from 'generated-sources';
 import { Button, DialogWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks';
 import { getDataEntityMetadataCreatingStatuses } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormItem';
 
 interface MetadataCreateFormProps {
@@ -82,6 +82,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       isLoading={isMetadataCreating}
       clearState={clearState}
       formSubmitHandler={methods.handleSubmit(createMetadata)}
+      confirmOnClose
     />
   );
 };

@@ -1,5 +1,5 @@
-import React from 'react';
-import { type DialogProps } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import { type DialogProps, Typography } from '@mui/material';
 import ClearIcon from 'components/shared/icons/ClearIcon';
 import * as S from 'components/shared/elements/DialogWrapper/DialogWrapperStyles';
 import Button from 'components/shared/elements/Button/Button';
@@ -26,6 +26,7 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   clearState?: () => void;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   formSubmitHandler?: () => Promise<unknown>;
+  confirmOnClose?: boolean;
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({
@@ -41,15 +42,18 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
   dialogContentId,
   clearState,
   formSubmitHandler,
+  confirmOnClose,
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  const handleOpen = React.useCallback((e?: React.MouseEvent) => {
+  const handleOpen = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault();
     e?.stopPropagation();
     setOpen(true);
   }, []);
-  const handleClose = React.useCallback((e?: React.MouseEvent) => {
+
+  const handleClose = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     setOpen(false);
     if (clearState) {
@@ -57,7 +61,24 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     }
   }, []);
 
-  React.useEffect(() => {
+  const handleDialogClose = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      if (confirmOnClose) {
+        setShowConfirmDialog(true);
+      } else {
+        handleClose();
+      }
+    },
+    [confirmOnClose, handleClose]
+  );
+
+  const handleConfirmationWindowClose = (e?: React.MouseEvent) => {
+    handleClose(e);
+    setShowConfirmDialog(false);
+  };
+
+  useEffect(() => {
     handleClose();
   }, [handleCloseSubmittedForm, handleClose]);
 
@@ -75,7 +96,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
         <S.MainDialog
           $isLoading={isLoading}
           open={open}
-          onClose={(e: React.MouseEvent) => handleClose(e)}
+          onClose={(e: React.MouseEvent) => handleDialogClose(e)}
           fullWidth
           maxWidth={maxWidth}
           scroll={scroll}
@@ -107,6 +128,28 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           )}
         </S.MainDialog>
       ) : null}
+      {showConfirmDialog && (
+        <S.MainDialog open={showConfirmDialog} maxWidth='sm'>
+          <S.Title>
+            <Typography variant='h4' component='span'>
+              Are you sure you want to close this form?
+            </Typography>
+          </S.Title>
+          <S.Actions disableSpacing>
+            <Button
+              buttonType='main-m'
+              text='Close form'
+              onClick={handleConfirmationWindowClose}
+            />
+            <Button
+              sx={{ ml: 1 }}
+              buttonType='secondary-m'
+              text='Cancel'
+              onClick={() => setShowConfirmDialog(false)}
+            />
+          </S.Actions>
+        </S.MainDialog>
+      )}
     </>
   );
 };

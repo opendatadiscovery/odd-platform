@@ -1,8 +1,9 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { DataSource, DataSourceFormData } from 'generated-sources';
 import { registerDataSource, updateDataSource } from 'redux/thunks';
-import { Typography } from '@mui/material';
 import {
   getDatasourceCreatingStatuses,
   getDatasourceUpdatingStatuses,
@@ -15,7 +16,6 @@ import {
   NamespaceAutocomplete,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import { Asterisk } from './DataSourceFormStyles';
 
 interface DataSourceFormDialogProps {
@@ -193,6 +193,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       handleCloseSubmittedForm={dataSource ? isDataSourceUpdated : isDataSourceCreated}
       isLoading={dataSource ? isDataSourceUpdating : isDataSourceCreating}
       clearState={clearState}
+      confirmOnClose
     />
   );
 };
