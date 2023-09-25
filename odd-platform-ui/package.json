@@ -107,7 +107,7 @@
     "@types/react-redux": "^7.1.25",
     "@types/styled-components": "^5.1.26",
     "@types/testing-library__jest-dom": "^5.14.9",
-    "@types/unist": "^2.0.7",
+    "@types/unist": "^3.0.0",
     "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
