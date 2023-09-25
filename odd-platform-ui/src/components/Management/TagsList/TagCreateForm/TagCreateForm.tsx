@@ -1,13 +1,13 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { TagFormData } from 'generated-sources';
 import { getTagCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createTag } from 'redux/thunks/tags.thunks';
 import { AddIcon } from 'components/shared/icons';
 import { DialogWrapper, Button } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
 
 interface TagCreateFormProps {
@@ -104,6 +104,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
       handleCloseSubmittedForm={isTagCreated}
       isLoading={isTagCreating}
       clearState={clearState}
+      confirmOnClose
     />
   );
 };

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { DataEntityLineageNode } from 'generated-sources';
 import { Button, DialogWrapper, EntityClassItem } from 'components/shared/elements';
-import { Link } from 'react-router-dom';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
@@ -17,7 +18,6 @@ import {
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/GroupedEntitiesListModal/GroupedEntitiesListModalStyles';
 import type { LineageQueryParams } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
 import { defaultLineageQuery } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/constants';
-import { useTranslation } from 'react-i18next';
 
 interface GroupedEntitiesListModalProps {
   dataEntityName: string | undefined;
@@ -152,6 +152,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
       renderContent={modalContent}
       maxWidth='lg'
       handleCloseSubmittedForm={isLoadMoreClicked}
+      confirmOnClose
     />
   );
 };

@@ -1,7 +1,7 @@
 import React, { type FC, useCallback, useState } from 'react';
-import { useAppParams, useSaveDataEntityFile } from 'lib/hooks';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
+import { useAppParams, useSaveDataEntityFile } from 'lib/hooks';
 import { Button, DialogWrapper, FileInput } from 'components/shared/elements';
 import FileItem from './FileItem/FileItem';
 
@@ -108,6 +108,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
       handleCloseSubmittedForm={isSuccess}
       isLoading={isLoading}
       clearState={clearState}
+      confirmOnClose
     />
   );
 };

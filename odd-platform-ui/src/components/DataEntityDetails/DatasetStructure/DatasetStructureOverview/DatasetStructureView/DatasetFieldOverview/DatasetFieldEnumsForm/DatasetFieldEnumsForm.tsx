@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type {
   DataSetFieldTypeTypeEnum,
   EnumValue,
@@ -11,7 +12,6 @@ import { createDataSetFieldEnum } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Button, DialogWrapper } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import DatasetFieldEnumsFormItem from './DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
 
 interface DataSetFieldEnumsFormProps {
@@ -180,6 +180,7 @@ const DatasetFieldEnumsForm: React.FC<DataSetFieldEnumsFormProps> = ({
       handleCloseSubmittedForm={isEnumsCreated}
       maxWidth='xl'
       clearState={clearFormState}
+      confirmOnClose
     />
   );
 };
