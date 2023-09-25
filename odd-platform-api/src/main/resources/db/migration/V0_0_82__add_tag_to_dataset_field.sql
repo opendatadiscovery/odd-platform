@@ -5,7 +5,7 @@ create TABLE IF NOT EXISTS tag_to_dataset_field
 (
     tag_id     bigint NOT NULL,
     dataset_field_id bigint NOT NULL,
-    external BOOLEAN NOT NULL DEFAULT FALSE,
+    origin     varchar(8) NOT NULL DEFAULT 'INTERNAL'::varchar,
 
     CONSTRAINT tag_to_dataset_field_pk PRIMARY KEY (tag_id, dataset_field_id),
 
@@ -20,10 +20,8 @@ where lbl.deleted_at is null
 and not exists (select 1 from tag tg
 			 where lower(tg.name) = lower(lbl.name));
 
-insert into tag_to_dataset_field(tag_id, dataset_field_id, external)
-select tg.id, ltdsf.dataset_field_id, (CASE
-        								WHEN ltdsf.origin = 'EXTERNAL' THEN true
-        								ELSE false END) as external
+insert into tag_to_dataset_field(tag_id, dataset_field_id, origin)
+select tg.id, ltdsf.dataset_field_id, ltdsf.origin
 from tag tg, label_to_dataset_field ltdsf, label lbl
 where lower(tg.name) = lower(lbl.name)
 and ltdsf.label_id = lbl.id;

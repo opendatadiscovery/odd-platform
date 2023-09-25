@@ -161,6 +161,7 @@ public class TagServiceImpl implements TagService {
     private Mono<TagPojo> updateSearchVectors(final TagPojo updatedPojo) {
         return Mono.zip(
             reactiveSearchEntrypointRepository.updateChangedTagVectors(updatedPojo.getId()),
+            reactiveSearchEntrypointRepository.updateChangedTagStructureVector(updatedPojo.getId()),
             reactiveTermSearchEntrypointRepository.updateChangedTagVectors(updatedPojo.getId())
         ).thenReturn(updatedPojo);
     }

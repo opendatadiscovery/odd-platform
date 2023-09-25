@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.dto;
 
-public enum LabelOrigin {
+public enum TagOrigin {
     ALL,
     INTERNAL,
     EXTERNAL,

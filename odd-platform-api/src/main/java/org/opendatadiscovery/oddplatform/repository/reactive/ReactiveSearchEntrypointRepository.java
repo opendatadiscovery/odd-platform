@@ -33,11 +33,11 @@ public interface ReactiveSearchEntrypointRepository {
 
     Mono<Integer> updateChangedTagVectors(final long tagId);
 
-    Mono<Integer> updateChangedOwnerVectors(final long ownerId);
+     Mono<Integer> updateChangedTagStructureVector(final long tagId);
+
+     Mono<Integer> updateChangedOwnerVectors(final long ownerId);
 
     Mono<Integer> updateChangedOwnershipVectors(final long ownershipId);
-
-    Mono<Integer> updateChangedTagVector(final long tagId);
 
     Mono<Integer> updateDatasetFieldSearchVectors(final long datasetFieldId);
 

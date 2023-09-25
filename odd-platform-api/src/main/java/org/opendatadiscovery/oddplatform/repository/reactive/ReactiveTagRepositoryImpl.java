@@ -14,6 +14,7 @@ import org.jooq.Select;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.model.Indexes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -85,7 +86,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     public Mono<List<TagDto>> listDatasetFieldDtos(long datasetFieldId) {
         final var query = DSL.select(TAG.fields())
             .select(DSL
-                .coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.EXTERNAL.ne(false)), false)
+                .coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.EXTERNAL.name())), false)
                 .as(HAS_EXTERNAL_RELATIONS_FIELD))
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
             .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
@@ -100,7 +101,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> listTagsRelations(Collection<Long> datasetFieldIds, boolean isAny, boolean isExternal) {
+    public Flux<TagToDatasetFieldPojo> listTagsRelations(Collection<Long> datasetFieldIds, TagOrigin origin) {
         if (CollectionUtils.isEmpty(datasetFieldIds)) {
             return Flux.just();
         }
@@ -110,8 +111,8 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATASET_FIELD.TAG_ID))
             .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds).and(TAG.DELETED_AT.isNull()));
 
-        if (!isAny) {
-            query = query.and(TAG_TO_DATASET_FIELD.EXTERNAL.eq(isExternal));
+        if (origin != null && TagOrigin.ALL != origin) {
+            query = query.and(TAG_TO_DATASET_FIELD.ORIGIN.eq(origin.toString()));
         }
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
@@ -292,14 +293,14 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     public Flux<TagToDatasetFieldPojo> deleteDataFieldInternalRelations(long datasetFieldId) {
         final var query = DSL.delete(TAG_TO_DATASET_FIELD)
             .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId))
-            .and(TAG_TO_DATASET_FIELD.EXTERNAL.eq(false))
+            .and(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.INTERNAL.toString()))
             .returning();
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> deleteDataFieldRelations(long tagId) {
+    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(long tagId) {
         final DeleteResultStep<TagToDatasetFieldRecord> query = DSL
             .delete(TAG_TO_DATASET_FIELD)
             .where(TAG_TO_DATASET_FIELD.TAG_ID.eq(tagId))
@@ -309,7 +310,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> deleteDataFieldRelations(List<TagToDatasetFieldPojo> pojos) {
+    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(List<TagToDatasetFieldPojo> pojos) {
         if (pojos.isEmpty()) {
             return Flux.just();
         }

@@ -25,6 +25,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.EnumValueOrigin;
+import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldStat;
@@ -203,7 +204,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                     .toList();
 
                 return reactiveTagRepository
-                    .listTagsRelations(datasetFieldIds, false, true)
+                    .listTagsRelations(datasetFieldIds, TagOrigin.EXTERNAL_STATISTICS)
                     .collectList()
                     .flatMap(existingRelations -> {
                         final List<TagToDatasetFieldPojo> relationsToDelete = existingRelations.stream()
@@ -211,7 +212,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                             .toList();
 
                         return reactiveTagRepository
-                            .deleteDataFieldRelations(relationsToDelete)
+                            .deleteDatasetFieldRelations(relationsToDelete)
                             .then(reactiveTagRepository.createDataFieldRelations(relationsToCreate).collectList());
                     });
             })
@@ -262,7 +263,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         return new TagToDatasetFieldPojo()
             .setTagId(tagId)
             .setDatasetFieldId(datasetFieldId)
-            .setExternal(true);
+            .setOrigin(TagOrigin.EXTERNAL_STATISTICS.toString());
     }
 
     private MultiValuedMap<String, String> transposeDatasetStatisticsDict(
@@ -339,10 +340,10 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     private Flux<TagToDatasetFieldPojo> copyInternalTagsToNewFieldVersion(
         final Map<Long, Long> lastVersionToNewVersion) {
-        return reactiveTagRepository.listTagsRelations(lastVersionToNewVersion.keySet(), false, false)
+        return reactiveTagRepository.listTagsRelations(lastVersionToNewVersion.keySet(), TagOrigin.INTERNAL)
             .map(relation -> new TagToDatasetFieldPojo()
                 .setTagId(relation.getTagId())
-                .setExternal(relation.getExternal())
+                .setOrigin(relation.getOrigin())
                 .setDatasetFieldId(lastVersionToNewVersion.get(relation.getDatasetFieldId())))
             .collectList()
             .flatMapMany(reactiveTagRepository::createDataFieldRelations);

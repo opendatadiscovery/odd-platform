@@ -23,6 +23,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.dto.dataset.DatasetVersionFields;
 import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
@@ -64,7 +65,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static reactor.function.TupleUtils.function;
 
@@ -82,7 +82,6 @@ public class ReactiveDatasetVersionRepositoryImpl
     public static final String TERMS = "terms";
     public static final String TERM_NAMESPACES = "term_namespaces";
     public static final String TERM_RELATIONS = "term_relations";
-    private static final String COUNT_FIELD = "count";
 
     private final JooqRecordHelper jooqRecordHelper;
 
@@ -103,7 +102,6 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(TAG_TO_DATASET_FIELD.asterisk().toString())).as(TAG_RELATIONS))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(TAGS))
-            .select(jsonArrayAgg(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD)))
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
@@ -172,7 +170,6 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(TAG_TO_DATASET_FIELD.asterisk().toString())).as(TAG_RELATIONS))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(TAGS))
-            .select(jsonArrayAgg(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD)))
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
@@ -320,7 +317,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .collect(Collectors.toMap(TagToDatasetFieldPojo::getTagId, identity()));
 
         return tags.stream()
-            .map(tagPojo -> new TagDto(tagPojo, null, relations.get(tagPojo.getId()).getExternal()))
+            .map(tagPojo -> new TagDto(tagPojo, null,
+                TagOrigin.EXTERNAL.name().equals(relations.get(tagPojo.getId()).getOrigin())))
             .toList();
     }
 
