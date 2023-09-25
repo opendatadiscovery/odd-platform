@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   glob-parent@<5.1.2: '>=5.1.2'
 
@@ -119,8 +123,8 @@ dependencies:
     specifier: ^6.1.0
     version: 6.1.0(react@18.2.0)
   react-multi-date-picker:
-    specifier: ^3.3.4
-    version: 3.3.4(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^4.3.1
+    version: 4.3.1(react-dom@18.2.0)(react@18.2.0)
   react-redux:
     specifier: ^8.1.2
     version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.20)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -5979,8 +5983,8 @@ packages:
       - supports-color
     dev: false
 
-  /react-multi-date-picker@3.3.4(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-bl1aTt3bmAYfsPpIUKsWVl3XWCfY3nxu7BFvLCR7j9iHckmiJNbkMBVGu5AvrcSa3mI39ybdHQuB3YzeM5O6Cg==}
+  /react-multi-date-picker@4.3.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-FBL7U9Ee3njRb3KAYijo4ySQDFWFZBKCrFd+FyXPHHoA4gPoY3yPk/gnKPX1M2/LetKVIM5bo8Moh7UJgDVX5g==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
