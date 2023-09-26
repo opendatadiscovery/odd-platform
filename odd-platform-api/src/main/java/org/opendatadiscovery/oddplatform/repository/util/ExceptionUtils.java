@@ -13,7 +13,6 @@ import static org.opendatadiscovery.oddplatform.model.Indexes.DATA_SOURCE_NAME_U
 import static org.opendatadiscovery.oddplatform.model.Indexes.DATA_SOURCE_ODDRN_UNIQUE;
 import static org.opendatadiscovery.oddplatform.model.Indexes.ENUM_VALUE_UNIQUE;
 import static org.opendatadiscovery.oddplatform.model.Indexes.IX_UNIQUE_INTERNAL_NAME;
-import static org.opendatadiscovery.oddplatform.model.Indexes.LABEL_UNIQUE;
 import static org.opendatadiscovery.oddplatform.model.Indexes.NAMESPACE_UNIQUE;
 import static org.opendatadiscovery.oddplatform.model.Indexes.OWNER_NAME_UNIQUE;
 import static org.opendatadiscovery.oddplatform.model.Indexes.POLICY_NAME_UNIQUE;
@@ -54,9 +53,6 @@ public final class ExceptionUtils {
         }
         if (message.contains(TAG_NAME_UNIQUE.getName())) {
             return "Tag with this name already exists";
-        }
-        if (message.contains(LABEL_UNIQUE.getName())) {
-            return "Label with this name already exists";
         }
         if (message.contains(ROLE_NAME_UNIQUE.getName())) {
             return "Role with this name already exists";
