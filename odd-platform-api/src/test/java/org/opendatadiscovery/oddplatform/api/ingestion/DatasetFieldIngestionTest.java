@@ -204,7 +204,7 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
      */
     @Test
     @DisplayName("Test whether statistics and tags from different ingestion endpoints do not mix their states")
-    public void externalStatisticsLabelStateIngestionTest() {
+    public void externalStatisticsTagStateIngestionTest() {
         final DataSource createdDataSource = createDataSource();
 
         final DataEntity datasetToIngest = IngestionModelGenerator
@@ -241,7 +241,7 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
         assertDatasetStructuresEqual(foundEntityId, expectedDataStructure);
 
         // build statistics and ingest it via Ingestion Statistics API
-        final Map<String, List<String>> fieldToLabelNames = datasetToIngest.getDataset().getFieldList()
+        final Map<String, List<String>> fieldToTagNames = datasetToIngest.getDataset().getFieldList()
             .stream()
             .collect(toMap(
                 DataSetField::getOddrn,
@@ -252,7 +252,7 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
 
         final DatasetStatisticsList statistics = IngestionModelGenerator.generateDatasetStatisticsList(
             datasetToIngest.getOddrn(),
-            fieldToLabelNames
+            fieldToTagNames
         );
 
         ingestStatistics(statistics);
@@ -262,15 +262,15 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
             assertThat(actual.getVersionList().get(0).getVersion()).isEqualTo(1);
         });
 
-        final Map<String, List<String>> originalLabelState = datasetToIngest.getDataset().getFieldList()
+        final Map<String, List<String>> originalTagState = datasetToIngest.getDataset().getFieldList()
             .stream()
             .collect(toMap(DataSetField::getOddrn, df -> df.getTags().stream().map(item -> item.getName()).toList()));
 
-        final Map<String, List<Tag>> expectedTagsState = fieldToLabelNames.entrySet()
+        final Map<String, List<Tag>> expectedTagsState = fieldToTagNames.entrySet()
             .stream()
             .collect(toMap(
                 Map.Entry::getKey,
-                e -> mapTags(mergeLists(e.getValue(), originalLabelState.getOrDefault(e.getKey(), emptyList())))
+                e -> mapTags(mergeLists(e.getValue(), originalTagState.getOrDefault(e.getKey(), emptyList())))
             ));
 
         final DataSetStructure expectedMergedStructure = new DataSetStructure()
