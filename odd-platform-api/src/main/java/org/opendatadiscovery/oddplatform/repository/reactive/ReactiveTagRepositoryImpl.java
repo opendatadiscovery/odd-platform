@@ -110,7 +110,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATASET_FIELD.TAG_ID))
             .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds).and(TAG.DELETED_AT.isNull()));
 
-        if (origin != null && TagOrigin.ALL != origin) {
+        if (origin != null) {
             query = query.and(TAG_TO_DATASET_FIELD.ORIGIN.eq(origin.toString()));
         }
 
@@ -289,7 +289,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> deleteDataFieldInternalRelations(final long datasetFieldId) {
+    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldInternalRelations(final long datasetFieldId) {
         final var query = DSL.delete(TAG_TO_DATASET_FIELD)
             .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId))
             .and(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.INTERNAL.toString()))

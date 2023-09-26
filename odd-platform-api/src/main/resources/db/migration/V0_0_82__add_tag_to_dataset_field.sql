@@ -96,3 +96,5 @@ SET new_state =
             END
 WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
   AND new_state ->> 'tags' IS NOT NULL;
+
+DROP TABLE label_to_dataset_field, label;

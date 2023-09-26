@@ -49,5 +49,5 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
 
     Flux<TagToTermPojo> deleteTermRelations(final long tagId);
 
-    Flux<TagToDatasetFieldPojo> deleteDataFieldInternalRelations(long datasetFieldId);
+    Flux<TagToDatasetFieldPojo> deleteDatasetFieldInternalRelations(long datasetFieldId);
 }

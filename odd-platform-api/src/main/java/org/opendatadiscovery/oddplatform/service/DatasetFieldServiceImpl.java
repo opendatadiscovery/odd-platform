@@ -118,7 +118,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         @ActivityParameter(DatasetFieldInformationUpdated.DATASET_FIELD_ID) final long datasetFieldId,
         final DatasetFieldTagsUpdateFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTags());
-        return reactiveTagRepository.deleteDataFieldInternalRelations(datasetFieldId)
+        return reactiveTagRepository.deleteDatasetFieldInternalRelations(datasetFieldId)
             .then(getUpdatedRelations(names, datasetFieldId))
             .flatMapMany(reactiveTagRepository::createDatasetFieldRelations)
             .then(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId))
