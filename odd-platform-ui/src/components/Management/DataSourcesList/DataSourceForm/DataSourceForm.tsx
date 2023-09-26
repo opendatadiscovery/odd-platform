@@ -165,6 +165,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       handleCloseSubmittedForm={dataSource ? isDataSourceUpdated : isDataSourceCreated}
       isLoading={dataSource ? isDataSourceUpdating : isDataSourceCreating}
       clearState={clearState}
+      confirmOnClose
     />
   );
 };

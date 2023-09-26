@@ -144,6 +144,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       handleCloseSubmittedForm={collector ? isCollectorUpdated : isCollectorCreated}
       isLoading={collector ? isCollectorUpdating : isCollectorCreating}
       clearState={clearState}
+      confirmOnClose
     />
   );
 };
