@@ -17,31 +17,31 @@ CREATE TABLE IF NOT EXISTS tag_to_dataset_field
     CONSTRAINT tag_to_dataset_field_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES tag (id)
 );
 
-insert into tag(name, important, created_at, updated_at)
-select lbl.name, false, lbl.created_at, lbl.updated_at
-from label lbl
-where lbl.deleted_at is null
-  and not exists(select 1
-                 from tag tg
-                 where lower(tg.name) = lower(lbl.name));
+INSERT INTO tag(name, important, created_at, updated_at)
+SELECT lbl.name, false, lbl.created_at, lbl.updated_at
+FROM label lbl
+WHERE lbl.deleted_at IS NULL
+  AND NOT EXISTS(SELECT 1
+                 FROM tag tg
+                 WHERE LOWER(tg.name) = LOWER(lbl.name));
 
-insert into tag_to_dataset_field(tag_id, dataset_field_id, origin)
-select tg.id, ltdsf.dataset_field_id, ltdsf.origin
-from tag tg,
+INSERT INTO tag_to_dataset_field(tag_id, dataset_field_id, origin)
+SELECT tg.id, ltdsf.dataset_field_id, ltdsf.origin
+FROM tag tg,
      label_to_dataset_field ltdsf,
      label lbl
-where lower(tg.name) = lower(lbl.name)
-  and ltdsf.label_id = lbl.id;
+WHERE LOWER(tg.name) = LOWER(lbl.name)
+  AND ltdsf.label_id = lbl.id;
 
 UPDATE activity
 SET old_state = old_state - 'labels' || jsonb_build_object('tags', old_state -> 'labels')
 WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
-  and old_state ->> 'labels' IS NOT NULL;
+  AND old_state ->> 'labels' IS NOT NULL;
 
 UPDATE activity
 SET new_state = new_state - 'labels' || jsonb_build_object('tags', new_state -> 'labels')
 WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
-  and new_state ->> 'labels' IS NOT NULL;
+  AND new_state ->> 'labels' IS NOT NULL;
 
 UPDATE activity
 SET old_state =
@@ -62,13 +62,13 @@ SET old_state =
                                             )
                                     )
                          FROM jsonb_array_elements(old_state -> 'tags') AS elem
-                                  JOIN public.tag mapping ON LOWER(elem ->> 'name') = LOWER(mapping.name))
+                                  JOIN tag mapping ON LOWER(elem ->> 'name') = LOWER(mapping.name))
                     )
             ELSE
                 old_state
             END
 WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
-  and old_state ->> 'tags' IS NOT NULL;
+  AND old_state ->> 'tags' IS NOT NULL;
 
 UPDATE activity
 SET new_state =
@@ -89,10 +89,10 @@ SET new_state =
                                             )
                                     )
                          FROM jsonb_array_elements(new_state -> 'tags') AS elem
-                                  JOIN public.tag mapping ON LOWER(elem ->> 'name') = LOWER(mapping.name))
+                                  JOIN tag mapping ON LOWER(elem ->> 'name') = LOWER(mapping.name))
                     )
             ELSE
                 new_state
             END
 WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
-  and new_state ->> 'tags' IS NOT NULL;
+  AND new_state ->> 'tags' IS NOT NULL;

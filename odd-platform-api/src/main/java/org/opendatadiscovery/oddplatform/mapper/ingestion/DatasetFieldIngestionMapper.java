@@ -24,7 +24,6 @@ import static java.util.Collections.emptyList;
 
 @Mapper(config = MapperConfig.class)
 public interface DatasetFieldIngestionMapper {
-    @Mapping(target = "tags", source = "tags")
     @Mapping(target = "field", source = ".")
     @Mapping(target = "metadata", source = "field.metadata", qualifiedByName = "mapFieldMetadata")
     @Mapping(target = "enumValues", source = "enumValues", qualifiedByName = "prepareEnumValues")

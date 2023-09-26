@@ -45,7 +45,6 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     implements ReactiveTagRepository {
     private static final String COUNT_FIELD = "count";
     private static final String EXTERNAL_FIELD = "external";
-    private static final String HAS_EXTERNAL_RELATIONS_FIELD = "has_external_relations";
 
     public ReactiveTagRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                      final JooqQueryHelper jooqQueryHelper) {
@@ -86,7 +85,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var query = DSL.select(TAG.fields())
             .select(DSL
                 .coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.EXTERNAL.name())), false)
-                .as(HAS_EXTERNAL_RELATIONS_FIELD))
+                .as(EXTERNAL_FIELD))
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
             .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
             .from(TAG)
@@ -351,7 +350,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> createDataFieldRelations(final Collection<TagToDatasetFieldPojo> pojos) {
+    public Flux<TagToDatasetFieldPojo> createDatasetFieldRelations(final Collection<TagToDatasetFieldPojo> pojos) {
         if (pojos.isEmpty()) {
             return Flux.just();
         }

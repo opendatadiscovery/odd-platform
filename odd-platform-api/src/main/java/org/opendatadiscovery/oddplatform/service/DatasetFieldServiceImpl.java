@@ -120,7 +120,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         final Set<String> names = new HashSet<>(formData.getTags());
         return reactiveTagRepository.deleteDataFieldInternalRelations(datasetFieldId)
             .then(getUpdatedRelations(names, datasetFieldId))
-            .flatMapMany(reactiveTagRepository::createDataFieldRelations)
+            .flatMapMany(reactiveTagRepository::createDatasetFieldRelations)
             .then(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId))
             .then(markDataEntityByTags(formData.getTags(), datasetFieldId))
             .then(reactiveTagRepository.listDatasetFieldDtos(datasetFieldId))
@@ -213,7 +213,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
                         return reactiveTagRepository
                             .deleteDatasetFieldRelations(relationsToDelete)
-                            .then(reactiveTagRepository.createDataFieldRelations(relationsToCreate).collectList());
+                            .then(reactiveTagRepository.createDatasetFieldRelations(relationsToCreate).collectList());
                     });
             })
             .then();
@@ -346,7 +346,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 .setOrigin(relation.getOrigin())
                 .setDatasetFieldId(lastVersionToNewVersion.get(relation.getDatasetFieldId())))
             .collectList()
-            .flatMapMany(reactiveTagRepository::createDataFieldRelations);
+            .flatMapMany(reactiveTagRepository::createDatasetFieldRelations);
     }
 
     private Flux<EnumValuePojo> copyInternalEnumValuesToNewFieldVersion(final Map<Long, Long> lastVersionToNewVersion) {

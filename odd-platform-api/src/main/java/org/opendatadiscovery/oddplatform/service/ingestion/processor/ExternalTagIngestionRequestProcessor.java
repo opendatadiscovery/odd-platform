@@ -93,7 +93,7 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .toList();
 
-        final Set<String> datasetFieldTagsNames = getDatasetFieldsTagsNames(entities);
+        final Set<String> datasetFieldTagsNames = getDatasetFieldTagNames(entities);
         final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo = getDatasetFieldsOddrn(entities);
 
         return datasetFieldOddrnToPojo.flatMap(datasetFieldMap -> {
@@ -114,7 +114,7 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
 
             return reactiveTagRepository.deleteDatasetFieldRelations(pojosToDelete).then(Mono.just(updated));
         })))
-        .flatMapMany(reactiveTagRepository::createDataFieldRelations);
+        .flatMapMany(reactiveTagRepository::createDatasetFieldRelations);
     }
 
     private Mono<Map<String, DatasetFieldPojo>> getDatasetFieldsOddrn(
@@ -130,7 +130,6 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
             return Mono.empty();
         }
 
-        System.out.println("SUZE " + oddrns.size());
         return datasetFieldRepository.getLastVersionDatasetFieldsByOddrns(oddrns)
             .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
     }
@@ -155,7 +154,7 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
             .collect(Collectors.toSet());
     }
 
-    private Set<String> getDatasetFieldsTagsNames(final List<EnrichedDataEntityIngestionDto> datasetEntities) {
+    private Set<String> getDatasetFieldTagNames(final List<EnrichedDataEntityIngestionDto> datasetEntities) {
         return datasetEntities.stream()
             .map(DataEntityIngestionDto::getDataSet)
             .filter(ds -> CollectionUtils.isNotEmpty(ds.fieldList()))

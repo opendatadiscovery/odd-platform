@@ -43,7 +43,7 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
 
     Flux<TagToTermPojo> createTermRelations(final long termId, final Collection<Long> tagIds);
 
-    Flux<TagToDatasetFieldPojo> createDataFieldRelations(Collection<TagToDatasetFieldPojo> pojos);
+    Flux<TagToDatasetFieldPojo> createDatasetFieldRelations(Collection<TagToDatasetFieldPojo> pojos);
 
     Flux<TagToTermPojo> deleteTermRelations(final long termId, final Collection<Long> tagIds);
 
