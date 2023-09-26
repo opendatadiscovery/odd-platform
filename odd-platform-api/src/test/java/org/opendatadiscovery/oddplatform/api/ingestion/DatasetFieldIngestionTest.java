@@ -376,7 +376,7 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
 
     private List<Tag> mapTags(final List<String> tagNames) {
         return tagNames.stream()
-            .map(ln -> new Tag().name(ln).external(true))
+            .map(ln -> new Tag().name(ln).external(true).important(false))
             .toList();
     }
 

@@ -318,7 +318,7 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         return tags.stream()
             .map(tagPojo -> new TagDto(tagPojo, null,
-                TagOrigin.EXTERNAL.name().equals(relations.get(tagPojo.getId()).getOrigin())))
+                !TagOrigin.INTERNAL.name().equals(relations.get(tagPojo.getId()).getOrigin())))
             .toList();
     }
 
