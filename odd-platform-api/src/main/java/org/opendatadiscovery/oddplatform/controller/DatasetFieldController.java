@@ -5,14 +5,14 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DatasetFieldApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.BulkEnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldLabelsUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTagsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.EnumValueService;
 import org.opendatadiscovery.oddplatform.service.MetricService;
@@ -53,13 +53,13 @@ public class DatasetFieldController implements DatasetFieldApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<Label>>> updateDatasetFieldLabels(
+    public Mono<ResponseEntity<Flux<Tag>>> updateDatasetFieldTags(
         final Long datasetFieldId,
-        final Mono<DatasetFieldLabelsUpdateFormData> formDataMono,
+        final Mono<DatasetFieldTagsUpdateFormData> formDataMono,
         final ServerWebExchange exchange) {
-        final Flux<Label> labels = formDataMono
-            .flatMapMany(formData -> datasetFieldService.updateDatasetFieldLabels(datasetFieldId, formData));
-        return Mono.just(ResponseEntity.ok(labels));
+        final Flux<Tag> tags = formDataMono
+            .flatMapMany(formData -> datasetFieldService.updateDatasetFieldTags(datasetFieldId, formData));
+        return Mono.just(ResponseEntity.ok(tags));
     }
 
     @Override

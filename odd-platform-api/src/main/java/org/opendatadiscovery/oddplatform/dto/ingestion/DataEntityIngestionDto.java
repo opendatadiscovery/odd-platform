@@ -59,7 +59,7 @@ public class DataEntityIngestionDto {
     }
 
     public record DatasetFieldIngestionDto(DatasetFieldPojo field,
-                                           List<String> labels,
+                                           List<String> tags,
                                            List<DataSetFieldEnumValue> enumValues,
                                            Map<String, Object> metadata) {
     }

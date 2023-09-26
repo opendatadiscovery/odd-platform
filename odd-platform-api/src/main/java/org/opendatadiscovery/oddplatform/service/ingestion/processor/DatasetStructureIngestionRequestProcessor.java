@@ -20,7 +20,6 @@ import org.opendatadiscovery.oddplatform.service.DatasetStructureService;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetFieldMetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.DatasetVersionHashCalculator;
 import org.opendatadiscovery.oddplatform.service.ingestion.EnumValuesIngestionService;
-import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -34,7 +33,6 @@ import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestio
 public class DatasetStructureIngestionRequestProcessor implements IngestionRequestProcessor {
     private final ReactiveDatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureService datasetStructureService;
-    private final LabelIngestionService labelIngestionService;
     private final DatasetFieldMetadataIngestionService datasetFieldMetadataIngestionService;
     private final EnumValuesIngestionService enumValuesIngestionService;
     private final DatasetVersionMapper datasetVersionMapper;
@@ -44,7 +42,6 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
     public Mono<Void> process(final IngestionRequest request) {
         return ingestNewDatasetStructure(request)
             .then(ingestExistingDatasetStructure(request))
-            .then(labelIngestionService.ingestExternalLabels(request))
             .then(datasetFieldMetadataIngestionService.ingestMetadata(request))
             .then(enumValuesIngestionService.ingestEnumValues(request))
             .then();

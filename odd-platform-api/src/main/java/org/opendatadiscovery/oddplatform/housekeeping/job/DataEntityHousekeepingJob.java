@@ -43,7 +43,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.FILE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINK;
 import static org.opendatadiscovery.oddplatform.model.Tables.MESSAGE;
@@ -55,6 +54,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METRIC_POINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.METRIC_SERIES;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 
 @Component
@@ -200,8 +200,8 @@ public class DataEntityHousekeepingJob implements HousekeepingJob {
             .where(ENUM_VALUE.DATASET_FIELD_ID.in(datasetFieldIds))
             .execute();
 
-        dslContext.deleteFrom(LABEL_TO_DATASET_FIELD)
-            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds))
+        dslContext.deleteFrom(TAG_TO_DATASET_FIELD)
+            .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.in(datasetFieldIds))
             .execute();
 
         dslContext.deleteFrom(DATASET_FIELD_TO_TERM)

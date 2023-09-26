@@ -21,7 +21,7 @@ public interface TagService {
 
     Mono<TagsResponse> listMostPopular(final String query, final List<Long> ids, final int page, final int size);
 
-    Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames);
+    Flux<TagPojo> getOrCreateTagsByName(final Set<String> tagNames);
 
     Flux<TagPojo> getOrInjectTagByName(final Set<String> tagNames);
 

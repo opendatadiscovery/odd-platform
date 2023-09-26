@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithLabelsDto;
+import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithTagsDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +37,14 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test get dataset field with labels from database")
-    void testGetDatasetFieldWithLabels() {
-        final DatasetFieldWithLabelsDto datasetFieldDto = createDatasetFieldWithLabelsDto();
+    @DisplayName("Test get dataset field with tags from database")
+    void testGetDatasetFieldWithTags() {
+        final DatasetFieldWithTagsDto datasetFieldDto = createDatasetFieldWithTagsDto();
         final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.datasetFieldPojo());
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
         final DatasetFieldPojo expectedDatasetFieldPojo = datasetFieldPojos.get(0);
 
-        reactiveDatasetFieldRepository.getDatasetFieldWithLabels(expectedDatasetFieldPojo.getId())
+        reactiveDatasetFieldRepository.getDatasetFieldWithTags(expectedDatasetFieldPojo.getId())
             .as(StepVerifier::create)
             .assertNext(dto -> {
                 assertNotNull(dto);
@@ -86,14 +86,14 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
         assertEquals(expectedDatasetFieldPojo.getInternalDescription(), actualDataSetField.getInternalDescription());
     }
 
-    private DatasetFieldWithLabelsDto createDatasetFieldWithLabelsDto() {
+    private DatasetFieldWithTagsDto createDatasetFieldWithTagsDto() {
         final DatasetFieldPojo datasetFieldPojo = EASY_RANDOM.nextObject(DatasetFieldPojo.class);
         final DataSetFieldStat dataSetFieldStat = EASY_RANDOM.nextObject(DataSetFieldStat.class);
         final DataSetFieldType dataSetFieldType = EASY_RANDOM.nextObject(DataSetFieldType.class);
         datasetFieldPojo.setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldPojo.setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
 
-        final LabelPojo labelPojo = EASY_RANDOM.nextObject(LabelPojo.class);
-        return new DatasetFieldWithLabelsDto(datasetFieldPojo, Set.of(labelPojo));
+        final TagPojo tagPojo = EASY_RANDOM.nextObject(TagPojo.class);
+        return new DatasetFieldWithTagsDto(datasetFieldPojo, Set.of(tagPojo));
     }
 }

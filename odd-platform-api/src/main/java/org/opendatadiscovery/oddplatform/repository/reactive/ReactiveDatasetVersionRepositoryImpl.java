@@ -22,8 +22,8 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
-import org.opendatadiscovery.oddplatform.dto.LabelDto;
-import org.opendatadiscovery.oddplatform.dto.LabelOrigin;
+import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.dto.dataset.DatasetVersionFields;
 import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
@@ -32,10 +32,10 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldMetadata
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetVersionRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -61,10 +61,10 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static reactor.function.TupleUtils.function;
 
@@ -74,8 +74,8 @@ public class ReactiveDatasetVersionRepositoryImpl
     extends ReactiveAbstractCRUDRepository<DatasetVersionRecord, DatasetVersionPojo>
     implements ReactiveDatasetVersionRepository {
 
-    public static final String LABELS = "labels";
-    public static final String LABEL_RELATIONS = "label_relations";
+    public static final String TAGS = "tags";
+    public static final String TAG_RELATIONS = "tag_relations";
     public static final String ENUM_VALUE_COUNT = "enum_value_count";
     public static final String METADATA_VALUES = "metadata_values";
     public static final String METADATA = "metadata";
@@ -100,8 +100,8 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
-            .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
-            .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
+            .select(jsonArrayAgg(field(TAG_TO_DATASET_FIELD.asterisk().toString())).as(TAG_RELATIONS))
+            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(TAGS))
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
@@ -111,8 +111,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .from(DATASET_VERSION)
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
+            .leftJoin(TAG_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID))
+            .leftJoin(TAG).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(TAG.ID)).and(TAG.DELETED_AT.isNull())
             .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
                 .and(ENUM_VALUE.DELETED_AT.isNull()))
             .leftJoin(DATASET_FIELD_METADATA_VALUE)
@@ -168,8 +168,8 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
-            .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
-            .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
+            .select(jsonArrayAgg(field(TAG_TO_DATASET_FIELD.asterisk().toString())).as(TAG_RELATIONS))
+            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(TAGS))
             .select(jsonArrayAgg(field(DATASET_FIELD_METADATA_VALUE.asterisk().toString())).as(METADATA_VALUES))
             .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(METADATA))
             .select(jsonArrayAgg(field(TERM.asterisk().toString())).as(TERMS))
@@ -182,8 +182,8 @@ public class ReactiveDatasetVersionRepositoryImpl
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
+            .leftJoin(TAG_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID))
+            .leftJoin(TAG).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(TAG.ID)).and(TAG.DELETED_AT.isNull())
             .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
                 .and(ENUM_VALUE.DELETED_AT.isNull()))
             .leftJoin(DATASET_FIELD_METADATA_VALUE)
@@ -292,7 +292,7 @@ public class ReactiveDatasetVersionRepositoryImpl
         }
         return DatasetFieldDto.builder()
             .datasetFieldPojo(datasetFieldPojo)
-            .labels(extractLabels(datasetVersionRecord))
+            .tags(extractTags(datasetVersionRecord))
             .metadata(extractMetadata(datasetVersionRecord))
             .terms(extractTerms(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
@@ -308,19 +308,17 @@ public class ReactiveDatasetVersionRepositoryImpl
         return new DatasetVersionFields(version, fields);
     }
 
-    private List<LabelDto> extractLabels(final Record record) {
-        final Set<LabelPojo> labels = jooqRecordHelper.extractAggRelation(record, LABELS, LabelPojo.class);
+    private List<TagDto> extractTags(final Record record) {
+        final Set<TagPojo> tags = jooqRecordHelper.extractAggRelation(record, TAGS, TagPojo.class);
 
-        final Map<Long, LabelToDatasetFieldPojo> relations = jooqRecordHelper
-            .extractAggRelation(record, LABEL_RELATIONS, LabelToDatasetFieldPojo.class)
+        final Map<Long, TagToDatasetFieldPojo> relations = jooqRecordHelper
+            .extractAggRelation(record, TAG_RELATIONS, TagToDatasetFieldPojo.class)
             .stream()
-            .collect(Collectors.toMap(LabelToDatasetFieldPojo::getLabelId, identity()));
+            .collect(Collectors.toMap(TagToDatasetFieldPojo::getTagId, identity()));
 
-        return labels.stream()
-            .map(labelPojo -> new LabelDto(
-                labelPojo,
-                !LabelOrigin.INTERNAL.equals(LabelOrigin.valueOf(relations.get(labelPojo.getId()).getOrigin()))
-            ))
+        return tags.stream()
+            .map(tagPojo -> new TagDto(tagPojo, null,
+                !TagOrigin.INTERNAL.name().equals(relations.get(tagPojo.getId()).getOrigin())))
             .toList();
     }
 

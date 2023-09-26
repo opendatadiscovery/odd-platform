@@ -23,7 +23,6 @@ import org.opendatadiscovery.oddplatform.mapper.DataSourceMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DateTimeMapperImpl;
-import org.opendatadiscovery.oddplatform.mapper.LabelMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapper;
 import org.opendatadiscovery.oddplatform.mapper.LineageMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapperImpl;
@@ -92,7 +91,7 @@ class LineageServiceTest {
                 ),
                 new DatasetVersionMapperImpl(
                     new DatasetFieldApiMapperImpl(
-                        new LabelMapperImpl(),
+                        new TagMapperImpl(),
                         new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()),
                         termMapper
                     ),

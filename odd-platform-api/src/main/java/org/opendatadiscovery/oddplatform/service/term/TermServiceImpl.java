@@ -244,7 +244,8 @@ public class TermServiceImpl implements TermService {
     public Flux<Tag> upsertTags(final Long termId, final TagsFormData tagsFormData) {
         final Set<String> names = new HashSet<>(tagsFormData.getTagNameList());
         return tagService.deleteRelationsWithTerm(termId, names)
-            .then(tagService.getOrCreateTagsByName(names))
+            .then(tagService.getOrCreateTagsByName(names)
+                .collectList())
             .flatMap(tagsToLink -> tagService.createRelationsWithTerm(termId, tagsToLink)
                 .ignoreElements().thenReturn(tagsToLink))
             .flatMap(tags -> termSearchEntrypointRepository.updateTagVectorsForTerm(termId)
