@@ -1,4 +1,4 @@
-ALTER TABLE data_entity_filled
+ALTER TABLE IF EXISTS data_entity_filled
     RENAME COLUMN dataset_field_labels_filled TO dataset_field_tags_filled;
 
 UPDATE activity
@@ -97,4 +97,4 @@ SET new_state =
 WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
   AND new_state ->> 'tags' IS NOT NULL;
 
-DROP TABLE label_to_dataset_field, label;
+DROP TABLE IF EXISTS label_to_dataset_field, label;
