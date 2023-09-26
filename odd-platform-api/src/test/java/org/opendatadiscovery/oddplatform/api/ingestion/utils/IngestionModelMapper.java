@@ -118,7 +118,7 @@ public class IngestionModelMapper {
         final DataSetFieldStat stats = buildExpectedDataSetFieldStat(field.getStats());
 
         final List<Tag> tags = field.getTags().stream()
-            .map(d -> new Tag().name(d.getName()).external(true))
+            .map(d -> new Tag().name(d.getName()).external(true).important(false))
             .toList();
 
         final List<MetadataFieldValue> metadataFieldValues = Optional.ofNullable(field.getMetadata())

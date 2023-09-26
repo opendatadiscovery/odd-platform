@@ -48,6 +48,11 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
         return true;
     }
 
+    @Override
+    public IngestionProcessingPhase getPhase() {
+        return IngestionProcessingPhase.FINALIZING;
+    }
+
     private List<TagToDataEntityPojo> getUpdatedRelations(final Map<String, TagPojo> tagsMap,
                                                           final IngestionRequest dataStructure) {
         return dataStructure.getAllEntities().stream()
