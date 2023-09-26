@@ -1,6 +1,10 @@
 ALTER TABLE data_entity_filled 
 RENAME COLUMN dataset_field_labels_filled TO dataset_field_tags_filled;
 
+UPDATE activity
+SET event_type = 'DATASET_FIELD_TAGS_UPDATED'
+WHERE event_type = 'DATASET_FIELD_LABELS_UPDATED';
+
 create TABLE IF NOT EXISTS tag_to_dataset_field
 (
     tag_id     bigint NOT NULL,
@@ -26,17 +30,17 @@ from tag tg, label_to_dataset_field ltdsf, label lbl
 where lower(tg.name) = lower(lbl.name)
 and ltdsf.label_id = lbl.id;
 
-UPDATE public.activity
+UPDATE activity
 SET old_state = old_state - 'labels' || jsonb_build_object('tags', old_state->'labels')
-WHERE event_type = 'DATASET_FIELD_LABELS_UPDATED'
+WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
 and old_state->>'labels' IS NOT NULL;
 
-UPDATE public.activity
+UPDATE activity
 SET new_state = new_state - 'labels' || jsonb_build_object('tags', new_state->'labels')
-WHERE event_type = 'DATASET_FIELD_LABELS_UPDATED'
+WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
 and new_state->>'labels' IS NOT NULL;
 
-UPDATE public.activity
+UPDATE activity
 SET old_state =
     CASE
         WHEN (old_state->'tags')::jsonb != '[]'::jsonb THEN
@@ -62,10 +66,10 @@ SET old_state =
 		ELSE
 			old_state
     END
-WHERE event_type = 'DATASET_FIELD_LABELS_UPDATED'
+WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
 and old_state->>'tags' IS NOT NULL;
 
-UPDATE public.activity
+UPDATE activity
 SET new_state =
     CASE
         WHEN (new_state->'tags')::jsonb != '[]'::jsonb THEN
@@ -91,5 +95,5 @@ SET new_state =
 		ELSE
 			new_state
     END
-WHERE event_type = 'DATASET_FIELD_LABELS_UPDATED'
+WHERE event_type = 'DATASET_FIELD_TAGS_UPDATED'
 and new_state->>'tags' IS NOT NULL;

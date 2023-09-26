@@ -34,7 +34,7 @@ class DatasetVersionMapperTest {
     @InjectMocks
     DatasetVersionMapper datasetVersionMapper =
         new DatasetVersionMapperImpl(
-            new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
+            new DatasetFieldApiMapperImpl(new TagMapperImpl(),
                 new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
                 new NamespaceMapperImpl(),
                 new DateTimeMapperImpl(),

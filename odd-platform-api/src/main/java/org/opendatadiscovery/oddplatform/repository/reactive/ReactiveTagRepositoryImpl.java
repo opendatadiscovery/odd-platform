@@ -14,8 +14,8 @@ import org.jooq.Select;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.model.Indexes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
@@ -46,7 +46,6 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     private static final String COUNT_FIELD = "count";
     private static final String EXTERNAL_FIELD = "external";
     private static final String HAS_EXTERNAL_RELATIONS_FIELD = "has_external_relations";
-
 
     public ReactiveTagRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                      final JooqQueryHelper jooqQueryHelper) {
@@ -83,7 +82,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Mono<List<TagDto>> listDatasetFieldDtos(long datasetFieldId) {
+    public Mono<List<TagDto>> listDatasetFieldDtos(final long datasetFieldId) {
         final var query = DSL.select(TAG.fields())
             .select(DSL
                 .coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.EXTERNAL.name())), false)
@@ -101,7 +100,8 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> listTagsRelations(Collection<Long> datasetFieldIds, TagOrigin origin) {
+    public Flux<TagToDatasetFieldPojo> listTagsRelations(final Collection<Long> datasetFieldIds,
+                                                         final TagOrigin origin) {
         if (CollectionUtils.isEmpty(datasetFieldIds)) {
             return Flux.just();
         }
@@ -290,7 +290,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> deleteDataFieldInternalRelations(long datasetFieldId) {
+    public Flux<TagToDatasetFieldPojo> deleteDataFieldInternalRelations(final long datasetFieldId) {
         final var query = DSL.delete(TAG_TO_DATASET_FIELD)
             .where(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId))
             .and(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.INTERNAL.toString()))
@@ -300,7 +300,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(long tagId) {
+    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(final long tagId) {
         final DeleteResultStep<TagToDatasetFieldRecord> query = DSL
             .delete(TAG_TO_DATASET_FIELD)
             .where(TAG_TO_DATASET_FIELD.TAG_ID.eq(tagId))
@@ -310,7 +310,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(List<TagToDatasetFieldPojo> pojos) {
+    public Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(final List<TagToDatasetFieldPojo> pojos) {
         if (pojos.isEmpty()) {
             return Flux.just();
         }
@@ -351,7 +351,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDatasetFieldPojo> createDataFieldRelations(Collection<TagToDatasetFieldPojo> pojos) {
+    public Flux<TagToDatasetFieldPojo> createDataFieldRelations(final Collection<TagToDatasetFieldPojo> pojos) {
         if (pojos.isEmpty()) {
             return Flux.just();
         }
@@ -373,7 +373,6 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
     }
-
 
     private TagDto mapTag(final Record jooqRecord) {
         return new TagDto(

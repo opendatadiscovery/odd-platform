@@ -62,7 +62,6 @@ public class DatasetFieldController implements DatasetFieldApi {
         return Mono.just(ResponseEntity.ok(tags));
     }
 
-
     @Override
     public Mono<ResponseEntity<EnumValueList>> createEnumValue(final Long datasetFieldId,
                                                                final Mono<BulkEnumValueFormData> bulkEnumValueFormData,

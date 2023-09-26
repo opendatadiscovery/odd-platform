@@ -195,9 +195,9 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
                         .ignoringFields("id", "labels", "metadata")
                         .isEqualTo(expectedField);
 
-                    assertThat(actualField.getLabels())
+                    assertThat(actualField.getTags())
                         .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
-                        .hasSameElementsAs(expectedField.getLabels());
+                        .hasSameElementsAs(expectedField.getTags());
 
                     assertThat(actualField.getMetadata())
                         .usingRecursiveFieldByFieldElementComparatorIgnoringFields("field.id")

@@ -17,7 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
-import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.ingestion.utils.IngestionModelGenerator;
 import org.opendatadiscovery.oddplatform.api.ingestion.utils.IngestionModelMapper;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
@@ -26,7 +26,6 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
 
@@ -192,16 +191,16 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
     }
 
     /**
-     * Preserve external labels state from different ingestion endpoints test.
+     * Preserve external tags state from different ingestion endpoints test.
      *
      * <p>Test ingests metadata with statistics and tags via standard Ingestion API endpoint
      * and asserts correct ingestion process
      *
      * <p>Then it ingests statistics and tags via Ingestion Statistics API endpoint and asserts
-     * that statistics is updated and labels' states are not mixed
+     * that statistics is updated and tags' states are not mixed
      *
      * <p>Then it ingests the original payload via standard Ingestion API endpoint and asserts
-     * that labels' states are the same
+     * that tags' states are the same
      */
     @Test
     @DisplayName("Test whether statistics and tags from different ingestion endpoints do not mix their states")
@@ -246,9 +245,9 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
             .stream()
             .collect(toMap(
                 DataSetField::getOddrn,
-                // adding 5 new labels and removing half of old ones
-                // basically mixing new and old labels together to make assumptions later
-                d -> mixLabelState(d.getTags().stream().map(Tag::getName).toList(), 5, d.getTags().size() / 2)
+                // adding 5 new tags and removing half of old ones
+                // basically mixing new and old tags together to make assumptions later
+                d -> mixTagState(d.getTags().stream().map(item -> item.getName()).toList(), 5, d.getTags().size() / 2)
             ));
 
         final DatasetStatisticsList statistics = IngestionModelGenerator.generateDatasetStatisticsList(
@@ -265,27 +264,27 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
 
         final Map<String, List<String>> originalLabelState = datasetToIngest.getDataset().getFieldList()
             .stream()
-            .collect(toMap(DataSetField::getOddrn, df -> df.getTags().stream().map(Tag::getName).toList()));
+            .collect(toMap(DataSetField::getOddrn, df -> df.getTags().stream().map(item -> item.getName()).toList()));
 
-        final Map<String, List<Label>> expectedLabelState = fieldToLabelNames.entrySet()
+        final Map<String, List<Tag>> expectedTagsState = fieldToLabelNames.entrySet()
             .stream()
             .collect(toMap(
                 Map.Entry::getKey,
-                e -> mapLabels(mergeLists(e.getValue(), originalLabelState.getOrDefault(e.getKey(), emptyList())))
+                e -> mapTags(mergeLists(e.getValue(), originalLabelState.getOrDefault(e.getKey(), emptyList())))
             ));
 
         final DataSetStructure expectedMergedStructure = new DataSetStructure()
             .dataSetVersion(new DataSetVersion().version(1))
             .fieldList(datasetToIngest.getDataset().getFieldList().stream()
                 .map(IngestionModelMapper::buildExpectedDataSetField)
-                .peek(d -> d.setLabels(expectedLabelState.get(d.getOddrn())))
+                .peek(d -> d.setTags(expectedTagsState.get(d.getOddrn())))
                 .peek(d -> d.setStats(IngestionModelMapper.buildExpectedDataSetFieldStat(
                     statistics.getItems().get(0).getFields().get(d.getOddrn()))))
                 .toList());
 
         assertDatasetStructuresEqual(foundEntityId, expectedMergedStructure);
 
-        // Ingest original payload to assert that labels do not change
+        // Ingest original payload to assert that tags do not change
         ingestAndAssert(dataEntityList);
 
         assertDataEntityDetailsEqual(expectedDataEntityDetails, (expected, actual) -> {
@@ -297,7 +296,7 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
             .dataSetVersion(new DataSetVersion().version(1))
             .fieldList(datasetToIngest.getDataset().getFieldList().stream()
                 .map(IngestionModelMapper::buildExpectedDataSetField)
-                .peek(d -> d.setLabels(expectedLabelState.get(d.getOddrn())))
+                .peek(d -> d.setTags(expectedTagsState.get(d.getOddrn())))
                 .toList());
 
         assertDatasetStructuresEqual(foundEntityId, expectedOriginalStructure);
@@ -375,9 +374,9 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
         }
     }
 
-    private List<Label> mapLabels(final List<String> labelNames) {
-        return labelNames.stream()
-            .map(ln -> new Label().name(ln).external(true))
+    private List<Tag> mapTags(final List<String> tagNames) {
+        return tagNames.stream()
+            .map(ln -> new Tag().name(ln).external(true))
             .toList();
     }
 
@@ -390,12 +389,12 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
         return new ArrayList<>(res);
     }
 
-    private List<String> mixLabelState(final List<String> currentLabels,
-                                       final int appendedLabelsCount,
-                                       final int trimmedLabelSize) {
+    private List<String> mixTagState(final List<String> currentLabels,
+                                     final int appendedLabelsCount,
+                                     final int trimmedLabelSize) {
         final List<String> appendedLabels = IngestionModelGenerator
             .generateDataSetFieldLabels(appendedLabelsCount).stream()
-            .map(Tag::getName)
+            .map(item -> item.getName())
             .toList();
 
         return ListUtils.union(
