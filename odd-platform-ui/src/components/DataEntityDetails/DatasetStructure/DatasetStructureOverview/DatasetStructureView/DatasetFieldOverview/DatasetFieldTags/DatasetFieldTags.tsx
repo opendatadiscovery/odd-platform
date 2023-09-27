@@ -38,7 +38,7 @@ const DatasetFieldTags: React.FC<DatasetFieldTagsProps> = ({
         <Typography variant='h5' color='texts.hint'>
           {t('TAGS')}
         </Typography>
-        <WithPermissions permissionTo={Permission.DATASET_FIELD_DESCRIPTION_UPDATE}>
+        <WithPermissions permissionTo={Permission.DATASET_FIELD_TAGS_UPDATE}>
           {!isStatusDeleted && (
             <TagsEditForm
               datasetFieldId={datasetFieldId}
