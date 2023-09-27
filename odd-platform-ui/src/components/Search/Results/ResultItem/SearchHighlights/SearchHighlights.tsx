@@ -116,7 +116,7 @@ const SearchHighlights: React.FC<SearchHighlightsProps> = ({ dataEntityId }) => 
         'owner' in entity;
       const isMetadata = (entity: any): entity is MetadataFieldValue => 'field' in entity;
       const isColumn = (entity: any): entity is DataSetStructureHighlight =>
-        'labels' in entity;
+        'tags' in entity;
 
       const mapItemsToHighlight = (entity: unknown) => {
         if (isTag(entity)) {
