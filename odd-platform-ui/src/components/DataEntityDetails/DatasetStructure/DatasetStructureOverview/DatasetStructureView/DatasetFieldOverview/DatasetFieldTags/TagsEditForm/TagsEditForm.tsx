@@ -5,7 +5,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { Button, DialogWrapper, TagItem } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataSetFieldTags } from 'redux/thunks';
-import { getDataEntityTags, getDataEntityTagsUpdatingStatuses } from 'redux/selectors';
+import { getDatasetFieldTags, getDatasetFieldTagsUpdatingStatus } from 'redux/selectors';
 import type { Tag } from 'generated-sources';
 import { TagListContainer } from './TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
@@ -21,9 +21,9 @@ type DatasetFieldTagsFormType = {
 
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl, datasetFieldId }) => {
   const dispatch = useAppDispatch();
-  const datasetFieldTags = useAppSelector(getDataEntityTags(datasetFieldId));
+  const datasetFieldTags = useAppSelector(getDatasetFieldTags(datasetFieldId));
   const { isLoading: isTagsUpdating, isLoaded: isTagsUpdated } = useAppSelector(
-    getDataEntityTagsUpdatingStatuses
+    getDatasetFieldTagsUpdatingStatus
   );
 
   const methods = useForm<DatasetFieldTagsFormType>({

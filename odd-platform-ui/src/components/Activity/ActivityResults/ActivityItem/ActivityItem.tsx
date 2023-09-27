@@ -150,6 +150,16 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           plural
         />
       )}
+      {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TAGS_UPDATED]) && (
+        <ArrayActivityField
+          activityName={`Tags in ${activity.oldState.datasetFieldInformation?.name} column`}
+          oldState={activity.oldState.datasetFieldInformation?.tags}
+          newState={activity.newState.datasetFieldInformation?.tags}
+          hideAllDetails={hideAllDetails}
+          stateItem={tagStateItem}
+          plural
+        />
+      )}
       {isTypeRelatedTo([ActivityEventType.TERM_ASSIGNMENT_UPDATED]) && (
         <TermActivityField
           oldState={activity.oldState.terms}
