@@ -1,12 +1,11 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { useAtom } from 'jotai';
-import { AppInput, NumberFormatted } from 'components/shared/elements';
-import { ClearIcon, SearchIcon } from 'components/shared/icons';
-import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { useTranslation } from 'react-i18next';
+import { Input, NumberFormatted } from 'components/shared/elements';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
 import * as S from './OwnerAssociationsHeaderStyles';
 
@@ -62,26 +61,14 @@ const OwnerAssociationsHeader: React.FC<OwnerAssociationsHeaderProps> = ({
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search requests')}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          value={query}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: handleInputClear,
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
       </S.Caption>
     </>

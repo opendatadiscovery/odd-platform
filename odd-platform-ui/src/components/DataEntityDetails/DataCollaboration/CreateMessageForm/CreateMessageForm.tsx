@@ -1,20 +1,19 @@
 import React from 'react';
-import { useAppPaths } from 'lib/hooks';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useAppPaths } from 'lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createMessageToSlack } from 'redux/thunks';
 import {
   Button,
-  AppInput,
   DialogWrapper,
+  Input,
   SlackChannelsAutocomplete,
 } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import { type MessageRequest } from 'generated-sources';
-import { useNavigate } from 'react-router-dom';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 
 interface CreateMessageFormProps {
   dataEntityId: number;
@@ -38,7 +37,7 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
 
   type MessageFormData = Omit<MessageRequest, 'dataEntityId'>;
 
-  const { control, handleSubmit, setValue, formState, reset } = useForm<MessageFormData>({
+  const { control, handleSubmit, formState, reset } = useForm<MessageFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {},
@@ -78,19 +77,12 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
             sx={{ mt: 2 }}
-            multiline
-            minRows={4}
-            label={t('Message')}
+            variant='main-m'
             placeholder={t('Start typing...')}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => setValue('text', ''),
-              icon: <ClearIcon />,
-            }}
+            label={t('Message')}
           />
         )}
       />

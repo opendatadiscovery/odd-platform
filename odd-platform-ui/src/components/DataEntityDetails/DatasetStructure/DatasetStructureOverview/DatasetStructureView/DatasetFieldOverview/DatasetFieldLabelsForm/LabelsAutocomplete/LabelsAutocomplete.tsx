@@ -5,14 +5,14 @@ import type {
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
-import { fetchLabelsList as searchLabels } from 'redux/thunks';
-import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import type { Label } from 'generated-sources';
-import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import type { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { useTranslation } from 'react-i18next';
+import { fetchLabelsList as searchLabels } from 'redux/thunks';
+import { useAppDispatch } from 'redux/lib/hooks';
+import type { Label } from 'generated-sources';
+import { AutocompleteSuggestion, Input } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 type DatasetFieldLabelsFormData = {
@@ -126,16 +126,14 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
-          ref={params.InputProps.ref}
-          placeholder={t('Enter label name')}
+        <Input
+          sx={{ mt: 2 }}
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           label={t('Label')}
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: loading,
-            position: { mr: 4 },
-          }}
+          placeholder={t('Enter label name')}
+          isLoading={loading}
         />
       )}
       renderOption={(props, option) => (

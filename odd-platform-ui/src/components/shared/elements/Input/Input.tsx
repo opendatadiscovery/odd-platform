@@ -1,9 +1,9 @@
 import React, { type ChangeEvent, forwardRef, useCallback } from 'react';
+import type { SxProps, Theme } from '@mui/system';
+import { Box } from '@mui/material';
 import { ClearIcon, SearchIcon } from 'components/shared/icons';
 import Button from 'components/shared/elements/Button/Button';
 import AppCircularProgress from 'components/shared/elements/AppCircularProgress/AppCircularProgress';
-import type { SxProps, Theme } from '@mui/system';
-import { Box } from '@mui/material';
 import type { InputSize, InputType, InputVariant } from './interfaces';
 import * as S from './Input.styles';
 
@@ -19,7 +19,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   inputContainerRef?: React.Ref<any>;
   sx?: SxProps<Theme>;
-
+  dataQAId?: string;
   calendar?: React.ReactNode;
 }
 
@@ -33,6 +33,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       isLoading,
       handleSearchClick,
       sx,
+      dataQAId,
       ...props
     },
     ref
@@ -62,6 +63,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </S.Adornment>
           )}
           <S.Input
+            data-qa={dataQAId}
             ref={ref}
             $isError={!!props.error}
             $type={inputType}

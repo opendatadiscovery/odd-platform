@@ -8,17 +8,17 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { type MetadataField, MetadataFieldType } from 'generated-sources';
 import { ClearIcon, DropdownIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { searchMetadata } from 'redux/thunks';
 import {
-  AppInput,
   AppMenuItem,
   AppSelect,
   AutocompleteSuggestion,
+  Input,
 } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import MetadataValueEditField from '../../MetadataValueEditor/MetadataValueEditor';
 
 const MetadataCreateFormItem: React.FC = () => {
@@ -159,16 +159,13 @@ const MetadataCreateFormItem: React.FC = () => {
             clearIcon={<ClearIcon />}
             popupIcon={<DropdownIcon />}
             renderInput={params => (
-              <AppInput
-                {...params}
+              <Input
+                variant='main-m'
                 dataQAId='add_custom_metadata_input'
-                ref={params.InputProps.ref}
+                inputContainerRef={params.InputProps.ref}
+                inputProps={params.inputProps}
                 placeholder={t('Metadata Name')}
-                customEndAdornment={{
-                  variant: 'loader',
-                  showAdornment: loading,
-                  position: { mr: -2 },
-                }}
+                isLoading={loading}
               />
             )}
             renderOption={(props, option) => (

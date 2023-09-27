@@ -1,14 +1,14 @@
 import React from 'react';
-import { useAppPaths, usePermissions } from 'lib/hooks';
-import { useAppDispatch } from 'redux/lib/hooks';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { createPolicy, updatePolicy } from 'redux/thunks';
-import { Button, AppInput, AppJSONEditor } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
-import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAppPaths, usePermissions } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { createPolicy, updatePolicy } from 'redux/thunks';
+import { AppJSONEditor, Button, Input } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
+import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -29,7 +29,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
   const toPolicies = `../${ManagementRoutes.policies}`;
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
-  const { control, handleSubmit, setValue, formState } = useForm<PolicyFormData>({
+  const { control, handleSubmit, formState } = useForm<PolicyFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues,
@@ -85,18 +85,13 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
           control={control}
           rules={{ required: true, validate: value => !!value.trim() }}
           render={({ field }) => (
-            <AppInput
+            <Input
               {...field}
+              variant='main-m'
               disabled={isAdministrator || !canUpdatePolicy}
               sx={{ mt: 3 }}
               label={t('Name')}
               placeholder={t('Enter policy name')}
-              customEndAdornment={{
-                variant: 'clear',
-                showAdornment: !!field.value,
-                onCLick: () => setValue('name', ''),
-                icon: <ClearIcon />,
-              }}
             />
           )}
         />

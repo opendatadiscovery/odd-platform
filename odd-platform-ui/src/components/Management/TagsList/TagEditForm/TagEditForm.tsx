@@ -1,13 +1,12 @@
 import React from 'react';
 import { Box, FormControlLabel, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateTag } from 'redux/thunks';
 import { getTagCreatingStatuses, getTagUpdatingStatuses } from 'redux/selectors';
-import { Checkbox, AppInput, Button, DialogWrapper } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
+import { Button, Checkbox, DialogWrapper, Input } from 'components/shared/elements';
 
 interface TagEditFormProps {
   editBtn: JSX.Element;
@@ -52,16 +51,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
         defaultValue={tag.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            placeholder={t('Tag Name')}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <Input {...field} sx={{ mt: 2 }} variant='main-m' placeholder={t('Tag Name')} />
         )}
       />
       <Box sx={{ mt: 1 }}>

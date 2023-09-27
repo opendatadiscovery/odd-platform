@@ -13,7 +13,7 @@ import { getIdentity, getOwnerAssociationRequestCreatingStatuses } from 'redux/s
 import type { Owner, OwnerFormData } from 'generated-sources';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/icons';
-import { Button, AppInput, AutocompleteSuggestion } from 'components/shared/elements';
+import { AutocompleteSuggestion, Button, Input } from 'components/shared/elements';
 import {
   createOwnerAssociationRequest,
   fetchIdentity,
@@ -197,17 +197,14 @@ const OwnerAssociationForm: React.FC = () => {
                 clearIcon={<ClearIcon />}
                 renderInput={params => (
                   <>
-                    <AppInput
-                      {...params}
-                      ref={params.InputProps.ref}
+                    <Input
+                      variant='main-m'
+                      inputContainerRef={params.InputProps.ref}
+                      inputProps={params.inputProps}
                       name='name'
                       label={t('Owner name')}
                       placeholder={t('Search name')}
-                      customEndAdornment={{
-                        variant: 'loader',
-                        showAdornment: optionsLoading,
-                        position: { mr: 4 },
-                      }}
+                      isLoading={optionsLoading}
                     />
                     {possibleOwners.length ? (
                       <S.SuggestedOwnersContainer

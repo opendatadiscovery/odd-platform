@@ -1,19 +1,18 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { Role, RoleFormData } from 'generated-sources';
 import {
   Button,
-  AppInput,
   DialogWrapper,
+  Input,
   PolicyAutocomplete,
   TagItem,
 } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createRole, updateRole } from 'redux/thunks';
 import { getRoleCreatingStatuses, getRoleUpdatingStatuses } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 
 interface RoleFormProps {
   openBtn: JSX.Element;
@@ -85,17 +84,12 @@ const RoleForm: React.FC<RoleFormProps> = ({ openBtn, roleId, name, policies }) 
         defaultValue={name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             disabled={isUser}
             label={t('Name')}
             placeholder={t('Enter role name')}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />

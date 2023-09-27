@@ -1,14 +1,13 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { Owner, OwnerFormData } from 'generated-sources';
-import { Button, AppInput, DialogWrapper, TagItem } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { Button, DialogWrapper, Input, TagItem } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 import { getOwnerCreatingStatuses, getOwnerUpdatingStatuses } from 'redux/selectors';
 import RoleAutocomplete from 'components/shared/elements/Autocomplete/RoleAutocomplete/RoleAutocomplete';
-import { useTranslation } from 'react-i18next';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;
@@ -77,16 +76,11 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, ownerId, name, roles
         defaultValue={name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             label={t('Name')}
             placeholder={t('Owner Name')}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />

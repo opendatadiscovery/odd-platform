@@ -1,5 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useDebouncedCallback } from 'use-debounce';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import {
   getCollectorDeletingStatuses,
   getCollectorsList,
@@ -7,19 +10,16 @@ import {
   getCollectorsListPage,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useDebouncedCallback } from 'use-debounce';
 import { fetchCollectorsList } from 'redux/thunks';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import {
   Button,
-  AppInput,
   EmptyContentPlaceholder,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import CollectorForm from './CollectorForm/CollectorForm';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
 import CollectorItem from './CollectorItem/CollectorItem';
@@ -79,26 +79,14 @@ const CollectorsListView: React.FC = () => {
         </Typography>
       </CollectorCaption>
       <CollectorCaption container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search collector')}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          value={query}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: handleSearch,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
+          value={query}
+          handleSearchClick={handleSearch}
         />
         <WithPermissions permissionTo={Permission.COLLECTOR_CREATE}>
           <CollectorForm

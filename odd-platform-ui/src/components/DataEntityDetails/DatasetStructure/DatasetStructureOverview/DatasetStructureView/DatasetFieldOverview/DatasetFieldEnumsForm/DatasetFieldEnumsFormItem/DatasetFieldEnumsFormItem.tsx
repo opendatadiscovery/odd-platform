@@ -1,10 +1,9 @@
 import type { HTMLInputTypeAttribute } from 'react';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, AppInput } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { useTranslation } from 'react-i18next';
+import { Button, Input } from 'components/shared/elements';
+import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import * as S from './DatasetFieldEnumsFormItem.styles';
 
 interface DatasetFieldEnumsFormItemProps {
@@ -51,18 +50,13 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
         rules={{ required: true, validate: setTextValidationByType }}
         render={({ field }) => (
           <S.ValueNameContainer sx={{ mr: 1 }}>
-            <AppInput
+            <Input
               {...field}
               disabled={isKeyEditable}
+              variant='main-m'
               placeholder={t('Name of value')}
               name={`enums.${itemIndex}.name`}
               type={setTextFieldType()}
-              customEndAdornment={{
-                variant: 'clear',
-                showAdornment: !!field.value,
-                onCLick: () => field.onChange(''),
-                icon: <ClearIcon />,
-              }}
             />
           </S.ValueNameContainer>
         )}
@@ -73,18 +67,13 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
         control={control}
         render={({ field }) => (
           <S.ValueDescriptionContainer sx={{ mr: 1 }}>
-            <AppInput
+            <Input
               {...field}
+              variant='main-m'
               sx={{ mr: 1 }}
               disabled={!isValueEditable}
               placeholder={t('Description')}
               name={`enums.${itemIndex}.description`}
-              customEndAdornment={{
-                variant: 'clear',
-                showAdornment: !!field.value,
-                onCLick: () => field.onChange(''),
-                icon: <ClearIcon />,
-              }}
             />
           </S.ValueDescriptionContainer>
         )}

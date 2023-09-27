@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type { Label, LabelFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
@@ -8,10 +9,7 @@ import {
   getLabelUpdatingStatuses,
 } from 'redux/selectors/labels.selectors';
 import { updateLabel } from 'redux/thunks';
-import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
-
-import ClearIcon from 'components/shared/icons/ClearIcon';
-import { useTranslation } from 'react-i18next';
+import { Button, DialogWrapper, Input } from 'components/shared/elements';
 
 interface LabelEditFormProps {
   editBtn: JSX.Element;
@@ -61,16 +59,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({ editBtn, label }) => {
         defaultValue={label.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            placeholder={t('Label Name')}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <Input {...field} variant='main-m' placeholder={t('Label Name')} />
         )}
       />
     </form>

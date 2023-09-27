@@ -11,11 +11,10 @@ import {
 } from 'redux/selectors';
 import {
   Button,
-  AppInput,
-  NamespaceAutocomplete,
   DialogWrapper,
+  Input,
+  NamespaceAutocomplete,
 } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
 import { Asterisk } from './CollectorFormStyles';
 
 interface CollectorFormDialogProps {
@@ -48,7 +47,6 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
     handleSubmit,
     control,
     reset,
-    setValue,
     formState: { isValid },
   } = useForm<CollectorFormData>({
     mode: 'all',
@@ -99,19 +97,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppInput
-            {...field}
-            sx={{ mt: 1.5 }}
-            label={t('Name')}
-            placeholder='e.g. Data Tower'
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
+          <Input {...field} variant='main-m' sx={{ mt: 1.5 }} label={t('Name')} />
         )}
       />
       <Controller
@@ -124,19 +110,12 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
         name='description'
         control={control}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             sx={{ mt: 1.25 }}
             label={t('Description')}
             placeholder={t('Collector description')}
-            multiline
-            maxRows={4}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => setValue('description', ''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />

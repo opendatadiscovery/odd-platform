@@ -1,8 +1,7 @@
 import React from 'react';
-import { useFormContext, Controller } from 'react-hook-form';
-import { Button, AppInput } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { Controller, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Button, Input } from 'components/shared/elements';
 import * as S from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps {
@@ -27,16 +26,11 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
         defaultValue=''
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             placeholder={t('Label Name')}
             name={`labels.${itemIndex}.name`}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />

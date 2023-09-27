@@ -1,16 +1,17 @@
 import React, { type FC, useCallback, useState } from 'react';
-import { useAppDispatch } from 'redux/lib/hooks';
 import { useNavigate } from 'react-router-dom';
-import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
 import type { SelectChangeEvent } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
 import { fetchDataSetStructure } from 'redux/thunks';
-import { ClearIcon, ColumnsIcon, SearchIcon } from 'components/shared/icons';
+import { ColumnsIcon } from 'components/shared/icons';
 import {
-  Button,
-  AppInput,
   AppMenuItem,
   AppSelect,
+  Button,
+  Input,
   NumberFormatted,
 } from 'components/shared/elements';
 import useStructure from '../../lib/useStructure';
@@ -20,6 +21,7 @@ const DatasetStructureHeader: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { versionId, dataEntityId } = useAppParams();
+  const { t } = useTranslation();
   const { datasetStructurePath, DataEntityRoutes, datasetStructureComparePath } =
     useAppPaths();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
@@ -110,26 +112,14 @@ const DatasetStructureHeader: FC = () => {
         alignItems='center'
         justifyContent='flex-end'
       >
-        <AppInput
-          placeholder='Search'
+        <Input
+          variant='search-m'
+          placeholder={t('Search')}
           sx={{ minWidth: '250px', mr: 1 }}
-          fullWidth={false}
-          value={searchQuery}
-          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleOnChange}
-          customStartAdornment={{
-            variant: 'search',
-            showAdornment: true,
-            onCLick: onSearchClick,
-            icon: <SearchIcon />,
-          }}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!searchQuery,
-            onCLick: clearSearchField,
-            icon: <ClearIcon />,
-          }}
+          value={searchQuery}
+          handleSearchClick={onSearchClick}
         />
         <AppSelect
           defaultValue={versionId}

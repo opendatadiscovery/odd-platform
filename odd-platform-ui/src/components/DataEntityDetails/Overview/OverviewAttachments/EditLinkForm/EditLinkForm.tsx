@@ -1,10 +1,10 @@
 import React, { type FC } from 'react';
-import { useAppParams, useUpdateDataEntityLink } from 'lib/hooks';
 import { Controller, useForm } from 'react-hook-form';
-import type { DataEntityLink, DataEntityLinkFormData } from 'generated-sources';
 import { Typography } from '@mui/material';
-import { AppInput, Button, DialogWrapper } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
+import { useAppParams, useUpdateDataEntityLink } from 'lib/hooks';
+import type { DataEntityLink, DataEntityLinkFormData } from 'generated-sources';
+import { Button, DialogWrapper, Input } from 'components/shared/elements';
 
 interface EditLinkFormProps {
   openBtn: JSX.Element;
@@ -15,6 +15,7 @@ interface EditLinkFormProps {
 
 const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => {
   const formId = 'update-link-form';
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
 
   const { mutate: updateLink, isLoading, isSuccess } = useUpdateDataEntityLink();
@@ -43,17 +44,11 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => 
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
-            placeholder='Place link here'
-            label='URL'
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
+            variant='main-m'
+            placeholder={t('Place link here')}
+            label={t('URL')}
           />
         )}
       />
@@ -62,18 +57,12 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => 
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
+            variant='main-m'
             sx={{ mt: 1, mb: 2 }}
-            placeholder='Enter custom name'
-            label='Custom name'
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
+            placeholder={t('Enter custom name')}
+            label={t('Custom name')}
           />
         )}
       />
