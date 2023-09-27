@@ -1,13 +1,13 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import TruncateMarkup from 'react-truncate-markup';
+import { useTranslation } from 'react-i18next';
 import { type Owner, Permission } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { deleteOwner } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import TruncateMarkup from 'react-truncate-markup';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import * as S from './EditableOwnerItemStyles';
 import OwnerForm from '../OwnerForm/OwnerForm';
 
@@ -32,10 +32,10 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
 
   return (
     <S.Container container>
-      <Grid item lg={3.53}>
+      <Grid item lg={4}>
         <Typography variant='body1'>{name}</Typography>
       </Grid>
-      <Grid item lg={6.73}>
+      <Grid item lg={6}>
         <TruncateMarkup lines={1} tokenize='words'>
           <div style={{ display: 'flex' }}>
             {roles?.map((role, idx) => (
@@ -48,7 +48,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
           </div>
         </TruncateMarkup>
       </Grid>
-      <S.ActionsContainer container item lg={1.74}>
+      <S.ActionsContainer container item lg={2}>
         <WithPermissions permissionTo={Permission.OWNER_UPDATE}>
           <OwnerForm
             ownerId={ownerId}

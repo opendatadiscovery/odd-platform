@@ -123,7 +123,7 @@ const RolesList: React.FC = () => {
           scrollableTarget='roles-list'
           loader={isRolesFetching && <RoleSkeletonItem length={5} />}
         >
-          {rolesList?.map(({ id, name, policies }) => (
+          {rolesList.map(({ id, name, policies }) => (
             <RoleItem key={id} roleId={id} name={name} policies={policies} />
           ))}
         </InfiniteScroll>

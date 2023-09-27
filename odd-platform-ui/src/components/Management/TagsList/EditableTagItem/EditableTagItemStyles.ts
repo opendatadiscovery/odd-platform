@@ -17,10 +17,3 @@ export const Container = styled(Grid)(({ theme }) => ({
     [`${ActionsContainer}`]: { opacity: 1 },
   },
 }));
-
-export const Col = styled(Grid)(() => ({
-  minWidth: '285px',
-  display: 'flex',
-  alignItems: 'center',
-  overflow: 'hidden',
-}));
