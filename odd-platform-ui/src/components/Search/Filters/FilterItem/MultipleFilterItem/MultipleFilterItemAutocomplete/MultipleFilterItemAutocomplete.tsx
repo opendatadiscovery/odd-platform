@@ -2,16 +2,17 @@ import React, { type HTMLAttributes } from 'react';
 import { Autocomplete, type AutocompleteRenderOptionState, Grid } from '@mui/material';
 import {
   type AutocompleteInputChangeReason,
-  type FilterOptionsState,
   createFilterOptions,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
 import type {
   CountableSearchFilter,
   MultipleFacetType,
   SearchFilter,
 } from 'generated-sources';
-import { AppInput } from 'components/shared/elements';
+import { Input } from 'components/shared/elements';
 import { ClearIcon, DropdownIcon } from 'components/shared/icons';
 import { type OptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -30,6 +31,7 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
   facetName,
 }) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const searchId = useAppSelector(getSearchId);
   const facetOptionsAll = useAppSelector(getSearchFacetsByType(facetName));
@@ -188,17 +190,14 @@ const MultipleFilterItemAutocomplete: React.FC<MultipleFilterItemAutocompletePro
       popupIcon={<DropdownIcon />}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
+        <Input
           sx={{ mt: 2 }}
-          placeholder='Search by name'
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           label={name}
-          ref={params.InputProps.ref}
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: facetOptionsLoading,
-            position: { mr: -2 },
-          }}
+          placeholder={t('Search by name')}
+          isLoading={facetOptionsLoading}
         />
       )}
     />

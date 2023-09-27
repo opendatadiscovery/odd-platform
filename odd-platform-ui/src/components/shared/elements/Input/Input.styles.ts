@@ -82,7 +82,7 @@ export const Adornment = styled('div')<{ $isStart?: boolean }>(({ theme, $isStar
   top: 0,
 }));
 
-export const Label = styled('p')(({ theme }) => ({
+export const Label = styled('label')(({ theme }) => ({
   fontSize: '12px',
   fontWeight: 500,
   lineHeight: '16px',

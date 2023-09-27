@@ -1,27 +1,27 @@
 import React from 'react';
 import { Autocomplete, Box, Typography } from '@mui/material';
-import type { Tag } from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
-  type FilterOptionsState,
   createFilterOptions,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import type { Tag } from 'generated-sources';
 import {
-  DialogWrapper,
-  TagItem,
   AutocompleteSuggestion,
   Button,
-  AppInput,
+  DialogWrapper,
+  Input,
+  TagItem,
 } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchTagsList as searchTags, updateTermDetailsTags } from 'redux/thunks';
 import { getTermDetailsTags, getTermDetailsTagsUpdatingStatuses } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import { OptionsContainer } from './TagsEditFormStyles';
 
 interface TagsEditProps {
@@ -188,15 +188,12 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
         value={{ name: searchText }}
         clearIcon={<ClearIcon />}
         renderInput={params => (
-          <AppInput
-            {...params}
-            ref={params.InputProps.ref}
+          <Input
+            variant='main-m'
+            inputContainerRef={params.InputProps.ref}
+            inputProps={params.inputProps}
             placeholder={t('Enter tag name')}
-            customEndAdornment={{
-              variant: 'loader',
-              showAdornment: loading,
-              position: { mr: 4 },
-            }}
+            isLoading={loading}
           />
         )}
         renderOption={(props, option) => (

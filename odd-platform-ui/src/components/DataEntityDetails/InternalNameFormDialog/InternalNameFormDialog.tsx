@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { type InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
-import { Button, AppInput, DialogWrapper } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
+import { useTranslation } from 'react-i18next';
+import { type InternalNameFormData } from 'generated-sources';
+import { Button, DialogWrapper, Input } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
@@ -20,6 +20,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
 
   const dataEntityInternalName = useAppSelector(getDataEntityInternalName(dataEntityId));
@@ -61,17 +62,12 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         name='internalName'
         defaultValue={dataEntityInternalName || ''}
         render={({ field }) => (
-          <AppInput
+          <Input
             {...field}
-            label='Business name'
-            placeholder='Enter business name'
+            variant='main-m'
+            label={t('Business name')}
+            placeholder={t('Enter business name')}
             onKeyDown={handleKeyDown}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
           />
         )}
       />

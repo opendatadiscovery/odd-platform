@@ -1,17 +1,16 @@
 import React, { type ChangeEvent, type FC, useCallback, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  AppErrorPage,
-  AppInput,
-  AppLoadingPage,
-  EmptyContentPlaceholder,
-  NumberFormatted,
-} from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
-import { useIntegrationPreviews } from 'lib/hooks/api';
-import type { ErrorState } from 'redux/interfaces';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'react-i18next';
+import {
+  AppErrorPage,
+  AppLoadingPage,
+  EmptyContentPlaceholder,
+  Input,
+  NumberFormatted,
+} from 'components/shared/elements';
+import { useIntegrationPreviews } from 'lib/hooks/api';
+import type { ErrorState } from 'redux/interfaces';
 import IntegrationPreviewItem from './IntegrationPreviewItem/IntegrationPreviewItem';
 
 const IntegrationPreviewList: FC = () => {
@@ -41,19 +40,12 @@ const IntegrationPreviewList: FC = () => {
         )}
       </Grid>
       <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 2 }}>
-        <AppInput
+        <Input
+          variant='search-m'
           placeholder={t('Search integrations')}
-          sx={{ minWidth: '340px' }}
-          fullWidth={false}
-          value={query}
-          customEndAdornment={{
-            variant: 'clear',
-            showAdornment: !!query,
-            onCLick: () => setQuery(''),
-            icon: <ClearIcon />,
-          }}
-          InputProps={{ 'aria-label': 'search' }}
+          maxWidth={340}
           onChange={handleInputChange}
+          value={query}
         />
       </Grid>
       {isLoading ? <AppLoadingPage /> : null}

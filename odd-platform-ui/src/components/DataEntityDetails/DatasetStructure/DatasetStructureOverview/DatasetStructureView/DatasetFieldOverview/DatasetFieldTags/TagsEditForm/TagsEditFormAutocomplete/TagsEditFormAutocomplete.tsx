@@ -10,7 +10,7 @@ import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray'
 import { useTranslation } from 'react-i18next';
 import { type Tag } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
+import { Input, AutocompleteSuggestion } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { fetchTagsList as searchTags } from 'redux/thunks';
 import { OptionsContainer } from '../TagsEditFormStyles';
@@ -60,7 +60,7 @@ const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
+    (_: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       if (
         searchText !== '' &&
@@ -83,10 +83,9 @@ const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
       reason: AutocompleteInputChangeReason
     ) => {
       if (reason === 'input') {
-        setSearchText(query);
-      } else {
-        setSearchText(''); // Clear input on select
+        return setSearchText(query);
       }
+      setSearchText(''); // Clear input on select
     },
     [setSearchText]
   );
@@ -127,15 +126,14 @@ const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
-          ref={params.InputProps.ref}
+        <Input
+          sx={{ mt: 2 }}
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
+          label={t('Tag')}
           placeholder={t('Enter tag name')}
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: loading,
-            position: { mr: 4 },
-          }}
+          isLoading={loading}
         />
       )}
       renderOption={(props, option) => (

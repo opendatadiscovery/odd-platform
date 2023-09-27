@@ -1,18 +1,18 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import { type Tag } from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
-  type FilterOptionsState,
   createFilterOptions,
+  type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import { AppInput, AutocompleteSuggestion } from 'components/shared/elements';
-import { ClearIcon } from 'components/shared/icons';
-import { fetchTagsList as searchTags } from 'redux/thunks';
 import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { useTranslation } from 'react-i18next';
+import { type Tag } from 'generated-sources';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { AutocompleteSuggestion, Input } from 'components/shared/elements';
+import { ClearIcon } from 'components/shared/icons';
+import { fetchTagsList as searchTags } from 'redux/thunks';
 import { OptionsContainer } from '../TagsEditFormStyles';
 
 type DataEntityTagsFormType = {
@@ -131,15 +131,12 @@ const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
-          ref={params.InputProps.ref}
+        <Input
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           placeholder={t('Enter tag name')}
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: loading,
-            position: { mr: 4 },
-          }}
+          isLoading={loading}
         />
       )}
       renderOption={(props, option) => (

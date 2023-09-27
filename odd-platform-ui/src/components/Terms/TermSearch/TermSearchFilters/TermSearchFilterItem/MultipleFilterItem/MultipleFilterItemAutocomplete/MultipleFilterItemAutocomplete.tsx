@@ -1,4 +1,11 @@
-import React, { type HTMLAttributes } from 'react';
+import React, {
+  type ChangeEvent,
+  type FC,
+  type HTMLAttributes,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Autocomplete, type AutocompleteRenderOptionState, Grid } from '@mui/material';
 import {
   type AutocompleteInputChangeReason,
@@ -6,12 +13,13 @@ import {
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
+import { useTranslation } from 'react-i18next';
 import type {
   CountableSearchFilter,
   MultipleFacetType,
   SearchFilter,
 } from 'generated-sources';
-import { AppInput } from 'components/shared/elements';
+import { Input } from 'components/shared/elements';
 import { ClearIcon, DropdownIcon } from 'components/shared/icons';
 import type { TermSearchOptionalFacetNames } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -25,8 +33,9 @@ interface Props {
   facetName: TermSearchOptionalFacetNames;
 }
 
-const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) => {
+const MultipleFilterItemAutocomplete: FC<Props> = ({ name, facetName }) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const searchId = useAppSelector(getTermSearchId);
   const facetOptionsAll = useAppSelector(getTermSearchFacetsByType(facetName));
@@ -34,15 +43,13 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
   type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> &
     Partial<CountableSearchFilter>;
 
-  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [facetOptions, setFacetOptions] = React.useState<FilterOption[]>(
-    facetOptionsAll || []
-  );
+  const [autocompleteOpen, setAutocompleteOpen] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [facetOptions, setFacetOptions] = useState<FilterOption[]>(facetOptionsAll || []);
   const filter = createFilterOptions<FilterOption>();
 
   const handleAutocompleteSelect = (
-    _: React.ChangeEvent<unknown>,
+    _: ChangeEvent<unknown>,
     option: FilterOption | null
   ) => {
     if (!option) return;
@@ -57,12 +64,8 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
     );
   };
 
-  const searchInputChange = React.useCallback(
-    (
-      _: React.ChangeEvent<unknown>,
-      query: string,
-      reason: AutocompleteInputChangeReason
-    ) => {
+  const searchInputChange = useCallback(
+    (_: ChangeEvent<unknown>, query: string, reason: AutocompleteInputChangeReason) => {
       if (reason === 'input') {
         setSearchText(query);
       } else {
@@ -72,12 +75,9 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
     [setSearchText]
   );
 
-  const getOptionLabel = React.useCallback(
-    (option: FilterOption) => option.name || '',
-    []
-  );
+  const getOptionLabel = useCallback((option: FilterOption) => option.name || '', []);
 
-  const getFilterOptions = React.useCallback(
+  const getFilterOptions = useCallback(
     (_: any, params: FilterOptionsState<FilterOption>) =>
       filter(
         searchText
@@ -92,9 +92,9 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
     [searchText, facetOptions]
   );
 
-  const [facetOptionsLoading, setFacetOptionsLoading] = React.useState<boolean>(false);
+  const [facetOptionsLoading, setFacetOptionsLoading] = useState(false);
 
-  const handleFacetSearch = React.useCallback(
+  const handleFacetSearch = useCallback(
     useDebouncedCallback(() => {
       setFacetOptionsLoading(true);
       dispatch(
@@ -115,7 +115,7 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
     [getTermsSearchFacetOptions, setFacetOptionsLoading, setFacetOptions, searchText]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!autocompleteOpen) return;
     setFacetOptionsLoading(true);
     handleFacetSearch();
@@ -185,17 +185,13 @@ const MultipleFilterItemAutocomplete: React.FC<Props> = ({ name, facetName }) =>
       popupIcon={<DropdownIcon />}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppInput
-          {...params}
+        <Input
           sx={{ mt: 2 }}
-          placeholder='Search by name'
+          variant='main-m'
+          inputContainerRef={params.InputProps.ref}
+          inputProps={params.inputProps}
           label={name}
-          ref={params.InputProps.ref}
-          customEndAdornment={{
-            variant: 'loader',
-            showAdornment: autocompleteOpen && facetOptionsLoading,
-            position: { mr: -2 },
-          }}
+          placeholder={t('Search by name')}
         />
       )}
     />
