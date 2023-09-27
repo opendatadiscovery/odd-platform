@@ -86,8 +86,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .select(DSL
                 .coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.ORIGIN.eq(TagOrigin.EXTERNAL.name())), false)
                 .as(EXTERNAL_FIELD))
-            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
-            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
+            .select(DSL.count(TAG_TO_DATASET_FIELD.TAG_ID).as(COUNT_FIELD))
             .from(TAG)
             .leftJoin(TAG_TO_DATASET_FIELD).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(TAG.ID))
             .where(addSoftDeleteFilter(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)))
