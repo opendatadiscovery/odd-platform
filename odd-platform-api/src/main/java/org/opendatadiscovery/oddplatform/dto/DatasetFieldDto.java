@@ -15,7 +15,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 @Builder
 public class DatasetFieldDto {
     private DatasetFieldPojo datasetFieldPojo;
-    private List<LabelDto> labels;
+    private List<TagDto> tags;
     private List<DatasetFieldMetadataDto> metadata;
     private List<LinkedTermDto> terms;
     private Long parentFieldId;

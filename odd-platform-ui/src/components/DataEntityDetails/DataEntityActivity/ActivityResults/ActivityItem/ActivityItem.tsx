@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { ActivityEventType } from 'generated-sources';
-import { LabelItem, TagItem } from 'components/shared/elements';
+import { TagItem } from 'components/shared/elements';
 import {
   ActivityFieldHeader,
   AlertActivityField,
@@ -28,11 +28,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
     (name: string, important: boolean | undefined) => (
       <TagItem sx={{ backgroundColor: 'white' }} label={name} important={important} />
     ),
-    []
-  );
-
-  const labelStateItem = React.useCallback(
-    (name: string) => <LabelItem labelName={name} />,
     []
   );
 
@@ -111,15 +106,15 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ activity, hideAllDetails })
             plural
           />
         )}
-        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_LABELS_UPDATED]) && (
+        {isTypeRelatedTo([ActivityEventType.DATASET_FIELD_TAGS_UPDATED]) && (
           <ArrayActivityField
-            activityName={`${t('Labels')} ${t('in')} ${
+            activityName={`${t('Tags')} ${t('in')} ${
               activity.oldState.datasetFieldInformation?.name
             } ${t('column')}`}
-            oldState={activity.oldState.datasetFieldInformation?.labels}
-            newState={activity.newState.datasetFieldInformation?.labels}
+            oldState={activity.oldState.datasetFieldInformation?.tags}
+            newState={activity.newState.datasetFieldInformation?.tags}
             hideAllDetails={hideAllDetails}
-            stateItem={labelStateItem}
+            stateItem={tagStateItem}
             plural
           />
         )}

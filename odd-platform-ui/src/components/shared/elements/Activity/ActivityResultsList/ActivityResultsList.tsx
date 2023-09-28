@@ -1,10 +1,10 @@
 import React, { type ComponentType, type FC, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid, List, ListSubheader, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { SkeletonWrapper, Button } from 'components/shared/elements';
 import type { ActivitiesState } from 'redux/interfaces';
 import { type ActivityItemProps } from 'components/shared/elements/Activity/common';
-import { useTranslation } from 'react-i18next';
 import ActivityResultsItemSkeleton from '../ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsListStyles';
 

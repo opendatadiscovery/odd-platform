@@ -6,7 +6,6 @@ export * from './dataentityLineage.thunks';
 export * from './dataentitiesSearch.thunks';
 export * from './owners.thunks';
 export * from './tags.thunks';
-export * from './labels.thunks';
 export * from './namespace.thunks';
 export * from './profile.thunks';
 export * from './alerts.thunks';

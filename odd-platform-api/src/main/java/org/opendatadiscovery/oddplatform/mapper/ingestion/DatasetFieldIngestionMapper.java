@@ -24,7 +24,6 @@ import static java.util.Collections.emptyList;
 
 @Mapper(config = MapperConfig.class)
 public interface DatasetFieldIngestionMapper {
-    @Mapping(target = "labels", source = "tags")
     @Mapping(target = "field", source = ".")
     @Mapping(target = "metadata", source = "field.metadata", qualifiedByName = "mapFieldMetadata")
     @Mapping(target = "enumValues", source = "enumValues", qualifiedByName = "prepareEnumValues")
@@ -38,12 +37,12 @@ public interface DatasetFieldIngestionMapper {
     @Mapping(target = "externalDescription", source = "description")
     DatasetFieldPojo mapFieldToPojo(final DataSetField field);
 
-    default List<String> mapLabels(final List<Tag> labels) {
-        if (CollectionUtils.isEmpty(labels)) {
+    default List<String> mapTags(final List<Tag> tags) {
+        if (CollectionUtils.isEmpty(tags)) {
             return emptyList();
         }
 
-        return labels.stream().map(Tag::getName).toList();
+        return tags.stream().map(Tag::getName).toList();
     }
 
     default JSONB mapType(final DataSetFieldType type) {

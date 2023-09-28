@@ -62,7 +62,6 @@ export enum ManagementRoutes {
   collectors = 'collectors',
   owners = 'owners',
   tags = 'tags',
-  labels = 'labels',
   associations = 'associations',
   associationsViewType = 'associationsViewType',
   associationsViewTypeParam = ':associationsViewType',

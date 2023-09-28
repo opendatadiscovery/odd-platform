@@ -66,7 +66,7 @@ class LineageMapperTest {
                 ),
                 new DatasetVersionMapperImpl(
                     new DatasetFieldApiMapperImpl(
-                        new LabelMapperImpl(), new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()),
+                        new TagMapperImpl(), new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()),
                         termMapper
                     ),
                     new DateTimeMapperImpl()

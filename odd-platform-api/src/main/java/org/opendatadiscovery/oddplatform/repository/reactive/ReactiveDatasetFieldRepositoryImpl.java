@@ -9,9 +9,9 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithLabelsDto;
+import org.opendatadiscovery.oddplatform.dto.DatasetFieldWithTagsDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetFieldRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -28,8 +28,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 
 @Repository
 @Slf4j
@@ -102,25 +102,25 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    public Mono<DatasetFieldWithLabelsDto> getDatasetFieldWithLabels(final long datasetFieldId) {
+    public Mono<DatasetFieldWithTagsDto> getDatasetFieldWithTags(final long datasetFieldId) {
         final var query = DSL.select(DATASET_FIELD.fields())
-            .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
+            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as("tags"))
             .from(DATASET_FIELD)
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
-            .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.DELETED_AT.isNull())
+            .leftJoin(TAG_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID))
+            .leftJoin(TAG).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(TAG.ID)).and(TAG.DELETED_AT.isNull())
             .where(DATASET_FIELD.ID.eq(datasetFieldId))
             .groupBy(DATASET_FIELD.fields());
 
         return jooqReactiveOperations.mono(query)
-            .map(this::mapRecordToDatasetFieldWithLabels);
+            .map(this::mapRecordToDatasetFieldWithTags);
     }
 
     @NotNull
-    private DatasetFieldWithLabelsDto mapRecordToDatasetFieldWithLabels(final Record datasetFieldRecord) {
+    private DatasetFieldWithTagsDto mapRecordToDatasetFieldWithTags(final Record datasetFieldRecord) {
         final DatasetFieldPojo pojo = datasetFieldRecord.into(DatasetFieldPojo.class);
-        final Set<LabelPojo> labels = jooqRecordHelper
-            .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
+        final Set<TagPojo> tags = jooqRecordHelper
+            .extractAggRelation(datasetFieldRecord, "tags", TagPojo.class);
 
-        return new DatasetFieldWithLabelsDto(pojo, labels);
+        return new DatasetFieldWithTagsDto(pojo, tags);
     }
 }

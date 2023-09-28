@@ -17,9 +17,9 @@ export const updateDataSetFieldDescriptionActionType = createActionType(
   'updateDataSetFieldDescription'
 );
 
-export const updateDataSetFieldLabelsActionType = createActionType(
+export const updateDataSetFieldTagsActionType = createActionType(
   datasetStructureActionTypePrefix,
-  'updateDataSetFieldLabels'
+  'updateDataSetFieldTags'
 );
 
 export const fetchDataSetFieldEnumActionType = createActionType(
