@@ -3,8 +3,10 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.dto.TagOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToTermPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
@@ -14,6 +16,10 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
     Mono<TagDto> getDto(final long id);
 
     Mono<List<TagDto>> listDataEntityDtos(final Long dataEntityId);
+
+    Mono<List<TagDto>> listDatasetFieldDtos(long datasetFieldId);
+
+    Flux<TagToDatasetFieldPojo> listTagsRelations(Collection<Long> datasetFieldIds, TagOrigin origin);
 
     Flux<TagPojo> listByNames(final Collection<String> names);
 
@@ -31,9 +37,17 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
 
     Flux<TagToDataEntityPojo> deleteDataEntityRelations(final long tagId);
 
+    Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(final long tagId);
+
+    Flux<TagToDatasetFieldPojo> deleteDatasetFieldRelations(List<TagToDatasetFieldPojo> pojos);
+
     Flux<TagToTermPojo> createTermRelations(final long termId, final Collection<Long> tagIds);
+
+    Flux<TagToDatasetFieldPojo> createDatasetFieldRelations(Collection<TagToDatasetFieldPojo> pojos);
 
     Flux<TagToTermPojo> deleteTermRelations(final long termId, final Collection<Long> tagIds);
 
     Flux<TagToTermPojo> deleteTermRelations(final long tagId);
+
+    Flux<TagToDatasetFieldPojo> deleteDatasetFieldInternalRelations(long datasetFieldId);
 }

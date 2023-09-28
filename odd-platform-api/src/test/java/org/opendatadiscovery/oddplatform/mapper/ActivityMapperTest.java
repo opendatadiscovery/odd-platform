@@ -40,7 +40,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityS
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityStatusUpdatedDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldEnumValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
-import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldLabelActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTagActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldTermsActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
@@ -219,7 +219,7 @@ public class ActivityMapperTest {
             case DESCRIPTION_UPDATED -> generateDescriptionState();
             case BUSINESS_NAME_UPDATED -> generateBusinessNameState();
             case DATASET_FIELD_VALUES_UPDATED -> generateDatasetFieldValuesState();
-            case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED, DATASET_FIELD_INTERNAL_NAME_UPDATED ->
+            case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_TAGS_UPDATED, DATASET_FIELD_INTERNAL_NAME_UPDATED ->
                 generateDatasetFieldInformationState();
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED -> generateCustomGroupState();
             case ALERT_HALT_CONFIG_UPDATED -> generateAlertHaltConfigState();
@@ -305,7 +305,7 @@ public class ActivityMapperTest {
             UUID.randomUUID().toString(),
             JSONB.jsonb("{\"type\": \"TYPE_INTEGER\", \"is_nullable\": true, \"logical_type\": \"integer\"}"),
             UUID.randomUUID().toString(),
-            GENERATOR.objects(DatasetFieldLabelActivityStateDto.class, 5).toList()
+            GENERATOR.objects(DatasetFieldTagActivityStateDto.class, 5).toList()
         );
         return JSONSerDeUtils.serializeJson(state);
     }

@@ -1,49 +1,52 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import type {
-  AutocompleteInputChangeReason,
-  FilterOptionsState,
+import {
+  type AutocompleteInputChangeReason,
+  type FilterOptionsState,
+  createFilterOptions,
 } from '@mui/material/useAutocomplete';
-import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import type { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { useTranslation } from 'react-i18next';
-import { fetchLabelsList as searchLabels } from 'redux/thunks';
+import { type Tag } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
-import type { Label } from 'generated-sources';
-import { AutocompleteSuggestion, Input } from 'components/shared/elements';
+import { Input, AutocompleteSuggestion } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
+import { fetchTagsList as searchTags } from 'redux/thunks';
+import { OptionsContainer } from '../TagsEditFormStyles';
 
-type FilterOption = Omit<Label, 'id'> & Partial<Label>;
-type DatasetFieldLabelsFormData = {
-  labels: Omit<Label, 'id'>[];
+type DatasetFieldTagsFormType = {
+  tagNames: Pick<Tag, 'name' | 'important' | 'external'>[];
 };
 
-interface LabelsAutocompleteProps {
-  appendLabel: UseFieldArrayAppend<DatasetFieldLabelsFormData, 'labels'>;
+interface TagsEditFormAutocompleteProps {
+  append: UseFieldArrayAppend<DatasetFieldTagsFormType, 'tagNames'>;
 }
 
-const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) => {
+const TagsEditFormAutocomplete: React.FC<TagsEditFormAutocompleteProps> = ({
+  append,
+}) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
+  type FilterOption = Omit<Tag, 'id'> & Partial<Tag>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [searchText, setSearchText] = React.useState('');
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [searchText, setSearchText] = React.useState<string>('');
   const filter = createFilterOptions<FilterOption>();
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      dispatch(searchLabels({ page: 1, size: 30, query: searchText }))
+      dispatch(searchTags({ page: 1, size: 30, query: searchText }))
         .unwrap()
         .then(({ items }) => {
           setLoading(false);
           setOptions(items);
         });
     }, 500),
-    [searchLabels, setLoading, setOptions, searchText]
+    [searchTags, setLoading, setOptions, searchText]
   );
 
   const getOptionLabel = React.useCallback((option: FilterOption | string) => {
@@ -57,7 +60,7 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
   }, []);
 
   const getFilterOptions = React.useCallback(
-    (filterOptions: FilterOption[], params: FilterOptionsState<FilterOption>) => {
+    (_: FilterOption[], params: FilterOptionsState<FilterOption>) => {
       const filtered = filter(options, params);
       if (
         searchText !== '' &&
@@ -80,10 +83,9 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
       reason: AutocompleteInputChangeReason
     ) => {
       if (reason === 'input') {
-        setSearchText(query);
-      } else {
-        setSearchText(''); // Clear input on select
+        return setSearchText(query);
       }
+      setSearchText(''); // Clear input on select
     },
     [setSearchText]
   );
@@ -101,15 +103,13 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    appendLabel(
-      typeof value === 'string' ? { name: value } : { ...value, external: false }
-    );
+    append(typeof value === 'string' ? { name: value } : { ...value, external: false });
   };
 
   return (
     <Autocomplete
       fullWidth
-      id='datasetfield-label-add-name-search'
+      id='dataentity-tag-add-name-search'
       open={autocompleteOpen}
       onOpen={() => setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
@@ -131,24 +131,26 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({ appendLabel }) 
           variant='main-m'
           inputContainerRef={params.InputProps.ref}
           inputProps={params.inputProps}
-          label={t('Label')}
-          placeholder={t('Enter label name')}
+          label={t('Tag')}
+          placeholder={t('Enter tag name')}
           isLoading={loading}
         />
       )}
       renderOption={(props, option) => (
         <li {...props}>
-          <Typography variant='body1'>
-            {option.id ? (
-              option.name
-            ) : (
-              <AutocompleteSuggestion optionLabel='label' optionName={option.name} />
-            )}
-          </Typography>
+          <OptionsContainer $isImportant={option.important}>
+            <Typography variant='body1'>
+              {option.id ? (
+                option.name
+              ) : (
+                <AutocompleteSuggestion optionLabel='tag' optionName={option.name} />
+              )}
+            </Typography>
+          </OptionsContainer>
         </li>
       )}
     />
   );
 };
 
-export default LabelsAutocomplete;
+export default TagsEditFormAutocomplete;

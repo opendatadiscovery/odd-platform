@@ -78,7 +78,6 @@ interface ManagementRouteViewTypes {
     | ManagementRoutes.collectors
     | ManagementRoutes.owners
     | ManagementRoutes.tags
-    | ManagementRoutes.labels
     | ManagementRoutes.associations
     | ManagementRoutes.roles
     | ManagementRoutes.policies

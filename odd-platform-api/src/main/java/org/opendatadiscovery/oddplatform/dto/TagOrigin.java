@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.dto;
 
-public enum LabelOrigin {
-    ALL,
+public enum TagOrigin {
     INTERNAL,
     EXTERNAL,
     EXTERNAL_STATISTICS

@@ -15,7 +15,6 @@ import {
   DataSourceApi,
   FeatureApi,
   IdentityApi,
-  LabelApi,
   LinksApi,
   MetadataApi,
   NamespaceApi,
@@ -58,7 +57,6 @@ export const dataQualityApi = new DataQualityApi(apiConf);
 export const datasetApiClient = new DataSetApi(apiConf);
 export const datasetFieldApiClient = new DatasetFieldApi(apiConf);
 export const dataSourceApi = new DataSourceApi(apiConf);
-export const labelApi = new LabelApi(apiConf);
 export const metadataApi = new MetadataApi(apiConf);
 export const namespaceApi = new NamespaceApi(apiConf);
 export const ownerAssociationRequestApi = new OwnerAssociationRequestApi(apiConf);

@@ -149,15 +149,15 @@ export const datasetStructureSlice = createSlice({
       }
     );
     builder.addCase(
-      thunks.updateDataSetFieldLabels.fulfilled,
+      thunks.updateDataSetFieldTags.fulfilled,
       (state, { payload }): DatasetStructureState => {
-        const { entityId: datasetFieldId, labels } = payload;
+        const { entityId: datasetFieldId, tags } = payload;
 
         return {
           ...state,
           fieldById: {
             ...state.fieldById,
-            [datasetFieldId]: { ...state.fieldById[datasetFieldId], labels },
+            [datasetFieldId]: { ...state.fieldById[datasetFieldId], tags },
           },
         };
       }

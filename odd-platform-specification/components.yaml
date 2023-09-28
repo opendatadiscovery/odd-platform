@@ -176,7 +176,7 @@ components:
         - DATASET_TEST_RUN_SET_SEVERITY
         - DATASET_FIELD_DESCRIPTION_UPDATE
         - DATASET_FIELD_INTERNAL_NAME_UPDATE
-        - DATASET_FIELD_LABELS_UPDATE
+        - DATASET_FIELD_TAGS_UPDATE
         - DATASET_FIELD_ENUMS_UPDATE
         - DATASET_FIELD_ADD_TERM
         - DATASET_FIELD_DELETE_TERM
@@ -205,9 +205,6 @@ components:
         - TAG_CREATE
         - TAG_UPDATE
         - TAG_DELETE
-        - LABEL_CREATE
-        - LABEL_UPDATE
-        - LABEL_DELETE
         - OWNER_CREATE
         - OWNER_UPDATE
         - OWNER_DELETE
@@ -682,8 +679,8 @@ components:
           type: string
         external_description:
           type: string
-        labels:
-          $ref: '#/components/schemas/LabelList'
+        tags:
+          $ref: '#/components/schemas/TagList'
 
     DataEntityClass:
       type: object
@@ -1636,8 +1633,8 @@ components:
           type: string
         internal_description:
           type: string
-        labels:
-          $ref: '#/components/schemas/LabelList'
+        tags:
+          $ref: '#/components/schemas/TagList'
         enum_value_count:
           type: integer
         metadata:
@@ -1689,10 +1686,10 @@ components:
         description:
           type: string
 
-    DatasetFieldLabelsUpdateFormData:
+    DatasetFieldTagsUpdateFormData:
       type: object
       properties:
-        labels:
+        tags:
           type: array
           items:
             type: string
@@ -1831,7 +1828,7 @@ components:
             $ref: '#/components/schemas/EnumValueFormData'
 
     Label:
-      description: DatasetField label
+      description: Exemplar label
       type: object
       properties:
         id:
@@ -1839,40 +1836,9 @@ components:
           format: int64
         name:
           type: string
-        external:
-          type: boolean
       required:
         - id
         - name
-
-    LabelList:
-      type: array
-      items:
-        $ref: '#/components/schemas/Label'
-
-    LabelsResponse:
-      type: object
-      properties:
-        items:
-          $ref: '#/components/schemas/LabelList'
-        page_info:
-          $ref: '#/components/schemas/PageInfo'
-      required:
-        - items
-        - page_info
-
-    LabelFormData:
-      type: object
-      properties:
-        name:
-          type: string
-      required:
-        - name
-
-    BulkLabelFormData:
-      type: array
-      items:
-        $ref: '#/components/schemas/LabelFormData'
 
     DataEntityLineageNode:
       type: object
@@ -2798,19 +2764,10 @@ components:
           $ref: '#/components/schemas/DataSetFieldType'
         description:
           type: string
-        labels:
+        tags:
           type: array
           items:
-            $ref: '#/components/schemas/LabelsActivityState'
-
-    LabelsActivityState:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
+            $ref: '#/components/schemas/TagActivityState'
 
     CustomGroupActivityState:
       type: object
@@ -2921,7 +2878,7 @@ components:
         - DATASET_FIELD_VALUES_UPDATED
         - DATASET_FIELD_DESCRIPTION_UPDATED
         - DATASET_FIELD_INTERNAL_NAME_UPDATED
-        - DATASET_FIELD_LABELS_UPDATED
+        - DATASET_FIELD_TAGS_UPDATED
         - DATASET_FIELD_TERM_ASSIGNMENT_UPDATED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED

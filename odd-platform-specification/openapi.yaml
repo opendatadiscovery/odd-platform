@@ -17,7 +17,6 @@ tags:
   - name: namespace
   - name: title
   - name: tag
-  - name: label
   - name: dataSource
   - name: search
   - name: dataSet
@@ -417,88 +416,6 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - tag
-
-  /api/labels:
-    get:
-      summary: List of structure field labels
-      description: Gets the list of existing labels
-      operationId: getLabelList
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/PageParam'
-        - $ref: './components.yaml/#/components/parameters/SizeParam'
-        - $ref: './components.yaml/#/components/parameters/SearchParam'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/LabelsResponse'
-      tags:
-        - label
-    post:
-      summary: Create a label
-      description: Creates a label
-      operationId: createLabel
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/BulkLabelFormData'
-      responses:
-        '201':
-          description: The resource has been successfully created
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/LabelList'
-      tags:
-        - label
-
-  /api/labels/{label_id}:
-    put:
-      summary: Update label
-      description: Updates existing label
-      operationId: updateLabel
-      parameters:
-        - name: label_id
-          in: path
-          schema:
-            type: integer
-            format: int64
-          required: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/LabelFormData'
-      responses:
-        '201':
-          description: The resource has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/Label'
-      tags:
-        - label
-    delete:
-      summary: Delete label
-      description: Deletes existing label
-      operationId: deleteLabel
-      parameters:
-        - name: label_id
-          in: path
-          schema:
-            type: integer
-            format: int64
-          required: true
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
-      tags:
-        - label
 
   /api/datasources:
     get:
@@ -2170,11 +2087,11 @@ paths:
       tags:
         - datasetField
 
-  /api/datasetfields/{dataset_field_id}/labels:
+  /api/datasetfields/{dataset_field_id}/tags:
     put:
-      summary: Update DatasetField's labels
-      description: Updates DatasetField's labels
-      operationId: updateDatasetFieldLabels
+      summary: Update DatasetField's tags
+      description: Updates DatasetField's tags
+      operationId: updateDatasetFieldTags
       parameters:
         - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
       requestBody:
@@ -2182,14 +2099,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DatasetFieldLabelsUpdateFormData'
+              $ref: './components.yaml/#/components/schemas/DatasetFieldTagsUpdateFormData'
       responses:
         '201':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/LabelList'
+                $ref: './components.yaml/#/components/schemas/TagList'
       tags:
         - datasetField
 

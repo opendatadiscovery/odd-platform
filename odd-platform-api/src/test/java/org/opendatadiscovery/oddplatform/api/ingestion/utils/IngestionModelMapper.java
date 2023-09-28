@@ -18,14 +18,13 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DateTimeFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.IntegerFieldStat;
-import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldOrigin;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.api.contract.model.NumberFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.StringFieldStat;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 
@@ -118,8 +117,8 @@ public class IngestionModelMapper {
 
         final DataSetFieldStat stats = buildExpectedDataSetFieldStat(field.getStats());
 
-        final List<Label> labels = field.getTags().stream()
-            .map(d -> new Label().name(d.getName()).external(true))
+        final List<Tag> tags = field.getTags().stream()
+            .map(d -> new Tag().name(d.getName()).external(true).important(false))
             .toList();
 
         final List<MetadataFieldValue> metadataFieldValues = Optional.ofNullable(field.getMetadata())
@@ -134,7 +133,7 @@ public class IngestionModelMapper {
             .type(expectedType)
             .stats(stats)
             .isKey(field.getIsKey())
-            .labels(labels)
+            .tags(tags)
             .isValue(field.getIsValue())
             .isSortKey(field.getIsSortKey())
             .isPrimaryKey(field.getIsPrimaryKey())

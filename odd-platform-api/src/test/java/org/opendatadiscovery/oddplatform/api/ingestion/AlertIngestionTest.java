@@ -33,6 +33,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTes
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.JobRunStatus;
@@ -55,9 +56,16 @@ public class AlertIngestionTest extends BaseIngestionTest {
     public void backwardsIncompatibleAlertIngestionTest() {
         final DataSource createdDataSource = createDataSource();
 
+        final List<DataSetField> fieldList = IngestionModelGenerator.generateDatasetFields(5);
+
+        for (final DataSetField field : fieldList) {
+            field.setEnumValues(IngestionModelGenerator.generateDataSetFieldEnumValues(5));
+        }
+
         final DataEntity datasetToIngest = IngestionModelGenerator
             .generateSimpleDataEntity(DataEntityType.TABLE)
-            .dataset(new DataSet().fieldList(IngestionModelGenerator.generateDatasetFields(5)).rowsNumber(1000L));
+            .type(DataEntityType.TABLE)
+            .dataset(new DataSet().fieldList(fieldList).rowsNumber(1000L));
 
         final var dataEntityList = new DataEntityList()
             .dataSourceOddrn(createdDataSource.getOddrn())

@@ -17,7 +17,7 @@ import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 
-@Mapper(config = MapperConfig.class, uses = {LabelMapper.class, MetadataFieldValueMapper.class, TermMapper.class})
+@Mapper(config = MapperConfig.class, uses = {TagMapper.class, MetadataFieldValueMapper.class, TermMapper.class})
 public interface DatasetFieldApiMapper {
 
     @Mapping(source = "datasetFieldPojo", target = ".")

@@ -120,7 +120,7 @@ public abstract class ActivityMapper {
             case BUSINESS_NAME_UPDATED -> mapBusinessNameState(jsonb);
             case DATA_ENTITY_STATUS_UPDATED -> mapDataEntityStatusState(jsonb);
             case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValuesState(jsonb);
-            case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED, DATASET_FIELD_INTERNAL_NAME_UPDATED ->
+            case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_TAGS_UPDATED, DATASET_FIELD_INTERNAL_NAME_UPDATED ->
                 mapDatasetFieldInformationState(jsonb);
             case DATASET_FIELD_TERM_ASSIGNMENT_UPDATED -> mapDatasetFieldTermState(jsonb);
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED -> mapCustomGroupState(jsonb);

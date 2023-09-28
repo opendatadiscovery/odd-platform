@@ -16,7 +16,6 @@ import type {
   DataSetVersion,
   DataSource,
   Feature,
-  Label,
   MetadataField,
   MetadataFieldValue,
   Namespace,
@@ -60,10 +59,6 @@ export interface CollectorsState extends EntityState<Collector> {
 }
 
 export interface TagsState extends EntityState<Tag> {
-  pageInfo: CurrentPageInfo;
-}
-
-export interface LabelsState extends EntityState<Label> {
   pageInfo: CurrentPageInfo;
 }
 

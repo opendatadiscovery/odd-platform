@@ -1,9 +1,9 @@
 import React, { type FC, useEffect, useMemo, useState } from 'react';
+import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
-import { Grid } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 
 const ManagementTabs: FC = () => {
   const { t } = useTranslation();
@@ -26,7 +26,6 @@ const ManagementTabs: FC = () => {
       { name: t('Collectors'), link: ManagementRoutes.collectors },
       { name: t('Owners'), link: ManagementRoutes.owners },
       { name: t('Tags'), link: ManagementRoutes.tags },
-      { name: t('Labels'), link: ManagementRoutes.labels },
       {
         name: t('Associations'),
         link: ManagementRoutes.associations,

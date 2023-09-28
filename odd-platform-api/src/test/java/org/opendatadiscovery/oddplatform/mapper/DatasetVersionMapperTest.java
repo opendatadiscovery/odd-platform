@@ -16,12 +16,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
-import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 
 import static org.jooq.JSONB.jsonb;
@@ -34,7 +34,7 @@ class DatasetVersionMapperTest {
     @InjectMocks
     DatasetVersionMapper datasetVersionMapper =
         new DatasetVersionMapperImpl(
-            new DatasetFieldApiMapperImpl(new LabelMapperImpl(),
+            new DatasetFieldApiMapperImpl(new TagMapperImpl(),
                 new MetadataFieldValueMapperImpl(new MetadataFieldMapperImpl()), new TermMapperImpl(
                 new NamespaceMapperImpl(),
                 new DateTimeMapperImpl(),
@@ -68,13 +68,13 @@ class DatasetVersionMapperTest {
         final DatasetFieldPojo datasetFieldPojo = EASY_RANDOM.nextObject(DatasetFieldPojo.class);
         final DataSetFieldStat dataSetFieldStat = EASY_RANDOM.nextObject(DataSetFieldStat.class);
         final DataSetFieldType dataSetFieldType = EASY_RANDOM.nextObject(DataSetFieldType.class);
-        final LabelPojo labelPojo = EASY_RANDOM.nextObject(LabelPojo.class);
+        final TagPojo tagPojo = EASY_RANDOM.nextObject(TagPojo.class);
 
         final DatasetFieldDto datasetFieldDto = new DatasetFieldDto();
         datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
         datasetFieldDto.setParentFieldId(1L);
         datasetFieldDto.setEnumValueCount(2);
-        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
+        datasetFieldDto.setTags(List.of(new TagDto(tagPojo, 1L,  false)));
         datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
         datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
 

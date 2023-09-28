@@ -5,7 +5,6 @@ import namespaces from './namespace.slice';
 import dataSources from './datasources.slice';
 import dataEntities from './dataentities.slice';
 import tags from './tags.slice';
-import labels from './labels.slice';
 import dataEntitySearch from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
 import owners from './owners.slice';
@@ -36,7 +35,6 @@ export default combineReducers({
   metaData,
   owners,
   datasetStructure,
-  labels,
   dataEntityLineage,
   profile,
   dataQualityTest,

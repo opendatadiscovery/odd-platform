@@ -30,7 +30,7 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
         {field?.isSortKey && <KeyFieldLabel sx={{ ml: 1 }} keyType='sort' />}
         {field?.type.isNullable && <KeyFieldLabel sx={{ ml: 1 }} keyType='nullable' />}
         <WithPermissions
-          permissionTo={Permission.DATASET_FIELD_LABELS_UPDATE}
+          permissionTo={Permission.DATASET_FIELD_INTERNAL_NAME_UPDATE}
           renderContent={({ isAllowedTo: editInternalName }) => (
             <DatasetFieldInternalNameForm
               datasetFieldId={field.id}

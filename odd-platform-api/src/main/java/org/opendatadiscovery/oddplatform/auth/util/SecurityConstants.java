@@ -19,7 +19,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_DESCRIPTION_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_ENUMS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_INTERNAL_NAME_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_LABELS_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_FIELD_TAGS_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATASET_TEST_RUN_SET_SEVERITY;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_ENTITY_ADD_TO_GROUP;
@@ -43,9 +43,6 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_TOKEN_REGENERATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_UPDATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_CREATE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_DELETE;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LABEL_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_UPDATE;
@@ -120,11 +117,6 @@ public final class SecurityConstants {
             TAG_UPDATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/tags/{tag_id}", DELETE),
             TAG_DELETE),
-        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels", POST), LABEL_CREATE),
-        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels/{label_id}", PUT),
-            LABEL_UPDATE),
-        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/labels/{label_id}", DELETE),
-            LABEL_DELETE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners", POST), OWNER_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/owners/{owner_id}", PUT),
             OWNER_UPDATE),
@@ -256,8 +248,8 @@ public final class SecurityConstants {
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/description", PUT),
             DATASET_FIELD_DESCRIPTION_UPDATE),
         new SecurityRule(DATASET_FIELD,
-            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/labels", PUT),
-            DATASET_FIELD_LABELS_UPDATE),
+            new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/tags", PUT),
+            DATASET_FIELD_TAGS_UPDATE),
         new SecurityRule(
             DATASET_FIELD,
             new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/enum_values", POST),

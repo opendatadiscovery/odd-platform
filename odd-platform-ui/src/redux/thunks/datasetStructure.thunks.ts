@@ -4,9 +4,9 @@ import type {
   DatasetFieldApiCreateEnumValueRequest,
   DatasetFieldApiGetEnumValuesRequest,
   DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
-  DatasetFieldApiUpdateDatasetFieldLabelsRequest,
+  DatasetFieldApiUpdateDatasetFieldTagsRequest,
   DataSetFieldDescription,
-  Label,
+  Tag,
 } from 'generated-sources';
 import type {
   DataSetFieldEnumsResponse,
@@ -74,20 +74,20 @@ export const updateDataSetFieldDescription = handleResponseAsyncThunk<
   }
 );
 
-export const updateDataSetFieldLabels = handleResponseAsyncThunk<
-  RelatedToEntityId<{ labels: Label[] }>,
-  DatasetFieldApiUpdateDatasetFieldLabelsRequest
+export const updateDataSetFieldTags = handleResponseAsyncThunk<
+  RelatedToEntityId<{ tags: Tag[] }>,
+  DatasetFieldApiUpdateDatasetFieldTagsRequest
 >(
-  actions.updateDataSetFieldLabelsActionType,
+  actions.updateDataSetFieldTagsActionType,
   async params => {
-    const labels = await datasetFieldApiClient.updateDatasetFieldLabels(params);
+    const tags = await datasetFieldApiClient.updateDatasetFieldTags(params);
 
-    return { entityId: params.datasetFieldId, labels };
+    return { entityId: params.datasetFieldId, tags };
   },
   {
     setSuccessOptions: ({ datasetFieldId }) => ({
-      id: `DatasetField-labels-updating-${datasetFieldId}`,
-      message: `Dataset field labels successfully updated.`,
+      id: `DatasetField-tags-updating-${datasetFieldId}`,
+      message: `Dataset field tags successfully updated.`,
     }),
   }
 );

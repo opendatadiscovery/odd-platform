@@ -15,7 +15,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -43,7 +42,6 @@ public class FTSConstants {
         Map.entry(DATASET_FIELD.INTERNAL_DESCRIPTION, "C"),
         Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
         Map.entry(DATASET_FIELD.INTERNAL_NAME, "C"),
-        Map.entry(LABEL.NAME, "C"),
         Map.entry(TITLE.NAME, "D"),
         Map.entry(OWNER.NAME, "C")
     );
