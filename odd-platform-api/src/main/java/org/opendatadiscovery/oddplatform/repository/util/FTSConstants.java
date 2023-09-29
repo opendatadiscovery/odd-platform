@@ -11,7 +11,10 @@ import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.select;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
@@ -20,6 +23,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALU
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
@@ -63,7 +67,19 @@ public class FTSConstants {
             FacetType.NAMESPACES, filters -> NAMESPACE.ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
             FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-            FacetType.TAGS, filters -> TAG_TO_DATA_ENTITY.TAG_ID.in(extractFilterId(filters)),
+            FacetType.TAGS, filters -> TAG_TO_DATA_ENTITY.TAG_ID.in(extractFilterId(filters))
+                .or(DATASET_VERSION.ID.in(select(DATASET_STRUCTURE.DATASET_VERSION_ID)
+                    .from(DATASET_STRUCTURE)
+                    .join(DATASET_FIELD)
+                    .on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+                    .join(TAG_TO_DATASET_FIELD)
+                    .on(TAG_TO_DATASET_FIELD.TAG_ID.in(extractFilterId(filters))
+                        .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID)))
+                    .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
+                        select(DSL.max(DATASET_VERSION.ID))
+                            .from(DATASET_VERSION)
+                            .groupBy(DATASET_VERSION.DATASET_ODDRN)))
+                   )),
             FacetType.GROUPS, filters -> {
                 final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
                     .from(DATA_ENTITY)
