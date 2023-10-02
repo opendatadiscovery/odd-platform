@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
+import TruncateMarkup from 'react-truncate-markup';
+import { useTranslation } from 'react-i18next';
 import { deleteRole } from 'redux/thunks';
 import { Permission, type Role } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
-import TruncateMarkup from 'react-truncate-markup';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import RoleForm from '../RoleForm/RoleForm';
 import * as S from './RoleItemStyles';
 
@@ -24,7 +24,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
   const isUser = name === 'User';
   const isAdministrator = name === 'Administrator';
 
-  const handleDelete = React.useCallback(
+  const handleDelete = useCallback(
     () => dispatch(deleteRole({ roleId })),
     [roleId, deleteRole]
   );
@@ -49,7 +49,7 @@ const RoleItem: React.FC<RoleItemProps> = ({ roleId, name, policies }) => {
           </div>
         </TruncateMarkup>
       </Grid>
-      <Grid item lg={1.74}>
+      <Grid item lg={2}>
         <S.ActionsContainer container item>
           <WithPermissions
             permissionTo={Permission.ROLE_UPDATE}
