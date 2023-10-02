@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { deletePolicy, deleteRole } from 'redux/thunks';
 import { Permission, type Policy } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
@@ -7,7 +8,6 @@ import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import * as S from './PolicyItemStyles';
 
 interface PolicyItemProps {
@@ -22,7 +22,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
 
   const isAdministrator = name === 'Administrator';
 
-  const handleDelete = React.useCallback(
+  const handleDelete = useCallback(
     () => dispatch(deletePolicy({ policyId })),
     [policyId, deleteRole]
   );
@@ -35,7 +35,7 @@ const PolicyItem: React.FC<PolicyItemProps> = ({ policyId, name }) => {
         </Typography>
       </Grid>
       <Grid item container lg={6.73} flexWrap='nowrap' />
-      <Grid item lg={1.74}>
+      <Grid item lg={2}>
         <S.ActionsContainer container item>
           <Button
             text={
