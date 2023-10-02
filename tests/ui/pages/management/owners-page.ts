@@ -5,9 +5,8 @@ import ManagementPage from './management-page';
 
 const SELECTORS = {
   createOwner: `button:has-text("Create Owner")`,
-  ownerLineRoot: 'div[class*="MuiGrid-root MuiGrid-container css-1d3bbye"]',
-  ownerLineItem: 'div[class*="MuiGrid-root MuiGrid-container sc-fulCBj jdVknn css-1d3bbye"]',
-  ownerDescription: (owner: string) => `div[class*="MuiGrid-container"]:has-text("${owner}")`,
+  ownerLineRoot: 'div#owners-list',
+  ownerLineItem: 'p.css-1cbt2p6',
 };
 
 export default class OwnersPage extends ManagementPage {
