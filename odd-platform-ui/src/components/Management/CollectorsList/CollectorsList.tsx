@@ -17,15 +17,15 @@ import {
   EmptyContentPlaceholder,
   Input,
   NumberFormatted,
+  ScrollableContainer,
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import CollectorForm from './CollectorForm/CollectorForm';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
 import CollectorItem from './CollectorItem/CollectorItem';
-import { CollectorCaption } from './CollectorsListStyles';
 
-const CollectorsListView: React.FC = () => {
+const CollectorsListView = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -72,13 +72,13 @@ const CollectorsListView: React.FC = () => {
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
-      <CollectorCaption container sx={{ mb: 1 }}>
+      <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Collectors')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalCollectors} /> {t('collectors overall')}
         </Typography>
-      </CollectorCaption>
-      <CollectorCaption container sx={{ mb: 2 }}>
+      </Grid>
+      <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 2 }}>
         <Input
           variant='search-m'
           placeholder={t('Search collector')}
@@ -99,14 +99,15 @@ const CollectorsListView: React.FC = () => {
             }
           />
         </WithPermissions>
-      </CollectorCaption>
-      <Grid container>
-        <Grid item xs={12}>
+      </Grid>
+      {collectorsList.length > 0 && (
+        <ScrollableContainer container id='collectors-list'>
           <InfiniteScroll
+            scrollableTarget='collectors-list'
             next={fetchNextPage}
             hasMore={hasNext}
             dataLength={collectorsList.length}
-            loader={isCollectorsListFetching && <CollectorSkeletonItem length={5} />}
+            loader={<CollectorSkeletonItem length={5} />}
           >
             {collectorsList.map(collector => (
               <Grid key={collector.id} sx={{ mb: 1 }}>
@@ -114,10 +115,10 @@ const CollectorsListView: React.FC = () => {
               </Grid>
             ))}
           </InfiniteScroll>
-        </Grid>
-      </Grid>
+        </ScrollableContainer>
+      )}
       {!isCollectorsListFetching && !collectorsList.length ? (
-        <EmptyContentPlaceholder />
+        <EmptyContentPlaceholder offsetTop={170} />
       ) : null}
     </Grid>
   );

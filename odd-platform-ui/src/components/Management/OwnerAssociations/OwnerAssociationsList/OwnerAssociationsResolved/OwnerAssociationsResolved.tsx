@@ -2,6 +2,7 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getOwnerAssociationRequestsListFetchingError,
@@ -9,9 +10,12 @@ import {
   getResolvedAssociationRequestsList,
   getResolvedOwnerAssociationRequestsPageInfo,
 } from 'redux/selectors';
-import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
+import {
+  AppErrorPage,
+  EmptyContentPlaceholder,
+  ScrollableContainer,
+} from 'components/shared/elements';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
-import { useTranslation } from 'react-i18next';
 import ManagementSkeletonItem from '../../../ManagementSkeletonItem/ManagementSkeletonItem';
 import ResolvedAssociationRequest from './ResolvedAssociationRequest/ResolvedAssociationRequest';
 import { queryAtom } from '../../OwnerAssociationsStore/OwnerAssociationsAtoms';
@@ -31,11 +35,8 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
   const { hasNext, page } = useAppSelector(getResolvedOwnerAssociationRequestsPageInfo);
   const requestList = useAppSelector(getResolvedAssociationRequestsList);
 
-  const {
-    isLoading: isRequestsListFetching,
-    isLoaded: isRequestsListFetched,
-    isNotLoaded: isRequestsListNotFetched,
-  } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
+  const { isLoaded: isRequestsListFetched, isNotLoaded: isRequestsListNotFetched } =
+    useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
   const ownerAssociationRequestsListFetchingError = useAppSelector(
     getOwnerAssociationRequestsListFetchingError
   );
@@ -80,14 +81,15 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
           {tableCellText(t('Resolved at'))}
         </Grid>
       </S.TableHeader>
-      <Grid container>
-        <Grid item xs={12}>
+      {requestList.length > 0 && (
+        <ScrollableContainer container id='resolved-associations-list'>
           <InfiniteScroll
+            scrollableTarget='resolved-associations-list'
             next={fetchNextPage}
             hasMore={hasNext}
             dataLength={requestList.length}
             scrollThreshold='200px'
-            loader={isRequestsListFetching && <ManagementSkeletonItem />}
+            loader={<ManagementSkeletonItem />}
           >
             {requestList?.map(request => (
               <ResolvedAssociationRequest
@@ -101,8 +103,8 @@ const OwnerAssociationsResolved: React.FC<OwnerAssociationsResolvedProps> = ({
               />
             ))}
           </InfiniteScroll>
-        </Grid>
-      </Grid>
+        </ScrollableContainer>
+      )}
       <EmptyContentPlaceholder
         isContentEmpty={!requestList.length}
         isContentLoaded={isRequestsListFetched}

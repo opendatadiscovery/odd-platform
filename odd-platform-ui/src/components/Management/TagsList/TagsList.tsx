@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
@@ -18,15 +18,15 @@ import {
   EmptyContentPlaceholder,
   Input,
   NumberFormatted,
+  ScrollableContainer,
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
-import * as S from './TagsListStyles';
 
-const TagsListView: React.FC = () => {
+const TagsListView = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -38,14 +38,14 @@ const TagsListView: React.FC = () => {
   const { page, total, hasNext } = useAppSelector(getTagsListPage);
 
   const size = 100;
-  const [query, setQuery] = React.useState('');
-  const [totalTags, setTotalTags] = React.useState(total);
+  const [query, setQuery] = useState('');
+  const [totalTags, setTotalTags] = useState(total);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!query) dispatch(fetchTagsList({ page: 1, size }));
   }, [fetchTagsList, isTagCreating, isTagDeleting, query]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!query) setTotalTags(total);
   }, [total]);
 
@@ -54,12 +54,9 @@ const TagsListView: React.FC = () => {
     dispatch(fetchTagsList({ page: page + 1, size, query }));
   };
 
-  const handleSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      dispatch(fetchTagsList({ page: 1, size, query }));
-    }, 500),
-    [query]
-  );
+  const handleSearch = useDebouncedCallback(() => {
+    dispatch(fetchTagsList({ page: 1, size, query }));
+  }, 500);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -72,13 +69,13 @@ const TagsListView: React.FC = () => {
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
-      <S.Caption container sx={{ mb: 1 }}>
+      <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Tags')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalTags} /> {t('tags overall')}
         </Typography>
-      </S.Caption>
-      <S.Caption container sx={{ mb: 2 }}>
+      </Grid>
+      <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 2 }}>
         <Input
           variant='search-m'
           placeholder={t('Search tag')}
@@ -99,34 +96,35 @@ const TagsListView: React.FC = () => {
             }
           />
         </WithPermissions>
-      </S.Caption>
-      <S.TableHeader container>
-        <S.Col item>
+      </Grid>
+      <Grid sx={{ borderBottom: '1px solid', borderBottomColor: 'divider' }} container>
+        <Grid lg={4} pl={1} item>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Name')}
           </Typography>
-        </S.Col>
-        <S.Col item>
+        </Grid>
+        <Grid lg={5} item>
           <Typography variant='subtitle2' color='texts.hint'>
             {t('Priority')}
           </Typography>
-        </S.Col>
-      </S.TableHeader>
-      <Grid container>
-        <Grid item xs={12}>
+        </Grid>
+        <Grid item lg={3} />
+      </Grid>
+      {tagsList.length > 0 && (
+        <ScrollableContainer $offsetY={140} id='tags-list' sx={{ width: '100%' }}>
           <InfiniteScroll
+            scrollableTarget='tags-list'
             next={fetchNextPage}
             hasMore={hasNext}
             dataLength={tagsList.length}
-            scrollThreshold='200px'
-            loader={isTagsFetching && <TagsSkeletonItem length={5} />}
+            loader={<TagsSkeletonItem length={5} />}
           >
-            {tagsList?.map(tag => (
+            {tagsList.map(tag => (
               <EditableTagItem key={tag.id} tag={tag} />
             ))}
           </InfiniteScroll>
-        </Grid>
-      </Grid>
+        </ScrollableContainer>
+      )}
       {!isTagsFetching && !tagsList.length ? (
         <EmptyContentPlaceholder offsetTop={190} />
       ) : null}
