@@ -2422,11 +2422,11 @@ paths:
       tags:
         - term
 
-  /api/terms/{term_id}/linked_items:
+  /api/terms/{term_id}/linked_entities:
     get:
-      summary: Get term linked items
+      summary: Get term linked entities
       description: Get data entities, which are using this term
-      operationId: getTermLinkedItems
+      operationId: getTermLinkedEntities
       parameters:
         - $ref: './components.yaml/#/components/parameters/TermIdParam'
         - $ref: './components.yaml/#/components/parameters/PageParam'
@@ -2443,6 +2443,29 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - term
+  /api/terms/{term_id}/linked_columns:
+    get:
+      summary: Get term linked columns
+      description: Get data columns, which are using this term
+      operationId: getTermLinkedColumns
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: column_class_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DatasetFieldList'
       tags:
         - term
 
