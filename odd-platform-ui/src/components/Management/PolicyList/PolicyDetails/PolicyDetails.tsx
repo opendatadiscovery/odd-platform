@@ -1,7 +1,7 @@
 import React from 'react';
+import { Grid } from '@mui/material';
 import { useAppParams } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { Grid } from '@mui/material';
 import { fetchPolicyDetails, fetchPolicySchema } from 'redux/thunks';
 import {
   AppLoadingPage,

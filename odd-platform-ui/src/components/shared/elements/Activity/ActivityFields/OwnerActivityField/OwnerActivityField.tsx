@@ -1,16 +1,16 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import isEmpty from 'lodash/isEmpty';
+import { useTranslation } from 'react-i18next';
 import type {
   ActivityEventType,
   ActivityState,
   OwnershipActivityState,
 } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
-import isEmpty from 'lodash/isEmpty';
 import OwnerWithTitle from 'components/shared/elements/Activity/ActivityFields/OwnerActivityField/OwnerWithTitle/OwnerWithTitle';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
-import { useTranslation } from 'react-i18next';
 
 type OwnerItem = OwnershipActivityState & {
   typeOfChange?: EventType;

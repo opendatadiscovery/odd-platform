@@ -1,10 +1,10 @@
 import React, { type FC, useState } from 'react';
+import { FormControlLabel } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button, Checkbox, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityOwnership } from 'redux/thunks';
-import { FormControlLabel } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 
 interface OwnershipDeleteFormProps {
   ownerName: string;

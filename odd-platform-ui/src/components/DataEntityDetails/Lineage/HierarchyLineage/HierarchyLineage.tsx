@@ -1,4 +1,6 @@
 import React from 'react';
+import { Zoom } from '@visx/zoom';
+import type { TransformMatrix } from '@visx/zoom/lib/types';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityLineage,
@@ -9,7 +11,6 @@ import {
 } from 'redux/selectors';
 import { useAppParams, useQueryParams } from 'lib/hooks';
 import { AppCircularProgress, AppErrorPage } from 'components/shared/elements';
-import { Zoom } from '@visx/zoom';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
@@ -18,7 +19,6 @@ import {
   expandEntitiesFromDownstreamGroup,
   expandEntitiesFromUpstreamGroup,
 } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
-import type { TransformMatrix } from '@visx/zoom/lib/types';
 import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
 import {

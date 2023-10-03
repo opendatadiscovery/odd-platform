@@ -1,12 +1,12 @@
 import React, { type FC, memo, useCallback } from 'react';
-import type { IntegrationPreview } from 'generated-sources';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import type { IntegrationPreview } from 'generated-sources';
 import { useAppPaths } from 'lib/hooks';
 import { IntegratedIcon } from 'components/shared/icons';
 import type { DatasourceName } from 'lib/interfaces';
 import { DatasourceLogo } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import * as S from './IntegrationPreviewItem.styles';
 
 interface IntegrationPreviewItemProps {

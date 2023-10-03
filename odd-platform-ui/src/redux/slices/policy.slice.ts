@@ -1,7 +1,7 @@
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import type { PoliciesState } from 'redux/interfaces';
 import type { Policy, PolicyDetails } from 'generated-sources';
 import { policyActTypePrefix } from 'redux/actions';
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 
 export const policyAdapter = createEntityAdapter<Policy>({

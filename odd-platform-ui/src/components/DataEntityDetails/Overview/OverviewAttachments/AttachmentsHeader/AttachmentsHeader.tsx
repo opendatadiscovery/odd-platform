@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { AppMenu, AppMenuItem, Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
@@ -7,7 +8,6 @@ import { Permission } from 'generated-sources';
 import { useAppParams, useGetUploadOptions } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 import SaveLinksForm from '../SaveLinksForm/SaveLinksForm';
 import SaveFilesForm from '../SaveFilesForm/SaveFilesForm';
 import * as S from './AttachmentsHeader.styles';

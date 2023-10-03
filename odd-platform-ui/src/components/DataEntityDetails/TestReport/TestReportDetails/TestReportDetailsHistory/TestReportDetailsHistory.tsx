@@ -1,4 +1,5 @@
 import React from 'react';
+import { Grid, Typography } from '@mui/material';
 import { fetchDataEntityRuns } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
@@ -7,7 +8,6 @@ import {
   getQualityTestNameByTestId,
 } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
-import { Grid, Typography } from '@mui/material';
 import { SkeletonWrapper, TestRunStatusItem } from 'components/shared/elements';
 import TestRunStatusReasonModal from '../../../QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';

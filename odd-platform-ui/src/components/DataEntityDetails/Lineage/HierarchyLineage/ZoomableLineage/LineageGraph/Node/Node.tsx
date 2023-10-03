@@ -1,11 +1,11 @@
 import React from 'react';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
 import { useNavigate } from 'react-router-dom';
+import { Group } from '@visx/group';
 import type { TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
 import { useAppPaths, useQueryParams } from 'lib/hooks';
-import { Group } from '@visx/group';
 import type { NodeSize } from '../../../lineageLib/interfaces';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
 import NodeTitle from './NodeTitle/NodeTitle';

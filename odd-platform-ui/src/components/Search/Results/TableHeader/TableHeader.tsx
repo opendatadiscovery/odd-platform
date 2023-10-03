@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { useScrollBarWidth } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from '../Results.styles';
 import type { GridSizesByBreakpoints } from '../Results.styles';
 

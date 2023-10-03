@@ -1,5 +1,6 @@
 import React, { type FC, useCallback } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import type { DataSetField, LinkedTerm } from 'generated-sources';
@@ -9,7 +10,6 @@ import {
   addDatasetFieldTerm,
   deleteDatasetFieldTerm,
 } from 'redux/slices/datasetStructure.slice';
-import { useTranslation } from 'react-i18next';
 import * as S from '../DatasetFieldOverview.styles';
 import TermItem from './TermItem/TermItem';
 import AssignFieldTermForm from './AssignFieldTermForm/AssignFieldTermForm';

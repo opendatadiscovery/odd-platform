@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
-import type { DataEntityDomain } from 'generated-sources';
 import { Box } from '@mui/material';
+import type { DataEntityDomain } from 'generated-sources';
 import { useAppPaths } from 'lib/hooks';
 import { IconicInfoBadge } from 'components/shared/elements';
 import { FolderIcon } from 'components/shared/icons';

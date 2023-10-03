@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Permission, type Tag } from 'generated-sources';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import { Button, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer } from './OverviewTagsStyles';
 

@@ -6,18 +6,18 @@ import {
   Typography,
 } from '@mui/material';
 import type { ControllerRenderProps } from 'react-hook-form';
-import type { Owner, OwnershipFormData } from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
+import { useTranslation } from 'react-i18next';
+import type { Owner, OwnershipFormData } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
 import Input from 'components/shared/elements/Input/Input';
-import { useTranslation } from 'react-i18next';
 
 interface OwnerAutocompleteProps {
   disableOwnerCreating?: boolean;

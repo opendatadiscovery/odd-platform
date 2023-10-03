@@ -1,4 +1,7 @@
 import React, { type FC, useEffect } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import { Box, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type {
   DatasetFieldTermsActivityState,
   TermActivityState,
@@ -6,9 +9,6 @@ import type {
 import type { EventType } from 'lib/interfaces';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
-import isEmpty from 'lodash/isEmpty';
-import { Box, Grid, Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import { LinkedTermIcon } from 'components/shared/icons';
 import * as S from './DatasetTermActivityField.styles';
 

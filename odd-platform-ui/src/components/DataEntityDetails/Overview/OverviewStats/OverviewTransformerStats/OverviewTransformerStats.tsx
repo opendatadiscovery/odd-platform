@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { UpstreamIcon, DownstreamIcon } from 'components/shared/icons';
 import { EntityClassItem, Button, EntitiesListModal } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import { StatIconContainer } from './OverviewTransformerStatsStyles';
 
 interface OverviewTransformerStatsProps {

@@ -2,11 +2,11 @@ import React, { type HTMLAttributes } from 'react';
 import { type AutocompleteRenderOptionState } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useDebouncedCallback } from 'use-debounce';
+import uniq from 'lodash/uniq';
+import { type AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
-import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
-import { type AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityMultipleFilterNames,

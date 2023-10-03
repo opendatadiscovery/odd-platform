@@ -1,5 +1,7 @@
 import React, { type ChangeEvent, type FC, useCallback, useMemo, useState } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import debounce from 'lodash/debounce';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   AppCircularProgress,
   AppErrorBlock,
@@ -8,8 +10,6 @@ import {
   Table,
 } from 'components/shared/elements';
 import { useAppParams, useGetDataEntityGroupItems } from 'lib/hooks';
-import debounce from 'lodash/debounce';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import EntityGroupItem from './EntityGroupItem/EntityGroupItem';
 import * as S from './OverviewEntityGroupItems.styles';
 

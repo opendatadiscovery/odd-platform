@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, type SelectProps, type Theme } from '@mui/material';
-import { DropdownIcon } from 'components/shared/icons';
 import { type SxProps } from '@mui/system';
+import { DropdownIcon } from 'components/shared/icons';
 import type { AppSelectSizes } from 'components/shared/elements/AppSelect/AppSelectStyles';
 import * as S from 'components/shared/elements/AppSelect/AppSelectStyles';
 

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import round from 'lodash/round';
+import { useTranslation } from 'react-i18next';
 import type { DataSetFormattedStats, DataSetFormattedStatsKeys } from 'redux/interfaces';
 import { DatasetStatsLabelMap } from 'redux/interfaces';
 import { LabeledInfoItem, NumberFormatted } from 'components/shared/elements';
 import type { DataSetField, DataSetStats } from 'generated-sources';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
-import round from 'lodash/round';
 import { useAppDateTime } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from './DatasetField.styles';
 
 interface DatasetFieldStatsProps {

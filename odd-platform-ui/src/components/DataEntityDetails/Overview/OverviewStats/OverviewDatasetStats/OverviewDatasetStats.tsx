@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { EntityClassItem, NumberFormatted } from 'components/shared/elements';
 import { UserIcon, ColumnsIcon, RowsIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 
 interface OverviewDatasetStatsProps {
   stats: {

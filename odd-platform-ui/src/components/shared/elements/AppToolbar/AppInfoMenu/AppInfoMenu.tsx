@@ -1,4 +1,6 @@
 import React, { type MouseEvent } from 'react';
+import { Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import {
   FeedbackIcon,
   GitBookIcon,
@@ -6,8 +8,6 @@ import {
   InformationIcon,
   SlackIcon,
 } from 'components/shared/icons';
-import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import { useAppInfo, useAppLinks } from 'lib/hooks/api';
 import * as S from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenuStyles';

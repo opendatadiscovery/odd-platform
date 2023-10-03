@@ -1,12 +1,12 @@
 import React, { type FC, useCallback, useEffect } from 'react';
+import { Box } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntitiesSearch } from 'redux/thunks';
 import { useCreateSearch } from 'lib/hooks';
 import { getSearchId, getSearchQuery } from 'redux/selectors';
-import { Box } from '@mui/material';
 import { updateSearchQuery } from 'redux/slices/dataEntitySearch.slice';
 import SearchSuggestionsAutocomplete from 'components/shared/elements/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
-import { useTranslation } from 'react-i18next';
 
 interface AppSearchProps {
   placeholder?: string;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import {
   MetadataFieldType,
   type MetadataFieldValue,
@@ -23,7 +24,6 @@ import {
 } from 'redux/thunks';
 import { WithPermissions } from 'components/shared/contexts';
 import { useAppDateTime } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import MetadataValueEditor from '../../../Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
 

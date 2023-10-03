@@ -1,9 +1,9 @@
 import React from 'react';
+import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { Button, EntitiesListModal, EntityClassItem } from 'components/shared/elements';
-import { Grid, Typography } from '@mui/material';
 import { useAppPaths } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 interface OverviewDataInputStatsProps {
   outputs: DataEntityDetails['outputList'];

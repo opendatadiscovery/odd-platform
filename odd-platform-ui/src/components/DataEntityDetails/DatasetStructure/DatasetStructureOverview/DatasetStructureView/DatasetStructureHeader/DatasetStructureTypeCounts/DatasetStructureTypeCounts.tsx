@@ -1,9 +1,9 @@
 import React from 'react';
+import TruncateMarkup from 'react-truncate-markup';
+import { Grid } from '@mui/material';
 import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import type { DataSetStructureTypesCount } from 'redux/interfaces';
-import TruncateMarkup from 'react-truncate-markup';
 import { Button } from 'components/shared/elements';
-import { Grid } from '@mui/material';
 import DatasetStructureTypeCountLabel from './DatasetStructureTypeCountLabel/DatasetStructureTypeCountLabel';
 
 interface DatasetStructureTypeCountsProps {

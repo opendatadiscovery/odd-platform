@@ -1,4 +1,5 @@
 import React, { type FC } from 'react';
+import { useAtom } from 'jotai';
 import { useAppParams, useQueryParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetVersions } from 'redux/selectors';
@@ -9,7 +10,6 @@ import {
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
 import type { ErrorState } from 'redux/interfaces';
-import { useAtom } from 'jotai';
 import { showOnlyChangesAtom } from './lib/atoms';
 import DatasetStructureCompareList from './DatasetStructureCompareList/DatasetStructureCompareList';
 import type { StructureCompareQueryParams } from './lib/interfaces';

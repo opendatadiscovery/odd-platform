@@ -1,11 +1,11 @@
 import React, { type FC, useCallback } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import { Button, Checkbox, AppMenuItem, AppSelect } from 'components/shared/elements';
 import { useAppDateTime, useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
-import { useNavigate } from 'react-router-dom';
 import type { DataSetVersion } from 'generated-sources';
-import { useAtom } from 'jotai';
 import { showOnlyChangesAtom } from '../lib/atoms';
 import { defaultStructureCompareQuery } from '../lib/constants';
 import type { StructureCompareQueryParams } from '../lib/interfaces';

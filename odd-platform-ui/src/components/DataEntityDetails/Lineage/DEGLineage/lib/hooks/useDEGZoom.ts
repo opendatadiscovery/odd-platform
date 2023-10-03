@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useQueryParams } from 'lib/hooks';
 import { useAtom } from 'jotai';
 import { zoom as D3Zoom, zoomIdentity } from 'd3-zoom';
 import { select } from 'd3-selection';
+import { useQueryParams } from 'lib/hooks';
 import type { DEGLineageQueryParams } from '../interfaces';
 import {
   defaultDEGLineageQuery,

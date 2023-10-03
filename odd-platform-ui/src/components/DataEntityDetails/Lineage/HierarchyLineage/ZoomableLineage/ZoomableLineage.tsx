@@ -1,8 +1,8 @@
 import React from 'react';
 import { Group } from '@visx/group';
 import { Grid } from '@mui/material';
-import { type DataEntityLineageById } from 'redux/interfaces';
 import { localPoint } from '@visx/event';
+import { type DataEntityLineageById } from 'redux/interfaces';
 import { useQueryParams } from 'lib/hooks';
 import { defaultLineageQuery, initialTransformMatrix } from '../lineageLib/constants';
 import type { LineageQueryParams, Zoom } from '../lineageLib/interfaces';

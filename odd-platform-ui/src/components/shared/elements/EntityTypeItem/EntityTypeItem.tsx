@@ -1,7 +1,7 @@
 import React from 'react';
-import { type DataEntityTypeNameEnum } from 'generated-sources';
 import { type SxProps } from '@mui/system';
 import { type Theme } from '@mui/material';
+import { type DataEntityTypeNameEnum } from 'generated-sources';
 import { stringFormatted } from 'lib/helpers';
 import * as S from 'components/shared/elements/EntityTypeItem/EntityTypeItemStyles';
 

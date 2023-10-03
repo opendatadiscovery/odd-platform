@@ -1,7 +1,7 @@
+import { addDays, startOfDay } from 'date-fns';
 import type { Activity, RequiredField, SerializeDateToNumber } from 'redux/interfaces';
 import type { ActivityApiGetActivityRequest } from 'generated-sources';
 import { ActivityType } from 'generated-sources';
-import { addDays, startOfDay } from 'date-fns';
 import { activityListSize } from 'redux/thunks';
 
 export type ActivityQuery = RequiredField<

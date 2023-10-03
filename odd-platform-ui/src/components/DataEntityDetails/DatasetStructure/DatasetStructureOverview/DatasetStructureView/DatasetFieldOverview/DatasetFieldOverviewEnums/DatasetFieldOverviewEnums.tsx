@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { WithPermissions } from 'components/shared/contexts';
 import type { DataSetField } from 'generated-sources';
 import { Permission } from 'generated-sources';
@@ -9,7 +10,6 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldEnums, getDatasetFieldEnumsFetchingError } from 'redux/selectors';
 import { resetLoaderByAction } from 'redux/slices/loader.slice';
 import { fetchDataSetFieldEnumActionType } from 'redux/actions';
-import { useTranslation } from 'react-i18next';
 import * as S from '../DatasetFieldOverview.styles';
 import DatasetFieldEnumsForm from '../DatasetFieldEnumsForm/DatasetFieldEnumsForm';
 

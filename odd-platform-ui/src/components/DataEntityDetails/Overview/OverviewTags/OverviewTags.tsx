@@ -1,10 +1,10 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Permission, type Tag } from 'generated-sources';
 import { Button, TagItem } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { AddIcon, EditIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';

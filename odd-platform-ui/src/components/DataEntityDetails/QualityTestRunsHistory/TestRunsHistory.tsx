@@ -1,4 +1,8 @@
 import React from 'react';
+import capitalize from 'lodash/capitalize';
+import { Grid, Typography } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import { DataEntityRunStatus } from 'generated-sources';
 import { fetchDataEntityRuns } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -10,14 +14,10 @@ import {
 import { useAppParams } from 'lib/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
-import capitalize from 'lodash/capitalize';
-import { Grid, Typography } from '@mui/material';
 import EmptyContentPlaceholder from 'components/shared/elements/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import SkeletonWrapper from 'components/shared/elements/SkeletonWrapper/SkeletonWrapper';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
-import { useTranslation } from 'react-i18next';
 import TestRunItem from './TestRunItem/TestRunItem';
 import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 

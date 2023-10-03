@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { type TreeLinkDatum } from 'redux/interfaces';
 import { linkHorizontal } from 'd3-shape';
 import { MarkerArrow } from '@visx/marker';
 import { curveBasis } from '@visx/curve';
 import { LinePath } from '@visx/shape';
 import type { DefaultLinkObject } from 'd3';
+import { type TreeLinkDatum } from 'redux/interfaces';
 import LineageContext from '../../../lineageLib/LineageContext/LineageContext';
 
 interface LinkProps {

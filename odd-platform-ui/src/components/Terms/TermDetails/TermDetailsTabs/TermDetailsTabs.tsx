@@ -1,9 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 const TermDetailsTabs: React.FC = () => {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
-import { activitySidebarWidth } from 'lib/constants';
 import styled from 'styled-components';
+import { activitySidebarWidth } from 'lib/constants';
 
 export const Container = styled(Grid)(({ theme }) => ({
   width: '100%',
