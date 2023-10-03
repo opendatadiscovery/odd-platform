@@ -2455,10 +2455,6 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
-        - name: column_class_id
-          in: query
-          schema:
-            type: integer
       responses:
         '200':
           description: OK

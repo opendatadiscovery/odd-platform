@@ -1695,8 +1695,15 @@ components:
           type: string
         internal_description:
           type: string
-        dataEntity:
-          $ref: '#/components/schemas/DataEntity'
+        dataEntityName:
+          type: string
+        dataEntityId:
+          type: integer
+          format: int64
+        ownership:
+          $ref: '#/components/schemas/OwnershipList'
+        data_source:
+          $ref: '#/components/schemas/DataSource'
       required:
         - id
         - oddrn
