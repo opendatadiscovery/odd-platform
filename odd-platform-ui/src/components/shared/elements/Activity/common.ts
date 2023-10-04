@@ -1,4 +1,4 @@
-import { addDays, startOfDay } from 'date-fns';
+import { addDays, endOfDay, startOfDay } from 'date-fns';
 import type { Activity, RequiredField, SerializeDateToNumber } from 'redux/interfaces';
 import type { ActivityApiGetActivityRequest } from 'generated-sources';
 import { ActivityType } from 'generated-sources';
@@ -31,7 +31,7 @@ export interface ActivityItemProps {
 }
 
 const beginDate = startOfDay(addDays(new Date(), -5)).getTime();
-const endDate = startOfDay(addDays(new Date(), 1)).getTime();
+const endDate = endOfDay(addDays(new Date(), 1)).getTime();
 
 export const defaultActivityQuery: ActivityQuery = {
   beginDate,

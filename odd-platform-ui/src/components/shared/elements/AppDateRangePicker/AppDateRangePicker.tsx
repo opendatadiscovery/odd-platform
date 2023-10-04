@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { addDays, endOfDay, startOfDay } from 'date-fns';
 import DatePicker, { type DateObject } from 'react-multi-date-picker';
 import AppDateRangePickerFooter from 'components/shared/elements/AppDateRangePicker/AppDateRangePickerFooter/AppDateRangePickerFooter';
@@ -15,15 +15,15 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   label,
   setCurrentRange,
 }) => {
-  const datePickerRef = React.useRef<any>();
+  const datePickerRef = useRef<any>();
 
-  const [isRangeCorrect, setIsRangeCorrect] = React.useState(true);
-  const [{ rangeStart, rangeEnd }, setRange] = React.useState({
+  const [isRangeCorrect, setIsRangeCorrect] = useState(true);
+  const [{ rangeStart, rangeEnd }, setRange] = useState({
     rangeStart: defaultRange.beginDate,
     rangeEnd: defaultRange.endDate,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     setRange({ rangeStart: defaultRange.beginDate, rangeEnd: defaultRange.endDate });
   }, [defaultRange]);
 
@@ -46,10 +46,10 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     },
   ];
 
-  const handleSetRange = React.useCallback(([beginDate, endDate]: Date[]) => {
+  const handleSetRange = useCallback(([beginDate, endDate]: Date[]) => {
     setIsRangeCorrect(true);
     if (!endDate) setIsRangeCorrect(false);
-    setRange({ rangeStart: startOfDay(beginDate), rangeEnd: startOfDay(endDate) });
+    setRange({ rangeStart: startOfDay(beginDate), rangeEnd: endOfDay(endDate) });
   }, []);
 
   type DisableSelectedDateParams = {
@@ -57,7 +57,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     selectedDate: DateObject | DateObject[];
   };
 
-  const disableSelectedDate = React.useCallback(
+  const disableSelectedDate = useCallback(
     ({ date, selectedDate }: DisableSelectedDateParams) => {
       const isArray = Array.isArray(selectedDate);
       if (isArray && selectedDate[0].unix === date.unix) return { disabled: true };
@@ -67,12 +67,22 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     []
   );
 
-  const handleClickDone = React.useCallback(() => {
+  const handleClickDone = useCallback(() => {
     if (setCurrentRange) {
       setCurrentRange(rangeStart, rangeEnd);
     }
     datePickerRef.current?.closeCalendar();
   }, [setCurrentRange, datePickerRef, rangeStart, rangeEnd]);
+
+  const appDateRangePickerFooter = (
+    <AppDateRangePickerFooter
+      position='bottom'
+      onClickDoneBtn={handleClickDone}
+      ranges={ranges}
+      setRange={handleSetRange}
+      isRangeCorrect={isRangeCorrect}
+    />
+  );
 
   return (
     <>
@@ -92,15 +102,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
           handleSetRange([begin?.toDate(), end?.toDate()]);
         }}
         value={[rangeStart, rangeEnd]}
-        plugins={[
-          <AppDateRangePickerFooter
-            position='bottom'
-            onClickDoneBtn={handleClickDone}
-            ranges={ranges}
-            setRange={handleSetRange}
-            isRangeCorrect={isRangeCorrect}
-          />,
-        ]}
+        plugins={[appDateRangePickerFooter]}
         ref={datePickerRef}
       />
     </>
