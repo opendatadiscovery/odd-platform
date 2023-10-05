@@ -40,9 +40,9 @@ export const useDataEntityPaths = () => {
       query ? `?${query}` : ''
     }`;
 
-  const dataEntityLinkedItemsPath = (
+  const dataEntityLinkedEntitiesPath = (
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
-  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.linkedItems)}`;
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.linkedEntities)}`;
 
   const datasetStructurePath = (
     viewType: string = DataEntityRoutes.testReportViewTypeParam,
@@ -124,7 +124,7 @@ export const useDataEntityPaths = () => {
     dataEntityTestReportPath,
     dataEntityCollaborationPath,
     dataEntityAlertsPath,
-    dataEntityLinkedItemsPath,
+    dataEntityLinkedEntitiesPath,
     datasetStructureComparePath,
   };
 };

@@ -141,7 +141,7 @@ const LinkedItemsList: FC = () => {
         )}
       </TermLinkedItemsListContainer>
       <EmptyContentPlaceholder
-        text={t('No linked items')}
+        text={t('No linked entities')}
         isContentLoaded={isLinkedListFetched}
         isContentEmpty={!total}
       />

@@ -16,7 +16,7 @@ const TermDetailsRoutes: React.FC = () => {
       <Routes>
         <Route path={TermsRoutes.termsViewTypeParam}>
           <Route path={TermsRoutes.overview} element={<Overview />} />
-          <Route path={TermsRoutes.linkedItems} element={<LinkedItemsList />} />
+          <Route path={TermsRoutes.linkedEntities} element={<LinkedItemsList />} />
           <Route path='' element={<Navigate to={TermsRoutes.overview} />} />
         </Route>
       </Routes>

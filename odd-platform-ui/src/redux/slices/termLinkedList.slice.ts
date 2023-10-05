@@ -20,10 +20,10 @@ export const termLinkedListSlice = createSlice({
     builder.addCase(
       fetchTermLinkedList.fulfilled,
       (state, { payload }): TermLinkedListState => {
-        const { termId, linkedItemsList, pageInfo } = payload;
+        const { termId, linkedEntitiesList, pageInfo } = payload;
         return {
           ...state,
-          linkedItemsIdsByTermId: linkedItemsList.reduce(
+          linkedItemsIdsByTermId: linkedEntitiesList.reduce(
             (memo: TermLinkedListState['linkedItemsIdsByTermId'], linkedItem) => ({
               ...memo,
               [termId]: [...(memo?.[termId] || []), linkedItem.id],
