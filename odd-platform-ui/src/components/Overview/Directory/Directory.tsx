@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
-import { useGetDataSourceTypes } from 'lib/hooks';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useGetDataSourceTypes } from 'lib/hooks';
 import * as S from '../shared/ItemsList.styles';
 import DirectoryItem from './DirectoryItem/DirectoryItem';
 

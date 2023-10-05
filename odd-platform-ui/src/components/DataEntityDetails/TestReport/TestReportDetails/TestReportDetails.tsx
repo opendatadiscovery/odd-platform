@@ -1,5 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   AppCircularProgress,
@@ -8,12 +10,10 @@ import {
   AppTooltip,
 } from 'components/shared/elements';
 import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors';
-import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 
 // lazy elements
 const TestReportDetailsOverview = React.lazy(

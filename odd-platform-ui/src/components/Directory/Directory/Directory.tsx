@@ -1,6 +1,7 @@
 import React, { type FC } from 'react';
-import { useGetDataSourceTypes } from 'lib/hooks/api';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { useGetDataSourceTypes } from 'lib/hooks/api';
 import type { ErrorState } from 'redux/interfaces';
 import {
   AppErrorPage,
@@ -8,7 +9,6 @@ import {
   EmptyContentPlaceholder,
   ScrollableContainer,
 } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import DirectoryItem from './DirectoryItem/DirectoryItem';
 
 const Directory: FC = () => {

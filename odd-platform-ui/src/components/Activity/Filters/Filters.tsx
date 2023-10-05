@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/shared/elements';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
@@ -15,7 +16,6 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { useTranslation } from 'react-i18next';
 import * as S from './FiltersStyles';
 
 const Filters: React.FC = () => {

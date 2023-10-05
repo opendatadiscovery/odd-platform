@@ -1,8 +1,8 @@
 import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { NoDataIcon } from 'components/shared/icons';
 import type { SxProps, Theme } from '@mui/system';
 import { useTranslation } from 'react-i18next';
+import { NoDataIcon } from 'components/shared/icons';
 
 interface EmptyContentPlaceholderProps {
   position?: 'vertical' | 'horizontal';

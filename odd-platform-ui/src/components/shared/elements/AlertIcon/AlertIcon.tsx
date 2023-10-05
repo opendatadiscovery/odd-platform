@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import {
   AlertAnomalyIcon,
   AlertDQTestIcon,
@@ -7,7 +8,6 @@ import {
 } from 'components/shared/icons';
 import { AlertStatus, AlertType, type DataEntityAlertConfig } from 'generated-sources';
 import type { Alert } from 'redux/interfaces';
-import styled from 'styled-components';
 
 interface AlertIconProps {
   status?: Alert['status'];

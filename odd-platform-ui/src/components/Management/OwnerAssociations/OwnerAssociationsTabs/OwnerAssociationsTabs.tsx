@@ -1,11 +1,11 @@
 import React from 'react';
+import { useAtom } from 'jotai';
+import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { useAtom } from 'jotai';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { getOwnerAssociationRequestsListFetchingStatuses } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
 
 interface OwnerAssociationsTabsProps {

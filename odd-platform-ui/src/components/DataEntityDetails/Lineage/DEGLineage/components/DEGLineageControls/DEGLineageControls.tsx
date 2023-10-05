@@ -1,9 +1,9 @@
 import React, { type FC, useCallback } from 'react';
+import { useSetAtom } from 'jotai';
+import { useTranslation } from 'react-i18next';
 import { AppTabs, Button } from 'components/shared/elements';
 import { TargetIcon } from 'components/shared/icons';
 import { useQueryParams } from 'lib/hooks';
-import { useSetAtom } from 'jotai';
-import { useTranslation } from 'react-i18next';
 import type { DEGLineageQueryParams } from '../../lib/interfaces';
 import { defaultDEGLineageQuery } from '../../lib/constants';
 import { isFitClickedAtom, isLayoutedAtom } from '../../lib/atoms';

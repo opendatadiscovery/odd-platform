@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 import { Typography } from '@mui/material';
-import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import { useTranslation } from 'react-i18next';
+import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 
 interface TestRunStatusReasonModalProps {
   openBtn: JSX.Element;

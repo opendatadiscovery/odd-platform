@@ -1,5 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Grid } from '@mui/material';
+import { type AsyncThunk } from '@reduxjs/toolkit';
 import {
   type AlertApiGetAllAlertsRequest,
   type AlertApiGetAssociatedUserAlertsRequest,
@@ -16,8 +18,6 @@ import {
   getAlerts,
 } from 'redux/selectors';
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
-import { Grid } from '@mui/material';
-import { type AsyncThunk } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import type { AlertsResponse } from 'redux/interfaces';
 import DataEntityAlertsSkeleton from '../../DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertsSkeleton';

@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import keyBy from 'lodash/keyBy';
+import omit from 'lodash/omit';
+import filter from 'lodash/filter';
 import * as thunks from 'redux/thunks';
 import type { DataEntitiesState } from 'redux/interfaces';
-import keyBy from 'lodash/keyBy';
 import type { DataEntityDetails, DataEntityStatus } from 'generated-sources';
-import omit from 'lodash/omit';
 import { dataEntitiesActionTypePrefix } from 'redux/actions';
-import filter from 'lodash/filter';
 
 export const initialState: DataEntitiesState = {
   classesAndTypesDict: { entityTypes: {}, entityClasses: {} },

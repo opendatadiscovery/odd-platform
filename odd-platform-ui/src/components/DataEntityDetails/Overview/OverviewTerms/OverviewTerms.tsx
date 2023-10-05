@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { LinkedTerm } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
 import { TermsCaptionContainer } from './OverviewTermsStyles';

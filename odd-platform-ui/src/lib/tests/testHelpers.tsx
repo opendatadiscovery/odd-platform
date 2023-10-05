@@ -2,7 +2,6 @@ import { act, fireEvent, render, renderHook, screen } from '@testing-library/rea
 import type { ByRoleOptions, RenderOptions } from '@testing-library/react';
 import React, { type PropsWithChildren, type ReactElement } from 'react';
 import { ThemeProvider } from 'styled-components';
-import theme from 'theme/mui.theme';
 import { MemoryRouter, type MemoryRouterProps, Route, Routes } from 'react-router-dom';
 import {
   QueryClient,
@@ -12,6 +11,7 @@ import {
 import { Provider } from 'react-redux';
 import type { AnyAction, Store } from '@reduxjs/toolkit';
 import { configureStore } from '@reduxjs/toolkit';
+import theme from 'theme/mui.theme';
 import type { RootState } from 'redux/interfaces';
 import rootReducer from 'redux/slices';
 

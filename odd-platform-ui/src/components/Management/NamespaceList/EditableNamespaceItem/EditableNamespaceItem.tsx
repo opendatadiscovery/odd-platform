@@ -1,12 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type Namespace, Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { deleteNamespace } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
 

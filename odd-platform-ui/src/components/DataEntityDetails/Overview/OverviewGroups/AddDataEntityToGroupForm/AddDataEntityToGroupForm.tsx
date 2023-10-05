@@ -1,6 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { type DataEntityRef } from 'generated-sources';
 import {
   DialogWrapper,
@@ -13,7 +14,6 @@ import {
   getDataEntityClassesList,
 } from 'redux/selectors';
 import { addDataEntityToGroup } from 'redux/thunks';
-import { useTranslation } from 'react-i18next';
 
 interface AddDataEntityToGroupFormProps {
   btnCreateEl: JSX.Element;

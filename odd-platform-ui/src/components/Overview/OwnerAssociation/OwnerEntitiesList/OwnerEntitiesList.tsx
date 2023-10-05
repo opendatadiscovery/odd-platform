@@ -1,4 +1,6 @@
 import React, { type FC, useEffect } from 'react';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   getIsOwnerEntitiesFetching,
   getMyDataEntitiesFetchingStatuses,
@@ -24,8 +26,6 @@ import {
 } from 'components/shared/icons';
 import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import OwnerEntitiesListSkeleton from './OwnerEntitiesListSkeleton/OwnerEntitiesListSkeleton';
 import * as S from './OwnerEntitiesListStyles';
 import DataEntityList from './DataEntityList/DataEntityList';

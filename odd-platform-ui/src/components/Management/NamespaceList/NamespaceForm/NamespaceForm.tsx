@@ -1,7 +1,8 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import type { Namespace, NamespaceFormData } from 'generated-sources';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import type { Namespace, NamespaceFormData } from 'generated-sources';
 import { Button, DialogWrapper, Input } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createNamespace, updateNamespace } from 'redux/thunks';
@@ -9,7 +10,6 @@ import {
   getNamespaceCreatingStatuses,
   getNamespaceUpdatingStatuses,
 } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 
 interface NamespaceFormProps {
   btnEl: JSX.Element;

@@ -1,10 +1,10 @@
 import React, { forwardRef, memo, useCallback } from 'react';
 import { Typography } from '@mui/material';
-import { useAppPaths } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useAppPaths } from 'lib/hooks';
 import { EntityClassItem, LabeledInfoItem } from 'components/shared/elements';
 import { EmptyIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import * as S from './Node.styles';
 import type { Node as NodeType } from '../../lib/interfaces';
 

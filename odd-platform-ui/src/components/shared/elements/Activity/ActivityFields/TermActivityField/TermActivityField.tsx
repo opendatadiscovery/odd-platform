@@ -1,12 +1,12 @@
 import React, { type CSSProperties } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import isEmpty from 'lodash/isEmpty';
+import { useTranslation } from 'react-i18next';
 import { type TermActivityState } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
-import isEmpty from 'lodash/isEmpty';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import { LinkedTermIcon } from 'components/shared/icons';
-import { useTranslation } from 'react-i18next';
 import * as S from './TermActivityField.styles';
 
 interface ActivityData extends TermActivityState {

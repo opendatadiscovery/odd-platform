@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
-import { maxContentWidthWithoutSidebar, maxTagsContainerWidth } from 'lib/constants';
 import styled from 'styled-components';
+import { maxContentWidthWithoutSidebar, maxTagsContainerWidth } from 'lib/constants';
 
 export const Container = styled('div')(({ theme }) => ({
   overflowY: 'scroll',

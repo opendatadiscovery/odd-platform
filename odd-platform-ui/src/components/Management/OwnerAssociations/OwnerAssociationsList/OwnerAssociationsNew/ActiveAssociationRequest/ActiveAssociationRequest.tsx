@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   type OwnerAssociationRequest,
   type OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest,
@@ -11,7 +12,6 @@ import { AcceptIcon, RejectIcon } from 'components/shared/icons';
 import { updateOwnerAssociationRequest } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { usePermissions } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from '../../OwnerAssociationsSharedStyles';
 
 interface Props {

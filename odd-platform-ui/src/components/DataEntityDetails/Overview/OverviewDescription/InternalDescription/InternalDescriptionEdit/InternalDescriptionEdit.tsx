@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
-import { Button, Markdown } from 'components/shared/elements';
 import { Box, Typography } from '@mui/material';
+import { Button, Markdown } from 'components/shared/elements';
 import * as S from './InternalDescriptionEdit.styles';
 
 interface InternalDescriptionEditProps {

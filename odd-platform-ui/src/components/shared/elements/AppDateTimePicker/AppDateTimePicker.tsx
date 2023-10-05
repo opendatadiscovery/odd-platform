@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Box, type Theme } from '@mui/material';
 import type { SxProps } from '@mui/system';
-import { CalendarIcon } from 'components/shared/icons';
 import { DateTimePicker, type DateTimePickerProps } from '@mui/x-date-pickers';
+import { CalendarIcon } from 'components/shared/icons';
 import Input from 'components/shared/elements/Input/Input';
 import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import { dateTimePaperPropsStyles } from './style.overrides';

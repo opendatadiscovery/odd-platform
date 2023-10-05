@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { SearchFormData } from 'generated-sources';
 import { createDataEntitiesSearch } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useNavigate } from 'react-router-dom';
 import useAppPaths from './useAppPaths/useAppPaths';
 
 export default function useCreateSearch() {

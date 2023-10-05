@@ -1,10 +1,10 @@
 import React from 'react';
+import { Collapse, Grid, Typography } from '@mui/material';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-import { Collapse, Grid, Typography } from '@mui/material';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { AlertStatusItem, Button, EntityClassItem } from 'components/shared/elements';
 import { alertTitlesMap } from 'lib/constants';

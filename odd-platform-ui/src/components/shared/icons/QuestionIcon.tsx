@@ -1,8 +1,8 @@
 import React from 'react';
 import type { SvgIconProps } from '@mui/material/SvgIcon';
-import AppSvgIcon from 'components/shared/icons/AppSvgIcon';
 import styled from 'styled-components';
 import type { Theme } from '@mui/material';
+import AppSvgIcon from 'components/shared/icons/AppSvgIcon';
 
 const styles = ({ theme }: { theme?: Theme }) => ({
   color: theme?.palette.texts.info,

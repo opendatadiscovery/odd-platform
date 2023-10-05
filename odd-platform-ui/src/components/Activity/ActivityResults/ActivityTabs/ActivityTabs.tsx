@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { type ActivityCountInfo, ActivityType } from 'generated-sources';
 import { useQueryParams } from 'lib/hooks';
@@ -6,7 +7,6 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { useTranslation } from 'react-i18next';
 
 interface ActivityTabsProps {
   counts: ActivityCountInfo;

@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
-import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import type { TermSearchResultsColType } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
 import { termSearchResultsColWidthStyles } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
 

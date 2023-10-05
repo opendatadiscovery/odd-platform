@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
@@ -6,7 +7,6 @@ import {
 } from 'components/shared/elements/Activity/common';
 import { toDate } from 'lib/helpers';
 import AppDateRangePicker from 'components/shared/elements/AppDateRangePicker/AppDateRangePicker';
-import { useTranslation } from 'react-i18next';
 
 const CalendarFilter: React.FC = () => {
   const { t } = useTranslation();

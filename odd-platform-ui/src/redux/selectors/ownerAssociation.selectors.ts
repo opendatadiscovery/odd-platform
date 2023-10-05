@@ -1,5 +1,5 @@
-import type { OwnerAssociationState, RootState, CurrentPageInfo } from 'redux/interfaces';
 import { createSelector } from '@reduxjs/toolkit';
+import type { OwnerAssociationState, RootState, CurrentPageInfo } from 'redux/interfaces';
 import {
   createErrorSelector,
   createStatusesSelector,

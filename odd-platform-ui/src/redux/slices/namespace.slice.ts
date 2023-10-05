@@ -1,7 +1,7 @@
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { namespaceActionTypePrefix } from 'redux/actions';
 import type { NamespacesState } from 'redux/interfaces';
 import { type Namespace } from 'generated-sources';
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 
 export const namespaceAdapter = createEntityAdapter<Namespace>({

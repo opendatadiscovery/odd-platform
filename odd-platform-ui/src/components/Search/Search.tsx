@@ -2,6 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
+import { useTranslation } from 'react-i18next';
 import { MainSearch, PageWithLeftSidebar } from 'components/shared/elements';
 import { useAppParams, useCreateSearch } from 'lib/hooks';
 import { getDataEntitiesSearch, updateDataEntitiesSearch } from 'redux/thunks';
@@ -16,7 +17,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import Filters from './Filters/Filters';
 import Results from './Results/Results';
 

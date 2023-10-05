@@ -1,3 +1,5 @@
+import uniqWith from 'lodash/uniqWith';
+import isEqual from 'lodash/isEqual';
 import type {
   DataEntityLineageById,
   DataEntityLineageState,
@@ -14,8 +16,6 @@ import type {
   StreamType,
 } from 'redux/interfaces';
 import type { DataEntityLineageEdge, DataEntityLineageNode } from 'generated-sources';
-import uniqWith from 'lodash/uniqWith';
-import isEqual from 'lodash/isEqual';
 
 export const isRootNodeIdsEqual = (rootNodeId: number, currentRootNodeId: number) =>
   rootNodeId === currentRootNodeId;

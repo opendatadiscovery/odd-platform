@@ -1,5 +1,5 @@
-import type { DatasourceName } from 'lib/interfaces';
 import capitalize from 'lodash/capitalize';
+import type { DatasourceName } from 'lib/interfaces';
 
 export function parseDatasourceName(input: string): DatasourceName {
   if (input.includes('-')) {

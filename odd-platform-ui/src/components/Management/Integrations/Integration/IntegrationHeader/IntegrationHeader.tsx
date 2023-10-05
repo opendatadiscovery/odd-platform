@@ -1,9 +1,9 @@
 import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button, DatasourceLogo } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
 import { useAppPaths } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 interface IntegrationHeaderProps {
   id: Integration['id'];

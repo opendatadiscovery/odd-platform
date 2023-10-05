@@ -1,7 +1,7 @@
 import React, { type ElementType } from 'react';
 import type { GridSize, TypographyProps } from '@mui/material';
-import type { DataEntityRunStatus } from 'generated-sources';
 import type { SxProps } from '@mui/system';
+import type { DataEntityRunStatus } from 'generated-sources';
 import {
   Container,
   Label,

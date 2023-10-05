@@ -1,8 +1,8 @@
 import { styled } from '@mui/material';
 import { Link } from 'react-router-dom';
 import type { CSSProperties } from 'react';
-import { mapKeysToValue } from 'lib/helpers';
 import type { CSSObject } from 'styled-components';
+import { mapKeysToValue } from 'lib/helpers';
 import { type ButtonColor, type ButtonSize, type Button } from './interfaces';
 import { getButtonFontType, getButtonType } from './helpers';
 

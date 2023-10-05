@@ -6,17 +6,17 @@ import {
   type Theme,
   Typography,
 } from '@mui/material';
-import { type OwnerFormData, type Role } from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { type SxProps } from '@mui/system';
+import { type OwnerFormData, type Role } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchRolesList } from 'redux/thunks';
-import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { type SxProps } from '@mui/system';
 import Input from 'components/shared/elements/Input/Input';
 
 interface RoleAutocompleteProps {

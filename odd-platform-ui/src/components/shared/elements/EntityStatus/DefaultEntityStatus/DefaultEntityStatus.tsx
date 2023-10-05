@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
+import { Typography } from '@mui/material';
 import { useAppDateTime } from 'lib/hooks';
 import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
-import { Typography } from '@mui/material';
 import type { DataEntityStatus } from 'generated-sources';
 import type { SerializeDateToNumber } from 'redux/interfaces';
 import * as S from '../EntityStatus.styles';

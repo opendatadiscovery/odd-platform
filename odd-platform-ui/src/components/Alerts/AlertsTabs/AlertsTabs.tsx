@@ -1,10 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { AlertTotals } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 
 interface AlertsTabsProps {
   totals: AlertTotals;

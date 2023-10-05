@@ -1,10 +1,10 @@
 import React from 'react';
+import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
-import { Grid } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import TermsForm from '../TermForm/TermsForm';
 import TermSearchInput from '../TermSearchInput/TermSearchInput';
 

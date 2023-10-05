@@ -1,9 +1,9 @@
-import { dataCollaborationActTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
+import uniqBy from 'lodash/uniqBy';
+import { dataCollaborationActTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import type { DataCollaborationState, Message } from 'redux/interfaces';
 import { formatDate } from 'lib/helpers';
-import uniqBy from 'lodash/uniqBy';
 import { datedListFormat } from 'lib/constants';
 
 export const initialState: DataCollaborationState = {

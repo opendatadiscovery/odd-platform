@@ -1,10 +1,10 @@
 import React, { type FC, useCallback } from 'react';
+import { Box } from '@mui/material';
 import { Permission, type TermRef } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button, CollapsibleInfoContainer, InfoItem } from 'components/shared/elements';
 import { DeleteIcon, LinkedTermIcon } from 'components/shared/icons';
 import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
-import { Box } from '@mui/material';
 
 interface TermItemProps {
   name: TermRef['name'];

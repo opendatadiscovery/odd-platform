@@ -1,9 +1,9 @@
 import React from 'react';
+import type { GridSize } from '@mui/material';
 import { getMetadataValue } from 'lib/helpers';
 import LabeledInfoItem from 'components/shared/elements/LabeledInfoItem/LabeledInfoItem';
 import type { MetadataFieldValue } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
-import type { GridSize } from '@mui/material';
 
 interface MetadataItemProps {
   metadata: MetadataFieldValue;

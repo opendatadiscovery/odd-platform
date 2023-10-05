@@ -1,22 +1,22 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import type {
-  DataEntityTermFormData,
-  TermRef,
-  CollectorFormData,
-} from 'generated-sources';
 import {
   type AutocompleteInputChangeReason,
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import ClearIcon from 'components/shared/icons/ClearIcon';
 import { type ControllerRenderProps } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import type {
+  DataEntityTermFormData,
+  TermRef,
+  CollectorFormData,
+} from 'generated-sources';
+import ClearIcon from 'components/shared/icons/ClearIcon';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchTermsList } from 'redux/thunks';
 import Input from 'components/shared/elements/Input/Input';
-import { useTranslation } from 'react-i18next';
 
 interface TermsAutocompleteProps {
   setSelectedTerm: (term: TermRef) => void;

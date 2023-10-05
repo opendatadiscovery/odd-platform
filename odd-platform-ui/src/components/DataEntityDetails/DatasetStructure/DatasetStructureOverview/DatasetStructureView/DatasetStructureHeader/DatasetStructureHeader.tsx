@@ -75,10 +75,6 @@ const DatasetStructureHeader: FC = () => {
     handleSearch(searchQuery);
   }, [handleSearch, searchQuery]);
 
-  const clearSearchField = useCallback(() => {
-    setSearchQuery('');
-  }, [setSearchQuery]);
-
   return (
     <Grid
       p={2}

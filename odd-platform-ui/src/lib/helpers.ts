@@ -38,8 +38,8 @@ export const stringFormatted = (
 };
 
 export const formatDate = (date: number, dateFormat: string) => format(date, dateFormat);
-export const toDate = (dateToCast: number): Date => new Date(dateToCast);
-export const toTimestamp = (dateToCast: Date): number => dateToCast.getTime();
+export const toDate = (date: number): Date => new Date(date);
+export const toTimestamp = (date: Date): number => date.getTime();
 
 export const setActivityBackgroundColor = (
   theme: Theme,

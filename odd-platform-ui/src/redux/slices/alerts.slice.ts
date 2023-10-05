@@ -1,10 +1,10 @@
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import type {
   AlertsState,
   Alert,
   AlertsConfig,
   PaginatedResponse,
 } from 'redux/interfaces';
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { alertsActionPrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   AppMenuItem,
@@ -12,7 +13,6 @@ import { Permission, type TermDetails } from 'generated-sources';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
 import { useAppDateTime } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 interface TermDetailsHeaderProps {
   name: TermDetails['name'];

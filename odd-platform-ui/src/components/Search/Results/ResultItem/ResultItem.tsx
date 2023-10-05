@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   AppTooltip,
@@ -16,7 +17,6 @@ import { useAppDateTime, useAppPaths } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 import { type GridSizesByBreakpoints, SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';

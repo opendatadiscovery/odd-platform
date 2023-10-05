@@ -1,11 +1,11 @@
 import React from 'react';
-import { type Message } from 'redux/interfaces';
 import { Grid, Typography } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
+import { type Message } from 'redux/interfaces';
 import { Button, EmptyContentPlaceholder } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppPaths } from 'lib/hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useTranslation } from 'react-i18next';
 import ThreadMessage from './ThreadMessage/ThreadMessage';
 import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
 import ThreadMessageSkeleton from './ThreadMessage/ThreadMessageSkeleton';
