@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.TermApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
@@ -19,6 +20,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
+import org.opendatadiscovery.oddplatform.service.DatasetFieldService;
 import org.opendatadiscovery.oddplatform.service.term.TermOwnershipService;
 import org.opendatadiscovery.oddplatform.service.term.TermSearchService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
@@ -34,6 +36,7 @@ public class TermController implements TermApi {
 
     private final TermService termService;
     private final DataEntityService dataEntityService;
+    private final DatasetFieldService datasetFieldService;
     private final TermSearchService termSearchService;
     private final TermOwnershipService termOwnershipService;
 
@@ -91,6 +94,16 @@ public class TermController implements TermApi {
                                                                    final ServerWebExchange exchange) {
         return dataEntityService
             .listByTerm(termId, query, entityClassId, page, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DatasetFieldList>> getTermLinkedColumns(final Long termId, final Integer page,
+                                                                       final Integer size,
+                                                                       final String query,
+                                                                       final ServerWebExchange exchange) {
+        return datasetFieldService
+            .listByTerm(termId, query, page, size)
             .map(ResponseEntity::ok);
     }
 
