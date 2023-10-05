@@ -84,7 +84,7 @@ public class TermController implements TermApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityList>> getTermLinkedItems(final Long termId, final Integer page,
+    public Mono<ResponseEntity<DataEntityList>> getTermLinkedEntities(final Long termId, final Integer page,
                                                                    final Integer size,
                                                                    final String query,
                                                                    final Integer entityClassId,

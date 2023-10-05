@@ -1,4 +1,4 @@
-import type { DataEntity, TermApiGetTermLinkedItemsRequest } from 'generated-sources';
+import type { DataEntity, TermApiGetTermLinkedEntitiesRequest } from 'generated-sources';
 import type { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { handleResponseAsyncThunk } from 'redux/lib/handleResponseThunk';
@@ -6,11 +6,11 @@ import { termApi } from 'lib/api';
 
 export const fetchTermLinkedList = handleResponseAsyncThunk<
   { termId: number; linkedItemsList: Array<DataEntity>; pageInfo: CurrentPageInfo },
-  TermApiGetTermLinkedItemsRequest
+  TermApiGetTermLinkedEntitiesRequest
 >(
   actions.fetchTermLinkedListAction,
-  async (params: TermApiGetTermLinkedItemsRequest) => {
-    const { items, pageInfo } = await termApi.getTermLinkedItems(params);
+  async params => {
+    const { items, pageInfo } = await termApi.getTermLinkedEntities(params);
 
     return {
       termId: params.termId,
