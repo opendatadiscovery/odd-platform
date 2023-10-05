@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityMessage,
@@ -9,7 +10,6 @@ import {
 } from 'redux/selectors';
 import { fetchRelatedMessages, messagesListSize as size } from 'redux/thunks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
-import { useNavigate } from 'react-router-dom';
 import { clearThreadState } from 'redux/slices/dataCollaboration.slice';
 import ThreadContent from './ThreadContent/ThreadContent';
 

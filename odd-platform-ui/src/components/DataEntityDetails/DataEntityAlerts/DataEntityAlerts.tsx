@@ -1,5 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import { Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
@@ -16,8 +18,6 @@ import {
 import { WithPermissions } from 'components/shared/contexts';
 import { fetchDataEntityAlerts } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useTranslation } from 'react-i18next';
 import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
 import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';

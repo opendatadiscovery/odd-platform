@@ -1,6 +1,6 @@
 import React, { type FC, memo } from 'react';
-import { Button, Markdown } from 'components/shared/elements';
 import { Grid, Typography } from '@mui/material';
+import { Button, Markdown } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 

@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import type { AsyncThunkAction } from '@reduxjs/toolkit';
 import type {
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
   DatasetFieldApiUpdateDatasetFieldDescriptionRequest,
@@ -10,7 +11,6 @@ import useAppPaths from 'lib/hooks/useAppPaths/useAppPaths';
 import useAppParams from 'lib/hooks/useAppParams/useAppParams';
 import { TERM_PATTERN } from 'lib/constants';
 import { useGetTermByNamespaceAndName } from 'lib/hooks/api';
-import type { AsyncThunkAction } from '@reduxjs/toolkit';
 
 interface UseTermWikiProps {
   updateDescription: (params: any) => AsyncThunkAction<any, any, any>;

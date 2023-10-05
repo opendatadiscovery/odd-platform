@@ -6,12 +6,15 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
+import { useDebouncedCallback } from 'use-debounce';
+import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type {
   DataEntityGroupFormData,
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
-import { useDebouncedCallback } from 'use-debounce';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
@@ -19,13 +22,10 @@ import {
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
-import { type UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
-import { Link } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import Button from 'components/shared/elements/Button/Button';
 import Input, { type InputProps } from 'components/shared/elements/Input/Input';
-import { useTranslation } from 'react-i18next';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;

@@ -1,10 +1,10 @@
 import React, { type FC, type ReactElement } from 'react';
 import { type Theme, Typography } from '@mui/material';
+import { type SxProps } from '@mui/system';
+import isUndefined from 'lodash/isUndefined';
 import ClearIcon from 'components/shared/icons/ClearIcon';
 import SystemIcon from 'components/shared/icons/SystemIcon';
-import { type SxProps } from '@mui/system';
 import Button from 'components/shared/elements/Button/Button';
-import isUndefined from 'lodash/isUndefined';
 import * as S from './TagItemStyles';
 
 interface TagItemProps {

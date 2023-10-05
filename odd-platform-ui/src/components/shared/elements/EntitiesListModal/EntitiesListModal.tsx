@@ -1,12 +1,12 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import type { DataEntityRef } from 'generated-sources';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import type { DataEntityRef } from 'generated-sources';
 import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import * as S from 'components/shared/elements/EntitiesListModal/EntitiesListModalStyles';
-import { useTranslation } from 'react-i18next';
 
 type LabelForTypes =
   | 'Entities'

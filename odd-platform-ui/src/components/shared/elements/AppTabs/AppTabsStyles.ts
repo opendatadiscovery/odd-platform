@@ -1,6 +1,6 @@
 import { tabClasses, Tabs, tabsClasses } from '@mui/material';
-import { primaryTabsHeight } from 'lib/constants';
 import styled, { type CSSObject } from 'styled-components';
+import { primaryTabsHeight } from 'lib/constants';
 import { type TabType } from 'components/shared/elements/AppTabs/interfaces';
 
 export const TabsContainer = styled(Tabs)<{ $type: TabType }>(({ theme, $type }) => {

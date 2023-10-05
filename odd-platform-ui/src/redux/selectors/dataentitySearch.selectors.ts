@@ -5,6 +5,7 @@ import values from 'lodash/values';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import transform from 'lodash/transform';
+import compact from 'lodash/compact';
 import type {
   CurrentPageInfo,
   DataEntitySearchState,
@@ -23,7 +24,6 @@ import {
   createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-import compact from 'lodash/compact';
 import { emptyArr } from 'lib/constants';
 
 const searchState = ({ dataEntitySearch }: RootState): DataEntitySearchState =>

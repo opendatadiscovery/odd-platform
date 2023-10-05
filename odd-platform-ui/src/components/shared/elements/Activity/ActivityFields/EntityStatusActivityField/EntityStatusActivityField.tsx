@@ -1,7 +1,7 @@
 import React, { type FC, useEffect, useState } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
-import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntityStatusActivityState } from 'generated-sources';
 import type { SerializeDateToNumber } from 'redux/interfaces';
 import { EntityStatus } from 'components/shared/elements/index';

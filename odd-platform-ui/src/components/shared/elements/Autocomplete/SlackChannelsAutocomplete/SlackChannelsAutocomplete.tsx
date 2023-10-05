@@ -6,16 +6,16 @@ import {
   type Theme,
   Typography,
 } from '@mui/material';
-import type { MessageChannel, MessageRequest } from 'generated-sources';
 import {
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
+import { type SxProps } from '@mui/system';
+import { type ControllerRenderProps } from 'react-hook-form';
+import type { MessageChannel, MessageRequest } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchSlackChannels } from 'redux/thunks';
-import { type SxProps } from '@mui/system';
-import { type ControllerRenderProps } from 'react-hook-form';
 import Input from 'components/shared/elements/Input/Input';
 
 type MessageFormData = Omit<MessageRequest, 'dataEntityId'>;

@@ -6,17 +6,17 @@ import {
   type Theme,
   Typography,
 } from '@mui/material';
-import { type MessageChannel } from 'generated-sources';
 import {
   createFilterOptions,
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
+import { type SxProps } from '@mui/system';
+import { useTranslation } from 'react-i18next';
+import { type MessageChannel } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntityChannels } from 'redux/thunks';
-import { type SxProps } from '@mui/system';
 import Input from 'components/shared/elements/Input/Input';
-import { useTranslation } from 'react-i18next';
 
 interface DataEntityChannelsAutocompleteProps {
   dataEntityId: number;

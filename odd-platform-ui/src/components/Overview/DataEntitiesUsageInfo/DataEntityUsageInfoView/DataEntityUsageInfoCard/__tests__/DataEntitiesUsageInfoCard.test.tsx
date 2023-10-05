@@ -1,8 +1,8 @@
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { waitFor } from '@testing-library/react';
 import { getByRole, getByTextContent, render } from 'lib/tests/testHelpers';
 import { dataEntityUsageInfoPayload } from 'lib/tests/mocks';
-import { waitFor } from '@testing-library/react';
 import DataEntitiesUsageInfoCard, {
   type DataEntityUsageInfoCardProps,
 } from '../DataEntitiesUsageInfoCard';

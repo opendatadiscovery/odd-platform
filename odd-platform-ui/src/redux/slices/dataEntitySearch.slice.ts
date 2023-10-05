@@ -1,4 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import mapValues from 'lodash/mapValues';
+import reduce from 'lodash/reduce';
+import values from 'lodash/values';
+import get from 'lodash/get';
 import { dataEntitiesSearchActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import type {
@@ -13,11 +17,7 @@ import type {
   SearchFacetsData,
   SearchFilter,
 } from 'generated-sources';
-import mapValues from 'lodash/mapValues';
-import reduce from 'lodash/reduce';
 import { assignWith } from 'redux/lib/helpers';
-import values from 'lodash/values';
-import get from 'lodash/get';
 
 const initialState: DataEntitySearchState = {
   searchId: '',

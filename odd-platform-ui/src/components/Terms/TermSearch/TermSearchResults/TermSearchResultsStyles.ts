@@ -1,6 +1,6 @@
 import { Grid, type GridProps } from '@mui/material';
-import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 
 export type TermSearchResultsColType = 'col' | 'colxs' | 'colsm' | 'colmd' | 'collg';
 export const termSearchResultsColWidthStyles = {

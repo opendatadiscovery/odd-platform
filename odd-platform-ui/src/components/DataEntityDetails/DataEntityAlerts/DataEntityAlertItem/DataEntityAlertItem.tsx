@@ -1,15 +1,15 @@
 import React from 'react';
+import { Collapse, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission } from 'generated-sources';
 import { useAppDateTime, useAppParams } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { Collapse, Grid, Typography } from '@mui/material';
 import { AlertStatusItem, Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { alertTitlesMap } from 'lib/constants';
-import { useTranslation } from 'react-i18next';
 import * as S from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps {

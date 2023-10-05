@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
-import { type DatasourceName, DatasourceNames } from 'lib/interfaces';
 import styled from 'styled-components';
+import { type DatasourceName, DatasourceNames } from 'lib/interfaces';
 import { parseDatasourceName } from './helpers';
 
 type BackgroundColor = 'tertiary' | 'default' | 'transparent';

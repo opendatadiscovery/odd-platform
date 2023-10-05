@@ -1,7 +1,8 @@
 import React, { type FC, useCallback } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import type { DataEntity, DataEntityBaseObject } from 'generated-sources';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-import { Box, Grid, Typography } from '@mui/material';
 import {
   Button,
   EntityClassItem,
@@ -9,7 +10,6 @@ import {
   Table,
   TruncatedList,
 } from 'components/shared/elements';
-import { Link } from 'react-router-dom';
 import { TriangularUnionIcon } from 'components/shared/icons';
 import MetadataStale from 'components/shared/elements/MetadataStale/MetadataStale';
 

@@ -1,15 +1,15 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import isEmpty from 'lodash/isEmpty';
+import { useTranslation } from 'react-i18next';
 import type {
   DatasetFieldEnumValuesActivityState,
   DatasetFieldValuesActivityState,
 } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
-import isEmpty from 'lodash/isEmpty';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import * as S from 'components/shared/elements/Activity/ActivityFields/EnumsActivityField/EnumsActivityFieldStyles';
-import { useTranslation } from 'react-i18next';
 
 interface ActivityData extends DatasetFieldEnumValuesActivityState {
   typeOfChange?: EventType;

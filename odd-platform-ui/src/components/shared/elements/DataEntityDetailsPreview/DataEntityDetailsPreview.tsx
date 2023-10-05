@@ -1,9 +1,9 @@
 import React, { type FC, useCallback, useMemo, useState } from 'react';
-import { InformationIcon } from 'components/shared/icons';
 import { Grid, Typography } from '@mui/material';
 import MDEditor from '@uiw/react-md-editor';
-import { useDataEntityDetails } from 'lib/hooks';
 import { useTranslation } from 'react-i18next';
+import { useDataEntityDetails } from 'lib/hooks';
+import { InformationIcon } from 'components/shared/icons';
 import * as S from './DataEntityDetailsPreview.styles';
 import AppCircularProgress from '../AppCircularProgress/AppCircularProgress';
 import NumberFormatted from '../NumberFormatted/NumberFormatted';

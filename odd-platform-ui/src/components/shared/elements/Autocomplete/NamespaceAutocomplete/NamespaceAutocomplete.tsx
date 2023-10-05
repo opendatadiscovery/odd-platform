@@ -6,6 +6,8 @@ import {
   type FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
+import { type ControllerRenderProps } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import type {
   CollectorFormData,
   DataEntityGroupFormData,
@@ -13,13 +15,11 @@ import type {
   TermFormData,
 } from 'generated-sources';
 import { ClearIcon } from 'components/shared/icons';
-import { type ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import type { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 import AutocompleteSuggestion from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestion';
 import Input from 'components/shared/elements/Input/Input';
-import { useTranslation } from 'react-i18next';
 
 type FilterOption = Omit<Namespace, 'id' | 'name'> & Partial<Namespace>;
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Group } from '@visx/group';
+import { useTranslation } from 'react-i18next';
 import type { DataEntityLineageNode, DataSource } from 'generated-sources';
 import { TruncatedSVGText } from 'components/shared/elements';
 import type { StreamType } from 'redux/interfaces';
@@ -11,7 +12,6 @@ import {
 import GroupedEntitiesListModal from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/GroupedEntitiesListModal/GroupedEntitiesListModal';
 import ItemsButton from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/ItemsButton/ItemsButton';
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/InfoStyles';
-import { useTranslation } from 'react-i18next';
 
 interface InfoProps {
   id: number;

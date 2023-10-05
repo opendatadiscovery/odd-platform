@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
-import { maxSidebarWidth } from 'lib/constants';
 import styled from 'styled-components';
+import { maxSidebarWidth } from 'lib/constants';
 
 export const Container = styled(Grid)(({ theme }) => ({
   position: 'relative',

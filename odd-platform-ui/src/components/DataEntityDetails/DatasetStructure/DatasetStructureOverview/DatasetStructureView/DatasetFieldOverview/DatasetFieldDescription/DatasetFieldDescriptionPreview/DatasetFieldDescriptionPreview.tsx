@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
-import { Markdown } from 'components/shared/elements';
 import { Typography } from '@mui/material';
+import { Markdown } from 'components/shared/elements';
 
 interface DatasetFieldDescriptionPreviewProps {
   isDescriptionEmpty: boolean;

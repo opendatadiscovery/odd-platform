@@ -1,5 +1,5 @@
-import { datasourceActionTypePrefix } from 'redux/actions';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { datasourceActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import type { DataSource } from 'generated-sources';
 import type { DataSourcesState } from 'redux/interfaces';

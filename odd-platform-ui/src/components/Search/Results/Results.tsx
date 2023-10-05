@@ -2,6 +2,9 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
+import findKey from 'lodash/findKey';
+import omit from 'lodash/omit';
+import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, Permission } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
@@ -28,10 +31,7 @@ import {
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
-import findKey from 'lodash/findKey';
 import { WithPermissions } from 'components/shared/contexts';
-import omit from 'lodash/omit';
-import { useTranslation } from 'react-i18next';
 import TableHeader from './TableHeader/TableHeader';
 import DataEntityGroupForm from '../../DataEntityDetails/DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import SearchResultsTabs from './SearchResultsTabs/SearchResultsTabs';

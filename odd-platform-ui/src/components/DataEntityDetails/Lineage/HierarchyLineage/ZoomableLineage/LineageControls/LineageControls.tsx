@@ -1,11 +1,11 @@
 import React from 'react';
+import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Checkbox, AppSelect, AppTabs, Button } from 'components/shared/elements';
 import { TargetIcon } from 'components/shared/icons';
-import { FormControlLabel, type SelectChangeEvent, Typography } from '@mui/material';
 import { useQueryParams } from 'lib/hooks';
 import { expandAllGroups } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useTranslation } from 'react-i18next';
 import type { LineageQueryParams } from '../../lineageLib/interfaces';
 import * as S from './LineageControlsStyles';
 import { defaultLineageQuery, lineageDepth } from '../../lineageLib/constants';

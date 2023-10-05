@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Metric, MetricFamily, MetricLabel } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
+import type { Metric, MetricFamily, MetricLabel } from 'generated-sources';
 import AppTooltip from 'components/shared/elements/AppTooltip/AppTooltip';
 import NumberFormatted from 'components/shared/elements/NumberFormatted/NumberFormatted';
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { type TreeNodeDatum } from 'redux/interfaces';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
+import { type TreeNodeDatum } from 'redux/interfaces';
 import { useQueryParams } from 'lib/hooks';
 import type { LineageQueryParams } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
 import {

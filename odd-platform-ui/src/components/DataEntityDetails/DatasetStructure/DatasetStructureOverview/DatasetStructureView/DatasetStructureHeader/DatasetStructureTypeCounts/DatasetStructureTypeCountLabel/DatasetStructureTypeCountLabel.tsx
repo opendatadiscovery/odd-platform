@@ -1,9 +1,9 @@
 import React from 'react';
-import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
-import { DatasetTypeLabelMap } from 'redux/interfaces';
 import type { BoxProps } from '@mui/material';
 import { Typography } from '@mui/material';
 import round from 'lodash/round';
+import { DatasetTypeLabelMap } from 'redux/interfaces';
+import type { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import * as S from './DatasetStructureTypeCountLabelStyles';
 
 interface DatasetStructureTypeCountLabelProps extends Pick<BoxProps, 'sx'> {

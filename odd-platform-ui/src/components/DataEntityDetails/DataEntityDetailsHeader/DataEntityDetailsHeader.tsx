@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   EntityClassItem,
@@ -15,7 +16,6 @@ import { AddIcon, EditIcon, SlackIcon, TimeGapIcon } from 'components/shared/ico
 import { useAppDateTime } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsDataEntityBelongsToClass, getIsEntityStatusDeleted } from 'redux/selectors';
-import { useTranslation } from 'react-i18next';
 import DataEntityGroupForm from '../DataEntityGroup/DataEntityGroupForm/DataEntityGroupForm';
 import CreateMessageForm from '../DataCollaboration/CreateMessageForm/CreateMessageForm';
 import InternalNameFormDialog from '../InternalNameFormDialog/InternalNameFormDialog';

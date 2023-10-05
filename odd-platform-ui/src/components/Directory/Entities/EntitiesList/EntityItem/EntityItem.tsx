@@ -1,4 +1,6 @@
 import React, { type FC } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import type { DataEntity } from 'generated-sources';
 import {
   EntityClassItem,
@@ -7,8 +9,6 @@ import {
   MetadataStale,
 } from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
-import { Box, Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
 
 interface EntityItemProps {

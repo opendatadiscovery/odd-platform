@@ -1,5 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { DataEntityRun } from 'generated-sources';
 import {
   Button,
@@ -8,7 +9,6 @@ import {
   TestRunStatusItem,
 } from 'components/shared/elements';
 import { useAppDateTime, useAppPaths } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import { StatsContainer, StatusReasonContainer } from './TestRunStatusReasonModalStyles';
 
 interface TestRunStatusReasonModalProps {

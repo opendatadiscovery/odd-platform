@@ -1,5 +1,5 @@
-import type { AppInfoState } from 'redux/interfaces';
 import { createSlice } from '@reduxjs/toolkit';
+import type { AppInfoState } from 'redux/interfaces';
 import { appInfoActionPrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 

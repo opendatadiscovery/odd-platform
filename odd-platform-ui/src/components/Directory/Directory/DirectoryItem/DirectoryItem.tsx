@@ -1,9 +1,9 @@
 import React, { type FC } from 'react';
+import { Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import type { DataSourceType } from 'generated-sources';
 import { DatasourceLogo } from 'components/shared/elements';
-import { Typography } from '@mui/material';
 import { pluralize } from 'lib/helpers';
-import { Link } from 'react-router-dom';
 import * as S from './DirectoryItem.styles';
 
 interface DirectoryItemProps {

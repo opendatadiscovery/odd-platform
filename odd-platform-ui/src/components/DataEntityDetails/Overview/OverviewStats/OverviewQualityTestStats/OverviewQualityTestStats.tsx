@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   DataEntityClassNameEnum,
   type DataEntityDetails,
@@ -14,7 +15,6 @@ import {
   TestRunStatusItem,
   TestRunStatusReasonModal,
 } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import * as S from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps {

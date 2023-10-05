@@ -1,6 +1,13 @@
 import React, { type FC, useMemo } from 'react';
-import { useAppParams, useGetDirectoryDataSources } from 'lib/hooks';
 import { Typography } from '@mui/material';
+import startCase from 'lodash/startCase';
+import uniq from 'lodash/uniq';
+import keys from 'lodash/keys';
+import flatten from 'lodash/flatten';
+import omit from 'lodash/omit';
+import type { DataSourceDirectory } from 'generated-sources';
+import type { ErrorState } from 'redux/interfaces';
+import { pluralize } from 'lib/helpers';
 import {
   AppErrorPage,
   AppLoadingPage,
@@ -9,14 +16,7 @@ import {
   getCapitalizedDatasourceNameFromPrefix,
   ScrollableContainer,
 } from 'components/shared/elements';
-import { pluralize } from 'lib/helpers';
-import type { ErrorState } from 'redux/interfaces';
-import type { DataSourceDirectory } from 'generated-sources';
-import startCase from 'lodash/startCase';
-import uniq from 'lodash/uniq';
-import keys from 'lodash/keys';
-import flatten from 'lodash/flatten';
-import omit from 'lodash/omit';
+import { useAppParams, useGetDirectoryDataSources } from 'lib/hooks';
 import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import * as S from '../shared/styles';
 import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';

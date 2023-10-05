@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import { type Theme } from '@mui/material/styles';
-import { type HintType } from 'components/shared/elements/AppTabs/interfaces';
 import { type ElementType } from 'react';
 import styled, { type CSSObject } from 'styled-components';
+import { type HintType } from 'components/shared/elements/AppTabs/interfaces';
 
 const getTabHintStylesByType = (theme: Theme, hintType: HintType): CSSObject => {
   switch (hintType) {

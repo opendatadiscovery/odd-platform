@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { useAtom } from 'jotai';
+import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import {
   getNewOwnerAssociationRequestsPageInfo,
   getResolvedOwnerAssociationRequestsPageInfo,

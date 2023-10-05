@@ -1,8 +1,8 @@
 import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { AppCircularProgress, AppErrorBlock } from 'components/shared/elements';
 import { useAppParams, useDataEntityAttachments } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import AttachmentsList from './AttachmentsList/AttachmentsList';
 import AttachmentsHeader from './AttachmentsHeader/AttachmentsHeader';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, Typography } from '@mui/material';
-import { Button, AppRadio, AppSwitch } from 'components/shared/elements';
 import { useController, type UseControllerProps } from 'react-hook-form';
+import { Button, AppRadio, AppSwitch } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityAlertConfig } from 'redux/selectors';
 import { useAppDateTime, useAppParams } from 'lib/hooks';

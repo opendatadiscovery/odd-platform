@@ -1,9 +1,9 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ErrorState } from 'redux/interfaces/loader';
 import { toolbarHeight } from 'lib/constants';
 import Button from 'components/shared/elements/Button/Button';
-import { useTranslation } from 'react-i18next';
 
 interface AppErrorPageProps {
   showError: boolean;

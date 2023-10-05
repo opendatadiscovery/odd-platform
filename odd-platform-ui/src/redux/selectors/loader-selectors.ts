@@ -1,5 +1,5 @@
-import type { AsyncRequestStatus, ErrorState, RootState } from 'redux/interfaces';
 import { createSelector } from '@reduxjs/toolkit';
+import type { AsyncRequestStatus, ErrorState, RootState } from 'redux/interfaces';
 
 export const createFetchingSelector = (action: string) => (state: RootState) =>
   state.loader.statuses[action] || 'initial';

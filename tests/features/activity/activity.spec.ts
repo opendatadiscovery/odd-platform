@@ -80,7 +80,9 @@ test.describe('Check filters', () => {
     test(`Display an expected item with filter Period`, async ({ steps: { pages } }) => {
       await test.step(`When apply filter Period`, async () => {
         await pages.activity.choose3days(`Period`);
-        expect(await pages.activity.isAlertVisible()).toBeTruthy();
+        expect(
+          await pages.activity.countListItems(entityNameWithAlphabeticChars),
+        ).toBeGreaterThanOrEqual(1);
       });
     });
   });

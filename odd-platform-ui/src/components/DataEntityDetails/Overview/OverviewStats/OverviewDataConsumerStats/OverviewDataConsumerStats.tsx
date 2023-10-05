@@ -1,9 +1,9 @@
 import React from 'react';
-import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { EntitiesListModal, Button, EntityClassItem } from 'components/shared/elements';
 import { useAppPaths } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 interface OverviewDataConsumerStatsProps {
   inputs: DataEntityDetails['inputList'];

@@ -1,5 +1,6 @@
-import type { DataQualityTestState } from 'redux/interfaces';
 import { createSlice } from '@reduxjs/toolkit';
+import uniq from 'lodash/uniq';
+import type { DataQualityTestState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
 import { dataQualityTestTypePrefix } from 'redux/actions';
 import {
@@ -7,7 +8,6 @@ import {
   type DataEntityList,
   DataEntityRunStatus,
 } from 'generated-sources';
-import uniq from 'lodash/uniq';
 
 export const initialState: DataQualityTestState = {
   qualityTestsById: {},

@@ -1,6 +1,6 @@
 import React from 'react';
-import AppSvgIcon from 'components/shared/icons/AppSvgIcon';
 import { type SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/icons/AppSvgIcon';
 
 const CopyIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
   <AppSvgIcon sx={sx} viewBox='0 0 16 16' {...props}>

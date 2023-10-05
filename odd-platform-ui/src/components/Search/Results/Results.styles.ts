@@ -1,7 +1,7 @@
 import type { GridSize } from '@mui/material';
 import { Grid } from '@mui/material';
-import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
+import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import type { DataEntityClassNameEnum } from 'generated-sources';
 
 const searchHeight = 40;

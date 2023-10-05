@@ -1,4 +1,6 @@
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { type DataEntityApiUpdateAlertConfigRequest } from 'generated-sources';
@@ -7,9 +9,7 @@ import {
   getDataEntityAlertsConfigUpdatingError,
   getDataEntityAlertsConfigUpdatingStatus,
 } from 'redux/selectors';
-import { useForm } from 'react-hook-form';
 import { fetchDataEntityAlertsConfig, updateDataEntityAlertsConfig } from 'redux/thunks';
-import { Grid, Typography } from '@mui/material';
 import { Button, AppCircularProgress, DialogWrapper } from 'components/shared/elements';
 import type { SerializeDateToNumber } from 'redux/interfaces';
 import AlertTypeRange from './AlertTypeRange/AlertTypeRange';

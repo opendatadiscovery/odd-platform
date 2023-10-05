@@ -1,8 +1,8 @@
 import React, { type FC } from 'react';
+import { Grid } from '@mui/material';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import type { DataEntityType } from 'generated-sources';
 import { AppTabs, type AppTabItem } from 'components/shared/elements';
-import { Grid } from '@mui/material';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
 
 interface EntitiesListTabsProps {

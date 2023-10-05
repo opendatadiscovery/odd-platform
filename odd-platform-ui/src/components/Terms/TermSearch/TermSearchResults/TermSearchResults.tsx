@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useTranslation } from 'react-i18next';
 import { useScrollBarWidth } from 'lib/hooks';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
 import {
@@ -15,7 +16,6 @@ import {
 } from 'redux/selectors';
 import { fetchTermsSearchResults } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useTranslation } from 'react-i18next';
 import TermSearchResultItem from './TermSearchResultItem/TermSearchResultItem';
 import * as S from './TermSearchResultsStyles';
 import TermSearchResultsSkeleton from './TermSearchResultsSkeleton/TermSearchResultsSkeleton';

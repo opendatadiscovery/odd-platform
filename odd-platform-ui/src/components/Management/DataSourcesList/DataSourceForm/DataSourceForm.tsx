@@ -15,10 +15,10 @@ import {
   Input,
   NamespaceAutocomplete,
 } from 'components/shared/elements';
-import { Asterisk } from './DataSourceFormStyles';
+import Asterisk from 'components/shared/styled-components/asterisk';
 
 interface DataSourceFormDialogProps {
-  btnCreateEl: JSX.Element;
+  btnCreateEl: React.JSX.Element;
   dataSource?: DataSource;
 }
 
