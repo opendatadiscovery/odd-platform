@@ -6,19 +6,19 @@ import { termSearchResultsColWidthStyles } from 'components/Terms/TermSearch/Ter
 
 const itemHeight = 40;
 
-export const TermLinkedItemsResultsTableHeader = styled(Grid)(({ theme }) => ({
+export const TermLinkedEntitiesResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
 }));
 
-export const TermLinkedItemsColContainer = styled(Grid)<{
+export const TermLinkedEntitiesColContainer = styled(Grid)<{
   $colType: TermSearchResultsColType;
 }>(({ $colType }) => ({
   ...termSearchResultsColWidthStyles.col,
   ...termSearchResultsColWidthStyles[$colType],
 }));
 
-export const TermLinkedItemsListContainer = styled(Grid)<{ $isListEmpty: boolean }>(
+export const TermLinkedEntitiesListContainer = styled(Grid)<{ $isListEmpty: boolean }>(
   ({ theme, $isListEmpty }) => ({
     height: $isListEmpty
       ? 'auto'

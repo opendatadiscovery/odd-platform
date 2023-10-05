@@ -20,6 +20,9 @@ export const useTermsPaths = () => {
   const termDetailsLinkedEntitiesPath = (termId: TermId = TermsRoutes.termIdParam) =>
     `${termDetailsPath(termId, TermsRoutes.linkedEntities)}`;
 
+  const termDetailsLinkedColumnsPath = (termId: TermId = TermsRoutes.termIdParam) =>
+    `${termDetailsPath(termId, TermsRoutes.linkedColumns)}`;
+
   const termDetailsOverviewPath = (termId: TermId = TermsRoutes.termIdParam) =>
     `${termDetailsPath(termId, TermsRoutes.overview)}`;
 
@@ -27,6 +30,7 @@ export const useTermsPaths = () => {
     termSearchPath,
     termDetailsPath,
     termDetailsLinkedEntitiesPath,
+    termDetailsLinkedColumnsPath,
     termDetailsOverviewPath,
   };
 };

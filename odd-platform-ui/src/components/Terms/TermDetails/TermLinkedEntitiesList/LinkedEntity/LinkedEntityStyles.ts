@@ -2,7 +2,7 @@ import type { GridProps } from '@mui/material';
 import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { colWidthStyles } from '../LinkedItemsListSkeleton/LinkedItemsListSkeletonStyles';
+import { colWidthStyles } from '../LinkedEntitiesListSkeleton/LinkedEntitiesListSkeletonStyles';
 
 export const Container = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
@@ -16,7 +16,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   },
 }));
 
-export const ItemLink = styled(Link)(() => ({
+export const EntityLink = styled(Link)(() => ({
   color: 'initial',
   textDecoration: 'none',
   flexGrow: 1,

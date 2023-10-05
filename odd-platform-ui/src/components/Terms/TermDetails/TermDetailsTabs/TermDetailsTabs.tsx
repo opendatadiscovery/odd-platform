@@ -8,8 +8,12 @@ import { useAppSelector } from 'redux/lib/hooks';
 const TermDetailsTabs: React.FC = () => {
   const { t } = useTranslation();
   const { termId, termsViewType } = useAppParams();
-  const { termDetailsOverviewPath, termDetailsLinkedEntitiesPath, TermsRoutes } =
-    useAppPaths();
+  const {
+    termDetailsOverviewPath,
+    termDetailsLinkedEntitiesPath,
+    termDetailsLinkedColumnsPath,
+    TermsRoutes,
+  } = useAppPaths();
 
   const termDetails = useAppSelector(getTermDetails(termId));
 
@@ -26,6 +30,13 @@ const TermDetailsTabs: React.FC = () => {
         hint: termDetails?.entitiesUsingCount,
         hidden: !termDetails?.entitiesUsingCount,
         value: TermsRoutes.linkedEntities,
+      },
+      {
+        name: t('Linked columns'),
+        link: termDetailsLinkedColumnsPath(termId),
+        hint: termDetails?.entitiesUsingCount,
+        hidden: !termDetails?.entitiesUsingCount,
+        value: TermsRoutes.linkedColumns,
       },
     ],
     [termId, termDetails?.entitiesUsingCount, t]

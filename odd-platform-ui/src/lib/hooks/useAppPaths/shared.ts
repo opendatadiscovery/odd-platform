@@ -92,6 +92,7 @@ export enum TermsRoutes {
   termsViewTypeParam = ':termsViewType',
   overview = 'overview',
   linkedEntities = 'linked-entities',
+  linkedColumns = 'linked-columns',
 }
 
 export enum DirectoryRoutes {

@@ -3,9 +3,9 @@ import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
 import { SkeletonWrapper } from 'components/shared/elements';
-import { ColContainer } from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsListSkeleton/LinkedItemsListSkeletonStyles';
+import { ColContainer } from 'components/Terms/TermDetails/TermLinkedEntitiesList/LinkedEntitiesListSkeleton/LinkedEntitiesListSkeletonStyles';
 
-const LinkedItemsListSkeleton: React.FC = () => (
+const LinkedEntitiesListSkeleton: React.FC = () => (
   <SkeletonWrapper
     length={10}
     renderContent={({ randWidth, key }) => (
@@ -41,4 +41,4 @@ const LinkedItemsListSkeleton: React.FC = () => (
     )}
   />
 );
-export default LinkedItemsListSkeleton;
+export default LinkedEntitiesListSkeleton;
