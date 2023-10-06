@@ -1,11 +1,11 @@
 import React, { cloneElement, type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import Button from 'components/shared/elements/Button/Button';
 import TermsAutocomplete from 'components/shared/elements/Autocomplete/TermsAutocomplete/TermsAutocomplete';
 import type { TermRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
-import { useTranslation } from 'react-i18next';
 
 interface AssignTermFormData {
   termId: number;

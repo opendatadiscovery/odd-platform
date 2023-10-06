@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   ConfirmationDialog,
@@ -14,7 +15,6 @@ import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 import OwnershipForm from '../../Ownership/OwnershipForm';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 

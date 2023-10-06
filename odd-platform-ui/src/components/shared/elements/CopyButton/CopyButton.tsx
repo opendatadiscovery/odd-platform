@@ -1,7 +1,7 @@
 import { CircularProgress } from '@mui/material';
 import React from 'react';
-import { AlertIcon, CopyIcon, SuccessIcon } from 'components/shared/icons';
 import { type SxProps, type Theme } from '@mui/system';
+import { AlertIcon, CopyIcon, SuccessIcon } from 'components/shared/icons';
 import Button from 'components/shared/elements/Button/Button';
 import type { Button as ButtonType } from 'components/shared/elements/Button/interfaces';
 

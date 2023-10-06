@@ -1,7 +1,7 @@
 import React from 'react';
-import { ClearIcon, SystemIcon } from 'components/shared/icons';
 import type { Theme, TypographyProps } from '@mui/material';
 import type { SxProps } from '@mui/system';
+import { ClearIcon, SystemIcon } from 'components/shared/icons';
 import { Container } from 'components/shared/elements/LabelItem/LabelItemStyles';
 import Button from 'components/shared/elements/Button/Button';
 

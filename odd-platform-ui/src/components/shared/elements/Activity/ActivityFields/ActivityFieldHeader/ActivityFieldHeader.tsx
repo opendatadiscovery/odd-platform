@@ -1,10 +1,10 @@
 import React from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { EventType } from 'lib/interfaces';
 import { useActivityHeaderIcon } from 'lib/hooks';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeaderStyles';
 import Button from 'components/shared/elements/Button/Button';
-import { useTranslation } from 'react-i18next';
 
 interface ActivityFieldHeaderProps {
   startText: string;

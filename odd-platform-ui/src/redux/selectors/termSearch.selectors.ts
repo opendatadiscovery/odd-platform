@@ -1,6 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
-import * as actions from 'redux/actions';
+import mapValues from 'lodash/mapValues';
+import pickBy from 'lodash/pickBy';
+import values from 'lodash/values';
+import transform from 'lodash/transform';
+import compact from 'lodash/compact';
 import type {
   CurrentPageInfo,
   RootState,
@@ -9,11 +12,8 @@ import type {
   TermSearchOptionalFacetNames,
   TermSearchState,
 } from 'redux/interfaces';
-import mapValues from 'lodash/mapValues';
-import pickBy from 'lodash/pickBy';
-import values from 'lodash/values';
-import transform from 'lodash/transform';
-import compact from 'lodash/compact';
+import * as actions from 'redux/actions';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { emptyArr } from 'lib/constants';
 
 export const getTermSearchCreateStatuses = createStatusesSelector(

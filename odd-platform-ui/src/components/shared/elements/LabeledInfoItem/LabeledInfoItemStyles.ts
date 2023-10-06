@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
-import { type DataEntityRunStatus } from 'generated-sources';
 import { type ElementType } from 'react';
+import { type DataEntityRunStatus } from 'generated-sources';
 
 interface ValueProps {
   $runStatus?: DataEntityRunStatus;

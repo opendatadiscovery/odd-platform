@@ -1,11 +1,11 @@
 import React from 'react';
 import { type SxProps } from '@mui/system';
 import { type Theme, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   NoResultText,
   CreateNewOptionText,
 } from 'components/shared/elements/AutocompleteSuggestion/AutocompleteSuggestionStyles';
-import { useTranslation } from 'react-i18next';
 
 interface AutocompleteSuggestionProps {
   optionLabel: string;

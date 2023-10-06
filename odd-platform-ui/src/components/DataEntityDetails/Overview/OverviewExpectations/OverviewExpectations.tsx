@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import type { DataQualityTestExpectation, LinkedUrl } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import type { DataQualityTestExpectation, LinkedUrl } from 'generated-sources';
 import { Button } from 'components/shared/elements';
 import { ChevronIcon, DropdownIcon } from 'components/shared/icons';
 import { useCollapse } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 import * as S from './OverviewExpectationsStyles';
 
 interface OverviewExpectationsProps {

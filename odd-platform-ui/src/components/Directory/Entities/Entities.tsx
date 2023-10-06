@@ -1,4 +1,6 @@
 import React, { type FC, useMemo } from 'react';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   useAppParams,
   useGetDataSourceEntities,
@@ -6,10 +8,8 @@ import {
   usePrevious,
 } from 'lib/hooks';
 import { AppErrorPage, AppLoadingPage, DatasourceLogo } from 'components/shared/elements';
-import { Typography } from '@mui/material';
 import { pluralize } from 'lib/helpers';
 import type { ErrorState } from 'redux/interfaces';
-import { useTranslation } from 'react-i18next';
 import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import EntitiesTabs from './EntitiesTabs/EntitiesTabs';
 import EntitiesList from './EntitiesList/EntitiesList';

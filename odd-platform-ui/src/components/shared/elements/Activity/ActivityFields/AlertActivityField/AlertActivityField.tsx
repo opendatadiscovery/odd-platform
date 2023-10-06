@@ -1,11 +1,11 @@
 import React from 'react';
+import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import type { ActivityEventType, AlertHaltConfigActivityState } from 'generated-sources';
 import type { Activity } from 'redux/interfaces';
-import { Grid, Typography } from '@mui/material';
 import { stringFormatted } from 'lib/helpers';
 import { alertTitlesMap } from 'lib/constants';
 import { useAppDateTime } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 interface AlertActivityFieldProps {
   eventType: ActivityEventType;

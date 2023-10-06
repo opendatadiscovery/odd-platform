@@ -2,6 +2,7 @@ import React from 'react';
 import { FormControlLabel, Grid, RadioGroup, type TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { isAfter, isBefore, isValid } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { MetadataFieldType } from 'generated-sources';
 import {
   AppDatePicker,
@@ -11,7 +12,6 @@ import {
   minDate,
 } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
-import { useTranslation } from 'react-i18next';
 
 interface MetadataValueEditFieldProps {
   metadataType: MetadataFieldType | '';
@@ -26,7 +26,6 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   metadataValue,
   fieldName = 'value',
   labeled,
-  size,
 }) => {
   const { t } = useTranslation();
   const { control } = useFormContext();

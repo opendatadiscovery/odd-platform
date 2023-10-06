@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { type OwnerAssociationRequestStatus } from 'generated-sources';
 import { Typography } from '@mui/material';
+import { type OwnerAssociationRequestStatus } from 'generated-sources';
 
 export const Container = styled(Typography)<{
   $status: OwnerAssociationRequestStatus;

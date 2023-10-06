@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
+import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { AddIcon } from 'components/shared/icons';
 import {
   Button,
   EmptyContentPlaceholder,
   Input,
   NumberFormatted,
-  SkeletonWrapper,
+  ScrollableContainer,
 } from 'components/shared/elements';
-import { Grid, Typography } from '@mui/material';
 import {
   getNamespaceCreatingStatuses,
   getNamespaceDeletingStatuses,
@@ -21,13 +22,11 @@ import { fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceForm from './NamespaceForm/NamespaceForm';
-import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
-import * as S from './NamespaceListStyles';
+import NamespaceListSkeleton from './NamespaceListSkeleton/NamespaceListSkeleton';
 
-const NamespaceList: React.FC = () => {
+const NamespaceList = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -40,70 +39,50 @@ const NamespaceList: React.FC = () => {
   const { isLoading: isNamespaceCreating } = useAppSelector(getNamespaceCreatingStatuses);
   const { isLoading: isNamespaceDeleting } = useAppSelector(getNamespaceDeletingStatuses);
 
-  const pageSize = 100;
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [totalNamespaces, setTotalNamespaces] = React.useState<number | undefined>(
-    pageInfo?.total
-  );
+  const size = 100;
+  const [query, setQuery] = useState('');
+  const [totalNamespaces, setTotalNamespaces] = useState(pageInfo?.total);
 
-  React.useEffect(() => {
-    if (!searchText) dispatch(fetchNamespaceList({ page: 1, size: pageSize }));
-  }, [
-    fetchNamespaceList,
-    dispatch,
-    isNamespaceCreating,
-    isNamespaceDeleting,
-    pageSize,
-    searchText,
-  ]);
+  useEffect(() => {
+    if (!query) dispatch(fetchNamespaceList({ page: 1, size }));
+  }, [isNamespaceCreating, isNamespaceDeleting, size, query]);
 
-  React.useEffect(() => {
-    if (!searchText) setTotalNamespaces(pageInfo?.total);
-  }, [pageInfo]);
+  useEffect(() => {
+    if (!query) setTotalNamespaces(pageInfo?.total);
+  }, [pageInfo?.total, query]);
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    dispatch(
-      fetchNamespaceList({
-        page: pageInfo.page + 1,
-        size: pageSize,
-        query: searchText,
-      })
-    );
+    dispatch(fetchNamespaceList({ page: pageInfo.page + 1, size, query }));
   };
 
-  const handleSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      dispatch(fetchNamespaceList({ page: 1, size: pageSize, query: searchText }));
-    }, 500),
-    [searchText]
-  );
+  const handleSearch = useDebouncedCallback(() => {
+    dispatch(fetchNamespaceList({ page: 1, size, query }));
+  }, 500);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+    setQuery(event.target.value);
     handleSearch();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
+    if (event.key === 'Enter') handleSearch();
   };
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
-      <S.Caption container sx={{ mb: 1 }}>
+      <Grid container sx={{ mb: 1 }} alignItems='center' justifyContent='space-between'>
         <Typography variant='h1'>{t('Namespaces')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalNamespaces} /> {t('namespaces overall')}
         </Typography>
-      </S.Caption>
-      <S.Caption container sx={{ mb: 2 }}>
+      </Grid>
+      <Grid container sx={{ mb: 2 }} alignItems='center' justifyContent='space-between'>
         <Input
           variant='search-m'
           maxWidth={320}
           placeholder={t('Search namespace')}
-          value={searchText}
+          value={query}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
@@ -118,38 +97,28 @@ const NamespaceList: React.FC = () => {
             }
           />
         </WithPermissions>
-      </S.Caption>
-      <S.TableHeader container>
-        <Grid item xs={12}>
-          <Typography variant='subtitle2' color='texts.hint'>
-            {t('Name')}
-          </Typography>
-        </Grid>
-      </S.TableHeader>
-      <Grid container>
-        <Grid item xs={12}>
+      </Grid>
+      <Grid container sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
+        <Typography px={1} variant='subtitle2' color='texts.hint'>
+          {t('Name')}
+        </Typography>
+      </Grid>
+      {namespacesList.length > 0 && (
+        <ScrollableContainer container $offsetY={140} id='namespaces-list'>
           <InfiniteScroll
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={namespacesList.length}
             scrollThreshold='200px'
-            loader={
-              isNamespaceFetching && (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randWidth, key }) => (
-                    <NamespaceSkeletonItem key={key} width={randWidth()} />
-                  )}
-                />
-              )
-            }
+            scrollableTarget='namespaces-list'
+            loader={<NamespaceListSkeleton />}
           >
-            {namespacesList?.map(namespace => (
+            {namespacesList.map(namespace => (
               <EditableNamespaceItem key={namespace.id} namespace={namespace} />
             ))}
           </InfiniteScroll>
-        </Grid>
-      </Grid>
+        </ScrollableContainer>
+      )}
       {!isNamespaceFetching && !namespacesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

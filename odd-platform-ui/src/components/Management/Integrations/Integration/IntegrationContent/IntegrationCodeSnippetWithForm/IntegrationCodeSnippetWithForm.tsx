@@ -2,9 +2,9 @@ import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Handlebars from 'handlebars';
 import { FormControlLabel, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button, Checkbox, Input, Markdown } from 'components/shared/elements';
 import type { IntegrationCodeSnippet as IntegrationCodeSnippetType } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 
 interface IntegrationCodeSnippetWithFormProps {
   snippet: IntegrationCodeSnippetType;

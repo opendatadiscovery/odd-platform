@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, type FC, useCallback, useState } from 'react';
+import React, { type ChangeEvent, type FC, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import {
   EmptyContentPlaceholder,
   Input,
   NumberFormatted,
+  ScrollableContainer,
 } from 'components/shared/elements';
 import { useIntegrationPreviews } from 'lib/hooks/api';
 import type { ErrorState } from 'redux/interfaces';
@@ -19,10 +20,8 @@ const IntegrationPreviewList: FC = () => {
 
   const { data, isError, isSuccess, error, isLoading } = useIntegrationPreviews();
 
-  const handleInputChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => setQuery(e.target.value),
-    []
-  );
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setQuery(e.target.value);
 
   const filteredIntegrations =
     data?.items.filter(integration =>
@@ -50,18 +49,22 @@ const IntegrationPreviewList: FC = () => {
       </Grid>
       {isLoading ? <AppLoadingPage /> : null}
 
-      {!isEmpty(filteredIntegrations) && (
-        <Grid container columnGap={2} rowGap={4}>
-          {filteredIntegrations.map(({ id, name, description, installed }) => (
-            <IntegrationPreviewItem
-              key={id}
-              id={id}
-              name={name}
-              description={description}
-              installed={installed}
-            />
-          ))}
-        </Grid>
+      {filteredIntegrations.length > 0 && (
+        <ScrollableContainer>
+          {!isEmpty(filteredIntegrations) && (
+            <Grid container columnGap={2} rowGap={4}>
+              {filteredIntegrations.map(({ id, name, description, installed }) => (
+                <IntegrationPreviewItem
+                  key={id}
+                  id={id}
+                  name={name}
+                  description={description}
+                  installed={installed}
+                />
+              ))}
+            </Grid>
+          )}
+        </ScrollableContainer>
       )}
 
       <AppErrorPage showError={isError} error={error as ErrorState} offsetTop={120} />

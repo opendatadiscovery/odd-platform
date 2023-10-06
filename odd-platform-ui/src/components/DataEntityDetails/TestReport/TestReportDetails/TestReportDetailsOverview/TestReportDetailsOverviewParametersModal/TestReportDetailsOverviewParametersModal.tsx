@@ -1,8 +1,8 @@
 import React from 'react';
-import { DialogWrapper } from 'components/shared/elements';
 import { Typography } from '@mui/material';
-import type { DataQualityTestExpectation } from 'generated-sources';
 import { useTranslation } from 'react-i18next';
+import { DialogWrapper } from 'components/shared/elements';
+import type { DataQualityTestExpectation } from 'generated-sources';
 
 interface TestReportDetailsOverviewParametersModalProps {
   openBtnEl: JSX.Element;

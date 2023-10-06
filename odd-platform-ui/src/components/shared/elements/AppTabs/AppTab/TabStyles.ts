@@ -6,8 +6,8 @@ import {
   type TabsProps,
 } from '@mui/material';
 import { type Theme } from '@mui/material/styles';
-import { type TabType } from 'components/shared/elements/AppTabs/interfaces';
 import styled, { type CSSObject } from 'styled-components';
+import { type TabType } from 'components/shared/elements/AppTabs/interfaces';
 
 const getTabStylesByType = (theme: Theme, type: TabType): CSSObject => {
   switch (type) {

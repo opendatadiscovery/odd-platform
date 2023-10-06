@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Typography } from '@mui/material';
 import { useAtom } from 'jotai';
 import { useDebouncedCallback } from 'use-debounce';
@@ -25,14 +25,14 @@ const OwnerAssociationsHeader: React.FC<OwnerAssociationsHeaderProps> = ({
 
   const [query, setQuery] = useAtom(queryAtom);
 
-  const handleSearch = React.useCallback(
+  const handleSearch = useCallback(
     useDebouncedCallback(() => {
       dispatch(fetchOwnerAssociationRequestList({ page: 1, size, query, active }));
     }, 500),
     [query, active, size]
   );
 
-  const handleInputChange = React.useCallback(
+  const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setQuery(event.target.value);
       handleSearch();
@@ -40,12 +40,7 @@ const OwnerAssociationsHeader: React.FC<OwnerAssociationsHeaderProps> = ({
     [handleSearch, setQuery]
   );
 
-  const handleInputClear = React.useCallback(() => {
-    setQuery('');
-    handleSearch();
-  }, [handleSearch, setQuery]);
-
-  const handleKeyDown = React.useCallback(
+  const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (event.key === 'Enter') handleSearch();
     },

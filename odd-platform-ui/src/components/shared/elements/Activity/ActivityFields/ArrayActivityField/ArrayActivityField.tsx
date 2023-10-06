@@ -1,7 +1,7 @@
 import React, { type CSSProperties } from 'react';
 import { Grid } from '@mui/material';
-import { type EventType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
+import { type EventType } from 'lib/interfaces';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';

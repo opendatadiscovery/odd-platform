@@ -15,10 +15,10 @@ import {
   Input,
   NamespaceAutocomplete,
 } from 'components/shared/elements';
-import { Asterisk } from './CollectorFormStyles';
+import Asterisk from 'components/shared/styled-components/asterisk';
 
 interface CollectorFormDialogProps {
-  btnCreateEl: JSX.Element;
+  btnCreateEl: React.JSX.Element;
   collector?: Collector;
 }
 

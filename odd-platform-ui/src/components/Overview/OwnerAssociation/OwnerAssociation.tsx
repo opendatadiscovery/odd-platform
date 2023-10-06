@@ -1,4 +1,6 @@
 import React, { type FC, useState } from 'react';
+import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   getAssociationRequestStatus,
   getIdentity,
@@ -7,11 +9,9 @@ import {
   getSupposedOwnerName,
 } from 'redux/selectors';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
-import { Grid, Typography } from '@mui/material';
 import { WaitIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import { Button } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import OwnerAssociationForm from './OwnerAssociationForm/OwnerAssociationForm';
 import OwnerEntitiesList from './OwnerEntitiesList/OwnerEntitiesList';
 import * as S from './OwnerAssociationStyles';

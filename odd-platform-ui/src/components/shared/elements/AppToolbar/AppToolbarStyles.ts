@@ -1,7 +1,7 @@
 import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
-import { maxContentWidth, maxSidebarWidth, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { maxContentWidth, maxSidebarWidth, toolbarHeight } from 'lib/constants';
 
 export const Bar = styled(AppBar)(({ theme }) => ({
   [`&.${appBarClasses.root}`]: { backgroundColor: theme.palette.common.white },

@@ -1,5 +1,6 @@
-import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
+import uniqBy from 'lodash/uniqBy';
+import { activitiesActionTypePrefix } from 'redux/actions';
 import type { ActivitiesState, Activity } from 'redux/interfaces';
 import {
   fetchActivityCounts,
@@ -8,7 +9,6 @@ import {
 } from 'redux/thunks/activity.thunks';
 import { formatDate } from 'lib/helpers';
 import { datedListFormat } from 'lib/constants';
-import uniqBy from 'lodash/uniqBy';
 
 export const initialState: ActivitiesState = {
   activities: {

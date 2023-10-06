@@ -1,14 +1,14 @@
 import { hierarchy, tree as d3tree } from 'd3-hierarchy';
+import maxBy from 'lodash/maxBy';
+import { v4 as uuidv4 } from 'uuid';
+import entries from 'lodash/entries';
+import type { DataEntityLineageNode } from 'generated-sources';
 import type {
   DataEntityLineageById,
   DataEntityLineageStreamById,
   TreeLinkDatum,
   TreeNodeDatum,
 } from 'redux/interfaces';
-import maxBy from 'lodash/maxBy';
-import type { DataEntityLineageNode } from 'generated-sources';
-import { v4 as uuidv4 } from 'uuid';
-import entries from 'lodash/entries';
 import type {
   GenerateGraphProps,
   LineageGraphState,

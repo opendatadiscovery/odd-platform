@@ -1,9 +1,9 @@
 import React from 'react';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { type DataEntityRun } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import { Button, TestRunStatusItem } from 'components/shared/elements';
-import { useTranslation } from 'react-i18next';
 import TestRunStatusReasonModal from '../TestRunStatusReasonModal/TestRunStatusReasonModal';
 import { Container, StatusReasonModalBtnContainer } from './TestRunItemStyles';
 import { ColContainer } from '../TestRunsHistoryStyles';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -17,15 +17,15 @@ import {
   EmptyContentPlaceholder,
   Input,
   NumberFormatted,
+  ScrollableContainer,
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
 import DataSourceForm from './DataSourceForm/DataSourceForm';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItem from './DataSourceItem/DataSourceItem';
-import * as S from './DataSourcesListStyles';
 
-const DataSourcesListView: React.FC = () => {
+const DataSourcesListView = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -40,23 +40,20 @@ const DataSourcesListView: React.FC = () => {
   );
 
   const size = 30;
-  const [query, setQuery] = React.useState('');
-  const [totalDataSources, setTotalDataSources] = React.useState(total);
+  const [query, setQuery] = useState('');
+  const [totalDataSources, setTotalDataSources] = useState(total);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!query) dispatch(fetchDataSourcesList({ page: 1, size }));
   }, [isDataSourceDeleting, query]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!query) setTotalDataSources(total);
   }, [total, query]);
 
-  const handleSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      dispatch(fetchDataSourcesList({ page: 1, size, query }));
-    }, 500),
-    [query]
-  );
+  const handleSearch = useDebouncedCallback(() => {
+    dispatch(fetchDataSourcesList({ page: 1, size, query }));
+  }, 500);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
@@ -74,13 +71,13 @@ const DataSourcesListView: React.FC = () => {
 
   return (
     <Grid container flexDirection='column' alignItems='center'>
-      <S.Caption container sx={{ mb: 1 }}>
+      <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 1 }}>
         <Typography variant='h1'>{t('Datasources')}</Typography>
         <Typography variant='subtitle1' color='texts.info'>
           <NumberFormatted value={totalDataSources} /> {t('datasources overall')}
         </Typography>
-      </S.Caption>
-      <S.Caption container sx={{ mb: 2 }}>
+      </Grid>
+      <Grid alignItems='center' justifyContent='space-between' container sx={{ mb: 2 }}>
         <Input
           variant='search-m'
           placeholder={t('Search datasource')}
@@ -101,13 +98,14 @@ const DataSourcesListView: React.FC = () => {
             }
           />
         </WithPermissions>
-      </S.Caption>
-      <Grid container>
-        <Grid item xs={12}>
+      </Grid>
+      {dataSourcesList.length > 0 && (
+        <ScrollableContainer container id='datasources-list'>
           <InfiniteScroll
+            scrollableTarget='datasources-list'
             next={fetchNextPage}
             hasMore={hasNext}
-            loader={isDataSourcesListFetching && <DataSourceSkeletonItem length={5} />}
+            loader={<DataSourceSkeletonItem length={5} />}
             dataLength={dataSourcesList.length}
           >
             {dataSourcesList.map(dataSource => (
@@ -116,8 +114,8 @@ const DataSourcesListView: React.FC = () => {
               </Grid>
             ))}
           </InfiniteScroll>
-        </Grid>
-      </Grid>
+        </ScrollableContainer>
+      )}
       {!isDataSourcesListFetching && !dataSourcesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

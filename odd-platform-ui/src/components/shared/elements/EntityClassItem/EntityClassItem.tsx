@@ -1,6 +1,6 @@
 import React from 'react';
-import { type DataEntityClassNameEnum } from 'generated-sources';
 import { type BoxProps } from '@mui/material';
+import { type DataEntityClassNameEnum } from 'generated-sources';
 import { DataEntityClassLabelMap } from 'lib/constants';
 import * as S from './EntityClassItem.styles';
 

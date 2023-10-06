@@ -1,4 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import mapValues from 'lodash/mapValues';
+import reduce from 'lodash/reduce';
+import values from 'lodash/values';
+import get from 'lodash/get';
 import { termsSearchActTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import type {
@@ -14,10 +18,6 @@ import type {
   SearchFilter,
   TermSearchFacetsData,
 } from 'generated-sources';
-import mapValues from 'lodash/mapValues';
-import reduce from 'lodash/reduce';
-import values from 'lodash/values';
-import get from 'lodash/get';
 import { assignWith } from 'redux/lib/helpers';
 
 const initialState: TermSearchState = {

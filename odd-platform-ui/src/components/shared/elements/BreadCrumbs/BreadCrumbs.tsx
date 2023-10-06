@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
-import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import * as S from './BreadCrumbs.styles';
 
 interface BreadCrumbsProps {

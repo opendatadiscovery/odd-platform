@@ -1,4 +1,5 @@
 import React from 'react';
+import { Group } from '@visx/group';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchDataEntityDownstreamLineage,
@@ -9,7 +10,6 @@ import {
   getDownstreamLineageFetchingStatuses,
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
-import { Group } from '@visx/group';
 import { useQueryParams } from 'lib/hooks';
 import LineageContext from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/LineageContext/LineageContext';
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/LoadMoreButton/LoadMoreButtonStyles';

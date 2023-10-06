@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { AppAvatar, Button, WithFeature } from 'components/shared/elements';
 import { type Message } from 'redux/interfaces';
 import { Feature } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 import * as S from './MainThreadMessageStyles';
 
 interface MainThreadMessageProps {

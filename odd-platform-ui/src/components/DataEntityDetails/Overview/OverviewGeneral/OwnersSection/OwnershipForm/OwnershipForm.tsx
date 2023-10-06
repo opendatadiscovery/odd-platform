@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormControlLabel, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { type Ownership, type OwnershipFormData, Permission } from 'generated-sources';
 import {
   Checkbox,
@@ -17,7 +18,6 @@ import {
   getDataEntityOwnerUpdatingStatuses,
 } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 
 interface OwnershipFormProps {
   dataEntityId: number;

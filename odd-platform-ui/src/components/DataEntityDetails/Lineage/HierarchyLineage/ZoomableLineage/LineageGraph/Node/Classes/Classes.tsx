@@ -1,7 +1,7 @@
 import React from 'react';
+import { Group } from '@visx/group';
 import { DataEntityClassLabelMap } from 'lib/constants';
 import type { DataEntityClass } from 'generated-sources';
-import { Group } from '@visx/group';
 import * as S from './ClassesStyles';
 import type { NodeSize } from '../../../../lineageLib/interfaces';
 

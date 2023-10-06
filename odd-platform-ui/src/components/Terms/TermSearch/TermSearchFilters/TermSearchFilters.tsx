@@ -1,11 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button, AppCircularProgress } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getNamespaceList, getTermSearchUpdateStatuses } from 'redux/selectors';
 import { fetchNamespaceList } from 'redux/thunks';
 import { clearTermSearchFacets } from 'redux/slices/termSearch.slice';
-import { useTranslation } from 'react-i18next';
 import MultipleFilterItem from './TermSearchFilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './TermSearchFilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './TermSearchFiltersStyles';

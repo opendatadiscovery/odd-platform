@@ -1,11 +1,11 @@
 import React, { type FC, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { DataEntityLink } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon, LinkIcon } from 'components/shared/icons';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { useAppParams, useDeleteDataEntityLink } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import EditLinkForm from '../EditLinkForm/EditLinkForm';
 import * as S from './AttachmentItem.styles';
 

@@ -1,9 +1,9 @@
 import React, { type FC, useMemo, useRef, useState } from 'react';
 import { Collapse } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/shared/elements';
 import { ChevronIcon } from 'components/shared/icons';
 import type { DataEntityFile, DataEntityLink } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 import FileAttachment from '../AttachmentItem/FileAttachment';
 import LinkAttachment from '../AttachmentItem/LinkAttachment';
 import * as S from './AttachmentsList.styles';

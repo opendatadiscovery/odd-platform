@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Button, LabeledInfoItem, LabelItem } from 'components/shared/elements';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
@@ -11,7 +12,6 @@ import {
 import { useAppParams } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { useTranslation } from 'react-i18next';
 import OwnershipDeleteForm from './OwnershipDeleteForm/OwnershipDeleteForm';
 import * as S from './OwnersSectionStyles';
 import OwnershipForm from './OwnershipForm/OwnershipForm';

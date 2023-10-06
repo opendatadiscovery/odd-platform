@@ -1,6 +1,6 @@
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import type { DataEntityRun } from 'generated-sources';
 import type { DataEntityRunState } from 'redux/interfaces';
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { dataEntityRunTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 

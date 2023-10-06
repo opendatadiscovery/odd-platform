@@ -1,5 +1,5 @@
-import type { StreamType, TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces';
 import type { HierarchyPointLink, HierarchyPointNode } from 'd3-hierarchy';
+import type { StreamType, TreeLinkDatum, TreeNodeDatum } from 'redux/interfaces';
 import {
   INFO_MIN_ODDRN_HEIGHT,
   NODE_INDENT_LEFT,

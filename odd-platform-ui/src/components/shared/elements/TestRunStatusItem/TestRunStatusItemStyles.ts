@@ -1,6 +1,6 @@
-import { type DataEntityRunStatus } from 'generated-sources';
 import styled from 'styled-components';
 import { Box, Typography } from '@mui/material';
+import { type DataEntityRunStatus } from 'generated-sources';
 
 export const Container = styled(Box)(() => ({
   display: 'inline-flex',

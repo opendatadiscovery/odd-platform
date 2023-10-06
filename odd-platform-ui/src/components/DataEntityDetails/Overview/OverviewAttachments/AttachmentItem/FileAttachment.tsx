@@ -1,4 +1,5 @@
 import React, { type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { DataEntityLink } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
@@ -10,7 +11,6 @@ import {
 } from 'lib/hooks';
 import { isImageFile } from 'lib/helpers';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import * as S from './AttachmentItem.styles';
 
 interface FileAttachmentProps {

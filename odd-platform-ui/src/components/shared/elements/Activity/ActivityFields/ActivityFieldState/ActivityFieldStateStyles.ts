@@ -1,7 +1,7 @@
 import styled, { type CSSObject } from 'styled-components';
-import { DropdownIcon } from 'components/shared/icons';
 import { Grid } from '@mui/material';
 import { type CSSProperties } from 'react';
+import { DropdownIcon } from 'components/shared/icons';
 
 export const SeparatorIcon = styled(DropdownIcon)(({ theme }) => ({
   marginLeft: theme.spacing(1),

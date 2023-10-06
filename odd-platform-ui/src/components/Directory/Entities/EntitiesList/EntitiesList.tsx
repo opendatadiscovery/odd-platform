@@ -1,15 +1,15 @@
 import React, { type FC } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { Grid } from '@mui/material';
+import type { InfiniteQueryObserverResult } from '@tanstack/react-query';
 import {
   AppCircularProgress,
   EmptyContentPlaceholder,
   ScrollableContainer,
 } from 'components/shared/elements';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import type { DataEntity } from 'generated-sources';
-import { Grid } from '@mui/material';
 import type { ErrorState } from 'redux/interfaces';
 import type { DataSourceEntityList } from 'lib/interfaces';
-import type { InfiniteQueryObserverResult } from '@tanstack/react-query';
 import EntityItem from './EntityItem/EntityItem';
 import TableHeader from './TableHeader/TableHeader';
 

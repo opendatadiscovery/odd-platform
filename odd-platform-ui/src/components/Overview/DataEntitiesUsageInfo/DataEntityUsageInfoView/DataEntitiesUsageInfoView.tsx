@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import type { DataEntityUsageInfo } from 'generated-sources';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'react-i18next';
+import type { DataEntityUsageInfo } from 'generated-sources';
 import * as S from './DataEntitiesUsageInfoView.styles';
 import DataEntitiesUsageInfoCard from './DataEntityUsageInfoCard/DataEntitiesUsageInfoCard';
 import type {

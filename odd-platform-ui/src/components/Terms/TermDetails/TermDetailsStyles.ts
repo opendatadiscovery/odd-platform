@@ -1,5 +1,5 @@
-import { maxContentWidthWithoutSidebar, toolbarHeight } from 'lib/constants';
 import styled from 'styled-components';
+import { maxContentWidthWithoutSidebar, toolbarHeight } from 'lib/constants';
 
 export const TermDetailsComponentWrapper = styled('div')(({ theme }) => ({
   margin: '0 auto',

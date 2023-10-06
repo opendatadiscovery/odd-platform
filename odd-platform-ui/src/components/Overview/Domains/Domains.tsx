@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
-import { useGetDomains } from 'lib/hooks';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useGetDomains } from 'lib/hooks';
 import DomainItem from './DomainItem/DomainItem';
 import * as S from '../shared/ItemsList.styles';
 

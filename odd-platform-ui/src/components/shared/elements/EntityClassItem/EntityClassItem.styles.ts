@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { type DataEntityClassNameEnum } from 'generated-sources';
 import { Box } from '@mui/material';
+import { type DataEntityClassNameEnum } from 'generated-sources';
 
 export const Content = styled(Box)<{
   $entityClassName?: DataEntityClassNameEnum;

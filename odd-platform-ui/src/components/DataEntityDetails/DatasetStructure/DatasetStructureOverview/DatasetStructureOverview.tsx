@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { fetchDataSetStructure, fetchDataSetStructureLatest } from 'redux/thunks';
 import {
   getDatasetStats,
@@ -14,7 +15,6 @@ import {
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useNavigate } from 'react-router-dom';
 import DatasetStructureOverviewProvider from './lib/DatasetStructureOverviewProvider';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
 import DatasetStructureView from './DatasetStructureView/DatasetStructureView';

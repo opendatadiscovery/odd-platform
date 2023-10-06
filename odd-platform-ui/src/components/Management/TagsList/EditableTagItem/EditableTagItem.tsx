@@ -1,12 +1,12 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { deleteTag } from 'redux/thunks';
 import { Permission, type Tag } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
-import { useTranslation } from 'react-i18next';
 import TagEditForm from '../TagEditForm/TagEditForm';
 import * as S from './EditableTagItemStyles';
 
@@ -25,16 +25,16 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
 
   return (
     <S.Container container>
-      <S.Col item>
+      <Grid lg={4} item>
         <Typography variant='body1' noWrap title={tag.name}>
           {tag.name}
         </Typography>
-      </S.Col>
-      <S.Col item>
+      </Grid>
+      <Grid lg={5} item>
         <Typography variant='body1'>{tag.important ? t('important') : ''}</Typography>
-      </S.Col>
+      </Grid>
       {!tag.external && (
-        <S.ActionsContainer container item>
+        <S.ActionsContainer lg={3} container item>
           <WithPermissions permissionTo={Permission.TAG_UPDATE}>
             <TagEditForm
               tag={tag}

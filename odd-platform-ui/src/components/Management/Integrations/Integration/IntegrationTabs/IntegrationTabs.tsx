@@ -1,8 +1,8 @@
 import React from 'react';
-import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
 import { Grid } from '@mui/material';
 import capitalize from 'lodash/capitalize';
+import { type AppTabItem, AppTabs } from 'components/shared/elements';
+import { useAppParams } from 'lib/hooks';
 
 interface IntegrationTabsProps {
   titles: string[];
