@@ -9,5 +9,6 @@ import lombok.Getter;
 public class TermDto {
     private final TermRefDto termRefDto;
     private final Integer entitiesUsingCount;
+    private final Integer columnsUsingCount;
     private final Set<TermOwnershipDto> ownerships;
 }

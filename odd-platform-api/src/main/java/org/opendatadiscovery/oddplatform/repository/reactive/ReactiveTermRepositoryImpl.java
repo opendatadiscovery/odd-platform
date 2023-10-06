@@ -76,6 +76,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     private static final String AGG_TITLES_FIELD = "titles";
     private static final String AGG_TAGS_FIELD = "tags";
     private static final String ENTITIES_COUNT = "entities_count";
+    private static final String COLUMNS_COUNT = "columns_count";
     private static final String IS_DESCRIPTION_LINK = "is_description_link";
 
     private final JooqRecordHelper jooqRecordHelper;
@@ -185,6 +186,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
+            .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
@@ -193,6 +195,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID))
+            .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID))
             .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
         return jooqReactiveOperations.mono(query)
@@ -290,8 +293,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(jsonArrayAgg(field(TERM_OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIPS_FIELD))
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
             .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
-            .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID)
-                .plus(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID)).as(ENTITIES_COUNT))
+            .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
+            .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .from(termCTE.getName())
             .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
             .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(termCTE.field(TERM.ID)))
@@ -408,6 +411,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         return TermDto.builder()
             .termRefDto(refDto)
             .entitiesUsingCount(record.get(ENTITIES_COUNT, Integer.class))
+            .columnsUsingCount(record.get(COLUMNS_COUNT, Integer.class))
             .ownerships(extractOwnershipRelation(record))
             .build();
     }
@@ -417,6 +421,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         return TermDto.builder()
             .termRefDto(refDto)
             .entitiesUsingCount(record.get(ENTITIES_COUNT, Integer.class))
+            .columnsUsingCount(record.get(COLUMNS_COUNT, Integer.class))
             .ownerships(extractOwnershipRelation(record))
             .build();
     }

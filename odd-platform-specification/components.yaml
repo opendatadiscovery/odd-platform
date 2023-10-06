@@ -2481,6 +2481,8 @@ components:
               $ref: '#/components/schemas/OwnershipList'
             entities_using_count:
               type: integer
+            columns_using_count:
+              type: integer
             created_at:
               type: string
               format: date-time
