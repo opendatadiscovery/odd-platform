@@ -148,7 +148,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             paginate(homogeneousQuery, List.of(new OrderByField(TAG.ID, SortOrder.ASC)), (page - 1) * size, size);
 
         final Table<? extends Record> tagCte = select.asTable("tag_cte");
-        Table<Record> unionUsages = getDataEntityWithDatasetFields(tagCte, select);
+        final Table<Record> unionUsages = getDataEntityWithDatasetFields(tagCte, select);
 
         final var cteSelect = DSL.select(unionUsages.fields(tagCte.fields()))
             .select(DSL.boolOr(unionUsages.field(EXTERNAL_FIELD, Boolean.class)).as(EXTERNAL_FIELD))
@@ -370,7 +370,8 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
     }
 
-    private static Table<Record> getDataEntityWithDatasetFields(Table<? extends Record> tagCte, Select<? extends Record> select) {
+    private static Table<Record> getDataEntityWithDatasetFields(final Table<? extends Record> tagCte,
+                                                                final Select<? extends Record> select) {
         return DSL.with(tagCte.getName())
             .as(select)
             .select(tagCte.fields())

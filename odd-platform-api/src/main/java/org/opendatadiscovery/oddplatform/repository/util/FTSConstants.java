@@ -67,19 +67,30 @@ public class FTSConstants {
             FacetType.NAMESPACES, filters -> NAMESPACE.ID.in(extractFilterId(filters)),
             FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
             FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-            FacetType.TAGS, filters -> TAG_TO_DATA_ENTITY.TAG_ID.in(extractFilterId(filters))
-                .or(DATASET_VERSION.ID.in(select(DATASET_STRUCTURE.DATASET_VERSION_ID)
-                    .from(DATASET_STRUCTURE)
-                    .join(DATASET_FIELD)
-                    .on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-                    .join(TAG_TO_DATASET_FIELD)
-                    .on(TAG_TO_DATASET_FIELD.TAG_ID.in(extractFilterId(filters))
-                        .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID)))
-                    .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
-                        select(DSL.max(DATASET_VERSION.ID))
-                            .from(DATASET_VERSION)
-                            .groupBy(DATASET_VERSION.DATASET_ODDRN)))
-                   )),
+            FacetType.TAGS, filters -> {
+                final var dataEntities = DSL.select(DATASET_VERSION.DATASET_ODDRN)
+                    .from(TAG_TO_DATA_ENTITY, DATA_ENTITY, DATASET_VERSION)
+                    .where(TAG_TO_DATA_ENTITY.TAG_ID.in(extractFilterId(filters)))
+                    .and(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                    .and(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+                    .union(DSL.select(DATASET_VERSION.DATASET_ODDRN)
+                        .from(DATASET_VERSION)
+                        .where(DATASET_VERSION.ID.in(
+                                select(DATASET_STRUCTURE.DATASET_VERSION_ID)
+                                    .from(DATASET_STRUCTURE, DATASET_FIELD, TAG_TO_DATASET_FIELD)
+                                    .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
+                                        select(DSL.max(DATASET_VERSION.ID))
+                                            .from(DATASET_VERSION)
+                                            .groupBy(DATASET_VERSION.DATASET_ODDRN)))
+                                    .and(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+                                    .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+                                    .and(TAG_TO_DATASET_FIELD.TAG_ID.in(extractFilterId(filters)))
+                            )
+                        )
+                    );
+
+                return DATASET_VERSION.DATASET_ODDRN.in(dataEntities);
+            },
             FacetType.GROUPS, filters -> {
                 final var groupOddrns = DSL.select(DATA_ENTITY.ODDRN)
                     .from(DATA_ENTITY)

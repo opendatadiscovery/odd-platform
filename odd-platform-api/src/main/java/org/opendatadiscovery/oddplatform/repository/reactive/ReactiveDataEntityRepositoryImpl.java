@@ -71,7 +71,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_FIELD;
@@ -445,7 +444,6 @@ public class ReactiveDataEntityRepositoryImpl
         final var select = DSL.select(countDistinct(DATA_ENTITY.ID))
             .from(DATA_ENTITY)
             .join(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(DATASET_VERSION)
             .on(DATASET_VERSION.DATASET_ODDRN.eq(DATA_ENTITY.ODDRN))
             .leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
@@ -681,8 +679,6 @@ public class ReactiveDataEntityRepositoryImpl
             .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TAG_TO_DATA_ENTITY)
-            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
             .leftJoin(DATASET_VERSION)
             .on(DATASET_VERSION.DATASET_ODDRN.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ODDRN)))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
