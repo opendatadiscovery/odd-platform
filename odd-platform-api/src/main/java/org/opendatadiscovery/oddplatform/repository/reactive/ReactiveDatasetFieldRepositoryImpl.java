@@ -143,7 +143,7 @@ public class ReactiveDatasetFieldRepositoryImpl
         final List<Condition> conditions = new ArrayList<>();
 
         if (StringUtils.isNotBlank(query)) {
-            conditions.add(DATASET_FIELD.NAME.contains(query));
+            conditions.add(DATASET_FIELD.NAME.containsIgnoreCase(query));
         }
 
         final SelectSeekStepN<Record> records = select(selectFields)
