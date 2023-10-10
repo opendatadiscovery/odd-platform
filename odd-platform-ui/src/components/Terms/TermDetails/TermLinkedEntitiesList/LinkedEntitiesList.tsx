@@ -123,7 +123,7 @@ const LinkedEntitiesList: FC = () => {
       {isLinkedListFetching && <LinkedEntitiesListSkeleton />}
       <TermLinkedEntitiesListContainer
         $isListEmpty={!total || isLinkedListNotFetched}
-        id='term-linked-items-list'
+        id='term-linked-entities-list'
       >
         {termLinkedList && (
           <InfiniteScroll
@@ -132,7 +132,7 @@ const LinkedEntitiesList: FC = () => {
             hasMore={hasNext}
             loader={isLinkedListFetching && <LinkedEntitiesListSkeleton />}
             scrollThreshold='200px'
-            scrollableTarget='term-linked-items-list'
+            scrollableTarget='term-linked-entities-list'
           >
             {termLinkedList?.map(linkedItem => (
               <LinkedEntity key={linkedItem.id} linkedEntity={linkedItem} />

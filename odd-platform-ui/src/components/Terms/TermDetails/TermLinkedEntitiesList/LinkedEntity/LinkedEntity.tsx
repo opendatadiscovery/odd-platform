@@ -36,9 +36,9 @@ const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
                 ml={0.5}
                 variant='body1'
                 noWrap
-                title={linkedEntity.internalName || linkedEntity.externalName}
+                title={linkedEntity.internalName ?? linkedEntity.externalName}
               >
-                {linkedEntity.internalName || linkedEntity.externalName}
+                {linkedEntity.internalName ?? linkedEntity.externalName}
               </Typography>
             </Box>
           </NameContainer>

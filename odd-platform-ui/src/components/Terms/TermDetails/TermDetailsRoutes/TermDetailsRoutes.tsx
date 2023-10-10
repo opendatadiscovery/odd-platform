@@ -7,6 +7,9 @@ const Overview = lazy(() => import('../Overview/Overview'));
 const LinkedEntitiesList = lazy(
   () => import('../TermLinkedEntitiesList/LinkedEntitiesList')
 );
+const LinkedColumnsList = lazy(
+  () => import('../TermLinkedColumnsList/LinkedColumnsList')
+);
 
 const TermDetailsRoutes: React.FC = () => {
   const { TermsRoutes } = useAppPaths();
@@ -18,7 +21,7 @@ const TermDetailsRoutes: React.FC = () => {
           <Route path='' element={<Navigate to={TermsRoutes.overview} />} />
           <Route path={TermsRoutes.overview} element={<Overview />} />
           <Route path={TermsRoutes.linkedEntities} element={<LinkedEntitiesList />} />
-          <Route path={TermsRoutes.linkedColumns} element={<LinkedEntitiesList />} />
+          <Route path={TermsRoutes.linkedColumns} element={<LinkedColumnsList />} />
         </Route>
       </Routes>
     </AppSuspenseWrapper>

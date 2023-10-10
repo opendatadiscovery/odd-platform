@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
@@ -17,7 +17,7 @@ const TermDetailsTabs: React.FC = () => {
 
   const termDetails = useAppSelector(getTermDetails(termId));
 
-  const tabs = React.useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem[]>(
     () => [
       {
         name: t('Overview'),
@@ -34,17 +34,17 @@ const TermDetailsTabs: React.FC = () => {
       {
         name: t('Linked columns'),
         link: termDetailsLinkedColumnsPath(termId),
-        hint: termDetails?.entitiesUsingCount,
-        hidden: !termDetails?.entitiesUsingCount,
+        hint: termDetails?.columnsUsingCount,
+        hidden: !termDetails?.columnsUsingCount,
         value: TermsRoutes.linkedColumns,
       },
     ],
-    [termId, termDetails?.entitiesUsingCount, t]
+    [termId, termDetails?.entitiesUsingCount, termDetails?.columnsUsingCount, t]
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectedTab(
       termsViewType ? tabs.findIndex(tab => tab.value === termsViewType) : 0
     );
