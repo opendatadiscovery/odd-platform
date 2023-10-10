@@ -45,6 +45,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.TITLE;
 
 @Repository
 @Slf4j
@@ -54,6 +55,8 @@ public class ReactiveDatasetFieldRepositoryImpl
     public static final String DATASET_FIELD_CTE_NAME = "dataset_field_cte";
     public static final String AGG_OWNER_FIELD = "owner";
     public static final String AGG_OWNERSHIP_FIELD = "ownership";
+    public static final String AGG_TITLE_FIELD = "title";
+
 
     private final JooqRecordHelper jooqRecordHelper;
     private final DatasetFieldTermsDtoMapper datasetFieldTermsDtoMapper;
@@ -161,6 +164,7 @@ public class ReactiveDatasetFieldRepositoryImpl
 
         final List<Field<?>> aggregatedFields = List.of(
             jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD),
+            jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLE_FIELD),
             jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD));
 
         final Table<?> fromTable = DSL.table(DATASET_FIELD_CTE_NAME)
@@ -181,6 +185,7 @@ public class ReactiveDatasetFieldRepositoryImpl
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
             .leftJoin(DATASET_FIELD_TO_TERM)
             .on(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID.eq(jooqQueryHelper.getField(datasetCte, DATASET_FIELD.ID)));
 
