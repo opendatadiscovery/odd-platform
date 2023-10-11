@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths } from 'lib/hooks';
@@ -8,12 +8,16 @@ import { useAppSelector } from 'redux/lib/hooks';
 const TermDetailsTabs: React.FC = () => {
   const { t } = useTranslation();
   const { termId, termsViewType } = useAppParams();
-  const { termDetailsOverviewPath, termDetailsLinkedItemsPath, TermsRoutes } =
-    useAppPaths();
+  const {
+    termDetailsOverviewPath,
+    termDetailsLinkedEntitiesPath,
+    termDetailsLinkedColumnsPath,
+    TermsRoutes,
+  } = useAppPaths();
 
   const termDetails = useAppSelector(getTermDetails(termId));
 
-  const tabs = React.useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem[]>(
     () => [
       {
         name: t('Overview'),
@@ -21,19 +25,26 @@ const TermDetailsTabs: React.FC = () => {
         value: TermsRoutes.overview,
       },
       {
-        name: t('Linked items'),
-        link: termDetailsLinkedItemsPath(termId),
+        name: t('Linked entities'),
+        link: termDetailsLinkedEntitiesPath(termId),
         hint: termDetails?.entitiesUsingCount,
         hidden: !termDetails?.entitiesUsingCount,
-        value: TermsRoutes.linkedItems,
+        value: TermsRoutes.linkedEntities,
+      },
+      {
+        name: t('Linked columns'),
+        link: termDetailsLinkedColumnsPath(termId),
+        hint: termDetails?.columnsUsingCount,
+        hidden: !termDetails?.columnsUsingCount,
+        value: TermsRoutes.linkedColumns,
       },
     ],
-    [termId, termDetails?.entitiesUsingCount, t]
+    [termId, termDetails?.entitiesUsingCount, termDetails?.columnsUsingCount, t]
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectedTab(
       termsViewType ? tabs.findIndex(tab => tab.value === termsViewType) : 0
     );

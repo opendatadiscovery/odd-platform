@@ -37,7 +37,7 @@ export enum DataEntityRoutes {
   testReports = 'test-reports',
   history = 'history',
   alerts = 'alerts',
-  linkedItems = 'linked-items',
+  linkedEntities = 'linked-entities',
   activity = 'activity',
   discussions = 'discussions',
   createMessage = 'createMessage',
@@ -91,7 +91,8 @@ export enum TermsRoutes {
   termsViewType = 'termsViewType',
   termsViewTypeParam = ':termsViewType',
   overview = 'overview',
-  linkedItems = 'linked-items',
+  linkedEntities = 'linked-entities',
+  linkedColumns = 'linked-columns',
 }
 
 export enum DirectoryRoutes {

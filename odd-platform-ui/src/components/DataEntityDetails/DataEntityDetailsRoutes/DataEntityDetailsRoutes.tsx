@@ -106,7 +106,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
             }
           />
           <Route
-            path={DataEntityRoutes.linkedItems}
+            path={DataEntityRoutes.linkedEntities}
             element={
               <RestrictedRoute
                 isAllowedTo={!isStatusDeleted}

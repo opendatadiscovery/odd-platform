@@ -28,7 +28,6 @@ i18n.use(initReactI18next).init({
   resources,
   lng: savedLanguage,
   fallbackLng: ['en', 'es', 'ch', 'fr', 'ua', 'hy'],
-  debug: true,
 });
 
 export default i18n;

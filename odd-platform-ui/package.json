@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "vite",
+    "start": "vite --force",
     "build-only": "vite build",
     "clean": "rm -rf ./src/generated-sources",
     "build": "pnpm generate && tsc --noEmit && vite build",

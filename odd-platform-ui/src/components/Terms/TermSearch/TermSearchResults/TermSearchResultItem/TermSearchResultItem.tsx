@@ -17,6 +17,9 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
   const { termFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
 
   const termDetailsOverviewLink = termDetailsOverviewPath(termSearchResult.id);
+  const usingCount =
+    (termSearchResult.entitiesUsingCount ?? 0) +
+    (termSearchResult.columnsUsingCount ?? 0);
 
   return (
     <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
@@ -46,7 +49,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType='colxs'>
           <Typography variant='body1' noWrap>
-            {termSearchResult.entitiesUsingCount}
+            {usingCount}
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType='colsm'>

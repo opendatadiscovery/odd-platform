@@ -14,7 +14,7 @@ interface DataEntityViewTypes {
     | DataEntityRoutes.structure
     | DataEntityRoutes.history
     | DataEntityRoutes.alerts
-    | DataEntityRoutes.linkedItems
+    | DataEntityRoutes.linkedEntities
     | DataEntityRoutes.activity
     | DataEntityRoutes.testReports
     | DataEntityRoutes.discussions;
@@ -41,7 +41,7 @@ interface AppDataEntityRouteParams extends DataEntityViewTypes {
 }
 
 interface TermRouteViewTypes {
-  [TermsRoutes.termsViewType]: TermsRoutes.overview | TermsRoutes.linkedItems;
+  [TermsRoutes.termsViewType]: TermsRoutes.overview | TermsRoutes.linkedEntities;
 }
 
 interface TermRouteParams extends TermRouteViewTypes {
