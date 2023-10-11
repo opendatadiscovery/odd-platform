@@ -67,6 +67,7 @@ public interface TermMapper {
     @Mapping(source = "dto.termDto.termRefDto.namespace", target = "namespace")
     @Mapping(source = "dto.termDto.ownerships", target = "ownership")
     @Mapping(source = "dto.termDto.entitiesUsingCount", target = "entitiesUsingCount")
+    @Mapping(source = "dto.termDto.columnsUsingCount", target = "columnsUsingCount")
     TermDetails mapToDetails(final TermDetailsDto dto);
 
     @Mapping(source = "dto.termRefDto.term", target = ".")

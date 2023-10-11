@@ -18,6 +18,7 @@ import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTagsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
@@ -32,6 +33,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldSt
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetStatistics;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DatasetStatisticsList;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
+import org.opendatadiscovery.oddplatform.mapper.DatasetFieldListMapper;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
@@ -78,6 +80,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final TagMapper tagMapper;
     private final EnumValueMapper enumValueMapper;
     private final TermMapper termMapper;
+    private final DatasetFieldListMapper datasetFieldListMapper;
 
     @Override
     @ReactiveTransactional
@@ -175,6 +178,14 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             ))
             .then(reactiveSearchEntrypointRepository.updateStructureVectorForDataEntitiesByOddrns(datasetOddrns))
             .then();
+    }
+
+    @Override
+    public Mono<DatasetFieldList> listByTerm(final Long termId, final String query,
+                                             final Integer page, final Integer size) {
+        return reactiveDatasetFieldRepository.listByTerm(termId, query, page, size)
+            .collectList()
+            .map(datasetFieldListMapper::mapPojos);
     }
 
     private Mono<Void> updateFieldsTags(final Map<String, DataSetFieldStat> statisticsDict,

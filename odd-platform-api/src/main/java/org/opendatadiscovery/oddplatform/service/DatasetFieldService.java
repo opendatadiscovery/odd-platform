@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldDescriptionUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldTagsUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
@@ -25,4 +26,6 @@ public interface DatasetFieldService {
     Mono<List<DatasetFieldPojo>> createOrUpdateDatasetFields(final List<DatasetFieldPojo> fields);
 
     Mono<Void> updateStatistics(final DatasetStatisticsList datasetStatisticsList);
+
+    Mono<DatasetFieldList> listByTerm(final Long termId, final String query, final Integer page, final Integer size);
 }

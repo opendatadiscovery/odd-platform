@@ -142,11 +142,11 @@ export const dataEntitiesSlice = createSlice({
     builder.addCase(
       thunks.fetchTermLinkedList.fulfilled,
       (state, { payload }): DataEntitiesState => {
-        const { linkedItemsList } = payload;
+        const { linkedEntitiesList } = payload;
 
         return {
           ...state,
-          byId: linkedItemsList.reduce(
+          byId: linkedEntitiesList.reduce(
             (memo, linkedItem) => ({
               ...memo,
               [linkedItem.id]: linkedItem,
