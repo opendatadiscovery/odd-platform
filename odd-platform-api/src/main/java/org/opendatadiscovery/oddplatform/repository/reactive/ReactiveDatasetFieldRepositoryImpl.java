@@ -57,7 +57,6 @@ public class ReactiveDatasetFieldRepositoryImpl
     public static final String AGG_OWNERSHIP_FIELD = "ownership";
     public static final String AGG_TITLE_FIELD = "title";
 
-
     private final JooqRecordHelper jooqRecordHelper;
     private final DatasetFieldTermsDtoMapper datasetFieldTermsDtoMapper;
 
