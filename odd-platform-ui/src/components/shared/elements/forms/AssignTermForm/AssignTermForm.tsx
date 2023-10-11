@@ -6,6 +6,7 @@ import Button from 'components/shared/elements/Button/Button';
 import TermsAutocomplete from 'components/shared/elements/Autocomplete/TermsAutocomplete/TermsAutocomplete';
 import type { TermRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
+import Markdown from 'components/shared/elements/Markdown/Markdown';
 
 interface AssignTermFormData {
   termId: number;
@@ -75,7 +76,7 @@ const AssignTermForm: FC<AssignTermFormProps> = ({
             <Typography variant='body2' color='texts.secondary' component='span'>
               {t('Definition')}:
             </Typography>
-            {selectedTerm.definition}
+            <Markdown value={selectedTerm.definition} />
           </Grid>
         </>
       )}

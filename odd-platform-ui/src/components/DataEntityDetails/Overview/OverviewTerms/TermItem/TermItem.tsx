@@ -41,7 +41,7 @@ const TermItem: React.FC<TermItemProps> = ({
             {linkedTerm.isDescriptionLink && <LinkedTermIcon />}
           </Box>
           <S.TermDefinition variant='subtitle2'>
-            {linkedTerm.term.definition}
+            {linkedTerm.term.namespace.name}
           </S.TermDefinition>
         </Grid>
         {!linkedTerm.isDescriptionLink && !isStatusDeleted && (
