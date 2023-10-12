@@ -14,7 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceSafe;
 import org.opendatadiscovery.oddplatform.api.contract.model.DateTimeFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.IntegerFieldStat;
@@ -33,7 +33,7 @@ import static java.util.Collections.emptyList;
 public class IngestionModelMapper {
     public static DataEntityDetails buildExpectedBaseDEDetails(final long entityId,
                                                                final DataEntity dataEntity,
-                                                               final DataSource dataSource) {
+                                                               final DataSourceSafe dataSource) {
         return new DataEntityDetails()
             .id(entityId)
             .sourceCreatedAt(dataEntity.getCreatedAt())

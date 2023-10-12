@@ -49,7 +49,8 @@ public class MetadataIngestionTest extends BaseIngestionTest {
         final long foundEntityId = extractIngestedEntityIdAndAssert(createdDataSource);
 
         final var expectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -78,7 +79,8 @@ public class MetadataIngestionTest extends BaseIngestionTest {
         ingestAndAssert(dataEntityList);
 
         final var expectedUpdatedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -95,7 +97,8 @@ public class MetadataIngestionTest extends BaseIngestionTest {
         ingestAndAssert(dataEntityList);
 
         final var expectedEmptyMetadataDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())

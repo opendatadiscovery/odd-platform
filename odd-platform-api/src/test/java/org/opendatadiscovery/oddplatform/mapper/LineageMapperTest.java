@@ -56,6 +56,9 @@ class LineageMapperTest {
                         new DateTimeMapperImpl()
                     )
                 ),
+                new DataSourceSafeMapperImpl(
+                    new NamespaceMapperImpl()
+                ),
                 new OwnershipMapperImpl(
                     new OwnerMapperImpl(),
                     new TitleMapperImpl()

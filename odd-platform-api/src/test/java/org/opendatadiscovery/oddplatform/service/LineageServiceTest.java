@@ -20,6 +20,7 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityRunMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityStatusMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.DataSourceSafeMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DateTimeMapperImpl;
@@ -80,6 +81,9 @@ class LineageServiceTest {
                     new TokenMapperImpl(
                         new DateTimeMapperImpl()
                     )
+                ),
+                new DataSourceSafeMapperImpl(
+                    new NamespaceMapperImpl()
                 ),
                 new OwnershipMapperImpl(
                     new OwnerMapperImpl(),

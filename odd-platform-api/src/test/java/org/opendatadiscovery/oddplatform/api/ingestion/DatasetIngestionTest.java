@@ -55,7 +55,8 @@ public class DatasetIngestionTest extends BaseIngestionTest {
         final long foundEntityId = extractIngestedEntityIdAndAssert(createdDataSource);
 
         final var expectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -107,7 +108,8 @@ public class DatasetIngestionTest extends BaseIngestionTest {
         final long foundEntityId = extractIngestedEntityIdAndAssert(createdDataSource);
 
         final var expectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -142,7 +144,8 @@ public class DatasetIngestionTest extends BaseIngestionTest {
         ingestAndAssert(dataEntityList);
 
         final var updatedExpectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -213,7 +216,8 @@ public class DatasetIngestionTest extends BaseIngestionTest {
             assertThat(dataEntityId).isNotNull();
 
             final DataEntityDetails expectedDetails = IngestionModelMapper
-                .buildExpectedBaseDEDetails(dataEntityId, dataEntity, createdDataSource);
+                .buildExpectedBaseDEDetails(dataEntityId, dataEntity,
+                    createDataSourceSafeFromDataSource(createdDataSource));
 
             if (dataEntity.getDataset() != null) {
                 expectedDetails.setStats(new DataSetStats()

@@ -100,7 +100,8 @@ public class LineageIngestionTest extends BaseIngestionTest {
             assertThat(dataEntityId).isNotNull();
 
             final DataEntityDetails expectedDetails = IngestionModelMapper
-                .buildExpectedBaseDEDetails(dataEntityId, dataEntity, createdDataSource);
+                .buildExpectedBaseDEDetails(dataEntityId, dataEntity,
+                    createDataSourceSafeFromDataSource(createdDataSource));
 
             if (dataEntity.getDataset() != null) {
                 expectedDetails.setStats(new DataSetStats()
