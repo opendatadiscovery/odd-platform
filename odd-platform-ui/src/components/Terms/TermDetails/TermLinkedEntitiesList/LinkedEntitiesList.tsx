@@ -21,15 +21,15 @@ import {
   getTermLinkedListPageInfo,
 } from 'redux/selectors';
 import { fetchTermLinkedList } from 'redux/thunks';
-import LinkedItem from './LinkedItem/LinkedItem';
+import LinkedEntity from './LinkedEntity/LinkedEntity';
 import {
-  TermLinkedItemsColContainer,
-  TermLinkedItemsListContainer,
-  TermLinkedItemsResultsTableHeader,
-} from './LinkedItemsListStyles';
-import LinkedItemsListSkeleton from './LinkedItemsListSkeleton/LinkedItemsListSkeleton';
+  TermLinkedEntitiesColContainer,
+  TermLinkedEntitiesListContainer,
+  TermLinkedEntitiesResultsTableHeader,
+} from './LinkedEntitiesListStyles';
+import LinkedEntitiesListSkeleton from './LinkedEntitiesListSkeleton/LinkedEntitiesListSkeleton';
 
-const LinkedItemsList: FC = () => {
+const LinkedEntitiesList: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
@@ -100,48 +100,48 @@ const LinkedItemsList: FC = () => {
           </AppSelect>
         </Grid>
       </Grid>
-      <TermLinkedItemsResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
-        <TermLinkedItemsColContainer item $colType='colmd'>
+      <TermLinkedEntitiesResultsTableHeader container sx={{ mt: 2 }} wrap='nowrap'>
+        <TermLinkedEntitiesColContainer item $colType='colmd'>
           <Typography variant='caption'>{t('Name')}</Typography>
-        </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType='collg'>
+        </TermLinkedEntitiesColContainer>
+        <TermLinkedEntitiesColContainer item $colType='collg'>
           <Typography variant='caption'>{t('Namespace')}</Typography>
-        </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType='colsm'>
+        </TermLinkedEntitiesColContainer>
+        <TermLinkedEntitiesColContainer item $colType='colsm'>
           <Typography variant='caption'>{t('Datasource')}</Typography>
-        </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType='colsm'>
+        </TermLinkedEntitiesColContainer>
+        <TermLinkedEntitiesColContainer item $colType='colsm'>
           <Typography variant='caption'>{t('Owner')}</Typography>
-        </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType='colxs'>
+        </TermLinkedEntitiesColContainer>
+        <TermLinkedEntitiesColContainer item $colType='colxs'>
           <Typography variant='caption'>{t('Created')}</Typography>
-        </TermLinkedItemsColContainer>
-        <TermLinkedItemsColContainer item $colType='colxs'>
+        </TermLinkedEntitiesColContainer>
+        <TermLinkedEntitiesColContainer item $colType='colxs'>
           <Typography variant='caption'>{t('Updated')}</Typography>
-        </TermLinkedItemsColContainer>
-      </TermLinkedItemsResultsTableHeader>
-      {isLinkedListFetching && <LinkedItemsListSkeleton />}
-      <TermLinkedItemsListContainer
+        </TermLinkedEntitiesColContainer>
+      </TermLinkedEntitiesResultsTableHeader>
+      {isLinkedListFetching && <LinkedEntitiesListSkeleton />}
+      <TermLinkedEntitiesListContainer
         $isListEmpty={!total || isLinkedListNotFetched}
-        id='term-linked-items-list'
+        id='term-linked-entities-list'
       >
         {termLinkedList && (
           <InfiniteScroll
             dataLength={termLinkedList?.length}
             next={fetchNextPage}
             hasMore={hasNext}
-            loader={isLinkedListFetching && <LinkedItemsListSkeleton />}
+            loader={isLinkedListFetching && <LinkedEntitiesListSkeleton />}
             scrollThreshold='200px'
-            scrollableTarget='term-linked-items-list'
+            scrollableTarget='term-linked-entities-list'
           >
             {termLinkedList?.map(linkedItem => (
-              <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
+              <LinkedEntity key={linkedItem.id} linkedEntity={linkedItem} />
             ))}
           </InfiniteScroll>
         )}
-      </TermLinkedItemsListContainer>
+      </TermLinkedEntitiesListContainer>
       <EmptyContentPlaceholder
-        text={t('No linked items')}
+        text={t('No linked entities')}
         isContentLoaded={isLinkedListFetched}
         isContentEmpty={!total}
       />
@@ -154,4 +154,4 @@ const LinkedItemsList: FC = () => {
   );
 };
 
-export default LinkedItemsList;
+export default LinkedEntitiesList;

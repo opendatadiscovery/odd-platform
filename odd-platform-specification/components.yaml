@@ -1175,6 +1175,19 @@ components:
         - items
         - page_info
 
+    DatasetFieldList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermSearchDataSetField'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
     DataSource:
       type: object
       properties:
@@ -1645,6 +1658,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LinkedTerm'
+      required:
+        - id
+        - oddrn
+        - name
+        - type
+
+    TermSearchDataSetField:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        parent_field_id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        name:
+          type: string
+        internal_name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        is_key:
+          type: boolean
+        is_value:
+          type: boolean
+        is_primary_key:
+          type: boolean
+        is_sort_key:
+          type: boolean
+        default_value:
+          type: string
+        external_description:
+          type: string
+        internal_description:
+          type: string
+        dataEntityName:
+          type: string
+        dataEntityId:
+          type: integer
+          format: int64
+        ownership:
+          $ref: '#/components/schemas/OwnershipList'
+        data_source:
+          $ref: '#/components/schemas/DataSource'
       required:
         - id
         - oddrn
@@ -2421,6 +2480,8 @@ components:
             ownership:
               $ref: '#/components/schemas/OwnershipList'
             entities_using_count:
+              type: integer
+            columns_using_count:
               type: integer
             created_at:
               type: string

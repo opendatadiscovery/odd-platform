@@ -15,6 +15,6 @@ public class TermDetailsDto {
 
     public TermDetailsDto(final TermRefDto termRefDto) {
         this.tags = null;
-        this.termDto = new TermDto(termRefDto, null, null);
+        this.termDto = new TermDto(termRefDto, null, null, null);
     }
 }

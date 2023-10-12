@@ -83,7 +83,7 @@ const LinkedItemsList: React.FC = () => {
         </S.ListContainer>
       )}
       {isLinkedListFetching && !pageInfo?.total ? (
-        <EmptyContentPlaceholder text={t('No linked items')} />
+        <EmptyContentPlaceholder text={t('No linked entities')} />
       ) : null}
     </S.Container>
   );

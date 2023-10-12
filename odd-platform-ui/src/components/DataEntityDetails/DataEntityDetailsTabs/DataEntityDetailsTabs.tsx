@@ -31,7 +31,7 @@ const DataEntityDetailsTabs: React.FC = () => {
     datasetStructurePath,
     dataEntityLineagePath,
     dataEntityTestReportPath,
-    dataEntityLinkedItemsPath,
+    dataEntityLinkedEntitiesPath,
     dataEntityHistoryPath,
     dataEntityAlertsPath,
     dataEntityActivityPath,
@@ -91,10 +91,10 @@ const DataEntityDetailsTabs: React.FC = () => {
         hidden: isStatusDeleted,
       },
       {
-        name: t('Linked items'),
-        link: dataEntityLinkedItemsPath(dataEntityId),
+        name: t('Linked entities'),
+        link: dataEntityLinkedEntitiesPath(dataEntityId),
         hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
-        value: DataEntityRoutes.linkedItems,
+        value: DataEntityRoutes.linkedEntities,
       },
       {
         name: t('Activity'),
