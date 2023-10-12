@@ -148,15 +148,13 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             paginate(homogeneousQuery, List.of(new OrderByField(TAG.ID, SortOrder.ASC)), (page - 1) * size, size);
 
         final Table<? extends Record> tagCte = select.asTable("tag_cte");
+        final Table<Record> unionUsages = getDataEntityWithDatasetFields(tagCte, select);
 
-        final var cteSelect = DSL.with(tagCte.getName())
-            .as(select)
-            .select(tagCte.fields())
-            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
-            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
-            .from(tagCte.getName())
-            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))
-            .groupBy(tagCte.fields())
+        final var cteSelect = DSL.select(unionUsages.fields(tagCte.fields()))
+            .select(DSL.boolOr(unionUsages.field(EXTERNAL_FIELD, Boolean.class)).as(EXTERNAL_FIELD))
+            .select(DSL.sum(unionUsages.field(COUNT_FIELD, Integer.class)).as(COUNT_FIELD))
+            .from(unionUsages)
+            .groupBy(unionUsages.fields(tagCte.fields()))
             .orderBy(field(COUNT_FIELD).desc());
 
         return jooqReactiveOperations.flux(cteSelect)
@@ -370,6 +368,27 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .returning();
 
         return jooqReactiveOperations.flux(query).map(r -> r.into(TagToDatasetFieldPojo.class));
+    }
+
+    private static Table<Record> getDataEntityWithDatasetFields(final Table<? extends Record> tagCte,
+                                                                final Select<? extends Record> select) {
+        return DSL.with(tagCte.getName())
+            .as(select)
+            .select(tagCte.fields())
+            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
+            .from(tagCte.getName())
+            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))
+            .groupBy(tagCte.fields())
+            .unionAll(
+                DSL.select(tagCte.fields())
+                    .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.ORIGIN.ne(TagOrigin.INTERNAL.name())),
+                        false).as(EXTERNAL_FIELD))
+                    .select(DSL.count(TAG_TO_DATASET_FIELD.TAG_ID).as(COUNT_FIELD))
+                    .from(tagCte.getName())
+                    .leftJoin(TAG_TO_DATASET_FIELD).on(TAG_TO_DATASET_FIELD.TAG_ID.eq(tagCte.field(TAG.ID)))
+                    .groupBy(tagCte.fields())
+            ).asTable("union_usages");
     }
 
     private TagDto mapTag(final Record jooqRecord) {
