@@ -380,7 +380,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .from(tagCte.getName())
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))
             .groupBy(tagCte.fields())
-            .union(
+            .unionAll(
                 DSL.select(tagCte.fields())
                     .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATASET_FIELD.ORIGIN.ne(TagOrigin.INTERNAL.name())),
                         false).as(EXTERNAL_FIELD))

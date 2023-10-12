@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Record3;
+import org.jooq.SelectOrderByStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
@@ -37,6 +39,10 @@ import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.select;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
@@ -46,6 +52,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_FACETS;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
@@ -193,9 +200,9 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
         }
         final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
         if (!CollectionUtils.isEmpty(tagIds)) {
-            select = select.join(TAG_TO_DATA_ENTITY)
-                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-            conditions.add(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
+            final var dataEntities = getRelatedEntitiesAndFieldsToTag(tagIds);
+
+            conditions.add(DATA_ENTITY.ID.in(dataEntities));
         }
 
         final Set<Long> groupIds = state.getFacetEntitiesIds(FacetType.GROUPS);
@@ -584,5 +591,28 @@ public class ReactiveSearchFacetRepositoryImpl implements ReactiveSearchFacetRep
     private boolean deletedEntitiesAreRequested(final Map<FacetType, List<SearchFilterDto>> facetStateMap) {
         return facetStateMap.getOrDefault(FacetType.STATUSES, List.of()).stream()
             .anyMatch(f -> f.getEntityId() == DataEntityStatusDto.DELETED.getId());
+    }
+
+    private  SelectOrderByStep<Record1<Long>> getRelatedEntitiesAndFieldsToTag(final Set<Long> tagIds) {
+        return select(DATA_ENTITY.ID)
+            .from(TAG_TO_DATA_ENTITY, DATA_ENTITY)
+            .where(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds))
+            .and(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .union(select(DATA_ENTITY.ID)
+                .from(DATASET_VERSION, DATA_ENTITY)
+                .where(DATASET_VERSION.ID.in(
+                            select(DATASET_STRUCTURE.DATASET_VERSION_ID)
+                                .from(DATASET_STRUCTURE, DATASET_FIELD, TAG_TO_DATASET_FIELD)
+                                .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(
+                                    select(DSL.max(DATASET_VERSION.ID))
+                                        .from(DATASET_VERSION)
+                                        .groupBy(DATASET_VERSION.DATASET_ODDRN)))
+                                .and(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+                                .and(TAG_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+                                .and(TAG_TO_DATASET_FIELD.TAG_ID.in(tagIds))
+                        )
+                        .and(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+                )
+            );
     }
 }
