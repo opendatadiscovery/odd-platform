@@ -2,7 +2,12 @@ import React, { type FC, useCallback } from 'react';
 import { Box } from '@mui/material';
 import { Permission, type TermRef } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { Button, CollapsibleInfoContainer, InfoItem } from 'components/shared/elements';
+import {
+  Button,
+  CollapsibleInfoContainer,
+  InfoItem,
+  Markdown,
+} from 'components/shared/elements';
 import { DeleteIcon, LinkedTermIcon } from 'components/shared/icons';
 import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
 
@@ -49,7 +54,7 @@ const TermItem: FC<TermItemProps> = ({
       }
       info={
         <CollapsibleInfoContainer
-          content={<>{definition}</>}
+          content={<Markdown value={definition} />}
           actions={
             !isDescriptionLink ? (
               <WithPermissions permissionTo={Permission.DATASET_FIELD_DELETE_TERM}>
