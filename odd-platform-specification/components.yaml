@@ -530,7 +530,7 @@ components:
         ownership:
           $ref: '#/components/schemas/OwnershipList'
         data_source:
-          $ref: '#/components/schemas/DataSource'
+          $ref: '#/components/schemas/DataSourceSafe'
         entity_classes:
           type: array
           items:
@@ -1210,6 +1210,25 @@ components:
         - oddrn
         - name
 
+    DataSourceSafe:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        oddrn:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - oddrn
+        - name
+
     DataSourceList:
       type: object
       properties:
@@ -1462,8 +1481,6 @@ components:
           $ref: '#/components/schemas/BinaryFieldStat'
         datetime_stats:
           $ref: '#/components/schemas/DateTimeFieldStat'
-      required:
-        - name
 
     BooleanFieldStat:
       type: object

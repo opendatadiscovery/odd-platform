@@ -69,7 +69,8 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
         final long foundEntityId = extractIngestedEntityIdAndAssert(createdDataSource);
 
         final var expectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -155,7 +156,8 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
         final long foundEntityId = extractIngestedEntityIdAndAssert(createdDataSource);
 
         final var expectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())
@@ -222,7 +224,8 @@ public class DatasetFieldIngestionTest extends BaseIngestionTest {
         final long foundEntityId = extractIngestedEntityIdAndAssert(createdDataSource);
 
         final var expectedDataEntityDetails = IngestionModelMapper
-            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest, createdDataSource)
+            .buildExpectedBaseDEDetails(foundEntityId, datasetToIngest,
+                createDataSourceSafeFromDataSource(createdDataSource))
             .stats(new DataSetStats()
                 .consumersCount(0L)
                 .fieldsCount((long) datasetToIngest.getDataset().getFieldList().size())

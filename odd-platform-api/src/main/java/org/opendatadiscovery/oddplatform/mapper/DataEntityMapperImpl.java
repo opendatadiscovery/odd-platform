@@ -62,6 +62,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private static DataEntityClassAndTypeDictionary TYPE_DICTIONARY = null;
 
     private final DataSourceMapper dataSourceMapper;
+    private final DataSourceSafeMapper dataSourceSafeMapper;
     private final OwnershipMapper ownershipMapper;
     private final TagMapper tagMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
@@ -86,7 +87,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
             .type(type)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
-            .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
+            .dataSource(dataSourceSafeMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .dataEntityGroups(groups);
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
@@ -250,7 +251,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .type(type)
             .status(dataEntityStatusMapper.mapStatus(pojo))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
-            .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
+            .dataSource(dataSourceSafeMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(tagMapper.mapToTagList(dto.getTags()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
             .terms(linkedTerms)

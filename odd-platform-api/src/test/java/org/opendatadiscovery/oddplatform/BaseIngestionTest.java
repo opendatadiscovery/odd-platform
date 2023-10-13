@@ -20,6 +20,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceSafe;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
@@ -51,6 +52,12 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
 
     protected DataSource createDataSource(final DataSourceFormData dataSource) {
         return ingestDataSource(dataSource);
+    }
+
+    protected DataSourceSafe createDataSourceSafeFromDataSource(final DataSource dataSource) {
+        return new DataSourceSafe(dataSource.getId(), dataSource.getOddrn(), dataSource.getName())
+            .description(dataSource.getDescription())
+            .namespace(dataSource.getNamespace());
     }
 
     private DataSource ingestDataSource(final DataSourceFormData dataSource) {
