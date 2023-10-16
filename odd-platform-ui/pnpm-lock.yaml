@@ -1,6 +1,11 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
+  minimist: 1.2.6
   glob-parent@<5.1.2: '>=5.1.2'
 
 dependencies:
@@ -119,8 +124,8 @@ dependencies:
     specifier: ^6.1.0
     version: 6.1.0(react@18.2.0)
   react-multi-date-picker:
-    specifier: ^3.3.4
-    version: 3.3.4(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^4.3.5
+    version: 4.3.5(react-dom@18.2.0)(react@18.2.0)
   react-redux:
     specifier: ^8.1.2
     version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.20)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -5891,8 +5896,8 @@ packages:
       - supports-color
     dev: false
 
-  /react-multi-date-picker@3.3.4(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-bl1aTt3bmAYfsPpIUKsWVl3XWCfY3nxu7BFvLCR7j9iHckmiJNbkMBVGu5AvrcSa3mI39ybdHQuB3YzeM5O6Cg==}
+  /react-multi-date-picker@4.3.5(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-c2LquVcRufdT73Dp3RyefUd1hLU52u1QymcmWc/cTvSCWLQdeTOLifavTK6IY3/32RvjkPau4gHVKaKxgWsHzg==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -7588,7 +7593,3 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: false
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
