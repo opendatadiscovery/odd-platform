@@ -45,6 +45,7 @@ dependencies {
     implementation libs.snappy.java
     implementation libs.minio
     implementation libs.okhttp
+    implementation libs.springdoc.openapi
 
     compileOnly libs.lombok
 
