@@ -23,6 +23,7 @@ jackson-databind-nullable = '0.2.6'
 jetbrains-annotations = '23.0.0'
 swagger-annotations = '2.2.11'
 springfox-core = '3.0.0'
+springdoc-openapi = '2.2.0'
 mapstruct = '1.5.3.Final'
 opentelemetry = '1.6.0'
 opentelemetry-alpha = '1.6.0-alpha'
@@ -80,6 +81,7 @@ jackson-yaml = { module = 'com.fasterxml.jackson.dataformat:jackson-dataformat-y
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
 swagger-annotations = { module = 'io.swagger.core.v3:swagger-annotations', version.ref = 'swagger-annotations' }
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
+springdoc-openapi = { module = 'org.springdoc:springdoc-openapi-starter-webflux-ui', version.ref = 'springdoc-openapi' }
 mapstruct = { module = 'org.mapstruct:mapstruct', version.ref = 'mapstruct' }
 mapstruct-processor = { module = 'org.mapstruct:mapstruct-processor', version.ref = 'mapstruct' }
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }

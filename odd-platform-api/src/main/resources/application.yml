@@ -10,6 +10,12 @@ spring:
   codec:
     max-in-memory-size: 20MB
 
+springdoc:
+  api-docs:
+    path: /api/v3/swagger-ui.html
+  swagger-ui:
+    path: /api/v3/api-docs
+
 session:
   # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
   provider: IN_MEMORY
