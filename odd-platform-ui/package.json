@@ -83,7 +83,7 @@
     "react-truncate-markup": "^5.1.2",
     "styled-components": "^5.3.11",
     "use-debounce": "^9.0.4",
-    "uuid": "^9.0.0",
+    "uuid": "^9.0.1",
     "vanilla-jsoneditor": "^0.7.11"
   },
   "devDependencies": {
@@ -137,8 +137,8 @@
     "minimist": "1.2.6"
   },
   "engines": {
-    "node": "v18.16.0",
-    "pnpm": "^8.4.0"
+    "node": "v18.18.2",
+    "pnpm": "^8.9.2"
   },
   "pnpm": {
     "overrides": {

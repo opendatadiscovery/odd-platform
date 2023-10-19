@@ -61,7 +61,7 @@ const TermLink = ({ title, children, node, ...props }: MarkdownTermLinkProps) =>
 
   return (
     <AppTooltip
-      title={`Definition: ${title}`}
+      title={<MDEditor.Markdown source={title} />}
       childSx={{ display: 'inline-block' }}
       type='termLink'
     >
@@ -75,7 +75,7 @@ type MarkdownPreviewProps = MarkdownElementProps<HTMLParagraphElement>;
 const Preview =
   (variant?: TypographyVariant) =>
   ({ ...props }: MarkdownPreviewProps) =>
-    !variant ? <p {...props} /> : <Typography paragraph variant={variant} {...props} />;
+    !variant ? <div {...props} /> : <Typography paragraph variant={variant} {...props} />;
 
 const Markdown: FC<MarkdownProps> = ({
   value,

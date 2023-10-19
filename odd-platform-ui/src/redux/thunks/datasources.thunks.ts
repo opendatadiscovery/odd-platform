@@ -23,7 +23,10 @@ export const fetchDataSourcesList = handleResponseAsyncThunk<
       query,
     });
 
-    return { datasourceList: items, pageInfo: { ...pageInfo, page } };
+    return {
+      datasourceList: items,
+      pageInfo: { ...pageInfo, page },
+    };
   },
   {}
 );
