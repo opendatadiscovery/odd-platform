@@ -69,7 +69,11 @@ const ResultItem: React.FC<ResultItemProps> = ({
   ) : null;
 
   return (
-    <S.Container container onClick={() => navigate(detailsLink)}>
+    <S.Container
+      data-testid='search-result-item'
+      container
+      onClick={() => navigate(detailsLink)}
+    >
       <SearchCol
         lg={grid.lg.nm}
         md={grid.md.nm}

@@ -12,12 +12,12 @@ const SELECTORS = {
   filterList: `[role="listbox"]`,
   filterOption: `[role="option"]`,
   filterWithInputOption: `[role="presentation"]`,
-  listItemName: name => `a:has-text('${name}')`,
+  listItemName: name => `div[data-testid="search-result-item"]:has-text('${name}')`,
   tab: name => `[role="tab"]:has-text('${name}')`,
   searchButton: `[placeholder="Search"] >> ..`,
   noMatchesFound: `text=No matches found`,
   resultList: `#results-list`,
-  listItem: `a[class][href]`,
+  listItem: `div[data-testid="search-result-item"]`,
 };
 export default class CatalogPage extends BasePage {
   get searchBar() {
