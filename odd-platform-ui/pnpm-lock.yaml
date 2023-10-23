@@ -166,7 +166,7 @@ devDependencies:
     version: 14.4.3(@testing-library/dom@9.3.1)
   '@types/d3':
     specifier: ^7.4.0
-    version: 7.4.0
+    version: 7.4.2
   '@types/d3-hierarchy':
     specifier: ^3.1.2
     version: 3.1.2
@@ -1562,8 +1562,8 @@ packages:
       '@types/d3-selection': 3.0.5
     dev: true
 
-  /@types/d3@7.4.0:
-    resolution: {integrity: sha512-jIfNVK0ZlxcuRDKtRS/SypEyOQ6UHaFQBKv032X45VvxSJ6Yi5G9behy9h6tNTHTDGh5Vq+KbmBjUWLgY4meCA==}
+  /@types/d3@7.4.2:
+    resolution: {integrity: sha512-Y4g2Yb30ZJmmtqAJTqMRaqXwRawfvpdpVmyEYEcyGNhrQI/Zvkq3k7yE1tdN07aFSmNBfvmegMQ9Fe2qy9ZMhw==}
     dependencies:
       '@types/d3-array': 3.0.7
       '@types/d3-axis': 3.0.3
