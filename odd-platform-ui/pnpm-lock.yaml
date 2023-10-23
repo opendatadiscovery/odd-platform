@@ -169,7 +169,7 @@ devDependencies:
     version: 7.4.0
   '@types/d3-hierarchy':
     specifier: ^3.1.2
-    version: 3.1.2
+    version: 3.1.5
   '@types/d3-selection':
     specifier: ^3.0.5
     version: 3.0.5
@@ -1473,8 +1473,8 @@ packages:
       '@types/geojson': 7946.0.10
     dev: true
 
-  /@types/d3-hierarchy@3.1.2:
-    resolution: {integrity: sha512-9hjRTVoZjRFR6xo8igAJyNXQyPX6Aq++Nhb5ebrUF414dv4jr2MitM2fWiOY475wa3Za7TOS2Gh9fmqEhLTt0A==}
+  /@types/d3-hierarchy@3.1.5:
+    resolution: {integrity: sha512-DEcBUj1IL3WyPLDlh4m2nsNXnMLITXM5Vwcu4G85yJHtf2cVGPBjgky3L11WBnT+ayHKf06Tchk5mY1eGmd4WQ==}
     dev: true
 
   /@types/d3-interpolate@3.0.1:
@@ -1580,7 +1580,7 @@ packages:
       '@types/d3-force': 3.0.5
       '@types/d3-format': 3.0.1
       '@types/d3-geo': 3.0.4
-      '@types/d3-hierarchy': 3.1.2
+      '@types/d3-hierarchy': 3.1.5
       '@types/d3-interpolate': 3.0.1
       '@types/d3-path': 3.0.0
       '@types/d3-polygon': 3.0.0
