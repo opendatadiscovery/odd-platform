@@ -4,8 +4,26 @@ import { unauthenticatedMiddleware } from 'redux/lib/unauthenticatedMiddleware';
 import rootReducer from 'redux/slices';
 
 const serializableCheck: SerializableStateInvariantMiddlewareOptions = {
-  ignoredPaths: [/token/],
-  ignoredActionPaths: [/token/],
+  ignoredPaths: [
+    /token/,
+    /lastIngestedAt/,
+    /sourceCreatedAt/,
+    /sourceUpdatedAt/,
+    /createdAt/,
+    /updatedAt/,
+    /startTime/,
+    /endTime/,
+  ],
+  ignoredActionPaths: [
+    /token/,
+    /lastIngestedAt/,
+    /sourceCreatedAt/,
+    /sourceUpdatedAt/,
+    /createdAt/,
+    /updatedAt/,
+    /startTime/,
+    /endTime/,
+  ],
 };
 export const store = configureStore({
   reducer: rootReducer,

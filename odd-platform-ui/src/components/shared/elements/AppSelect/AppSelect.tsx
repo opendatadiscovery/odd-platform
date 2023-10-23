@@ -14,24 +14,23 @@ interface AppSelectProps extends SelectProps {
 
 const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
   (
-    { size = 'medium', fullWidth = true, label, maxMenuHeight, dataQAId, ...props },
+    { id, size = 'medium', fullWidth = true, label, maxMenuHeight, dataQAId, ...props },
     ref
   ) => (
     <Grid
       sx={props.containerSx || { mt: label ? 2 : 0, width: fullWidth ? '100%' : 'auto' }}
     >
-      {label && <S.SelectLabel id='select-label-id'>{label}</S.SelectLabel>}
+      {label && <S.SelectLabel htmlFor={id}>{label}</S.SelectLabel>}
       <S.AppSelect
         {...props}
         $size={size}
         $isLabeled={!!label}
         variant='outlined'
         fullWidth={fullWidth}
-        labelId='select-label-id'
         IconComponent={DropdownIcon}
         notched
         ref={ref}
-        inputProps={{ ...props.inputProps, 'data-qa': dataQAId }}
+        inputProps={{ ...props.inputProps, 'data-qa': dataQAId, id }}
         MenuProps={{
           anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
           transformOrigin: { vertical: 'top', horizontal: 'left' },

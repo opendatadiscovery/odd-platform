@@ -69,7 +69,7 @@ const OverviewStats: React.FC = () => {
               />
             );
           case DataEntityClassNameEnum.ENTITY_GROUP:
-            return <OverviewEntityGroupItems />;
+            return <OverviewEntityGroupItems key={entityClass.id} />;
           default:
             return null;
         }
