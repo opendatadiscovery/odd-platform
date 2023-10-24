@@ -20,13 +20,18 @@ const AppSelect: React.FC<AppSelectProps> = React.forwardRef(
     <Grid
       sx={props.containerSx || { mt: label ? 2 : 0, width: fullWidth ? '100%' : 'auto' }}
     >
-      {label && <S.SelectLabel htmlFor={id}>{label}</S.SelectLabel>}
+      {label && (
+        <S.SelectLabel id={`${id}-label`} htmlFor={id}>
+          {label}
+        </S.SelectLabel>
+      )}
       <S.AppSelect
         {...props}
         $size={size}
         $isLabeled={!!label}
         variant='outlined'
         fullWidth={fullWidth}
+        labelId={`${id}-label`}
         IconComponent={DropdownIcon}
         notched
         ref={ref}

@@ -53,7 +53,7 @@ const SingleFilter = <OptionType extends DataSource | Namespace | ActivityEventT
           sx={{ mt: 2 }}
           label={name}
           id={`filter-${filterName}`}
-          value={queryParams[filterName] || defaultOption}
+          value={queryParams[filterName] ?? defaultOption}
           dataQAId={dataQA}
         >
           <AppMenuItem value='All' onClick={handleFilterSelect(defaultOption)}>
