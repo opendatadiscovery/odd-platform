@@ -4,8 +4,8 @@ import type { NodeSize } from 'components/DataEntityDetails/Lineage/HierarchyLin
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/NodeTitle/NodeTitleStyles';
 
 interface NodeTitleProps {
-  externalName: string | undefined;
-  internalName: string | undefined;
+  externalName?: string;
+  internalName?: string;
   handleTitleClick: () => void;
   nodeSize: NodeSize;
   fullNames: boolean;
@@ -16,14 +16,14 @@ const NodeTitle = React.memo<NodeTitleProps>(
     <Group top={nodeSize.content.title.y} left={nodeSize.content.title.x}>
       {externalName ? (
         <>
-          <title>{internalName || externalName}</title>
+          <title>{internalName ?? externalName}</title>
           <S.Title
             onClick={handleTitleClick}
             width={nodeSize.content.title.width}
             height={nodeSize.content.title.height}
           >
             <S.TitleWrapper $fullNames={fullNames}>
-              {internalName || externalName}
+              {internalName ?? externalName}
             </S.TitleWrapper>
           </S.Title>
         </>
