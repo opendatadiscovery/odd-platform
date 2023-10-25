@@ -124,10 +124,10 @@ export function useGetDataEntityGroupItems({
 
       const totalItems = response.pageInfo.total;
       const totalPageCount = Math.ceil(totalItems / size);
-      let nextPage;
+      let nextPage = pageParam;
 
       if (pageParam < totalPageCount) {
-        nextPage = pageParam + 1;
+        nextPage += 1;
       }
 
       return {

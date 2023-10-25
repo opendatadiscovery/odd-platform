@@ -6,6 +6,7 @@ import type { TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
 import { useAppPaths, useQueryParams } from 'lib/hooks';
+import { DatasourceLogo } from 'components/shared/elements';
 import type { NodeSize } from '../../../lineageLib/interfaces';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
 import NodeTitle from './NodeTitle/NodeTitle';
@@ -144,6 +145,16 @@ const Node = React.memo<NodeProps>(
             oddrn={node.data.oddrn}
             streamType={streamType}
           />
+          {node.data.dataSource?.oddrn ? (
+            <DatasourceLogo
+              svg
+              name={node.data.dataSource?.oddrn}
+              width={24}
+              height={24}
+              x={nodeSize.size.contentWidth}
+              y={nodeSize.content.title.y}
+            />
+          ) : null}
           <Classes nodeSize={nodeSize} entityClasses={node.data.entityClasses} />
           <rect
             width={nodeSize.content.loadMore.layer.width}

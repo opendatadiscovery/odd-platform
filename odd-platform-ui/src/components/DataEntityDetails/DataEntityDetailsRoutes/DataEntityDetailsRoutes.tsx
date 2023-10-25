@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
@@ -7,24 +7,20 @@ import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted, getResourcePermissions } from 'redux/selectors';
 
-const Overview = React.lazy(() => import('../Overview/Overview'));
-const DatasetStructure = React.lazy(() => import('../DatasetStructure/DatasetStructure'));
-const Lineage = React.lazy(() => import('../Lineage/Lineage'));
-const TestReport = React.lazy(() => import('../TestReport/TestReport'));
-const TestReportDetails = React.lazy(
+const Overview = lazy(() => import('../Overview/Overview'));
+const DatasetStructure = lazy(() => import('../DatasetStructure/DatasetStructure'));
+const Lineage = lazy(() => import('../Lineage/Lineage'));
+const TestReport = lazy(() => import('../TestReport/TestReport'));
+const TestReportDetails = lazy(
   () => import('../TestReport/TestReportDetails/TestReportDetails')
 );
-const DataEntityAlerts = React.lazy(() => import('../DataEntityAlerts/DataEntityAlerts'));
-const QualityTestHistory = React.lazy(
+const DataEntityAlerts = lazy(() => import('../DataEntityAlerts/DataEntityAlerts'));
+const QualityTestHistory = lazy(
   () => import('../QualityTestRunsHistory/TestRunsHistory')
 );
-const DataEntityActivity = React.lazy(
-  () => import('../DataEntityActivity/DataEntityActivity')
-);
-const DataCollaboration = React.lazy(
-  () => import('../DataCollaboration/DataCollaboration')
-);
-const LinkedItemsList = React.lazy(() => import('../LinkedItemsList/LinkedItemsList'));
+const DataEntityActivity = lazy(() => import('../DataEntityActivity/DataEntityActivity'));
+const DataCollaboration = lazy(() => import('../DataCollaboration/DataCollaboration'));
+const LinkedItemsList = lazy(() => import('../LinkedItemsList/LinkedItemsList'));
 
 const DataEntityDetailsRoutes: React.FC = () => {
   const { DataEntityRoutes, getNonExactParamPath } = useAppPaths();
@@ -39,6 +35,7 @@ const DataEntityDetailsRoutes: React.FC = () => {
     <AppSuspenseWrapper>
       <Routes>
         <Route path={DataEntityRoutes.dataEntityViewTypeParam}>
+          <Route path='' element={<Navigate to={DataEntityRoutes.overview} />} />
           <Route path={DataEntityRoutes.overview} element={<Overview />} />
           <Route
             path={getNonExactParamPath(DataEntityRoutes.structure)}
@@ -128,7 +125,6 @@ const DataEntityDetailsRoutes: React.FC = () => {
           >
             <Route path={DataEntityRoutes.messageIdParam} />
           </Route>
-          <Route path='' element={<Navigate to={DataEntityRoutes.overview} />} />
         </Route>
       </Routes>
     </AppSuspenseWrapper>

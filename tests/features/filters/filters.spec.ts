@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
 import { test } from '../../config/test-base';
 
-const datasourceFilter = 'Datasource';
-const namespaceFilter = 'Namespace';
+const datasourcesFilter = 'Datasources';
+const namespacesFilter = 'Namespaces';
 const ownerFilter = 'Owner';
 const typeFilter = 'Type';
 const tagFilter = 'Tag';
@@ -29,7 +29,7 @@ test.describe('Check filters', () => {
       steps: { pages },
     }) => {
       await test.step('Apply filter Datasource', async () => {
-        await pages.catalog.openFilterWithSelect(datasourceFilter);
+        await pages.catalog.openFilterWithSelect(datasourcesFilter);
         await pages.catalog.chooseOption(datasourceOptionBookETL);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
@@ -39,7 +39,7 @@ test.describe('Check filters', () => {
      */
     test('Should display the expected item with Namespace filter', async ({ steps: { pages } }) => {
       await test.step('Apply filter Namespace', async () => {
-        await pages.catalog.openFilterWithSelect(namespaceFilter);
+        await pages.catalog.openFilterWithSelect(namespacesFilter);
         await pages.catalog.chooseOption(namespaceOption);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
@@ -113,7 +113,7 @@ test.describe('Check filters', () => {
       const ownerName2 = `ownerName2${workerId}`;
       const ownerTitle2 = `ownerTitle2${workerId}`;
       await test.step('Apply filter Namespace', async () => {
-        await pages.catalog.openFilterWithSelect(namespaceFilter);
+        await pages.catalog.openFilterWithSelect(namespacesFilter);
         await pages.catalog.chooseOption(namespaceOption);
         expect(await pages.catalog.isListItemVisible(bookETLDataEntity)).toBeTruthy();
       });
@@ -137,11 +137,11 @@ test.describe('Check filters', () => {
       const ownerName3 = `ownerName3${workerId}`;
       const ownerTitle3 = `ownerTitle3${workerId}`;
       await test.step('Apply filter Datasource', async () => {
-        await pages.catalog.openFilterWithSelect(datasourceFilter);
+        await pages.catalog.openFilterWithSelect(datasourcesFilter);
         await pages.catalog.chooseOption(datasourceOptionBookETL);
       });
       await test.step('Apply filter Namespace', async () => {
-        await pages.catalog.openFilterWithSelect(namespaceFilter);
+        await pages.catalog.openFilterWithSelect(namespacesFilter);
         await pages.catalog.chooseOption(namespaceOption);
       });
       await test.step('Apply filter Owner', async () => {

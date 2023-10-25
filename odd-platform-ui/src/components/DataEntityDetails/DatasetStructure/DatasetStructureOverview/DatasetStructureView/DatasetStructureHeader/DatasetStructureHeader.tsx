@@ -109,6 +109,7 @@ const DatasetStructureHeader: FC = () => {
         justifyContent='flex-end'
       >
         <Input
+          name='search'
           variant='search-m'
           placeholder={t('Search')}
           sx={{ minWidth: '250px', mr: 1 }}
@@ -118,6 +119,7 @@ const DatasetStructureHeader: FC = () => {
           handleSearchClick={onSearchClick}
         />
         <AppSelect
+          name='select-revision'
           defaultValue={versionId}
           value={versionId}
           onChange={handleRevisionChange}

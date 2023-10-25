@@ -60,9 +60,7 @@ const App: React.FC = () => {
         <AppSuspenseWrapper>
           <Routes>
             <Route path={basePath} element={<Overview />} />
-            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />}>
-              <Route path={SearchRoutes.searchIdParam} />
-            </Route>
+            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />} />
             <Route
               path={getNonExactPath(ManagementRoutesEnum.management)}
               element={<Management />}
@@ -75,31 +73,20 @@ const App: React.FC = () => {
             <Route
               path={getNonExactPath(TermsRoutes.termSearch)}
               element={<TermSearch />}
-            >
-              <Route path={TermsRoutes.termSearchIdParam} />
-            </Route>
-            <Route path={getNonExactPath(AlertsRoutes.alerts)} element={<Alerts />}>
-              <Route path={AlertsRoutes.alertsViewTypeParam} />
-            </Route>
+            />
+            <Route path={getNonExactPath(AlertsRoutes.alerts)} element={<Alerts />} />
             <Route
               path={getNonExactPath(ActivityRoutes.activity)}
               element={<Activity />}
             />
-
             <Route path={getNonExactPath(TermsRoutes.terms)} element={<TermDetails />}>
-              <Route path={getNonExactParamPath(TermsRoutes.termIdParam)}>
-                <Route path={TermsRoutes.termsViewTypeParam} />
-              </Route>
+              <Route path={getNonExactParamPath(TermsRoutes.termIdParam)} />
             </Route>
             <Route
               path={getNonExactPath(DataEntityRoutes.dataentities)}
               element={<DataEntityDetails />}
             >
-              <Route path={getNonExactParamPath(DataEntityRoutes.dataEntityIdParam)}>
-                <Route
-                  path={getNonExactParamPath(DataEntityRoutes.dataEntityViewTypeParam)}
-                />
-              </Route>
+              <Route path={getNonExactParamPath(DataEntityRoutes.dataEntityIdParam)} />
             </Route>
             <Route
               path={getNonExactPath(DirectoryRoutesEnum.directory)}

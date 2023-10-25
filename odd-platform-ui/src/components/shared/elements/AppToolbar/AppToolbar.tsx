@@ -87,7 +87,7 @@ const AppToolbar: FC = () => {
         </S.ContentContainer>
       </S.Container>
       <AppMenu
-        PaperProps={{ sx: { width: '240px' } }}
+        slotProps={{ paper: { sx: { width: '240px' } } }}
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}

@@ -131,7 +131,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
         )}
       </Grid>
       <Grid sx={{ mt: 0.5 }} container flexWrap='nowrap'>
-        <Grid container flexWrap='nowrap' lg={8}>
+        <Grid container item flexWrap='nowrap' lg={8}>
           <Grid container flexDirection='column'>
             <Typography variant='h4'>{alertTitlesMap.get(type)}</Typography>
             <Grid container flexWrap='nowrap' alignItems='center' sx={{ mt: 0.5 }}>
@@ -151,7 +151,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        <S.Wrapper container lg={4} $alignItems='flex-start'>
+        <S.Wrapper container item lg={4} $alignItems='flex-start'>
           {resolvedInfo}
           <AlertStatusItem status={alertStatus} />
           <Grid display='flex' flexDirection='column' alignItems='center' sx={{ ml: 2 }}>

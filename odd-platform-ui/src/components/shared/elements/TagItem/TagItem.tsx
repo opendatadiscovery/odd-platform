@@ -41,7 +41,7 @@ const TagItem: FC<TagItemProps> = ({
     {systemTag && <SystemIcon />}
     {label}
     {!isUndefined(count) && (
-      <Typography ml={0.5} variant='subtitle1'>
+      <Typography ml={0.5} variant='subtitle1' component='span'>
         {count}
       </Typography>
     )}

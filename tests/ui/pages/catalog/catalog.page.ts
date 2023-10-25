@@ -5,7 +5,7 @@ import TextBox from '../../elements/text-box';
 import BasePage from '../base-page';
 
 const SELECTORS = {
-  filterWithSelect: filterName => `#select-label-id:has-text('${filterName}') >> ..`,
+  filterWithSelect: filterName => `#filter-${filterName.toLowerCase()}-label >> ..`,
   filterWithInput: filterName => `label:text-is("${filterName}") >> ..`,
   searchBar: `[placeholder="Search"]`,
   cleanSearchBarButton: `[data-qa="search_string"] >> .. >> button path[fill-rule="evenodd"]`,
