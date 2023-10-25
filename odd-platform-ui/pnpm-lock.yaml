@@ -124,8 +124,8 @@ dependencies:
     specifier: ^6.1.0
     version: 6.1.0(react@18.2.0)
   react-multi-date-picker:
-    specifier: ^3.3.4
-    version: 3.3.4(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^4.4.0
+    version: 4.4.0(react-dom@18.2.0)(react@18.2.0)
   react-redux:
     specifier: ^8.1.2
     version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.20)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -5950,8 +5950,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-date-object@2.1.7:
-    resolution: {integrity: sha512-810eaGk/xvQBJNncPvhwXaKcSwPRKX48jtY/5U5T1bSUnGFqmBdMvl4EVl76cyzQ8U3KX6hpF6xZ1c0eY9vvJA==}
+  /react-date-object@2.1.8:
+    resolution: {integrity: sha512-94zg/9r29v/VsKsJT0E5+tPg85IyMirkU/B7qBWlhT7RDSuf9x5dczfbQOsj9TbzSVUK/Vx/ZDboOBy9hA381w==}
     dev: false
 
   /react-dom@18.2.0(react@18.2.0):
@@ -6062,14 +6062,14 @@ packages:
       - supports-color
     dev: false
 
-  /react-multi-date-picker@3.3.4(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-bl1aTt3bmAYfsPpIUKsWVl3XWCfY3nxu7BFvLCR7j9iHckmiJNbkMBVGu5AvrcSa3mI39ybdHQuB3YzeM5O6Cg==}
+  /react-multi-date-picker@4.4.0(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-bh7y1xh+yvl15/yPVXHnJVvaVAFjTApvZ4G6u4iY+OJouWYSt4COHuykniQD1/13XYe2PTHpdTz/uvBVCZFe0Q==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
       react: 18.2.0
-      react-date-object: 2.1.7
+      react-date-object: 2.1.8
       react-dom: 18.2.0(react@18.2.0)
       react-element-popper: 2.1.6(react-dom@18.2.0)(react@18.2.0)
     dev: false
