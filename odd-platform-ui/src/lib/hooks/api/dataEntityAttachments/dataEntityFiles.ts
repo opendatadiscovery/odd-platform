@@ -87,11 +87,11 @@ export function useDownloadDataEntityFile({
   dataEntityId,
   fileId,
 }: DataEntityAttachmentApiDownloadFileRequest) {
-  return useQuery(
-    ['dataEntityFiles', dataEntityId, fileId],
-    () => dataEntityAttachmentApi.downloadFile({ dataEntityId, fileId }),
-    { enabled: false }
-  );
+  return useQuery({
+    queryKey: ['dataEntityFiles', dataEntityId, fileId],
+    queryFn: () => dataEntityAttachmentApi.downloadFile({ dataEntityId, fileId }),
+    enabled: false,
+  });
 }
 
 export function useDeleteDataEntityFile() {
@@ -112,7 +112,8 @@ export function useDeleteDataEntityFile() {
 export function useGetUploadOptions({
   dataEntityId,
 }: DataEntityAttachmentApiGetUploadOptionsRequest) {
-  return useQuery(['dataEntityUploadOptions', dataEntityId], () =>
-    dataEntityAttachmentApi.getUploadOptions({ dataEntityId })
-  );
+  return useQuery({
+    queryKey: ['dataEntityUploadOptions', dataEntityId],
+    queryFn: () => dataEntityAttachmentApi.getUploadOptions({ dataEntityId }),
+  });
 }

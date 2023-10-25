@@ -9,27 +9,32 @@ import type { ErrorState } from 'redux/interfaces';
 import type { DataSourceEntityList } from 'lib/interfaces';
 
 export function useGetDataSourceTypes() {
-  return useQuery(['dataSourceTypes'], async () => {
-    const { items } = await directoryApi.getDataSourceTypes();
+  return useQuery({
+    queryKey: ['dataSourceTypes'],
+    queryFn: async () => {
+      const { items } = await directoryApi.getDataSourceTypes();
 
-    return items;
+      return items;
+    },
   });
 }
 
 export function useGetDirectoryDataSources(
   params: DirectoryApiGetDirectoryDatasourceListRequest
 ) {
-  return useQuery(['directoryDataSources', params.prefix], () =>
-    directoryApi.getDirectoryDatasourceList(params)
-  );
+  return useQuery({
+    queryKey: ['directoryDataSources', params.prefix],
+    queryFn: () => directoryApi.getDirectoryDatasourceList(params),
+  });
 }
 
 export function useGetDataSourceEntityTypes(
   params: DirectoryApiGetDatasourceEntityTypesRequest
 ) {
-  return useQuery(['directoryDataSourceEntityTypes', params.dataSourceId], () =>
-    directoryApi.getDatasourceEntityTypes(params)
-  );
+  return useQuery({
+    queryKey: ['directoryDataSourceEntityTypes', params.dataSourceId],
+    queryFn: () => directoryApi.getDatasourceEntityTypes(params),
+  });
 }
 
 type UseGetDataSourceEntities = Omit<DirectoryApiGetDatasourceEntitiesRequest, 'page'> & {
@@ -42,9 +47,9 @@ export function useGetDataSourceEntities({
   typeId,
   enabled,
 }: UseGetDataSourceEntities) {
-  return useInfiniteQuery<DataSourceEntityList, ErrorState, DataSourceEntityList>(
-    ['directoryDataSourceEntities', { dataSourceId, size, typeId }],
-    async ({ pageParam = 1 }) => {
+  return useInfiniteQuery<DataSourceEntityList, ErrorState, DataSourceEntityList>({
+    queryKey: ['directoryDataSourceEntities', { dataSourceId, size, typeId }],
+    queryFn: async ({ pageParam = 1 }) => {
       const response = await directoryApi.getDatasourceEntities({
         dataSourceId,
         size,
@@ -68,9 +73,7 @@ export function useGetDataSourceEntities({
         },
       };
     },
-    {
-      getNextPageParam: lastPage => lastPage.entities.pageInfo.nextPage,
-      enabled,
-    }
-  );
+    getNextPageParam: lastPage => lastPage.entities.pageInfo.nextPage,
+    enabled,
+  });
 }

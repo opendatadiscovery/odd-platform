@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import {
   StyledEngineProvider,
@@ -28,16 +28,18 @@ declare module 'styled-components' {
 }
 
 const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: async e => {
+      if ((e as Error).message === '401') {
+        window.location.reload();
+      }
+      await showServerErrorToast(e as Response);
+    },
+  }),
   defaultOptions: {
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
-      async onError(e) {
-        if ((e as Error).message === '401') {
-          window.location.reload();
-        }
-        await showServerErrorToast(e as Response);
-      },
     },
     mutations: {
       async onError(e) {

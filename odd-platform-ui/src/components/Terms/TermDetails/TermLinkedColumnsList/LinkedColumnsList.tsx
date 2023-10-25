@@ -2,10 +2,8 @@ import React, { type FC, useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
 import { EmptyContentPlaceholder, Input } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
-import { termApi } from 'lib/api';
+import { useAppParams, useGetTermLinkedColumns } from 'lib/hooks';
 import LinkedColumn from './LinkedColumn/LinkedColumn';
 import {
   TermLinkedColumnsColContainer,
@@ -25,11 +23,7 @@ const LinkedColumnsList: FC = () => {
     isFetching,
     isFetched,
     refetch: search,
-  } = useQuery(
-    ['termLinkedColumns', termId],
-    () => termApi.getTermLinkedColumns({ termId, page: 1, size, query }),
-    { enabled: false, initialData: { pageInfo: { total: 0, hasNext: false }, items: [] } }
-  );
+  } = useGetTermLinkedColumns({ termId, page: 1, size, query });
 
   useEffect(() => {
     search();
