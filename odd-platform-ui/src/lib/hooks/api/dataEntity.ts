@@ -22,62 +22,63 @@ export function useDataEntityMetrics({
   dataEntityId,
   enabled,
 }: UseDataEntityMetricsProps) {
-  return useQuery(
-    ['dataEntityMetrics', dataEntityId],
-    () => dataEntityApi.getDataEntityMetrics({ dataEntityId }),
-    {
-      retry: false,
-      refetchOnWindowFocus: false,
-      onError: err =>
+  return useQuery({
+    queryKey: ['dataEntityMetrics', dataEntityId],
+    queryFn: () =>
+      dataEntityApi.getDataEntityMetrics({ dataEntityId }).catch(err => {
         showServerErrorToast(err as Response, {
           additionalMessage: 'while loading metrics',
-        }),
-      enabled,
-    }
-  );
+        });
+      }),
+    retry: false,
+    refetchOnWindowFocus: false,
+    enabled,
+  });
 }
 
 export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: number }) {
-  return useQuery(
-    ['dataEntityGroupLineage', dataEntityId],
-    () => dataEntityApi.getDataEntityGroupsLineage({ dataEntityGroupId: dataEntityId }),
-    {
-      cacheTime: 0,
-      select: (data): DataEntityGroupLineage =>
-        data.items.reduce(
-          (memo, lineage) => {
-            const nodes = lineage.nodes.map<Node>(node => ({
-              id: String(node.id),
-              data: {
-                oddrn: node.oddrn,
-                externalName: node.externalName,
-                internalName: node.internalName,
-                dataSource: node.dataSource,
-                entityClasses: node.entityClasses,
-                status: node.status,
-                isStale: node.isStale,
-              },
-            }));
-            const edges = lineage.edges.map<Edge>(({ sourceId, targetId }) => ({
-              id: `${sourceId}-${targetId}`,
-              targets: [String(targetId)],
-              sources: [String(sourceId)],
-            }));
+  return useQuery({
+    queryKey: ['dataEntityGroupLineage', dataEntityId],
+    queryFn: () =>
+      dataEntityApi.getDataEntityGroupsLineage({ dataEntityGroupId: dataEntityId }),
+    cacheTime: 0,
+    select: (data): DataEntityGroupLineage =>
+      data.items.reduce(
+        (memo, lineage) => {
+          const nodes = lineage.nodes.map<Node>(node => ({
+            id: String(node.id),
+            data: {
+              oddrn: node.oddrn,
+              externalName: node.externalName,
+              internalName: node.internalName,
+              dataSource: node.dataSource,
+              entityClasses: node.entityClasses,
+              status: node.status,
+              isStale: node.isStale,
+            },
+          }));
+          const edges = lineage.edges.map<Edge>(({ sourceId, targetId }) => ({
+            id: `${sourceId}-${targetId}`,
+            targets: [String(targetId)],
+            sources: [String(sourceId)],
+          }));
 
-            return {
-              ...memo,
-              nodes: [...memo.nodes, ...nodes],
-              edges: [...memo.edges, ...edges],
-            };
-          },
-          { nodes: [], edges: [] } as DataEntityGroupLineage
-        ),
-    }
-  );
+          return {
+            ...memo,
+            nodes: [...memo.nodes, ...nodes],
+            edges: [...memo.edges, ...edges],
+          };
+        },
+        { nodes: [], edges: [] } as DataEntityGroupLineage
+      ),
+  });
 }
 
 export function useDataEntitiesUsage() {
-  return useQuery(['dataEntitiesUsage'], () => dataEntityApi.getDataEntitiesUsage());
+  return useQuery({
+    queryKey: ['dataEntitiesUsage'],
+    queryFn: () => dataEntityApi.getDataEntitiesUsage(),
+  });
 }
 
 interface UseDataEntityDetailsParams {
@@ -89,15 +90,17 @@ export function useDataEntityDetails({
   dataEntityId,
   enabled = true,
 }: UseDataEntityDetailsParams) {
-  return useQuery(
-    ['dataEntityDetails', dataEntityId],
-    () => dataEntityApi.getDataEntityDetails({ dataEntityId }),
-    { enabled }
-  );
+  return useQuery({
+    queryKey: ['dataEntityDetails', dataEntityId],
+    queryFn: () => dataEntityApi.getDataEntityDetails({ dataEntityId }),
+    enabled,
+  });
 }
 
 export function useGetDomains() {
-  return useQuery(['domains'], () => dataEntityApi.getDomains(), {
+  return useQuery({
+    queryKey: ['domains'],
+    queryFn: () => dataEntityApi.getDomains(),
     select: data => data.items,
   });
 }
@@ -112,9 +115,9 @@ export function useGetDataEntityGroupItems({
   size,
   query,
 }: UseGetDataEntityGroupItems) {
-  return useInfiniteQuery<DataEntityGroupList, ErrorState, DataEntityGroupList>(
-    ['dataEntityGroupItems', { dataEntityGroupId, size, query }],
-    async ({ pageParam = 1 }) => {
+  return useInfiniteQuery<DataEntityGroupList, ErrorState, DataEntityGroupList>({
+    queryKey: ['dataEntityGroupItems', { dataEntityGroupId, size, query }],
+    queryFn: async ({ pageParam = 1 }) => {
       const response = await dataEntityApi.getDataEntityGroupsItems({
         dataEntityGroupId,
         size,
@@ -135,8 +138,8 @@ export function useGetDataEntityGroupItems({
         pageInfo: { ...response.pageInfo, nextPage },
       };
     },
-    { getNextPageParam: lastPage => lastPage.pageInfo.nextPage }
-  );
+    getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
+  });
 }
 
 export function useUpdateDataEntityStatus() {

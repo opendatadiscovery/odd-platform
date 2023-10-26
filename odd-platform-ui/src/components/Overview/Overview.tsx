@@ -1,11 +1,12 @@
 import { Grid } from '@mui/material';
 import React from 'react';
-import { getIdentityFetchingStatuses, getTagListFetchingStatuses } from 'redux/selectors';
+import { getIdentityFetchingStatuses } from 'redux/selectors';
 import { MainSearch, SkeletonWrapper } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import Domains from 'components/Overview/Domains/Domains';
+import { useGetPopularTags } from 'lib/hooks/api/tags';
 import DataEntitiesUsageInfo from './DataEntitiesUsageInfo/DataEntitiesUsageInfo';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
@@ -14,8 +15,11 @@ import TopTagsList from './TopTagsList/TopTagsList';
 import Directory from './Directory/Directory';
 
 const Overview: React.FC = () => {
-  const { isLoading: isTagsFetching } = useAppSelector(getTagListFetchingStatuses);
   const { isLoading: isIdentityFetching } = useAppSelector(getIdentityFetchingStatuses);
+  const { isLoading: isTagsFetching, data: tags } = useGetPopularTags({
+    page: 1,
+    size: 30,
+  });
 
   const isLoading = React.useMemo(
     () => isIdentityFetching || isTagsFetching,
@@ -38,7 +42,7 @@ const Overview: React.FC = () => {
         <MainSearch mainSearch />
       </Grid>
       <S.TagsContainer container>
-        <TopTagsList />
+        {tags ? <TopTagsList tags={tags} /> : null}
       </S.TagsContainer>
       <Domains />
       <DataEntitiesUsageInfo />

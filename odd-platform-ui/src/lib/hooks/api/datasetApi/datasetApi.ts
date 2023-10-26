@@ -15,24 +15,19 @@ export function useDatasetStructureCompare({
   secondVersionId,
   showChangesOnly,
 }: UseDatasetStructureCompareProps) {
-  return useQuery(
-    ['datasetStructureCompare', dataEntityId, firstVersionId, secondVersionId],
-    () =>
+  return useQuery({
+    queryKey: ['datasetStructureCompare', dataEntityId, firstVersionId, secondVersionId],
+    queryFn: () =>
       datasetApiClient.getDataSetStructureDiff({
         dataEntityId,
         firstVersionId,
         secondVersionId,
       }),
-    {
-      select: ({ fieldList: data }) => {
-        const args = { data, firstVersionId, secondVersionId, showChangesOnly };
-
-        const structureDiffList = makeCompareFieldsTree(args);
-
-        const isNested = structureDiffList.some(diff => diff.childFields?.length);
-
-        return { isNested, structureDiffList };
-      },
-    }
-  );
+    select: ({ fieldList: data }) => {
+      const args = { data, firstVersionId, secondVersionId, showChangesOnly };
+      const structureDiffList = makeCompareFieldsTree(args);
+      const isNested = structureDiffList.some(diff => diff.childFields?.length);
+      return { isNested, structureDiffList };
+    },
+  });
 }

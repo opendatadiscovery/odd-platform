@@ -11,18 +11,17 @@ interface UseDataEntityMetricsProps {
 }
 
 export function useDataSetFieldMetrics({ datasetFieldId }: UseDataEntityMetricsProps) {
-  return useQuery(
-    ['dataSetFieldMetrics', datasetFieldId],
-    () => datasetFieldApiClient.getDatasetFieldMetrics({ datasetFieldId }),
-    {
-      retry: false,
-      refetchOnWindowFocus: false,
-      onError: err =>
+  return useQuery({
+    queryKey: ['dataSetFieldMetrics', datasetFieldId],
+    queryFn: () =>
+      datasetFieldApiClient.getDatasetFieldMetrics({ datasetFieldId }).catch(err => {
         showServerErrorToast(err as Response, {
           additionalMessage: 'while loading field metrics',
-        }),
-    }
-  );
+        });
+      }),
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 }
 
 interface UseAddDatasetFieldTermParams {

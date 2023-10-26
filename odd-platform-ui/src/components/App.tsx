@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { lazy, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { toolbarHeight } from 'lib/constants';
@@ -13,20 +13,18 @@ import {
 import { useAppPaths } from 'lib/hooks';
 
 // lazy elements
-const Management = React.lazy(() => import('./Management/Management'));
-const ManagementRoutes = React.lazy(
+const Management = lazy(() => import('./Management/Management'));
+const ManagementRoutes = lazy(
   () => import('./Management/ManagementRoutes/ManagementRoutes')
 );
-const DataEntityDetails = React.lazy(
-  () => import('./DataEntityDetails/DataEntityDetails')
-);
-const TermDetails = React.lazy(() => import('./Terms/TermDetails/TermDetails'));
-const Overview = React.lazy(() => import('./Overview/Overview'));
-const Search = React.lazy(() => import('./Search/Search'));
-const TermSearch = React.lazy(() => import('./Terms/TermSearch/TermSearch'));
-const Alerts = React.lazy(() => import('./Alerts/Alerts'));
-const Activity = React.lazy(() => import('./Activity/Activity'));
-const DirectoryRoutes = React.lazy(() => import('./Directory/DirectoryRoutes'));
+const DataEntityDetails = lazy(() => import('./DataEntityDetails/DataEntityDetails'));
+const TermDetails = lazy(() => import('./Terms/TermDetails/TermDetails'));
+const Overview = lazy(() => import('./Overview/Overview'));
+const Search = lazy(() => import('./Search/Search'));
+const TermSearch = lazy(() => import('./Terms/TermSearch/TermSearch'));
+const Alerts = lazy(() => import('./Alerts/Alerts'));
+const Activity = lazy(() => import('./Activity/Activity'));
+const DirectoryRoutes = lazy(() => import('./Directory/DirectoryRoutes'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();

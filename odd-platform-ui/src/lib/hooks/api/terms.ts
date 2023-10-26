@@ -1,6 +1,9 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { termApi } from 'lib/api';
-import type { TermApiGetTermByNamespaceAndNameRequest } from 'generated-sources';
+import type {
+  TermApiGetTermByNamespaceAndNameRequest,
+  TermApiGetTermLinkedColumnsRequest,
+} from 'generated-sources';
 import type { AppError } from 'lib/errorHandling';
 
 export function useGetTermByNamespaceAndName() {
@@ -15,4 +18,13 @@ export function useGetTermByNamespaceAndName() {
       return error as AppError;
     }
   };
+}
+
+export function useGetTermLinkedColumns(params: TermApiGetTermLinkedColumnsRequest) {
+  return useQuery({
+    queryKey: ['termLinkedColumns', params.termId],
+    queryFn: () => termApi.getTermLinkedColumns(params),
+    enabled: false,
+    initialData: { pageInfo: { total: 0, hasNext: false }, items: [] },
+  });
 }

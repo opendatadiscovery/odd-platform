@@ -27,18 +27,6 @@ export const getResourcePermissions = (
     resourceId ? profile.permissions[resourceType][resourceId] || emptyArr : emptyArr
   );
 
-export const isResourcePermissionsAlreadyFetched = (
-  resourceType: PermissionResourceType,
-  resourceId?: number
-) =>
-  createSelector(profileState, profile =>
-    Object.keys(profile.permissions[resourceType]).includes(String(resourceId))
-  );
-
-export const getResourcePermissionsFetchingStatuses = createStatusesSelector(
-  actions.fetchResourcePermissionsActionType
-);
-
 export const getAssociationRequestStatus = createSelector(
   profileState,
   profile => profile.owner?.associationRequest?.status
