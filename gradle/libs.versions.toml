@@ -41,6 +41,7 @@ protobuf-java = '3.21.12'
 snappy-java = '1.1.9.1'
 minio = '8.4.6'
 okhttp = '4.10.0'
+spring-mail = '3.1.0'
 
 [libraries]
 spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
@@ -82,6 +83,7 @@ jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'j
 swagger-annotations = { module = 'io.swagger.core.v3:swagger-annotations', version.ref = 'swagger-annotations' }
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
 springdoc-openapi = { module = 'org.springdoc:springdoc-openapi-starter-webflux-ui', version.ref = 'springdoc-openapi' }
+spring-mail = { module = 'org.springframework.boot:spring-boot-starter-mail', version.ref = 'spring-mail' }
 mapstruct = { module = 'org.mapstruct:mapstruct', version.ref = 'mapstruct' }
 mapstruct-processor = { module = 'org.mapstruct:mapstruct-processor', version.ref = 'mapstruct' }
 opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }

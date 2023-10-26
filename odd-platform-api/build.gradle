@@ -46,6 +46,7 @@ dependencies {
     implementation libs.minio
     implementation libs.okhttp
     implementation libs.springdoc.openapi
+    implementation libs.spring.mail
 
     compileOnly libs.lombok
 

@@ -58,6 +58,7 @@ public class AlertHaltConfigRepositoryImpl implements AlertHaltConfigRepository 
             .set(ALERT_HALT_CONFIG.INCOMPATIBLE_SCHEMA_HALT_UNTIL, cfg.getIncompatibleSchemaHaltUntil())
             .set(ALERT_HALT_CONFIG.FAILED_DQ_TEST_HALT_UNTIL, cfg.getFailedDqTestHaltUntil())
             .set(ALERT_HALT_CONFIG.FAILED_JOB_HALT_UNTIL, cfg.getFailedJobHaltUntil())
+            .set(ALERT_HALT_CONFIG.NOTIFICATIONS_EMAILS, cfg.getNotificationsEmails())
             .returning();
 
         return jooqReactiveOperations.mono(query).map(r -> r.into(AlertHaltConfigPojo.class));
