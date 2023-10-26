@@ -34,7 +34,7 @@ export function useSaveDataEntityLinks() {
       await dataEntityAttachmentApi.saveLinks(params),
     onSuccess: async () => {
       showSuccessToast({ message: 'Links successfully saved!' });
-      await client.invalidateQueries(['dataEntityAttachments']);
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
     },
   });
 }
@@ -47,7 +47,7 @@ export function useUpdateDataEntityLink() {
       await dataEntityAttachmentApi.updateLink(params),
     onSuccess: async () => {
       showSuccessToast({ message: 'Link successfully updated!' });
-      await client.invalidateQueries(['dataEntityAttachments']);
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
     },
   });
 }
@@ -60,7 +60,7 @@ export function useDeleteDataEntityLink() {
       dataEntityAttachmentApi.deleteLink(params),
     onSuccess: async () => {
       showSuccessToast({ message: 'Link successfully deleted!' });
-      await client.invalidateQueries(['dataEntityAttachments']);
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
     },
   });
 }

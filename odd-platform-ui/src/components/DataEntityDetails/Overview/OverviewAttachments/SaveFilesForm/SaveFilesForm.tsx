@@ -18,7 +18,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
   const formId = 'save-files-form';
   const { dataEntityId } = useAppParams();
 
-  const { mutate: saveFile, isLoading, isSuccess } = useSaveDataEntityFile();
+  const { mutate: saveFile, isPending, isSuccess } = useSaveDataEntityFile();
 
   const [uploadedFile, setUploadedFile] = useState<Blob | undefined>(undefined);
   const { reset, handleSubmit, control } = useForm<FormData>({
@@ -92,7 +92,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
       type='submit'
       form={formId}
       fullWidth
-      disabled={!uploadedFile || isLoading}
+      disabled={!uploadedFile || isPending}
     />
   );
 
@@ -106,7 +106,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccess}
-      isLoading={isLoading}
+      isLoading={isPending}
       clearState={clearState}
       confirmOnClose
     />

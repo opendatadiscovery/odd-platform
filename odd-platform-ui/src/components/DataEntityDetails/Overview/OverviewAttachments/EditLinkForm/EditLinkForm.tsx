@@ -18,7 +18,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => 
   const { t } = useTranslation();
   const { dataEntityId } = useAppParams();
 
-  const { mutate: updateLink, isLoading, isSuccess } = useUpdateDataEntityLink();
+  const { mutate: updateLink, isPending, isSuccess } = useUpdateDataEntityLink();
 
   const { reset, formState, handleSubmit, control } = useForm<DataEntityLinkFormData>({
     defaultValues: { name, url },
@@ -90,7 +90,7 @@ const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => 
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccess}
-      isLoading={isLoading}
+      isLoading={isPending}
       clearState={clearState}
     />
   );

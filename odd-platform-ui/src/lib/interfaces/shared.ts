@@ -11,7 +11,7 @@ export interface DataSetVersionDiff extends GeneratedDataSetVersionDiff {
 
 export interface InfiniteQueryPageInfo {
   total: number;
-  nextPage: number;
+  nextPage?: number;
 }
 
 export type Lang = keyof typeof LANGUAGES_MAP;

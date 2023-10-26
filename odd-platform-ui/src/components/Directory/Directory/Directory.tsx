@@ -27,7 +27,11 @@ const Directory: FC = () => {
         <Typography variant='h0'>{t('Directories')}</Typography>
       </Grid>
       {isLoading && <AppLoadingPage />}
-      <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
+      <AppErrorPage
+        showError={isError}
+        offsetTop={210}
+        error={error as unknown as ErrorState}
+      />
       {dataSourceTypes && (
         <ScrollableContainer $offsetY={70}>
           <Grid container mt={3} columnGap={1} rowGap={3}>

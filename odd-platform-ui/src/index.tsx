@@ -29,11 +29,11 @@ declare module 'styled-components' {
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: async e => {
-      if ((e as Error).message === '401') {
+    onError: (e: unknown) => {
+      if (e instanceof Error && e.message === '401') {
         window.location.reload();
       }
-      await showServerErrorToast(e as Response);
+      showServerErrorToast(e as Response);
     },
   }),
   defaultOptions: {
@@ -42,9 +42,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
     mutations: {
-      async onError(e) {
-        await showServerErrorToast(e as Response);
-      },
+      onError: async (e: unknown) => await showServerErrorToast(e as Response),
     },
   },
 });

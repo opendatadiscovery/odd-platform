@@ -11,9 +11,10 @@ export function useGetTermByNamespaceAndName() {
 
   return async ({ namespaceName, termName }: TermApiGetTermByNamespaceAndNameRequest) => {
     try {
-      return await queryClient.fetchQuery(['terms', namespaceName, termName], () =>
-        termApi.getTermByNamespaceAndName({ namespaceName, termName })
-      );
+      return await queryClient.fetchQuery({
+        queryKey: ['terms', namespaceName, termName],
+        queryFn: () => termApi.getTermByNamespaceAndName({ namespaceName, termName }),
+      });
     } catch (error) {
       return error as AppError;
     }

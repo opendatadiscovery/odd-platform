@@ -26,7 +26,7 @@ export const handleResponseAsyncThunk = <Returned, ThunkArg = void>(
     try {
       const response = (await thunk(arg, thunkAPI)) as Returned;
 
-      if (options && options.setSuccessOptions) {
+      if (options?.setSuccessOptions) {
         const { id, message } = options.setSuccessOptions(arg);
         showSuccessToast({ id, message });
       }

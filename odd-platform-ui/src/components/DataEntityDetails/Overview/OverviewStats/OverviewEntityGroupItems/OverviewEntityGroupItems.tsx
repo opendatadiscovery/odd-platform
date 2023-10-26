@@ -106,7 +106,7 @@ const OverviewEntityGroupItems: FC = () => {
                 scrollableTarget='entity-group-items-list'
                 dataLength={entities.length}
                 next={fetchNextPage}
-                hasMore={!!hasNextPage}
+                hasMore={hasNextPage}
                 loader={
                   <Grid container justifyContent='center' mt={3}>
                     <AppCircularProgress size={30} background='transparent' />

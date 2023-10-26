@@ -21,7 +21,7 @@ const DatasetFieldInternalNameForm = ({
   const formId = 'datasetField-internal-name';
   const {
     mutateAsync: updateName,
-    isLoading: isInternalNameUpdating,
+    isPending: isInternalNameUpdating,
     isSuccess: isInternalNameUpdated,
   } = useUpdateDatasetFieldInternalName();
 

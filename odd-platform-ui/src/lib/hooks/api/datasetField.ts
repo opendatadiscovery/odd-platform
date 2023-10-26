@@ -16,9 +16,9 @@ export function useDataSetFieldMetrics({ datasetFieldId }: UseDataEntityMetricsP
     queryFn: async () =>
       datasetFieldApiClient
         .getDatasetFieldMetrics({ datasetFieldId })
-        .catch((err: Response) => {
-          showServerErrorToast(err, { additionalMessage: 'while loading field metrics' });
-        }),
+        .catch(err =>
+          showServerErrorToast(err, { additionalMessage: 'while loading field metrics' })
+        ),
     retry: false,
     refetchOnWindowFocus: false,
   });

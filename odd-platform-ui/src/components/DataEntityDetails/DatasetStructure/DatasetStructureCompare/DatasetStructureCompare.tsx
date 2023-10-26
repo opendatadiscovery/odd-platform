@@ -43,7 +43,11 @@ const DatasetStructureCompare: FC = () => {
         />
       )}
       {isLoading && <AppLoadingPage />}
-      <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
+      <AppErrorPage
+        showError={isError}
+        offsetTop={210}
+        error={error as unknown as ErrorState}
+      />
       <EmptyContentPlaceholder
         isContentLoaded={isSuccess}
         isContentEmpty={!data?.structureDiffList.length}

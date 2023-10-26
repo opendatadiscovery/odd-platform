@@ -45,7 +45,7 @@
     "@mui/system": "^5.14.4",
     "@mui/x-date-pickers": "^5.0.20",
     "@reduxjs/toolkit": "^1.9.5",
-    "@tanstack/react-query": "^4.32.6",
+    "@tanstack/react-query": "^5.0.5",
     "@tanstack/react-virtual": "3.0.0-beta.60",
     "@uiw/react-md-editor": "^3.23.5",
     "@visx/curve": "^3.3.0",

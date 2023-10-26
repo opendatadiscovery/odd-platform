@@ -14,7 +14,7 @@ const AssignFieldTermForm: FC<AssignFieldTermFormProps> = ({
   datasetFieldId,
   handleAddTerm,
 }) => {
-  const { isLoading, isSuccess, mutateAsync: addTerm } = useAddDatasetFieldTerm();
+  const { isPending, isSuccess, mutateAsync: addTerm } = useAddDatasetFieldTerm();
 
   const onSubmit = useCallback(
     (clearState: () => void) =>
@@ -32,7 +32,7 @@ const AssignFieldTermForm: FC<AssignFieldTermFormProps> = ({
       onSubmit={onSubmit}
       openBtnEl={openBtnEl}
       handleCloseSubmittedForm={isSuccess}
-      isLoading={isLoading}
+      isLoading={isPending}
     />
   );
 };

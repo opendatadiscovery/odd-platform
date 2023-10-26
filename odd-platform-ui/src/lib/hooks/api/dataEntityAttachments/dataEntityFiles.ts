@@ -74,9 +74,9 @@ export function useSaveDataEntityFile() {
         uploadId,
       });
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       showSuccessToast({ message: 'File successfully saved!' });
-      await client.invalidateQueries(['dataEntityAttachments']);
+      client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
     },
   });
 }
@@ -100,7 +100,7 @@ export function useDeleteDataEntityFile() {
       dataEntityAttachmentApi.deleteFile(params),
     onSuccess: async () => {
       showSuccessToast({ message: 'File successfully deleted!' });
-      await client.invalidateQueries(['dataEntityAttachments']);
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
     },
   });
 }
