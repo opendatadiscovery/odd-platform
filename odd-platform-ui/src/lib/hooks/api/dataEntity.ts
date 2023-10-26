@@ -24,7 +24,7 @@ export function useDataEntityMetrics({
 }: UseDataEntityMetricsProps) {
   return useQuery({
     queryKey: ['dataEntityMetrics', dataEntityId],
-    queryFn: () =>
+    queryFn: async () =>
       dataEntityApi.getDataEntityMetrics({ dataEntityId }).catch(err => {
         showServerErrorToast(err as Response, {
           additionalMessage: 'while loading metrics',
@@ -143,12 +143,9 @@ export function useGetDataEntityGroupItems({
 }
 
 export function useUpdateDataEntityStatus() {
-  return useMutation(
-    (params: DataEntityApiUpdateStatusRequest) => dataEntityApi.updateStatus(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Status successfully updated!' });
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: async (params: DataEntityApiUpdateStatusRequest) =>
+      dataEntityApi.updateStatus(params),
+    onSuccess: () => showSuccessToast({ message: 'Status successfully updated!' }),
+  });
 }

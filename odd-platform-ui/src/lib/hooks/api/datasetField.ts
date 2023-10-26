@@ -13,12 +13,12 @@ interface UseDataEntityMetricsProps {
 export function useDataSetFieldMetrics({ datasetFieldId }: UseDataEntityMetricsProps) {
   return useQuery({
     queryKey: ['dataSetFieldMetrics', datasetFieldId],
-    queryFn: () =>
-      datasetFieldApiClient.getDatasetFieldMetrics({ datasetFieldId }).catch(err => {
-        showServerErrorToast(err as Response, {
-          additionalMessage: 'while loading field metrics',
-        });
-      }),
+    queryFn: async () =>
+      datasetFieldApiClient
+        .getDatasetFieldMetrics({ datasetFieldId })
+        .catch((err: Response) => {
+          showServerErrorToast(err, { additionalMessage: 'while loading field metrics' });
+        }),
     retry: false,
     refetchOnWindowFocus: false,
   });
@@ -30,43 +30,31 @@ interface UseAddDatasetFieldTermParams {
 }
 
 export function useAddDatasetFieldTerm() {
-  return useMutation(
-    ({ datasetFieldId, termId }: UseAddDatasetFieldTermParams) => {
-      const params = { datasetFieldId, datasetFieldTermFormData: { termId } };
-
-      return datasetFieldApiClient.addDatasetFieldTerm(params);
-    },
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Term successfully added!' });
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: async ({ termId, datasetFieldId }: UseAddDatasetFieldTermParams) =>
+      datasetFieldApiClient.addDatasetFieldTerm({
+        datasetFieldId,
+        datasetFieldTermFormData: { termId },
+      }),
+    onSuccess: () => showSuccessToast({ message: 'Term successfully added!' }),
+  });
 }
 
 export function useDeleteDatasetFieldTerm() {
-  return useMutation(
-    async (params: DatasetFieldApiDeleteTermFromDatasetFieldRequest) => {
+  return useMutation({
+    mutationFn: async (params: DatasetFieldApiDeleteTermFromDatasetFieldRequest) => {
       await datasetFieldApiClient.deleteTermFromDatasetField(params);
 
       return params.termId;
     },
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Term successfully deleted!' });
-      },
-    }
-  );
+    onSuccess: () => showSuccessToast({ message: 'Term successfully deleted!' }),
+  });
 }
 
 export function useUpdateDatasetFieldInternalName() {
-  return useMutation(
-    async (params: DatasetFieldApiUpdateDatasetFieldInternalNameRequest) =>
+  return useMutation({
+    mutationFn: async (params: DatasetFieldApiUpdateDatasetFieldInternalNameRequest) =>
       datasetFieldApiClient.updateDatasetFieldInternalName(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Internal name successfully updated!' });
-      },
-    }
-  );
+    onSuccess: () => showSuccessToast({ message: 'Internal name successfully updated!' }),
+  });
 }

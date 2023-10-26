@@ -52,8 +52,8 @@ interface UseSaveDataEntityFileParams {
 export function useSaveDataEntityFile() {
   const client = useQueryClient();
 
-  return useMutation(
-    async ({ dataEntityId, file }: UseSaveDataEntityFileParams) => {
+  return useMutation({
+    mutationFn: async ({ dataEntityId, file }: UseSaveDataEntityFileParams) => {
       const dataEntityUploadFormData = { fileName: file.name };
       const initialUploadParams = { dataEntityId, dataEntityUploadFormData };
       const { id: uploadId } = await dataEntityAttachmentApi.initiateFileUpload(
@@ -74,13 +74,11 @@ export function useSaveDataEntityFile() {
         uploadId,
       });
     },
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'File successfully saved!' });
-        client.invalidateQueries(['dataEntityAttachments']);
-      },
-    }
-  );
+    onSuccess: async () => {
+      showSuccessToast({ message: 'File successfully saved!' });
+      await client.invalidateQueries(['dataEntityAttachments']);
+    },
+  });
 }
 
 export function useDownloadDataEntityFile({
@@ -97,16 +95,14 @@ export function useDownloadDataEntityFile({
 export function useDeleteDataEntityFile() {
   const client = useQueryClient();
 
-  return useMutation(
-    (params: DataEntityAttachmentApiDeleteFileRequest) =>
+  return useMutation({
+    mutationFn: (params: DataEntityAttachmentApiDeleteFileRequest) =>
       dataEntityAttachmentApi.deleteFile(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'File successfully deleted!' });
-        client.invalidateQueries(['dataEntityAttachments']);
-      },
-    }
-  );
+    onSuccess: async () => {
+      showSuccessToast({ message: 'File successfully deleted!' });
+      await client.invalidateQueries(['dataEntityAttachments']);
+    },
+  });
 }
 
 export function useGetUploadOptions({
