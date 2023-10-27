@@ -56,6 +56,13 @@ public class EmailNotificationSender extends AbstractNotificationSender<AlertNot
         StringWriter stringWriter = new StringWriter();
         Map<String, Object> model = new HashMap<>();
         model.put("dataEntity", message.getDataEntity());
+        model.put("alertType", message.getAlertType().name());
+        model.put("alertDescription", message.getAlertType().getDescription());
+        model.put("eventAtTime", message.getEventAt().toString());
+        model.put("chunks", message.getAlertChunks());
+        model.put("owners", message.getDataEntity().owners().stream()
+            .map(OwnershipPair::ownerName)
+            .collect(Collectors.joining(",")));
         configuration.getTemplate("email.ftlh").process(model, stringWriter);
         return stringWriter.getBuffer().toString();
     }

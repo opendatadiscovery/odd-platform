@@ -1,15 +1,49 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang='en'>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Spring Boot Email using FreeMarker</title>
+    <title>ODD Platform - ${alertType} Alert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+            margin-top: 20px;
+        }
+        p {
+            color: #777;
+            margin-bottom: 10px;
+        }
+        .alert-description {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<div style="margin-top: 10px">Greetings, ${dataEntity.id}</div>
-<div>Your username is <b>${dataEntity.name}</b></div>
-<br/>
-<div> Have a nice day..!</div>
+    <h1>Notification Alert</h1>
+    <h3>Alert Type: ${alertType}</h3>
+    <h3>Event At: ${eventAtTime}</h3>
+
+    <h2>Alerted Data Entity</h2>
+    <p>ID: <a href=${link}>${dataEntity.id}</a></p>
+    <p>Name: ${dataEntity.name}</p>
+    <p>Data Source: ${dataEntity.dataSourceName}</p>
+    <p>Namespace: ${dataEntity.namespaceName}</p>
+    <p>Type: ${dataEntity.type}</p>
+
+    <blockquote class="alert-description">
+        Alert Description: ${alertDescription}
+    </blockquote>
 </body>
 </html>
