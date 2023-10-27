@@ -1,39 +1,63 @@
 package org.opendatadiscovery.oddplatform.notification.sender;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.http.HttpClient;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import freemarker.template.TemplateException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import freemarker.template.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertChunkPojo;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.exception.NotificationSenderException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 public class EmailNotificationSender extends AbstractNotificationSender<AlertNotificationMessage> {
     private final JavaMailSender emailSender;
     private final List<String> notificationsEmails;
+    private final Configuration configuration;
 
     public EmailNotificationSender(final HttpClient httpClient,
                                    final JavaMailSender mailSender,
+                                   final Configuration configuration,
                                    final List<String> notificationsEmails) {
         super(httpClient);
         this.emailSender = mailSender;
+        this.configuration = configuration;
         this.notificationsEmails = notificationsEmails;
     }
 
     @Override
     public void send(final AlertNotificationMessage message) throws InterruptedException, NotificationSenderException {
-        final SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        try {
+            helper.setSubject(message.getAlertType().getDescription());
+            String emailContent = getEmailContent(message);
+            helper.setText(emailContent, true);
 
-        simpleMailMessage.setSubject(message.getAlertType().getDescription());
-        simpleMailMessage.setText(buildMessage(message));
+            for (String notificationsEmail : notificationsEmails) {
+                helper.setTo(notificationsEmail);
+                emailSender.send(mimeMessage);
+            }
+        } catch (MessagingException | TemplateException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        notificationsEmails.forEach(notificationsEmail -> {
-            simpleMailMessage.setTo(notificationsEmail);
-            emailSender.send(simpleMailMessage);
-        });
+    String getEmailContent(final AlertNotificationMessage message) throws IOException, TemplateException {
+        StringWriter stringWriter = new StringWriter();
+        Map<String, Object> model = new HashMap<>();
+        model.put("dataEntity", message.getDataEntity());
+        configuration.getTemplate("email.ftlh").process(model, stringWriter);
+        return stringWriter.getBuffer().toString();
     }
 
     private String buildMessage(final AlertNotificationMessage message) {
