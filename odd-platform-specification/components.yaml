@@ -2329,10 +2329,6 @@ components:
         distribution_anomaly_halt_until:
           type: string
           format: date-time
-        notifications_emails:
-          type: array
-          items:
-            type: string
 
     DataEntityAttachments:
       type: object

@@ -2,11 +2,13 @@ package org.opendatadiscovery.oddplatform.notification.config;
 
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.util.List;
 import java.util.Properties;
 import org.jooq.DSLContext;
 import org.jooq.tools.StringUtils;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.processor.message.SlackMessageGenerator;
+import org.opendatadiscovery.oddplatform.notification.sender.EmailNotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.NotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.SlackNotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.WebhookNotificationSender;
@@ -89,6 +91,18 @@ public class NotificationConfiguration {
         }
 
         return new WebhookNotificationSender(httpClient, webhookUrl);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "notifications.receivers.email.sender")
+    public NotificationSender<AlertNotificationMessage> emailNotificationSender(
+            @Value("${notifications.receivers.email.notification.emails}") final String notificationEmails,
+            final HttpClient httpClient,
+            final JavaMailSender mailSender
+    ) {
+        return new EmailNotificationSender(httpClient,
+                mailSender,
+                List.of(notificationEmails.trim().split(",")));
     }
 
     @Bean

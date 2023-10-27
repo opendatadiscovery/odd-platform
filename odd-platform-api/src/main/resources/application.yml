@@ -171,6 +171,8 @@ notifications:
 #      password:
 #      smpt:
 #      port:
+#      notification:
+#        emails: "yourFirst@gmail.com,yourSecond@gmail.com"
 
 partition:
   advisory-lock-id: 90
