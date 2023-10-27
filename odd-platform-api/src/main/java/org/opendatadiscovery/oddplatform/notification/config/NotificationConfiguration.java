@@ -30,6 +30,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class NotificationConfiguration {
     @Autowired
     private freemarker.template.Configuration configuration;
+
     @Bean
     public HttpClient httpClient() {
         return HttpClient.newHttpClient();
@@ -103,7 +104,7 @@ public class NotificationConfiguration {
             final HttpClient httpClient,
             final JavaMailSender mailSender
     ) {
-        if(StringUtils.isBlank(notificationEmails)){
+        if (StringUtils.isBlank(notificationEmails)) {
             throw new IllegalArgumentException("notification.emails is empty");
         }
 

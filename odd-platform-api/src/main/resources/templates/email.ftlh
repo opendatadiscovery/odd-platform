@@ -36,14 +36,11 @@
     <h3>Event At: ${eventAtTime}</h3>
 
     <h2>Alerted Data Entity</h2>
-    <p>ID: <a href=${link}>${dataEntity.id}</a></p>
-    <p>Name: ${dataEntity.name}</p>
-    <p>Data Source: ${dataEntity.dataSourceName}</p>
-    <p>Namespace: ${dataEntity.namespaceName}</p>
-    <p>Type: ${dataEntity.type}</p>
-
-    <blockquote class="alert-description">
-        Alert Description: ${alertDescription}
-    </blockquote>
+    <p>ID: <a href=${link}>${dataEntityId}</a></p>
+    <p>Name: ${dataEntityName}</p>
+    <p>Data Source: ${dataEntityDataSourceName}</p>
+    <p>Namespace: ${dataEntityNamespaceName}</p>
+    <p>Type: ${dataEntityType}</p>
+    <p>Alert Description: ${alertDescription}</p>
 </body>
 </html>
