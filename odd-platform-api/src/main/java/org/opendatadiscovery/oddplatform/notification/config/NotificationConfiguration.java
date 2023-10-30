@@ -15,7 +15,6 @@ import org.opendatadiscovery.oddplatform.notification.sender.WebhookNotification
 import org.opendatadiscovery.oddplatform.notification.translator.AlertNotificationMessageTranslator;
 import org.opendatadiscovery.oddplatform.notification.translator.NotificationMessageTranslator;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,8 +27,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @ConditionalOnNotifications
 @EnableConfigurationProperties(NotificationsProperties.class)
 public class NotificationConfiguration {
-    @Autowired
-    private freemarker.template.Configuration configuration;
 
     @Bean
     public HttpClient httpClient() {
@@ -101,6 +98,7 @@ public class NotificationConfiguration {
     @ConditionalOnProperty(name = "notifications.receivers.email.sender")
     public NotificationSender<AlertNotificationMessage> emailNotificationSender(
             @Value("${notifications.receivers.email.notification.emails}") final String notificationEmails,
+            final freemarker.template.Configuration configuration,
             final HttpClient httpClient,
             final JavaMailSender mailSender
     ) {

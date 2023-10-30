@@ -53,7 +53,7 @@ public class EmailNotificationSender extends AbstractNotificationSender<AlertNot
                 emailSender.send(mimeMessage);
             }
         } catch (MessagingException | TemplateException | IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Couldn't send email for " + message.getDataEntity().id(), e);
         }
     }
 
