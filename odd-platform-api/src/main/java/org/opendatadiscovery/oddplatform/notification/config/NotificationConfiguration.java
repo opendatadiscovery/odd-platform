@@ -2,9 +2,13 @@ package org.opendatadiscovery.oddplatform.notification.config;
 
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.util.List;
+import java.util.Properties;
 import org.jooq.DSLContext;
+import org.jooq.tools.StringUtils;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.processor.message.SlackMessageGenerator;
+import org.opendatadiscovery.oddplatform.notification.sender.EmailNotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.NotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.SlackNotificationSender;
 import org.opendatadiscovery.oddplatform.notification.sender.WebhookNotificationSender;
@@ -16,14 +20,51 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 @ConditionalOnNotifications
 @EnableConfigurationProperties(NotificationsProperties.class)
 public class NotificationConfiguration {
+
     @Bean
     public HttpClient httpClient() {
         return HttpClient.newHttpClient();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "notifications.receivers.email.sender")
+    public JavaMailSender mailSender(@Value("${notifications.receivers.email.sender}") final String senderEmail,
+                                     @Value("${notifications.receivers.email.password}") final String senderPassword,
+                                     @Value("${notifications.receivers.email.smpt}") final String smptHost,
+                                     @Value("${notifications.receivers.email.port}") final int port) {
+        if (StringUtils.isBlank(senderEmail)) {
+            throw new IllegalArgumentException("senderEmail is empty");
+        }
+
+        if (StringUtils.isBlank(senderPassword)) {
+            throw new IllegalArgumentException("senderPassword is empty");
+        }
+
+        if (StringUtils.isBlank(smptHost)) {
+            throw new IllegalArgumentException("smptHost is empty");
+        }
+
+        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+        mailSender.setHost(smptHost);
+        mailSender.setPort(port);
+        mailSender.setUsername(senderEmail);
+        mailSender.setPassword(senderPassword);
+
+        final Properties props = mailSender.getJavaMailProperties();
+
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        return mailSender;
     }
 
     @Bean
@@ -51,6 +92,24 @@ public class NotificationConfiguration {
         }
 
         return new WebhookNotificationSender(httpClient, webhookUrl);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "notifications.receivers.email.sender")
+    public NotificationSender<AlertNotificationMessage> emailNotificationSender(
+            @Value("${notifications.receivers.email.notification.emails}") final String notificationEmails,
+            final freemarker.template.Configuration configuration,
+            final HttpClient httpClient,
+            final JavaMailSender mailSender
+    ) {
+        if (StringUtils.isBlank(notificationEmails)) {
+            throw new IllegalArgumentException("notification.emails is empty");
+        }
+
+        return new EmailNotificationSender(httpClient,
+                mailSender,
+                configuration,
+                List.of(notificationEmails.trim().split(",")));
     }
 
     @Bean
