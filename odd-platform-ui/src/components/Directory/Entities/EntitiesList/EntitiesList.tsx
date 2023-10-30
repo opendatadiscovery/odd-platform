@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid } from '@mui/material';
-import type { InfiniteQueryObserverResult } from '@tanstack/react-query';
+import type { InfiniteData, InfiniteQueryObserverResult } from '@tanstack/react-query';
 import {
   AppCircularProgress,
   EmptyContentPlaceholder,
@@ -19,7 +19,7 @@ interface EntitiesResultsListProps {
   isEntitiesLoaded: boolean;
   isContentEmpty: boolean;
   fetchNextPage: () => Promise<
-    InfiniteQueryObserverResult<DataSourceEntityList, ErrorState>
+    InfiniteQueryObserverResult<InfiniteData<DataSourceEntityList>, ErrorState>
   >;
 }
 

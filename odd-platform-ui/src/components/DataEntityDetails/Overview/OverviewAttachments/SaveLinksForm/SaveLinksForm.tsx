@@ -15,7 +15,7 @@ const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
   const formId = 'save-links-form';
   const { dataEntityId } = useAppParams();
 
-  const { mutate: saveLinks, isLoading, isSuccess } = useSaveDataEntityLinks();
+  const { mutate: saveLinks, isPending, isSuccess } = useSaveDataEntityLinks();
 
   const methods = useForm<DataEntityLinkListFormData>({
     defaultValues: { items: [{ name: '', url: '' }] },
@@ -87,7 +87,7 @@ const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccess}
-      isLoading={isLoading}
+      isLoading={isPending}
       clearState={clearState}
     />
   );

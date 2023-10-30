@@ -1,4 +1,9 @@
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query';
 import { dataEntityApi } from 'lib/api';
 import { showServerErrorToast, showSuccessToast } from 'lib/errorHandling';
 import type {
@@ -24,9 +29,9 @@ export function useDataEntityMetrics({
 }: UseDataEntityMetricsProps) {
   return useQuery({
     queryKey: ['dataEntityMetrics', dataEntityId],
-    queryFn: () =>
+    queryFn: async () =>
       dataEntityApi.getDataEntityMetrics({ dataEntityId }).catch(err => {
-        showServerErrorToast(err as Response, {
+        showServerErrorToast(err, {
           additionalMessage: 'while loading metrics',
         });
       }),
@@ -41,7 +46,7 @@ export function useDataEntityGroupLineage({ dataEntityId }: { dataEntityId: numb
     queryKey: ['dataEntityGroupLineage', dataEntityId],
     queryFn: () =>
       dataEntityApi.getDataEntityGroupsLineage({ dataEntityGroupId: dataEntityId }),
-    cacheTime: 0,
+    gcTime: 0,
     select: (data): DataEntityGroupLineage =>
       data.items.reduce(
         (memo, lineage) => {
@@ -115,9 +120,15 @@ export function useGetDataEntityGroupItems({
   size,
   query,
 }: UseGetDataEntityGroupItems) {
-  return useInfiniteQuery<DataEntityGroupList, ErrorState, DataEntityGroupList>({
+  return useInfiniteQuery<
+    DataEntityGroupList,
+    ErrorState,
+    InfiniteData<DataEntityGroupList>,
+    ['dataEntityGroupItems', UseGetDataEntityGroupItems],
+    number
+  >({
     queryKey: ['dataEntityGroupItems', { dataEntityGroupId, size, query }],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam }) => {
       const response = await dataEntityApi.getDataEntityGroupsItems({
         dataEntityGroupId,
         size,
@@ -127,10 +138,10 @@ export function useGetDataEntityGroupItems({
 
       const totalItems = response.pageInfo.total;
       const totalPageCount = Math.ceil(totalItems / size);
-      let nextPage = pageParam;
+      let nextPage;
 
       if (pageParam < totalPageCount) {
-        nextPage += 1;
+        nextPage = pageParam + 1;
       }
 
       return {
@@ -138,17 +149,15 @@ export function useGetDataEntityGroupItems({
         pageInfo: { ...response.pageInfo, nextPage },
       };
     },
+    initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
   });
 }
 
 export function useUpdateDataEntityStatus() {
-  return useMutation(
-    (params: DataEntityApiUpdateStatusRequest) => dataEntityApi.updateStatus(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Status successfully updated!' });
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: async (params: DataEntityApiUpdateStatusRequest) =>
+      dataEntityApi.updateStatus(params),
+    onSuccess: () => showSuccessToast({ message: 'Status successfully updated!' }),
+  });
 }

@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { type InfiniteData, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { directoryApi } from 'lib/api';
 import type {
   DirectoryApiGetDatasourceEntitiesRequest,
@@ -47,9 +47,15 @@ export function useGetDataSourceEntities({
   typeId,
   enabled,
 }: UseGetDataSourceEntities) {
-  return useInfiniteQuery<DataSourceEntityList, ErrorState, DataSourceEntityList>({
+  return useInfiniteQuery<
+    DataSourceEntityList,
+    ErrorState,
+    InfiniteData<DataSourceEntityList>,
+    ['directoryDataSourceEntities', Omit<UseGetDataSourceEntities, 'enabled'>],
+    number
+  >({
     queryKey: ['directoryDataSourceEntities', { dataSourceId, size, typeId }],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam }) => {
       const response = await directoryApi.getDatasourceEntities({
         dataSourceId,
         size,
@@ -73,6 +79,7 @@ export function useGetDataSourceEntities({
         },
       };
     },
+    initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.entities.pageInfo.nextPage,
     enabled,
   });

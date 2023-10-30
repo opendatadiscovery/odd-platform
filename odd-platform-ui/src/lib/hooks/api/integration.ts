@@ -13,33 +13,34 @@ export function useIntegrationPreviews() {
     { items: GeneratedIntegrationPreview[] },
     ErrorState,
     { items: IntegrationPreview[] }
-  >(['integrationPreviews'], () => integrationApi.getIntegrationPreviews());
+  >({
+    queryKey: ['integrationPreviews'],
+    queryFn: () => integrationApi.getIntegrationPreviews(),
+  });
 }
 
 export function useIntegration({ integrationId }: IntegrationApiGetIntegrationRequest) {
-  return useQuery<GeneratedIntegration, ErrorState, Integration>(
-    ['integration', integrationId],
-    () => integrationApi.getIntegration({ integrationId }),
-    {
-      select: ({ id, installed, name, description, contentBlocks }) => {
-        const contentByTitle = contentBlocks.reduce<Integration['contentByTitle']>(
-          (memo, block) => {
-            const lowerCasedTitle = block.title.toLowerCase();
+  return useQuery<GeneratedIntegration, ErrorState, Integration>({
+    queryKey: ['integration', integrationId],
+    queryFn: () => integrationApi.getIntegration({ integrationId }),
+    select: ({ id, installed, name, description, contentBlocks }) => {
+      const contentByTitle = contentBlocks.reduce<Integration['contentByTitle']>(
+        (memo, block) => {
+          const lowerCasedTitle = block.title.toLowerCase();
 
-            return {
-              ...memo,
-              [lowerCasedTitle]: {
-                ...memo[lowerCasedTitle],
-                content: block.content,
-                codeSnippets: block.codeSnippets,
-              },
-            };
-          },
-          {}
-        );
+          return {
+            ...memo,
+            [lowerCasedTitle]: {
+              ...memo[lowerCasedTitle],
+              content: block.content,
+              codeSnippets: block.codeSnippets,
+            },
+          };
+        },
+        {}
+      );
 
-        return { id: id as DatasourceName, name, description, installed, contentByTitle };
-      },
-    }
-  );
+      return { id: id as DatasourceName, name, description, installed, contentByTitle };
+    },
+  });
 }

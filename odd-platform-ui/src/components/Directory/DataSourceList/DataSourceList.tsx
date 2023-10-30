@@ -106,7 +106,11 @@ const DataSourceList: FC = () => {
   return (
     <>
       {isLoading && <AppLoadingPage />}
-      <AppErrorPage showError={isError} offsetTop={210} error={error as ErrorState} />
+      <AppErrorPage
+        showError={isError}
+        offsetTop={210}
+        error={error as unknown as ErrorState}
+      />
       {dataSourceList && (
         <S.Container>
           <DirectoryBreadCrumbs />

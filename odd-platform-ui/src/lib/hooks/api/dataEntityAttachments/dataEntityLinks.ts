@@ -19,56 +19,48 @@ export function useDataEntityAttachments({
     DataEntityAttachments,
     ErrorState,
     Array<DataEntityFile | DataEntityLink>
-  >(
-    ['dataEntityAttachments'],
-    () => dataEntityAttachmentApi.getAttachments({ dataEntityId }),
-    {
-      select: data => [...data.files, ...data.links],
-    }
-  );
+  >({
+    queryKey: ['dataEntityAttachments'],
+    queryFn: () => dataEntityAttachmentApi.getAttachments({ dataEntityId }),
+    select: data => [...data.files, ...data.links],
+  });
 }
 
 export function useSaveDataEntityLinks() {
   const client = useQueryClient();
 
-  return useMutation(
-    (params: DataEntityAttachmentApiSaveLinksRequest) =>
-      dataEntityAttachmentApi.saveLinks(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Links successfully saved!' });
-        client.invalidateQueries(['dataEntityAttachments']);
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: async (params: DataEntityAttachmentApiSaveLinksRequest) =>
+      await dataEntityAttachmentApi.saveLinks(params),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Links successfully saved!' });
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
+    },
+  });
 }
 
 export function useUpdateDataEntityLink() {
   const client = useQueryClient();
 
-  return useMutation(
-    (params: DataEntityAttachmentApiUpdateLinkRequest) =>
-      dataEntityAttachmentApi.updateLink(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Link successfully updated!' });
-        client.invalidateQueries(['dataEntityAttachments']);
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: async (params: DataEntityAttachmentApiUpdateLinkRequest) =>
+      await dataEntityAttachmentApi.updateLink(params),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Link successfully updated!' });
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
+    },
+  });
 }
 
 export function useDeleteDataEntityLink() {
   const client = useQueryClient();
 
-  return useMutation(
-    (params: DataEntityAttachmentApiDeleteLinkRequest) =>
+  return useMutation({
+    mutationFn: (params: DataEntityAttachmentApiDeleteLinkRequest) =>
       dataEntityAttachmentApi.deleteLink(params),
-    {
-      onSuccess: () => {
-        showSuccessToast({ message: 'Link successfully deleted!' });
-        client.invalidateQueries(['dataEntityAttachments']);
-      },
-    }
-  );
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Link successfully deleted!' });
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
+    },
+  });
 }

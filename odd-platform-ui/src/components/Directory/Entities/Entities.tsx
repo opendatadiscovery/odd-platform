@@ -60,7 +60,7 @@ const Entities: FC = () => {
       <AppErrorPage
         showError={isTypesError || isEntitiesError}
         offsetTop={210}
-        error={(typesError || entitiesError) as ErrorState}
+        error={(typesError ?? entitiesError) as ErrorState}
       />
       <S.Container>
         <DirectoryBreadCrumbs dataSourceName={dataSourceName} />
@@ -80,7 +80,7 @@ const Entities: FC = () => {
         {types && <EntitiesTabs types={types} />}
         <EntitiesList
           entities={entities}
-          hasNextPage={!!hasNextPage}
+          hasNextPage={hasNextPage}
           isEntitiesLoaded={isEntitiesLoaded}
           isContentEmpty={!total}
           fetchNextPage={fetchNextPage}

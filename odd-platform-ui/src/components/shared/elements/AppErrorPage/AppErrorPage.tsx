@@ -10,7 +10,6 @@ interface AppErrorPageProps {
   error?: ErrorState;
   offsetTop?: number;
 }
-
 const AppErrorPage: React.FC<AppErrorPageProps> = ({
   showError,
   error,
@@ -27,7 +26,7 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
           </Typography>
         </Grid>
         <Grid item alignItems='center'>
-          <Typography variant='h1'>{error?.statusText || t('Unknown Error')}</Typography>
+          <Typography variant='h1'>{error?.statusText ?? t('Unknown Error')}</Typography>
           <Grid container alignItems='center'>
             <Typography variant='body1'>{t('Return to the')}</Typography>
             <Button text={t('Home Page')} to='/' buttonType='tertiary-m' />

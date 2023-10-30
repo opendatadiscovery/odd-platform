@@ -42,7 +42,7 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
   const { add } = useAppDateTime();
   const {
     mutateAsync: updateStatus,
-    isLoading: isStatusUpdating,
+    isPending: isStatusUpdating,
     isSuccess: isStatusUpdated,
   } = useUpdateDataEntityStatus();
 
