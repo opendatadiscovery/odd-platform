@@ -3475,6 +3475,33 @@ components:
         - entities
         - data_source
 
+    DataQualityCategoryResultsList:
+      type: object
+      properties:
+        testResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataQualityCategoryResults'
+
+    DataQualityCategoryResults:
+      type: object
+      properties:
+        category:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataQualityRunStatusCount'
+
+    DataQualityRunStatusCount:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityRunStatus'
+        count:
+          type: integer
+          format: int64
+
   parameters:
     PageParam:
       name: page

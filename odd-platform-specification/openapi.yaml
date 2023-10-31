@@ -41,6 +41,7 @@ tags:
   - name: integration
   - name: dataEntityAttachment
   - name: directory
+  - name: dataQualityRuns
 
 paths:
   /api/integrations:
@@ -1909,6 +1910,21 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntity'
       tags:
         - dataQuality
+
+  /api/dataqatests/runs:
+    get:
+      summary: Get Data Quality tests runs
+      description: Get Data Quality tests runs
+      operationId: getDataQualityTestsRuns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataQualityCategoryResultsList'
+      tags:
+        - dataQualityRuns
 
   /api/dataentitygroups/domains:
     get:
