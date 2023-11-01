@@ -67,17 +67,21 @@ public class EmailNotificationSender extends AbstractNotificationSender<AlertNot
                 String.valueOf(message.getDataEntity().id()));
 
         model.put("dataEntityId", String.valueOf(message.getDataEntity().id()));
-        model.put("dataEntityName", message.getDataEntity().name());
-        model.put("dataEntityDataSourceName", message.getDataEntity().dataSourceName());
-        model.put("dataEntityNamespaceName", message.getDataEntity().namespaceName());
-        model.put("dataEntityType", message.getDataEntity().type().name());
-        model.put("link", alertUrl);
-        model.put("alertType", message.getAlertType().name());
-        model.put("alertDescription", message.getAlertType().getDescription());
-        model.put("eventAtTime", message.getEventAt().toString());
+        model.put("dataEntityName", getStringValue(message.getDataEntity().name()));
+        model.put("dataEntityDataSourceName", getStringValue(message.getDataEntity().dataSourceName()));
+        model.put("dataEntityNamespaceName", getStringValue(message.getDataEntity().namespaceName()));
+        model.put("dataEntityType", getStringValue(message.getDataEntity().type().name()));
+        model.put("link", getStringValue(alertUrl));
+        model.put("alertType", getStringValue(message.getAlertType().name()));
+        model.put("alertDescription", getStringValue(message.getAlertType().getDescription()));
+        model.put("eventAtTime", getStringValue(message.getEventAt().toString()));
 
         configuration.getTemplate("email.ftlh").process(model, stringWriter);
 
         return stringWriter.getBuffer().toString();
+    }
+
+    private String getStringValue(final String value) {
+        return StringUtils.isBlank(value) ? StringUtils.EMPTY : value;
     }
 }
