@@ -37,7 +37,7 @@ public class NotificationConfiguration {
     @ConditionalOnProperty(name = "notifications.receivers.email.sender")
     public JavaMailSender mailSender(@Value("${notifications.receivers.email.sender}") final String senderEmail,
                                      @Value("${notifications.receivers.email.password}") final String senderPassword,
-                                     @Value("${notifications.receivers.email.smpt}") final String smptHost,
+                                     @Value("${notifications.receivers.email.smtp}") final String smtpHost,
                                      @Value("${notifications.receivers.email.port}") final int port) {
         if (StringUtils.isBlank(senderEmail)) {
             throw new IllegalArgumentException("senderEmail is empty");
@@ -47,13 +47,13 @@ public class NotificationConfiguration {
             throw new IllegalArgumentException("senderPassword is empty");
         }
 
-        if (StringUtils.isBlank(smptHost)) {
-            throw new IllegalArgumentException("smptHost is empty");
+        if (StringUtils.isBlank(smtpHost)) {
+            throw new IllegalArgumentException("smtpHost is empty");
         }
 
         final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost(smptHost);
+        mailSender.setHost(smtpHost);
         mailSender.setPort(port);
         mailSender.setUsername(senderEmail);
         mailSender.setPassword(senderPassword);

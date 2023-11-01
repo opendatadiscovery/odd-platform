@@ -169,7 +169,7 @@ notifications:
 #    email:
 #      sender:
 #      password:
-#      smpt:
+#      smtp:
 #      port:
 #      notification:
 #        emails: "yourFirst@gmail.com,yourSecond@gmail.com"
