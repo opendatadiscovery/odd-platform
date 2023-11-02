@@ -98,6 +98,7 @@ public class NotificationConfiguration {
     @ConditionalOnProperty(name = "notifications.receivers.email.sender")
     public NotificationSender<AlertNotificationMessage> emailNotificationSender(
             @Value("${notifications.receivers.email.notification.emails}") final String notificationEmails,
+            @Value("${odd.platform-base-url:http://localhost:8080}") final String platformHost,
             final freemarker.template.Configuration configuration,
             final HttpClient httpClient,
             final JavaMailSender mailSender
@@ -109,6 +110,7 @@ public class NotificationConfiguration {
         return new EmailNotificationSender(httpClient,
                 mailSender,
                 configuration,
+                platformHost,
                 List.of(notificationEmails.trim().split(",")));
     }
 

@@ -22,14 +22,17 @@ public class EmailNotificationSender extends AbstractNotificationSender<AlertNot
     private final JavaMailSender emailSender;
     private final List<String> notificationsEmails;
     private final Configuration configuration;
+    private final String platformHost;
 
     public EmailNotificationSender(final HttpClient httpClient,
                                    final JavaMailSender mailSender,
                                    final Configuration configuration,
+                                   final String platformHost,
                                    final List<String> notificationsEmails) {
         super(httpClient);
         this.emailSender = mailSender;
         this.configuration = configuration;
+        this.platformHost = platformHost;
         this.notificationsEmails = notificationsEmails;
     }
 
@@ -60,10 +63,7 @@ public class EmailNotificationSender extends AbstractNotificationSender<AlertNot
     private String getEmailContent(final AlertNotificationMessage message) throws IOException, TemplateException {
         final StringWriter stringWriter = new StringWriter();
         final Map<String, Object> model = new HashMap<>();
-        final String host = StringUtils.isBlank(System.getenv("PLATFORM_HOST_URL"))
-                ? "http://localhost:8080"
-                : System.getenv("PLATFORM_HOST_URL");
-        final String alertUrl = host + ALERT_PATH.replace("{dataEntityId}",
+        final String alertUrl = platformHost + ALERT_PATH.replace("{dataEntityId}",
                 String.valueOf(message.getDataEntity().id()));
 
         model.put("dataEntityId", String.valueOf(message.getDataEntity().id()));
