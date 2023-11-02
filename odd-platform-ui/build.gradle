@@ -7,7 +7,7 @@ plugins {
 node {
     download = true
     version = "18.18.2"
-    pnpmVersion = "8.9.2"
+    pnpmVersion = "8.10.2"
 }
 
 tasks.register("buildUI", PnpmTask) {
