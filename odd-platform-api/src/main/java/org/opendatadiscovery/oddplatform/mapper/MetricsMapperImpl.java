@@ -87,7 +87,7 @@ public class MetricsMapperImpl implements MetricsMapper {
                              final List<MetricPointPojo> points,
                              final List<MetricSeriesDto> series,
                              final List<MetricLabelValueDto> labelValues) {
-        final Metric metric = new Metric();
+        final Metric metric = new Metric(new MetricPoint());
         final List<MetricLabel> metricLabels = labelValues.stream()
             .filter(dto -> metricLabelValues.contains(dto.labelValue().getId()))
             .map(dto -> new MetricLabel()
