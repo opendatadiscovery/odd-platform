@@ -3283,8 +3283,6 @@ components:
             $ref: '#/components/schemas/MetricLabel'
         metric_point:
           $ref: '#/components/schemas/MetricPoint'
-      required:
-        - metric_point
 
     MetricLabel:
       type: object
