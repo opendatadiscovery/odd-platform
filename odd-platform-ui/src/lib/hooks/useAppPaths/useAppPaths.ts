@@ -1,9 +1,8 @@
-import React from 'react';
+import { useMemo } from 'react';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
 import { useTermsPaths } from './useTermsPaths';
 import { useDataEntityPaths } from './useDataEntityPaths';
 import {
-  BaseRoutes,
   ActivityRoutes,
   SearchRoutes,
   AlertsRoutes,
@@ -11,6 +10,7 @@ import {
   TermsRoutes,
   DataEntityRoutes,
   DirectoryRoutes,
+  DataQualityRoutes,
 } from './shared';
 
 const useAppPaths = () => {
@@ -53,10 +53,9 @@ const useAppPaths = () => {
   const directoryDataSourceListPath = (dataSourcePrefix: string) =>
     updatePath(`${DirectoryRoutes.directory}/${dataSourcePrefix}`);
 
-  return React.useMemo(
+  return useMemo(
     () => ({
       isPathEmbedded,
-      BaseRoutes,
       ActivityRoutes,
       SearchRoutes,
       AlertsRoutes,
@@ -64,6 +63,7 @@ const useAppPaths = () => {
       TermsRoutes,
       DataEntityRoutes,
       DirectoryRoutes,
+      DataQualityRoutes,
       basePath,
       updatePath,
       getNonExactPath,
