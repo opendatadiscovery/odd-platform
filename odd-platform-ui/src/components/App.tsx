@@ -26,6 +26,7 @@ const TermSearch = lazy(() => import('./Terms/TermSearch/TermSearch'));
 const Alerts = lazy(() => import('./Alerts/Alerts'));
 const Activity = lazy(() => import('./Activity/Activity'));
 const DirectoryRoutes = lazy(() => import('./Directory/DirectoryRoutes'));
+const DataQuality = lazy(() => import('./DataQuality/DataQuality'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -93,7 +94,7 @@ const App: React.FC = () => {
             />
             <Route
               path={getNonExactPath(DataQualityRoutes.dataQuality)}
-              element={<div>Data Quality</div>}
+              element={<DataQuality />}
             />
           </Routes>
         </AppSuspenseWrapper>

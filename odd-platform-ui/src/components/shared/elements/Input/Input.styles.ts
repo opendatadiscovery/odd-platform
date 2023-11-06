@@ -10,7 +10,9 @@ export const Container = styled(Box)<{ $maxWidth?: number }>(({ $maxWidth }) => 
   maxWidth: $maxWidth !== undefined ? `${$maxWidth}px` : 'auto',
 }));
 
-export const Input = styled('input')<{
+export const Input = styled.input.withConfig({
+  shouldForwardProp: prop => !['inputProps', 'inputContainerRef'].includes(prop),
+})<{
   $type: InputType;
   $size: InputSize;
   $isError: boolean;
