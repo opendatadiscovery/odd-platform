@@ -10,20 +10,45 @@ export const Container = styled.section(
   `
 );
 
-export const SectionWrapper = styled.div(
+export const Section = styled.div(
   ({ theme }) => css`
     display: flex;
+    flex-direction: column;
+    width: fit-content;
     padding: ${theme.spacing(3)};
     border: 1px solid ${theme.palette.border.primary};
     border-radius: ${theme.spacing(1)};
+    gap: ${theme.spacing(2)};
+  `
+);
+
+interface FlexDirection {
+  $direction?: 'column' | 'row';
+}
+
+export const SubSection = styled.div<FlexDirection>(
+  ({ theme, $direction = 'row' }) => css`
+    display: flex;
+    flex-direction: ${$direction};
+    gap: ${theme.spacing(3)};
   `
 );
 
 export const DashboardLegend = styled.div(
   ({ theme }) => css`
     display: flex;
-    justify-content: space-between;
     gap: ${theme.spacing(4)};
+  `
+);
+
+export const ChartWrapper = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-top: ${theme.spacing(2)};
+    background: ${theme.palette.backgrounds.tertiary};
+    border-radius: ${theme.spacing(1)};
   `
 );
 

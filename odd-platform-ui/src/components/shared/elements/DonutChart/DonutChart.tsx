@@ -1,6 +1,6 @@
-import React, { forwardRef, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Text, Label } from 'recharts';
-import type { LabelProps, type PieLabelRenderProps } from 'recharts';
+import type { LabelProps, PieLabelRenderProps } from 'recharts';
 import { typography } from 'theme/typography';
 import type { PolarViewBox } from 'recharts/types/util/types';
 import { palette } from 'theme/palette';

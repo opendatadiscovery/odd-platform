@@ -76,6 +76,7 @@ export const palette = createPalette({
   texts: {
     primary: colors.black90,
     secondary: colors.black50,
+    secondaryVariant: colors.black40,
     hint: colors.black30,
     info: colors.black70,
     action: colors.blue60,

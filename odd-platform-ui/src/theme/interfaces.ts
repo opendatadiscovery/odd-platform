@@ -55,6 +55,7 @@ type EntityStatus = Record<DataEntityStatusEnum, ItemCondition>;
 interface TextType {
   primary: string;
   secondary: string;
+  secondaryVariant: string;
   info: string;
   hint: string;
   action: string;
@@ -169,6 +170,8 @@ declare module '@mui/material/styles/createTypography' {
   interface TypographyOptions extends Record<ButtonFont, TypographyStyle> {
     errorCode?: TypographyStyleOptions;
     totalCountTitle?: TypographyStyleOptions;
+    label?: TypographyStyleOptions;
+    title?: TypographyStyleOptions;
     h0?: TypographyStyleOptions;
   }
 }
@@ -176,6 +179,8 @@ declare module '@mui/material/Typography/Typography' {
   interface TypographyPropsVariantOverrides extends Record<ButtonFont, true> {
     errorCode: true;
     totalCountTitle: true;
+    label: true;
+    title: true;
     h0: true;
   }
 }
