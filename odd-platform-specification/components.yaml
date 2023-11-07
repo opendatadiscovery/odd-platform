@@ -3512,7 +3512,7 @@ components:
         monitored_tables:
           type: integer
           format: int32
-        not_monitoredTables:
+        not_monitored_tables:
           type: integer
           format: int32
 
