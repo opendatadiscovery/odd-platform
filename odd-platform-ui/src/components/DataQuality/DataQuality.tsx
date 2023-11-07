@@ -13,6 +13,11 @@ function capitalizeFirstLetter(str: string) {
   return [...str][0].toUpperCase() + str.slice(1);
 }
 
+const DONUT_CHART_WIDTH = 300;
+const DONUT_CHART_HEIGHT = 300;
+const DONUT_CHART_INNER_RADIUS = 66;
+const DONUT_CHART_OUTER_RADIUS = 90;
+
 function calcTestResultsBreakdown(categoryResults: DataQualityCategoryResults[]) {
   return categoryResults.reduce(
     ({ statusCounts, total }, { results }) => {
@@ -46,40 +51,43 @@ const DataQuality: React.FC = () => {
 
   const tableHealthData = useMemo(() => {
     if (!data) return [];
+    const { healthyTables, warningTables, errorTables } =
+      data.tablesDashboard.tablesHealth;
     return [
       {
         title: 'Healthy',
-        value: 10,
+        value: healthyTables,
         color: palette.runStatus.SUCCESS.color,
       },
       {
-        title: 'Unhealthy',
-        value: 5,
-        color: palette.runStatus.FAILED.color,
-      },
-      {
-        title: 'Unknown',
-        value: 2,
+        title: 'Warning',
+        value: warningTables,
         color: palette.runStatus.BROKEN.color,
       },
+      {
+        title: 'Error',
+        value: errorTables,
+        color: palette.runStatus.FAILED.color,
+      },
     ];
-  }, [data?.testResults]);
+  }, [data?.tablesDashboard.monitoredTables]);
 
   const tableMonitoredTables = useMemo(() => {
     if (!data) return [];
+    const { monitoredTables, notMonitoredTables } = data.tablesDashboard.monitoredTables;
     return [
       {
         title: 'Monitored',
-        value: 10,
+        value: monitoredTables,
         color: palette.runStatus.SUCCESS.color,
       },
       {
         title: 'Not Monitored',
-        value: 5,
+        value: notMonitoredTables,
         color: palette.runStatus.UNKNOWN.color,
       },
     ];
-  }, [data?.testResults]);
+  }, [data?.tablesDashboard.monitoredTables]);
 
   const testResults = useMemo(() => {
     if (!data) return [];
@@ -106,10 +114,10 @@ const DataQuality: React.FC = () => {
               {t('Table Health')}
             </Typography>
             <DonutChart
-              width={300}
-              height={300}
-              innerRadius={66}
-              outerRadius={90}
+              width={DONUT_CHART_WIDTH}
+              height={DONUT_CHART_HEIGHT}
+              innerRadius={DONUT_CHART_INNER_RADIUS}
+              outerRadius={DONUT_CHART_OUTER_RADIUS}
               label={t('Total Tables')}
               data={tableHealthData}
             />
@@ -119,10 +127,10 @@ const DataQuality: React.FC = () => {
               {t('Test Results Breakdown')}
             </Typography>
             <DonutChart
-              width={300}
-              height={300}
-              innerRadius={66}
-              outerRadius={90}
+              width={DONUT_CHART_WIDTH}
+              height={DONUT_CHART_HEIGHT}
+              innerRadius={DONUT_CHART_INNER_RADIUS}
+              outerRadius={DONUT_CHART_OUTER_RADIUS}
               label={t('Total Tests')}
               data={testResultsBreakdownChartData}
             />
@@ -139,15 +147,23 @@ const DataQuality: React.FC = () => {
         </S.SubSection>
       </S.Section>
       <S.Section>
+        <S.DashboardLegend>
+          <S.DashboardLegendItem $status={DataEntityRunStatus.SUCCESS}>
+            <Typography variant='label'>{t('Monitored')}</Typography>
+          </S.DashboardLegendItem>
+          <S.DashboardLegendItem $status={DataEntityRunStatus.UNKNOWN}>
+            <Typography variant='label'>{t('Unmonitored')}</Typography>
+          </S.DashboardLegendItem>
+        </S.DashboardLegend>
         <S.ChartWrapper>
           <Typography variant='title' component='h4' align='center'>
             {t('Monitored Tables')}
           </Typography>
           <DonutChart
-            width={300}
-            height={300}
-            innerRadius={66}
-            outerRadius={90}
+            width={DONUT_CHART_WIDTH}
+            height={DONUT_CHART_HEIGHT}
+            innerRadius={DONUT_CHART_INNER_RADIUS}
+            outerRadius={DONUT_CHART_OUTER_RADIUS}
             label={t('Total Tables')}
             data={tableMonitoredTables}
           />

@@ -36,7 +36,7 @@ export const TitleContainer = styled(Typography)(
     ({
       wordBreak: 'break-all',
       '&:hover': { cursor: 'pointer' },
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const SourceContainer = styled('div')(({ theme }) => ({

@@ -20,5 +20,5 @@ export const PopoverChildren = styled(Box)(
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'center',
-    } as CSSObject)
+    }) as CSSObject
 );

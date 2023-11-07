@@ -81,17 +81,24 @@ const CustomPieLabel = ({ viewBox, value, label }: LabelProps & { label?: string
 };
 
 const DonutChart: React.FC<DonutChartProps> = props => {
-  const { data, label, ...pieChartProps } = props;
+  const { data: rawData, label, ...pieChartProps } = props;
   const { width, height, innerRadius, outerRadius } = pieChartProps;
   const totalValue = useMemo(
-    () => data.reduce((acc, { value }) => acc + value, 0),
-    [data]
+    () => rawData.reduce((acc, { value }) => acc + value, 0),
+    [rawData]
   );
+
+  const data = useMemo(() => {
+    if (totalValue === 0)
+      return [{ title: 'No data', value: 1, color: palette.runStatus.UNKNOWN.color }];
+
+    return rawData;
+  }, [rawData, totalValue]);
 
   return (
     <PieChart width={width} height={height}>
       <Pie
-        label={CustomLabel}
+        label={totalValue ? CustomLabel : false}
         labelLine={false}
         data={data}
         dataKey='value'

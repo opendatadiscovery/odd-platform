@@ -7,7 +7,7 @@ import type { DataEntityLineageState } from 'redux/interfaces';
 
 export interface DataEntityLineageById<
   NodeT = GroupedDataEntityLineageNode,
-  EdgeT = DataEntityLineageEdge
+  EdgeT = DataEntityLineageEdge,
 > {
   rootNode: NodeT;
   upstream: DataEntityLineageStreamById<NodeT, EdgeT>;
@@ -16,7 +16,7 @@ export interface DataEntityLineageById<
 
 export interface DataEntityLineageStreamById<
   NodeT = GroupedDataEntityLineageNode,
-  EdgeT = DataEntityLineageEdge
+  EdgeT = DataEntityLineageEdge,
 > {
   nodesById: { [nodeId: number]: NodeT };
   // Id of parent entity in the tree. It is source_id of DataEntityLineageEdge for downstream, and target_id for upstream

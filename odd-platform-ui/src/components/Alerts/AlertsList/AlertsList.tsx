@@ -92,9 +92,7 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
           loader={isAlertsFetching && <DataEntityAlertsSkeleton length={5} />}
           scrollableTarget='alerts-list'
         >
-          {alerts?.map(alert => (
-            <AlertItem key={alert.id} alert={alert} />
-          ))}
+          {alerts?.map(alert => <AlertItem key={alert.id} alert={alert} />)}
         </InfiniteScroll>
       </S.AlertsContainer>
 

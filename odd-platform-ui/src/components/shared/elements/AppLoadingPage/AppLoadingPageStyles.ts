@@ -14,5 +14,5 @@ export const Container = styled(Grid)(
       alignContent: 'center',
       justifyContent: 'center',
       overflow: 'auto',
-    } as CSSObject)
+    }) as CSSObject
 );

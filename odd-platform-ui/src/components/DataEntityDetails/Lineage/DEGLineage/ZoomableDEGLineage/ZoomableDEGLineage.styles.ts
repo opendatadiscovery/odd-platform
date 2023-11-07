@@ -16,7 +16,7 @@ export const ZoomWrapper = styled('div')(
       position: 'absolute',
       top: 0,
       left: 0,
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const ZoomContainer = styled('div')(
@@ -28,5 +28,5 @@ export const ZoomContainer = styled('div')(
       top: 0,
       left: 0,
       transformOrigin: '0 0',
-    } as CSSObject)
+    }) as CSSObject
 );

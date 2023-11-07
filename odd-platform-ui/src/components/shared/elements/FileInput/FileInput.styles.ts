@@ -6,7 +6,7 @@ export const Container = styled('div')(
     ({
       display: 'flex',
       flexDirection: 'column',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const Input = styled('div')(({ theme }) => ({
@@ -36,5 +36,5 @@ export const InputContent = styled('div')(
     ({
       display: 'flex',
       flexWrap: 'nowrap',
-    } as CSSObject)
+    }) as CSSObject
 );

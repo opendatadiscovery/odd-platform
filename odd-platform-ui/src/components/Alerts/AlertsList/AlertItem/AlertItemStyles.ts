@@ -15,5 +15,5 @@ export const Wrapper = styled(Grid)<{ $alignItems?: CSSObject['alignItems'] }>(
       flexWrap: 'nowrap',
       alignItems: $alignItems,
       justifyContent: 'flex-end',
-    } as CSSObject)
+    }) as CSSObject
 );
