@@ -3484,6 +3484,9 @@ components:
             $ref: '#/components/schemas/DataQualityCategoryResults'
         tables_dashboard:
             $ref: '#/components/schemas/TablesDashboard'
+      required:
+        - test_results
+        - tables_dashboard
 
     TablesDashboard:
       type: object
@@ -3492,6 +3495,9 @@ components:
           $ref: '#/components/schemas/TablesHealthDashboard'
         monitored_tables:
           $ref: '#/components/schemas/MonitoredTablesDashboard'
+      required:
+        - tables_health
+        - monitored_tables
 
     TablesHealthDashboard:
       type: object
@@ -3505,6 +3511,10 @@ components:
         warning_tables:
           type: integer
           format: int32
+      required:
+        - healthy_tables
+        - error_tables
+        - warning_tables
 
     MonitoredTablesDashboard:
       type: object
@@ -3515,6 +3525,9 @@ components:
         not_monitored_tables:
           type: integer
           format: int32
+      required:
+        - monitored_tables
+        - not_monitored_tables
 
     DataQualityCategoryResults:
       type: object
@@ -3525,6 +3538,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataQualityRunStatusCount'
+      required:
+        - category
+        - results
 
     DataQualityRunStatusCount:
       type: object
@@ -3534,6 +3550,9 @@ components:
         count:
           type: integer
           format: int64
+      required:
+        - status
+        - count
 
   parameters:
     PageParam:
