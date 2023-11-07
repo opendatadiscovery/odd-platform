@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.jooq.Record3;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityCategoryResults;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityCategoryResultsList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityRunStatusCount;
 import org.opendatadiscovery.oddplatform.dto.DataQualityCategory;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ public class DataQualityCategoryMapperImpl implements DataQualityCategoryMapper 
     private static final String TASK_RUN_CATEGORY = "TASK_RUN_CATEGORY";
 
     @Override
-    public DataQualityCategoryResultsList mapToDto(final List<Record3<String, String, Integer>> items) {
+    public List<DataQualityCategoryResults> mapToDto(final List<Record3<String, String, Integer>> items) {
         final Map<DataQualityCategory, DataQualityCategoryResults> categoryResults =
                 Arrays.stream(DataQualityCategory.values())
                         .collect(Collectors.toMap(Function.identity(),
@@ -39,10 +38,9 @@ public class DataQualityCategoryMapperImpl implements DataQualityCategoryMapper 
                                 .fromValue(row.getValue(DATA_ENTITY_TASK_LAST_RUN.STATUS)))
                         .count(Long.valueOf(row.get(TASK_RUNS_COUNT, Integer.class)))));
 
-        return new DataQualityCategoryResultsList()
-                .testResults(addMissingStatuses(categoryResults.values()
+        return addMissingStatuses(categoryResults.values()
                         .stream()
-                        .toList()));
+                        .toList());
     }
 
     private List<DataQualityCategoryResults> addMissingStatuses(final List<DataQualityCategoryResults> resultsList) {

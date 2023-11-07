@@ -3475,13 +3475,46 @@ components:
         - entities
         - data_source
 
-    DataQualityCategoryResultsList:
+    DataQualityResults:
       type: object
       properties:
-        testResults:
+        test_results:
           type: array
           items:
             $ref: '#/components/schemas/DataQualityCategoryResults'
+        tables_dashboard:
+            $ref: '#/components/schemas/TablesDashboard'
+
+    TablesDashboard:
+      type: object
+      properties:
+        tables_health:
+          $ref: '#/components/schemas/TablesHealthDashboard'
+        monitored_tables:
+          $ref: '#/components/schemas/MonitoredTablesDashboard'
+
+    TablesHealthDashboard:
+      type: object
+      properties:
+        healthy_tables:
+          type: integer
+          format: int32
+        error_tables:
+          type: integer
+          format: int32
+        warning_tables:
+          type: integer
+          format: int32
+
+    MonitoredTablesDashboard:
+      type: object
+      properties:
+        monitored_tables:
+          type: integer
+          format: int32
+        not_monitoredTables:
+          type: integer
+          format: int32
 
     DataQualityCategoryResults:
       type: object
