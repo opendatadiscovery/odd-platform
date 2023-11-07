@@ -32,6 +32,14 @@ interface ItemCondition {
   disabled?: ItemColors;
 }
 
+type DataQualityDashboardLegend =
+  | 'monitored'
+  | 'nonMonitored'
+  | 'healthy'
+  | 'warning'
+  | 'error'
+  | 'unknown';
+
 type Input = ItemCondition & {
   label: ItemColors;
   hint: ItemColors;
@@ -45,6 +53,8 @@ type StructureLabel = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
 type RunStatus = Record<DataEntityRunStatus, ItemColors>;
+
+type DataQualityDashboard = Record<DataQualityDashboardLegend, string>;
 
 type AssociationRequestStatus = Record<OwnerAssociationRequestStatus, ItemColors>;
 
@@ -112,6 +122,7 @@ declare module '@mui/material/styles' {
     entityClass: EntityClasses;
     reportStatus: ReportStatus;
     runStatus: RunStatus;
+    dataQualityDashboard: DataQualityDashboard;
     associationRequestStatus: AssociationRequestStatus;
     button: Button;
     tag: Tag;
@@ -137,6 +148,7 @@ declare module '@mui/material/styles' {
     entityClass?: EntityClasses;
     reportStatus?: ReportStatus;
     runStatus?: RunStatus;
+    dataQualityDashboard?: DataQualityDashboard;
     associationRequestStatus?: AssociationRequestStatus;
     button?: Button;
     tag?: Tag;

@@ -34,6 +34,10 @@ function calcTestResultsBreakdown(categoryResults: DataQualityCategoryResults[])
   );
 }
 
+function createDonutChartData(category: string, value: number, color: string) {
+  return { title: category, value, color };
+}
+
 const DataQuality: React.FC = () => {
   const { data, isSuccess } = useGetDataQualityDashboard();
   const { palette } = useTheme();
@@ -42,52 +46,36 @@ const DataQuality: React.FC = () => {
   const testResultsBreakdownChartData = useMemo(() => {
     if (!data) return [];
     const breakdown = calcTestResultsBreakdown(data.testResults);
-    return Array.from(breakdown.statusCounts.entries()).map(([status, count]) => ({
-      title: status,
-      value: count,
-      color: palette.runStatus[status].color,
-    }));
-  }, [data?.testResults]);
+    return Array.from(breakdown.statusCounts.entries()).map(([status, count]) =>
+      createDonutChartData(
+        status,
+        count,
+        palette.runStatus[status].color ?? palette.dataQualityDashboard.unknown
+      )
+    );
+  }, [data?.testResults, palette.runStatus]);
 
   const tableHealthData = useMemo(() => {
     if (!data) return [];
     const { healthyTables, warningTables, errorTables } =
       data.tablesDashboard.tablesHealth;
+    const { healthy, warning, error } = palette.dataQualityDashboard;
     return [
-      {
-        title: 'Healthy',
-        value: healthyTables,
-        color: palette.runStatus.SUCCESS.color,
-      },
-      {
-        title: 'Warning',
-        value: warningTables,
-        color: palette.runStatus.BROKEN.color,
-      },
-      {
-        title: 'Error',
-        value: errorTables,
-        color: palette.runStatus.FAILED.color,
-      },
+      createDonutChartData('Healthy', healthyTables, healthy),
+      createDonutChartData('Warning', warningTables, warning),
+      createDonutChartData('Error', errorTables, error),
     ];
-  }, [data?.tablesDashboard.monitoredTables]);
+  }, [data?.tablesDashboard.tablesHealth, palette.dataQualityDashboard]);
 
   const tableMonitoredTables = useMemo(() => {
     if (!data) return [];
     const { monitoredTables, notMonitoredTables } = data.tablesDashboard.monitoredTables;
+    const { monitored, nonMonitored } = palette.dataQualityDashboard;
     return [
-      {
-        title: 'Monitored',
-        value: monitoredTables,
-        color: palette.runStatus.SUCCESS.color,
-      },
-      {
-        title: 'Not Monitored',
-        value: notMonitoredTables,
-        color: palette.runStatus.UNKNOWN.color,
-      },
+      createDonutChartData('Monitored', monitoredTables, monitored),
+      createDonutChartData('Not Monitored', notMonitoredTables, nonMonitored),
     ];
-  }, [data?.tablesDashboard.monitoredTables]);
+  }, [data?.tablesDashboard.monitoredTables, palette.dataQualityDashboard]);
 
   const testResults = useMemo(() => {
     if (!data) return [];
@@ -110,28 +98,24 @@ const DataQuality: React.FC = () => {
         </S.DashboardLegend>
         <S.SubSection>
           <S.ChartWrapper>
-            <Typography variant='title' component='h4' align='center'>
-              {t('Table Health')}
-            </Typography>
             <DonutChart
               width={DONUT_CHART_WIDTH}
               height={DONUT_CHART_HEIGHT}
               innerRadius={DONUT_CHART_INNER_RADIUS}
               outerRadius={DONUT_CHART_OUTER_RADIUS}
               label={t('Total Tables')}
+              title={t('Table Health')}
               data={tableHealthData}
             />
           </S.ChartWrapper>
           <S.ChartWrapper>
-            <Typography variant='title' component='h4' align='center'>
-              {t('Test Results Breakdown')}
-            </Typography>
             <DonutChart
               width={DONUT_CHART_WIDTH}
               height={DONUT_CHART_HEIGHT}
               innerRadius={DONUT_CHART_INNER_RADIUS}
               outerRadius={DONUT_CHART_OUTER_RADIUS}
               label={t('Total Tests')}
+              title={t('Test Results Breakdown')}
               data={testResultsBreakdownChartData}
             />
           </S.ChartWrapper>
@@ -156,15 +140,13 @@ const DataQuality: React.FC = () => {
           </S.DashboardLegendItem>
         </S.DashboardLegend>
         <S.ChartWrapper>
-          <Typography variant='title' component='h4' align='center'>
-            {t('Monitored Tables')}
-          </Typography>
           <DonutChart
             width={DONUT_CHART_WIDTH}
             height={DONUT_CHART_HEIGHT}
             innerRadius={DONUT_CHART_INNER_RADIUS}
             outerRadius={DONUT_CHART_OUTER_RADIUS}
             label={t('Total Tables')}
+            title={t('Monitored Tables')}
             data={tableMonitoredTables}
           />
         </S.ChartWrapper>

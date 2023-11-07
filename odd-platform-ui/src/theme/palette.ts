@@ -110,6 +110,14 @@ export const palette = createPalette({
     DATA_QUALITY_TEST_RUN: colors.orange5,
     DATA_ENTITY_GROUP: colors.lightGreen5,
   },
+  dataQualityDashboard: {
+    monitored: colors.green60,
+    nonMonitored: colors.black30,
+    healthy: colors.green60,
+    warning: colors.orange50,
+    error: colors.red50,
+    unknown: colors.black30,
+  },
   runStatus: {
     SUCCESS: { color: colors.green60, background: colors.green5 },
     FAILED: { color: colors.red50, background: colors.red5 },

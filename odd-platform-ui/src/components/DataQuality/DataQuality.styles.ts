@@ -6,6 +6,7 @@ export const Container = styled.section(
     display: grid;
     justify-content: center;
     margin-top: ${theme.spacing(5)};
+    margin-bottom: ${theme.spacing(5)};
     gap: ${theme.spacing(3)};
   `
 );
