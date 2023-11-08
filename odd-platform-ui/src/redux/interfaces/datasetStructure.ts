@@ -39,6 +39,7 @@ export const DatasetTypeLabelMap: Record<
   TYPE_DURATION: { short: 'Dur', plural: 'durations' },
   TYPE_UNKNOWN: { short: 'Unk', plural: 'unknowns' },
   TYPE_REFERENCE: { short: 'Ref', plural: 'references' },
+  TYPE_VECTOR: { short: 'Vec', plural: 'vectors' },
 };
 
 export type DataSetFormattedStatsKeys = keyof Required<DataSetFormattedStats>;

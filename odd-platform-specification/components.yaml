@@ -737,6 +737,7 @@ components:
             - API_SERVICE
             - KAFKA_SERVICE
             - DOMAIN
+            - VECTOR_STORE
       required:
         - id
         - name
@@ -1748,6 +1749,7 @@ components:
             - TYPE_DURATION
             - TYPE_REFERENCE
             - TYPE_UNKNOWN
+            - TYPE_VECTOR
         logical_type:
           type: string
         is_nullable:
