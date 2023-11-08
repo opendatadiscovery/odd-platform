@@ -7,7 +7,7 @@ export const Scrollable = styled('div')(
       width: '100%',
       overflowY: 'auto',
       contain: 'strict',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const Container = styled('div')<{ $height: number }>(({ $height }) => ({

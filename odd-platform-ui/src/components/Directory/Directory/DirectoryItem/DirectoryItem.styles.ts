@@ -7,7 +7,7 @@ export const Container = styled('div')(
       flexDirection: 'column',
       width: '160px',
       cursor: 'pointer',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const LogoContainer = styled('div')(({ theme }) => ({

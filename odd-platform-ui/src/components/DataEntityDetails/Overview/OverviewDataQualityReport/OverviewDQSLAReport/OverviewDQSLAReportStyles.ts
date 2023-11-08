@@ -23,7 +23,7 @@ export const TooltipStyles = {
 };
 
 export const BarContainer = styled(Grid)(
-  () => ({ flexWrap: 'nowrap', marginTop: '3px', columnGap: '2px' } as CSSObject)
+  () => ({ flexWrap: 'nowrap', marginTop: '3px', columnGap: '2px' }) as CSSObject
 );
 
 export const Bar = styled(LinearProgress)<{

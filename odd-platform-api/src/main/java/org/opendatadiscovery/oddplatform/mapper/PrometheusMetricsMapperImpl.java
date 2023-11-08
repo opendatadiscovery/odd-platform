@@ -74,7 +74,7 @@ public class PrometheusMetricsMapperImpl implements PrometheusMetricsMapper {
                 final Metric existingMetric = metricByLabels.get();
                 enrichMetric(existingMetric, type, metric);
             } else {
-                final Metric newMetric = new Metric();
+                final Metric newMetric = new Metric(new MetricPoint());
                 newMetric.setLabels(metricLabels);
                 enrichMetric(newMetric, type, metric);
                 result.add(newMetric);
@@ -94,9 +94,6 @@ public class PrometheusMetricsMapperImpl implements PrometheusMetricsMapper {
     private void enrichMetric(final Metric metric,
                               final MetricType metricType,
                               final PrometheusMetric prometheusMetric) {
-        if (metric.getMetricPoint() == null) {
-            metric.setMetricPoint(new MetricPoint());
-        }
         metric.getMetricPoint().setTimestamp(getTimestampValue(prometheusMetric.getValue().get(0)));
         switch (metricType) {
             case GAUGE -> enrichGaugeValue(metric, prometheusMetric);

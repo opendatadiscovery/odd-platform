@@ -78,3 +78,4 @@ export { default as BreadCrumbs } from './BreadCrumbs/BreadCrumbs';
 export { default as TruncatedList } from './TruncatedList/TruncatedList';
 export { default as IconicInfoBadge } from './IconicInfoBadge/IconicInfoBadge';
 export { default as MetadataStale } from './MetadataStale/MetadataStale';
+export { default as DonutChart } from './DonutChart/DonutChart';

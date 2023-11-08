@@ -18,7 +18,7 @@ export const TitleWrapper = styled('div')<{ $fullNames: boolean }>(
       overflow: $fullNames ? 'initial' : 'hidden',
       textOverflow: $fullNames ? 'initial' : 'ellipsis',
       whiteSpace: $fullNames ? 'initial' : 'nowrap',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const UnknownEntityNameCircle = styled('circle')(({ theme }) => ({

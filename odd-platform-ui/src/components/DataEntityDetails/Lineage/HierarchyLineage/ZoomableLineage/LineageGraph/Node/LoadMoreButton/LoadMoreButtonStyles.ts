@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { Group } from '@visx/group';
 
 export const LoadMoreButton = styled(Group)(({ theme }) => ({
@@ -12,28 +12,31 @@ export const LoadMoreButton = styled(Group)(({ theme }) => ({
   },
 }));
 
-export const LoadMoreSpinner = styled('circle')(({ theme }) => ({
-  fill: 'transparent',
-  strokeWidth: 2,
-  strokeDasharray: 2 * Math.PI * 8,
-  stroke: theme.palette.border.element,
-  strokeLinecap: 'round',
-  animation: 'dash 1.5s ease-in-out infinite',
-  '@keyframes dash': {
-    '0%': {
-      strokeDasharray: '1, 150',
-      strokeDashoffset: 0,
-    },
-    '50%': {
-      strokeDasharray: '90, 150',
-      strokeDashoffset: -35,
-    },
-    '100%': {
-      strokeDasharray: '90, 150',
-      strokeDashoffset: -124,
-    },
-  },
-}));
+const dash = keyframes`
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+`;
+
+export const LoadMoreSpinner = styled.circle(
+  ({ theme }) => css`
+    fill: transparent;
+    stroke-width: 2;
+    stroke-dasharray: ${2 * Math.PI * 8};
+    stroke: ${theme.palette.border.element};
+    stroke-linecap: round;
+    animation: ${dash} 1.5s ease-in-out infinite;
+  `
+);
 
 export const LoadMoreSpinnerBackground = styled('circle')(({ theme }) => ({
   fill: 'transparent',

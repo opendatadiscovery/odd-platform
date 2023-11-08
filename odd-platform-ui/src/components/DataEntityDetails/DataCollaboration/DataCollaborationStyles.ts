@@ -6,5 +6,5 @@ export const Container = styled(Grid)(
     ({
       position: 'relative',
       flexWrap: 'nowrap',
-    } as CSSObject)
+    }) as CSSObject
 );

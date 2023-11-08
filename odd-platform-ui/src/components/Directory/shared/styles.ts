@@ -6,7 +6,7 @@ export const Container = styled('div')(
     ({
       display: 'flex',
       flexDirection: 'column',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const Header = styled('div')(() => ({

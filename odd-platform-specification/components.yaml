@@ -3475,6 +3475,85 @@ components:
         - entities
         - data_source
 
+    DataQualityResults:
+      type: object
+      properties:
+        test_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataQualityCategoryResults'
+        tables_dashboard:
+            $ref: '#/components/schemas/TablesDashboard'
+      required:
+        - test_results
+        - tables_dashboard
+
+    TablesDashboard:
+      type: object
+      properties:
+        tables_health:
+          $ref: '#/components/schemas/TablesHealthDashboard'
+        monitored_tables:
+          $ref: '#/components/schemas/MonitoredTablesDashboard'
+      required:
+        - tables_health
+        - monitored_tables
+
+    TablesHealthDashboard:
+      type: object
+      properties:
+        healthy_tables:
+          type: integer
+          format: int32
+        error_tables:
+          type: integer
+          format: int32
+        warning_tables:
+          type: integer
+          format: int32
+      required:
+        - healthy_tables
+        - error_tables
+        - warning_tables
+
+    MonitoredTablesDashboard:
+      type: object
+      properties:
+        monitored_tables:
+          type: integer
+          format: int32
+        not_monitored_tables:
+          type: integer
+          format: int32
+      required:
+        - monitored_tables
+        - not_monitored_tables
+
+    DataQualityCategoryResults:
+      type: object
+      properties:
+        category:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataQualityRunStatusCount'
+      required:
+        - category
+        - results
+
+    DataQualityRunStatusCount:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/DataEntityRunStatus'
+        count:
+          type: integer
+          format: int64
+      required:
+        - status
+        - count
+
   parameters:
     PageParam:
       name: page

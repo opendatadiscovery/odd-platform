@@ -9,21 +9,21 @@ import type {
 
 interface DataEntityViewTypes {
   [DataEntityRoutes.dataEntityViewType]:
-    | DataEntityRoutes.overview
-    | DataEntityRoutes.lineage
-    | DataEntityRoutes.structure
-    | DataEntityRoutes.history
-    | DataEntityRoutes.alerts
-    | DataEntityRoutes.linkedEntities
-    | DataEntityRoutes.activity
-    | DataEntityRoutes.testReports
-    | DataEntityRoutes.discussions;
+    | typeof DataEntityRoutes.overview
+    | typeof DataEntityRoutes.lineage
+    | typeof DataEntityRoutes.structure
+    | typeof DataEntityRoutes.history
+    | typeof DataEntityRoutes.alerts
+    | typeof DataEntityRoutes.linkedEntities
+    | typeof DataEntityRoutes.activity
+    | typeof DataEntityRoutes.testReports
+    | typeof DataEntityRoutes.discussions;
   [DataEntityRoutes.testReportViewType]:
-    | DataEntityRoutes.overview
-    | DataEntityRoutes.history;
+    | typeof DataEntityRoutes.overview
+    | typeof DataEntityRoutes.history;
   [DataEntityRoutes.structureViewType]:
-    | DataEntityRoutes.overview
-    | DataEntityRoutes.structureCompare;
+    | typeof DataEntityRoutes.overview
+    | typeof DataEntityRoutes.structureCompare;
 }
 
 interface DataEntityRouteParams extends DataEntityViewTypes {
@@ -41,7 +41,9 @@ interface AppDataEntityRouteParams extends DataEntityViewTypes {
 }
 
 interface TermRouteViewTypes {
-  [TermsRoutes.termsViewType]: TermsRoutes.overview | TermsRoutes.linkedEntities;
+  [TermsRoutes.termsViewType]:
+    | typeof TermsRoutes.overview
+    | typeof TermsRoutes.linkedEntities;
 }
 
 interface TermRouteParams extends TermRouteViewTypes {
@@ -64,30 +66,30 @@ interface AppSearchRouteParams {
 
 interface AlertsRouteViewTypes {
   [AlertsRoutes.alertsViewType]:
-    | AlertsRoutes.all
-    | AlertsRoutes.my
-    | AlertsRoutes.dependents;
+    | typeof AlertsRoutes.all
+    | typeof AlertsRoutes.my
+    | typeof AlertsRoutes.dependents;
 }
 
 type AppAlertsRouteParams = AlertsRouteViewTypes;
 
 interface ManagementRouteViewTypes {
   [ManagementRoutes.managementViewType]:
-    | ManagementRoutes.namespaces
-    | ManagementRoutes.datasources
-    | ManagementRoutes.collectors
-    | ManagementRoutes.owners
-    | ManagementRoutes.tags
-    | ManagementRoutes.associations
-    | ManagementRoutes.roles
-    | ManagementRoutes.policies
-    | ManagementRoutes.integrations;
+    | typeof ManagementRoutes.namespaces
+    | typeof ManagementRoutes.datasources
+    | typeof ManagementRoutes.collectors
+    | typeof ManagementRoutes.owners
+    | typeof ManagementRoutes.tags
+    | typeof ManagementRoutes.associations
+    | typeof ManagementRoutes.roles
+    | typeof ManagementRoutes.policies
+    | typeof ManagementRoutes.integrations;
   [ManagementRoutes.associationsViewType]:
-    | ManagementRoutes.associationsNew
-    | ManagementRoutes.associationsResolved;
+    | typeof ManagementRoutes.associationsNew
+    | typeof ManagementRoutes.associationsResolved;
   [ManagementRoutes.integrationViewType]:
-    | ManagementRoutes.overview
-    | ManagementRoutes.configure;
+    | typeof ManagementRoutes.overview
+    | typeof ManagementRoutes.configure;
 }
 
 interface ManagementRouteParams extends ManagementRouteViewTypes {

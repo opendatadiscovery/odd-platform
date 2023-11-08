@@ -35,16 +35,18 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
           </Typography>
         </Grid>
         <Grid item container xs={12} direction='column' alignItems='flex-start'>
-          {inputs?.slice(0, displayedEntitiesNumber).map(input => (
-            <Button
-              text={input.internalName || input.externalName}
-              to={dataEntityOverviewPath(input.id)}
-              key={input.id}
-              sx={{ my: 0.25 }}
-              buttonType='tertiary-m'
-              onClick={() => {}}
-            />
-          ))}
+          {inputs
+            ?.slice(0, displayedEntitiesNumber)
+            .map(input => (
+              <Button
+                text={input.internalName || input.externalName}
+                to={dataEntityOverviewPath(input.id)}
+                key={input.id}
+                sx={{ my: 0.25 }}
+                buttonType='tertiary-m'
+                onClick={() => {}}
+              />
+            ))}
           {unknownInputsCount ? (
             <Typography sx={{ ml: 0.5 }} variant='subtitle1'>
               {unknownInputsCount} {t('more source')}

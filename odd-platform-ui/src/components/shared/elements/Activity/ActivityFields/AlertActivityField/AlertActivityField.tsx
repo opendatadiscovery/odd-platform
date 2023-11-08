@@ -73,7 +73,7 @@ const AlertActivityField: React.FC<AlertActivityFieldProps> = ({
 
   type AlertHaltConfigEntriesType = [
     keyof AlertHaltConfigActivityState,
-    number | undefined
+    number | undefined,
   ][];
   const alertHaltConfigEntries = newState.alertHaltConfig
     ? (Object.entries(newState.alertHaltConfig) as AlertHaltConfigEntriesType)

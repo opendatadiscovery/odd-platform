@@ -15,5 +15,5 @@ export const Wrapper = styled(Grid)(
       flexWrap: 'nowrap',
       alignItems: 'center',
       justifyContent: 'flex-end',
-    } as CSSObject)
+    }) as CSSObject
 );

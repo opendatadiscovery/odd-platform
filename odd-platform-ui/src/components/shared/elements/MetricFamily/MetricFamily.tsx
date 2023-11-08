@@ -21,7 +21,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
   );
 
   const emptyLabelsMetricValue = React.useMemo(() => {
-    if (emptyLabelsMetric) {
+    if (emptyLabelsMetric?.metricPoint) {
       if (family.type === 'COUNTER') {
         return (
           <Grid container flexWrap='nowrap'>
@@ -108,8 +108,8 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
-        <AppTooltip title={metric.metricPoint.counterValue?.total}>
-          <NumberFormatted value={metric.metricPoint.counterValue?.total} />
+        <AppTooltip title={metric.metricPoint?.counterValue?.total}>
+          <NumberFormatted value={metric.metricPoint?.counterValue?.total} />
         </AppTooltip>
       </Grid>
     </Grid>
@@ -121,8 +121,8 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.65}>
-        <AppTooltip title={metric.metricPoint.gaugeValue?.value}>
-          <NumberFormatted value={metric.metricPoint.gaugeValue?.value} />
+        <AppTooltip title={metric.metricPoint?.gaugeValue?.value}>
+          <NumberFormatted value={metric.metricPoint?.gaugeValue?.value} />
         </AppTooltip>
       </Grid>
     </Grid>
@@ -134,7 +134,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
-        {metric.metricPoint.histogramValue?.buckets?.map((bucket, idx) => (
+        {metric.metricPoint?.histogramValue?.buckets?.map((bucket, idx) => (
           <Grid
             key={bucket.count}
             display='flex'
@@ -161,7 +161,7 @@ const MetricFamilyView: React.FC<MetricFamilyProps> = ({ family }) => {
         {metric.labels?.map(getLabel)}
       </Grid>
       <Grid item display='flex' flexWrap='nowrap' lg={8.6}>
-        {metric.metricPoint.summaryValue?.quantile?.map(quantile => (
+        {metric.metricPoint?.summaryValue?.quantile?.map(quantile => (
           <Grid
             key={quantile.quantile}
             display='flex'

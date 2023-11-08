@@ -8,5 +8,5 @@ export const TagsContainer = styled(Box)(
       alignItems: 'center',
       justifyContent: 'flex-start',
       flexWrap: 'wrap',
-    } as CSSObject)
+    }) as CSSObject
 );

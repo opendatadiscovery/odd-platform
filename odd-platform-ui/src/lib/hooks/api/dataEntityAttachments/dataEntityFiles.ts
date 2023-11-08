@@ -56,9 +56,8 @@ export function useSaveDataEntityFile() {
     mutationFn: async ({ dataEntityId, file }: UseSaveDataEntityFileParams) => {
       const dataEntityUploadFormData = { fileName: file.name };
       const initialUploadParams = { dataEntityId, dataEntityUploadFormData };
-      const { id: uploadId } = await dataEntityAttachmentApi.initiateFileUpload(
-        initialUploadParams
-      );
+      const { id: uploadId } =
+        await dataEntityAttachmentApi.initiateFileUpload(initialUploadParams);
 
       await uploadFile({
         file,

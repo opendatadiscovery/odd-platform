@@ -7,7 +7,7 @@ export const ActionsContainer = styled(Grid)(
       justifyContent: 'flex-end',
       flexWrap: 'nowrap',
       opacity: 0,
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const Container = styled(Grid)(({ theme }) => ({

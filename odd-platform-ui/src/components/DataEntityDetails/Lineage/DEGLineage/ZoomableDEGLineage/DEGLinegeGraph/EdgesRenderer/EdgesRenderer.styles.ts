@@ -11,5 +11,5 @@ export const Container = styled('svg')(
       height: '100%',
       top: 0,
       left: 0,
-    } as CSSObject)
+    }) as CSSObject
 );

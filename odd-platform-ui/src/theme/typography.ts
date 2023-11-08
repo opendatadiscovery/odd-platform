@@ -62,6 +62,13 @@ export const typography = createTypography(palette, {
     lineHeight: pxToRem(16),
     fontWeight: 500,
   },
+  title: {
+    fontSize: pxToRem(14),
+    lineHeight: pxToRem(20),
+    color: palette.texts.secondary,
+    fontWeight: 500,
+    ...breakpointDownLgBody2,
+  },
   subtitle1: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
@@ -104,6 +111,12 @@ export const typography = createTypography(palette, {
     fontSize: pxToRem(40),
     lineHeight: pxToRem(36),
     fontWeight: 500,
+  },
+  label: {
+    fontSize: pxToRem(14),
+    lineHeight: pxToRem(20),
+    fontWeight: 400,
+    color: palette.texts.secondaryVariant,
   },
   ...mapKeysToValue(
     [

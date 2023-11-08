@@ -33,15 +33,17 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
           <Typography variant='h4'>{t('outputs')}</Typography>
         </Grid>
         <Grid item container xs={12} direction='column' alignItems='flex-start'>
-          {outputs?.slice(0, displayedEntitiesNumber).map(output => (
-            <Button
-              text={output.internalName || output.externalName}
-              to={dataEntityOverviewPath(output.id)}
-              key={output.id}
-              sx={{ my: 0.25 }}
-              buttonType='tertiary-m'
-            />
-          ))}
+          {outputs
+            ?.slice(0, displayedEntitiesNumber)
+            .map(output => (
+              <Button
+                text={output.internalName || output.externalName}
+                to={dataEntityOverviewPath(output.id)}
+                key={output.id}
+                sx={{ my: 0.25 }}
+                buttonType='tertiary-m'
+              />
+            ))}
           {unknownOutputsCount ? (
             <Typography variant='subtitle1' sx={{ ml: 0.5 }}>
               {unknownOutputsCount} {t('more output')}

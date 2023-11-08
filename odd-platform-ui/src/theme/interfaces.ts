@@ -32,6 +32,14 @@ interface ItemCondition {
   disabled?: ItemColors;
 }
 
+type DataQualityDashboardLegend =
+  | 'monitored'
+  | 'nonMonitored'
+  | 'healthy'
+  | 'warning'
+  | 'error'
+  | 'unknown';
+
 type Input = ItemCondition & {
   label: ItemColors;
   hint: ItemColors;
@@ -46,6 +54,8 @@ type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
 type RunStatus = Record<DataEntityRunStatus, ItemColors>;
 
+type DataQualityDashboard = Record<DataQualityDashboardLegend, string>;
+
 type AssociationRequestStatus = Record<OwnerAssociationRequestStatus, ItemColors>;
 
 type SLAStatus = Record<DataQualityTestSeverity | SLAColour, string>;
@@ -55,6 +65,7 @@ type EntityStatus = Record<DataEntityStatusEnum, ItemCondition>;
 interface TextType {
   primary: string;
   secondary: string;
+  secondaryVariant: string;
   info: string;
   hint: string;
   action: string;
@@ -111,6 +122,7 @@ declare module '@mui/material/styles' {
     entityClass: EntityClasses;
     reportStatus: ReportStatus;
     runStatus: RunStatus;
+    dataQualityDashboard: DataQualityDashboard;
     associationRequestStatus: AssociationRequestStatus;
     button: Button;
     tag: Tag;
@@ -136,6 +148,7 @@ declare module '@mui/material/styles' {
     entityClass?: EntityClasses;
     reportStatus?: ReportStatus;
     runStatus?: RunStatus;
+    dataQualityDashboard?: DataQualityDashboard;
     associationRequestStatus?: AssociationRequestStatus;
     button?: Button;
     tag?: Tag;
@@ -169,6 +182,8 @@ declare module '@mui/material/styles/createTypography' {
   interface TypographyOptions extends Record<ButtonFont, TypographyStyle> {
     errorCode?: TypographyStyleOptions;
     totalCountTitle?: TypographyStyleOptions;
+    label?: TypographyStyleOptions;
+    title?: TypographyStyleOptions;
     h0?: TypographyStyleOptions;
   }
 }
@@ -176,6 +191,8 @@ declare module '@mui/material/Typography/Typography' {
   interface TypographyPropsVariantOverrides extends Record<ButtonFont, true> {
     errorCode: true;
     totalCountTitle: true;
+    label: true;
+    title: true;
     h0: true;
   }
 }

@@ -5,7 +5,7 @@ export const assignWith = <
   TargetType extends Record<string, any>,
   SourceType extends Record<string, any>,
   ReturnType extends Record<keyof TargetType | keyof SourceType, unknown> = TargetType &
-    SourceType
+    SourceType,
 >(
   target: TargetType,
   source: SourceType,
@@ -35,7 +35,7 @@ export const isArray = (value: unknown): value is Array<unknown> => Array.isArra
 
 export const castDatesToTimestampInItemsArray = <
   Data extends object,
-  RData extends object
+  RData extends object,
 >(
   data: Array<Data>
 ): Array<RData> =>
