@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import type { DataQualityCategoryResults } from 'generated-sources';
+import React, { useCallback, useMemo } from 'react';
 import { DataEntityRunStatus } from 'generated-sources';
 import { Typography } from '@mui/material';
 import { useGetDataQualityDashboard } from 'lib/hooks/api/dataQuality';
@@ -18,42 +17,35 @@ const DONUT_CHART_HEIGHT = 300;
 const DONUT_CHART_INNER_RADIUS = 66;
 const DONUT_CHART_OUTER_RADIUS = 90;
 
-function calcTestResultsBreakdown(categoryResults: DataQualityCategoryResults[]) {
-  return categoryResults.reduce(
-    ({ statusCounts, total }, { results }) => {
-      results.forEach(({ status, count }) => {
-        statusCounts.set(status, (statusCounts.get(status) ?? 0) + count);
-        total += count;
-      });
-      return { statusCounts, total };
-    },
-    {
-      statusCounts: new Map<DataEntityRunStatus, number>(),
-      total: 0,
-    }
-  );
-}
-
-function createDonutChartData(category: string, value: number, color: string) {
-  return { title: category, value, color };
-}
-
 const DataQuality: React.FC = () => {
   const { data, isSuccess } = useGetDataQualityDashboard();
   const { palette } = useTheme();
   const { t } = useTranslation();
 
+  const calcTestResultsBreakdown = useCallback(() => {
+    const initBreakdown = {
+      statusCounts: new Map<DataEntityRunStatus, number>(),
+      total: 0,
+    };
+    if (!data) return initBreakdown;
+    return data.testResults.reduce(({ statusCounts, total }, { results }) => {
+      results.forEach(({ status, count }) => {
+        statusCounts.set(status, (statusCounts.get(status) ?? 0) + count);
+        total += count;
+      });
+      return { statusCounts, total };
+    }, initBreakdown);
+  }, [data?.testResults]);
+
   const testResultsBreakdownChartData = useMemo(() => {
     if (!data) return [];
-    const breakdown = calcTestResultsBreakdown(data.testResults);
-    return Array.from(breakdown.statusCounts.entries()).map(([status, count]) =>
-      createDonutChartData(
-        status,
-        count,
-        palette.runStatus[status].color ?? palette.dataQualityDashboard.unknown
-      )
-    );
-  }, [data?.testResults, palette.runStatus]);
+    const breakdown = calcTestResultsBreakdown();
+    return Array.from(breakdown.statusCounts).map(([status, count]) => {
+      const color =
+        palette.runStatus[status].color ?? palette.dataQualityDashboard.unknown;
+      return { title: status, value: count, color };
+    });
+  }, [data]);
 
   const tableHealthData = useMemo(() => {
     if (!data) return [];
@@ -61,28 +53,25 @@ const DataQuality: React.FC = () => {
       data.tablesDashboard.tablesHealth;
     const { healthy, warning, error } = palette.dataQualityDashboard;
     return [
-      createDonutChartData('Healthy', healthyTables, healthy),
-      createDonutChartData('Warning', warningTables, warning),
-      createDonutChartData('Error', errorTables, error),
+      { title: 'Healthy', value: healthyTables, color: healthy },
+      { title: 'Warning', value: warningTables, color: warning },
+      { title: 'Error', value: errorTables, color: error },
     ];
-  }, [data?.tablesDashboard.tablesHealth, palette.dataQualityDashboard]);
+  }, [data?.tablesDashboard.tablesHealth]);
 
   const tableMonitoredTables = useMemo(() => {
     if (!data) return [];
     const { monitoredTables, notMonitoredTables } = data.tablesDashboard.monitoredTables;
     const { monitored, nonMonitored } = palette.dataQualityDashboard;
     return [
-      createDonutChartData('Monitored', monitoredTables, monitored),
-      createDonutChartData('Not Monitored', notMonitoredTables, nonMonitored),
+      { title: 'Monitored', value: monitoredTables, color: monitored },
+      { title: 'Non-Monitored', value: notMonitoredTables, color: nonMonitored },
     ];
-  }, [data?.tablesDashboard.monitoredTables, palette.dataQualityDashboard]);
+  }, [data?.tablesDashboard.monitoredTables]);
 
-  const testResults = useMemo(() => {
-    if (!data) return [];
-    return data.testResults.sort(({ category: a }, { category: b }) =>
-      a.localeCompare(b)
-    );
-  }, [data?.testResults]);
+  const testResults = isSuccess
+    ? data.testResults.toSorted(({ category: a }, { category: b }) => a.localeCompare(b))
+    : [];
 
   return (
     <S.Container>
@@ -120,13 +109,12 @@ const DataQuality: React.FC = () => {
             />
           </S.ChartWrapper>
           <S.SubSection $direction='column'>
-            {isSuccess &&
-              testResults.map(categoryResults => (
-                <TestCategoryResults
-                  key={categoryResults.category}
-                  categoryResults={categoryResults}
-                />
-              ))}
+            {testResults.map(categoryResults => (
+              <TestCategoryResults
+                key={categoryResults.category}
+                categoryResults={categoryResults}
+              />
+            ))}
           </S.SubSection>
         </S.SubSection>
       </S.Section>
