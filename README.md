@@ -85,7 +85,7 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Deploying to Kubernetes with Helm Charts
 
-* :point_right: **[QUICKSTART](https://github.com/opendatadiscovery/charts/blob/master/QUICKSTART.md)**
+* :point_right: **[QUICKSTART](https://github.com/opendatadiscovery/charts/blob/main/QUICKSTART.md)**
 
 ### Example configurations
 
