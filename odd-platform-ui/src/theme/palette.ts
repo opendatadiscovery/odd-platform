@@ -234,6 +234,7 @@ export const palette = createPalette({
     TYPE_DURATION: { border: colors.blue40 },
     TYPE_UNKNOWN: { border: colors.black10 },
     TYPE_REFERENCE: { border: colors.purple40 },
+    TYPE_VECTOR: { border: colors.orange40 },
   },
   datasetFieldKey: {
     primary: { background: colors.black30, color: colors.white, border: colors.blue30 },

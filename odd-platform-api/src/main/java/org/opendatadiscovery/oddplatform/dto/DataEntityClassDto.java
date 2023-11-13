@@ -32,11 +32,12 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_A
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_INSTANCE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_TRAINING;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.TABLE;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.VECTOR_STORE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.VIEW;
 
 @Getter
 public enum DataEntityClassDto {
-    DATA_SET(1, Set.of(TABLE, FILE, FEATURE_GROUP, KAFKA_TOPIC, VIEW, GRAPH_NODE)),
+    DATA_SET(1, Set.of(TABLE, FILE, FEATURE_GROUP, KAFKA_TOPIC, VIEW, GRAPH_NODE, VECTOR_STORE)),
     DATA_TRANSFORMER(2, Set.of(JOB, ML_MODEL_TRAINING, ML_MODEL_INSTANCE, VIEW, MICROSERVICE)),
     DATA_TRANSFORMER_RUN(3, JOB_RUN),
     DATA_QUALITY_TEST(4, JOB),
