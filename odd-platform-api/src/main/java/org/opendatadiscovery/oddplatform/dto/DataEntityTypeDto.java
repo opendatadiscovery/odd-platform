@@ -31,7 +31,8 @@ public enum DataEntityTypeDto {
     DATABASE_SERVICE(19),
     API_SERVICE(20),
     KAFKA_SERVICE(21),
-    DOMAIN(22);
+    DOMAIN(22),
+    VECTOR_STORE(23);
 
     private static final Map<Integer, DataEntityTypeDto> MAP = Arrays
         .stream(DataEntityTypeDto.values())
