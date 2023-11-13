@@ -32,6 +32,7 @@ import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_LAST_RUN;
@@ -40,13 +41,13 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_LA
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class})
 public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
     public static final String DATA_QUALITY_TEST_ATTRIBUTE = """
-            {
-              "DATA_QUALITY_TEST": {
-                "expectation": {
-                  "category": "{type}"
-                }
-              }
-            }""";
+        {
+          "DATA_QUALITY_TEST": {
+            "expectation": {
+              "category": "{type}"
+            }
+          }
+        }""";
     public static final int NUMBER_OF_ASSERTION = 5;
     public static final int NUMBER_OF_SCHEMA_CHANGES = 3;
     public static final int NUMBER_OF_COLUMN_ANOMALY = 2;
@@ -54,17 +55,17 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
     public static final int NUMBER_OF_VOLUME_ANOMALY = 1;
 
     public static final Map<DataQualityCategory, Pair<List<DataEntityRunStatus>, Integer>> EXPECTED_VALUES = Map.of(
-            DataQualityCategory.ASSERTION, Pair.of(List.of(DataEntityRunStatus.SUCCESS), NUMBER_OF_ASSERTION),
-            DataQualityCategory.SCHEMA_CHANGE,
-            Pair.of(List.of(DataEntityRunStatus.SUCCESS, DataEntityRunStatus.ABORTED), NUMBER_OF_SCHEMA_CHANGES),
-            DataQualityCategory.COLUMN_VALUES_ANOMALY,
-            Pair.of(List.of(DataEntityRunStatus.SUCCESS,
-                    DataEntityRunStatus.FAILED), NUMBER_OF_COLUMN_ANOMALY),
-            DataQualityCategory.FRESHNESS_ANOMALY,
-            Pair.of(List.of(DataEntityRunStatus.SKIPPED,
-                    DataEntityRunStatus.ABORTED), NUMBER_OF_FRESHNESS_ANOMALY),
-            DataQualityCategory.VOLUME_ANOMALY,
-            Pair.of(List.of(DataEntityRunStatus.SKIPPED, DataEntityRunStatus.FAILED), NUMBER_OF_VOLUME_ANOMALY)
+        DataQualityCategory.ASSERTION, Pair.of(List.of(DataEntityRunStatus.SUCCESS), NUMBER_OF_ASSERTION),
+        DataQualityCategory.SCHEMA_CHANGE,
+        Pair.of(List.of(DataEntityRunStatus.SUCCESS, DataEntityRunStatus.ABORTED), NUMBER_OF_SCHEMA_CHANGES),
+        DataQualityCategory.COLUMN_VALUES_ANOMALY,
+        Pair.of(List.of(DataEntityRunStatus.SUCCESS,
+            DataEntityRunStatus.FAILED), NUMBER_OF_COLUMN_ANOMALY),
+        DataQualityCategory.FRESHNESS_ANOMALY,
+        Pair.of(List.of(DataEntityRunStatus.SKIPPED,
+            DataEntityRunStatus.ABORTED), NUMBER_OF_FRESHNESS_ANOMALY),
+        DataQualityCategory.VOLUME_ANOMALY,
+        Pair.of(List.of(DataEntityRunStatus.SKIPPED, DataEntityRunStatus.FAILED), NUMBER_OF_VOLUME_ANOMALY)
     );
     @Autowired
     private ReactiveDataQualityRunsRepository repository;
@@ -89,12 +90,11 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Test get Latest Data Quality Runs")
     public void testGetLatestDataQualityRunsResults() {
-        final List<DataQualityCategoryResults> testResults =
-                testsMapper.mapToDto(repository.getLatestDataQualityRunsResults()
-                        .collectList()
-                        .block());
-
-        dataQualityTestAssertion(testResults);
+        repository.getLatestDataQualityRunsResults()
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(records -> dataQualityTestAssertion(testsMapper.mapToDto(records)))
+            .verifyComplete();
     }
 
     @Test
@@ -102,79 +102,77 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
     public void testGetMonitoredTables() {
         final int numberOfNotMonitoredTables = 5;
         IntStream.range(0, 5)
-                .forEach(i -> createHollowDataSentEntityTable());
+            .forEach(i -> createHollowDataSentEntityTable());
 
-        final TablesDashboard tablesDashboard =
-                tablesDashboardMapper.mapToDto(List.of(), repository.getMonitoredTables()
-                        .collectList()
-                        .block());
-
-        assertEquals(numberOfNotMonitoredTables, tablesDashboard.getMonitoredTables().getNotMonitoredTables());
-        assertEquals(NUMBER_OF_ASSERTION + NUMBER_OF_SCHEMA_CHANGES
+        repository.getMonitoredTables()
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(records -> {
+                final TablesDashboard tablesDashboard = tablesDashboardMapper.mapToDto(List.of(), records);
+                assertEquals(numberOfNotMonitoredTables, tablesDashboard.getMonitoredTables().getNotMonitoredTables());
+                assertEquals(NUMBER_OF_ASSERTION + NUMBER_OF_SCHEMA_CHANGES
                         + NUMBER_OF_COLUMN_ANOMALY + NUMBER_OF_FRESHNESS_ANOMALY + NUMBER_OF_VOLUME_ANOMALY,
-                tablesDashboard.getMonitoredTables().getMonitoredTables());
+                    tablesDashboard.getMonitoredTables().getMonitoredTables());
+            })
+            .verifyComplete();
     }
 
     private void generateTestsData() {
         ReactiveDataQualityRunsRepositoryTest.EXPECTED_VALUES
-                .forEach((key, value) -> generateSpecificTestData(key, value.getLeft(), value.getRight()));
+            .forEach((key, value) -> generateSpecificTestData(key, value.getLeft(), value.getRight()));
     }
 
     private void generateSpecificTestData(final DataQualityCategory category,
                                           final List<DataEntityRunStatus> statuses,
                                           final int numberOfTests) {
         IntStream.range(0, numberOfTests)
-                .mapToObj(value -> createHollowDataSentEntityTable())
-                .forEach(hollowEntity -> {
-                    statuses.forEach(status -> {
-                        final DataEntityPojo assertion = createDataQualityEntityWithCategory(category);
-                        dataQualityTestRelationRepository.createRelations(List.of(
-                                new DataQualityTestRelationsPojo()
-                                        .setDataQualityTestOddrn(assertion.getOddrn())
-                                        .setDatasetOddrn(hollowEntity.getOddrn())
-                        )).block();
-                        createTaskRun(assertion, status);
-                    });
-                });
+            .mapToObj(value -> createHollowDataSentEntityTable())
+            .forEach(hollowEntity -> statuses.forEach(status -> {
+                final DataEntityPojo assertion = createDataQualityEntityWithCategory(category);
+                dataQualityTestRelationRepository.createRelations(List.of(
+                    new DataQualityTestRelationsPojo()
+                        .setDataQualityTestOddrn(assertion.getOddrn())
+                        .setDatasetOddrn(hollowEntity.getOddrn())
+                )).block();
+                createTaskRun(assertion, status);
+            }));
     }
 
     private DataEntityPojo createHollowDataSentEntityTable() {
         return dataEntityRepository
-                .create(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
-                        .setTypeId(DataEntityTypeDto.TABLE.getId()))
-                .block();
+            .create(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
+                .setTypeId(DataEntityTypeDto.TABLE.getId()))
+            .block();
     }
 
     private DataEntityPojo createDataQualityEntityWithCategory(final DataQualityCategory category) {
         final JSONB jsonb = JSONB.jsonb(
-                DATA_QUALITY_TEST_ATTRIBUTE.replace("{type}", category.name())
+            DATA_QUALITY_TEST_ATTRIBUTE.replace("{type}", category.name())
         );
 
-        final List<DataEntityPojo> dataEntityPojos = List.of(new DataEntityPojo()
-                .setOddrn(UUID.randomUUID().toString())
-                .setTypeId(DataEntityTypeDto.JOB.getId())
-                .setSpecificAttributes(jsonb));
+        final DataEntityPojo dataEntityPojos = new DataEntityPojo()
+            .setOddrn(UUID.randomUUID().toString())
+            .setTypeId(DataEntityTypeDto.JOB.getId())
+            .setSpecificAttributes(jsonb);
 
         return dataEntityRepository
-                .bulkCreate(dataEntityPojos)
-                .collectList()
-                .block()
-                .get(0);
+            .create(dataEntityPojos)
+            .block();
     }
 
     private void createTaskRun(final DataEntityPojo de,
                                final DataEntityRunStatus status) {
         final String jobOddrn = UUID.randomUUID().toString();
         final DataEntityTaskRunPojo dataEntityTaskRunPojo = new DataEntityTaskRunPojo()
-                .setOddrn(jobOddrn)
-                .setTaskOddrn(de.getOddrn())
-                .setStartTime(LocalDateTime.now())
-                .setEndTime(LocalDateTime.now())
-                .setStatus(status.toString());
+            .setOddrn(jobOddrn)
+            .setTaskOddrn(de.getOddrn())
+            .setStartTime(LocalDateTime.now())
+            .setEndTime(LocalDateTime.now())
+            .setStatus(status.toString());
 
         dataEntityTaskRunRepository
-                .bulkCreate(List.of(dataEntityTaskRunPojo))
-                .block();
+            .bulkCreate(List.of(dataEntityTaskRunPojo))
+            .block();
 
         createLatestTaskRun(de.getOddrn(), dataEntityTaskRunPojo);
     }
@@ -189,25 +187,25 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
         dataEntityTaskLastRunPojo.setEndTime(dataEntityTaskRunPojo.getEndTime());
 
         jooqReactiveOperations.mono(DSL.insertInto(DATA_ENTITY_TASK_LAST_RUN)
-                        .set(jooqReactiveOperations.newRecord(DATA_ENTITY_TASK_LAST_RUN, dataEntityTaskLastRunPojo)))
-                .block();
+                .set(jooqReactiveOperations.newRecord(DATA_ENTITY_TASK_LAST_RUN, dataEntityTaskLastRunPojo)))
+            .block();
     }
 
     private void dataQualityTestAssertion(final List<DataQualityCategoryResults> actualResult) {
         for (final DataQualityCategoryResults result : actualResult) {
             final Pair<List<DataEntityRunStatus>, Integer> expectedStatuses =
-                    ReactiveDataQualityRunsRepositoryTest.EXPECTED_VALUES
-                            .getOrDefault(DataQualityCategory.resolveByDescription(result.getCategory()),
-                                    Pair.of(List.of(), 0));
+                ReactiveDataQualityRunsRepositoryTest.EXPECTED_VALUES
+                    .getOrDefault(DataQualityCategory.resolveByDescription(result.getCategory()),
+                        Pair.of(List.of(), 0));
 
             result.getResults().forEach(testStatus -> {
                 final DataEntityRunStatus expected = expectedStatuses.getLeft().stream()
-                        .filter(item -> item.equals(testStatus.getStatus()))
-                        .findFirst()
-                        .orElse(null);
+                    .filter(item -> item.equals(testStatus.getStatus()))
+                    .findFirst()
+                    .orElse(null);
                 assertEquals(testStatus.getCount(), expected == null
-                        ? 0L
-                        : expectedStatuses.getRight().longValue());
+                    ? 0L
+                    : expectedStatuses.getRight().longValue());
             });
         }
     }
