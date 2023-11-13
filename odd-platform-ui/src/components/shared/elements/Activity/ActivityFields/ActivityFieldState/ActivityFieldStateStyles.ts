@@ -16,7 +16,7 @@ export const Container = styled(Grid)(
       flexWrap: 'nowrap',
       alignItems: 'center',
       height: '100%',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const StateContainer = styled(Grid)<{

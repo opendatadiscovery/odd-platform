@@ -36,7 +36,7 @@ export type AnySchemaObject = SchemaObject | AsyncSchema;
 interface ErrorObject<
   K extends string = string,
   P = Record<string, unknown>,
-  S = unknown
+  S = unknown,
 > {
   keyword: K;
   instancePath: string;

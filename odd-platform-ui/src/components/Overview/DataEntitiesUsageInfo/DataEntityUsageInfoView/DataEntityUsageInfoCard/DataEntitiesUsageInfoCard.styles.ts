@@ -21,7 +21,7 @@ export const Container = styled('div')(
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const ClassHeaderContainer = styled('div')(
@@ -30,7 +30,7 @@ export const ClassHeaderContainer = styled('div')(
       display: 'flex',
       flexWrap: 'nowrap',
       justifyContent: 'space-between',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const Header = styled('div')(({ theme }) => ({
@@ -56,7 +56,7 @@ export const TypeListContainer = styled('div')(({ theme }) => ({
   marginLeft: theme.spacing(0.5),
 }));
 
-export const TypeItem = styled('div')(({ theme }) => ({
+export const TypeItem = styled.div(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   padding: theme.spacing(0, 0.25),
@@ -66,7 +66,6 @@ export const TypeItem = styled('div')(({ theme }) => ({
   position: 'relative',
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   '&:active': { backgroundColor: theme.palette.backgrounds.secondary },
-
   '&::after': {
     content: '""',
     position: 'absolute',
@@ -77,6 +76,5 @@ export const TypeItem = styled('div')(({ theme }) => ({
     right: '-6px',
     top: '42%',
   },
-
-  '&:last-child': { '&::after': { display: 'none' } },
+  '&:last-child::after': { display: 'none' },
 }));

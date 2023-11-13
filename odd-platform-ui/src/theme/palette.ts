@@ -76,6 +76,7 @@ export const palette = createPalette({
   texts: {
     primary: colors.black90,
     secondary: colors.black50,
+    secondaryVariant: colors.black40,
     hint: colors.black30,
     info: colors.black70,
     action: colors.blue60,
@@ -108,6 +109,14 @@ export const palette = createPalette({
     DATA_TRANSFORMER_RUN: colors.purple5,
     DATA_QUALITY_TEST_RUN: colors.orange5,
     DATA_ENTITY_GROUP: colors.lightGreen5,
+  },
+  dataQualityDashboard: {
+    monitored: colors.green60,
+    nonMonitored: colors.black30,
+    healthy: colors.green60,
+    warning: colors.orange50,
+    error: colors.red50,
+    unknown: colors.black30,
   },
   runStatus: {
     SUCCESS: { color: colors.green60, background: colors.green5 },

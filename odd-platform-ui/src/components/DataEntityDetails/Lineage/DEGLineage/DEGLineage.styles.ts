@@ -25,5 +25,5 @@ export const LineageViewContainer = styled('div')(
       width: '100%',
       height: '100%',
       position: 'relative',
-    } as CSSObject)
+    }) as CSSObject
 );

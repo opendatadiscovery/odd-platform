@@ -59,7 +59,7 @@ root.render(
             <CssBaseline />
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <BrowserRouter>
-                <StyleSheetManager disableVendorPrefixes>
+                <StyleSheetManager>
                   <App />
                 </StyleSheetManager>
               </BrowserRouter>

@@ -31,7 +31,7 @@ export const SpinnerContainer = styled(Grid)(
       position: 'relative',
       alignItems: 'center',
       justifyContent: 'center',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const ProgressBack = styled(CircularProgress)<{

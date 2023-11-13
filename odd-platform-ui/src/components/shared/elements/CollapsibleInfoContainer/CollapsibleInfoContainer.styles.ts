@@ -25,7 +25,7 @@ export const ContentWrapper = styled('div')(
       display: 'flex',
       flexWrap: 'nowrap',
       justifyContent: 'space-between',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const ContentContainer = styled('div')(({ theme }) => ({

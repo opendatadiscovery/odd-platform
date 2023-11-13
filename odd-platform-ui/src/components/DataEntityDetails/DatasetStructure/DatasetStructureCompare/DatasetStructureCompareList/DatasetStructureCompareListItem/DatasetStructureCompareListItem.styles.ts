@@ -40,7 +40,7 @@ export const Container = styled('div')(
       display: 'flex',
       width: `100%`,
       flexWrap: 'nowrap',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const CollapseContainer = styled('div')<{ $visibility: boolean }>(

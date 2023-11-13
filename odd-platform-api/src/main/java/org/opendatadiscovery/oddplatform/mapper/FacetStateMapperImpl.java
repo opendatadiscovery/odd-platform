@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -104,9 +103,6 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     @Override
     public FacetStateDto mapForm(final TermSearchFormData formData) {
         final TermSearchFormDataFilters filters = formData.getFilters();
-        if (filters == null) {
-            return FacetStateDto.empty();
-        }
 
         final Map<FacetType, List<SearchFilterDto>> state = TERM_FORM_MAPPINGS.entrySet().stream()
             .map(e -> {

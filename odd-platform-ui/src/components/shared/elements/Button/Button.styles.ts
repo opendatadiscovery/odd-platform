@@ -13,126 +13,130 @@ interface ButtonProps {
   $iconButton: boolean | undefined;
 }
 
-export const StyledButton = styled('button')<ButtonProps>(
-  ({ theme, $color, $size, $iconButton, $fullWidth }) => {
-    const btnType = getButtonType($color, $size, $iconButton);
-    const btnFontType = getButtonFontType($color, $size);
+export const StyledButton = styled('button')<ButtonProps>(({
+  theme,
+  $color,
+  $size,
+  $iconButton,
+  $fullWidth,
+}) => {
+  const btnType = getButtonType($color, $size, $iconButton);
+  const btnFontType = getButtonFontType($color, $size);
 
-    const common = {
-      width: $fullWidth ? '100%' : 'auto',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontFamily: 'inherit',
-      border: 'none',
-      minWidth: 0,
-      boxSizing: 'border-box',
+  const common = {
+    width: $fullWidth ? '100%' : 'auto',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: 'inherit',
+    border: 'none',
+    minWidth: 0,
+    boxSizing: 'border-box',
 
-      color: theme.palette.button[$color].normal.color,
-      backgroundColor: theme.palette.button[$color].normal.background,
+    color: theme.palette.button[$color].normal.color,
+    backgroundColor: theme.palette.button[$color].normal.background,
 
-      fontWeight: theme.typography[btnFontType].fontWeight,
-      fontSize: theme.typography[btnFontType].fontSize,
-      lineHeight: theme.typography[btnFontType].lineHeight,
+    fontWeight: theme.typography[btnFontType].fontWeight,
+    fontSize: theme.typography[btnFontType].fontSize,
+    lineHeight: theme.typography[btnFontType].lineHeight,
 
-      '&:hover': {
-        cursor: 'pointer',
-        color: theme.palette.button[$color].hover.color,
-        backgroundColor: theme.palette.button[$color].hover.background,
-      },
-      '&:active': {
-        color: theme.palette.button[$color].active.color,
-        backgroundColor: theme.palette.button[$color].active.background,
-      },
-      '&:disabled': {
-        cursor: 'auto',
-        color: theme.palette.button[$color].disabled?.color,
-        backgroundColor: theme.palette.button[$color].disabled?.background,
-      },
-    };
+    '&:hover': {
+      cursor: 'pointer',
+      color: theme.palette.button[$color].hover.color,
+      backgroundColor: theme.palette.button[$color].hover.background,
+    },
+    '&:active': {
+      color: theme.palette.button[$color].active.color,
+      backgroundColor: theme.palette.button[$color].active.background,
+    },
+    '&:disabled': {
+      cursor: 'auto',
+      color: theme.palette.button[$color].disabled?.color,
+      backgroundColor: theme.palette.button[$color].disabled?.background,
+    },
+  };
 
-    const stylesByButtonType: Record<Button, CSSProperties> = {
-      [getButtonType('main', 'lg')]: {
-        height: '32px',
-        borderRadius: '4px',
-        padding: theme.spacing(0.75, 1),
-      },
-      [getButtonType('main', 'm')]: {
-        height: '24px',
-        borderRadius: '12px',
-        padding: theme.spacing(0.25, 1),
-      },
-      [getButtonType('secondary', 'lg')]: {
-        height: '32px',
-        borderRadius: '16px',
-        padding: theme.spacing(0.75, 1.5),
-      },
-      ...mapKeysToValue(
-        [
-          getButtonType('secondary', 'm'),
-          getButtonType('secondarySuccess', 'm'),
-          getButtonType('secondaryWarning', 'm'),
-        ],
-        {
-          height: '24px',
-          borderRadius: '16px',
-          padding: theme.spacing(0.25, 1.5),
-        }
-      ),
-      [getButtonType('secondary', 'sm')]: {
-        height: '16px',
-        borderRadius: '2px',
-        padding: theme.spacing(0, 0.25),
-      },
-      [getButtonType('secondary', 'm', true)]: {
+  const stylesByButtonType: Record<Button, CSSProperties> = {
+    [getButtonType('main', 'lg')]: {
+      height: '32px',
+      borderRadius: '4px',
+      padding: theme.spacing(0.75, 1),
+    },
+    [getButtonType('main', 'm')]: {
+      height: '24px',
+      borderRadius: '12px',
+      padding: theme.spacing(0.25, 1),
+    },
+    [getButtonType('secondary', 'lg')]: {
+      height: '32px',
+      borderRadius: '16px',
+      padding: theme.spacing(0.75, 1.5),
+    },
+    ...mapKeysToValue(
+      [
+        getButtonType('secondary', 'm'),
+        getButtonType('secondarySuccess', 'm'),
+        getButtonType('secondaryWarning', 'm'),
+      ],
+      {
         height: '24px',
         borderRadius: '16px',
-        padding: theme.spacing(0.5),
-      },
-      [getButtonType('secondary', 'sm', true)]: {
-        height: '16px',
-        borderRadius: '8px',
-      },
+        padding: theme.spacing(0.25, 1.5),
+      }
+    ),
+    [getButtonType('secondary', 'sm')]: {
+      height: '16px',
+      borderRadius: '2px',
+      padding: theme.spacing(0, 0.25),
+    },
+    [getButtonType('secondary', 'm', true)]: {
+      height: '24px',
+      borderRadius: '16px',
+      padding: theme.spacing(0.5),
+    },
+    [getButtonType('secondary', 'sm', true)]: {
+      height: '16px',
+      borderRadius: '8px',
+    },
 
-      [getButtonType('tertiary', 'm')]: {
-        height: '20px',
-        borderRadius: '4px',
-        padding: theme.spacing(0, 0.5),
-      },
-      [getButtonType('tertiary', 'sm')]: {
-        height: '16px',
-        borderRadius: '2px',
-        padding: theme.spacing(0, 0.25),
-      },
-      [getButtonType('tertiary', 'm', true)]: {
-        height: '20px',
-        borderRadius: '4px',
-        padding: theme.spacing(0.25),
-      },
+    [getButtonType('tertiary', 'm')]: {
+      height: '20px',
+      borderRadius: '4px',
+      padding: theme.spacing(0, 0.5),
+    },
+    [getButtonType('tertiary', 'sm')]: {
+      height: '16px',
+      borderRadius: '2px',
+      padding: theme.spacing(0, 0.25),
+    },
+    [getButtonType('tertiary', 'm', true)]: {
+      height: '20px',
+      borderRadius: '4px',
+      padding: theme.spacing(0.25),
+    },
 
-      [getButtonType('link', 'm')]: {
-        height: '20px',
-        padding: theme.spacing(0),
-      },
-      [getButtonType('linkGray', 'm', true)]: {
-        height: '16px',
-        padding: theme.spacing(0),
-      },
+    [getButtonType('link', 'm')]: {
+      height: '20px',
+      padding: theme.spacing(0),
+    },
+    [getButtonType('linkGray', 'm', true)]: {
+      height: '16px',
+      padding: theme.spacing(0),
+    },
 
-      [getButtonType('expand', 'sm', true)]: {
-        height: '16px',
-        borderRadius: '2px',
-        padding: theme.spacing(0.75, 0.5),
-      },
+    [getButtonType('expand', 'sm', true)]: {
+      height: '16px',
+      borderRadius: '2px',
+      padding: theme.spacing(0.75, 0.5),
+    },
 
-      [getButtonType('service', 'm')]: {
-        height: '20px',
-      },
-    };
+    [getButtonType('service', 'm')]: {
+      height: '20px',
+    },
+  };
 
-    return { ...(common as CSSObject), ...stylesByButtonType[btnType] };
-  }
-);
+  return { ...(common as CSSObject), ...stylesByButtonType[btnType] };
+});
 
 export const StyledLink = styled(Link)<{
   $disabled?: boolean;

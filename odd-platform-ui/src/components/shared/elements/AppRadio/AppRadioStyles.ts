@@ -1,11 +1,15 @@
 import { Radio, radioClasses } from '@mui/material';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const StyledRadio = styled(Radio)(() => ({
-  [`&.${radioClasses.root}`]: {
-    '&:hover': { backgroundColor: 'unset' },
-  },
-}));
+export const StyledRadio = styled(Radio)(
+  () => css`
+    &.${radioClasses.root} {
+      &:hover {
+        background-color: unset;
+      }
+    }
+  `
+);
 
 const iconStyles = {
   borderRadius: '50%',

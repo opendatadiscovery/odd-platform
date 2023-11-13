@@ -49,7 +49,7 @@ public class IngestionMetricModelMapper {
 
     private static Metric buildExpectedMetric(
         final org.opendatadiscovery.oddplatform.ingestion.contract.model.Metric metric) {
-        final Metric result = new Metric();
+        final Metric result = new Metric(new MetricPoint());
         if (CollectionUtils.isNotEmpty(metric.getLabels())) {
             final List<MetricLabel> labels = metric.getLabels().stream()
                 .map(IngestionMetricModelMapper::buildExpectedLabel)

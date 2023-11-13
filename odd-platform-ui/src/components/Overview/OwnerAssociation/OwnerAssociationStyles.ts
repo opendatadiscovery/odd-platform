@@ -20,7 +20,7 @@ export const PendingContainer = styled(Grid)(
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const RejectMsg = styled(Grid)(({ theme }) => ({

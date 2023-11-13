@@ -16,7 +16,7 @@ export const ContentContainer = styled(Grid)(
       alignItems: 'baseline',
       flexWrap: 'nowrap',
       position: 'relative',
-    } as CSSObject)
+    }) as CSSObject
 );
 
 export const InfoContainer = styled('div')(
@@ -27,5 +27,5 @@ export const InfoContainer = styled('div')(
       alignItems: 'center',
       position: 'absolute',
       right: 0,
-    } as CSSObject)
+    }) as CSSObject
 );

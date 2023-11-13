@@ -27,5 +27,5 @@ export const TagListContainer = styled(Box)(
       alignItems: 'center',
       justifyContent: 'flex-start',
       flexWrap: 'wrap',
-    } as CSSObject)
+    }) as CSSObject
 );
