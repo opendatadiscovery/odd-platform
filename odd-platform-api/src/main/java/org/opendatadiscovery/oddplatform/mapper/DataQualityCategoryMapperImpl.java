@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.EnumUtils;
 import org.jooq.Record3;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityCategoryResults;
@@ -34,13 +35,14 @@ public class DataQualityCategoryMapperImpl implements DataQualityCategoryMapper 
         items.forEach(row -> categoryResults.get(DataQualityCategory
                         .resolveByName(row.get(TASK_RUN_CATEGORY, String.class)))
                 .getResults().add(new DataQualityRunStatusCount()
-                        .status(DataEntityRunStatus
-                                .fromValue(row.getValue(DATA_ENTITY_TASK_LAST_RUN.STATUS)))
+                        .status(EnumUtils.getEnum(DataEntityRunStatus.class,
+                                row.getValue(DATA_ENTITY_TASK_LAST_RUN.STATUS),
+                                DataEntityRunStatus.UNKNOWN))
                         .count(Long.valueOf(row.get(TASK_RUNS_COUNT, Integer.class)))));
 
         return addMissingStatuses(categoryResults.values()
-                        .stream()
-                        .toList());
+                .stream()
+                .toList());
     }
 
     private List<DataQualityCategoryResults> addMissingStatuses(final List<DataQualityCategoryResults> resultsList) {

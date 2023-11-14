@@ -29,4 +29,11 @@ public enum DataQualityCategory {
     public static DataQualityCategory resolveByName(final String name) {
         return DICT.getOrDefault(name, UNKNOWN);
     }
+
+    public static DataQualityCategory resolveByDescription(final String name) {
+        return Arrays.stream(values())
+                .filter(value -> value.getDescription().equals(name))
+                .findFirst()
+                .orElse(UNKNOWN);
+    }
 }
