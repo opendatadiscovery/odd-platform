@@ -42,6 +42,7 @@ tags:
   - name: dataEntityAttachment
   - name: directory
   - name: dataQualityRuns
+  - name: dataModeling
 
 paths:
   /api/integrations:
@@ -1925,6 +1926,240 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataQualityResults'
       tags:
         - dataQualityRuns
+
+  /api/modeling:
+    get:
+      summary: List of DataModeling
+      description: Gets the list of existing DataModels
+      operationId: getDataModelingList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingRefList'
+      tags:
+        - dataModeling
+    post:
+      summary: Create DataModeling
+      description: Create new DataModeling
+      operationId: createDataModeling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataModelingFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingDetails'
+      tags:
+        - dataModeling
+
+  /api/modeling/{modeling_id}:
+    get:
+      summary: Get DataModeling details
+      description: Get all information about DataModeling
+      operationId: getDataModelingDetails
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingDetails'
+      tags:
+        - dataModeling
+    put:
+      summary: Update DataModeling
+      description: Update existing DataModeling
+      operationId: updateDataModeling
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataModelingFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingDetails'
+      tags:
+        - dataModeling
+    delete:
+      summary: Delete DataModeling
+      description: Deletes DataModeling
+      operationId: deleteDataModeling
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataModeling
+
+  /api/modeling/search:
+    post:
+      summary: DataModeling search by query
+      description: Creates a new search of all the matching Data Models to given query and calculates the aggregation data for correspondent data slice
+      operationId: dataModelingSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataModelingSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingSearchFacetsData'
+      tags:
+        - dataModeling
+
+  /api/modeling/search/{search_id}:
+    get:
+      summary: Get DataModeling search facets by search ID
+      description: Gets DataModeling search facets by parameter which can be found in search endpoint response
+      operationId: getDataModelingSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingSearchFacetsData'
+      tags:
+        - dataModeling
+    put:
+      summary: Update DataModeling search facets by search ID
+      description: Updates DataModeling search facets of a certain search ID by provided search parameters
+      operationId: updateDataModelingSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataModelingSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingSearchFormData'
+      tags:
+        - dataModeling
+
+  /api/modeling/search/{search_id}/results:
+    get:
+      summary: Get DataModeling search results by search ID
+      description: Returns paginated list of DataModeling search results for a given search ID
+      operationId: getDataModelingSearchResults
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingList'
+      tags:
+        - dataModeling
+
+  /api/modeling/{dataset_id}:
+    get:
+      summary: Get DataModeling
+      description: Gets DataModelings by DataSet's id
+      operationId: getDataModelingByDatasetId
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingList'
+      tags:
+        - dataModeling
+
+  /api/modeling/{modeling_id}/dataset:
+    post:
+      summary: add Dataset to DataModeling
+      description: Creates a new relation between DataModeling and Dataset
+      operationId: createDataModelingToDatasetRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataModelingDatasetFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingList'
+      tags:
+        - dataModeling
+
+  /api/modeling/{modeling_id}/dataset/{dataset_id}:
+    delete:
+      summary: Delete Dataset from DataModeling
+      description: Deletes relationship between DataModeling and Dataset
+      operationId: deleteDataModelingToDatasetRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataModeling
 
   /api/dataentitygroups/domains:
     get:

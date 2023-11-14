@@ -2609,6 +2609,124 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
 
+    DataModelingRefList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataModelingRef'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataModelingRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        definition:
+          type: string
+          format: uuid
+        query_example:
+          type: string
+      required:
+        - id
+        - definition
+        - query_example
+
+    DataModelingList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataModeling'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataModeling:
+      type: object
+      properties:
+        definition:
+          type: string
+          format: uuid
+        query_example:
+          type: string
+        linked_entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityList'
+
+    DataModelingDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataModelingRef'
+        - type: object
+          properties:
+            linked_entities:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataEntityList'
+            entities_using_count:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+          required:
+            - created_at
+            - updated_at
+
+    DataModelingFormData:
+      type: object
+      properties:
+        definition:
+          type: string
+          format: uuid
+        query_example:
+          type: string
+      required:
+        - definition
+        - query_example
+
+    DataModelingSearchFormData:
+      type: object
+      properties:
+        query:
+          type: string
+
+    DataModelingSearchFacetsData:
+      type: object
+      properties:
+        search_id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        total:
+          type: integer
+          format: int64
+      required:
+        - search_id
+        - query
+
+    DataModelingDatasetFormData:
+      type: object
+      properties:
+        dataset_id:
+          type: integer
+          format: int64
+      required:
+        - dataset_id
+
     ActivityCountInfo:
       type: object
       properties:
@@ -3551,7 +3669,7 @@ components:
           $ref: '#/components/schemas/DataEntityRunStatus'
         count:
           type: integer
-          format: int64
+          format: int32
       required:
         - status
         - count
@@ -3685,6 +3803,14 @@ components:
       name: data_source_id
       in: path
       requited: true
+      schema:
+        type: integer
+        format: int64
+
+    DataModelingIdParam:
+      name: term_id
+      in: path
+      required: true
       schema:
         type: integer
         format: int64
