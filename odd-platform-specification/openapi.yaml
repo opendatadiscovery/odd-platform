@@ -2176,7 +2176,8 @@ paths:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataModelingRefList'
       tags:
-        - term
+        - dataModeling
+
   /api/dataentitygroups/domains:
     get:
       summary: Get domains info
