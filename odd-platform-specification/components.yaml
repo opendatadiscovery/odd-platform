@@ -2630,7 +2630,6 @@ components:
           format: int64
         definition:
           type: string
-          format: uuid
         query_example:
           type: string
       required:
@@ -2656,7 +2655,6 @@ components:
       properties:
         definition:
           type: string
-          format: uuid
         query_example:
           type: string
         linked_entities:
@@ -2690,7 +2688,6 @@ components:
       properties:
         definition:
           type: string
-          format: uuid
         query_example:
           type: string
       required:

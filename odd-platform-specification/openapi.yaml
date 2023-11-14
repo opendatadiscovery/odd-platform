@@ -2161,6 +2161,22 @@ paths:
       tags:
         - dataModeling
 
+  /api/modeling/search/suggestions:
+    get:
+      summary: Get DataModeling search suggestions by query
+      description: Returns top five search suggestions for a given query
+      operationId: getDataModelingSearchSuggestions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataModelingRefList'
+      tags:
+        - term
   /api/dataentitygroups/domains:
     get:
       summary: Get domains info
