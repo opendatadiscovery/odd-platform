@@ -11,6 +11,7 @@ import {
   DataEntityRoutes,
   DirectoryRoutes,
   DataQualityRoutes,
+  DataModellingRoutes,
 } from './shared';
 
 const useAppPaths = () => {
@@ -64,6 +65,7 @@ const useAppPaths = () => {
       DataEntityRoutes,
       DirectoryRoutes,
       DataQualityRoutes,
+      DataModellingRoutes,
       basePath,
       updatePath,
       getNonExactPath,

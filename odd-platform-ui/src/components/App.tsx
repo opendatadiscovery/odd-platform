@@ -11,7 +11,7 @@ import {
   fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { DataQualityRoutes } from '../lib/hooks/useAppPaths/shared';
+import { DataModellingRoutes, DataQualityRoutes } from '../lib/hooks/useAppPaths/shared';
 
 // lazy elements
 const Management = lazy(() => import('./Management/Management'));
@@ -95,6 +95,10 @@ const App: React.FC = () => {
             <Route
               path={getNonExactPath(DataQualityRoutes.dataQuality)}
               element={<DataQuality />}
+            />
+            <Route
+              path={getNonExactPath(DataModellingRoutes.querySearch)}
+              element={<div>Query Search</div>}
             />
           </Routes>
         </AppSuspenseWrapper>

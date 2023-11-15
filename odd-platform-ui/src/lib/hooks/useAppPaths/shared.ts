@@ -104,3 +104,11 @@ export const DirectoryRoutes = {
 export const DataQualityRoutes = {
   dataQuality: 'data-quality',
 } as const;
+
+export const DataModellingRoutes = {
+  querySearch: 'query-search',
+  querySearchId: 'querySearchId',
+  querySearchIdParam: ':querySearchId',
+  queryId: 'queryId',
+  queryIdParam: ':queryId',
+} as const;

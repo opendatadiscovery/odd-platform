@@ -30,6 +30,7 @@ const ToolbarTabs: FC = () => {
     DirectoryRoutes,
     DataEntityRoutes,
     DataQualityRoutes,
+    DataModellingRoutes,
     updatePath,
   } = useAppPaths();
 
@@ -49,6 +50,11 @@ const ToolbarTabs: FC = () => {
         name: t('Data Quality'),
         link: updatePath(DataQualityRoutes.dataQuality),
         value: DataQualityRoutes.dataQuality,
+      },
+      {
+        name: t('Data Modelling'),
+        link: updatePath(DataModellingRoutes.querySearch),
+        value: DataModellingRoutes.querySearch,
       },
       {
         name: t('Management'),
