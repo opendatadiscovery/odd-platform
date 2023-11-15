@@ -55,6 +55,8 @@ const ToolbarTabs: FC = () => {
         name: t('Data Modelling'),
         link: updatePath(DataModellingRoutes.querySearch),
         value: DataModellingRoutes.querySearch,
+        hint: t('BETA'),
+        hintType: 'secondary',
       },
       {
         name: t('Management'),

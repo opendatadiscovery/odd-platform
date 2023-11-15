@@ -40,17 +40,17 @@ const AppTabs: FC<AppTabsProps> = ({
   tabSx,
 }) => {
   const selectedTabState = selectedTab === -1 ? false : selectedTab;
-  const [currentTab, setCurrent] = useState<number | boolean | undefined>(
+  const [currentTab, setCurrentTab] = useState<number | boolean | undefined>(
     selectedTabState
   );
 
   const handleChange = (_: SyntheticEvent, newTab: number) => {
-    setCurrent(newTab);
+    setCurrentTab(newTab);
     handleTabChange(newTab);
   };
 
   useEffect(() => {
-    setCurrent(selectedTabState);
+    setCurrentTab(selectedTabState);
   }, [selectedTab]);
 
   return (
@@ -72,7 +72,7 @@ const AppTabs: FC<AppTabsProps> = ({
 
         const setHintShowed = (): boolean => {
           if (getHintLength() === 0 && item.hintType === 'alert') return false;
-          return type === 'primary';
+          return ['primary', 'menu'].includes(type);
         };
 
         return item.link ? (
@@ -99,7 +99,7 @@ const AppTabs: FC<AppTabsProps> = ({
             $orientation={orientation}
             type={type}
             hidden={item.hidden}
-            key={item.link || item.name}
+            key={item.name}
             sx={tabSx}
             label={
               <AppTabLabel
