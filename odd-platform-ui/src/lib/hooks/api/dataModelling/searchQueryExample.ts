@@ -1,26 +1,31 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { dataModellingApi } from 'lib/api';
-import type { DataModelingApiGetDataModelingSearchResultsRequest } from 'generated-sources';
 import { addNextPage } from 'lib/hooks/api/utils';
+import { queryExampleApi } from 'lib/api';
+import type { QueryExampleApiGetQueryExampleSearchResultsRequest } from 'generated-sources';
 
 export function useCreateQueryExampleSearchId() {
   return useQuery({
     queryKey: ['createQueryExampleSearchId'],
     queryFn: async () =>
-      dataModellingApi.dataModelingSearch({ dataModelingSearchFormData: { query: '' } }),
+      queryExampleApi.queryExamplesSearch({ queryExampleSearchFormData: { query: '' } }),
   });
 }
 
+type UseSearchQueryExamples = Omit<
+  QueryExampleApiGetQueryExampleSearchResultsRequest,
+  'page'
+> & {
+  enabled: boolean;
+};
 export function useSearchQueryExamples({
   searchId,
-  page,
   size,
   enabled,
-}: DataModelingApiGetDataModelingSearchResultsRequest & { enabled: boolean }) {
+}: UseSearchQueryExamples) {
   return useInfiniteQuery({
-    queryKey: ['searchQueryExamples', searchId, page, size],
+    queryKey: ['searchQueryExamples', searchId, size],
     queryFn: async ({ pageParam }) => {
-      const response = await dataModellingApi.getDataModelingSearchResults({
+      const response = await queryExampleApi.getQueryExampleSearchResults({
         searchId,
         size,
         page: pageParam,

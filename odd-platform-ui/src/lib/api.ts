@@ -30,7 +30,7 @@ import {
   IntegrationApi,
   DirectoryApi,
   DataQualityRunsApi,
-  DataModelingApi,
+  QueryExampleApi,
 } from 'generated-sources';
 
 const HEADERS: ConfigurationParameters = {
@@ -75,4 +75,4 @@ export const dataEntityAttachmentApi = new DataEntityAttachmentApi(apiConf);
 export const dataEntityFileUploadApi = new DataEntityAttachmentApi(fileUploadConf);
 export const directoryApi = new DirectoryApi(apiConf);
 export const dataQualityRunsApi = new DataQualityRunsApi(apiConf);
-export const dataModellingApi = new DataModelingApi(apiConf);
+export const queryExampleApi = new QueryExampleApi(apiConf);
