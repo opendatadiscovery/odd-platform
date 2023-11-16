@@ -38,7 +38,6 @@ public class QueryExampleController implements QueryExampleApi {
         updateQueryExample(final Long exampleId,
                        final Mono<QueryExampleFormData> queryExampleFormData,
                        final ServerWebExchange exchange) {
-        System.out.println("ALLO");
         return queryExampleFormData
             .flatMap(item -> queryExampleService.updateQueryExample(exampleId, item))
             .map(ResponseEntity::ok);
@@ -47,7 +46,8 @@ public class QueryExampleController implements QueryExampleApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteQueryExample(final Long exampleId,
                                                          final ServerWebExchange exchange) {
-        return QueryExampleApi.super.deleteQueryExample(exampleId, exchange);
+        return queryExampleService.deleteQueryExample(exampleId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 
     @Override
@@ -71,13 +71,15 @@ public class QueryExampleController implements QueryExampleApi {
     @Override
     public Mono<ResponseEntity<QueryExampleList>> getQueryExampleByDatasetId(final Long dataEntityId,
                                                                              final ServerWebExchange exchange) {
-        return QueryExampleApi.super.getQueryExampleByDatasetId(dataEntityId, exchange);
+        return queryExampleService.getQueryExampleByDatasetId(dataEntityId)
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<QueryExampleDetails>> getQueryExampleDetails(final Long exampleId,
                                                                             final ServerWebExchange exchange) {
-        return QueryExampleApi.super.getQueryExampleDetails(exampleId, exchange);
+        return queryExampleService.getQueryExampleDetails(exampleId)
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -85,7 +87,8 @@ public class QueryExampleController implements QueryExampleApi {
                                                                          final Integer size,
                                                                          final String query,
                                                                          final ServerWebExchange exchange) {
-        return QueryExampleApi.super.getQueryExampleList(page, size, query, exchange);
+        return queryExampleService.getQueryExampleList(page, size, query)
+            .map(ResponseEntity::ok);
     }
 
     @Override

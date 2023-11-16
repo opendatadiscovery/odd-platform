@@ -2107,7 +2107,7 @@ paths:
       tags:
         - queryExample
 
-  /api/queryexample/{data_entity_id}:
+  /api/queryexample/dataset/{data_entity_id}:
     get:
       summary: Get QueryExample
       description: Gets QueryExamples by DataSet's id

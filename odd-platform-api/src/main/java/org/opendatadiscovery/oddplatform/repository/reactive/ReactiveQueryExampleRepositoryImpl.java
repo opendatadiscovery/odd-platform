@@ -8,13 +8,14 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectHavingStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToQueryExamplePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.QueryExampleRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
@@ -120,10 +121,12 @@ public class ReactiveQueryExampleRepositoryImpl
         final var query = DSL.with(queryExampleCte.getName())
             .as(queryExampleSelect)
             .select(queryExampleCte.fields())
-            .select(jsonArrayAgg(field(DATA_ENTITY_TO_QUERY_EXAMPLE.asterisk().toString())).as(AGG_DATA_ENTITIES_FIELD))
+            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(AGG_DATA_ENTITIES_FIELD))
             .from(queryExampleCte.getName())
             .leftJoin(DATA_ENTITY_TO_QUERY_EXAMPLE)
             .on(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(queryExampleCte.field(QUERY_EXAMPLE.ID)))
+            .leftJoin(DATA_ENTITY)
+            .on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID))
             .groupBy(queryExampleCte.fields());
 
         return jooqReactiveOperations.flux(query)
@@ -135,15 +138,41 @@ public class ReactiveQueryExampleRepositoryImpl
             ));
     }
 
+    @Override
+    public Mono<Page<QueryExamplePojo>> listQueryExample(Integer page, Integer size, String inputQuery) {
+        final Select<QueryExampleRecord> homogeneousQuery = DSL.selectFrom(QUERY_EXAMPLE)
+            .where(listCondition(inputQuery));
+
+        final Select<? extends Record> queryExampleSelect =
+            paginate(homogeneousQuery,
+                List.of(new OrderByField(QUERY_EXAMPLE.ID, SortOrder.ASC)), (page - 1) * size, size);
+
+        final Table<? extends Record> queryCTE = queryExampleSelect.asTable("query_cte");
+
+        SelectHavingStep<Record> query = DSL.with(queryCTE.getName())
+            .as(queryExampleSelect)
+            .select(queryCTE.fields())
+            .from(queryCTE.getName())
+            .groupBy(queryCTE.fields());
+
+        return jooqReactiveOperations.flux(query)
+            .collectList()
+            .flatMap(record -> jooqQueryHelper.pageifyResult(
+                record,
+                r -> r.into(QueryExamplePojo.class),
+                fetchCount(inputQuery)
+            ));
+    }
+
     private QueryExampleDto mapRecordToDto(final Record record, final String cteName) {
         return new QueryExampleDto(
             jooqRecordHelper.remapCte(record, cteName, QUERY_EXAMPLE).into(QueryExamplePojo.class),
-            extractDataEntityRelation(record)
+            extractDataEntityPojos(record)
         );
     }
 
-    private List<DataEntityToQueryExamplePojo> extractDataEntityRelation(final Record r) {
+    private List<DataEntityPojo> extractDataEntityPojos(final Record r) {
         return new ArrayList<>(jooqRecordHelper.extractAggRelation(r, AGG_DATA_ENTITIES_FIELD,
-            DataEntityToQueryExamplePojo.class));
+            DataEntityPojo.class));
     }
 }

@@ -1,13 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
@@ -18,9 +11,6 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.mapper.QueryExampleMapper;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToQueryExamplePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
@@ -70,36 +60,7 @@ public class QueryExampleSearchServiceImpl implements QueryExampleSearchService 
                 final FacetStateDto state = facetStateMapper.pojoToState(pojo);
                 return queryExampleRepository.findByState(state, page, size);
             })
-            .map(dtoPage -> {
-                final Set<Long> dataEntitiesId = dtoPage.getData().stream()
-                    .flatMap(entity -> entity.linkedEntities()
-                        .stream()
-                        .map(DataEntityToQueryExamplePojo::getDataEntityId))
-                    .collect(Collectors.toSet());
-
-                final Map<QueryExamplePojo, List<DataEntityPojo>> queryExamplePojoListMap = new HashMap<>();
-
-                return reactiveDataEntityRepository
-                    .get(dataEntitiesId.stream().toList())
-                    .collectList()
-                    .map(dataEntities -> {
-                        dtoPage.getData().forEach(datum -> {
-                            queryExamplePojoListMap.put(datum.queryExamplePojo(), new ArrayList<>());
-                            final Set<Long> collect =
-                                datum.linkedEntities().stream()
-                                    .map(DataEntityToQueryExamplePojo::getDataEntityId)
-                                    .collect(Collectors.toSet());
-
-                            dataEntities.stream()
-                                .filter(item -> collect.contains(item.getId()))
-                                .forEach(item -> queryExamplePojoListMap.get(datum.queryExamplePojo()).add(item));
-                        });
-
-                        return queryExampleMapper.mapToQueryExamplePage(queryExamplePojoListMap,
-                            dtoPage.getTotal(), dtoPage.isHasNext());
-                    });
-            })
-            .flatMap(Function.identity());
+            .map(queryExampleMapper::mapPageToQueryExample);
     }
 
     @Override

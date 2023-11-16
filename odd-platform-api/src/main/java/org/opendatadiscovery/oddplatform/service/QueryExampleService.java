@@ -4,6 +4,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDatasetFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
 import reactor.core.publisher.Mono;
 
 public interface QueryExampleService {
@@ -16,4 +18,12 @@ public interface QueryExampleService {
         final QueryExampleDatasetFormData queryExampleDatasetFormData);
 
     Mono<Void> deleteQueryExampleDatasetRelationship(final Long exampleId, final Long dataEntityId);
+
+    Mono<Void> deleteQueryExample(final Long exampleId);
+
+    Mono<QueryExampleList> getQueryExampleByDatasetId(Long dataEntityId);
+
+    Mono<QueryExampleDetails> getQueryExampleDetails(final Long exampleId);
+
+    Mono<QueryExampleRefList> getQueryExampleList(final Integer page, final Integer size, final String query);
 }

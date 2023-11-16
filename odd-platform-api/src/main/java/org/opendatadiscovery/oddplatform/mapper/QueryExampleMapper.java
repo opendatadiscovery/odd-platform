@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -15,6 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -49,21 +49,26 @@ public abstract class QueryExampleMapper {
             .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
     }
 
-    public QueryExampleList mapToQueryExamplePage(
-        final Map<QueryExamplePojo, List<DataEntityPojo>> queryExamplePojoListMap,
-        final long total,
-        final boolean hasNext) {
+    public QueryExampleList mapPageToQueryExample(
+        final Page<QueryExampleDto> dtoPage) {
         return new QueryExampleList()
-            .items(mapToQueryExampleList(queryExamplePojoListMap))
-            .pageInfo(new PageInfo().total(total).hasNext(hasNext));
+            .items(mapToQueryExampleList(dtoPage.getData()))
+            .pageInfo(new PageInfo().total(dtoPage.getTotal()).hasNext(dtoPage.isHasNext()));
+    }
+
+    public QueryExampleList mapListToQueryExampleList(
+        final List<QueryExampleDto> queryExampleDtos) {
+        return new QueryExampleList()
+            .items(mapToQueryExampleList(queryExampleDtos))
+            .pageInfo(new PageInfo().total(Long.valueOf(queryExampleDtos.size())).hasNext(false));
     }
 
     public List<QueryExample> mapToQueryExampleList(
-        final Map<QueryExamplePojo, List<DataEntityPojo>> queryExamplePojoListMap) {
-        return queryExamplePojoListMap.entrySet()
+        final List<QueryExampleDto> queryExampleDtos) {
+        return queryExampleDtos
             .stream()
-            .map(item -> mapToQueryExample(item.getKey(),
-                item.getValue().stream().toList()))
+            .map(item -> mapToQueryExample(item.queryExamplePojo(),
+                item.linkedEntities()))
             .collect(Collectors.toList());
     }
 

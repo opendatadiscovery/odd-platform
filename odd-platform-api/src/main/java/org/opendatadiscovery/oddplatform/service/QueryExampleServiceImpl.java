@@ -10,12 +10,14 @@ import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDatasetFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleList;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
 import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.QueryExampleMapper;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToQueryExamplePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityQueryExampleRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
@@ -60,22 +62,56 @@ public class QueryExampleServiceImpl implements QueryExampleService {
         return dataEntityToQueryExampleRepository
             .createRelationWithDataEntity(queryExampleDatasetFormData.getDatasetId(), queryExampleId)
             .switchIfEmpty(Mono.error(() -> new BadUserRequestException("Dataset assigned to Query Example")))
-            .flatMap(pojo -> dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(queryExampleId))
-            .map(dto -> reactiveDataEntityRepository
-                .get(getRelatedDataEntitiesIds(dto).stream().toList())
-                .collectList()
-                .map(items -> queryExampleMapper.mapToQueryExample(
-                    dto.queryExamplePojo(),
-                    items)))
-            .flatMap(Function.identity());
+            .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(queryExampleId))
+            .map(dto -> queryExampleMapper.mapToQueryExample(
+                dto.queryExamplePojo(),
+                dto.linkedEntities()));
     }
 
     @Override
     @ReactiveTransactional
     public Mono<Void> deleteQueryExampleDatasetRelationship(final Long exampleId, final Long dataEntityId) {
         return dataEntityToQueryExampleRepository
-            .removeRelationWithDataEntity(exampleId, dataEntityId)
+            .removeRelationWithDataEntityByQueryId(exampleId, dataEntityId)
             .then();
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<Void> deleteQueryExample(final Long exampleId) {
+        return queryExampleRepository.get(exampleId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("QueryExample", exampleId)))
+            .thenMany(dataEntityToQueryExampleRepository.removeRelationWithDataEntityByQueryId(exampleId))
+            .then(queryExampleRepository.delete(exampleId).map(QueryExamplePojo::getId))
+            .then();
+    }
+
+    @Override
+    public Mono<QueryExampleList> getQueryExampleByDatasetId(final Long dataEntityId) {
+        return dataEntityToQueryExampleRepository
+            .getQueryExampleDatasetRelationsByDataEntity(dataEntityId)
+            .collectList()
+            .map(queryExampleMapper::mapListToQueryExampleList);
+    }
+
+    @Override
+    public Mono<QueryExampleDetails> getQueryExampleDetails(final Long exampleId) {
+        return queryExampleRepository.get(exampleId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("QueryExample", exampleId)))
+            .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(exampleId))
+            .map(dto -> reactiveDataEntityRepository
+                .getDimensionsByIds(getRelatedDataEntitiesIds(dto))
+                .collectList()
+                .map(items -> queryExampleMapper.mapToQueryExampleDetails(
+                    dto.queryExamplePojo(),
+                    items)))
+            .flatMap(Function.identity());
+    }
+
+    @Override
+    public Mono<QueryExampleRefList> getQueryExampleList(final Integer page, final Integer size, final String query) {
+        return queryExampleRepository.listQueryExample(page, size, query)
+            .map(queryExampleMapper::mapToRefPage);
     }
 
     private Mono<QueryExampleDetails> update(final QueryExamplePojo pojo) {
@@ -93,7 +129,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     private static Set<Long> getRelatedDataEntitiesIds(final QueryExampleDto dto) {
         return dto.linkedEntities()
             .stream()
-            .map(DataEntityToQueryExamplePojo::getDataEntityId)
+            .map(DataEntityPojo::getId)
             .collect(Collectors.toSet());
     }
 
