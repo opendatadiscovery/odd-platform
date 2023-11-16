@@ -15,6 +15,7 @@ export type AppTabItem<ValueT = number | string | boolean> = {
   hintType?: HintType;
   value?: ValueT;
   hidden?: boolean;
+  disabled?: boolean;
 };
 
 interface AppTabsProps
@@ -80,6 +81,7 @@ const AppTabs: FC<AppTabsProps> = ({
             $orientation={orientation}
             type={type}
             hidden={item.hidden}
+            disabled={item.disabled}
             key={item.link || item.name}
             sx={tabSx}
             label={
@@ -99,6 +101,7 @@ const AppTabs: FC<AppTabsProps> = ({
             $orientation={orientation}
             type={type}
             hidden={item.hidden}
+            disabled={item.disabled}
             key={item.name}
             sx={tabSx}
             label={

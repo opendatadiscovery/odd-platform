@@ -7,6 +7,7 @@ import type {
 } from 'generated-sources';
 import type { ErrorState } from 'redux/interfaces';
 import type { DataSourceEntityList } from 'lib/interfaces';
+import { addNextPage } from './utils';
 
 export function useGetDataSourceTypes() {
   return useQuery({
@@ -63,19 +64,10 @@ export function useGetDataSourceEntities({
         page: pageParam,
       });
 
-      const totalItems = response.entities.pageInfo.total;
-      const totalPageCount = Math.ceil(totalItems / size);
-      let nextPage;
-
-      if (pageParam < totalPageCount) {
-        nextPage = pageParam + 1;
-      }
-
       return {
         ...response,
         entities: {
-          ...response.entities,
-          pageInfo: { ...response.entities.pageInfo, nextPage },
+          ...addNextPage(response.entities, pageParam, size),
         },
       };
     },

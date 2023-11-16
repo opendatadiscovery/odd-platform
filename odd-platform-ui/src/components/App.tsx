@@ -27,6 +27,7 @@ const Alerts = lazy(() => import('./Alerts/Alerts'));
 const Activity = lazy(() => import('./Activity/Activity'));
 const DirectoryRoutes = lazy(() => import('./Directory/DirectoryRoutes'));
 const DataQuality = lazy(() => import('./DataQuality/DataQuality'));
+const DataModeling = lazy(() => import('./DataModelling/DataModelling'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -98,7 +99,7 @@ const App: React.FC = () => {
             />
             <Route
               path={getNonExactPath(DataModellingRoutes.querySearch)}
-              element={<div>Query Search</div>}
+              element={<DataModeling />}
             />
           </Routes>
         </AppSuspenseWrapper>

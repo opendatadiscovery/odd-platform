@@ -17,6 +17,7 @@ import type {
   DataEntityApiGetDataEntityGroupsItemsRequest,
   DataEntityApiUpdateStatusRequest,
 } from 'generated-sources';
+import { addNextPage } from './utils';
 
 interface UseDataEntityMetricsProps {
   dataEntityId: number;
@@ -136,18 +137,7 @@ export function useGetDataEntityGroupItems({
         page: pageParam,
       });
 
-      const totalItems = response.pageInfo.total;
-      const totalPageCount = Math.ceil(totalItems / size);
-      let nextPage;
-
-      if (pageParam < totalPageCount) {
-        nextPage = pageParam + 1;
-      }
-
-      return {
-        ...response,
-        pageInfo: { ...response.pageInfo, nextPage },
-      };
+      return addNextPage(response, pageParam, size);
     },
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
