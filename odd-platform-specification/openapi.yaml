@@ -42,7 +42,7 @@ tags:
   - name: dataEntityAttachment
   - name: directory
   - name: dataQualityRuns
-  - name: dataModeling
+  - name: queryExample
 
 paths:
   /api/integrations:
@@ -1927,11 +1927,11 @@ paths:
       tags:
         - dataQualityRuns
 
-  /api/modeling:
+  /api/queryexample:
     get:
-      summary: List of DataModeling
-      description: Gets the list of existing DataModels
-      operationId: getDataModelingList
+      summary: List of QueryExamples
+      description: Gets the list of existing QueryExamples
+      operationId: getQueryExampleList
       parameters:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
@@ -1942,104 +1942,104 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingRefList'
+                $ref: './components.yaml/#/components/schemas/QueryExampleRefList'
       tags:
-        - dataModeling
+        - queryExample
     post:
-      summary: Create DataModeling
-      description: Create new DataModeling
-      operationId: createDataModeling
+      summary: Create QueryExamples
+      description: Create new QueryExamples
+      operationId: createQueryExamples
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataModelingFormData'
+              $ref: './components.yaml/#/components/schemas/QueryExampleFormData'
       responses:
         '201':
           description: The resource has been successfully created
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingDetails'
+                $ref: './components.yaml/#/components/schemas/QueryExampleDetails'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/{modeling_id}:
+  /api/queryexample/{example_id}:
     get:
-      summary: Get DataModeling details
-      description: Get all information about DataModeling
-      operationId: getDataModelingDetails
+      summary: Get QueryExample details
+      description: Get all information about QueryExample
+      operationId: getQueryExampleDetails
       parameters:
-        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingDetails'
+                $ref: './components.yaml/#/components/schemas/QueryExampleDetails'
       tags:
-        - dataModeling
+        - queryExample
     put:
-      summary: Update DataModeling
-      description: Update existing DataModeling
-      operationId: updateDataModeling
+      summary: Update QueryExample
+      description: Update existing QueryExample
+      operationId: updateQueryExample
       parameters:
-        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataModelingFormData'
+              $ref: './components.yaml/#/components/schemas/QueryExampleFormData'
       responses:
         '201':
           description: The resource has been successfully modified
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingDetails'
+                $ref: './components.yaml/#/components/schemas/QueryExampleDetails'
       tags:
-        - dataModeling
+        - queryExample
     delete:
-      summary: Delete DataModeling
-      description: Deletes DataModeling
-      operationId: deleteDataModeling
+      summary: Delete QueryExample
+      description: Deletes QueryExample
+      operationId: deleteQueryExample
       parameters:
-        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/search:
+  /api/queryexample/search:
     post:
-      summary: DataModeling search by query
-      description: Creates a new search of all the matching Data Models to given query and calculates the aggregation data for correspondent data slice
-      operationId: dataModelingSearch
+      summary: QueryExample search by query
+      description: Creates a new search of all the matching QueryExamples to given query and calculates the aggregation data for correspondent data slice
+      operationId: queryExamplesSearch
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataModelingSearchFormData'
+              $ref: './components.yaml/#/components/schemas/QueryExampleSearchFormData'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingSearchFacetsData'
+                $ref: './components.yaml/#/components/schemas/QueryExampleSearchFacetsData'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/search/{search_id}:
+  /api/queryexample/search/{search_id}:
     get:
-      summary: Get DataModeling search facets by search ID
-      description: Gets DataModeling search facets by parameter which can be found in search endpoint response
-      operationId: getDataModelingSearchFacetList
+      summary: Get QueryExample search facets by search ID
+      description: Gets QueryExample search facets by parameter which can be found in search endpoint response
+      operationId: getQueryExampleSearchFacetList
       parameters:
         - name: search_id
           in: path
@@ -2053,13 +2053,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingSearchFacetsData'
+                $ref: './components.yaml/#/components/schemas/QueryExampleSearchFacetsData'
       tags:
-        - dataModeling
+        - queryExample
     put:
-      summary: Update DataModeling search facets by search ID
-      description: Updates DataModeling search facets of a certain search ID by provided search parameters
-      operationId: updateDataModelingSearchFacetList
+      summary: Update QueryExample search facets by search ID
+      description: Updates QueryExample search facets of a certain search ID by provided search parameters
+      operationId: updateQueryExampleSearchFacetList
       parameters:
         - name: search_id
           in: path
@@ -2072,22 +2072,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataModelingSearchFormData'
+              $ref: './components.yaml/#/components/schemas/QueryExampleSearchFormData'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingSearchFormData'
+                $ref: './components.yaml/#/components/schemas/QueryExampleSearchFacetsData'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/search/{search_id}/results:
+  /api/queryexample/search/{search_id}/results:
     get:
-      summary: Get DataModeling search results by search ID
-      description: Returns paginated list of DataModeling search results for a given search ID
-      operationId: getDataModelingSearchResults
+      summary: Get QueryExample search results by search ID
+      description: Returns paginated list of QueryExample search results for a given search ID
+      operationId: getQueryExampleSearchResults
       parameters:
         - name: search_id
           in: path
@@ -2103,15 +2103,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingList'
+                $ref: './components.yaml/#/components/schemas/QueryExampleList'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/{dataset_id}:
+  /api/queryexample/{data_entity_id}:
     get:
-      summary: Get DataModeling
-      description: Gets DataModelings by DataSet's id
-      operationId: getDataModelingByDatasetId
+      summary: Get QueryExample
+      description: Gets QueryExamples by DataSet's id
+      operationId: getQueryExampleByDatasetId
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
       responses:
@@ -2120,52 +2120,52 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingList'
+                $ref: './components.yaml/#/components/schemas/QueryExampleList'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/{modeling_id}/dataset:
+  /api/queryexample/{example_id}/dataset:
     post:
-      summary: add Dataset to DataModeling
-      description: Creates a new relation between DataModeling and Dataset
-      operationId: createDataModelingToDatasetRelationship
+      summary: add Dataset to QueryExample
+      description: Creates a new relation between QueryExample and Dataset
+      operationId: createQueryExampleToDatasetRelationship
       parameters:
-        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataModelingDatasetFormData'
+              $ref: './components.yaml/#/components/schemas/QueryExampleDatasetFormData'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingList'
+                $ref: './components.yaml/#/components/schemas/QueryExample'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/{modeling_id}/dataset/{dataset_id}:
+  /api/queryexample/{example_id}/dataset/{data_entity_id}:
     delete:
-      summary: Delete Dataset from DataModeling
-      description: Deletes relationship between DataModeling and Dataset
-      operationId: deleteDataModelingToDatasetRelationship
+      summary: Delete Dataset from QueryExample
+      description: Deletes relationship between QueryExample and Dataset
+      operationId: deleteQueryExampleToDatasetRelationship
       parameters:
-        - $ref: './components.yaml/#/components/parameters/DataModelingIdParam'
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
-        - dataModeling
+        - queryExample
 
-  /api/modeling/search/suggestions:
+  /api/queryexample/search/suggestions:
     get:
-      summary: Get DataModeling search suggestions by query
+      summary: Get QueryExample search suggestions by query
       description: Returns top five search suggestions for a given query
-      operationId: getDataModelingSearchSuggestions
+      operationId: getQueryExampleSearchSuggestions
       parameters:
         - $ref: './components.yaml/#/components/parameters/SearchParam'
       responses:
@@ -2174,9 +2174,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataModelingRefList'
+                $ref: './components.yaml/#/components/schemas/QueryExampleRefList'
       tags:
-        - dataModeling
+        - queryExample
 
   /api/dataentitygroups/domains:
     get:

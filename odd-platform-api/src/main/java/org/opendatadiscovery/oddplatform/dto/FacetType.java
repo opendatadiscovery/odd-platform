@@ -8,7 +8,8 @@ public enum FacetType {
     OWNERS,
     TAGS,
     GROUPS,
-    STATUSES;
+    STATUSES,
+    DATA_ENTITY;
 
     public static FacetType lookup(final String facetType) {
         for (final FacetType ft : FacetType.values()) {

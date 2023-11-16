@@ -184,6 +184,11 @@ components:
         - DATA_ENTITY_GROUP_UPDATE
         - DATA_ENTITY_ATTACHMENT_MANAGE
         - DATA_ENTITY_STATUS_UPDATE
+        - QUERY_EXAMPLE_CREATE
+        - QUERY_EXAMPLE_UPDATE
+        - QUERY_EXAMPLE_DELETE
+        - QUERY_EXAMPLE_DATASET_CREATE
+        - QUERY_EXAMPLE_DATASET_DELETE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -2609,20 +2614,20 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
 
-    DataModelingRefList:
+    QueryExampleRefList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/DataModelingRef'
+            $ref: '#/components/schemas/QueryExampleRef'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
         - page_info
 
-    DataModelingRef:
+    QueryExampleRef:
       type: object
       properties:
         id:
@@ -2630,49 +2635,43 @@ components:
           format: int64
         definition:
           type: string
-        query_example:
+        query:
           type: string
       required:
         - id
         - definition
-        - query_example
+        - query
 
-    DataModelingList:
+    QueryExampleList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/DataModeling'
+            $ref: '#/components/schemas/QueryExample'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
         - page_info
 
-    DataModeling:
+    QueryExample:
       type: object
       properties:
         definition:
           type: string
-        query_example:
+        query:
           type: string
         linked_entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataEntityList'
+          $ref: '#/components/schemas/DataEntityRefList'
 
-    DataModelingDetails:
+    QueryExampleDetails:
       allOf:
-        - $ref: '#/components/schemas/DataModelingRef'
+        - $ref: '#/components/schemas/QueryExampleRef'
         - type: object
           properties:
             linked_entities:
-              type: array
-              items:
-                $ref: '#/components/schemas/DataEntityList'
-            entities_using_count:
-              type: integer
+              $ref: '#/components/schemas/DataEntityList'
             created_at:
               type: string
               format: date-time
@@ -2683,24 +2682,24 @@ components:
             - created_at
             - updated_at
 
-    DataModelingFormData:
+    QueryExampleFormData:
       type: object
       properties:
         definition:
           type: string
-        query_example:
+        query:
           type: string
       required:
         - definition
-        - query_example
+        - query
 
-    DataModelingSearchFormData:
+    QueryExampleSearchFormData:
       type: object
       properties:
         query:
           type: string
 
-    DataModelingSearchFacetsData:
+    QueryExampleSearchFacetsData:
       type: object
       properties:
         search_id:
@@ -2715,7 +2714,7 @@ components:
         - search_id
         - query
 
-    DataModelingDatasetFormData:
+    QueryExampleDatasetFormData:
       type: object
       properties:
         dataset_id:
@@ -3804,8 +3803,8 @@ components:
         type: integer
         format: int64
 
-    DataModelingIdParam:
-      name: term_id
+    QueryExampleIdParam:
+      name: example_id
       in: path
       required: true
       schema:
