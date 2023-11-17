@@ -2667,6 +2667,10 @@ components:
           type: string
         linked_entities:
           $ref: '#/components/schemas/DataEntityRefList'
+      required:
+        - definition
+        - query
+        - linked_entities
 
     QueryExampleDetails:
       allOf:

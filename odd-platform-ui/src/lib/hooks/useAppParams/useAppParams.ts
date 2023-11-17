@@ -23,6 +23,7 @@ const useAppParams = (): AppRouteParams => {
     dataSourceTypePrefix,
     dataSourceId,
     typeId,
+    querySearchId,
   } = useParams<keyof RouteParams>() as RouteParams;
 
   const directoriesEntityTypeId = typeId === 'all' ? undefined : parseInt(typeId, 10);
@@ -48,6 +49,7 @@ const useAppParams = (): AppRouteParams => {
     dataSourceTypePrefix,
     dataSourceId: parseInt(dataSourceId, 10),
     typeId: directoriesEntityTypeId,
+    querySearchId,
   };
 };
 

@@ -5,6 +5,7 @@ import type {
   SearchRoutes,
   TermsRoutes,
   DirectoryRoutes,
+  DataModellingRoutes,
 } from '../useAppPaths/shared';
 
 interface DataEntityViewTypes {
@@ -114,16 +115,26 @@ interface AppDirectoryRouteParams {
   [DirectoryRoutes.typeId]: undefined | number;
 }
 
+interface DataModellingRouteParams {
+  [DataModellingRoutes.querySearchId]: string;
+}
+
+interface AppDataModellingRouteParams extends DataModellingRouteParams {
+  [DataModellingRoutes.querySearchId]: string;
+}
+
 export type RouteParams = DataEntityRouteParams &
   TermRouteParams &
   SearchRouteParams &
   AlertsRouteViewTypes &
   ManagementRouteParams &
-  DirectoryRouteParams;
+  DirectoryRouteParams &
+  DataModellingRouteParams;
 
 export type AppRouteParams = AppDataEntityRouteParams &
   AppSearchRouteParams &
   AppTermRouteParams &
   AppAlertsRouteParams &
   AppManagementRouteParams &
-  AppDirectoryRouteParams;
+  AppDirectoryRouteParams &
+  AppDataModellingRouteParams;

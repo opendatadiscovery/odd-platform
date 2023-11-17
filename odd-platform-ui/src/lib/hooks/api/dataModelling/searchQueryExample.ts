@@ -3,25 +3,20 @@ import { addNextPage } from 'lib/hooks/api/utils';
 import { queryExampleApi } from 'lib/api';
 import type { QueryExampleApiGetQueryExampleSearchResultsRequest } from 'generated-sources';
 
-export function useCreateQueryExampleSearchId() {
+export function useCreateQueryExampleSearchId({ enabled }: { enabled: boolean }) {
   return useQuery({
     queryKey: ['createQueryExampleSearchId'],
     queryFn: async () =>
       queryExampleApi.queryExamplesSearch({ queryExampleSearchFormData: { query: '' } }),
+    enabled,
   });
 }
 
 type UseSearchQueryExamples = Omit<
   QueryExampleApiGetQueryExampleSearchResultsRequest,
   'page'
-> & {
-  enabled: boolean;
-};
-export function useSearchQueryExamples({
-  searchId,
-  size,
-  enabled,
-}: UseSearchQueryExamples) {
+>;
+export function useSearchQueryExamples({ searchId, size }: UseSearchQueryExamples) {
   return useInfiniteQuery({
     queryKey: ['searchQueryExamples', searchId, size],
     queryFn: async ({ pageParam }) => {
@@ -35,6 +30,5 @@ export function useSearchQueryExamples({
     },
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
-    enabled,
   });
 }
