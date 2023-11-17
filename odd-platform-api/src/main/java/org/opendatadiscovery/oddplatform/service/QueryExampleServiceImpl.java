@@ -25,6 +25,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampl
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,6 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     private final ReactiveQueryExampleSearchEntrypointRepository queryExampleSearchEntrypointRepository;
     private final ReactiveDataEntityQueryExampleRelationRepository dataEntityToQueryExampleRepository;
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
-    private final DataEntityMapper dataEntityMapper;
     private final QueryExampleMapper queryExampleMapper;
 
     @Override
@@ -65,7 +65,9 @@ public class QueryExampleServiceImpl implements QueryExampleService {
             .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(queryExampleId))
             .map(dto -> queryExampleMapper.mapToQueryExample(
                 dto.queryExamplePojo(),
-                dto.linkedEntities()));
+                dto.linkedEntities()))
+            .zipWith(queryExampleSearchEntrypointRepository.updateQueryExampleVectorsForDataEntity(queryExampleId))
+            .map(Tuple2::getT1);
     }
 
     @Override

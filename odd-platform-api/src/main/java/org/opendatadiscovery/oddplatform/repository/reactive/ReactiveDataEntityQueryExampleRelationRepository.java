@@ -12,7 +12,8 @@ public interface ReactiveDataEntityQueryExampleRelationRepository
 
     Mono<QueryExampleDto> getQueryExampleDatasetRelations(final long queryExample);
 
-    Mono<DataEntityToQueryExamplePojo> removeRelationWithDataEntityByQueryId(final Long exampleId, final Long dataEntityId);
+    Mono<DataEntityToQueryExamplePojo> removeRelationWithDataEntityByQueryId(final Long exampleId,
+                                                                             final Long dataEntityId);
 
     Flux<DataEntityToQueryExamplePojo> removeRelationWithDataEntityByQueryId(final Long exampleId);
 

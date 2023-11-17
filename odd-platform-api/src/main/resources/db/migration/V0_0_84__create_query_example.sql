@@ -26,8 +26,10 @@ CREATE TABLE IF NOT EXISTS query_example_search_entrypoint
 (
     query_example_id          bigint PRIMARY KEY,
     query_example_vector      tsvector,
+    data_entity_vector        tsvector,
     search_vector             tsvector GENERATED ALWAYS
-                                AS (coalesce(query_example_vector, ''))
+                                AS (coalesce(query_example_vector, '')
+                                    || coalesce(data_entity_vector, ''))
                                 STORED,
 
     CONSTRAINT search_entrypoint_query_example_id_fkey FOREIGN KEY (query_example_id) REFERENCES query_example (id)

@@ -139,7 +139,9 @@ public class ReactiveQueryExampleRepositoryImpl
     }
 
     @Override
-    public Mono<Page<QueryExamplePojo>> listQueryExample(Integer page, Integer size, String inputQuery) {
+    public Mono<Page<QueryExamplePojo>> listQueryExample(final Integer page,
+                                                         final Integer size,
+                                                         final String inputQuery) {
         final Select<QueryExampleRecord> homogeneousQuery = DSL.selectFrom(QUERY_EXAMPLE)
             .where(listCondition(inputQuery));
 
@@ -149,7 +151,7 @@ public class ReactiveQueryExampleRepositoryImpl
 
         final Table<? extends Record> queryCTE = queryExampleSelect.asTable("query_cte");
 
-        SelectHavingStep<Record> query = DSL.with(queryCTE.getName())
+        final SelectHavingStep<Record> query = DSL.with(queryCTE.getName())
             .as(queryExampleSelect)
             .select(queryCTE.fields())
             .from(queryCTE.getName())

@@ -7,5 +7,7 @@ import reactor.core.publisher.Mono;
 public interface ReactiveQueryExampleSearchEntrypointRepository {
     Mono<Integer> updateQueryExampleVectors(final Long id);
 
+    Mono<Integer> updateQueryExampleVectorsForDataEntity(final long id);
+
     Mono<Page<QueryExamplePojo>> getQuerySuggestions(final String query);
 }
