@@ -76,10 +76,33 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 
 ## Getting Started 
+### Running as a separate container
+
+Setting up PostgreSQL connection details, for example:
+```
+export POSTGRES_HOST=172.17.0.1 \
+export POSTGRES_PORT=5432 \
+export POSTGRES_DATABASE=postgres \
+export POSTGRES_USER=postgres \
+export POSTGRES_PASSWORD=mysecretpassword
+```
+Starting new instance of the platform:
+```
+docker run -d \
+  --name odd-platform \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE} \
+  -e SPRING_DATASOURCE_USERNAME=${POSTGRES_USER} \
+  -e SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD} \  
+  -p 8080:8080 \
+  ghcr.io/opendatadiscovery/odd-platform:latest
+```
+Go to [localhost:8080](http://localhost:8080) in case of local environment
 
 ### Running Locally with Docker Compose
 
-**```docker-compose -f docker/demo.yaml up -d odd-platform-enricher```** 
+```
+docker-compose -f docker/demo.yaml up -d odd-platform-enricher
+```
 
 * :point_right: **[QUICKSTART](./docker/README.md)** 
 
