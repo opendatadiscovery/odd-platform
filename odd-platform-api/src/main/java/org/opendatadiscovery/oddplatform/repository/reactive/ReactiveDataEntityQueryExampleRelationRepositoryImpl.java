@@ -65,9 +65,9 @@ public class ReactiveDataEntityQueryExampleRelationRepositoryImpl
         final SelectHavingStep<Record> query = DSL.select(QUERY_EXAMPLE.asterisk())
             .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(AGG_DATA_ENTITIES_FIELD))
             .from(QUERY_EXAMPLE)
-            .join(DATA_ENTITY_TO_QUERY_EXAMPLE)
+            .leftJoin(DATA_ENTITY_TO_QUERY_EXAMPLE)
             .on(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(QUERY_EXAMPLE.ID))
-            .join(DATA_ENTITY)
+            .leftJoin(DATA_ENTITY)
             .on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID))
             .where(QUERY_EXAMPLE.ID.eq(queryExample))
             .groupBy(QUERY_EXAMPLE.ID);

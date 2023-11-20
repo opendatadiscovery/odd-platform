@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto.MANAGEMENT;
-import static org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyTypeDto.TERM;
 
 @RequiredArgsConstructor
@@ -69,11 +68,11 @@ public enum PolicyPermissionDto {
     ROLE_CREATE(MANAGEMENT),
     ROLE_UPDATE(MANAGEMENT),
     ROLE_DELETE(MANAGEMENT),
-    QUERY_EXAMPLE_CREATE(QUERY_EXAMPLE),
-    QUERY_EXAMPLE_UPDATE(QUERY_EXAMPLE),
-    QUERY_EXAMPLE_DELETE(QUERY_EXAMPLE),
-    QUERY_EXAMPLE_DATASET_CREATE(QUERY_EXAMPLE),
-    QUERY_EXAMPLE_DATASET_DELETE(QUERY_EXAMPLE),
+    QUERY_EXAMPLE_CREATE(DATA_ENTITY),
+    QUERY_EXAMPLE_UPDATE(DATA_ENTITY),
+    QUERY_EXAMPLE_DELETE(DATA_ENTITY),
+    QUERY_EXAMPLE_DATASET_CREATE(DATA_ENTITY),
+    QUERY_EXAMPLE_DATASET_DELETE(DATA_ENTITY),
     ALL(null);
 
     private final PolicyTypeDto type;
