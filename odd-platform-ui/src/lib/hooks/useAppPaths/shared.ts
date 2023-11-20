@@ -106,9 +106,9 @@ export const DataQualityRoutes = {
 } as const;
 
 export const DataModellingRoutes = {
-  querySearch: 'query-search',
+  dataModelling: 'data-modelling',
+  queryExamples: 'query-examples',
+  queryExampleId: 'queryExampleId',
+  queryExampleIdParam: ':queryExampleId',
   querySearchId: 'querySearchId',
-  querySearchIdParam: ':querySearchId',
-  queryId: 'queryId',
-  queryIdParam: ':queryId',
 } as const;

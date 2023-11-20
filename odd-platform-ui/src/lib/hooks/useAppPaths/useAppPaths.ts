@@ -54,6 +54,12 @@ const useAppPaths = () => {
   const directoryDataSourceListPath = (dataSourcePrefix: string) =>
     updatePath(`${DirectoryRoutes.directory}/${dataSourcePrefix}`);
 
+  // Data modelling
+  const queryExamplePath = (queryExampleId: number) =>
+    updatePath(
+      `${DataModellingRoutes.dataModelling}/${DataModellingRoutes.queryExamples}/${queryExampleId}`
+    );
+
   return useMemo(
     () => ({
       isPathEmbedded,
@@ -75,6 +81,7 @@ const useAppPaths = () => {
       integrationPath,
       directoryEntitiesListPath,
       directoryDataSourceListPath,
+      queryExamplePath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

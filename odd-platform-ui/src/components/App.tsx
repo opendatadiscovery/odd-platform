@@ -99,7 +99,7 @@ const App: React.FC = () => {
               element={<DataQuality />}
             />
             <Route
-              path={getNonExactPath(DataModellingRoutes.querySearch)}
+              path={getNonExactPath(DataModellingRoutes.dataModelling)}
               element={<DataModeling />}
             />
           </Routes>

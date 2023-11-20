@@ -4,8 +4,8 @@ import React, { useMemo } from 'react';
 import { useSearchQueryExamples } from 'lib/hooks/api/dataModelling/searchQueryExample';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import { useTheme } from 'styled-components';
-import ThreadMessageSkeleton from '../../DataEntityDetails/DataCollaboration/CurrentMessage/Thread/ThreadContent/ThreadMessage/ThreadMessageSkeleton';
 import QueryExampleSearchResultsItem from '../QueryExampleSearchResultsItem/QueryExampleSearchResultsItem';
+import QueryExampleSearchResultsSkeleton from './QueryExampleSearchResultsSkeletion';
 
 interface QueryExampleSearchResultsProps {
   searchId: string;
@@ -34,14 +34,14 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
         dataLength={queryExamples.length}
         next={fetchNextPage}
         hasMore={hasNextPage}
-        loader={<ThreadMessageSkeleton />}
+        loader={<QueryExampleSearchResultsSkeleton />}
         scrollThreshold='200px'
         scrollableTarget='query-examples-list'
       >
         {queryExamples.map(qe => (
           <QueryExampleSearchResultsItem queryExample={qe} key={qe.definition} />
         ))}
-        {isFetching && <ThreadMessageSkeleton />}
+        {isFetching && <QueryExampleSearchResultsSkeleton />}
       </InfiniteScroll>
     </Grid>
   );
