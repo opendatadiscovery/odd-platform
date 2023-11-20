@@ -2658,6 +2658,9 @@ components:
     QueryExample:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         definition:
           type: string
         query:

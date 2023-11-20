@@ -60,7 +60,7 @@ public abstract class QueryExampleMapper {
         final List<QueryExampleDto> queryExampleDtos) {
         return new QueryExampleList()
             .items(mapToQueryExampleList(queryExampleDtos))
-            .pageInfo(new PageInfo().total(Long.valueOf(queryExampleDtos.size())).hasNext(false));
+            .pageInfo(new PageInfo().total((long) queryExampleDtos.size()).hasNext(false));
     }
 
     public List<QueryExample> mapToQueryExampleList(
@@ -75,6 +75,7 @@ public abstract class QueryExampleMapper {
     public QueryExample mapToQueryExample(
         final QueryExamplePojo pojo, final List<DataEntityPojo> dataEntities) {
         return new QueryExample()
+            .id(pojo.getId())
             .definition(pojo.getDefinition())
             .query(pojo.getQuery())
             .linkedEntities(mapDataEntityRefList(dataEntities));

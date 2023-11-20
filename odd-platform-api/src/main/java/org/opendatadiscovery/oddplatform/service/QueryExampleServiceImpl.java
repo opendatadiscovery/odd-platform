@@ -15,7 +15,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleRefList;
 import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.QueryExampleMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
@@ -75,6 +74,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     public Mono<Void> deleteQueryExampleDatasetRelationship(final Long exampleId, final Long dataEntityId) {
         return dataEntityToQueryExampleRepository
             .removeRelationWithDataEntityByQueryId(exampleId, dataEntityId)
+            .then(queryExampleSearchEntrypointRepository.updateQueryExampleVectorsForDataEntity(exampleId))
             .then();
     }
 
