@@ -116,11 +116,11 @@ interface AppDirectoryRouteParams {
 }
 
 interface DataModellingRouteParams {
-  [DataModellingRoutes.querySearchId]: string;
+  [DataModellingRoutes.queryExampleId]: string;
 }
 
-interface AppDataModellingRouteParams extends DataModellingRouteParams {
-  [DataModellingRoutes.querySearchId]: string;
+interface AppDataModellingRouteParams {
+  [DataModellingRoutes.queryExampleId]: number;
 }
 
 export type RouteParams = DataEntityRouteParams &

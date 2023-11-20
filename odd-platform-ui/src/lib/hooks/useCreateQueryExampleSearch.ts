@@ -1,10 +1,10 @@
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
-import { useAppPaths } from './index';
+import useAppPaths from './useAppPaths/useAppPaths';
 import {
   useCreateQueryExampleSearchId,
   useGetQueryExampleSearchFacets,
-} from './api/dataModelling/searchQueryExample';
+} from './api/dataModelling/searchQueryExamples';
 
 export default function useCreateQueryExampleSearch() {
   const { DataModellingRoutes } = useAppPaths();

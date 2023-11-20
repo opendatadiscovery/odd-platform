@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { AppSuspenseWrapper } from 'components/shared/elements';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAppPaths } from 'lib/hooks';
-import QueryExamplesContainer from './QueryExamplesContainer';
-import QueryExampleDetails from './QueryExampleDetails/QueryExampleDetails';
+
+const QueryExamplesContainer = lazy(() => import('./QueryExamplesContainer'));
+const QueryExampleDetails = lazy(
+  () => import('./QueryExampleDetails/QueryExampleDetails')
+);
 
 const DataModellingRoutes: React.FC = () => {
   const { DataModellingRoutes: routes } = useAppPaths();
+
   return (
     <AppSuspenseWrapper>
       <Routes>
+        <Route path='/' element={<Navigate to={routes.queryExamples} />} />
         <Route path={routes.queryExamples} element={<QueryExamplesContainer />} />
-        <Route
-          path={`${routes.queryExamples}/${routes.queryExampleIdParam}`}
-          element={<QueryExampleDetails />}
-        />
+        <Route path={routes.queryExamples}>
+          <Route path={routes.queryExampleIdParam} element={<QueryExampleDetails />} />
+        </Route>
       </Routes>
     </AppSuspenseWrapper>
   );

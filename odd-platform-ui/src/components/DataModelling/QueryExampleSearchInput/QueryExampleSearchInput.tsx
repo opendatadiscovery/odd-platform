@@ -1,7 +1,7 @@
 import { Input } from 'components/shared/elements';
 import React, { useCallback, useEffect, useState } from 'react';
 import type { QueryExampleSearchFacetsData } from 'generated-sources';
-import { useUpdateQueryExampleSearchFacets } from 'lib/hooks/api/dataModelling/searchQueryExample';
+import { useUpdateQueryExampleSearchFacets } from 'lib/hooks/api/dataModelling/searchQueryExamples';
 
 interface QueryExampleSearchInputProps {
   facets?: QueryExampleSearchFacetsData;

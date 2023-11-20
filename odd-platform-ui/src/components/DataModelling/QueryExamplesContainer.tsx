@@ -15,7 +15,7 @@ const QueryExamplesContainer: React.FC = () => {
   const { facets, searchId } = useCreateQueryExampleSearch();
 
   return (
-    <>
+    <Grid container gap={2}>
       <Grid
         item
         display='flex'
@@ -54,7 +54,7 @@ const QueryExamplesContainer: React.FC = () => {
         </Grid>
         {searchId && <QueryExampleSearchResults searchId={searchId} />}
       </Grid>
-    </>
+    </Grid>
   );
 };
 

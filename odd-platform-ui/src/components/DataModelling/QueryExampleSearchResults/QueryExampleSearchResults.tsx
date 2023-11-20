@@ -1,9 +1,9 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Grid } from '@mui/material';
 import React, { useMemo } from 'react';
-import { useSearchQueryExamples } from 'lib/hooks/api/dataModelling/searchQueryExample';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import { useTheme } from 'styled-components';
+import { useSearchQueryExamples } from 'lib/hooks/api/dataModelling/searchQueryExamples';
 import QueryExampleSearchResultsItem from '../QueryExampleSearchResultsItem/QueryExampleSearchResultsItem';
 import QueryExampleSearchResultsSkeleton from './QueryExampleSearchResultsSkeletion';
 
