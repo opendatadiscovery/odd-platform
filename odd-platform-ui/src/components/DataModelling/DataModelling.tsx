@@ -5,9 +5,11 @@ import DataModellingRoutes from './DataModellingRoutes';
 
 const DataModelling: React.FC = () => (
   <PageWithLeftSidebar.MainContainer>
-    <Grid container px={2}>
-      <DataModellingRoutes />
-    </Grid>
+    <PageWithLeftSidebar.ContentContainer container spacing={2}>
+      <Grid container p={2}>
+        <DataModellingRoutes />
+      </Grid>
+    </PageWithLeftSidebar.ContentContainer>
   </PageWithLeftSidebar.MainContainer>
 );
 

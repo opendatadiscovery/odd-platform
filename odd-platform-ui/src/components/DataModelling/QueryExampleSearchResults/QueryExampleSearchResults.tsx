@@ -1,12 +1,14 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Grid } from '@mui/material';
 import React, { useMemo } from 'react';
 import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
 import { useTheme } from 'styled-components';
 import { useSearchQueryExamples } from 'lib/hooks/api/dataModelling/searchQueryExamples';
-import QueryExampleSearchResultsItem from '../QueryExampleSearchResultsItem/QueryExampleSearchResultsItem';
-import QueryExampleSearchResultsSkeleton from './QueryExampleSearchResultsSkeletion';
-import { EmptyContentPlaceholder } from '../../shared/elements';
+import {
+  EmptyContentPlaceholder,
+  QueryExamplesListItem,
+  QueryExamplesSkeleton,
+} from 'components/shared/elements';
+import { ScrollableYGrid } from 'components/shared/styled-components/ScrollableYGrid';
 
 interface QueryExampleSearchResultsProps {
   searchId: string;
@@ -34,23 +36,24 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
   const calculatedHeight = `calc(100vh - ${toolbarHeight}px - ${querySearchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
     8
   )})`;
+
   return (
-    <Grid item xs={12} id='query-examples-list' sx={{ height: calculatedHeight }}>
+    <ScrollableYGrid height={calculatedHeight} item xs={12} id='query-examples-list'>
       <InfiniteScroll
         dataLength={queryExamples.length}
         next={fetchNextPage}
         hasMore={hasNextPage}
-        loader={<QueryExampleSearchResultsSkeleton />}
+        loader={<QueryExamplesSkeleton />}
         scrollThreshold='200px'
         scrollableTarget='query-examples-list'
       >
         {queryExamples.map(qe => (
-          <QueryExampleSearchResultsItem queryExample={qe} key={qe.definition} />
+          <QueryExamplesListItem queryExample={qe} key={qe.definition} />
         ))}
-        {isLoading && <QueryExampleSearchResultsSkeleton />}
+        {isLoading && <QueryExamplesSkeleton />}
         {isEmpty && <EmptyContentPlaceholder />}
       </InfiniteScroll>
-    </Grid>
+    </ScrollableYGrid>
   );
 };
 

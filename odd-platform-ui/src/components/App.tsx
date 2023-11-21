@@ -11,6 +11,7 @@ import {
   fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
+import { DataModellingRoutes } from 'routes/dataModellingRoutes';
 
 // lazy elements
 const Management = lazy(() => import('./Management/Management'));
@@ -41,7 +42,6 @@ const App: React.FC = () => {
     ActivityRoutes,
     AlertsRoutes,
     DirectoryRoutes: DirectoryRoutesEnum,
-    DataModellingRoutes,
     DataQualityRoutes,
     getNonExactPath,
     getNonExactParamPath,
@@ -99,7 +99,7 @@ const App: React.FC = () => {
               element={<DataQuality />}
             />
             <Route
-              path={getNonExactPath(DataModellingRoutes.dataModelling)}
+              path={getNonExactPath(DataModellingRoutes.BASE_PATH)}
               element={<DataModeling />}
             />
           </Routes>

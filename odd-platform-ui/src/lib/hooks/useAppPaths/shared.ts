@@ -34,6 +34,7 @@ export const DataEntityRoutes = {
   history: 'history',
   alerts: 'alerts',
   linkedEntities: 'linked-entities',
+  queryExamples: 'query-examples',
   activity: 'activity',
   discussions: 'discussions',
   createMessage: 'createMessage',
@@ -103,12 +104,4 @@ export const DirectoryRoutes = {
 
 export const DataQualityRoutes = {
   dataQuality: 'data-quality',
-} as const;
-
-export const DataModellingRoutes = {
-  dataModelling: 'data-modelling',
-  queryExamples: 'query-examples',
-  queryExampleId: 'queryExampleId',
-  queryExampleIdParam: ':queryExampleId',
-  querySearchId: 'querySearchId',
 } as const;

@@ -7,7 +7,7 @@ import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
 import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
 import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';
 
-const QueryExampleDetails: React.FC = () => {
+const QueryExampleDetailsContainer: React.FC = () => {
   const { queryExampleId: exampleId } = useAppParams();
   const { data: queryExampleDetails, isLoading } = useGetQueryExampleDetails({
     exampleId,
@@ -48,4 +48,4 @@ const QueryExampleDetails: React.FC = () => {
   );
 };
 
-export default QueryExampleDetails;
+export default QueryExampleDetailsContainer;

@@ -3,14 +3,13 @@ import TruncateMarkup from 'react-truncate-markup';
 import React from 'react';
 import type { QueryExample } from 'generated-sources';
 import { useAppPaths, useScrollBarWidth } from 'lib/hooks';
-import { TruncatedCell } from 'components/shared/elements';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
+import TruncatedCell from '../TruncatedCell/TruncatedCell';
 
 const StyledGridContainer = styled(Grid)<{ $scrollbarWidth: string }>(
   ({ theme, $scrollbarWidth }) => css`
     padding-right: ${$scrollbarWidth};
-    height: ${theme.spacing(9)};
     border-bottom: 1px solid ${theme.palette.divider};
     flex-wrap: nowrap;
     align-items: center;
@@ -26,9 +25,7 @@ interface QueryExampleSearchResultsItemProps {
   queryExample: QueryExample;
 }
 
-const QueryExampleSearchResultsItem = ({
-  queryExample,
-}: QueryExampleSearchResultsItemProps) => {
+const QueryExamplesListItem = ({ queryExample }: QueryExampleSearchResultsItemProps) => {
   const scrollbarWidth = useScrollBarWidth();
   const navigate = useNavigate();
   const { queryExamplePath } = useAppPaths();
@@ -40,7 +37,7 @@ const QueryExampleSearchResultsItem = ({
       container
       $scrollbarWidth={scrollbarWidth}
     >
-      <Grid item xs={4} sx={theme => ({ py: theme.spacing(2), px: theme.spacing(1) })}>
+      <Grid item xs={4} pl={1}>
         <Typography variant='body1'>{queryExample.definition}</Typography>
       </Grid>
       <Grid item xs={5} p={theme => theme.spacing(1)} alignItems='center'>
@@ -65,4 +62,4 @@ const QueryExampleSearchResultsItem = ({
   );
 };
 
-export default QueryExampleSearchResultsItem;
+export default QueryExamplesListItem;

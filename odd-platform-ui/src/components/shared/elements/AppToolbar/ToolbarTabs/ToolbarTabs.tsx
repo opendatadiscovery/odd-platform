@@ -1,5 +1,5 @@
 import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { generatePath, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
@@ -9,6 +9,7 @@ import {
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
+import { DataModellingRoutes } from 'routes/dataModellingRoutes';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +31,6 @@ const ToolbarTabs: FC = () => {
     DirectoryRoutes,
     DataEntityRoutes,
     DataQualityRoutes,
-    DataModellingRoutes,
     updatePath,
   } = useAppPaths();
 
@@ -53,10 +53,8 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Data Modelling'),
-        link: updatePath(
-          `${DataModellingRoutes.dataModelling}/${DataModellingRoutes.queryExamples}`
-        ),
-        value: DataModellingRoutes.dataModelling,
+        link: generatePath(DataModellingRoutes.BASE_PATH),
+        value: 'data-modelling',
         hint: t('BETA'),
         hintType: 'secondary',
       },
