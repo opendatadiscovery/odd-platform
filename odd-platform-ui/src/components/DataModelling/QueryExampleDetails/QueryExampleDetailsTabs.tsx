@@ -1,17 +1,20 @@
 import { useTranslation } from 'react-i18next';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import type { AppTabItem } from 'components/shared/elements';
 import { AppTabs } from 'components/shared/elements';
 
 interface QueryExampleDetailsTabsProps {
+  onHandleTabChange: () => void;
   linkedEntitiesHint?: number | string;
+  selectedTab?: number;
 }
 
 const QueryExampleDetailsTabs = ({
   linkedEntitiesHint,
+  selectedTab,
+  onHandleTabChange,
 }: QueryExampleDetailsTabsProps) => {
   const { t } = useTranslation();
-  const [selectedTab, setSelectedTab] = useState(0);
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -25,18 +28,15 @@ const QueryExampleDetailsTabs = ({
         hint: linkedEntitiesHint,
       },
     ],
-    [t]
+    [t, linkedEntitiesHint]
   );
-  const handleTabChange = useCallback(() => {
-    setSelectedTab(prev => (prev === 0 ? 1 : 0));
-  }, []);
 
   return (
     <AppTabs
       type='primary'
       items={tabs}
       selectedTab={selectedTab}
-      handleTabChange={handleTabChange}
+      handleTabChange={onHandleTabChange}
     />
   );
 };

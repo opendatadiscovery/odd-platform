@@ -1,15 +1,22 @@
-import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import React, { useCallback, useState } from 'react';
+import { Grid, Typography } from '@mui/material';
 import { useGetQueryExampleDetails } from 'lib/hooks/api/dataModelling/queryExamples';
 import { useAppParams } from 'lib/hooks';
-import { AppLoadingPage, AppPaper, Markdown } from 'components/shared/elements';
+import { AppLoadingPage } from 'components/shared/elements';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
+import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
+import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';
 
 const QueryExampleDetails: React.FC = () => {
   const { queryExampleId: exampleId } = useAppParams();
-  const { data: queryExampleDetails, isFetching } = useGetQueryExampleDetails({
+  const { data: queryExampleDetails, isLoading } = useGetQueryExampleDetails({
     exampleId,
   });
+
+  const [selectedTab, setSelectedTab] = useState(0);
+  const handleTabChange = useCallback(() => {
+    setSelectedTab(prev => (prev === 0 ? 1 : 0));
+  }, []);
 
   return (
     <Grid container gap={2} flexDirection='column'>
@@ -18,44 +25,25 @@ const QueryExampleDetails: React.FC = () => {
       </Grid>
       <Grid item alignItems='center'>
         <QueryExampleDetailsTabs
-          linkedEntitiesHint={queryExampleDetails?.linkedEntities?.pageInfo.total}
+          selectedTab={selectedTab}
+          onHandleTabChange={handleTabChange}
+          linkedEntitiesHint={queryExampleDetails?.linkedEntities.pageInfo.total}
         />
       </Grid>
-      {isFetching && <AppLoadingPage />}
       <Grid item container gap={2} flexDirection='column' alignItems='start'>
-        {queryExampleDetails && (
-          <>
-            <AppPaper
-              elevation={0}
-              sx={theme => ({ p: theme.spacing(2), width: '100%' })}
-            >
-              <Typography variant='h2' mb={1}>
-                Definition
-              </Typography>
-              <Markdown value={queryExampleDetails.definition} />
-            </AppPaper>
-            <AppPaper
-              elevation={0}
-              sx={theme => ({ p: theme.spacing(2), width: '100%' })}
-            >
-              <Typography variant='h2' mb={1}>
-                Query
-              </Typography>
-              <Box
-                sx={theme => ({
-                  borderRadius: theme.spacing(0.5),
-                  p: theme.spacing(1),
-                  backgroundColor: theme.palette.backgrounds.primary,
-                })}
-              >
-                <Typography variant='body1' color={theme => theme.palette.text.secondary}>
-                  {queryExampleDetails.query}
-                </Typography>
-              </Box>
-            </AppPaper>
-          </>
+        {queryExampleDetails && !isLoading && selectedTab === 0 && (
+          <QueryExampleDetailsOverview
+            definition={queryExampleDetails.definition}
+            query={queryExampleDetails.query}
+          />
+        )}
+        {queryExampleDetails && !isLoading && selectedTab === 1 && (
+          <QueryExampleDetailsLinkedEntities
+            entities={queryExampleDetails.linkedEntities.items}
+          />
         )}
       </Grid>
+      {isLoading && <AppLoadingPage />}
     </Grid>
   );
 };

@@ -6,6 +6,7 @@ import { useTheme } from 'styled-components';
 import { useSearchQueryExamples } from 'lib/hooks/api/dataModelling/searchQueryExamples';
 import QueryExampleSearchResultsItem from '../QueryExampleSearchResultsItem/QueryExampleSearchResultsItem';
 import QueryExampleSearchResultsSkeleton from './QueryExampleSearchResultsSkeletion';
+import { EmptyContentPlaceholder } from '../../shared/elements';
 
 interface QueryExampleSearchResultsProps {
   searchId: string;
@@ -15,7 +16,7 @@ const querySearchHeight = 40;
 
 const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps) => {
   const theme = useTheme();
-  const { data, fetchNextPage, hasNextPage, isFetching } = useSearchQueryExamples({
+  const { data, fetchNextPage, hasNextPage, isLoading } = useSearchQueryExamples({
     searchId,
     size: 30,
   });
@@ -23,6 +24,11 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
   const queryExamples = useMemo(
     () => data?.pages.flatMap(page => page.items) ?? [],
     [data?.pages]
+  );
+
+  const isEmpty = useMemo(
+    () => queryExamples.length === 0 && !isLoading,
+    [queryExamples.length, isLoading]
   );
 
   const calculatedHeight = `calc(100vh - ${toolbarHeight}px - ${querySearchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
@@ -41,7 +47,8 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
         {queryExamples.map(qe => (
           <QueryExampleSearchResultsItem queryExample={qe} key={qe.definition} />
         ))}
-        {isFetching && <QueryExampleSearchResultsSkeleton />}
+        {isLoading && <QueryExampleSearchResultsSkeleton />}
+        {isEmpty && <EmptyContentPlaceholder />}
       </InfiniteScroll>
     </Grid>
   );

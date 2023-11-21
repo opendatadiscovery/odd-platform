@@ -2668,6 +2668,7 @@ components:
         linked_entities:
           $ref: '#/components/schemas/DataEntityRefList'
       required:
+        - id
         - definition
         - query
         - linked_entities
@@ -2686,6 +2687,7 @@ components:
               type: string
               format: date-time
           required:
+            - linked_entities
             - created_at
             - updated_at
 
