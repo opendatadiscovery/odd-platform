@@ -91,7 +91,11 @@ public class ReactiveQueryExampleSearchEntrypointRepositoryImpl
     @Override
     public Mono<Page<QueryExamplePojo>> getQuerySuggestions(final String query) {
         if (StringUtils.isEmpty(query)) {
-            return Mono.empty();
+            return Mono.just(Page.<QueryExamplePojo>builder()
+                .data(List.of())
+                .total(0)
+                .hasNext(false)
+                .build());
         }
 
         final Field<?> rankField = jooqFTSHelper.ftsRankField(QUERY_EXAMPLE_SEARCH_ENTRYPOINT.SEARCH_VECTOR, query);
