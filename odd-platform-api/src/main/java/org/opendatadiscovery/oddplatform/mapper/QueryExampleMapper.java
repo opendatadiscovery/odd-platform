@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
@@ -26,18 +25,23 @@ import org.springframework.beans.factory.annotation.Autowired;
         DataEntityMapper.class,
     })
 public abstract class QueryExampleMapper {
-    @Autowired
     protected DataEntityMapper dataEntityMapper;
-    @Autowired
     protected DateTimeMapper dateTimeMapper;
+
+    @Autowired
+    public void setDateTimeMapper(final DateTimeMapper dateTimeMapper) {
+        this.dateTimeMapper = dateTimeMapper;
+    }
+
+    @Autowired
+    public void setDataEntityMapper(final DataEntityMapper dataEntityMapper) {
+        this.dataEntityMapper = dataEntityMapper;
+    }
 
     public abstract QueryExamplePojo mapToPojo(final QueryExampleFormData dto);
 
     public abstract QueryExamplePojo applyToPojo(final QueryExampleFormData dto,
                                                  @MappingTarget final QueryExamplePojo pojo);
-
-    public abstract QueryExampleDetails mapToDetails(final QueryExamplePojo pojo,
-                                                     final List<DataEntity> dataEntities);
 
     public abstract List<QueryExampleRef> mapToRefList(final List<QueryExamplePojo> data);
 

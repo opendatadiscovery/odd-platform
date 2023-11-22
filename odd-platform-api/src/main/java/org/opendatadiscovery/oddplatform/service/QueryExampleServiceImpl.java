@@ -40,7 +40,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     public Mono<QueryExampleDetails> createQueryExample(final QueryExampleFormData queryExampleFormData) {
         final QueryExamplePojo pojo = queryExampleMapper.mapToPojo(queryExampleFormData);
         return queryExampleRepository.create(pojo)
-            .map(queryExamplePojo -> queryExampleMapper.mapToDetails(queryExamplePojo, List.of()))
+            .map(queryExamplePojo -> queryExampleMapper.mapToQueryExampleDetails(queryExamplePojo, List.of()))
             .flatMap(this::updateSearchVectors);
     }
 

@@ -8,11 +8,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleSearchFa
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleSearchFormData;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.mapper.QueryExampleMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchFacetRepository;
@@ -25,10 +23,8 @@ public class QueryExampleSearchServiceImpl implements QueryExampleSearchService 
     private final ReactiveQueryExampleRepository queryExampleRepository;
     private final ReactiveQueryExampleSearchEntrypointRepository queryExampleSearchEntrypointRepository;
     private final ReactiveSearchFacetRepository reactiveSearchFacetRepository;
-    private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final FacetStateMapper facetStateMapper;
     private final QueryExampleMapper queryExampleMapper;
-    private final DataEntityMapper dataEntityMapper;
 
     @Override
     public Mono<QueryExampleRefList> getQuerySuggestions(final String query) {
