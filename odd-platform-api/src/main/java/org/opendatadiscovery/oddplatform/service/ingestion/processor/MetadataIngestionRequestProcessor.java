@@ -12,6 +12,7 @@ import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataInfo;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataTypeEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
@@ -39,11 +40,12 @@ public class MetadataIngestionRequestProcessor implements IngestionRequestProces
             .distinct()
             .toList();
 
-        final var existingMono = metadataFieldValueRepository.listByDataEntityIds(request.getAllIds())
-            .collect(Collectors.toMap(
-                mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
-                identity()
-            ));
+        final var existingMono =
+            metadataFieldValueRepository.listByDataEntityIds(request.getAllIds(), MetadataOrigin.EXTERNAL)
+                .collect(Collectors.toMap(
+                    mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
+                    identity()
+                ));
         return metadataFieldService.ingestMetadataFields(metadataKeys)
             .zipWith(existingMono)
             .flatMap(function((allMetadataFields, existingMetadataValues) -> {
