@@ -1,11 +1,12 @@
-import { Box, Grid, Typography } from '@mui/material';
-import TruncateMarkup from 'react-truncate-markup';
+import { Grid } from '@mui/material';
 import React from 'react';
 import type { QueryExample } from 'generated-sources';
 import { useAppPaths, useScrollBarWidth } from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
+import Markdown from '../Markdown/Markdown';
+import CollapsibleInfoContainer from '../CollapsibleInfoContainer/CollapsibleInfoContainer';
 
 const StyledGridContainer = styled(Grid)<{ $scrollbarWidth: string }>(
   ({ theme, $scrollbarWidth }) => css`
@@ -37,25 +38,21 @@ const QueryExamplesListItem = ({ queryExample }: QueryExampleSearchResultsItemPr
       container
       $scrollbarWidth={scrollbarWidth}
     >
-      <Grid item xs={4} pl={1}>
-        <Typography variant='body1'>{queryExample.definition}</Typography>
+      <Grid item xs={4} p={1}>
+        <CollapsibleInfoContainer
+          style={{ border: 'none' }}
+          initialMaxHeight={96}
+          content={<Markdown value={queryExample.definition} disableCopy />}
+        />
       </Grid>
-      <Grid item xs={5} p={theme => theme.spacing(1)} alignItems='center'>
-        <Box
-          sx={theme => ({
-            borderRadius: theme.spacing(0.5),
-            p: theme.spacing(1),
-            backgroundColor: theme.palette.backgrounds.primary,
-          })}
-        >
-          <TruncateMarkup lines={2}>
-            <Typography variant='body1' color={theme => theme.palette.text.secondary}>
-              {queryExample.query}
-            </Typography>
-          </TruncateMarkup>
-        </Box>
+      <Grid item xs={5} p={1}>
+        <CollapsibleInfoContainer
+          style={{ border: 'none' }}
+          initialMaxHeight={96}
+          content={<Markdown value={queryExample.query} disableCopy />}
+        />
       </Grid>
-      <Grid item xs={3} p={theme => theme.spacing(1)} alignItems='center'>
+      <Grid item xs={3} p={1} alignItems='center'>
         <TruncatedCell dataList={queryExample.linkedEntities} externalEntityId={1} />
       </Grid>
     </StyledGridContainer>

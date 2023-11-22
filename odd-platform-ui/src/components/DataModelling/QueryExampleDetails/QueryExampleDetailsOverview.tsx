@@ -22,17 +22,7 @@ const QueryExampleDetailsOverview = ({
       <Typography variant='h2' mb={1}>
         Query
       </Typography>
-      <Box
-        sx={theme => ({
-          borderRadius: theme.spacing(0.5),
-          p: theme.spacing(1),
-          backgroundColor: theme.palette.backgrounds.primary,
-        })}
-      >
-        <Typography variant='body1' color={theme => theme.palette.text.secondary}>
-          {query}
-        </Typography>
-      </Box>
+      <Markdown value={query} />
     </AppPaper>
   </>
 );

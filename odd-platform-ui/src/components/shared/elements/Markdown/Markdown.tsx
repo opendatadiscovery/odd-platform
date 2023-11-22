@@ -100,7 +100,7 @@ const Markdown: FC<MarkdownProps> = ({
   ) : (
     <MDEditor.Markdown
       source={value}
-      style={{ width: '100%' }}
+      style={{ width: '100%', backgroundColor: 'inherit' }}
       wrapperElement={wrapperElement}
       disableCopy={disableCopy}
       components={{ div: MarkdownCopyButton, a: TermLink, p: Preview(variant) }}
