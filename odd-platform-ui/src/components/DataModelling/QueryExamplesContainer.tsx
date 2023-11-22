@@ -8,6 +8,7 @@ import QueryExampleSearchInput from './QueryExampleSearchInput/QueryExampleSearc
 import QueryExampleSearchResults from './QueryExampleSearchResults/QueryExampleSearchResults';
 import DataModellingTabs from './DataModellingTabs';
 import QueryExamplesListHeader from '../shared/elements/QueryExamples/QueryExamplesListHeader';
+import QueryExampleForm from './QueryExampleForm/QueryExampleForm';
 
 const QueryExamplesContainer: React.FC = () => {
   const { t } = useTranslation();
@@ -24,10 +25,14 @@ const QueryExamplesContainer: React.FC = () => {
       >
         <QueryExampleSearchInput facets={facets} />
 
-        <Button
-          buttonType='main-lg'
-          startIcon={<AddIcon />}
-          text={t('Add query example')}
+        <QueryExampleForm
+          btnCreateEl={
+            <Button
+              buttonType='main-lg'
+              startIcon={<AddIcon />}
+              text={t('Add query example')}
+            />
+          }
         />
       </Grid>
       <Grid item xs={12}>
