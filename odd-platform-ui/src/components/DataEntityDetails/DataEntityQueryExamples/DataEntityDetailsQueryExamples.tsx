@@ -7,10 +7,11 @@ import {
   QueryExamplesListItem,
   QueryExamplesSkeleton,
 } from 'components/shared/elements';
-import { LinkIcon } from 'components/shared/icons';
+import { AddIcon, LinkIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppParams } from 'lib/hooks';
 import { useGetQueryExamplesByDatasetId } from 'lib/hooks/api/dataModelling/queryExamples';
+import AssignEntityQueryExampleForm from './AssignEntityQueryExampleForm';
 
 const DataEntityDetailsQueryExamples: React.FC = () => {
   const { t } = useTranslation();
@@ -26,14 +27,17 @@ const DataEntityDetailsQueryExamples: React.FC = () => {
 
   return (
     <Grid container gap={2} mt={2}>
-      <Grid
-        item
-        display='flex'
-        justifyContent='space-between'
-        alignItems='center'
-        xs={12}
-      >
-        <Button buttonType='main-lg' startIcon={<LinkIcon />} text={t('Link query')} />
+      <Grid item display='flex' justifyContent='end' alignItems='center' xs={12}>
+        <AssignEntityQueryExampleForm
+          dataEntityId={dataEntityId}
+          openBtnEl={
+            <Button
+              buttonType='secondary-lg'
+              startIcon={<LinkIcon />}
+              text={t('Link query')}
+            />
+          }
+        />
       </Grid>
       <Grid item xs={12}>
         <QueryExamplesListHeader />

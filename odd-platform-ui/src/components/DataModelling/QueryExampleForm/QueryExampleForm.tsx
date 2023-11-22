@@ -9,7 +9,7 @@ import {
 import React, { cloneElement, useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
-import { Button, DialogWrapper, Markdown } from 'components/shared/elements';
+import { Button, DialogWrapper, Input, Markdown } from 'components/shared/elements';
 
 interface QueryExampleFormProps {
   btnCreateEl: JSX.Element;
@@ -84,20 +84,7 @@ const QueryExampleForm = ({
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <Grid container flexDirection='column' mt={1.25}>
-            <Typography
-              fontWeight={500}
-              variant='body2'
-              color='input.label.color'
-              mb={0.125}
-            >
-              {t('Definition')}
-            </Typography>
-            <Markdown
-              value={field.value}
-              onChange={value => field.onChange(value)}
-              editor
-              height={200}
-            />
+            <Input {...field} variant='main-m' label={t('Definition')} />
           </Grid>
         )}
       />

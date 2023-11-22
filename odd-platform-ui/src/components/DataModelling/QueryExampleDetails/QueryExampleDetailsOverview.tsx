@@ -1,5 +1,5 @@
 import { AppPaper, Markdown } from 'components/shared/elements';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 
 interface QueryExampleDetailsOverviewProps {
