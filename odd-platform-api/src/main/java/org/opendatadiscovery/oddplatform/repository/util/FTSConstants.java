@@ -63,8 +63,8 @@ public class FTSConstants {
     public static final Map<Field<?>, String> QUERY_EXAMPLE_FTS_WEIGHTS = Map.ofEntries(
         Map.entry(QUERY_EXAMPLE.DEFINITION, "A"),
         Map.entry(QUERY_EXAMPLE.QUERY, "B"),
-        Map.entry(DATA_ENTITY.EXTERNAL_NAME, "B"),
-        Map.entry(DATA_ENTITY.INTERNAL_NAME, "C")
+        Map.entry(DATA_ENTITY.INTERNAL_NAME, "B"),
+        Map.entry(DATA_ENTITY.EXTERNAL_NAME, "C")
     );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> DATA_ENTITY_CONDITIONS =
