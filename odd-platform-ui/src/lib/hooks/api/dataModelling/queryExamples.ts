@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   QueryExampleApiGetQueryExampleDetailsRequest,
   QueryExampleApiGetQueryExampleByDatasetIdRequest,
@@ -38,6 +38,8 @@ export function useCreateQueryExample() {
 }
 
 export function useUpdateQueryExample() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ['updateQueryExample'],
     mutationFn: async ({
@@ -45,6 +47,22 @@ export function useUpdateQueryExample() {
       exampleId,
     }: QueryExampleApiUpdateQueryExampleRequest) =>
       queryExampleApi.updateQueryExample({ exampleId, queryExampleFormData }),
-    onSuccess: () => showSuccessToast({ message: 'Query Example successfully updated!' }),
+    onSuccess: async qed => {
+      showSuccessToast({ message: 'Query Example successfully updated!' });
+      await queryClient.invalidateQueries({
+        queryKey: ['getQueryExampleDetails', qed.id],
+      });
+    },
+  });
+}
+
+export function useDeleteQueryExample() {
+  return useMutation({
+    mutationKey: ['deleteQueryExample'],
+    mutationFn: async ({ exampleId }: { exampleId: number }) =>
+      queryExampleApi.deleteQueryExample({ exampleId }),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Query Example successfully deleted!' });
+    },
   });
 }

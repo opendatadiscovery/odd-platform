@@ -64,6 +64,8 @@ const useAppPaths = () => {
       )
     );
 
+  const dataModellingPath = () => updatePath(generatePath(DataModellingRoutes.BASE_PATH));
+
   return useMemo(
     () => ({
       isPathEmbedded,
@@ -85,6 +87,7 @@ const useAppPaths = () => {
       directoryEntitiesListPath,
       directoryDataSourceListPath,
       queryExamplePath,
+      dataModellingPath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

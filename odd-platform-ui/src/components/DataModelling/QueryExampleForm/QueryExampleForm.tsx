@@ -13,10 +13,13 @@ import { Button, DialogWrapper, Markdown } from 'components/shared/elements';
 
 interface QueryExampleFormProps {
   btnCreateEl: JSX.Element;
-  queryExample?: QueryExampleDetails;
+  queryExampleDetails?: QueryExampleDetails;
 }
 
-const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) => {
+const QueryExampleForm = ({
+  queryExampleDetails,
+  btnCreateEl,
+}: QueryExampleFormProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { queryExamplePath } = useAppPaths();
@@ -33,10 +36,10 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
 
   const defaultValues = useMemo(
     () => ({
-      definition: queryExample?.definition ?? '',
-      query: queryExample?.query ?? '',
+      definition: queryExampleDetails?.definition ?? '',
+      query: queryExampleDetails?.query ?? '',
     }),
-    [queryExample]
+    [queryExampleDetails]
   );
 
   const { handleSubmit, control, reset, formState } = useForm<QueryExampleFormData>({
@@ -51,10 +54,10 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
 
   const onSubmit = useCallback(
     (data: QueryExampleFormData) => {
-      const mutation$ = queryExample
+      const mutation$ = queryExampleDetails
         ? updateQueryExample({
             queryExampleFormData: data,
-            exampleId: queryExample.id,
+            exampleId: queryExampleDetails.id,
           })
         : addQueryExample({ queryExampleFormData: data });
 
@@ -63,12 +66,12 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
         navigate(queryExamplePath(qe.id));
       });
     },
-    [queryExample]
+    [queryExampleDetails]
   );
 
   const title = (
     <Typography variant='h4' component='span'>
-      {queryExample ? t('Edit') : t('Add')} {t('query example')}
+      {queryExampleDetails ? t('Edit') : t('Add')} {t('query example')}
     </Typography>
   );
 
@@ -89,7 +92,12 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
             >
               {t('Definition')}
             </Typography>
-            <Markdown {...field} editor height={200} />
+            <Markdown
+              value={field.value}
+              onChange={value => field.onChange(value)}
+              editor
+              height={200}
+            />
           </Grid>
         )}
       />
@@ -108,7 +116,12 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
             >
               {t('Query')}
             </Typography>
-            <Markdown {...field} editor height={200} />
+            <Markdown
+              value={field.value}
+              onChange={value => field.onChange(value)}
+              editor
+              height={200}
+            />
           </Grid>
         )}
       />
@@ -117,7 +130,7 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
 
   const actionButton = () => (
     <Button
-      text={queryExample ? t('Save query example') : t('Add query example')}
+      text={queryExampleDetails ? t('Save query example') : t('Add query example')}
       buttonType='main-lg'
       type='submit'
       form='query-example-form'
@@ -135,8 +148,8 @@ const QueryExampleForm = ({ queryExample, btnCreateEl }: QueryExampleFormProps) 
       title={title}
       renderContent={formContent}
       renderActions={actionButton}
-      handleCloseSubmittedForm={queryExample ? isUpdated : isCreated}
-      isLoading={queryExample ? isUpdating : isCreating}
+      handleCloseSubmittedForm={queryExampleDetails ? isUpdated : isCreated}
+      isLoading={queryExampleDetails ? isUpdating : isCreating}
       clearState={reset}
       formSubmitHandler={handleSubmit(onSubmit)}
     />
