@@ -11,7 +11,6 @@ public class URLResourceExtractor implements ResourceExtractor {
     @Override
     public boolean handles(final AuthorizationManagerType type) {
         return type == AuthorizationManagerType.DATA_ENTITY || type == AuthorizationManagerType.TERM
-            || type == AuthorizationManagerType.QUERY_EXAMPLE
             || type == AuthorizationManagerType.DEG;
     }
 
