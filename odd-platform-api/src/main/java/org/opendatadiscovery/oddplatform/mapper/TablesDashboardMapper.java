@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
-import org.jooq.Record2;
 import org.opendatadiscovery.oddplatform.api.contract.model.TablesDashboard;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRunsRepository;
 
 public interface TablesDashboardMapper {
     String TABLE_STATUS = "STATUS";
@@ -13,6 +13,6 @@ public interface TablesDashboardMapper {
     String NOT_MONITORED_TABLES = "NOT_MONITORED_TABLES";
     String COUNT = "COUNT";
 
-    TablesDashboard mapToDto(final List<Record2<Integer, String>> tableHealth,
-                             final List<Record2<Integer, String>> monitoredTablesStatus);
+    TablesDashboard mapToDto(final List<ReactiveDataQualityRunsRepository.TableHealthRecord> tableHealth,
+                             final List<ReactiveDataQualityRunsRepository.MonitoredtablesRecord> monitoredTablesStatus);
 }

@@ -44,6 +44,10 @@ export const useDataEntityPaths = () => {
     entityId: DataEntityId = DataEntityRoutes.dataEntityId
   ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.linkedEntities)}`;
 
+  const datasetQueryExamplesPath = (
+    entityId: DataEntityId = DataEntityRoutes.dataEntityId
+  ) => `${dataEntityDetailsBasePath(entityId, DataEntityRoutes.queryExamples)}`;
+
   const datasetStructurePath = (
     viewType: string = DataEntityRoutes.testReportViewTypeParam,
     entityId: DataEntityId = DataEntityRoutes.dataEntityId,
@@ -115,6 +119,7 @@ export const useDataEntityPaths = () => {
     dataEntityLineagePath,
     dataEntityActivityPath,
     datasetStructurePath,
+    datasetQueryExamplesPath,
     dataEntityCollaborationMessagePath,
     dataEntityCollaborationCreateMessagePath,
     testReportDetailsOverviewPath,

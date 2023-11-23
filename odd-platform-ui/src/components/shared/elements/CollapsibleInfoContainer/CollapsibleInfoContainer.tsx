@@ -1,4 +1,5 @@
-import React, { type FC, type ReactElement } from 'react';
+import type { FC, ReactElement, CSSProperties } from 'react';
+import React from 'react';
 import { useCollapse } from 'lib/hooks';
 import { ChevronIcon } from 'components/shared/icons';
 import Button from 'components/shared/elements/Button/Button';
@@ -8,18 +9,20 @@ interface CollapsibleInfoContainerProps {
   initialMaxHeight?: number;
   actions?: ReactElement;
   content: ReactElement;
+  style?: CSSProperties;
 }
 
 const CollapsibleInfoContainer: FC<CollapsibleInfoContainerProps> = ({
   initialMaxHeight = 60,
   actions,
   content,
+  style,
 }) => {
   const { contentRef, containerStyle, toggleCollapse, isCollapsed, controlsStyle } =
     useCollapse({ initialMaxHeight });
 
   return (
-    <S.Container>
+    <S.Container style={style}>
       <S.ContentWrapper ref={contentRef} style={containerStyle}>
         <S.ContentContainer>{content}</S.ContentContainer>
         <S.ActionsContainer>{actions}</S.ActionsContainer>

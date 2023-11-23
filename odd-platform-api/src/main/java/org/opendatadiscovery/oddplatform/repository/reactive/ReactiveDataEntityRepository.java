@@ -31,6 +31,8 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
 
     Mono<List<DataEntityDimensionsDto>> getDimensions(Collection<String> oddrns);
 
+    Flux<DataEntityDimensionsDto> getDimensionsByIds(final Set<Long> ids);
+
     Mono<DataEntityDetailsDto> getDetails(final long id);
 
     default Flux<DataEntityPojo> listByOddrns(final Collection<String> oddrns,

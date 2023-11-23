@@ -18,11 +18,11 @@ public class DataQualityRunsServiceImpl implements DataQualityRunsService {
     @Override
     public Mono<DataQualityResults> getDataQualityTestsRuns() {
         return dataQualityRunsRepository.getLatestDataQualityRunsResults()
-                .collectList()
-                .zipWith(dataQualityRunsRepository.getLatestTablesHealth().collectList()
-                        .zipWith(dataQualityRunsRepository.getMonitoredTables().collectList()))
-                .map(item -> new DataQualityResults()
-                        .testResults(testsMapper.mapToDto(item.getT1()))
-                        .tablesDashboard(tablesDashboardMapper.mapToDto(item.getT2().getT1(), item.getT2().getT2())));
+            .collectList()
+            .zipWith(dataQualityRunsRepository.getLatestTablesHealth().collectList()
+                .zipWith(dataQualityRunsRepository.getMonitoredTables().collectList()))
+            .map(item -> new DataQualityResults()
+                .testResults(testsMapper.mapToDto(item.getT1()))
+                .tablesDashboard(tablesDashboardMapper.mapToDto(item.getT2().getT1(), item.getT2().getT2())));
     }
 }

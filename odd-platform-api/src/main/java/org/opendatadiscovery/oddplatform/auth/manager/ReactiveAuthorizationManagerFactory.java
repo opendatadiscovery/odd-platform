@@ -12,6 +12,7 @@ public final class ReactiveAuthorizationManagerFactory {
     private static final String TERM_ID = "term_id";
     private static final String DATASET_FIELD_ID = "dataset_field_id";
     private static final String DATA_ENTITY_GROUP_ID = "data_entity_group_id";
+    private static final String QUERY_EXAMPLE_ID = "example_id";
     private static final String ALERT_ID = "alert_id";
 
     private ReactiveAuthorizationManagerFactory() {
@@ -44,6 +45,7 @@ public final class ReactiveAuthorizationManagerFactory {
             case TERM -> TERM_ID;
             case ALERT -> ALERT_ID;
             case DEG -> DATA_ENTITY_GROUP_ID;
+            case QUERY_EXAMPLE -> QUERY_EXAMPLE_ID;
             default -> throw new IllegalArgumentException("Unsupported resource type: " + type);
         };
     }

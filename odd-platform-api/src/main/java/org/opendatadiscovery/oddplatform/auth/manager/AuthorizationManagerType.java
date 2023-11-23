@@ -5,6 +5,7 @@ public enum AuthorizationManagerType {
     DATA_ENTITY,
     DATASET_FIELD,
     TERM,
+    QUERY_EXAMPLE,
     ALERT,
     DEG
 }

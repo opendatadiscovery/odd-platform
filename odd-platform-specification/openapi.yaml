@@ -42,6 +42,7 @@ tags:
   - name: dataEntityAttachment
   - name: directory
   - name: dataQualityRuns
+  - name: queryExample
 
 paths:
   /api/integrations:
@@ -1925,6 +1926,257 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataQualityResults'
       tags:
         - dataQualityRuns
+
+  /api/queryexample:
+    get:
+      summary: List of QueryExamples
+      description: Gets the list of existing QueryExamples
+      operationId: getQueryExampleList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleRefList'
+      tags:
+        - queryExample
+    post:
+      summary: Create QueryExamples
+      description: Create new QueryExamples
+      operationId: createQueryExamples
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleDetails'
+      tags:
+        - queryExample
+
+  /api/queryexample/{example_id}:
+    get:
+      summary: Get QueryExample details
+      description: Get all information about QueryExample
+      operationId: getQueryExampleDetails
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleDetails'
+      tags:
+        - queryExample
+    put:
+      summary: Update QueryExample
+      description: Update existing QueryExample
+      operationId: updateQueryExample
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleDetails'
+      tags:
+        - queryExample
+    delete:
+      summary: Delete QueryExample
+      description: Deletes QueryExample
+      operationId: deleteQueryExample
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - queryExample
+
+  /api/queryexample/search:
+    post:
+      summary: QueryExample search by query
+      description: Creates a new search of all the matching QueryExamples to given query and calculates the aggregation data for correspondent data slice
+      operationId: queryExamplesSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleSearchFacetsData'
+      tags:
+        - queryExample
+
+  /api/queryexample/search/{search_id}:
+    get:
+      summary: Get QueryExample search facets by search ID
+      description: Gets QueryExample search facets by parameter which can be found in search endpoint response
+      operationId: getQueryExampleSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleSearchFacetsData'
+      tags:
+        - queryExample
+    put:
+      summary: Update QueryExample search facets by search ID
+      description: Updates QueryExample search facets of a certain search ID by provided search parameters
+      operationId: updateQueryExampleSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleSearchFacetsData'
+      tags:
+        - queryExample
+
+  /api/queryexample/search/{search_id}/results:
+    get:
+      summary: Get QueryExample search results by search ID
+      description: Returns paginated list of QueryExample search results for a given search ID
+      operationId: getQueryExampleSearchResults
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleList'
+      tags:
+        - queryExample
+
+  /api/queryexample/dataset/{data_entity_id}:
+    get:
+      summary: Get QueryExample
+      description: Gets QueryExamples by DataSet's id
+      operationId: getQueryExampleByDatasetId
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleList'
+      tags:
+        - queryExample
+
+  /api/queryexample/{example_id}/dataset:
+    post:
+      summary: add Dataset to QueryExample
+      description: Creates a new relation between QueryExample and Dataset
+      operationId: createQueryExampleToDatasetRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/QueryExampleDatasetFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExample'
+      tags:
+        - queryExample
+
+  /api/queryexample/{example_id}/dataset/{data_entity_id}:
+    delete:
+      summary: Delete Dataset from QueryExample
+      description: Deletes relationship between QueryExample and Dataset
+      operationId: deleteQueryExampleToDatasetRelationship
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/QueryExampleIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - queryExample
+
+  /api/queryexample/search/suggestions:
+    get:
+      summary: Get QueryExample search suggestions by query
+      description: Returns top five search suggestions for a given query
+      operationId: getQueryExampleSearchSuggestions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/QueryExampleRefList'
+      tags:
+        - queryExample
 
   /api/dataentitygroups/domains:
     get:

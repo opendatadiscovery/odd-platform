@@ -6,6 +6,7 @@ import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted, getResourcePermissions } from 'redux/selectors';
+import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
 
 const Overview = lazy(() => import('../Overview/Overview'));
 const DatasetStructure = lazy(() => import('../DatasetStructure/DatasetStructure'));
@@ -21,6 +22,9 @@ const QualityTestHistory = lazy(
 const DataEntityActivity = lazy(() => import('../DataEntityActivity/DataEntityActivity'));
 const DataCollaboration = lazy(() => import('../DataCollaboration/DataCollaboration'));
 const LinkedItemsList = lazy(() => import('../LinkedItemsList/LinkedItemsList'));
+const DataEntityDetailsQueryExamples = lazy(
+  () => import('../DataEntityQueryExamples/DataEntityDetailsQueryExamples')
+);
 
 const DataEntityDetailsRoutes: React.FC = () => {
   const { DataEntityRoutes, getNonExactParamPath } = useAppPaths();
@@ -126,6 +130,16 @@ const DataEntityDetailsRoutes: React.FC = () => {
             <Route path={DataEntityRoutes.messageIdParam} />
           </Route>
         </Route>
+        <Route
+          path={DataEntitiesRoutes.QUERY_EXAMPLES_PATH}
+          element={
+            <RestrictedRoute
+              isAllowedTo={!isStatusDeleted}
+              redirectTo={`${DataEntityRoutes.overview}`}
+              component={DataEntityDetailsQueryExamples}
+            />
+          }
+        />
       </Routes>
     </AppSuspenseWrapper>
   );

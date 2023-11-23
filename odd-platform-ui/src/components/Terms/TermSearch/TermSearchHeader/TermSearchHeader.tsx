@@ -12,7 +12,7 @@ const TermSearchHeader: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <Grid container justifyContent='space-between' alignItems='center' mt={1.5}>
+    <Grid container justifyContent='space-between' alignItems='center'>
       <TermSearchInput />
       <WithPermissions permissionTo={Permission.TERM_CREATE}>
         <TermsForm

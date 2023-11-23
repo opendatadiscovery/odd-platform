@@ -14,6 +14,8 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
+import { generatePath } from 'react-router-dom';
+import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
@@ -95,6 +97,14 @@ const DataEntityDetailsTabs: React.FC = () => {
         link: dataEntityLinkedEntitiesPath(dataEntityId),
         hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
         value: DataEntityRoutes.linkedEntities,
+      },
+      {
+        name: t('Query examples'),
+        link: generatePath(DataEntitiesRoutes.QUERY_EXAMPLES_PATH, {
+          dataEntityId: String(dataEntityId),
+        }),
+        value: 'query-examples',
+        hidden: !isDataset,
       },
       {
         name: t('Activity'),
