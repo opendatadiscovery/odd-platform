@@ -9,7 +9,6 @@ import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManage
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.NO_CONTEXT;
-import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.auth.manager.AuthorizationManagerType.TERM;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.COLLECTOR_DELETE;
@@ -279,16 +278,16 @@ public final class SecurityConstants {
             AuthorizationManagerType.DEG,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", PUT),
             DATA_ENTITY_GROUP_UPDATE),
-        new SecurityRule(QUERY_EXAMPLE,
+        new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}", PUT),
             QUERY_EXAMPLE_UPDATE),
-        new SecurityRule(QUERY_EXAMPLE,
+        new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}", DELETE),
             QUERY_EXAMPLE_DELETE),
-        new SecurityRule(QUERY_EXAMPLE,
+        new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}/dataset", POST),
             QUERY_EXAMPLE_DATASET_CREATE),
-        new SecurityRule(QUERY_EXAMPLE,
+        new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher(
                 "/api/queryexample/{example_id}/dataset/{data_entity_id}", DELETE),
             QUERY_EXAMPLE_DATASET_DELETE)
