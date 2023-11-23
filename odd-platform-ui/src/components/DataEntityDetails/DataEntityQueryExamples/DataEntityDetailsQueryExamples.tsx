@@ -7,7 +7,7 @@ import {
   QueryExamplesListItem,
   QueryExamplesSkeleton,
 } from 'components/shared/elements';
-import { AddIcon, LinkIcon } from 'components/shared/icons';
+import { LinkIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppParams } from 'lib/hooks';
 import { useGetQueryExamplesByDatasetId } from 'lib/hooks/api/dataModelling/queryExamples';
