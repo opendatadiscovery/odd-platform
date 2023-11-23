@@ -45,7 +45,7 @@
     "@mui/system": "^5.14.4",
     "@mui/x-date-pickers": "^5.0.20",
     "@reduxjs/toolkit": "^1.9.5",
-    "@tanstack/react-query": "^5.4.3",
+    "@tanstack/react-query": "^5.8.3",
     "@tanstack/react-virtual": "3.0.0-beta.60",
     "@uiw/react-md-editor": "^3.23.5",
     "@visx/curve": "^3.3.0",
@@ -82,7 +82,7 @@
     "react-router-dom": "^6.17.0",
     "react-truncate-markup": "^5.1.2",
     "recharts": "^2.9.2",
-    "styled-components": "^6.1.0",
+    "styled-components": "^6.1.1",
     "use-debounce": "^9.0.4",
     "uuid": "^9.0.1",
     "vanilla-jsoneditor": "^0.7.11"

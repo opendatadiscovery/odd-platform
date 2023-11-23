@@ -40,7 +40,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
   if (numVal || numVal === 0) {
     formattedNumber = formatNumber();
   } else {
-    formattedNumber = '';
+    formattedNumber = value ?? '';
   }
 
   return (

@@ -204,8 +204,8 @@ public class ReactiveDataQualityRunsRepositoryTest extends BaseIntegrationTest {
                     .findFirst()
                     .orElse(null);
                 assertEquals(testStatus.getCount(), expected == null
-                    ? 0L
-                    : expectedStatuses.getRight().longValue());
+                    ? 0
+                    : expectedStatuses.getRight());
             });
         }
     }

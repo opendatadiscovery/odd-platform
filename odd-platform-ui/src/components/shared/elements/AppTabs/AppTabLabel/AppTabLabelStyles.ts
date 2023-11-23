@@ -9,14 +9,26 @@ const getTabHintStylesByType = (theme: Theme, hintType: HintType): CSSObject => 
     case 'primary':
       return {
         backgroundColor: theme.palette.backgrounds.primary,
-        borderRadius: '4px',
+        borderRadius: theme.spacing(0.5),
         color: theme.palette.texts.secondary,
-        height: '16px',
+        height: theme.spacing(2),
         fontSize: theme.typography.h6.fontSize,
         lineHeight: theme.typography.h6.lineHeight,
         fontWeight: theme.typography.h6.fontWeight,
         '& > span': { minWidth: '28px' },
       };
+    case 'secondary': {
+      return {
+        backgroundColor: theme.palette.backgrounds.element,
+        borderRadius: theme.spacing(0.5),
+        color: theme.palette.common.white,
+        height: theme.spacing(2),
+        fontSize: theme.typography.h6.fontSize,
+        lineHeight: theme.typography.h6.lineHeight,
+        fontWeight: theme.typography.h6.fontWeight,
+        '& > span': { minWidth: '28px' },
+      };
+    }
     case 'alert':
       return {
         backgroundColor: theme.palette.warning.main,
@@ -43,6 +55,7 @@ export const HintContainer = styled('div')<{ $hintType: HintType }>(
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: theme.spacing(0.5),
+    padding: theme.spacing(0.5),
     ...getTabHintStylesByType(theme, $hintType),
   })
 );

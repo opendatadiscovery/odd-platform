@@ -1,3 +1,4 @@
+import type { DataModellingRoutes as dmRoutes } from 'routes/dataModellingRoutes';
 import type {
   AlertsRoutes,
   DataEntityRoutes,
@@ -114,16 +115,26 @@ interface AppDirectoryRouteParams {
   [DirectoryRoutes.typeId]: undefined | number;
 }
 
+interface DataModellingRouteParams {
+  [dmRoutes.QUERY_EXAMPLE_ID]: string;
+}
+
+interface AppDataModellingRouteParams {
+  [dmRoutes.QUERY_EXAMPLE_ID]: number;
+}
+
 export type RouteParams = DataEntityRouteParams &
   TermRouteParams &
   SearchRouteParams &
   AlertsRouteViewTypes &
   ManagementRouteParams &
-  DirectoryRouteParams;
+  DirectoryRouteParams &
+  DataModellingRouteParams;
 
 export type AppRouteParams = AppDataEntityRouteParams &
   AppSearchRouteParams &
   AppTermRouteParams &
   AppAlertsRouteParams &
   AppManagementRouteParams &
-  AppDirectoryRouteParams;
+  AppDirectoryRouteParams &
+  AppDataModellingRouteParams;

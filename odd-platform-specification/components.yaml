@@ -184,6 +184,11 @@ components:
         - DATA_ENTITY_GROUP_UPDATE
         - DATA_ENTITY_ATTACHMENT_MANAGE
         - DATA_ENTITY_STATUS_UPDATE
+        - QUERY_EXAMPLE_CREATE
+        - QUERY_EXAMPLE_UPDATE
+        - QUERY_EXAMPLE_DELETE
+        - QUERY_EXAMPLE_DATASET_CREATE
+        - QUERY_EXAMPLE_DATASET_DELETE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -2609,6 +2614,124 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
 
+    QueryExampleRefList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueryExampleRef'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    QueryExampleRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        definition:
+          type: string
+        query:
+          type: string
+      required:
+        - id
+        - definition
+        - query
+
+    QueryExampleList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueryExample'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    QueryExample:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        definition:
+          type: string
+        query:
+          type: string
+        linked_entities:
+          $ref: '#/components/schemas/DataEntityRefList'
+      required:
+        - id
+        - definition
+        - query
+        - linked_entities
+
+    QueryExampleDetails:
+      allOf:
+        - $ref: '#/components/schemas/QueryExampleRef'
+        - type: object
+          properties:
+            linked_entities:
+              $ref: '#/components/schemas/DataEntityList'
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+          required:
+            - linked_entities
+            - created_at
+            - updated_at
+
+    QueryExampleFormData:
+      type: object
+      properties:
+        definition:
+          type: string
+        query:
+          type: string
+      required:
+        - definition
+        - query
+
+    QueryExampleSearchFormData:
+      type: object
+      properties:
+        query:
+          type: string
+
+    QueryExampleSearchFacetsData:
+      type: object
+      properties:
+        search_id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        total:
+          type: integer
+          format: int64
+      required:
+        - search_id
+        - query
+
+    QueryExampleDatasetFormData:
+      type: object
+      properties:
+        dataset_id:
+          type: integer
+          format: int64
+      required:
+        - dataset_id
+
     ActivityCountInfo:
       type: object
       properties:
@@ -3551,7 +3674,7 @@ components:
           $ref: '#/components/schemas/DataEntityRunStatus'
         count:
           type: integer
-          format: int64
+          format: int32
       required:
         - status
         - count
@@ -3685,6 +3808,14 @@ components:
       name: data_source_id
       in: path
       requited: true
+      schema:
+        type: integer
+        format: int64
+
+    QueryExampleIdParam:
+      name: example_id
+      in: path
+      required: true
       schema:
         type: integer
         format: int64

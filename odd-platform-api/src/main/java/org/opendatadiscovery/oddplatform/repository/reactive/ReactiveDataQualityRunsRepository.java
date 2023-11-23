@@ -1,14 +1,24 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import org.jooq.Record2;
-import org.jooq.Record3;
+import java.io.Serializable;
 import reactor.core.publisher.Flux;
 
 public interface ReactiveDataQualityRunsRepository {
+    record DataQualityRunsRecord(String taskRunCategory, String status, Integer taskRunsCount) implements
+        Serializable {
+    }
 
-    Flux<Record3<String, String, Integer>> getLatestDataQualityRunsResults();
+    record TableHealthRecord(Integer count, String tableStatus) implements
+        Serializable {
+    }
 
-    Flux<Record2<Integer, String>> getLatestTablesHealth();
+    record MonitoredtablesRecord(Integer count, String status) implements
+        Serializable {
+    }
 
-    Flux<Record2<Integer, String>> getMonitoredTables();
+    Flux<DataQualityRunsRecord> getLatestDataQualityRunsResults();
+
+    Flux<TableHealthRecord> getLatestTablesHealth();
+
+    Flux<MonitoredtablesRecord> getMonitoredTables();
 }
