@@ -34,6 +34,7 @@ export const DataEntityRoutes = {
   history: 'history',
   alerts: 'alerts',
   linkedEntities: 'linked-entities',
+  queryExamples: 'query-examples',
   activity: 'activity',
   discussions: 'discussions',
   createMessage: 'createMessage',

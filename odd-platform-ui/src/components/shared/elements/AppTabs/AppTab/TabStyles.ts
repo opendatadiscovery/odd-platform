@@ -96,6 +96,12 @@ const tabStyles = (
   $hidden?: boolean,
   $orientation?: TabsProps['orientation']
 ): CSSObject => ({
+  padding: theme.spacing(0.75, 1.5),
+  color: theme.palette.texts.secondary,
+  fontSize: theme.typography.body1.fontSize,
+  textTransform: 'none',
+  ...getTabStylesByType(theme, type),
+
   [`&.${buttonBaseClasses.root}`]: {
     [`&.${tabClasses.root}`]: {
       display: $hidden ? 'none' : 'flex',
@@ -109,11 +115,11 @@ const tabStyles = (
     alignItems: 'center',
   },
 
-  padding: theme.spacing(0.75, 1.5),
-  color: theme.palette.texts.secondary,
-  fontSize: theme.typography.body1.fontSize,
-  textTransform: 'none',
-  ...getTabStylesByType(theme, type),
+  [`&.${tabClasses.disabled}`]: {
+    ...getSelectedTabStylesByType(theme, type),
+    alignItems: 'center',
+    opacity: 0.5,
+  },
 });
 
 export const TabContainer = styled(Tab)<{

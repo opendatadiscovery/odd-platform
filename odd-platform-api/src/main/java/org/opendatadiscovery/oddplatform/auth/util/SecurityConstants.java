@@ -53,6 +53,11 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.O
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.POLICY_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DATASET_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DATASET_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.QUERY_EXAMPLE_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.ROLE_UPDATE;
@@ -90,6 +95,8 @@ public final class SecurityConstants {
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups", POST),
             DATA_ENTITY_GROUP_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/terms", POST), TERM_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/queryexample", POST),
+            QUERY_EXAMPLE_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/datasources", POST),
             DATA_SOURCE_CREATE),
         new SecurityRule(NO_CONTEXT,
@@ -270,6 +277,19 @@ public final class SecurityConstants {
         new SecurityRule(
             AuthorizationManagerType.DEG,
             new PathPatternParserServerWebExchangeMatcher("/api/dataentitygroups/{data_entity_group_id}", PUT),
-            DATA_ENTITY_GROUP_UPDATE)
+            DATA_ENTITY_GROUP_UPDATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}", PUT),
+            QUERY_EXAMPLE_UPDATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}", DELETE),
+            QUERY_EXAMPLE_DELETE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher("/api/queryexample/{example_id}/dataset", POST),
+            QUERY_EXAMPLE_DATASET_CREATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/queryexample/{example_id}/dataset/{data_entity_id}", DELETE),
+            QUERY_EXAMPLE_DATASET_DELETE)
     );
 }

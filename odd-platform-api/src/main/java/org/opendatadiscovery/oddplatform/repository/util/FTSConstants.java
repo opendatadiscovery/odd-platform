@@ -22,6 +22,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
+import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
@@ -57,6 +58,13 @@ public class FTSConstants {
         Map.entry(TAG.NAME, "B"),
         Map.entry(OWNER.NAME, "C"),
         Map.entry(TITLE.NAME, "D")
+    );
+
+    public static final Map<Field<?>, String> QUERY_EXAMPLE_FTS_WEIGHTS = Map.ofEntries(
+        Map.entry(QUERY_EXAMPLE.DEFINITION, "A"),
+        Map.entry(QUERY_EXAMPLE.QUERY, "B"),
+        Map.entry(DATA_ENTITY.INTERNAL_NAME, "B"),
+        Map.entry(DATA_ENTITY.EXTERNAL_NAME, "C")
     );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> DATA_ENTITY_CONDITIONS =
@@ -105,6 +113,8 @@ public class FTSConstants {
         FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
+
+    public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> QUERY_EXAMPLE_CONDITIONS = Map.of();
 
     private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()

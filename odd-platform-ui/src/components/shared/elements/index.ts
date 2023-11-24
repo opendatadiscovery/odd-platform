@@ -79,3 +79,6 @@ export { default as TruncatedList } from './TruncatedList/TruncatedList';
 export { default as IconicInfoBadge } from './IconicInfoBadge/IconicInfoBadge';
 export { default as MetadataStale } from './MetadataStale/MetadataStale';
 export { default as DonutChart } from './DonutChart/DonutChart';
+export { default as QueryExamplesListHeader } from './QueryExamples/QueryExamplesListHeader';
+export { default as QueryExamplesListItem } from './QueryExamples/QueryExamplesListItem';
+export { default as QueryExamplesSkeleton } from './QueryExamples/QueryExamplesSkeleton';

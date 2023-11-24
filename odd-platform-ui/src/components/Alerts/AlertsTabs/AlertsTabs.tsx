@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
@@ -17,26 +17,26 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
   const { alertsViewType } = useAppParams();
   const { AlertsRoutes } = useAppPaths();
 
-  const [selectedTab, setSelectedTab] = React.useState(-1);
+  const [selectedTab, setSelectedTab] = useState(-1);
 
-  const tabs = React.useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem[]>(
     () => [
       {
         name: t('All'),
-        hint: totals?.total || 0,
+        hint: totals?.total ?? 0,
         value: AlertsRoutes.all,
         link: AlertsRoutes.all,
       },
       {
         name: t('My Objects'),
-        hint: totals?.myTotal || 0,
+        hint: totals?.myTotal ?? 0,
         value: AlertsRoutes.my,
         link: AlertsRoutes.my,
         hidden: !showMyAndDepends,
       },
       {
         name: t('Dependents'),
-        hint: totals?.dependentTotal || 0,
+        hint: totals?.dependentTotal ?? 0,
         value: AlertsRoutes.dependents,
         link: AlertsRoutes.dependents,
         hidden: !showMyAndDepends,
