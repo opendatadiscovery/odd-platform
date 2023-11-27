@@ -5,6 +5,7 @@ import type {
   QueryExampleApiCreateQueryExamplesRequest,
   QueryExampleApiUpdateQueryExampleRequest,
   QueryExampleApiCreateQueryExampleToDatasetRelationshipRequest,
+  QueryExampleApiDeleteQueryExampleToDatasetRelationshipRequest,
 } from 'generated-sources';
 import { queryExampleApi } from 'lib/api';
 import { showSuccessToast } from 'lib/errorHandling';
@@ -83,6 +84,23 @@ export function useAssignEntityQueryExample() {
       }),
     onSuccess: async () => {
       showSuccessToast({ message: 'Query Example successfully assigned!' });
+      await queryClient.invalidateQueries({
+        queryKey: ['getQueryExamplesByDatasetId'],
+      });
+    },
+  });
+}
+
+export function useUnassignEntityQueryExample() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ['unassignEntityQueryExample'],
+    mutationFn: async (
+      params: QueryExampleApiDeleteQueryExampleToDatasetRelationshipRequest
+    ) => queryExampleApi.deleteQueryExampleToDatasetRelationship(params),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Query Example successfully unassigned!' });
       await queryClient.invalidateQueries({
         queryKey: ['getQueryExamplesByDatasetId'],
       });

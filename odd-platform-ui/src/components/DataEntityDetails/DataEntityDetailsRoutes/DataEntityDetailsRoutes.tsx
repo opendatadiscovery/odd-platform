@@ -136,8 +136,16 @@ const DataEntityDetailsRoutes: React.FC = () => {
             <RestrictedRoute
               isAllowedTo={!isStatusDeleted}
               redirectTo={`${DataEntityRoutes.overview}`}
-              component={DataEntityDetailsQueryExamples}
-            />
+            >
+              <WithPermissionsProvider
+                allowedPermissions={[
+                  Permission.QUERY_EXAMPLE_DATASET_CREATE,
+                  Permission.QUERY_EXAMPLE_DATASET_DELETE,
+                ]}
+                resourcePermissions={[]}
+                Component={DataEntityDetailsQueryExamples}
+              />
+            </RestrictedRoute>
           }
         />
       </Routes>

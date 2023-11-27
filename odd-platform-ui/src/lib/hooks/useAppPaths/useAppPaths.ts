@@ -59,7 +59,7 @@ const useAppPaths = () => {
   const queryExamplePath = (queryExampleId: number) =>
     updatePath(
       generatePath(
-        `${DataModellingRoutes.BASE_PATH}/${DataModellingRoutes.QUERY_EXAMPLES_PATH}/${DataModellingRoutes.QUERY_EXAMPLE_PATH}`,
+        `${DataModellingRoutes.BASE_PATH}/${DataModellingRoutes.QUERY_EXAMPLE_PATH}`,
         { queryExampleId: String(queryExampleId) }
       )
     );
