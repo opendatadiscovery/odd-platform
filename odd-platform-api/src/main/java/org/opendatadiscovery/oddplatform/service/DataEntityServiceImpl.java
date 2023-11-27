@@ -154,6 +154,13 @@ public class DataEntityServiceImpl implements DataEntityService {
     }
 
     @Override
+    public Mono<List<DataEntityDimensionsDto>> getDimensionsByIds(final Set<Long> ids) {
+        return reactiveDataEntityRepository.getDimensionsByIds(ids)
+            .flatMap(this::enrichEntityClassDetails)
+            .flatMap(this::enrichParentGroups);
+    }
+
+    @Override
     public Mono<DataSourceEntityList> getDataEntitiesByDatasourceAndType(final long datasourceId,
                                                                          final Integer typeId,
                                                                          final int page,

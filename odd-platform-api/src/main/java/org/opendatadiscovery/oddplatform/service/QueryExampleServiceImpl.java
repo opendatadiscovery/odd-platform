@@ -19,7 +19,6 @@ import org.opendatadiscovery.oddplatform.mapper.QueryExampleMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityQueryExampleRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     private final ReactiveQueryExampleRepository queryExampleRepository;
     private final ReactiveQueryExampleSearchEntrypointRepository queryExampleSearchEntrypointRepository;
     private final ReactiveDataEntityQueryExampleRelationRepository dataEntityToQueryExampleRepository;
-    private final ReactiveDataEntityRepository reactiveDataEntityRepository;
+    private final DataEntityService dataEntityService;
     private final QueryExampleMapper queryExampleMapper;
 
     @Override
@@ -101,9 +100,8 @@ public class QueryExampleServiceImpl implements QueryExampleService {
         return queryExampleRepository.get(exampleId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("QueryExample", exampleId)))
             .then(dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(exampleId))
-            .map(dto -> reactiveDataEntityRepository
+            .map(dto -> dataEntityService
                 .getDimensionsByIds(getRelatedDataEntitiesIds(dto))
-                .collectList()
                 .map(items -> queryExampleMapper.mapToQueryExampleDetails(
                     dto.queryExamplePojo(),
                     items)))
@@ -119,9 +117,8 @@ public class QueryExampleServiceImpl implements QueryExampleService {
     private Mono<QueryExampleDetails> update(final QueryExamplePojo pojo) {
         return queryExampleRepository.update(pojo)
             .flatMap(item -> dataEntityToQueryExampleRepository.getQueryExampleDatasetRelations(item.getId()))
-            .map(dto -> reactiveDataEntityRepository
+            .map(dto -> dataEntityService
                 .getDimensionsByIds(getRelatedDataEntitiesIds(dto))
-                .collectList()
                 .map(items -> queryExampleMapper.mapToQueryExampleDetails(
                     dto.queryExamplePojo(),
                     items)))
