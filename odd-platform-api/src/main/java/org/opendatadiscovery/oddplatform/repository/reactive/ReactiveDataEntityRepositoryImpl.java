@@ -201,14 +201,15 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
-    public Flux<DataEntityDimensionsDto> getDimensionsByIds(final Set<Long> ids) {
+    public Mono<List<DataEntityDimensionsDto>> getDimensionsByIds(final Set<Long> ids) {
         final DataEntityCTEQueryConfig cteConfig = DataEntityCTEQueryConfig.builder()
             .conditions(List.of(DATA_ENTITY.ID.in(ids)))
             .includeDeleted(true)
             .build();
         final var query = baseDimensionsSelect(cteConfig);
         return jooqReactiveOperations.flux(query)
-            .map(dataEntityDtoMapper::mapDimensionRecord);
+            .map(dataEntityDtoMapper::mapDimensionRecord)
+            .collectList();
     }
 
     @Override

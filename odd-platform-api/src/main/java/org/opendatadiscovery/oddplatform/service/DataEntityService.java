@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -36,6 +37,8 @@ public interface DataEntityService {
     Mono<DataEntityDimensionsDto> getDimensions(final long dataEntityId);
 
     Mono<List<DataEntityDimensionsDto>> getDimensions(final Collection<String> oddrns);
+
+    Mono<List<DataEntityDimensionsDto>> getDimensionsByIds(final Set<Long> ids);
 
     default Mono<DataEntityList> findByState(final FacetStateDto state, final int page, final int size) {
         return findByState(state, page, size, null);

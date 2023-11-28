@@ -3,15 +3,16 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.ArrayList;
 import java.util.List;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.QueryExampleDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToQueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityToQueryExampleRecord;
-import org.opendatadiscovery.oddplatform.repository.mapper.DataEntityDtoMapper;
-import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
@@ -30,22 +31,17 @@ public class ReactiveDataEntityQueryExampleRelationRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<DataEntityToQueryExampleRecord, DataEntityToQueryExamplePojo>
     implements ReactiveDataEntityQueryExampleRelationRepository {
     private static final String AGG_DATA_ENTITIES_FIELD = "dataEntities";
+    private static final String QUERY_EXAMPLES_CTE = "query_examples_cte";
 
-    private final JooqFTSHelper jooqFTSHelper;
     private final JooqRecordHelper jooqRecordHelper;
-    private final DataEntityDtoMapper dataEntityDtoMapper;
 
     public ReactiveDataEntityQueryExampleRelationRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                                                 final JooqQueryHelper jooqQueryHelper,
-                                                                final JooqRecordHelper jooqRecordHelper,
-                                                                final JooqFTSHelper jooqFTSHelper,
-                                                                final DataEntityDtoMapper dataEntityDtoMapper) {
+                                                                final JooqRecordHelper jooqRecordHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, DATA_ENTITY_TO_QUERY_EXAMPLE,
             DataEntityToQueryExamplePojo.class);
 
-        this.jooqFTSHelper = jooqFTSHelper;
         this.jooqRecordHelper = jooqRecordHelper;
-        this.dataEntityDtoMapper = dataEntityDtoMapper;
     }
 
     @Override
@@ -99,15 +95,26 @@ public class ReactiveDataEntityQueryExampleRelationRepositoryImpl
 
     @Override
     public Flux<QueryExampleDto> getQueryExampleDatasetRelationsByDataEntity(final Long dataEntityId) {
-        final SelectHavingStep<Record> query = DSL.select(QUERY_EXAMPLE.asterisk())
-            .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(AGG_DATA_ENTITIES_FIELD))
-            .from(QUERY_EXAMPLE)
-            .join(DATA_ENTITY_TO_QUERY_EXAMPLE)
-            .on(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(QUERY_EXAMPLE.ID))
-            .join(DATA_ENTITY)
-            .on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID))
-            .where(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID.eq(dataEntityId))
-            .groupBy(QUERY_EXAMPLE.ID);
+        final SelectConditionStep<Record1<Long>> queryExampleSelect =
+            DSL.select(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID)
+                .from(DATA_ENTITY_TO_QUERY_EXAMPLE)
+                .where(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID.eq(dataEntityId));
+
+        final Table<Record1<Long>> exampleCTE = queryExampleSelect.asTable(QUERY_EXAMPLES_CTE);
+
+        final SelectHavingStep<Record> query =
+            DSL.with(exampleCTE.getName())
+                .as(queryExampleSelect)
+                .select(QUERY_EXAMPLE.asterisk())
+                .select(jsonArrayAgg(field(DATA_ENTITY.asterisk().toString())).as(AGG_DATA_ENTITIES_FIELD))
+                .from(exampleCTE.getName())
+                .join(QUERY_EXAMPLE)
+                .on(QUERY_EXAMPLE.ID.eq(exampleCTE.field(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID)))
+                .leftJoin(DATA_ENTITY_TO_QUERY_EXAMPLE)
+                .on(DATA_ENTITY_TO_QUERY_EXAMPLE.QUERY_EXAMPLE_ID.eq(QUERY_EXAMPLE.ID))
+                .leftJoin(DATA_ENTITY)
+                .on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_QUERY_EXAMPLE.DATA_ENTITY_ID))
+                .groupBy(QUERY_EXAMPLE.ID);
 
         return jooqReactiveOperations.flux(query)
             .map(r -> new QueryExampleDto(r.into(QUERY_EXAMPLE).into(QueryExamplePojo.class),

@@ -46,7 +46,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToQueryExamplePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.QueryExamplePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityQueryExampleRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveQueryExampleSearchEntrypointRepository;
 import reactor.core.publisher.Flux;
@@ -70,7 +69,7 @@ public class QueryExampleServiceTest {
     @Mock
     private ReactiveDataEntityQueryExampleRelationRepository dataEntityToQueryExampleRepository;
     @Mock
-    private ReactiveDataEntityRepository reactiveDataEntityRepository;
+    private DataEntityService dataEntityService;
     private final QueryExampleMapper queryExampleMapper = new QueryExampleMapperImpl();
 
     @BeforeEach
@@ -123,7 +122,7 @@ public class QueryExampleServiceTest {
         queryExampleService = new QueryExampleServiceImpl(queryExampleRepository,
             queryExampleSearchEntrypointRepository,
             dataEntityToQueryExampleRepository,
-            reactiveDataEntityRepository,
+            dataEntityService,
             queryExampleMapper);
     }
 
@@ -184,9 +183,9 @@ public class QueryExampleServiceTest {
             .thenReturn(Mono.just(queryExampleDto));
         when(queryExampleRepository.get(anyLong()))
             .thenReturn(Mono.just(pojo));
-        when(reactiveDataEntityRepository
+        when(dataEntityService
             .getDimensionsByIds(any()))
-            .thenReturn(Flux.just(dataEntityDimensionsDto));
+            .thenReturn(Mono.just(List.of(dataEntityDimensionsDto)));
 
         queryExampleService
             .getQueryExampleDetails(queryExampleId)
