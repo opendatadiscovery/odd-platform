@@ -9,7 +9,7 @@ services:
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
 
   odd-platform:
-    image: odd-platform:e2e-latest-build
+    image: ghcr.io/opendatadiscovery/odd-platform:latest
     restart: always
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
