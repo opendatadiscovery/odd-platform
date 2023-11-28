@@ -10,13 +10,10 @@ import {
 import { LinkIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppParams } from 'lib/hooks';
-import {
-  useGetQueryExamplesByDatasetId,
-  useUnassignEntityQueryExample,
-} from 'lib/hooks/api/dataModelling/queryExamples';
+import { useGetQueryExamplesByDatasetId } from 'lib/hooks/api/dataModelling/queryExamples';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import AssignEntityQueryExampleForm from './AssignEntityQueryExampleForm';
-import { WithPermissions } from '../../shared/contexts';
-import { Permission } from '../../../generated-sources';
 
 const DataEntityDetailsQueryExamples: React.FC = () => {
   const { t } = useTranslation();
