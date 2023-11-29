@@ -12,6 +12,7 @@ import {
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
 import { DataModellingRoutes } from 'routes/dataModellingRoutes';
+import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
 
 // lazy elements
 const Management = lazy(() => import('./Management/Management'));
@@ -38,7 +39,6 @@ const App: React.FC = () => {
     SearchRoutes,
     basePath,
     TermsRoutes,
-    DataEntityRoutes,
     ActivityRoutes,
     AlertsRoutes,
     DirectoryRoutes: DirectoryRoutesEnum,
@@ -85,11 +85,9 @@ const App: React.FC = () => {
               <Route path={getNonExactParamPath(TermsRoutes.termIdParam)} />
             </Route>
             <Route
-              path={getNonExactPath(DataEntityRoutes.dataentities)}
+              path={getNonExactPath(DataEntitiesRoutes.BASE_PATH)}
               element={<DataEntityDetails />}
-            >
-              <Route path={getNonExactParamPath(DataEntityRoutes.dataEntityIdParam)} />
-            </Route>
+            />
             <Route
               path={getNonExactPath(DirectoryRoutesEnum.directory)}
               element={<DirectoryRoutes />}
