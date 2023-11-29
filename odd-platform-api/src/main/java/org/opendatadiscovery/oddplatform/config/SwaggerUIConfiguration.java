@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerUIConfiguration {
 
     @Bean
-    public GroupedOpenApi apiOpenApi() {
+    public GroupedOpenApi platformOpenApi() {
         final String[] paths = { "/api/**" };
         return GroupedOpenApi.builder().group("platform-api").pathsToMatch(paths)
             .build();
