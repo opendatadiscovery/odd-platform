@@ -4,6 +4,8 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AddIcon } from 'components/shared/icons';
 import useCreateQueryExampleSearch from 'lib/hooks/useCreateQueryExampleSearch';
+import { WithPermissions } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import QueryExampleSearchInput from './QueryExampleSearchInput/QueryExampleSearchInput';
 import QueryExampleSearchResults from './QueryExampleSearchResults/QueryExampleSearchResults';
 import DataModellingTabs from './DataModellingTabs';
@@ -24,16 +26,17 @@ const QueryExamplesContainer: React.FC = () => {
         xs={12}
       >
         <QueryExampleSearchInput facets={facets} />
-
-        <QueryExampleForm
-          btnCreateEl={
-            <Button
-              buttonType='main-lg'
-              startIcon={<AddIcon />}
-              text={t('Add query example')}
-            />
-          }
-        />
+        <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_CREATE}>
+          <QueryExampleForm
+            btnCreateEl={
+              <Button
+                buttonType='main-lg'
+                startIcon={<AddIcon />}
+                text={t('Add query example')}
+              />
+            }
+          />
+        </WithPermissions>
       </Grid>
       <Grid item xs={12}>
         <DataModellingTabs />

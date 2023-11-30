@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
@@ -14,21 +14,20 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { generatePath } from 'react-router-dom';
+import { generatePath, useLocation, useMatch } from 'react-router-dom';
 import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId, dataEntityViewType } = useAppParams();
+  const { dataEntityId } = useAppParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
   const { defaultQueryString: degLineageQueryString } =
     useQueryParams(defaultDEGLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
   const {
-    DataEntityRoutes,
     dataEntityOverviewPath,
     datasetStructurePath,
     dataEntityLineagePath,
@@ -49,19 +48,20 @@ const DataEntityDetailsTabs: React.FC = () => {
     getIsDataEntityBelongsToClass(dataEntityId)
   );
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
+  const pathMatch = useMatch(useLocation().pathname);
 
-  const tabs = React.useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem[]>(
     () => [
       {
         name: t('Overview'),
         link: dataEntityOverviewPath(dataEntityId),
-        value: DataEntityRoutes.overview,
+        value: DataEntitiesRoutes.OVERVIEW_PATH,
       },
       {
         name: t('Structure'),
-        link: datasetStructurePath(DataEntityRoutes.overview, dataEntityId),
+        link: datasetStructurePath('overview', dataEntityId),
         hidden: !isDataset,
-        value: DataEntityRoutes.structure,
+        value: DataEntitiesRoutes.STRUCTURE_PATH,
       },
       {
         name: t('Lineage'),
@@ -70,24 +70,24 @@ const DataEntityDetailsTabs: React.FC = () => {
           isDEG ? degLineageQueryString : lineageQueryString
         ),
         hidden: isQualityTest || isStatusDeleted,
-        value: DataEntityRoutes.lineage,
+        value: DataEntitiesRoutes.LINEAGE_PATH,
       },
       {
         name: t('Test reports'),
         link: dataEntityTestReportPath(dataEntityId),
         hidden: !isDataset || !datasetQualityTestReportTotal || isStatusDeleted,
-        value: DataEntityRoutes.testReports,
+        value: DataEntitiesRoutes.TEST_REPORTS_PATH,
       },
       {
         name: t('History'),
         link: dataEntityHistoryPath(dataEntityId),
         hidden: (!isQualityTest && !isTransformer) || isStatusDeleted,
-        value: DataEntityRoutes.history,
+        value: DataEntitiesRoutes.HISTORY_PATH,
       },
       {
         name: t('Alerts'),
         link: dataEntityAlertsPath(dataEntityId),
-        value: DataEntityRoutes.alerts,
+        value: DataEntitiesRoutes.ALERTS_PATH,
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
         hidden: isStatusDeleted,
@@ -96,25 +96,25 @@ const DataEntityDetailsTabs: React.FC = () => {
         name: t('Linked entities'),
         link: dataEntityLinkedEntitiesPath(dataEntityId),
         hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
-        value: DataEntityRoutes.linkedEntities,
+        value: DataEntitiesRoutes.LINKED_ENTITIES_PATH,
       },
       {
         name: t('Query examples'),
         link: generatePath(DataEntitiesRoutes.QUERY_EXAMPLES_PATH, {
           dataEntityId: String(dataEntityId),
         }),
-        value: 'query-examples',
+        value: DataEntitiesRoutes.QUERY_EXAMPLES_PATH,
         hidden: !isDataset,
       },
       {
         name: t('Activity'),
         link: dataEntityActivityPath(dataEntityId, activityQueryString),
-        value: 'activity',
+        value: DataEntitiesRoutes.ACTIVITY_PATH,
       },
       {
         name: t('Discussions'),
         link: dataEntityCollaborationPath(dataEntityId),
-        value: DataEntityRoutes.discussions,
+        value: DataEntitiesRoutes.DISCUSSIONS_PATH,
         hidden: isStatusDeleted,
       },
     ],
@@ -139,10 +139,14 @@ const DataEntityDetailsTabs: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
   React.useEffect(() => {
-    setSelectedTab(
-      dataEntityViewType ? tabs.findIndex(tab => tab.value === dataEntityViewType) : 0
-    );
-  }, [tabs, dataEntityViewType]);
+    const foundIndex = tabs.findIndex(({ link }) => {
+      const pathname = pathMatch?.pathname;
+      return link && pathname
+        ? pathname.includes(link) || link.includes(pathname)
+        : false;
+    });
+    setSelectedTab(foundIndex === -1 ? 0 : foundIndex);
+  }, [tabs, pathMatch]);
 
   return (
     <>
