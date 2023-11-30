@@ -14,7 +14,7 @@ const FILE_UPLOAD_POOL_LIMIT = 2;
 interface UploadFileParams {
   dataEntityId: number;
   uploadId: string;
-  file: Blob;
+  file: File;
   fileSize: number;
   chunkSize: number;
   poolLimit?: number;
@@ -46,7 +46,7 @@ async function uploadFile({
 
 interface UseSaveDataEntityFileParams {
   dataEntityId: number;
-  file: Blob;
+  file: File;
 }
 
 export function useSaveDataEntityFile() {
@@ -73,9 +73,9 @@ export function useSaveDataEntityFile() {
         uploadId,
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       showSuccessToast({ message: 'File successfully saved!' });
-      client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
+      await client.invalidateQueries({ queryKey: ['dataEntityAttachments'] });
     },
   });
 }
