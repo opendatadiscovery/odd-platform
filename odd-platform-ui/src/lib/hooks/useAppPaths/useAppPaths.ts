@@ -8,7 +8,6 @@ import {
   ActivityRoutes,
   SearchRoutes,
   AlertsRoutes,
-  ManagementRoutes,
   TermsRoutes,
   DataEntityRoutes,
   DirectoryRoutes,
@@ -35,12 +34,6 @@ const useAppPaths = () => {
     const queryStr = `?${query}`;
     return updatePath(`${ActivityRoutes.activity}${query ? queryStr : ''}`);
   };
-
-  // Management
-  const integrationPath = (integrationId: string) =>
-    updatePath(
-      `${ManagementRoutes.management}/${ManagementRoutes.integrations}/${integrationId}`
-    );
 
   // Directories
   const directoryEntitiesListPath = (
@@ -72,7 +65,6 @@ const useAppPaths = () => {
       ActivityRoutes,
       SearchRoutes,
       AlertsRoutes,
-      ManagementRoutes,
       TermsRoutes,
       DataEntityRoutes,
       DirectoryRoutes,
@@ -83,7 +75,6 @@ const useAppPaths = () => {
       getNonExactParamPath,
       searchPath,
       activityPath,
-      integrationPath,
       directoryEntitiesListPath,
       directoryDataSourceListPath,
       queryExamplePath,

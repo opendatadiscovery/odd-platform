@@ -10,6 +10,8 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
 import { DataModellingRoutes } from 'routes/dataModellingRoutes';
+import { AlertsRoutes } from 'routes/alertsRoutes';
+import { managementPath } from 'routes/managementRoutes';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
@@ -23,8 +25,6 @@ const ToolbarTabs: FC = () => {
   const {
     activityPath,
     termSearchPath,
-    ManagementRoutes,
-    AlertsRoutes,
     TermsRoutes,
     SearchRoutes,
     ActivityRoutes,
@@ -60,8 +60,8 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Management'),
-        link: updatePath(ManagementRoutes.management),
-        value: ManagementRoutes.management,
+        link: updatePath(managementPath('namespaces')),
+        value: 'management',
       },
       {
         name: t('Dictionary'),
@@ -70,8 +70,7 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Alerts'),
-        link: updatePath(AlertsRoutes.alerts),
-        value: AlertsRoutes.alerts,
+        link: updatePath(generatePath(AlertsRoutes.ALL_PATH)),
       },
       {
         name: t('Activity'),

@@ -3,10 +3,11 @@ import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { IntegrationPreview } from 'generated-sources';
-import { useAppPaths } from 'lib/hooks';
 import { IntegratedIcon } from 'components/shared/icons';
 import type { DatasourceName } from 'lib/interfaces';
 import { DatasourceLogo } from 'components/shared/elements';
+import { integrationsPath } from 'routes/managementRoutes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import * as S from './IntegrationPreviewItem.styles';
 
 interface IntegrationPreviewItemProps {
@@ -24,10 +25,10 @@ const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { integrationPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const handleOnItemClick = useCallback(() => {
-    navigate(integrationPath(id));
+    navigate(updatePath(integrationsPath(id)));
   }, [id]);
 
   return (

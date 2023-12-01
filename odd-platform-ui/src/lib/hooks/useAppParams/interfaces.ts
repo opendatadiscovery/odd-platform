@@ -2,7 +2,6 @@ import type { DataModellingRoutes as dmRoutes } from 'routes/dataModellingRoutes
 import type {
   AlertsRoutes,
   DataEntityRoutes,
-  ManagementRoutes,
   SearchRoutes,
   TermsRoutes,
   DirectoryRoutes,
@@ -74,35 +73,6 @@ interface AlertsRouteViewTypes {
 
 type AppAlertsRouteParams = AlertsRouteViewTypes;
 
-interface ManagementRouteViewTypes {
-  [ManagementRoutes.managementViewType]:
-    | typeof ManagementRoutes.namespaces
-    | typeof ManagementRoutes.datasources
-    | typeof ManagementRoutes.collectors
-    | typeof ManagementRoutes.owners
-    | typeof ManagementRoutes.tags
-    | typeof ManagementRoutes.associations
-    | typeof ManagementRoutes.roles
-    | typeof ManagementRoutes.policies
-    | typeof ManagementRoutes.integrations;
-  [ManagementRoutes.associationsViewType]:
-    | typeof ManagementRoutes.associationsNew
-    | typeof ManagementRoutes.associationsResolved;
-  [ManagementRoutes.integrationViewType]:
-    | typeof ManagementRoutes.overview
-    | typeof ManagementRoutes.configure;
-}
-
-interface ManagementRouteParams extends ManagementRouteViewTypes {
-  [ManagementRoutes.policyId]: string;
-  [ManagementRoutes.integrationId]: string;
-}
-
-interface AppManagementRouteParams extends ManagementRouteViewTypes {
-  [ManagementRoutes.policyId]: number;
-  [ManagementRoutes.integrationId]: string;
-}
-
 interface DirectoryRouteParams {
   [DirectoryRoutes.dataSourceTypePrefix]: string;
   [DirectoryRoutes.dataSourceId]: string;
@@ -127,7 +97,6 @@ export type RouteParams = DataEntityRouteParams &
   TermRouteParams &
   SearchRouteParams &
   AlertsRouteViewTypes &
-  ManagementRouteParams &
   DirectoryRouteParams &
   DataModellingRouteParams;
 
@@ -135,6 +104,5 @@ export type AppRouteParams = AppDataEntityRouteParams &
   AppSearchRouteParams &
   AppTermRouteParams &
   AppAlertsRouteParams &
-  AppManagementRouteParams &
   AppDirectoryRouteParams &
   AppDataModellingRouteParams;

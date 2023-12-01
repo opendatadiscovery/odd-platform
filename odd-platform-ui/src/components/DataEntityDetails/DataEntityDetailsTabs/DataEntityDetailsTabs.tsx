@@ -16,6 +16,7 @@ import {
 } from 'components/shared/elements/Activity/common';
 import { generatePath, useLocation, useMatch } from 'react-router-dom';
 import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
@@ -48,7 +49,7 @@ const DataEntityDetailsTabs: React.FC = () => {
     getIsDataEntityBelongsToClass(dataEntityId)
   );
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
-  const pathMatch = useMatch(useLocation().pathname);
+  const match = useMatch(useLocation().pathname);
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -100,9 +101,12 @@ const DataEntityDetailsTabs: React.FC = () => {
       },
       {
         name: t('Query examples'),
-        link: generatePath(DataEntitiesRoutes.QUERY_EXAMPLES_PATH, {
-          dataEntityId: String(dataEntityId),
-        }),
+        link: generatePath(
+          `/${DataEntitiesRoutes.BASE_PATH}/${DataEntitiesRoutes.QUERY_EXAMPLES_PATH}`,
+          {
+            dataEntityId: String(dataEntityId),
+          }
+        ),
         value: DataEntitiesRoutes.QUERY_EXAMPLES_PATH,
         hidden: !isDataset,
       },
@@ -137,16 +141,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
-
-  React.useEffect(() => {
-    const foundIndex = tabs.findIndex(({ link }) => {
-      const pathname = pathMatch?.pathname;
-      return link && pathname
-        ? pathname.includes(link) || link.includes(pathname)
-        : false;
-    });
-    setSelectedTab(foundIndex === -1 ? 0 : foundIndex);
-  }, [tabs, pathMatch]);
+  useSetSelectedTab(tabs, match, setSelectedTab);
 
   return (
     <>

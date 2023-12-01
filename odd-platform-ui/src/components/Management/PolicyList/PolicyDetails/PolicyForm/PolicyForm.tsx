@@ -3,12 +3,14 @@ import { Grid, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppPaths, usePermissions } from 'lib/hooks';
+import { usePermissions } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createPolicy, updatePolicy } from 'redux/thunks';
 import { AppJSONEditor, Button, Input } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
+import { managementPath } from 'routes/managementRoutes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -21,12 +23,12 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { ManagementRoutes } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';
-  const toPolicies = `../${ManagementRoutes.policies}`;
+  const toPolicies = updatePath(managementPath('policies'));
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
   const { control, handleSubmit, formState } = useForm<PolicyFormData>({

@@ -2,27 +2,33 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { integrationsPath } from 'routes/managementRoutes';
+import type { Integration } from 'generated-sources';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
+import { useLocation, useMatch } from 'react-router-dom';
 
 interface IntegrationTabsProps {
   titles: string[];
+  integrationId: Integration['id'];
 }
 
-const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles }) => {
-  const { integrationViewType } = useAppParams();
+const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId }) => {
+  const { updatePath } = useIsEmbeddedPath();
+  const match = useMatch(useLocation().pathname);
 
   const [selectedTab, setSelectedTab] = React.useState(0);
 
   const tabs = React.useMemo<AppTabItem[]>(
-    () => titles.map(title => ({ name: capitalize(title), link: title })),
+    () =>
+      titles.map(title => ({
+        name: capitalize(title),
+        link: updatePath(integrationsPath(integrationId, title)),
+      })),
     [titles]
   );
 
-  React.useEffect(() => {
-    setSelectedTab(
-      integrationViewType ? tabs.findIndex(tab => tab.link === integrationViewType) : 0
-    );
-  }, [integrationViewType]);
+  useSetSelectedTab(tabs, match, setSelectedTab);
 
   return (
     <Grid sx={{ mt: 1 }}>

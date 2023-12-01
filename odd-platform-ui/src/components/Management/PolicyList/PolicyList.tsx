@@ -17,9 +17,9 @@ import {
   Input,
   NumberFormatted,
 } from 'components/shared/elements';
-import { useAppPaths } from 'lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
+import { PoliciesRoutes } from 'routes/managementRoutes';
 import PolicyItem from './PolicyItem/PolicyItem';
 import * as S from './PolicyListStyles';
 import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
@@ -27,7 +27,6 @@ import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
 const PolicyList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { ManagementRoutes } = useAppPaths();
 
   const { isLoading: isPoliciesFetching } = useAppSelector(getPoliciesFetchingStatuses);
 
@@ -93,7 +92,7 @@ const PolicyList: React.FC = () => {
         <WithPermissions permissionTo={Permission.POLICY_CREATE}>
           <Button
             text={t('Create policy')}
-            to={ManagementRoutes.createPolicy}
+            to={PoliciesRoutes.CREATE_POLICY}
             buttonType='secondary-m'
             startIcon={<AddIcon />}
           />

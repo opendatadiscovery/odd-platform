@@ -50,34 +50,6 @@ export const AlertsRoutes = {
   alertsViewTypeParam: ':alertsViewType',
 } as const;
 
-export const ManagementRoutes = {
-  managementViewType: 'managementViewType',
-  managementViewTypeParam: ':managementViewType',
-  management: 'management',
-  namespaces: 'namespaces',
-  datasources: 'datasources',
-  collectors: 'collectors',
-  owners: 'owners',
-  tags: 'tags',
-  associations: 'associations',
-  associationsViewType: 'associationsViewType',
-  associationsViewTypeParam: ':associationsViewType',
-  associationsNew: 'new',
-  associationsResolved: 'resolved',
-  roles: 'roles',
-  policies: 'policies',
-  createPolicy: 'createPolicy',
-  policyId: 'policyId',
-  policyIdParam: ':policyId',
-  integrations: 'integrations',
-  integrationId: 'integrationId',
-  integrationIdParam: ':integrationId',
-  integrationViewType: 'integrationViewType',
-  integrationViewTypeParam: ':integrationViewType',
-  overview: 'overview',
-  configure: 'configure',
-} as const;
-
 export const TermsRoutes = {
   termSearch: 'termsearch',
   terms: 'terms',

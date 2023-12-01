@@ -1,13 +1,12 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useMatch } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import {
   getNewOwnerAssociationRequestsPageInfo,
   getResolvedOwnerAssociationRequestsPageInfo,
 } from 'redux/selectors';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import OwnerAssociationsTabs from './OwnerAssociationsTabs/OwnerAssociationsTabs';
 import OwnerAssociationsHeader from './OwnerAssociationsHeader/OwnerAssociationsHeader';
@@ -24,17 +23,18 @@ const OwnerAssociationsResolved = React.lazy(
 
 const OwnerAssociations: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { associationsViewType } = useAppParams();
-  const { ManagementRoutes } = useAppPaths();
+  const match = useMatch(useLocation().pathname);
 
   const [query] = useAtom(queryAtom);
 
   const size = 30;
 
-  const active = React.useMemo(
-    () => associationsViewType === ManagementRoutes.associationsNew,
-    [associationsViewType]
-  );
+  const active = React.useMemo(() => {
+    if (match) {
+      return match.pathname.includes('new');
+    }
+    return false;
+  }, [match?.pathname]);
 
   const newRequestsPageInfo = useAppSelector(getNewOwnerAssociationRequestsPageInfo);
   const resolvedRequestsPageInfo = useAppSelector(
@@ -64,15 +64,9 @@ const OwnerAssociations: React.FC = () => {
           />
         </Grid>
         <Routes>
-          <Route
-            path={ManagementRoutes.associationsNew}
-            element={<OwnerAssociationsNew size={size} />}
-          />
-          <Route
-            path={ManagementRoutes.associationsResolved}
-            element={<OwnerAssociationsResolved size={size} />}
-          />
-          <Route path='/' element={<Navigate to={ManagementRoutes.associationsNew} />} />
+          <Route path='' element={<Navigate to='new' />} />
+          <Route path='new' element={<OwnerAssociationsNew size={size} />} />
+          <Route path='resolved' element={<OwnerAssociationsResolved size={size} />} />
         </Routes>
       </Grid>
     </OwnerAssociationsAtomProvider>

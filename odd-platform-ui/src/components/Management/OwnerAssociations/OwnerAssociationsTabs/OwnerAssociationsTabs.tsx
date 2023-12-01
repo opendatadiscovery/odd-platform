@@ -2,10 +2,13 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { getOwnerAssociationRequestsListFetchingStatuses } from 'redux/selectors';
+import { associationsPath } from 'routes/managementRoutes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { useLocation, useMatch } from 'react-router-dom';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
 
 interface OwnerAssociationsTabsProps {
@@ -19,24 +22,24 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { associationsViewType } = useAppParams();
-  const { ManagementRoutes } = useAppPaths();
 
   const [, setQuery] = useAtom(queryAtom);
 
   const { isLoading } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
+  const { updatePath } = useIsEmbeddedPath();
+  const match = useMatch(useLocation().pathname);
 
   const tabs = React.useMemo<AppTabItem<boolean>[]>(
     () => [
       {
         name: t('New'),
         hint: newRequestsTabHint,
-        link: ManagementRoutes.associationsNew,
+        link: updatePath(associationsPath('new')),
         value: true,
       },
       {
         name: t('Resolved'),
-        link: ManagementRoutes.associationsResolved,
+        link: updatePath(associationsPath('resolved')),
         value: false,
       },
     ],
@@ -44,13 +47,7 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
-
-  React.useEffect(() => {
-    const tabIdx = associationsViewType
-      ? tabs.findIndex(tab => tab.link === associationsViewType)
-      : 0;
-    setSelectedTab(tabIdx);
-  }, [tabs, associationsViewType]);
+  useSetSelectedTab(tabs, match, setSelectedTab);
 
   const onTabChange = React.useCallback(() => {
     setQuery('');
