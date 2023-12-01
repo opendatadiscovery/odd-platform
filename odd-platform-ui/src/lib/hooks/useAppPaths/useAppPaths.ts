@@ -1,13 +1,10 @@
 import { useMemo } from 'react';
-import { DataModellingRoutes } from 'routes/dataModellingRoutes';
-import { generatePath } from 'react-router-dom';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
 import { useTermsPaths } from './useTermsPaths';
 import { useDataEntityPaths } from './useDataEntityPaths';
 import {
   ActivityRoutes,
   SearchRoutes,
-  AlertsRoutes,
   TermsRoutes,
   DataEntityRoutes,
   DirectoryRoutes,
@@ -48,23 +45,11 @@ const useAppPaths = () => {
   const directoryDataSourceListPath = (dataSourcePrefix: string) =>
     updatePath(`${DirectoryRoutes.directory}/${dataSourcePrefix}`);
 
-  // Data modelling
-  const queryExamplePath = (queryExampleId: number) =>
-    updatePath(
-      generatePath(
-        `${DataModellingRoutes.BASE_PATH}/${DataModellingRoutes.QUERY_EXAMPLE_PATH}`,
-        { queryExampleId: String(queryExampleId) }
-      )
-    );
-
-  const dataModellingPath = () => updatePath(generatePath(DataModellingRoutes.BASE_PATH));
-
   return useMemo(
     () => ({
       isPathEmbedded,
       ActivityRoutes,
       SearchRoutes,
-      AlertsRoutes,
       TermsRoutes,
       DataEntityRoutes,
       DirectoryRoutes,
@@ -77,8 +62,6 @@ const useAppPaths = () => {
       activityPath,
       directoryEntitiesListPath,
       directoryDataSourceListPath,
-      queryExamplePath,
-      dataModellingPath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

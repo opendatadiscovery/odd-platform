@@ -1,5 +1,5 @@
 import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { generatePath, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
@@ -9,8 +9,8 @@ import {
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
-import { DataModellingRoutes } from 'routes/dataModellingRoutes';
-import { AlertsRoutes } from 'routes/alertsRoutes';
+import { dataModellingPath } from 'routes/dataModellingRoutes';
+import { alertsPath } from 'routes/alertsRoutes';
 import { managementPath } from 'routes/managementRoutes';
 
 const ToolbarTabs: FC = () => {
@@ -53,7 +53,7 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Data Modelling'),
-        link: generatePath(DataModellingRoutes.BASE_PATH),
+        link: updatePath(dataModellingPath('query-examples')),
         value: 'data-modelling',
         hint: t('BETA'),
         hintType: 'secondary',
@@ -70,7 +70,8 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Alerts'),
-        link: updatePath(generatePath(AlertsRoutes.ALL_PATH)),
+        link: updatePath(alertsPath('all')),
+        value: 'alerts',
       },
       {
         name: t('Activity'),

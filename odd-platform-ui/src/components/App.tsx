@@ -11,9 +11,9 @@ import {
   fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { DataModellingRoutes } from 'routes/dataModellingRoutes';
+import { dataModellingPath } from 'routes/dataModellingRoutes';
 import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
-import { AlertsRoutes } from 'routes/alertsRoutes';
+import { alertsPath } from 'routes/alertsRoutes';
 import { managementPath } from 'routes/managementRoutes';
 
 // lazy elements
@@ -65,7 +65,7 @@ const App: React.FC = () => {
               path={getNonExactPath(TermsRoutes.termSearch)}
               element={<TermSearch />}
             />
-            <Route path={getNonExactPath(AlertsRoutes.BASE_PATH)} element={<Alerts />} />
+            <Route path={getNonExactPath(alertsPath())} element={<Alerts />} />
             <Route
               path={getNonExactPath(ActivityRoutes.activity)}
               element={<Activity />}
@@ -86,7 +86,7 @@ const App: React.FC = () => {
               element={<DataQuality />}
             />
             <Route
-              path={getNonExactPath(DataModellingRoutes.BASE_PATH)}
+              path={getNonExactPath(dataModellingPath())}
               element={<DataModeling />}
             />
           </Routes>

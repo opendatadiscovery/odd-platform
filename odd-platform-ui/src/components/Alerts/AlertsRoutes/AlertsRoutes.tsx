@@ -5,29 +5,18 @@ import {
   fetchMyAlertList,
   fetchMyDependentsAlertList,
 } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks';
 import AlertsList from '../AlertsList/AlertsList';
 
-const AlertsRoutes: React.FC = () => {
-  const { AlertsRoutes: AlertsRoutesEnum } = useAppPaths();
-
-  return (
-    <Routes>
-      <Route
-        path={AlertsRoutesEnum.all}
-        element={<AlertsList fetchAlerts={fetchAllAlertList} />}
-      />
-      <Route
-        path={AlertsRoutesEnum.my}
-        element={<AlertsList fetchAlerts={fetchMyAlertList} />}
-      />
-      <Route
-        path={AlertsRoutesEnum.dependents}
-        element={<AlertsList fetchAlerts={fetchMyDependentsAlertList} />}
-      />
-      <Route path='/' element={<Navigate to={AlertsRoutesEnum.all} replace />} />
-    </Routes>
-  );
-};
+const AlertsRoutes: React.FC = () => (
+  <Routes>
+    <Route path='all' element={<AlertsList fetchAlerts={fetchAllAlertList} />} />
+    <Route path='my' element={<AlertsList fetchAlerts={fetchMyAlertList} />} />
+    <Route
+      path='dependents'
+      element={<AlertsList fetchAlerts={fetchMyDependentsAlertList} />}
+    />
+    <Route path='/' element={<Navigate to='all' replace />} />
+  </Routes>
+);
 
 export default AlertsRoutes;

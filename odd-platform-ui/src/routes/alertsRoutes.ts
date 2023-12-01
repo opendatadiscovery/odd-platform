@@ -1,7 +1,15 @@
-const BASE_PATH = 'alerts';
-export const AlertsRoutes = {
-  BASE_PATH,
-  ALL_PATH: `${BASE_PATH}/all`,
-  MY_PATH: `${BASE_PATH}/my`,
-  DEPENDENTS_PATH: `${BASE_PATH}/dependents`,
+import { generatePath } from 'react-router-dom';
+
+const AlertsRoutes = {
+  BASE_PATH: 'alerts',
+  ALL_PATH: `all`,
+  MY_PATH: `my`,
+  DEPENDENTS_PATH: `dependents`,
 } as const;
+
+type AlertsRoutesType = typeof AlertsRoutes;
+
+export function alertsPath(path?: AlertsRoutesType[keyof AlertsRoutesType]) {
+  if (!path) return generatePath(AlertsRoutes.BASE_PATH);
+  return generatePath(`${AlertsRoutes.BASE_PATH}/${path}`);
+}

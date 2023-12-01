@@ -1,10 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { AlertTotals } from 'generated-sources';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { alertsPath } from 'routes/alertsRoutes';
+import { useLocation, useMatch } from 'react-router-dom';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 interface AlertsTabsProps {
   totals: AlertTotals;
@@ -14,8 +17,8 @@ interface AlertsTabsProps {
 const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { alertsViewType } = useAppParams();
-  const { AlertsRoutes } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
+  const match = useMatch(useLocation().pathname);
 
   const [selectedTab, setSelectedTab] = useState(-1);
 
@@ -24,34 +27,27 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
       {
         name: t('All'),
         hint: totals?.total ?? 0,
-        value: AlertsRoutes.all,
-        link: AlertsRoutes.all,
+        link: updatePath(alertsPath('all')),
       },
       {
         name: t('My Objects'),
         hint: totals?.myTotal ?? 0,
-        value: AlertsRoutes.my,
-        link: AlertsRoutes.my,
+        link: updatePath(alertsPath('my')),
         hidden: !showMyAndDepends,
       },
       {
         name: t('Dependents'),
         hint: totals?.dependentTotal ?? 0,
-        value: AlertsRoutes.dependents,
-        link: AlertsRoutes.dependents,
+        link: updatePath(alertsPath('dependents')),
         hidden: !showMyAndDepends,
       },
     ],
     [totals, showMyAndDepends, t]
   );
 
-  React.useEffect(() => {
-    setSelectedTab(
-      alertsViewType ? tabs.findIndex(tab => tab.value === alertsViewType) : 0
-    );
-  }, [tabs, alertsViewType]);
+  useSetSelectedTab(tabs, match, setSelectedTab);
 
-  const alertsFilterUpdateAction = React.useCallback(() => {
+  const alertsFilterUpdateAction = useCallback(() => {
     dispatch(changeAlertsFilterAction());
   }, []);
 

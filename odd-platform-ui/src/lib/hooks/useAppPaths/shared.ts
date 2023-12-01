@@ -41,15 +41,6 @@ export const DataEntityRoutes = {
   retries: 'retries',
 } as const;
 
-export const AlertsRoutes = {
-  alerts: 'alerts',
-  all: 'all',
-  my: 'my',
-  dependents: 'dependents',
-  alertsViewType: 'alertsViewType',
-  alertsViewTypeParam: ':alertsViewType',
-} as const;
-
 export const TermsRoutes = {
   termSearch: 'termsearch',
   terms: 'terms',

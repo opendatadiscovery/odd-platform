@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useAppPaths } from 'lib/hooks';
 import type { QueryExampleDetails, QueryExampleFormData } from 'generated-sources';
 import {
   useCreateQueryExample,
@@ -10,6 +9,8 @@ import React, { cloneElement, useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import { Button, DialogWrapper, Input, Markdown } from 'components/shared/elements';
+import { queryExamplePath } from 'routes/dataModellingRoutes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface QueryExampleFormProps {
   btnCreateEl: JSX.Element;
@@ -21,8 +22,8 @@ const QueryExampleForm = ({
   btnCreateEl,
 }: QueryExampleFormProps) => {
   const { t } = useTranslation();
+  const { updatePath } = useIsEmbeddedPath();
   const navigate = useNavigate();
-  const { queryExamplePath } = useAppPaths();
   const {
     mutateAsync: addQueryExample,
     isSuccess: isCreated,
@@ -63,7 +64,7 @@ const QueryExampleForm = ({
 
       mutation$.then(qe => {
         reset();
-        navigate(queryExamplePath(qe.id));
+        navigate(updatePath(queryExamplePath(String(qe.id))));
       });
     },
     [queryExampleDetails]

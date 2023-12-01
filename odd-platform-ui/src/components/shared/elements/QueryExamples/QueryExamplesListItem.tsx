@@ -2,7 +2,7 @@ import { Box, Grid } from '@mui/material';
 import React from 'react';
 import type { QueryExample } from 'generated-sources';
 import { Permission } from 'generated-sources';
-import { useAppPaths, useScrollBarWidth } from 'lib/hooks';
+import { useScrollBarWidth } from 'lib/hooks';
 import Button from 'components/shared/elements/Button/Button';
 import { PreviewIcon, UnlinkIcon } from 'components/shared/icons';
 import styled, { css } from 'styled-components';
@@ -10,6 +10,8 @@ import { WithPermissions } from 'components/shared/contexts';
 import ConfirmationDialog from 'components/shared/elements/ConfirmationDialog/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import { useUnassignEntityQueryExample } from 'lib/hooks/api/dataModelling/queryExamples';
+import { queryExamplePath } from 'routes/dataModellingRoutes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
 import Markdown from '../Markdown/Markdown';
 import CollapsibleInfoContainer from '../CollapsibleInfoContainer/CollapsibleInfoContainer';
@@ -45,9 +47,9 @@ const QueryExamplesListItem = ({
   dataEntityId,
 }: QueryExampleSearchResultsItemProps) => {
   const scrollbarWidth = useScrollBarWidth();
-  const { queryExamplePath } = useAppPaths();
   const { t } = useTranslation();
   const { mutateAsync } = useUnassignEntityQueryExample();
+  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <ListItemContainer key={queryExample.id} container pr={scrollbarWidth}>
@@ -73,7 +75,7 @@ const QueryExamplesListItem = ({
           <Button
             buttonType='linkGray-m-icon'
             icon={<PreviewIcon />}
-            to={queryExamplePath(queryExample.id)}
+            to={updatePath(queryExamplePath(String(queryExample.id)))}
           />
           <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_DATASET_DELETE}>
             <ConfirmationDialog

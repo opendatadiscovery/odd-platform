@@ -1,6 +1,4 @@
-import type { DataModellingRoutes as dmRoutes } from 'routes/dataModellingRoutes';
 import type {
-  AlertsRoutes,
   DataEntityRoutes,
   SearchRoutes,
   TermsRoutes,
@@ -64,15 +62,6 @@ interface AppSearchRouteParams {
   [SearchRoutes.searchId]: string;
 }
 
-interface AlertsRouteViewTypes {
-  [AlertsRoutes.alertsViewType]:
-    | typeof AlertsRoutes.all
-    | typeof AlertsRoutes.my
-    | typeof AlertsRoutes.dependents;
-}
-
-type AppAlertsRouteParams = AlertsRouteViewTypes;
-
 interface DirectoryRouteParams {
   [DirectoryRoutes.dataSourceTypePrefix]: string;
   [DirectoryRoutes.dataSourceId]: string;
@@ -85,24 +74,12 @@ interface AppDirectoryRouteParams {
   [DirectoryRoutes.typeId]: undefined | number;
 }
 
-interface DataModellingRouteParams {
-  [dmRoutes.QUERY_EXAMPLE_ID]: string;
-}
-
-interface AppDataModellingRouteParams {
-  [dmRoutes.QUERY_EXAMPLE_ID]: number;
-}
-
 export type RouteParams = DataEntityRouteParams &
   TermRouteParams &
   SearchRouteParams &
-  AlertsRouteViewTypes &
-  DirectoryRouteParams &
-  DataModellingRouteParams;
+  DirectoryRouteParams;
 
 export type AppRouteParams = AppDataEntityRouteParams &
   AppSearchRouteParams &
   AppTermRouteParams &
-  AppAlertsRouteParams &
-  AppDirectoryRouteParams &
-  AppDataModellingRouteParams;
+  AppDirectoryRouteParams;
