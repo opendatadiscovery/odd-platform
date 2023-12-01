@@ -11,7 +11,7 @@ interface SaveFilesFormProps {
 }
 
 interface FormData {
-  file: Blob;
+  file: File;
 }
 
 const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
@@ -20,7 +20,7 @@ const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
 
   const { mutate: saveFile, isPending, isSuccess } = useSaveDataEntityFile();
 
-  const [uploadedFile, setUploadedFile] = useState<Blob | undefined>(undefined);
+  const [uploadedFile, setUploadedFile] = useState<File | undefined>(undefined);
   const { reset, handleSubmit, control } = useForm<FormData>({
     defaultValues: { file: undefined },
     mode: 'onChange',
