@@ -99,7 +99,7 @@
     "@types/d3-shape": "^3.1.6",
     "@types/d3-zoom": "^3.0.8",
     "@types/glob": "^8.1.0",
-    "@types/hast": "^2.3.8",
+    "@types/hast": "^3.0.3",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.10.1",
