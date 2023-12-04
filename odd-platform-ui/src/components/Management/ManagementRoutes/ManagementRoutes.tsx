@@ -4,7 +4,7 @@ import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements';
 import { usePermissions } from 'lib/hooks';
-import { PoliciesRoutes } from '../../../routes/managementRoutes';
+import { PoliciesRoutes } from 'routes/managementRoutes';
 
 const NamespaceList = React.lazy(() => import('../NamespaceList/NamespaceList'));
 const OwnersList = React.lazy(() => import('../OwnersList/OwnersList'));

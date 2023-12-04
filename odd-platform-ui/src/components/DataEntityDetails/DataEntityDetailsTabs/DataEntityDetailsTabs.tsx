@@ -14,9 +14,10 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { generatePath, useLocation, useMatch } from 'react-router-dom';
-import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
+import { useLocation, useMatch } from 'react-router-dom';
+import { dataEntityDetailsPath } from 'routes/dataEntitiesRoutes';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
@@ -28,18 +29,9 @@ const DataEntityDetailsTabs: React.FC = () => {
     useQueryParams(defaultDEGLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
-  const {
-    dataEntityOverviewPath,
-    datasetStructurePath,
-    dataEntityLineagePath,
-    dataEntityTestReportPath,
-    dataEntityLinkedEntitiesPath,
-    dataEntityHistoryPath,
-    dataEntityAlertsPath,
-    dataEntityActivityPath,
-    dataEntityCollaborationPath,
-  } = useAppPaths();
+  const { dataEntityLineagePath } = useAppPaths();
 
+  const { updatePath } = useIsEmbeddedPath();
   const openAlertsCount = useAppSelector(getDataEntityAlertsCount(dataEntityId));
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
   const datasetQualityTestReportTotal = useAppSelector(
@@ -55,14 +47,12 @@ const DataEntityDetailsTabs: React.FC = () => {
     () => [
       {
         name: t('Overview'),
-        link: dataEntityOverviewPath(dataEntityId),
-        value: DataEntitiesRoutes.OVERVIEW_PATH,
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'overview')),
       },
       {
         name: t('Structure'),
-        link: datasetStructurePath('overview', dataEntityId),
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'structure')),
         hidden: !isDataset,
-        value: DataEntitiesRoutes.STRUCTURE_PATH,
       },
       {
         name: t('Lineage'),
@@ -71,54 +61,41 @@ const DataEntityDetailsTabs: React.FC = () => {
           isDEG ? degLineageQueryString : lineageQueryString
         ),
         hidden: isQualityTest || isStatusDeleted,
-        value: DataEntitiesRoutes.LINEAGE_PATH,
       },
       {
         name: t('Test reports'),
-        link: dataEntityTestReportPath(dataEntityId),
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'test-reports')),
         hidden: !isDataset || !datasetQualityTestReportTotal || isStatusDeleted,
-        value: DataEntitiesRoutes.TEST_REPORTS_PATH,
       },
       {
         name: t('History'),
-        link: dataEntityHistoryPath(dataEntityId),
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'history')),
         hidden: (!isQualityTest && !isTransformer) || isStatusDeleted,
-        value: DataEntitiesRoutes.HISTORY_PATH,
       },
       {
         name: t('Alerts'),
-        link: dataEntityAlertsPath(dataEntityId),
-        value: DataEntitiesRoutes.ALERTS_PATH,
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'alerts')),
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
         hidden: isStatusDeleted,
       },
       {
         name: t('Linked entities'),
-        link: dataEntityLinkedEntitiesPath(dataEntityId),
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'linked-entities')),
         hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
-        value: DataEntitiesRoutes.LINKED_ENTITIES_PATH,
       },
       {
         name: t('Query examples'),
-        link: generatePath(
-          `/${DataEntitiesRoutes.BASE_PATH}/${DataEntitiesRoutes.QUERY_EXAMPLES_PATH}`,
-          {
-            dataEntityId: String(dataEntityId),
-          }
-        ),
-        value: DataEntitiesRoutes.QUERY_EXAMPLES_PATH,
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'query-examples')),
         hidden: !isDataset,
       },
       {
         name: t('Activity'),
-        link: dataEntityActivityPath(dataEntityId, activityQueryString),
-        value: DataEntitiesRoutes.ACTIVITY_PATH,
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'activity')),
       },
       {
         name: t('Discussions'),
-        link: dataEntityCollaborationPath(dataEntityId),
-        value: DataEntitiesRoutes.DISCUSSIONS_PATH,
+        link: updatePath(dataEntityDetailsPath(String(dataEntityId), 'discussions')),
         hidden: isStatusDeleted,
       },
     ],

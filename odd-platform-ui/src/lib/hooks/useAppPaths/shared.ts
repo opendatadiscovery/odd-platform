@@ -64,7 +64,3 @@ export const DirectoryRoutes = {
   typeId: 'typeId',
   typeIdParam: ':typeId',
 } as const;
-
-export const DataQualityRoutes = {
-  dataQuality: 'data-quality',
-} as const;

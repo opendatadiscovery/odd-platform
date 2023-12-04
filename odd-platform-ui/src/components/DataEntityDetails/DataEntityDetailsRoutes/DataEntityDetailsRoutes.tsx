@@ -3,10 +3,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted, getResourcePermissions } from 'redux/selectors';
-import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
 
 const Overview = lazy(() => import('../Overview/Overview'));
 const DatasetStructure = lazy(() => import('../DatasetStructure/DatasetStructure'));
@@ -27,7 +26,6 @@ const DataEntityDetailsQueryExamples = lazy(
 );
 
 const DataEntityDetailsRoutes = () => {
-  const { DataEntityRoutes, getNonExactParamPath } = useAppPaths();
   const { dataEntityId } = useAppParams();
 
   const resourcePermissions = useAppSelector(
@@ -38,49 +36,41 @@ const DataEntityDetailsRoutes = () => {
   return (
     <AppSuspenseWrapper>
       <Routes>
-        <Route path='' element={<Navigate to={DataEntitiesRoutes.OVERVIEW_PATH} />} />
-        <Route path={DataEntitiesRoutes.OVERVIEW_PATH} element={<Overview />} />
-        <Route path={DataEntitiesRoutes.STRUCTURE_PATH} element={<DatasetStructure />}>
-          <Route path={getNonExactParamPath(DataEntityRoutes.structureViewTypeParam)}>
-            <Route path={DataEntityRoutes.versionIdParam} />
+        <Route path='' element={<Navigate to='overview' />} />
+        <Route path='overview' element={<Overview />} />
+        <Route path='structure' element={<DatasetStructure />}>
+          <Route path=':structureViewType'>
+            <Route path=':versionId' />
           </Route>
         </Route>
         <Route
-          path={DataEntitiesRoutes.LINEAGE_PATH}
+          path='lineage/*'
           element={
             <RestrictedRoute
               isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
+              redirectTo='../overview'
               component={Lineage}
             />
           }
         />
         <Route
-          path={DataEntitiesRoutes.TEST_REPORTS_PATH}
+          path='test-reports/*'
           element={
             <RestrictedRoute
               isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
+              redirectTo='../overview'
               component={TestReport}
             />
           }
         >
-          <Route
-            path={getNonExactParamPath(DataEntityRoutes.dataQATestIdParam)}
-            element={<TestReportDetails />}
-          >
-            <Route
-              path={getNonExactParamPath(DataEntityRoutes.testReportViewTypeParam)}
-            />
+          <Route path=':dataQATestId' element={<TestReportDetails />}>
+            <Route path=':testReportViewType' />
           </Route>
         </Route>
         <Route
-          path={DataEntitiesRoutes.ALERTS_PATH}
+          path='alerts'
           element={
-            <RestrictedRoute
-              isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
-            >
+            <RestrictedRoute isAllowedTo={!isStatusDeleted} redirectTo='../overview'>
               <WithPermissionsProvider
                 allowedPermissions={[
                   Permission.DATA_ENTITY_ALERT_RESOLVE,
@@ -93,45 +83,42 @@ const DataEntityDetailsRoutes = () => {
           }
         />
         <Route
-          path={DataEntitiesRoutes.HISTORY_PATH}
+          path='history'
           element={
             <RestrictedRoute
               isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
+              redirectTo='../overview'
               component={QualityTestHistory}
             />
           }
         />
         <Route
-          path={DataEntitiesRoutes.LINKED_ENTITIES_PATH}
+          path='linked-entities'
           element={
             <RestrictedRoute
               isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
+              redirectTo='../overview'
               component={LinkedItemsList}
             />
           }
         />
-        <Route path={DataEntityRoutes.activity} element={<DataEntityActivity />} />
+        <Route path='activity' element={<DataEntityActivity />} />
         <Route
-          path={getNonExactParamPath(DataEntitiesRoutes.DISCUSSIONS_PATH)}
+          path='discussions/*'
           element={
             <RestrictedRoute
               isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
+              redirectTo='../overview'
               component={DataCollaboration}
             />
           }
         >
-          <Route path={DataEntityRoutes.messageIdParam} />
+          <Route path=':messageId' />
         </Route>
         <Route
-          path={DataEntitiesRoutes.QUERY_EXAMPLES_PATH}
+          path='query-examples'
           element={
-            <RestrictedRoute
-              isAllowedTo={!isStatusDeleted}
-              redirectTo={`../${DataEntitiesRoutes.OVERVIEW_PATH}`}
-            >
+            <RestrictedRoute isAllowedTo={!isStatusDeleted} redirectTo='../overview'>
               <WithPermissionsProvider
                 allowedPermissions={[
                   Permission.QUERY_EXAMPLE_DATASET_CREATE,

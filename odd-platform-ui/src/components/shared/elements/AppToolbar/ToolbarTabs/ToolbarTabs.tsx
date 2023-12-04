@@ -12,6 +12,7 @@ import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/App
 import { dataModellingPath } from 'routes/dataModellingRoutes';
 import { alertsPath } from 'routes/alertsRoutes';
 import { managementPath } from 'routes/managementRoutes';
+import { dataQualityPath } from 'routes/dataQualityRoutes';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +31,6 @@ const ToolbarTabs: FC = () => {
     ActivityRoutes,
     DirectoryRoutes,
     DataEntityRoutes,
-    DataQualityRoutes,
     updatePath,
   } = useAppPaths();
 
@@ -48,8 +48,8 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Data Quality'),
-        link: updatePath(DataQualityRoutes.dataQuality),
-        value: DataQualityRoutes.dataQuality,
+        link: updatePath(dataQualityPath()),
+        value: 'data-quality',
       },
       {
         name: t('Data Modelling'),

@@ -14,10 +14,12 @@ import {
   MetadataStale,
 } from 'components/shared/elements';
 import { ColumnsIcon, QuestionIcon, RowsIcon } from 'components/shared/icons';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
+import { dataEntityDetailsPath } from 'routes/dataEntitiesRoutes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { type GridSizesByBreakpoints, SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
@@ -36,10 +38,12 @@ const ResultItem: React.FC<ResultItemProps> = ({
   showClassIcons,
 }) => {
   const { t } = useTranslation();
-  const { dataEntityOverviewPath } = useAppPaths();
   const navigate = useNavigate();
+  const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = dataEntityOverviewPath(searchResult.id);
+  const detailsLink = updatePath(
+    dataEntityDetailsPath(String(searchResult.id), 'overview')
+  );
 
   const searchQuery = useAppSelector(getSearchQuery);
 
