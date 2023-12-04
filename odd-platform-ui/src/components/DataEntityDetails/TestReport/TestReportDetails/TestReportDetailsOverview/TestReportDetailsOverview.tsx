@@ -17,11 +17,12 @@ import {
   getQualityTestByTestId,
 } from 'redux/selectors';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useDataEntityRouteParams } from 'routes';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
 import * as S from './TestReportDetailsOverviewStyles';
@@ -29,7 +30,7 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataEntityId, dataQATestId } = useAppParams();
+  const { dataEntityId, dataQATestId } = useDataEntityRouteParams();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));

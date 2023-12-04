@@ -38,11 +38,7 @@ const DataEntityDetailsRoutes = () => {
       <Routes>
         <Route path='' element={<Navigate to='overview' />} />
         <Route path='overview' element={<Overview />} />
-        <Route path='structure' element={<DatasetStructure />}>
-          <Route path=':structureViewType'>
-            <Route path=':versionId' />
-          </Route>
-        </Route>
+        <Route path='structure/*' element={<DatasetStructure />} />
         <Route
           path='lineage/*'
           element={
@@ -63,7 +59,7 @@ const DataEntityDetailsRoutes = () => {
             />
           }
         >
-          <Route path=':dataQATestId' element={<TestReportDetails />}>
+          <Route path=':dataQATestId/*' element={<TestReportDetails />}>
             <Route path=':testReportViewType' />
           </Route>
         </Route>

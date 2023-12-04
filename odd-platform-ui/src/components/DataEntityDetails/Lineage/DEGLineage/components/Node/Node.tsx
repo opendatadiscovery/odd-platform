@@ -2,9 +2,10 @@ import React, { forwardRef, memo, useCallback } from 'react';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppPaths } from 'lib/hooks';
 import { EntityClassItem, LabeledInfoItem } from 'components/shared/elements';
 import { EmptyIcon } from 'components/shared/icons';
+import { dataEntityDetailsPath, dataEntityLineagePath } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import * as S from './Node.styles';
 import type { Node as NodeType } from '../../lib/interfaces';
 
@@ -26,13 +27,13 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(
   ) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { dataEntityLineagePath, dataEntityOverviewPath } = useAppPaths();
+    const { updatePath } = useIsEmbeddedPath();
 
     const lineageLink = React.useMemo(
       () =>
         data?.entityClasses?.some(entityClass => entityClass.name === 'DATA_QUALITY_TEST')
-          ? dataEntityOverviewPath(id)
-          : dataEntityLineagePath(id),
+          ? updatePath(dataEntityDetailsPath(id))
+          : updatePath(dataEntityLineagePath(id)),
       [id, data?.entityClasses]
     );
 

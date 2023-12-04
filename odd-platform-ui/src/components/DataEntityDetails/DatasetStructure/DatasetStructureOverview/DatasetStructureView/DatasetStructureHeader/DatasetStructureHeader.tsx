@@ -4,7 +4,7 @@ import type { SelectChangeEvent } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { fetchDataSetStructure } from 'redux/thunks';
 import { ColumnsIcon } from 'components/shared/icons';
 import {
@@ -14,16 +14,21 @@ import {
   Input,
   NumberFormatted,
 } from 'components/shared/elements';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import {
+  datasetStructureComparePath,
+  datasetStructurePath,
+  useDataEntityRouteParams,
+} from 'routes';
 import useStructure from '../../lib/useStructure';
 import DatasetStructureTypeCounts from './DatasetStructureTypeCounts/DatasetStructureTypeCounts';
 
 const DatasetStructureHeader: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { versionId, dataEntityId } = useAppParams();
+  const { versionId, dataEntityId } = useDataEntityRouteParams();
   const { t } = useTranslation();
-  const { datasetStructurePath, DataEntityRoutes, datasetStructureComparePath } =
-    useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
   const {
     handleSearch,
@@ -44,9 +49,7 @@ const DatasetStructureHeader: FC = () => {
     (event: SelectChangeEvent<unknown>) => {
       const newVersionId = event.target.value as number;
       dispatch(fetchDataSetStructure({ dataEntityId, versionId: newVersionId }));
-      navigate(
-        datasetStructurePath(DataEntityRoutes.overview, dataEntityId, newVersionId)
-      );
+      navigate(updatePath(datasetStructurePath(dataEntityId, newVersionId)));
     },
     [dataEntityId]
   );
@@ -68,7 +71,11 @@ const DatasetStructureHeader: FC = () => {
   const handleCompareClick = useCallback(() => {
     const firstVersionId = sortedVersions[0].id;
     const secondVersionId = sortedVersions[sortedVersions.length - 1].id;
-    navigate(datasetStructureComparePath(dataEntityId, firstVersionId, secondVersionId));
+    navigate(
+      updatePath(
+        datasetStructureComparePath(dataEntityId, firstVersionId, secondVersionId)
+      )
+    );
   }, [dataEntityId]);
 
   const onSearchClick = useCallback(() => {

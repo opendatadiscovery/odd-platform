@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useAppPaths, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import {
   getDataEntityAlertsCount,
   getDataEntityDetails,
@@ -15,7 +15,12 @@ import {
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
 import { useLocation, useMatch } from 'react-router-dom';
-import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
+import {
+  dataEntityDetailsPath,
+  dataEntityLineagePath,
+  dataEntityTestReportsPath,
+  useDataEntityRouteParams,
+} from 'routes';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
@@ -29,7 +34,6 @@ const DataEntityDetailsTabs: React.FC = () => {
     useQueryParams(defaultDEGLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
-  const { dataEntityLineagePath } = useAppPaths();
 
   const { updatePath } = useIsEmbeddedPath();
   const openAlertsCount = useAppSelector(getDataEntityAlertsCount(dataEntityId));
@@ -56,15 +60,17 @@ const DataEntityDetailsTabs: React.FC = () => {
       },
       {
         name: t('Lineage'),
-        link: dataEntityLineagePath(
-          dataEntityId,
-          isDEG ? degLineageQueryString : lineageQueryString
+        link: updatePath(
+          dataEntityLineagePath(
+            dataEntityId,
+            isDEG ? degLineageQueryString : lineageQueryString
+          )
         ),
         hidden: isQualityTest || isStatusDeleted,
       },
       {
         name: t('Test reports'),
-        link: updatePath(dataEntityDetailsPath(dataEntityId, 'test-reports')),
+        link: updatePath(dataEntityTestReportsPath(dataEntityId)),
         hidden: !isDataset || !datasetQualityTestReportTotal || isStatusDeleted,
       },
       {

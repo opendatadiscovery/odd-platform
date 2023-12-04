@@ -1,37 +1,4 @@
-import type { DataEntityRoutes, SearchRoutes, TermsRoutes } from '../useAppPaths/shared';
-
-interface DataEntityViewTypes {
-  [DataEntityRoutes.dataEntityViewType]:
-    | typeof DataEntityRoutes.overview
-    | typeof DataEntityRoutes.lineage
-    | typeof DataEntityRoutes.structure
-    | typeof DataEntityRoutes.history
-    | typeof DataEntityRoutes.alerts
-    | typeof DataEntityRoutes.linkedEntities
-    | typeof DataEntityRoutes.activity
-    | typeof DataEntityRoutes.testReports
-    | typeof DataEntityRoutes.discussions;
-  [DataEntityRoutes.testReportViewType]:
-    | typeof DataEntityRoutes.overview
-    | typeof DataEntityRoutes.history;
-  [DataEntityRoutes.structureViewType]:
-    | typeof DataEntityRoutes.overview
-    | typeof DataEntityRoutes.structureCompare;
-}
-
-interface DataEntityRouteParams extends DataEntityViewTypes {
-  [DataEntityRoutes.dataEntityId]: string;
-  [DataEntityRoutes.dataQATestId]: string;
-  [DataEntityRoutes.versionId]: string;
-  [DataEntityRoutes.messageId]: string;
-}
-
-interface AppDataEntityRouteParams extends DataEntityViewTypes {
-  [DataEntityRoutes.dataEntityId]: number;
-  [DataEntityRoutes.dataQATestId]: number;
-  [DataEntityRoutes.versionId]: number;
-  [DataEntityRoutes.messageId]: string;
-}
+import type { SearchRoutes, TermsRoutes } from '../useAppPaths/shared';
 
 interface TermRouteViewTypes {
   [TermsRoutes.termsViewType]:
@@ -57,7 +24,5 @@ interface AppSearchRouteParams {
   [SearchRoutes.searchId]: string;
 }
 
-export type RouteParams = DataEntityRouteParams & TermRouteParams & SearchRouteParams;
-export type AppRouteParams = AppDataEntityRouteParams &
-  AppSearchRouteParams &
-  AppTermRouteParams;
+export type RouteParams = TermRouteParams & SearchRouteParams;
+export type AppRouteParams = AppSearchRouteParams & AppTermRouteParams;

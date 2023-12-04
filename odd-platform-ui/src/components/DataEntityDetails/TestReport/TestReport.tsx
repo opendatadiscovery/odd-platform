@@ -12,9 +12,9 @@ import {
   getTestReportListBySuiteName,
 } from 'redux/selectors';
 import { fetchDataSetQualityTestList } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
 import { AppErrorPage, AppPaper, TestRunStatusItem } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import TestReportItem from './TestReportItem/TestReportItem';
 import TestReportDetails from './TestReportDetails/TestReportDetails';
 import TestReportItemSkeleton from './TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
@@ -24,7 +24,7 @@ import * as S from './TestReportStyles';
 const TestReport: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataQATestId, dataEntityId } = useAppParams();
+  const { dataQATestId, dataEntityId } = useDataEntityRouteParams();
 
   const datasetTestReport = useAppSelector(getDatasetTestReport(dataEntityId));
   const datasetQualityTestList = useAppSelector(

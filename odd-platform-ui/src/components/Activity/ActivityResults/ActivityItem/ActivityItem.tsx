@@ -16,8 +16,10 @@ import {
   DatasetTermActivityField,
   EntityStatusActivityField,
 } from 'components/shared/elements/Activity';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -31,7 +33,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   hideAllDetails,
   dataQA,
 }) => {
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { activityFormattedDateTime } = useAppDateTime();
 
   const tagStateItem = React.useCallback(
@@ -48,7 +50,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
     <S.Container container data-qa={dataQA}>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
         <Grid item display='flex' flexWrap='nowrap' alignItems='center'>
-          <Link to={dataEntityOverviewPath(activity.dataEntity.id)}>
+          <Link to={updatePath(dataEntityDetailsPath(activity.dataEntity.id))}>
             <Typography variant='h3' sx={{ mr: 1, width: 'max-content' }}>
               {activity.dataEntity.externalName || activity.dataEntity.internalName}
             </Typography>

@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { UpstreamIcon, DownstreamIcon } from 'components/shared/icons';
 import { EntityClassItem, Button, EntitiesListModal } from 'components/shared/elements';
-import { useAppPaths } from 'lib/hooks';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 import { StatIconContainer } from './OverviewTransformerStatsStyles';
 
 interface OverviewTransformerStatsProps {
@@ -24,7 +25,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
 }) => {
   const { t } = useTranslation();
   const displayedEntitiesNumber = 10;
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <Grid container>
@@ -55,7 +56,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
               .map(source => (
                 <Button
                   text={source.internalName || source.externalName}
-                  to={dataEntityOverviewPath(source.id)}
+                  to={updatePath(dataEntityDetailsPath(source.id))}
                   key={source.id}
                   buttonType='link-m'
                   sx={{ my: 0.25 }}
@@ -102,7 +103,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
               .map(target => (
                 <Button
                   text={target.internalName || target.externalName}
-                  to={dataEntityOverviewPath(target.id)}
+                  to={updatePath(dataEntityDetailsPath(target.id))}
                   key={target.id}
                   sx={{ my: 0.25 }}
                   buttonType='link-m'

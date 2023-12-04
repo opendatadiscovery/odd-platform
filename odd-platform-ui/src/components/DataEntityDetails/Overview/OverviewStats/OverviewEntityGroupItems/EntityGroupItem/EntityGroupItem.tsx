@@ -2,7 +2,7 @@ import React, { type FC, useCallback } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import type { DataEntity, DataEntityBaseObject } from 'generated-sources';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import {
   Button,
   EntityClassItem,
@@ -12,6 +12,8 @@ import {
 } from 'components/shared/elements';
 import { TriangularUnionIcon } from 'components/shared/icons';
 import MetadataStale from 'components/shared/elements/MetadataStale/MetadataStale';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 
 interface EntityGroupItemProps {
   isUpperGroup: boolean;
@@ -40,7 +42,7 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
   lastIngestedAt,
   isStale,
 }) => {
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
   const ownersEllipsis = useCallback(
@@ -55,7 +57,7 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
   );
 
   return (
-    <Link to={dataEntityOverviewPath(id)}>
+    <Link to={updatePath(dataEntityDetailsPath(id))}>
       <Table.RowContainer>
         <Table.Cell $flex={flexMap.name}>
           <Grid

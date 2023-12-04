@@ -3,7 +3,6 @@ import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createMessageToSlack } from 'redux/thunks';
 import {
@@ -14,6 +13,8 @@ import {
 } from 'components/shared/elements';
 import { type MessageRequest } from 'generated-sources';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 
 interface CreateMessageFormProps {
   dataEntityId: number;
@@ -27,13 +28,13 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { dataEntityCollaborationPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const { isLoading: isMessageCreating, isLoaded: isMessageCreated } = useAppSelector(
     getMessageToSlackCreatingStatuses
   );
 
-  const toCollaboration = dataEntityCollaborationPath(dataEntityId);
+  const toCollaboration = updatePath(dataEntityDetailsPath(dataEntityId, 'discussions'));
 
   type MessageFormData = Omit<MessageRequest, 'dataEntityId'>;
 

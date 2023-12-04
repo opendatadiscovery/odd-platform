@@ -2,9 +2,10 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { type MessagesByDate } from 'redux/interfaces';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDiscussionsPath, useDataEntityRouteParams } from 'routes';
 import Message from './Message/Message';
 import * as S from './MessagesListStyles';
 import MessageSkeleton from './Message/MessageSkeleton';
@@ -29,12 +30,12 @@ const MessagesList: React.FC<MessagesListProps> = ({
   handleSetMessageDate,
 }) => {
   const navigate = useNavigate();
-  const { dataEntityId, messageId: routerMessageId } = useAppParams();
-  const { dataEntityCollaborationMessagePath } = useAppPaths();
+  const { dataEntityId, messageId: routerMessageId } = useDataEntityRouteParams();
+  const { updatePath } = useIsEmbeddedPath();
 
   const handleMessageOnClick = React.useCallback(
     (messageId: string) => () => {
-      navigate(dataEntityCollaborationMessagePath(dataEntityId, messageId));
+      navigate(updatePath(dataEntityDiscussionsPath(dataEntityId, messageId)));
     },
     [dataEntityId]
   );

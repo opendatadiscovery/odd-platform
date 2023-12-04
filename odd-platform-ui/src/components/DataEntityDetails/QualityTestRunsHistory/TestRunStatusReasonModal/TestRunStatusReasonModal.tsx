@@ -8,7 +8,9 @@ import {
   LabeledInfoItem,
   TestRunStatusItem,
 } from 'components/shared/elements';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 import { StatsContainer, StatusReasonContainer } from './TestRunStatusReasonModalStyles';
 
 interface TestRunStatusReasonModalProps {
@@ -25,7 +27,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
   dataQATestRun,
 }) => {
   const { t } = useTranslation();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const modalTitle = (
@@ -34,7 +36,7 @@ const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
         {dataQATestName}
       </Typography>
       <Button
-        to={dataEntityOverviewPath(dataQATestId)}
+        to={updatePath(dataEntityDetailsPath(dataQATestId))}
         text={t('Go to page')}
         buttonType='tertiary-m'
       />

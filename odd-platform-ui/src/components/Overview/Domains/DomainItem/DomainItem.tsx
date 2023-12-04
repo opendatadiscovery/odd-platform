@@ -1,9 +1,10 @@
 import React, { type FC } from 'react';
 import { Box } from '@mui/material';
 import type { DataEntityDomain } from 'generated-sources';
-import { useAppPaths } from 'lib/hooks';
 import { IconicInfoBadge } from 'components/shared/elements';
 import { FolderIcon } from 'components/shared/icons';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 
 interface DomainItemProps {
   domain: DataEntityDomain['domain'];
@@ -11,13 +12,13 @@ interface DomainItemProps {
 }
 
 const DomainItem: FC<DomainItemProps> = ({ domain, childrenCount }) => {
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <IconicInfoBadge
       name={domain.internalName ?? domain.externalName ?? ''}
       count={childrenCount}
-      to={dataEntityOverviewPath(domain.id)}
+      to={updatePath(dataEntityDetailsPath(domain.id))}
       icon={
         <Box
           sx={{

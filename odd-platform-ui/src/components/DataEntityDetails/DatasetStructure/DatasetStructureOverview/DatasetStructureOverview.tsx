@@ -13,8 +13,9 @@ import {
   getDatasetVersions,
 } from 'redux/selectors';
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { datasetStructurePath, useDataEntityRouteParams } from 'routes';
 import DatasetStructureOverviewProvider from './lib/DatasetStructureOverviewProvider';
 import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
 import DatasetStructureView from './DatasetStructureView/DatasetStructureView';
@@ -22,8 +23,8 @@ import DatasetStructureView from './DatasetStructureView/DatasetStructureView';
 const DatasetStructureOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { datasetStructurePath, DataEntityRoutes } = useAppPaths();
-  const { dataEntityId, versionId } = useAppParams();
+  const { updatePath } = useIsEmbeddedPath();
+  const { dataEntityId, versionId } = useDataEntityRouteParams();
 
   useEffect(() => {
     if (versionId) {
@@ -32,14 +33,9 @@ const DatasetStructureOverview: React.FC = () => {
       dispatch(fetchDataSetStructureLatest({ dataEntityId }))
         .unwrap()
         .then(({ dataSetVersionId }) => {
-          navigate(
-            datasetStructurePath(
-              DataEntityRoutes.overview,
-              dataEntityId,
-              dataSetVersionId
-            ),
-            { replace: true }
-          );
+          navigate(updatePath(datasetStructurePath(dataEntityId, dataSetVersionId)), {
+            replace: true,
+          });
         });
     }
   }, []);

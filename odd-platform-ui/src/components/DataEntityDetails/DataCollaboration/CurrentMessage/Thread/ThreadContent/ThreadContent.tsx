@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { type Message } from 'redux/interfaces';
 import { Button, EmptyContentPlaceholder } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
-import { useAppPaths } from 'lib/hooks';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 import ThreadMessage from './ThreadMessage/ThreadMessage';
 import MainThreadMessage from './MainThreadMessage/MainThreadMessage';
 import ThreadMessageSkeleton from './ThreadMessage/ThreadMessageSkeleton';
@@ -30,7 +31,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
   isRelatedMessagesLoaded,
 }) => {
   const { t } = useTranslation();
-  const { dataEntityCollaborationPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <Grid
@@ -45,7 +46,7 @@ const ThreadContent: React.FC<ThreadContentProps> = ({
           {t('Thread')}
         </Typography>
         <Button
-          to={dataEntityCollaborationPath(dataEntityId)}
+          to={updatePath(dataEntityDetailsPath(dataEntityId, 'discussions'))}
           buttonType='linkGray-m'
           icon={<ClearIcon viewBox='0 0 16 16' width={24} height={24} />}
           sx={{ ml: 2 }}

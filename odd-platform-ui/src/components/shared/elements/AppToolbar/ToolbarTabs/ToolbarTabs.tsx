@@ -26,15 +26,8 @@ const ToolbarTabs: FC = () => {
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const {
-    activityPath,
-    termSearchPath,
-    TermsRoutes,
-    SearchRoutes,
-    ActivityRoutes,
-    DataEntityRoutes,
-    updatePath,
-  } = useAppPaths();
+  const { activityPath, termSearchPath, TermsRoutes, SearchRoutes, updatePath } =
+    useAppPaths();
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -78,7 +71,7 @@ const ToolbarTabs: FC = () => {
       {
         name: t('Activity'),
         link: activityPath(activityQueryString),
-        value: ActivityRoutes.activity,
+        value: 'activity',
       },
     ],
     [activityQueryString, t, updatePath]
@@ -91,7 +84,7 @@ const ToolbarTabs: FC = () => {
     tabs.forEach((tab, idx) => {
       if (
         location.pathname.includes(tab.value as string) &&
-        !location.pathname.includes(DataEntityRoutes.dataentities)
+        !location.pathname.includes('dataentities')
       ) {
         newTabIdx = idx;
       }
