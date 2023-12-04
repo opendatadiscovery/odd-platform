@@ -9,7 +9,7 @@ import React, { cloneElement, useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import { Button, DialogWrapper, Input, Markdown } from 'components/shared/elements';
-import { queryExamplesPath } from 'routes/dataModellingRoutes';
+import { queryExamplesPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface QueryExampleFormProps {

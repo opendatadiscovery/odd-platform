@@ -9,7 +9,8 @@ import {
   MetadataStale,
 } from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
-import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useDirectoryRouteParams } from 'routes';
 
 interface EntityItemProps {
   name: DataEntity['internalName'] | DataEntity['externalName'];
@@ -36,7 +37,7 @@ const EntityItem: FC<EntityItemProps> = ({
   flexMap,
   id,
 }) => {
-  const { typeId } = useAppParams();
+  const { typeId } = useDirectoryRouteParams();
   const { dataEntityOverviewPath } = useAppPaths();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 

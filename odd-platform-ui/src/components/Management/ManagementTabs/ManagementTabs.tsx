@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { usePermissions } from 'lib/hooks';
-import { managementPath } from 'routes/managementRoutes';
+import { managementPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';

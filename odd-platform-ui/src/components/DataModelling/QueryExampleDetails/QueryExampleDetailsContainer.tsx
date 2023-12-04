@@ -15,10 +15,7 @@ import {
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  queryExamplesPath,
-  useQueryExamplesRouteParams,
-} from 'routes/dataModellingRoutes';
+import { queryExamplesPath, useQueryExamplesRouteParams } from 'routes';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
 import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
 import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';

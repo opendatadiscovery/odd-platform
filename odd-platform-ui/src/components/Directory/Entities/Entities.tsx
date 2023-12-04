@@ -2,7 +2,6 @@ import React, { type FC, useMemo } from 'react';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
-  useAppParams,
   useGetDataSourceEntities,
   useGetDataSourceEntityTypes,
   usePrevious,
@@ -10,6 +9,7 @@ import {
 import { AppErrorPage, AppLoadingPage, DatasourceLogo } from 'components/shared/elements';
 import { pluralize } from 'lib/helpers';
 import type { ErrorState } from 'redux/interfaces';
+import { useDirectoryRouteParams } from 'routes';
 import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import EntitiesTabs from './EntitiesTabs/EntitiesTabs';
 import EntitiesList from './EntitiesList/EntitiesList';
@@ -17,7 +17,7 @@ import * as S from '../shared/styles';
 
 const Entities: FC = () => {
   const { t } = useTranslation();
-  const { dataSourceTypePrefix: prefix, dataSourceId, typeId } = useAppParams();
+  const { dataSourceTypePrefix, dataSourceId, typeId } = useDirectoryRouteParams();
 
   const {
     data: types,
@@ -66,7 +66,7 @@ const Entities: FC = () => {
         <DirectoryBreadCrumbs dataSourceName={dataSourceName} />
         <S.Header>
           <S.LogoContainer>
-            <DatasourceLogo name={prefix} rounded width={32} padding={1} />
+            <DatasourceLogo name={dataSourceTypePrefix} rounded width={32} padding={1} />
             <Typography variant='h0' ml={1}>
               {dataSourceName}
             </Typography>

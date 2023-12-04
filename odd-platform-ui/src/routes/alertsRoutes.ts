@@ -1,5 +1,3 @@
-import { generatePath } from 'react-router-dom';
-
 const BASE_PATH = 'alerts';
 const AlertsRoutes = {
   ALL_PATH: `all`,
@@ -10,6 +8,6 @@ const AlertsRoutes = {
 type AlertsRoutesType = typeof AlertsRoutes;
 
 export function alertsPath(path?: AlertsRoutesType[keyof AlertsRoutesType]) {
-  if (!path) return generatePath(BASE_PATH);
-  return generatePath(`${BASE_PATH}/${path}`);
+  if (!path) return BASE_PATH;
+  return `${BASE_PATH}/${path}`;
 }

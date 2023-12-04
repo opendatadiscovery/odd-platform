@@ -3,3 +3,4 @@ export * from './dataEntitiesRoutes';
 export * from './dataModellingRoutes';
 export * from './dataQualityRoutes';
 export * from './managementRoutes';
+export * from './directoryRoutes';

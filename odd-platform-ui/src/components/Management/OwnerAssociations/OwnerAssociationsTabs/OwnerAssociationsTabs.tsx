@@ -5,7 +5,7 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { getOwnerAssociationRequestsListFetchingStatuses } from 'redux/selectors';
-import { associationsPath } from 'routes/managementRoutes';
+import { associationsPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';

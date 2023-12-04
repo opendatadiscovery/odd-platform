@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
-import { integrationsPath } from 'routes/managementRoutes';
+import { integrationsPath } from 'routes';
 import type { Integration } from 'generated-sources';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { useLocation, useMatch } from 'react-router-dom';

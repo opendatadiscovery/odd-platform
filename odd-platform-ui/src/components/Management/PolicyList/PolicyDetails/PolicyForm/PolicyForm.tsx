@@ -9,7 +9,7 @@ import { createPolicy, updatePolicy } from 'redux/thunks';
 import { AppJSONEditor, Button, Input } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
-import { managementPath } from 'routes/managementRoutes';
+import { managementPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface PolicyFormProps {

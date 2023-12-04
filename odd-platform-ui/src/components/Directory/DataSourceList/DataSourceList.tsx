@@ -16,14 +16,15 @@ import {
   getCapitalizedDatasourceNameFromPrefix,
   ScrollableContainer,
 } from 'components/shared/elements';
-import { useAppParams, useGetDirectoryDataSources } from 'lib/hooks';
+import { useGetDirectoryDataSources } from 'lib/hooks';
+import { useDirectoryRouteParams } from 'routes';
 import DirectoryBreadCrumbs from '../DirectoryBreadCrumbs/DirectoryBreadCrumbs';
 import * as S from '../shared/styles';
 import type { Cell, FlexCell, Row } from './DataSourceTable/interfaces';
 import * as Table from './DataSourceTable/Table';
 
 const DataSourceList: FC = () => {
-  const { dataSourceTypePrefix: prefix } = useAppParams();
+  const { dataSourceTypePrefix: prefix } = useDirectoryRouteParams();
   const {
     data: dataSourceList,
     isLoading,

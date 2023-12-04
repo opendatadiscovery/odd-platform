@@ -2,7 +2,7 @@ import React, { type FC } from 'react';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Table } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
+import { useDirectoryRouteParams } from 'routes';
 
 interface TableHeaderProps {
   flexMap: Record<string, string>;
@@ -10,7 +10,7 @@ interface TableHeaderProps {
 
 const TableHeader: FC<TableHeaderProps> = ({ flexMap }) => {
   const { t } = useTranslation();
-  const { typeId } = useAppParams();
+  const { typeId } = useDirectoryRouteParams();
 
   const cells = [
     { name: t('Name'), flex: flexMap.name },

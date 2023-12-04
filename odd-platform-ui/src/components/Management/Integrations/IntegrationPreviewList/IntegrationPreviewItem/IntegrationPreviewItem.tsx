@@ -6,7 +6,7 @@ import type { IntegrationPreview } from 'generated-sources';
 import { IntegratedIcon } from 'components/shared/icons';
 import type { DatasourceName } from 'lib/interfaces';
 import { DatasourceLogo } from 'components/shared/elements';
-import { integrationsPath } from 'routes/managementRoutes';
+import { integrationsPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import * as S from './IntegrationPreviewItem.styles';
 

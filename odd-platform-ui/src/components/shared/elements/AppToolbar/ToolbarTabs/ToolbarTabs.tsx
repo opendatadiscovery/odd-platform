@@ -9,10 +9,13 @@ import {
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
-import { queryExamplesPath } from 'routes/dataModellingRoutes';
-import { alertsPath } from 'routes/alertsRoutes';
-import { managementPath } from 'routes/managementRoutes';
-import { dataQualityPath } from 'routes/dataQualityRoutes';
+import {
+  alertsPath,
+  dataQualityPath,
+  directoryPath,
+  managementPath,
+  queryExamplesPath,
+} from 'routes';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
@@ -29,7 +32,6 @@ const ToolbarTabs: FC = () => {
     TermsRoutes,
     SearchRoutes,
     ActivityRoutes,
-    DirectoryRoutes,
     DataEntityRoutes,
     updatePath,
   } = useAppPaths();
@@ -43,8 +45,8 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Directory'),
-        link: updatePath(DirectoryRoutes.directory),
-        value: DirectoryRoutes.directory,
+        link: updatePath(directoryPath()),
+        value: 'directory',
       },
       {
         name: t('Data Quality'),

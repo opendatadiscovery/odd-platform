@@ -5,7 +5,7 @@ import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { AlertTotals } from 'generated-sources';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
-import { alertsPath } from 'routes/alertsRoutes';
+import { alertsPath } from 'routes';
 import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 

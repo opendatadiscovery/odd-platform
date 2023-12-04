@@ -1,7 +1,8 @@
 import React, { type FC } from 'react';
 import type { DataSourceType } from 'generated-sources';
 import { DatasourceLogo, IconicInfoBadge } from 'components/shared/elements';
-import { useAppPaths } from 'lib/hooks';
+import { directoryDataSourcePath } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface DirectoryItemProps {
   name: DataSourceType['name'];
@@ -10,13 +11,13 @@ interface DirectoryItemProps {
 }
 
 const DirectoryItem: FC<DirectoryItemProps> = ({ name, entitiesCount, prefix }) => {
-  const { directoryDataSourceListPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <IconicInfoBadge
       name={name}
       count={entitiesCount}
-      to={directoryDataSourceListPath(prefix)}
+      to={updatePath(directoryDataSourcePath(prefix))}
       icon={
         <DatasourceLogo
           name={prefix}

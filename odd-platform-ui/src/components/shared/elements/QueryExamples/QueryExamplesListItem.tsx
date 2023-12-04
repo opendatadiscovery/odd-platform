@@ -10,7 +10,7 @@ import { WithPermissions } from 'components/shared/contexts';
 import ConfirmationDialog from 'components/shared/elements/ConfirmationDialog/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import { useUnassignEntityQueryExample } from 'lib/hooks/api/dataModelling/queryExamples';
-import { queryExamplesPath } from 'routes/dataModellingRoutes';
+import { queryExamplesPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
 import Markdown from '../Markdown/Markdown';

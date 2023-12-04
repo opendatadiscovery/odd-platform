@@ -2,13 +2,7 @@ import { useMemo } from 'react';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
 import { useTermsPaths } from './useTermsPaths';
 import { useDataEntityPaths } from './useDataEntityPaths';
-import {
-  ActivityRoutes,
-  SearchRoutes,
-  TermsRoutes,
-  DataEntityRoutes,
-  DirectoryRoutes,
-} from './shared';
+import { ActivityRoutes, SearchRoutes, TermsRoutes, DataEntityRoutes } from './shared';
 
 const useAppPaths = () => {
   const { updatePath, isPathEmbedded } = useIsEmbeddedPath();
@@ -31,19 +25,6 @@ const useAppPaths = () => {
     return updatePath(`${ActivityRoutes.activity}${query ? queryStr : ''}`);
   };
 
-  // Directories
-  const directoryEntitiesListPath = (
-    dataSourcePrefix: string,
-    dataSourceId: number,
-    typeId: number | string
-  ) =>
-    updatePath(
-      `${DirectoryRoutes.directory}/${dataSourcePrefix}/${dataSourceId}/${typeId}`
-    );
-
-  const directoryDataSourceListPath = (dataSourcePrefix: string) =>
-    updatePath(`${DirectoryRoutes.directory}/${dataSourcePrefix}`);
-
   return useMemo(
     () => ({
       isPathEmbedded,
@@ -51,15 +32,12 @@ const useAppPaths = () => {
       SearchRoutes,
       TermsRoutes,
       DataEntityRoutes,
-      DirectoryRoutes,
       basePath,
       updatePath,
       getNonExactPath,
       getNonExactParamPath,
       searchPath,
       activityPath,
-      directoryEntitiesListPath,
-      directoryDataSourceListPath,
       ...termsPaths,
       ...dataEntityPaths,
     }),

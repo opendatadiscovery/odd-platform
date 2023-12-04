@@ -1,9 +1,4 @@
-import type {
-  DataEntityRoutes,
-  SearchRoutes,
-  TermsRoutes,
-  DirectoryRoutes,
-} from '../useAppPaths/shared';
+import type { DataEntityRoutes, SearchRoutes, TermsRoutes } from '../useAppPaths/shared';
 
 interface DataEntityViewTypes {
   [DataEntityRoutes.dataEntityViewType]:
@@ -62,24 +57,7 @@ interface AppSearchRouteParams {
   [SearchRoutes.searchId]: string;
 }
 
-interface DirectoryRouteParams {
-  [DirectoryRoutes.dataSourceTypePrefix]: string;
-  [DirectoryRoutes.dataSourceId]: string;
-  [DirectoryRoutes.typeId]: string;
-}
-
-interface AppDirectoryRouteParams {
-  [DirectoryRoutes.dataSourceTypePrefix]: string;
-  [DirectoryRoutes.dataSourceId]: number;
-  [DirectoryRoutes.typeId]: undefined | number;
-}
-
-export type RouteParams = DataEntityRouteParams &
-  TermRouteParams &
-  SearchRouteParams &
-  DirectoryRouteParams;
-
+export type RouteParams = DataEntityRouteParams & TermRouteParams & SearchRouteParams;
 export type AppRouteParams = AppDataEntityRouteParams &
   AppSearchRouteParams &
-  AppTermRouteParams &
-  AppDirectoryRouteParams;
+  AppTermRouteParams;

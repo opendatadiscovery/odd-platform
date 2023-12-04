@@ -18,7 +18,7 @@ import { useAppDateTime } from 'lib/hooks';
 import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
-import { dataEntityDetailsPath } from 'routes/dataEntitiesRoutes';
+import { dataEntityDetailsPath } from 'routes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { type GridSizesByBreakpoints, SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';

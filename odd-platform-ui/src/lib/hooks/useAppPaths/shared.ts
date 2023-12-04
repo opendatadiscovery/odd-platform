@@ -54,13 +54,3 @@ export const TermsRoutes = {
   linkedEntities: 'linked-entities',
   linkedColumns: 'linked-columns',
 } as const;
-
-export const DirectoryRoutes = {
-  directory: 'directory',
-  dataSourceTypePrefix: 'dataSourceTypePrefix',
-  dataSourceTypePrefixParam: ':dataSourceTypePrefix',
-  dataSourceId: 'dataSourceId',
-  dataSourceIdParam: ':dataSourceId',
-  typeId: 'typeId',
-  typeIdParam: ':typeId',
-} as const;

@@ -15,10 +15,7 @@ import {
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
 import { useLocation, useMatch } from 'react-router-dom';
-import {
-  dataEntityDetailsPath,
-  useDataEntityRouteParams,
-} from 'routes/dataEntitiesRoutes';
+import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';

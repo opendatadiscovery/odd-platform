@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Button, DatasourceLogo } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
-import { managementPath } from 'routes/managementRoutes';
+import { managementPath } from 'routes';
 
 interface IntegrationHeaderProps {
   id: Integration['id'];
