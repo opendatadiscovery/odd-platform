@@ -9,12 +9,13 @@ import {
   Input,
   Table,
 } from 'components/shared/elements';
-import { useAppParams, useGetDataEntityGroupItems } from 'lib/hooks';
+import { useGetDataEntityGroupItems } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import EntityGroupItem from './EntityGroupItem/EntityGroupItem';
 import * as S from './OverviewEntityGroupItems.styles';
 
 const OverviewEntityGroupItems: FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const [inputValue, setInputValue] = useState('');
   const [query, setQuery] = useState('');

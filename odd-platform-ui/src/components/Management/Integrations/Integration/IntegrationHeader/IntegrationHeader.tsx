@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Button, DatasourceLogo } from 'components/shared/elements';
 import type { Integration } from 'lib/interfaces';
-import { useAppPaths } from 'lib/hooks';
+import { managementPath } from 'routes';
 
 interface IntegrationHeaderProps {
   id: Integration['id'];
@@ -13,7 +13,6 @@ interface IntegrationHeaderProps {
 
 const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }) => {
   const { t } = useTranslation();
-  const { ManagementRoutes } = useAppPaths();
 
   return (
     <Grid container justifyContent='space-between' flexWrap='nowrap'>
@@ -29,7 +28,7 @@ const IntegrationHeader: FC<IntegrationHeaderProps> = ({ id, name, description }
       <Button
         sx={{ flexShrink: 0 }}
         text={t('Back to integrations')}
-        to={`../../${ManagementRoutes.integrations}`}
+        to={managementPath('integrations')}
         buttonType='secondary-m'
       />
     </Grid>

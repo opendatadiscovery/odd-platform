@@ -9,15 +9,15 @@ import {
 } from 'components/shared/elements';
 import { LinkIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
-import { useAppParams } from 'lib/hooks';
 import { useGetQueryExamplesByDatasetId } from 'lib/hooks/api/dataModelling/queryExamples';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import AssignEntityQueryExampleForm from './AssignEntityQueryExampleForm';
 
 const DataEntityDetailsQueryExamples: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { data, isLoading } = useGetQueryExamplesByDatasetId({ dataEntityId });
 
   const queryExamples = useMemo(() => data?.items ?? [], [data?.items]);

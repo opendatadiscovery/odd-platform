@@ -4,11 +4,12 @@ import isEmpty from 'lodash/isEmpty';
 import { useTranslation } from 'react-i18next';
 import { type CustomGroupActivityState } from 'generated-sources';
 import { type EventType } from 'lib/interfaces';
-import { useAppPaths } from 'lib/hooks';
 import Button from 'components/shared/elements/Button/Button';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from '../../../../../../routes';
 
 interface GroupFieldData {
   id?: number;
@@ -35,7 +36,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   hideAllDetails,
 }) => {
   const { t } = useTranslation();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
@@ -139,7 +140,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
             <S.ArrayItemWrapper key={item.id} $typeOfChange={item.typeOfChange}>
               <Button
                 text={item.name}
-                to={dataEntityOverviewPath(item.id)}
+                to={updatePath(dataEntityDetailsPath(item.id))}
                 buttonType='tertiary-m'
                 sx={{
                   mb: item.typeOfChange ? 0 : 0.5,

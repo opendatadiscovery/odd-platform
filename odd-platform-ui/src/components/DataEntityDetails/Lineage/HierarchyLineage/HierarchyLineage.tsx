@@ -9,7 +9,7 @@ import {
   getUpstreamLineageFetchingError,
   getUpstreamLineageFetchingStatuses,
 } from 'redux/selectors';
-import { useAppParams, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import { AppCircularProgress, AppErrorPage } from 'components/shared/elements';
 import {
   fetchDataEntityDownstreamLineage,
@@ -19,6 +19,7 @@ import {
   expandEntitiesFromDownstreamGroup,
   expandEntitiesFromUpstreamGroup,
 } from 'redux/slices/dataEntityLineage/dataEntityLineage.slice';
+import { useDataEntityRouteParams } from 'routes';
 import type { LineageQueryParams } from './lineageLib/interfaces';
 import ZoomableLineage from './ZoomableLineage/ZoomableLineage';
 import {
@@ -32,7 +33,7 @@ import * as S from './HierarchyLineage.styles';
 
 const HierarchyLineage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const {
     queryParams: { d, t, eag, exdg, exug, exd, exu },

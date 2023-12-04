@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntity } from 'generated-sources';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { MetadataStale } from 'components/shared/elements';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 import { Container, ItemLink, ColContainer } from './LinkedItemStyles';
 
 interface LinkedItemProps {
@@ -10,9 +12,9 @@ interface LinkedItemProps {
 }
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
-  const { dataEntityOverviewPath } = useAppPaths();
   const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = dataEntityOverviewPath(linkedItem.id);
+  const { updatePath } = useIsEmbeddedPath();
+  const detailsLink = updatePath(dataEntityDetailsPath(linkedItem.id));
 
   return (
     <ItemLink to={detailsLink}>

@@ -1,13 +1,13 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useAppParams } from 'lib/hooks';
 import type { DataSetField } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import useStructure from '../../lib/useStructure';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureList.styles';
 
 const DatasetStructureList: FC = () => {
-  const { dataEntityId, versionId } = useAppParams();
+  const { dataEntityId, versionId } = useDataEntityRouteParams();
   const { datasetStructureRoot, idxToScroll, isSearchUpdated } = useStructure();
 
   const containerRef = useRef<HTMLDivElement>(null);

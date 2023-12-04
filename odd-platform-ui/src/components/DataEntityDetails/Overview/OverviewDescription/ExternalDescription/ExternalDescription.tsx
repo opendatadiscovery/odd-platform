@@ -1,12 +1,12 @@
 import React, { type FC, memo } from 'react';
 import { Markdown } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityExternalDescription } from 'redux/selectors';
+import { useDataEntityRouteParams } from 'routes';
 import * as S from './ExternalDescription.styles';
 
 const ExternalDescription: FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const description = useAppSelector(getDataEntityExternalDescription(dataEntityId));
 

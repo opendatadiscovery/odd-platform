@@ -1,8 +1,9 @@
 import React, { type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
-import { useAppParams, useSaveDataEntityFile } from 'lib/hooks';
+import { useSaveDataEntityFile } from 'lib/hooks';
 import { Button, DialogWrapper, FileInput } from 'components/shared/elements';
+import { useDataEntityRouteParams } from 'routes';
 import FileItem from './FileItem/FileItem';
 
 interface SaveFilesFormProps {
@@ -16,7 +17,7 @@ interface FormData {
 
 const SaveFilesForm: FC<SaveFilesFormProps> = ({ openBtn, maxSize }) => {
   const formId = 'save-files-form';
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const { mutate: saveFile, isPending, isSuccess } = useSaveDataEntityFile();
 

@@ -11,14 +11,16 @@ import {
   fetchTagsList,
 } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks';
-import { DataModellingRoutes } from 'routes/dataModellingRoutes';
-import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
+import {
+  alertsPath,
+  dataModellingPath,
+  dataQualityPath,
+  directoryPath,
+  managementPath,
+} from 'routes';
 
 // lazy elements
 const Management = lazy(() => import('./Management/Management'));
-const ManagementRoutes = lazy(
-  () => import('./Management/ManagementRoutes/ManagementRoutes')
-);
 const DataEntityDetails = lazy(() => import('./DataEntityDetails/DataEntityDetails'));
 const TermDetails = lazy(() => import('./Terms/TermDetails/TermDetails'));
 const Overview = lazy(() => import('./Overview/Overview'));
@@ -35,14 +37,10 @@ const App: React.FC = () => {
 
   const {
     isPathEmbedded,
-    ManagementRoutes: ManagementRoutesEnum,
     SearchRoutes,
     basePath,
     TermsRoutes,
     ActivityRoutes,
-    AlertsRoutes,
-    DirectoryRoutes: DirectoryRoutesEnum,
-    DataQualityRoutes,
     getNonExactPath,
     getNonExactParamPath,
   } = useAppPaths();
@@ -63,20 +61,12 @@ const App: React.FC = () => {
           <Routes>
             <Route path={basePath} element={<Overview />} />
             <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />} />
-            <Route
-              path={getNonExactPath(ManagementRoutesEnum.management)}
-              element={<Management />}
-            >
-              <Route
-                path={getNonExactParamPath(ManagementRoutesEnum.managementViewTypeParam)}
-                element={<ManagementRoutes />}
-              />
-            </Route>
+            <Route path={getNonExactPath(managementPath())} element={<Management />} />
             <Route
               path={getNonExactPath(TermsRoutes.termSearch)}
               element={<TermSearch />}
             />
-            <Route path={getNonExactPath(AlertsRoutes.alerts)} element={<Alerts />} />
+            <Route path={getNonExactPath(alertsPath())} element={<Alerts />} />
             <Route
               path={getNonExactPath(ActivityRoutes.activity)}
               element={<Activity />}
@@ -85,19 +75,16 @@ const App: React.FC = () => {
               <Route path={getNonExactParamPath(TermsRoutes.termIdParam)} />
             </Route>
             <Route
-              path={getNonExactPath(DataEntitiesRoutes.BASE_PATH)}
+              path={getNonExactPath('/dataentities/:dataEntityId')}
               element={<DataEntityDetails />}
             />
             <Route
-              path={getNonExactPath(DirectoryRoutesEnum.directory)}
+              path={getNonExactPath(directoryPath())}
               element={<DirectoryRoutes />}
             />
+            <Route path={getNonExactPath(dataQualityPath())} element={<DataQuality />} />
             <Route
-              path={getNonExactPath(DataQualityRoutes.dataQuality)}
-              element={<DataQuality />}
-            />
-            <Route
-              path={getNonExactPath(DataModellingRoutes.BASE_PATH)}
+              path={getNonExactPath(dataModellingPath())}
               element={<DataModeling />}
             />
           </Routes>

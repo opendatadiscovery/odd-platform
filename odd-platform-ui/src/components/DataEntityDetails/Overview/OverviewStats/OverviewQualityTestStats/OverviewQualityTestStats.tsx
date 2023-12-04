@@ -6,7 +6,7 @@ import {
   type DataEntityDetails,
   type DataQualityTest,
 } from 'generated-sources';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import {
   Button,
   EntitiesListModal,
@@ -15,6 +15,8 @@ import {
   TestRunStatusItem,
   TestRunStatusReasonModal,
 } from 'components/shared/elements';
+import { dataEntityDetailsPath } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import * as S from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps {
@@ -33,7 +35,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   datasetsList,
 }) => {
   const { t } = useTranslation();
-  const { dataEntityOverviewPath, dataEntityHistoryPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { qualityTestFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 
   const displayedEntitiesNumber = 10;
@@ -57,7 +59,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             .map(dataset => (
               <Button
                 text={dataset.internalName || dataset.externalName}
-                to={dataEntityOverviewPath(dataset.id)}
+                to={updatePath(dataEntityDetailsPath(dataset.id))}
                 key={dataset.id}
                 sx={{ my: 0.25, maxWidth: '100%' }}
                 buttonType='link-m'
@@ -130,7 +132,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             <Button
               text={t('History')}
               buttonType='secondary-m'
-              to={dataEntityHistoryPath(qualityTest?.id)}
+              to={updatePath(dataEntityDetailsPath(qualityTest?.id, 'history'))}
             />
           </Grid>
         </S.Overview>

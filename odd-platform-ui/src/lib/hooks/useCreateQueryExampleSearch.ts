@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
-import { URLSearchParams } from 'routes/dataModellingRoutes';
+import { URLSearchParams } from 'routes';
 import {
   useCreateQueryExampleSearchId,
   useGetQueryExampleSearchFacets,

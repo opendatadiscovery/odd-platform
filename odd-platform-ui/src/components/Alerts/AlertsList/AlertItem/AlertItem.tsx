@@ -4,11 +4,13 @@ import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchResourcePermissions, updateAlertStatus } from 'redux/thunks';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { AlertStatusItem, Button, EntityClassItem } from 'components/shared/elements';
 import { alertTitlesMap } from 'lib/constants';
 import { getGlobalPermissions } from 'redux/selectors';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 import * as S from './AlertItemStyles';
 
 interface AlertItemProps {
@@ -29,7 +31,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { alertFormattedDateTime } = useAppDateTime();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const [showHistory, setShowHistory] = React.useState(false);
   const [disableResolve, setDisableResolve] = React.useState(false);
@@ -117,7 +119,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
           <>
             <Button
               text={dataEntity.externalName || dataEntity.internalName}
-              to={dataEntityOverviewPath(dataEntity.id)}
+              to={updatePath(dataEntityDetailsPath(dataEntity.id))}
               buttonType='link-m'
             />
             {dataEntity?.entityClasses?.map(entityClass => (

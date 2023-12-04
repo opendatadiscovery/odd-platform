@@ -9,16 +9,16 @@ import {
   getIsDataEntityBelongsToClass,
   getIsEntityStatusDeleted,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import OwnershipDeleteForm from './OwnershipDeleteForm/OwnershipDeleteForm';
 import * as S from './OwnersSectionStyles';
 import OwnershipForm from './OwnershipForm/OwnershipForm';
 
 const OwnersSection: FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const ownership = useAppSelector(getDataEntityOwnership(dataEntityId));
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));

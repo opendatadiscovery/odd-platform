@@ -7,14 +7,15 @@ import {
   getDataEntityRunsFetchingStatuses,
   getQualityTestNameByTestId,
 } from 'redux/selectors';
-import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { SkeletonWrapper, TestRunStatusItem } from 'components/shared/elements';
+import { useDataEntityRouteParams } from 'routes';
 import TestRunStatusReasonModal from '../../../QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
 import * as S from './TestReportDetailsHistoryStyles';
 
 const TestReportDetailsHistory: React.FC = () => {
-  const { dataQATestId } = useAppParams();
+  const { dataQATestId } = useDataEntityRouteParams();
   const dispatch = useAppDispatch();
   const { qualityTestRunFormattedDateTime, formatDistanceStrict } = useAppDateTime();
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import OverviewEntityGroupItems from './OverviewEntityGroupItems/OverviewEntityGroupItems';
 import OverviewDataConsumerStats from './OverviewDataConsumerStats/OverviewDataConsumerStats';
 import OverviewDataInputStats from './OverviewDataInputStats/OverviewDataInputStats';
@@ -11,7 +11,7 @@ import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransfo
 import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQualityTestStats';
 
 const OverviewStats: React.FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
 
   const dataEntityName =

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { useAppParams } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchPolicyDetails, fetchPolicySchema } from 'redux/thunks';
 import {
@@ -16,14 +15,14 @@ import {
   getPolicySchemaFetchingError,
   getPolicySchemaFetchingStatuses,
 } from 'redux/selectors';
+import { useParams } from 'react-router-dom';
 
 const PolicyForm = React.lazy(() => import('./PolicyForm/PolicyForm'));
 
 const PolicyDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { policyId } = useAppParams();
-
-  const policyDet = useAppSelector(state => getPolicyDetails(state, policyId));
+  const { policyId } = useParams();
+  const policyDet = useAppSelector(state => getPolicyDetails(state, Number(policyId)));
   const schema = useAppSelector(getPolicySchema);
 
   const { isLoading: isDetailsFetching, isNotLoaded: isDetailsNotFetched } =
@@ -48,8 +47,8 @@ const PolicyDetails: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchPolicySchema());
-    if (policyId) {
-      dispatch(fetchPolicyDetails({ policyId }));
+    if (policyId !== 'createPolicy') {
+      dispatch(fetchPolicyDetails({ policyId: Number(policyId) }));
     }
   }, [policyId]);
 

@@ -3,10 +3,11 @@ import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { DataEntityRef } from 'generated-sources';
-import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import * as S from 'components/shared/elements/EntitiesListModal/EntitiesListModalStyles';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 
 type LabelForTypes =
   | 'Entities'
@@ -31,10 +32,10 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   openBtnEl,
 }) => {
   const { t } = useTranslation();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const listItem = (item: DataEntityRef) => (
-    <Link to={dataEntityOverviewPath(item.id)}>
+    <Link to={updatePath(dataEntityDetailsPath(item.id))}>
       <S.ListItemContainer container>
         <Typography noWrap title={item.internalName || item.externalName}>
           {item.internalName || item.externalName}

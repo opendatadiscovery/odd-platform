@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements';
-import { useAppPaths, usePermissions } from 'lib/hooks';
+import { usePermissions } from 'lib/hooks';
 
 const NamespaceList = React.lazy(() => import('../NamespaceList/NamespaceList'));
 const OwnersList = React.lazy(() => import('../OwnersList/OwnersList'));
@@ -21,14 +21,13 @@ const PolicyDetails = React.lazy(
 const Integrations = React.lazy(() => import('../Integrations/Integrations'));
 
 const ManagementRoutes: React.FC = () => {
-  const { ManagementRoutes: ManagementRoutesEnum, getNonExactParamPath } = useAppPaths();
   const { hasAccessTo } = usePermissions();
 
   return (
     <AppSuspenseWrapper>
       <Routes>
         <Route
-          path={ManagementRoutesEnum.namespaces}
+          path='namespaces'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -42,7 +41,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={ManagementRoutesEnum.datasources}
+          path='datasources'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -57,7 +56,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={ManagementRoutesEnum.collectors}
+          path='collectors'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -72,7 +71,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={ManagementRoutesEnum.owners}
+          path='owners'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -86,7 +85,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={ManagementRoutesEnum.tags}
+          path='tags'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -100,20 +99,18 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={getNonExactParamPath(ManagementRoutesEnum.associations)}
+          path='associations/*'
           element={
             <RestrictedRoute
               isAllowedTo={hasAccessTo(Permission.OWNER_ASSOCIATION_MANAGE)}
-              redirectTo={`../${ManagementRoutesEnum.namespaces}`}
+              redirectTo='../namespaces'
               component={OwnerAssociations}
             />
           }
-        >
-          <Route path={ManagementRoutesEnum.associationsViewTypeParam} />
-        </Route>
+        />
 
         <Route
-          path={ManagementRoutesEnum.roles}
+          path='roles'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -127,7 +124,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={ManagementRoutesEnum.policies}
+          path='policies'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -141,7 +138,7 @@ const ManagementRoutes: React.FC = () => {
           }
         />
         <Route
-          path={`${ManagementRoutesEnum.policies}/${ManagementRoutesEnum.policyIdParam}`}
+          path='policies/:policyId'
           element={
             <WithPermissionsProvider
               allowedPermissions={[Permission.POLICY_UPDATE]}
@@ -150,14 +147,8 @@ const ManagementRoutes: React.FC = () => {
             />
           }
         />
-        <Route
-          path={getNonExactParamPath(ManagementRoutesEnum.integrations)}
-          element={<Integrations />}
-        />
-        <Route
-          path='/'
-          element={<Navigate to={ManagementRoutesEnum.namespaces} replace />}
-        />
+        <Route path='integrations/*' element={<Integrations />} />
+        <Route path='' element={<Navigate to='namespaces' replace />} />
       </Routes>
     </AppSuspenseWrapper>
   );

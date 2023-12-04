@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import {
   getDataEntityAlertsCount,
   getDataEntityDetails,
@@ -14,31 +14,28 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { generatePath, useLocation, useMatch } from 'react-router-dom';
-import { DataEntitiesRoutes } from 'routes/dataEntitiesRoutes';
+import { useLocation, useMatch } from 'react-router-dom';
+import {
+  dataEntityDetailsPath,
+  dataEntityLineagePath,
+  dataEntityTestReportsPath,
+  useDataEntityRouteParams,
+} from 'routes';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { defaultLineageQuery } from '../Lineage/HierarchyLineage/lineageLib/constants';
 import { defaultDEGLineageQuery } from '../Lineage/DEGLineage/lib/constants';
 
 const DataEntityDetailsTabs: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { defaultQueryString: lineageQueryString } = useQueryParams(defaultLineageQuery);
   const { defaultQueryString: degLineageQueryString } =
     useQueryParams(defaultDEGLineageQuery);
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
-  const {
-    dataEntityOverviewPath,
-    datasetStructurePath,
-    dataEntityLineagePath,
-    dataEntityTestReportPath,
-    dataEntityLinkedEntitiesPath,
-    dataEntityHistoryPath,
-    dataEntityAlertsPath,
-    dataEntityActivityPath,
-    dataEntityCollaborationPath,
-  } = useAppPaths();
 
+  const { updatePath } = useIsEmbeddedPath();
   const openAlertsCount = useAppSelector(getDataEntityAlertsCount(dataEntityId));
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
   const datasetQualityTestReportTotal = useAppSelector(
@@ -48,73 +45,63 @@ const DataEntityDetailsTabs: React.FC = () => {
     getIsDataEntityBelongsToClass(dataEntityId)
   );
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
-  const pathMatch = useMatch(useLocation().pathname);
+  const match = useMatch(useLocation().pathname);
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
       {
         name: t('Overview'),
-        link: dataEntityOverviewPath(dataEntityId),
-        value: DataEntitiesRoutes.OVERVIEW_PATH,
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'overview')),
       },
       {
         name: t('Structure'),
-        link: datasetStructurePath('overview', dataEntityId),
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'structure')),
         hidden: !isDataset,
-        value: DataEntitiesRoutes.STRUCTURE_PATH,
       },
       {
         name: t('Lineage'),
-        link: dataEntityLineagePath(
-          dataEntityId,
-          isDEG ? degLineageQueryString : lineageQueryString
+        link: updatePath(
+          dataEntityLineagePath(
+            dataEntityId,
+            isDEG ? degLineageQueryString : lineageQueryString
+          )
         ),
         hidden: isQualityTest || isStatusDeleted,
-        value: DataEntitiesRoutes.LINEAGE_PATH,
       },
       {
         name: t('Test reports'),
-        link: dataEntityTestReportPath(dataEntityId),
+        link: updatePath(dataEntityTestReportsPath(dataEntityId)),
         hidden: !isDataset || !datasetQualityTestReportTotal || isStatusDeleted,
-        value: DataEntitiesRoutes.TEST_REPORTS_PATH,
       },
       {
         name: t('History'),
-        link: dataEntityHistoryPath(dataEntityId),
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'history')),
         hidden: (!isQualityTest && !isTransformer) || isStatusDeleted,
-        value: DataEntitiesRoutes.HISTORY_PATH,
       },
       {
         name: t('Alerts'),
-        link: dataEntityAlertsPath(dataEntityId),
-        value: DataEntitiesRoutes.ALERTS_PATH,
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'alerts')),
         hint: openAlertsCount > 0 ? openAlertsCount : undefined,
         hintType: 'alert',
         hidden: isStatusDeleted,
       },
       {
         name: t('Linked entities'),
-        link: dataEntityLinkedEntitiesPath(dataEntityId),
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'linked-entities')),
         hidden: !dataEntityDetails?.hasChildren || isStatusDeleted,
-        value: DataEntitiesRoutes.LINKED_ENTITIES_PATH,
       },
       {
         name: t('Query examples'),
-        link: generatePath(DataEntitiesRoutes.QUERY_EXAMPLES_PATH, {
-          dataEntityId: String(dataEntityId),
-        }),
-        value: DataEntitiesRoutes.QUERY_EXAMPLES_PATH,
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'query-examples')),
         hidden: !isDataset,
       },
       {
         name: t('Activity'),
-        link: dataEntityActivityPath(dataEntityId, activityQueryString),
-        value: DataEntitiesRoutes.ACTIVITY_PATH,
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'activity')),
       },
       {
         name: t('Discussions'),
-        link: dataEntityCollaborationPath(dataEntityId),
-        value: DataEntitiesRoutes.DISCUSSIONS_PATH,
+        link: updatePath(dataEntityDetailsPath(dataEntityId, 'discussions')),
         hidden: isStatusDeleted,
       },
     ],
@@ -137,16 +124,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
-
-  React.useEffect(() => {
-    const foundIndex = tabs.findIndex(({ link }) => {
-      const pathname = pathMatch?.pathname;
-      return link && pathname
-        ? pathname.includes(link) || link.includes(pathname)
-        : false;
-    });
-    setSelectedTab(foundIndex === -1 ? 0 : foundIndex);
-  }, [tabs, pathMatch]);
+  useSetSelectedTab(tabs, match, setSelectedTab);
 
   return (
     <>

@@ -2,7 +2,9 @@ import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntity } from 'generated-sources';
 import { EntityClassItem, MetadataStale } from 'components/shared/elements';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
+import { dataEntityDetailsPath } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { TermLinkedEntitiesColContainer } from '../LinkedEntitiesListStyles';
 import { Container, EntityLink, NameContainer } from './LinkedEntityStyles';
 
@@ -11,10 +13,10 @@ interface LinkedEntityProps {
 }
 
 const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
 
-  const detailsLink = dataEntityOverviewPath(linkedEntity.id);
+  const detailsLink = updatePath(dataEntityDetailsPath(linkedEntity.id));
 
   return (
     <EntityLink to={detailsLink}>

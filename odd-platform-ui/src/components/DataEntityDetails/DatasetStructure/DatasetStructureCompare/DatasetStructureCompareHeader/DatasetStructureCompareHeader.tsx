@@ -4,8 +4,10 @@ import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { Button, Checkbox, AppMenuItem, AppSelect } from 'components/shared/elements';
-import { useAppDateTime, useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
+import { useAppDateTime, useQueryParams } from 'lib/hooks';
 import type { DataSetVersion } from 'generated-sources';
+import { datasetStructurePath, useDataEntityRouteParams } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { showOnlyChangesAtom } from '../lib/atoms';
 import { defaultStructureCompareQuery } from '../lib/constants';
 import type { StructureCompareQueryParams } from '../lib/interfaces';
@@ -17,10 +19,10 @@ interface DatasetStructureCompareHeaderProps {
 const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
   datasetVersions,
 }) => {
-  const { DataEntityRoutes, datasetStructurePath } = useAppPaths();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
   const navigate = useNavigate();
+  const { updatePath } = useIsEmbeddedPath();
 
   const [showOnlyChanges, setShowOnlyChanges] = useAtom(showOnlyChangesAtom);
 
@@ -30,7 +32,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
   } = useQueryParams<StructureCompareQueryParams>(defaultStructureCompareQuery);
 
   const handleCloseClick = useCallback(() => {
-    navigate(datasetStructurePath(DataEntityRoutes.overview, dataEntityId));
+    navigate(updatePath(datasetStructurePath(dataEntityId)));
   }, [dataEntityId]);
 
   const handleFirstRevisionChange = useCallback(

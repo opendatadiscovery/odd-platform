@@ -22,10 +22,11 @@ import {
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
-import { useAppPaths } from 'lib/hooks';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import Button from 'components/shared/elements/Button/Button';
 import Input, { type InputProps } from 'components/shared/elements/Input/Input';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from '../../../../../routes';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
@@ -53,7 +54,7 @@ const SearchSuggestionsAutocomplete: FC<SearchSuggestionsAutocompleteProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);
   const { isLoading: isSuggestionsLoading } = useAppSelector(
@@ -137,7 +138,9 @@ const SearchSuggestionsAutocomplete: FC<SearchSuggestionsAutocompleteProps> = ({
       </Box>
     );
 
-    const linkedItem = id ? <Link to={dataEntityOverviewPath(id)}>{item}</Link> : null;
+    const linkedItem = id ? (
+      <Link to={updatePath(dataEntityDetailsPath(id))}>{item}</Link>
+    ) : null;
 
     return (
       <li {...props} key={id}>

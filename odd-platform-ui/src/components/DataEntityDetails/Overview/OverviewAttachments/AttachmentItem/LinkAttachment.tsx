@@ -4,8 +4,9 @@ import type { DataEntityLink } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { DeleteIcon, EditIcon, LinkIcon } from 'components/shared/icons';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
-import { useAppParams, useDeleteDataEntityLink } from 'lib/hooks';
+import { useDeleteDataEntityLink } from 'lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
+import { useDataEntityRouteParams } from 'routes';
 import EditLinkForm from '../EditLinkForm/EditLinkForm';
 import * as S from './AttachmentItem.styles';
 
@@ -17,7 +18,7 @@ interface LinkAttachmentProps {
 
 const LinkAttachment: FC<LinkAttachmentProps> = ({ name, linkId, url }) => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { mutateAsync: deleteLink } = useDeleteDataEntityLink();
 
   return (

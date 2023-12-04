@@ -20,7 +20,6 @@ import {
   SearchSuggestionsAutocomplete,
 } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityGroupCreatingStatuses,
@@ -28,6 +27,8 @@ import {
   getDataEntityTypesByClassName,
 } from 'redux/selectors';
 import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
+import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 
@@ -37,9 +38,9 @@ interface DataEntityGroupFormProps {
 
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const navigate = useNavigate();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
@@ -95,7 +96,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
       .unwrap()
       .then(response => {
         clearState();
-        navigate(dataEntityOverviewPath(response.id));
+        navigate(updatePath(dataEntityDetailsPath(response.id)));
       });
   };
 

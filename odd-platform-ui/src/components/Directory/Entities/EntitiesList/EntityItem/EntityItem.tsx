@@ -9,7 +9,9 @@ import {
   MetadataStale,
 } from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
-import { useAppDateTime, useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
+import { dataEntityDetailsPath, useDirectoryRouteParams } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface EntityItemProps {
   name: DataEntity['internalName'] | DataEntity['externalName'];
@@ -36,12 +38,12 @@ const EntityItem: FC<EntityItemProps> = ({
   flexMap,
   id,
 }) => {
-  const { typeId } = useAppParams();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { typeId } = useDirectoryRouteParams();
+  const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
   return (
-    <Link to={dataEntityOverviewPath(id)}>
+    <Link to={updatePath(dataEntityDetailsPath(id))}>
       <Table.RowContainer>
         <Table.Cell $flex={flexMap.name}>
           <Grid

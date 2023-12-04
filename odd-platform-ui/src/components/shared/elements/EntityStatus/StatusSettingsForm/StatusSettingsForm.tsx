@@ -1,7 +1,7 @@
 import React, { cloneElement, type FC, useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Box, FormControlLabel, Typography } from '@mui/material';
-import { useAppDateTime, useAppParams, useUpdateDataEntityStatus } from 'lib/hooks';
+import { useAppDateTime, useUpdateDataEntityStatus } from 'lib/hooks';
 import type {
   DataEntityStatusEnum,
   DataEntityApiUpdateStatusRequest,
@@ -13,6 +13,7 @@ import { updateEntityStatus } from 'redux/slices/dataentities.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
 import Checkbox from 'components/shared/elements/Checkbox/Checkbox';
 import DefaultEntityStatus from 'components/shared/elements/EntityStatus/DefaultEntityStatus/DefaultEntityStatus';
+import { useDataEntityRouteParams } from 'routes';
 import Option from './Option/Option';
 
 interface StatusSettingsFormProps {
@@ -38,7 +39,7 @@ const StatusSettingsForm: FC<StatusSettingsFormProps> = ({
   isTimeSensitive,
 }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { add } = useAppDateTime();
   const {
     mutateAsync: updateStatus,

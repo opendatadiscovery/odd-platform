@@ -11,13 +11,13 @@ import {
   getDataEntityRunsFetchingStatuses,
   getDataEntityRunsListPageInfo,
 } from 'redux/selectors/dataEntityRun.selector';
-import { useAppParams } from 'lib/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
 import EmptyContentPlaceholder from 'components/shared/elements/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppSelect from 'components/shared/elements/AppSelect/AppSelect';
 import SkeletonWrapper from 'components/shared/elements/SkeletonWrapper/SkeletonWrapper';
 import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
+import { useDataEntityRouteParams } from 'routes';
 import TestRunItem from './TestRunItem/TestRunItem';
 import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 
@@ -31,7 +31,7 @@ const TestRunsHistory: React.FC = () => {
   );
 
   const dispatch = useAppDispatch();
-  const { dataEntityId: dataQATestId } = useAppParams();
+  const { dataEntityId: dataQATestId } = useDataEntityRouteParams();
   const dataQATestName = useAppSelector(state =>
     getQualityTestNameByTestId(state, dataQATestId)
   );

@@ -4,13 +4,13 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityGroupLinkedList,
   getDataEntityGroupLinkedListPage,
   getDEGLinkedListFetchingStatuses,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import LinkedItem from './LinkedItem/LinkedItem';
 import * as S from './LinkedItemsListStyles';
 import LinkedListSkeleton from './LinkedListSkeleton/LinkedListSkeleton';
@@ -18,7 +18,7 @@ import LinkedListSkeleton from './LinkedListSkeleton/LinkedListSkeleton';
 const LinkedItemsList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataEntityId: dataEntityGroupId } = useAppParams();
+  const { dataEntityId: dataEntityGroupId } = useDataEntityRouteParams();
 
   const dataEntityGroupLinkedList = useAppSelector(
     getDataEntityGroupLinkedList(dataEntityGroupId)

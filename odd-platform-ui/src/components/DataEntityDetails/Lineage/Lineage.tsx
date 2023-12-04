@@ -4,13 +4,13 @@ import {
   getDataEntityDetailsFetchingStatuses,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import DEGLineageAtomProvider from './DEGLineage/lib/DEGLineageAtomProvider';
 import DEGLineage from './DEGLineage/DEGLineage';
 import HierarchyLineage from './HierarchyLineage/HierarchyLineage';
 
 const Lineage: React.FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { isDEG } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));
   const { isLoaded } = useAppSelector(getDataEntityDetailsFetchingStatuses);
 

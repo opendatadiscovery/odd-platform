@@ -1,5 +1,5 @@
 import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { generatePath, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
@@ -9,7 +9,13 @@ import {
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
-import { DataModellingRoutes } from 'routes/dataModellingRoutes';
+import {
+  alertsPath,
+  dataQualityPath,
+  directoryPath,
+  managementPath,
+  queryExamplesPath,
+} from 'routes';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
@@ -20,19 +26,8 @@ const ToolbarTabs: FC = () => {
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const {
-    activityPath,
-    termSearchPath,
-    ManagementRoutes,
-    AlertsRoutes,
-    TermsRoutes,
-    SearchRoutes,
-    ActivityRoutes,
-    DirectoryRoutes,
-    DataEntityRoutes,
-    DataQualityRoutes,
-    updatePath,
-  } = useAppPaths();
+  const { activityPath, termSearchPath, TermsRoutes, SearchRoutes, updatePath } =
+    useAppPaths();
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -43,25 +38,25 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Directory'),
-        link: updatePath(DirectoryRoutes.directory),
-        value: DirectoryRoutes.directory,
+        link: updatePath(directoryPath()),
+        value: 'directory',
       },
       {
         name: t('Data Quality'),
-        link: updatePath(DataQualityRoutes.dataQuality),
-        value: DataQualityRoutes.dataQuality,
+        link: updatePath(dataQualityPath()),
+        value: 'data-quality',
       },
       {
         name: t('Data Modelling'),
-        link: generatePath(DataModellingRoutes.BASE_PATH),
+        link: updatePath(queryExamplesPath()),
         value: 'data-modelling',
         hint: t('BETA'),
         hintType: 'secondary',
       },
       {
         name: t('Management'),
-        link: updatePath(ManagementRoutes.management),
-        value: ManagementRoutes.management,
+        link: updatePath(managementPath('namespaces')),
+        value: 'management',
       },
       {
         name: t('Dictionary'),
@@ -70,13 +65,13 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Alerts'),
-        link: updatePath(AlertsRoutes.alerts),
-        value: AlertsRoutes.alerts,
+        link: updatePath(alertsPath('all')),
+        value: 'alerts',
       },
       {
         name: t('Activity'),
         link: activityPath(activityQueryString),
-        value: ActivityRoutes.activity,
+        value: 'activity',
       },
     ],
     [activityQueryString, t, updatePath]
@@ -89,7 +84,7 @@ const ToolbarTabs: FC = () => {
     tabs.forEach((tab, idx) => {
       if (
         location.pathname.includes(tab.value as string) &&
-        !location.pathname.includes(DataEntityRoutes.dataentities)
+        !location.pathname.includes('dataentities')
       ) {
         newTabIdx = idx;
       }

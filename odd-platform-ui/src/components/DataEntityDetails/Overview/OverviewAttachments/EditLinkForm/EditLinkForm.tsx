@@ -2,9 +2,10 @@ import React, { type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useAppParams, useUpdateDataEntityLink } from 'lib/hooks';
+import { useUpdateDataEntityLink } from 'lib/hooks';
 import type { DataEntityLink, DataEntityLinkFormData } from 'generated-sources';
 import { Button, DialogWrapper, Input } from 'components/shared/elements';
+import { useDataEntityRouteParams } from 'routes';
 
 interface EditLinkFormProps {
   openBtn: JSX.Element;
@@ -16,7 +17,7 @@ interface EditLinkFormProps {
 const EditLinkForm: FC<EditLinkFormProps> = ({ openBtn, linkId, name, url }) => {
   const formId = 'update-link-form';
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const { mutate: updateLink, isPending, isSuccess } = useUpdateDataEntityLink();
 

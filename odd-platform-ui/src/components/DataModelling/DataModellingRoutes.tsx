@@ -1,7 +1,6 @@
 import React, { lazy } from 'react';
 import { AppSuspenseWrapper } from 'components/shared/elements';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { DataModellingRoutes as routes } from 'routes/dataModellingRoutes';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from '../shared/contexts';
 
@@ -13,9 +12,9 @@ const QueryExampleDetails = lazy(
 const DataModellingRoutes: React.FC = () => (
   <AppSuspenseWrapper>
     <Routes>
-      <Route path='/' element={<Navigate to={routes.QUERY_EXAMPLES_PATH} />} />
+      <Route path='' element={<Navigate to='query-examples' />} />
       <Route
-        path={routes.QUERY_EXAMPLES_PATH}
+        path='query-examples'
         element={
           <WithPermissionsProvider
             allowedPermissions={[Permission.QUERY_EXAMPLE_CREATE]}
@@ -25,7 +24,7 @@ const DataModellingRoutes: React.FC = () => (
         }
       />
       <Route
-        path={routes.QUERY_EXAMPLE_PATH}
+        path='query-examples/:queryExampleId'
         element={
           <WithPermissionsProvider
             allowedPermissions={[

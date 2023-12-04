@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAppParams } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchDataEntityMessages, messagesListSize as size } from 'redux/thunks';
 import {
@@ -10,6 +9,7 @@ import {
   getMessageToSlackCreatingStatuses,
 } from 'redux/selectors';
 import { clearCollaborationState } from 'redux/slices/dataCollaboration.slice';
+import { useDataEntityRouteParams } from 'routes';
 import MessagesList from './MessagesList/MessagesList';
 import Channels from './Channels/Channels';
 import * as S from './DataCollaborationStyles';
@@ -17,7 +17,7 @@ import CurrentMessage from './CurrentMessage/CurrentMessage';
 
 const DataCollaboration: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const [channelId, setChannelId] = React.useState<string | undefined>(undefined);
   const [messageDate, setMessageDate] = React.useState('');

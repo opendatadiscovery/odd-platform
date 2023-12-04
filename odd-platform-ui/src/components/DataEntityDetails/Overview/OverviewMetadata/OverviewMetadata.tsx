@@ -8,17 +8,18 @@ import {
   getDataEntityPredefinedMetadataList,
   getIsEntityStatusDeleted,
 } from 'redux/selectors';
-import { useAppParams, useCollapse } from 'lib/hooks';
+import { useCollapse } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import * as S from './OverviewMetadataStyles';
 
 const OverviewMetadata: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { contentRef, containerStyle, toggleCollapse, isCollapsed, controlsStyle } =
     useCollapse({ initialMaxHeight: 200 });
 

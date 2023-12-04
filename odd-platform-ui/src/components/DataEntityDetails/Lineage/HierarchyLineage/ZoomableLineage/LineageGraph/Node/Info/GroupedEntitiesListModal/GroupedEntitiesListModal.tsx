@@ -9,7 +9,7 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { useAppPaths, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import type { StreamType } from 'redux/interfaces';
 import {
   expandEntitiesFromDownstreamGroup,
@@ -18,6 +18,8 @@ import {
 import * as S from 'components/DataEntityDetails/Lineage/HierarchyLineage/ZoomableLineage/LineageGraph/Node/Info/GroupedEntitiesListModal/GroupedEntitiesListModalStyles';
 import type { LineageQueryParams } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/interfaces';
 import { defaultLineageQuery } from 'components/DataEntityDetails/Lineage/HierarchyLineage/lineageLib/constants';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityDetailsPath } from 'routes';
 
 interface GroupedEntitiesListModalProps {
   dataEntityName: string | undefined;
@@ -36,7 +38,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const {
     queryParams: { eag },
     setQueryParams,
@@ -86,7 +88,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   };
 
   const listItem = (item: DataEntityLineageNode) => (
-    <Link to={dataEntityOverviewPath(item.id)}>
+    <Link to={updatePath(dataEntityDetailsPath(item.id))}>
       <S.ListItemContainer container>
         <Grid maxWidth='370px'>
           <Typography noWrap title={item.internalName || item.externalName}>

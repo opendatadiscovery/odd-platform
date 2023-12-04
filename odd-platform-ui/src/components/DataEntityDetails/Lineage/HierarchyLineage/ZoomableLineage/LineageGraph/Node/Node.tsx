@@ -5,8 +5,10 @@ import { Group } from '@visx/group';
 import type { TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
-import { useAppPaths, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import { DatasourceLogo } from 'components/shared/elements';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
+import { dataEntityLineagePath } from 'routes';
 import type { NodeSize } from '../../../lineageLib/interfaces';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
 import NodeTitle from './NodeTitle/NodeTitle';
@@ -42,7 +44,7 @@ const Node = React.memo<NodeProps>(
     hasChildren,
   }) => {
     const navigate = useNavigate();
-    const { dataEntityLineagePath } = useAppPaths();
+    const { updatePath } = useIsEmbeddedPath();
     const {
       defaultQueryString: lineageQueryString,
       queryParams: { fn, full },
@@ -57,7 +59,7 @@ const Node = React.memo<NodeProps>(
         : node.data.id;
 
       return parent && node.data.externalName
-        ? dataEntityLineagePath(entityId, lineageQueryString)
+        ? updatePath(dataEntityLineagePath(entityId, lineageQueryString))
         : '#';
     }, [
       parent,

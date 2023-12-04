@@ -2,10 +2,11 @@ import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { DatasetFieldList } from 'generated-sources';
-import { useAppPaths } from 'lib/hooks';
 import { AppTooltip } from 'components/shared/elements';
 import { StrokedInfoIcon } from 'components/shared/icons';
 import TypeFieldLabel from 'components/DataEntityDetails/DatasetStructure/shared/TypeFieldLabel/TypeFieldLabel';
+import { dataEntityDetailsPath } from 'routes';
+import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { Container, ColumnLink, NameContainer } from './LinkedColumnStyles';
 import { TermLinkedColumnsColContainer } from '../LinkedColumnsListStyles';
 
@@ -14,10 +15,10 @@ interface LinkedColumnProps {
 }
 
 const LinkedColumn: React.FC<LinkedColumnProps> = ({ linkedColumn }) => {
-  const { dataEntityOverviewPath } = useAppPaths();
+  const { updatePath } = useIsEmbeddedPath();
   const { t } = useTranslation();
 
-  const detailsLink = dataEntityOverviewPath(linkedColumn.dataEntityId);
+  const detailsLink = updatePath(dataEntityDetailsPath(linkedColumn.dataEntityId!));
 
   return (
     <ColumnLink to={detailsLink}>

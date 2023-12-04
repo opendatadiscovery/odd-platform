@@ -1,29 +1,24 @@
 import React, { type FC } from 'react';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   BreadCrumbs,
   getCapitalizedDatasourceNameFromPrefix,
 } from 'components/shared/elements';
+import { useDirectoryRouteParams } from 'routes';
 
 interface BreadCrumbsProps {
   dataSourceName?: string;
 }
 
 const DirectoryBreadCrumbs: FC<BreadCrumbsProps> = ({ dataSourceName }) => {
-  const { DirectoryRoutes } = useAppPaths();
-  const { dataSourceTypePrefix, dataSourceId } = useAppParams();
+  const { dataSourceTypePrefix, dataSourceId } = useDirectoryRouteParams();
 
   const labelsMap = {
-    [DirectoryRoutes.directory]: 'Directories',
+    directory: 'Directories',
     [dataSourceTypePrefix]: getCapitalizedDatasourceNameFromPrefix(dataSourceTypePrefix),
     [dataSourceId]: dataSourceName,
   };
 
-  const pathNames = [
-    DirectoryRoutes.directory,
-    dataSourceTypePrefix,
-    dataSourceId,
-  ].filter(Boolean);
+  const pathNames = ['directory', dataSourceTypePrefix, dataSourceId].filter(Boolean);
 
   return <BreadCrumbs pathNames={pathNames} labelsMap={labelsMap} />;
 };

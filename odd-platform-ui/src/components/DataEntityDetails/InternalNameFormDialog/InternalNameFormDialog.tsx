@@ -6,11 +6,11 @@ import { type InternalNameFormData } from 'generated-sources';
 import { Button, DialogWrapper, Input } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityInternalName,
   getDataEntityInternalNameUpdatingStatuses,
 } from 'redux/selectors';
+import { useDataEntityRouteParams } from 'routes';
 
 interface InternalNameFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -21,7 +21,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const dataEntityInternalName = useAppSelector(getDataEntityInternalName(dataEntityId));
   const { isLoading: isInternalNameUpdating, isLoaded: isInternalNameUpdated } =

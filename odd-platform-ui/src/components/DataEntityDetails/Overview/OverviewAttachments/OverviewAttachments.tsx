@@ -2,13 +2,14 @@ import React, { type FC } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AppCircularProgress, AppErrorBlock } from 'components/shared/elements';
-import { useAppParams, useDataEntityAttachments } from 'lib/hooks';
+import { useDataEntityAttachments } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import AttachmentsList from './AttachmentsList/AttachmentsList';
 import AttachmentsHeader from './AttachmentsHeader/AttachmentsHeader';
 
 const OverviewAttachments: FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const { data, isError, isLoading } = useDataEntityAttachments({ dataEntityId });
 

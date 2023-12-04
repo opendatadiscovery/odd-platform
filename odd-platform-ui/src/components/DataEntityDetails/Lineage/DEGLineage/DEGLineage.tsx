@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { useAppParams } from 'lib/hooks';
 import { useDataEntityGroupLineage } from 'lib/hooks/api';
 import { AppCircularProgress, EmptyContentPlaceholder } from 'components/shared/elements';
+import { useDataEntityRouteParams } from 'routes';
 import DEGLineageControls from './components/DEGLineageControls/DEGLineageControls';
 import DEGLineageLayouter from './DEGLineageLayouter/DEGLineageLayouter';
 import { isLayoutedAtom } from './lib/atoms';
@@ -10,7 +10,7 @@ import ZoomableDEGLineage from './ZoomableDEGLineage/ZoomableDEGLineage';
 import * as S from './DEGLineage.styles';
 
 const DEGLineage: React.FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const { data, isLoading, isSuccess, isFetching } = useDataEntityGroupLineage({
     dataEntityId,
