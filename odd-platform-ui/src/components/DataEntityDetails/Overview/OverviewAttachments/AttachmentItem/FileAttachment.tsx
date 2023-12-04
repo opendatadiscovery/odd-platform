@@ -4,13 +4,10 @@ import type { DataEntityLink } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, DocumentIcon, ImageIcon } from 'components/shared/icons';
-import {
-  useAppParams,
-  useDeleteDataEntityFile,
-  useDownloadDataEntityFile,
-} from 'lib/hooks';
+import { useDeleteDataEntityFile, useDownloadDataEntityFile } from 'lib/hooks';
 import { isImageFile } from 'lib/helpers';
 import { WithPermissions } from 'components/shared/contexts';
+import { useDataEntityRouteParams } from 'routes';
 import * as S from './AttachmentItem.styles';
 
 interface FileAttachmentProps {
@@ -20,7 +17,7 @@ interface FileAttachmentProps {
 
 const FileAttachment: FC<FileAttachmentProps> = ({ fileId, name }) => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { mutateAsync: deleteFile } = useDeleteDataEntityFile();
   const { refetch: downloadFile } = useDownloadDataEntityFile({ dataEntityId, fileId });
 

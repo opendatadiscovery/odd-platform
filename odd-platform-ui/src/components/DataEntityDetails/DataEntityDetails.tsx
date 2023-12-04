@@ -1,7 +1,6 @@
 import { Grid } from '@mui/material';
 import React, { useEffect } from 'react';
 import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
 import {
   fetchDataEntityAlertsCounts,
   fetchDataEntityDetails,
@@ -21,6 +20,7 @@ import {
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { useDataEntityRouteParams } from 'routes';
 import DataEntityDetailsHeader from './DataEntityDetailsHeader/DataEntityDetailsHeader';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import * as S from './DataEntityDetailsStyles';
@@ -29,7 +29,7 @@ import DataEntityDetailsRoutes from './DataEntityDetailsRoutes/DataEntityDetails
 
 const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const details = useAppSelector(getDataEntityDetails(dataEntityId));
   const resourcePermissions = useAppSelector(

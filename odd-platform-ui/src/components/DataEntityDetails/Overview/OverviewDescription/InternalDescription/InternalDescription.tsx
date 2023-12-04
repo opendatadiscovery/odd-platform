@@ -4,9 +4,10 @@ import {
   getDataEntityInternalDescription,
   getIsEntityStatusDeleted,
 } from 'redux/selectors';
-import { useAppParams, useTermWiki } from 'lib/hooks';
+import { useTermWiki } from 'lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import type { TermRef } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import InternalDescriptionHeader from './InternalDescriptionHeader/InternalDescriptionHeader';
 import InternalDescriptionEdit from './InternalDescriptionEdit/InternalDescriptionEdit';
 import InternalDescriptionPreview from './InternalDescriptionPreview/InternalDescriptionPreview';
@@ -16,7 +17,7 @@ interface InternalDescriptionProps {
 }
 
 const InternalDescription: FC<InternalDescriptionProps> = ({ terms = [] }) => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const description = useAppSelector(getDataEntityInternalDescription(dataEntityId));
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));

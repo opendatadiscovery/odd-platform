@@ -4,8 +4,9 @@ import { Box, FormControlLabel, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { Button, Checkbox, AppMenuItem, AppSelect } from 'components/shared/elements';
-import { useAppDateTime, useAppParams, useAppPaths, useQueryParams } from 'lib/hooks';
+import { useAppDateTime, useAppPaths, useQueryParams } from 'lib/hooks';
 import type { DataSetVersion } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import { showOnlyChangesAtom } from '../lib/atoms';
 import { defaultStructureCompareQuery } from '../lib/constants';
 import type { StructureCompareQueryParams } from '../lib/interfaces';
@@ -18,7 +19,7 @@ const DatasetStructureCompareHeader: FC<DatasetStructureCompareHeaderProps> = ({
   datasetVersions,
 }) => {
   const { DataEntityRoutes, datasetStructurePath } = useAppPaths();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
   const navigate = useNavigate();
 

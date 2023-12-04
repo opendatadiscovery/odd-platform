@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { useAtom } from 'jotai';
-import { useAppParams, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetVersions } from 'redux/selectors';
 import { useDatasetStructureCompare } from 'lib/hooks/api';
@@ -10,6 +10,7 @@ import {
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
 import type { ErrorState } from 'redux/interfaces';
+import { useDataEntityRouteParams } from 'routes';
 import { showOnlyChangesAtom } from './lib/atoms';
 import DatasetStructureCompareList from './DatasetStructureCompareList/DatasetStructureCompareList';
 import type { StructureCompareQueryParams } from './lib/interfaces';
@@ -17,7 +18,7 @@ import DatasetStructureCompareHeader from './DatasetStructureCompareHeader/Datas
 import { defaultStructureCompareQuery } from './lib/constants';
 
 const DatasetStructureCompare: FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const [showChangesOnly] = useAtom(showOnlyChangesAtom);
 
   const {

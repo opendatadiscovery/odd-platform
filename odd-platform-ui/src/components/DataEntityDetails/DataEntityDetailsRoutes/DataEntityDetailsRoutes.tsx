@@ -3,9 +3,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import { useAppParams } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted, getResourcePermissions } from 'redux/selectors';
+import { useDataEntityRouteParams } from 'routes';
 
 const Overview = lazy(() => import('../Overview/Overview'));
 const DatasetStructure = lazy(() => import('../DatasetStructure/DatasetStructure'));
@@ -26,7 +26,7 @@ const DataEntityDetailsQueryExamples = lazy(
 );
 
 const DataEntityDetailsRoutes = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const resourcePermissions = useAppSelector(
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)

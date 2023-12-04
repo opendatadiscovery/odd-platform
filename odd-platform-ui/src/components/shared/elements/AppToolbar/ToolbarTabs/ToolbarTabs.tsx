@@ -9,7 +9,7 @@ import {
 import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
-import { dataModellingPath } from 'routes/dataModellingRoutes';
+import { queryExamplesPath } from 'routes/dataModellingRoutes';
 import { alertsPath } from 'routes/alertsRoutes';
 import { managementPath } from 'routes/managementRoutes';
 import { dataQualityPath } from 'routes/dataQualityRoutes';
@@ -53,7 +53,7 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Data Modelling'),
-        link: updatePath(dataModellingPath('query-examples')),
+        link: updatePath(queryExamplesPath()),
         value: 'data-modelling',
         hint: t('BETA'),
         hintType: 'secondary',

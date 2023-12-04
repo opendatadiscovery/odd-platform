@@ -9,13 +9,14 @@ import {
 } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
-import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import * as S from './OverviewGeneralStyles';
 import OwnersSection from './OwnersSection/OwnersSection';
 
 const OverviewGeneral: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));

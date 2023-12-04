@@ -5,20 +5,20 @@ import {
   AppLoadingPage,
   EmptyContentPlaceholder,
 } from 'components/shared/elements';
-import { useParams } from 'react-router-dom';
+import { useIntegrationRouteParams } from 'routes';
 import IntegrationHeader from './IntegrationHeader/IntegrationHeader';
 import IntegrationTabs from './IntegrationTabs/IntegrationTabs';
 import IntegrationRoutes from './IntegrationRoutes/IntegrationRoutes';
 
 const Integration: FC = () => {
-  const { integrationId } = useParams();
+  const { integrationId } = useIntegrationRouteParams();
 
   const {
     data: integration,
     isError,
     isLoading,
     error,
-  } = useIntegration({ integrationId: integrationId || '' });
+  } = useIntegration({ integrationId });
 
   const titles = useMemo(
     () => Object.keys(integration?.contentByTitle || {}),

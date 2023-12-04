@@ -4,7 +4,8 @@ import { useController, type UseControllerProps } from 'react-hook-form';
 import { Button, AppRadio, AppSwitch } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityAlertConfig } from 'redux/selectors';
-import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import { type FormData } from '../NotificationSettings';
 
 type TimeRange = number;
@@ -16,7 +17,7 @@ interface AlertTypeRangeProps {
 }
 
 const AlertTypeRange: React.FC<AlertTypeRangeProps> = ({ control, name }) => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { formatDuration, intervalToDuration, minutesToMilliseconds } = useAppDateTime();
   const config = useAppSelector(state => getDataEntityAlertConfig(state, dataEntityId));
 

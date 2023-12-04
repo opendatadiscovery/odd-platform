@@ -19,7 +19,6 @@ import {
 } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { WithPermissions } from 'components/shared/contexts';
-import { PoliciesRoutes } from 'routes/managementRoutes';
 import PolicyItem from './PolicyItem/PolicyItem';
 import * as S from './PolicyListStyles';
 import PolicyListSkeleton from './PolicyListSkeleton/PolicyListSkeleton';
@@ -92,7 +91,7 @@ const PolicyList: React.FC = () => {
         <WithPermissions permissionTo={Permission.POLICY_CREATE}>
           <Button
             text={t('Create policy')}
-            to={PoliciesRoutes.CREATE_POLICY}
+            to='createPolicy'
             buttonType='secondary-m'
             startIcon={<AddIcon />}
           />

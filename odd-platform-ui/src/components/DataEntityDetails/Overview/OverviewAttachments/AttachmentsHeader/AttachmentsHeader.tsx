@@ -5,16 +5,17 @@ import { AppMenu, AppMenuItem, Button } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import { useAppParams, useGetUploadOptions } from 'lib/hooks';
+import { useGetUploadOptions } from 'lib/hooks';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
+import { useDataEntityRouteParams } from 'routes';
 import SaveLinksForm from '../SaveLinksForm/SaveLinksForm';
 import SaveFilesForm from '../SaveFilesForm/SaveFilesForm';
 import * as S from './AttachmentsHeader.styles';
 
 const AttachmentsHeader: FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { data } = useGetUploadOptions({ dataEntityId });
 
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));

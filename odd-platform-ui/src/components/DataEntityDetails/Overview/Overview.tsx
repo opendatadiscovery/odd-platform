@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
 import React, { useMemo } from 'react';
-import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityDetailsFetchingStatuses,
@@ -13,6 +12,7 @@ import { SkeletonWrapper } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
+import { useDataEntityRouteParams } from 'routes';
 import OverviewMetrics from './OverviewMetrics/OverviewMetrics';
 import OverviewDQTestReport from './OverviewDataQualityReport/OverviewDQTestReport/OverviewDQTestReport';
 import OverviewDQSLAReport from './OverviewDataQualityReport/OverviewDQSLAReport/OverviewDQSLAReport';
@@ -29,7 +29,7 @@ import OverviewTerms from './OverviewTerms/OverviewTerms';
 import OverviewAttachments from './OverviewAttachments/OverviewAttachments';
 
 const Overview: React.FC = () => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const dataEntityDetails = useAppSelector(getDataEntityDetails(dataEntityId));
   const { isDataset } = useAppSelector(getIsDataEntityBelongsToClass(dataEntityId));

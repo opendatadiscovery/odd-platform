@@ -5,8 +5,8 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { Button, DialogWrapper, TagItem } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityTags } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
 import { getDataEntityTags, getDataEntityTagsUpdatingStatuses } from 'redux/selectors';
+import { useDataEntityRouteParams } from 'routes';
 import { TagListContainer } from './TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
@@ -24,7 +24,7 @@ type DataEntityTagsFormType = {
 
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const dataEntityTags = useAppSelector(getDataEntityTags(dataEntityId));
   const { isLoading: isTagsUpdating, isLoaded: isTagsUpdated } = useAppSelector(

@@ -8,7 +8,7 @@ import {
   getDataEntityActivitiesLengthByEntityId,
   getDataEntityActivitiesPageInfo,
 } from 'redux/selectors';
-import { useAppParams, useQueryParams } from 'lib/hooks';
+import { useQueryParams } from 'lib/hooks';
 import { fetchDataEntityActivityList } from 'redux/thunks';
 import { AppErrorPage, EmptyContentPlaceholder } from 'components/shared/elements';
 import {
@@ -16,11 +16,12 @@ import {
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
 import { ActivityResultsList } from 'components/shared/elements/Activity';
+import { useDataEntityRouteParams } from 'routes';
 import ActivityItem from './ActivityItem/ActivityItem';
 
 const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { queryParams } = useQueryParams<ActivityQuery>(defaultActivityQuery);
 
   const activitiesByDate = useAppSelector(getDataEntityActivitiesByDate(dataEntityId));

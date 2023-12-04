@@ -20,7 +20,7 @@ import {
   SearchSuggestionsAutocomplete,
 } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityGroupCreatingStatuses,
@@ -28,6 +28,7 @@ import {
   getDataEntityTypesByClassName,
 } from 'redux/selectors';
 import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
+import { useDataEntityRouteParams } from 'routes';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 
@@ -37,7 +38,7 @@ interface DataEntityGroupFormProps {
 
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const navigate = useNavigate();
   const { dataEntityOverviewPath } = useAppPaths();
 

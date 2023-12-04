@@ -17,7 +17,7 @@ import {
 } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { fetchDataEntityAlerts } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import DataEntityAlertsSkeleton from './DataEntityAlertItem/DataEntityAlertsSkeleton';
 import NotificationSettings from './NotificationSettings/NotificationSettings';
 import DataEntityAlertItem from './DataEntityAlertItem/DataEntityAlertItem';
@@ -26,7 +26,7 @@ import * as S from './DataEntityAlertsStyles';
 const DataEntityAlerts: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const size = 30;
 

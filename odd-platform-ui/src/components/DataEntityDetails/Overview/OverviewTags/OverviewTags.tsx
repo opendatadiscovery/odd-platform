@@ -7,7 +7,7 @@ import { WithPermissions } from 'components/shared/contexts';
 import { AddIcon, EditIcon } from 'components/shared/icons';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getIsEntityStatusDeleted } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import { CaptionContainer, TagsContainer } from './OverviewTagsStyles';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 
@@ -16,7 +16,7 @@ interface OverviewTagsProps {
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
 
   const { t } = useTranslation();

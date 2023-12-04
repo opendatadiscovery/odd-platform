@@ -2,7 +2,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams } from 'lib/hooks';
 import { type DataEntityApiUpdateAlertConfigRequest } from 'generated-sources';
 import {
   getDataEntityAlertsConfigFetchingStatus,
@@ -12,6 +11,7 @@ import {
 import { fetchDataEntityAlertsConfig, updateDataEntityAlertsConfig } from 'redux/thunks';
 import { Button, AppCircularProgress, DialogWrapper } from 'components/shared/elements';
 import type { SerializeDateToNumber } from 'redux/interfaces';
+import { useDataEntityRouteParams } from 'routes';
 import AlertTypeRange from './AlertTypeRange/AlertTypeRange';
 
 interface NotificationSettingsProps {
@@ -24,7 +24,7 @@ export type FormData = SerializeDateToNumber<
 
 const NotificationSettings: React.FC<NotificationSettingsProps> = ({ btnCreateEl }) => {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const { isLoading: isDataEntityAlertConfigFetching } = useAppSelector(
     getDataEntityAlertsConfigFetchingStatus

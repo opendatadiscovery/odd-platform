@@ -3,13 +3,14 @@ import { Collapse, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { Alert } from 'redux/interfaces';
 import { AlertStatus, Permission } from 'generated-sources';
-import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { updateAlertStatus } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { AlertStatusItem, Button } from 'components/shared/elements';
 import { WithPermissions } from 'components/shared/contexts';
 import { GearIcon, UserIcon } from 'components/shared/icons';
 import { alertTitlesMap } from 'lib/constants';
+import { useDataEntityRouteParams } from 'routes';
 import * as S from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps {
@@ -29,7 +30,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { alertFormattedDateTime } = useAppDateTime();
 
   const [showHistory, setShowHistory] = React.useState(false);

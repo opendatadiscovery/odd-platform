@@ -8,9 +8,9 @@ import type {
 } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
 import useAppPaths from 'lib/hooks/useAppPaths/useAppPaths';
-import useAppParams from 'lib/hooks/useAppParams/useAppParams';
 import { TERM_PATTERN } from 'lib/constants';
 import { useGetTermByNamespaceAndName } from 'lib/hooks/api';
+import { useDataEntityRouteParams } from 'routes';
 
 interface UseTermWikiProps {
   updateDescription: (params: any) => AsyncThunkAction<any, any, any>;
@@ -36,7 +36,7 @@ export default function useTermWiki({
   isDatasetField = false,
 }: UseTermWikiProps) {
   const dispatch = useAppDispatch();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { termDetailsOverviewPath } = useAppPaths();
   const fetchTerm = useGetTermByNamespaceAndName();
 

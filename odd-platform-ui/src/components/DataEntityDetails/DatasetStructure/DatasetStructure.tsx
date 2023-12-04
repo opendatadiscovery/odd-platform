@@ -1,11 +1,11 @@
 import React, { type FC } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppSuspenseWrapper } from 'components/shared/elements';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getResourcePermissions } from 'redux/selectors';
+import { useDataEntityRouteParams } from 'routes';
 
 const DatasetStructureOverview = React.lazy(
   () => import('./DatasetStructureOverview/DatasetStructureOverview')
@@ -15,8 +15,7 @@ const DatasetStructureCompare = React.lazy(
 );
 
 const DatasetStructure: FC = () => {
-  const { DataEntityRoutes } = useAppPaths();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const resourcePermissions = useAppSelector(
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
@@ -26,7 +25,7 @@ const DatasetStructure: FC = () => {
     <AppSuspenseWrapper>
       <Routes>
         <Route
-          path={DataEntityRoutes.overview}
+          path='overview'
           element={
             <WithPermissionsProvider
               allowedPermissions={[
@@ -42,13 +41,10 @@ const DatasetStructure: FC = () => {
             />
           }
         >
-          <Route path={DataEntityRoutes.versionIdParam} />
+          <Route path=':versionId' />
         </Route>
-        <Route
-          path={DataEntityRoutes.structureCompare}
-          element={<DatasetStructureCompare />}
-        />
-        <Route path='' element={<Navigate to={DataEntityRoutes.overview} />} />
+        <Route path='compare' element={<DatasetStructureCompare />} />
+        <Route path='' element={<Navigate to='overview' />} />
       </Routes>
     </AppSuspenseWrapper>
   );

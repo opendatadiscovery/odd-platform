@@ -1,8 +1,7 @@
-import { generatePath } from 'react-router-dom';
+import { generatePath, useParams } from 'react-router-dom';
 
 const BASE_PATH = 'management';
-export const ManagementRoutes = {
-  BASE_PATH,
+const ManagementRoutes = {
   NAMESPACES: 'namespaces',
   DATASOURCES: 'datasources',
   INTEGRATIONS: 'integrations',
@@ -33,29 +32,24 @@ export function associationsPath(
   return generatePath(`${managementPath(ManagementRoutes.ASSOCIATIONS)}/${path}`);
 }
 
-export const IntegrationsRoutes = {
-  ID: ':integrationId',
-  OVERVIEW: 'overview',
-  CONFIGURE: 'configure',
-} as const;
+const INTEGRATION_ID_PARAM = ':integrationId';
+const INTEGRATION_ID = 'integrationId';
+
+interface IntegrationRouteParams {
+  [INTEGRATION_ID]: string;
+}
+
+export const useIntegrationRouteParams = (): IntegrationRouteParams =>
+  useParams<keyof IntegrationRouteParams>() as IntegrationRouteParams;
 
 export function integrationsPath(integrationId: string, path?: string) {
   if (!path)
     return generatePath(
-      `${managementPath(ManagementRoutes.INTEGRATIONS)}/${IntegrationsRoutes.ID}`,
+      `${managementPath(ManagementRoutes.INTEGRATIONS)}/${INTEGRATION_ID_PARAM}`,
       { integrationId }
     );
   return generatePath(
-    `${managementPath(ManagementRoutes.INTEGRATIONS)}/${IntegrationsRoutes.ID}/${path}`,
+    `${managementPath(ManagementRoutes.INTEGRATIONS)}/${INTEGRATION_ID_PARAM}/${path}`,
     { integrationId }
   );
-}
-
-export const PoliciesRoutes = {
-  ID: ':policyId',
-  CREATE_POLICY: 'createPolicy',
-} as const;
-
-export function policyPath(policyId: string) {
-  return generatePath(`${managementPath(ManagementRoutes.POLICIES)}/${policyId}`);
 }

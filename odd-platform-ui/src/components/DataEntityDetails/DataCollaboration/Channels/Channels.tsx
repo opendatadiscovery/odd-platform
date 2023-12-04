@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppParams } from 'lib/hooks';
 import { DataEntityChannelsAutocomplete } from 'components/shared/elements';
+import { useDataEntityRouteParams } from 'routes';
 import * as S from './ChannelsStyles';
 
 interface ChannelsProps {
@@ -8,7 +8,7 @@ interface ChannelsProps {
 }
 
 const Channels: React.FC<ChannelsProps> = ({ handleSetChannelId }) => {
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   return (
     <S.Container container>

@@ -10,7 +10,7 @@ import { WithPermissions } from 'components/shared/contexts';
 import ConfirmationDialog from 'components/shared/elements/ConfirmationDialog/ConfirmationDialog';
 import { useTranslation } from 'react-i18next';
 import { useUnassignEntityQueryExample } from 'lib/hooks/api/dataModelling/queryExamples';
-import { queryExamplePath } from 'routes/dataModellingRoutes';
+import { queryExamplesPath } from 'routes/dataModellingRoutes';
 import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
 import Markdown from '../Markdown/Markdown';
@@ -75,7 +75,7 @@ const QueryExamplesListItem = ({
           <Button
             buttonType='linkGray-m-icon'
             icon={<PreviewIcon />}
-            to={updatePath(queryExamplePath(String(queryExample.id)))}
+            to={updatePath(queryExamplesPath(queryExample.id))}
           />
           <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_DATASET_DELETE}>
             <ConfirmationDialog

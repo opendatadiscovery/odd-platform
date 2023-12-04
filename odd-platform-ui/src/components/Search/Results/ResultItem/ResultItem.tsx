@@ -41,9 +41,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
   const navigate = useNavigate();
   const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = updatePath(
-    dataEntityDetailsPath(String(searchResult.id), 'overview')
-  );
+  const detailsLink = updatePath(dataEntityDetailsPath(searchResult.id, 'overview'));
 
   const searchQuery = useAppSelector(getSearchQuery);
 

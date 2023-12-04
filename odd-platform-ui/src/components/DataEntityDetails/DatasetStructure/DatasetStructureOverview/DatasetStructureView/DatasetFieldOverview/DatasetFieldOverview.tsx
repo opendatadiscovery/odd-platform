@@ -6,7 +6,7 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetFieldById, getIsEntityStatusDeleted } from 'redux/selectors';
 import { MetadataItem } from 'components/shared/elements';
 import { useDataSetFieldMetrics } from 'lib/hooks/api';
-import { useAppParams } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import DatasetFieldHeader from './DatasetFieldHeader/DatasetFieldHeader';
 import DatasetFieldDescription from './DatasetFieldDescription/DatasetFieldDescription';
 import DatasetFieldTerms from './DatasetFieldTerms/DatasetFieldTerms';
@@ -19,7 +19,7 @@ import DatasetFieldTags from './DatasetFieldTags/DatasetFieldTags';
 
 const DatasetFieldOverview: React.FC = () => {
   const { t } = useTranslation();
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
   const { selectedFieldId, datasetFieldRowsCount } = useStructure();
 
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));

@@ -4,7 +4,8 @@ import { Typography } from '@mui/material';
 import { Button, DialogWrapper } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import type { DataEntityLinkListFormData } from 'generated-sources';
-import { useAppParams, useSaveDataEntityLinks } from 'lib/hooks';
+import { useSaveDataEntityLinks } from 'lib/hooks';
+import { useDataEntityRouteParams } from 'routes';
 import LinkItem from './LinkItem/LinkItem';
 
 interface SaveLinksFormProps {
@@ -13,7 +14,7 @@ interface SaveLinksFormProps {
 
 const SaveLinksForm: FC<SaveLinksFormProps> = ({ openBtn }) => {
   const formId = 'save-links-form';
-  const { dataEntityId } = useAppParams();
+  const { dataEntityId } = useDataEntityRouteParams();
 
   const { mutate: saveLinks, isPending, isSuccess } = useSaveDataEntityLinks();
 

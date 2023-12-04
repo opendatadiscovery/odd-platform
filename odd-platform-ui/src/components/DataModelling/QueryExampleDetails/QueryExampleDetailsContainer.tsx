@@ -14,19 +14,22 @@ import {
 } from 'components/shared/elements';
 import { EditIcon, KebabIcon, TimeGapIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { dataModellingPath } from 'routes/dataModellingRoutes';
+import { useNavigate } from 'react-router-dom';
+import {
+  queryExamplesPath,
+  useQueryExamplesRouteParams,
+} from 'routes/dataModellingRoutes';
 import QueryExampleDetailsTabs from './QueryExampleDetailsTabs';
 import QueryExampleDetailsOverview from './QueryExampleDetailsOverview';
 import QueryExampleDetailsLinkedEntities from './QueryExampleDetailsLinkedEntities';
 import QueryExampleForm from '../QueryExampleForm/QueryExampleForm';
 
 const QueryExampleDetailsContainer: React.FC = () => {
-  const { queryExampleId: exampleId } = useParams();
+  const { queryExampleId: exampleId } = useQueryExamplesRouteParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: queryExampleDetails, isLoading } = useGetQueryExampleDetails({
-    exampleId: Number(exampleId) || 0,
+    exampleId,
   });
   const { mutateAsync: deleteQueryExample } = useDeleteQueryExample();
 
@@ -49,7 +52,7 @@ const QueryExampleDetailsContainer: React.FC = () => {
   const handleDelete = useCallback(
     async (id: number) => {
       await deleteQueryExample({ exampleId: id });
-      navigate(dataModellingPath('query-examples'));
+      navigate(queryExamplesPath());
     },
     [queryExampleDetails?.id]
   );
