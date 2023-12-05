@@ -21,7 +21,7 @@ import { ClearIcon } from 'components/shared/icons';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchTagsList as searchTags, updateTermDetailsTags } from 'redux/thunks';
 import { getTermDetailsTags, getTermDetailsTagsUpdatingStatuses } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useTermsRouteParams } from 'routes';
 import { OptionsContainer } from './TagsEditFormStyles';
 
 interface TagsEditProps {
@@ -31,7 +31,7 @@ interface TagsEditProps {
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { termId } = useAppParams();
+  const { termId } = useTermsRouteParams();
 
   const termDetailsTags = useAppSelector(state => getTermDetailsTags(state, termId));
 

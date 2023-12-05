@@ -11,13 +11,13 @@ import {
   OwnerTitleAutocomplete,
 } from 'components/shared/elements';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams } from 'lib/hooks';
 import { createTermOwnership, updateTermOwnership } from 'redux/thunks';
 import {
   getTermDetailsOwnerCreatingStatuses,
   getTermDetailsOwnerUpdatingStatuses,
 } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
+import { useTermsRouteParams } from 'routes';
 
 interface OwnershipFormProps {
   termDetailsOwnership?: Ownership;
@@ -30,7 +30,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { termId } = useAppParams();
+  const { termId } = useTermsRouteParams();
 
   const { isLoading: isOwnerUpdating, isLoaded: isOwnerUpdated } = useAppSelector(
     getTermDetailsOwnerUpdatingStatuses

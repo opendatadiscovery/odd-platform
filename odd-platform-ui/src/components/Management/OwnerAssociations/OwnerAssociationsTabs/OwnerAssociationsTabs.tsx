@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { getOwnerAssociationRequestsListFetchingStatuses } from 'redux/selectors';
 import { associationsPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
@@ -26,7 +25,6 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   const [, setQuery] = useAtom(queryAtom);
 
   const { isLoading } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
-  const { updatePath } = useIsEmbeddedPath();
   const match = useMatch(useLocation().pathname);
 
   const tabs = React.useMemo<AppTabItem<boolean>[]>(
@@ -34,12 +32,12 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
       {
         name: t('New'),
         hint: newRequestsTabHint,
-        link: updatePath(associationsPath('new')),
+        link: associationsPath('new'),
         value: true,
       },
       {
         name: t('Resolved'),
-        link: updatePath(associationsPath('resolved')),
+        link: associationsPath('resolved'),
         value: false,
       },
     ],

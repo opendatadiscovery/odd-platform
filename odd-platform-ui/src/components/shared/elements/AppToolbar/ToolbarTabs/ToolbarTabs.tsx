@@ -1,7 +1,7 @@
 import React, { type FC, useCallback, useMemo, useState } from 'react';
 import { useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppPaths, useCreateSearch, useQueryParams } from 'lib/hooks';
+import { useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
   type ActivityQuery,
   defaultActivityQuery,
@@ -29,7 +29,6 @@ const ToolbarTabs: FC = () => {
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const { updatePath } = useAppPaths();
   const match = useMatch(useLocation().pathname);
 
   const tabs = useMemo<AppTabItem[]>(
@@ -69,7 +68,7 @@ const ToolbarTabs: FC = () => {
         link: activityPath(activityQueryString),
       },
     ],
-    [activityQueryString, t, updatePath]
+    [activityQueryString, t]
   );
 
   const [selectedTab, setSelectedTab] = useState(-1);
