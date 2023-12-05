@@ -7,7 +7,6 @@ import { DataEntityClassNameEnum } from 'generated-sources';
 import { type StreamType } from 'redux/interfaces';
 import { useQueryParams } from 'lib/hooks';
 import { DatasourceLogo } from 'components/shared/elements';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityLineagePath } from 'routes';
 import type { NodeSize } from '../../../lineageLib/interfaces';
 import { getHighLightedLinks } from '../../../lineageLib/helpers';
@@ -44,7 +43,6 @@ const Node = React.memo<NodeProps>(
     hasChildren,
   }) => {
     const navigate = useNavigate();
-    const { updatePath } = useIsEmbeddedPath();
     const {
       defaultQueryString: lineageQueryString,
       queryParams: { fn, full },
@@ -59,7 +57,7 @@ const Node = React.memo<NodeProps>(
         : node.data.id;
 
       return parent && node.data.externalName
-        ? updatePath(dataEntityLineagePath(entityId, lineageQueryString))
+        ? dataEntityLineagePath(entityId, lineageQueryString)
         : '#';
     }, [
       parent,

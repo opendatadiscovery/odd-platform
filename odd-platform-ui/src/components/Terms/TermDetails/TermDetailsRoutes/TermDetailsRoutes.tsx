@@ -1,6 +1,5 @@
 import React, { lazy } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { useAppPaths } from 'lib/hooks';
 import { AppSuspenseWrapper } from 'components/shared/elements';
 
 const Overview = lazy(() => import('../Overview/Overview'));
@@ -11,21 +10,16 @@ const LinkedColumnsList = lazy(
   () => import('../TermLinkedColumnsList/LinkedColumnsList')
 );
 
-const TermDetailsRoutes: React.FC = () => {
-  const { TermsRoutes } = useAppPaths();
-
-  return (
-    <AppSuspenseWrapper>
-      <Routes>
-        <Route path={TermsRoutes.termsViewTypeParam}>
-          <Route path='' element={<Navigate to={TermsRoutes.overview} />} />
-          <Route path={TermsRoutes.overview} element={<Overview />} />
-          <Route path={TermsRoutes.linkedEntities} element={<LinkedEntitiesList />} />
-          <Route path={TermsRoutes.linkedColumns} element={<LinkedColumnsList />} />
-        </Route>
-      </Routes>
-    </AppSuspenseWrapper>
-  );
-};
+const TermDetailsRoutes: React.FC = () => (
+  <AppSuspenseWrapper>
+    <Routes>
+      <Route path=':termDetailsView(overview|linked-entities|linked-columns)' />
+      <Route path='overview' element={<Overview />} />
+      <Route path='linked-entities' element={<LinkedEntitiesList />} />
+      <Route path='linked-columns' element={<LinkedColumnsList />} />
+      <Route path='' element={<Navigate to='overview' />} />
+    </Routes>
+  </AppSuspenseWrapper>
+);
 
 export default TermDetailsRoutes;

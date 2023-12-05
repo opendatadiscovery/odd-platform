@@ -13,7 +13,6 @@ import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors'
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import {
   dataEntityDetailsPath,
   dataEntityTestReportsPath,
@@ -32,7 +31,6 @@ const TestReportDetailsHistory = React.lazy(
 const TestReportDetails: React.FC = () => {
   const { t } = useTranslation();
   const { dataQATestId, dataEntityId } = useDataEntityRouteParams();
-  const { updatePath } = useIsEmbeddedPath();
   const match = useMatch(useLocation().pathname);
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
@@ -44,14 +42,12 @@ const TestReportDetails: React.FC = () => {
     () => [
       {
         name: t('Overview'),
-        link: updatePath(dataEntityTestReportsPath(dataEntityId, dataQATestId)),
+        link: dataEntityTestReportsPath(dataEntityId, dataQATestId),
         value: 'overview',
       },
       {
         name: t('History'),
-        link: updatePath(
-          dataEntityTestReportsPath(dataEntityId, dataQATestId, 'history')
-        ),
+        link: dataEntityTestReportsPath(dataEntityId, dataQATestId, 'history'),
         value: 'history',
       },
     ],
@@ -74,7 +70,7 @@ const TestReportDetails: React.FC = () => {
         </Grid>
         <Button
           text={t('Go to page')}
-          to={updatePath(dataEntityDetailsPath(dataQATestId))}
+          to={dataEntityDetailsPath(dataQATestId)}
           buttonType='tertiary-m'
           sx={{ ml: 2, flexShrink: 0 }}
         />

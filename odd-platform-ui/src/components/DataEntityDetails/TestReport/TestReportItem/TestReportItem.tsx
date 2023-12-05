@@ -6,7 +6,6 @@ import { TestRunStatusItem, Button } from 'components/shared/elements';
 import { MinusIcon, PlusIcon } from 'components/shared/icons';
 import type { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import { dataEntityTestReportsPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import TestItem from './TestItem/TestItem';
 import * as S from './TestReportItemStyles';
 
@@ -26,8 +25,6 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   dataQATestReport,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { updatePath } = useIsEmbeddedPath();
-
   React.useEffect(() => {
     if (dataQATestList.length < 5) setOpen(true);
   }, [dataQATestList]);
@@ -78,7 +75,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
               <Link
-                to={updatePath(dataEntityTestReportsPath(dataSetId, dataQATest.id))}
+                to={dataEntityTestReportsPath(dataSetId, dataQATest.id)}
                 key={dataQATest.id}
               >
                 <TestItem

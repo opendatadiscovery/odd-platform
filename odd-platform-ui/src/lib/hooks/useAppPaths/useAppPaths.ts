@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
 import { useIsEmbeddedPath } from './useIsEmbeddedPath';
-import { useTermsPaths } from './useTermsPaths';
-import { ActivityRoutes, SearchRoutes, TermsRoutes } from './shared';
+import { ActivityRoutes, TermsRoutes } from './shared';
 
 const useAppPaths = () => {
   const { updatePath, isPathEmbedded } = useIsEmbeddedPath();
-  const termsPaths = useTermsPaths();
 
   const getNonExactPath = (path: string) => updatePath(`${path}/*`);
   const getNonExactParamPath = (path: string) => `${path}/*`;
@@ -20,15 +18,13 @@ const useAppPaths = () => {
     () => ({
       isPathEmbedded,
       ActivityRoutes,
-      SearchRoutes,
       TermsRoutes,
       updatePath,
       getNonExactPath,
       getNonExactParamPath,
       activityPath,
-      ...termsPaths,
     }),
-    [isPathEmbedded, termsPaths]
+    [isPathEmbedded]
   );
 };
 

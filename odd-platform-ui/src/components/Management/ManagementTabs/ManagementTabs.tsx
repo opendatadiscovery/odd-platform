@@ -5,14 +5,12 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { usePermissions } from 'lib/hooks';
 import { managementPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 const ManagementTabs: FC = () => {
   const { t } = useTranslation();
   const { hasAccessTo } = usePermissions();
-  const { updatePath } = useIsEmbeddedPath();
   const match = useMatch(useLocation().pathname);
 
   const [selectedTab, setSelectedTab] = useState(0);
@@ -26,31 +24,31 @@ const ManagementTabs: FC = () => {
     () => [
       {
         name: t('Namespaces'),
-        link: updatePath(managementPath('namespaces')),
+        link: managementPath('namespaces'),
       },
       {
         name: t('Datasources'),
-        link: updatePath(managementPath('datasources')),
+        link: managementPath('datasources'),
       },
       {
         name: t('Integrations'),
-        link: updatePath(managementPath('integrations')),
+        link: managementPath('integrations'),
       },
       {
         name: t('Collectors'),
-        link: updatePath(managementPath('collectors')),
+        link: managementPath('collectors'),
       },
-      { name: t('Owners'), link: updatePath(managementPath('owners')) },
-      { name: t('Tags'), link: updatePath(managementPath('tags')) },
+      { name: t('Owners'), link: managementPath('owners') },
+      { name: t('Tags'), link: managementPath('tags') },
       {
         name: t('Associations'),
-        link: updatePath(managementPath('associations')),
+        link: managementPath('associations'),
         hidden: hideAssociations,
       },
-      { name: t('Roles'), link: updatePath(managementPath('roles')) },
+      { name: t('Roles'), link: managementPath('roles') },
       {
         name: t('Policies'),
-        link: updatePath(managementPath('policies')),
+        link: managementPath('policies'),
       },
     ],
     [hideAssociations, t]

@@ -18,7 +18,6 @@ import {
 } from 'components/shared/elements/Activity';
 import { useAppDateTime } from 'lib/hooks';
 import type { Activity } from 'redux/interfaces';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 import * as S from './ActivityItemStyles';
 
@@ -33,7 +32,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   hideAllDetails,
   dataQA,
 }) => {
-  const { updatePath } = useIsEmbeddedPath();
   const { activityFormattedDateTime } = useAppDateTime();
 
   const tagStateItem = React.useCallback(
@@ -50,7 +48,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
     <S.Container container data-qa={dataQA}>
       <Grid container justifyContent='space-between' flexWrap='nowrap'>
         <Grid item display='flex' flexWrap='nowrap' alignItems='center'>
-          <Link to={updatePath(dataEntityDetailsPath(activity.dataEntity.id))}>
+          <Link to={dataEntityDetailsPath(activity.dataEntity.id)}>
             <Typography variant='h3' sx={{ mr: 1, width: 'max-content' }}>
               {activity.dataEntity.externalName || activity.dataEntity.internalName}
             </Typography>

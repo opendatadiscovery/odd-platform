@@ -10,7 +10,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import { Button, DialogWrapper, Input, Markdown } from 'components/shared/elements';
 import { queryExamplesPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface QueryExampleFormProps {
   btnCreateEl: JSX.Element;
@@ -22,7 +21,6 @@ const QueryExampleForm = ({
   btnCreateEl,
 }: QueryExampleFormProps) => {
   const { t } = useTranslation();
-  const { updatePath } = useIsEmbeddedPath();
   const navigate = useNavigate();
   const {
     mutateAsync: addQueryExample,
@@ -64,7 +62,7 @@ const QueryExampleForm = ({
 
       mutation$.then(qe => {
         reset();
-        navigate(updatePath(queryExamplesPath(qe.id)));
+        navigate(queryExamplesPath(qe.id));
       });
     },
     [queryExampleDetails]

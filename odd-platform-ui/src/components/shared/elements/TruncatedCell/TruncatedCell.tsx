@@ -5,7 +5,6 @@ import TruncatedCellMenu from 'components/shared/elements/TruncatedCell/Truncate
 import * as S from 'components/shared/elements/TruncatedCell/TruncatedCellStyles';
 import Button from 'components/shared/elements/Button/Button';
 import type { SerializeDateToNumber } from 'redux/interfaces';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 
 interface TruncatedCellProps {
@@ -31,8 +30,6 @@ export type Values = {
 type Item = DataEntityRef | LinkedUrl | string | SerializeDateToNumber<DataEntityRef>;
 
 const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityId }) => {
-  const { updatePath } = useIsEmbeddedPath();
-
   const getValues = React.useCallback((item: Item): Values => {
     let key;
     let linkTo;
@@ -48,7 +45,7 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({ dataList, externalEntityI
       linkContent = item.name;
     } else {
       key = `${item.id}`;
-      linkTo = updatePath(dataEntityDetailsPath(item.id));
+      linkTo = dataEntityDetailsPath(item.id);
       linkContent = item.internalName || item.externalName;
     }
 

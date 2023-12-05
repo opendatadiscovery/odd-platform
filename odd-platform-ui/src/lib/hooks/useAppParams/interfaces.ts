@@ -1,4 +1,4 @@
-import type { SearchRoutes, TermsRoutes } from '../useAppPaths/shared';
+import type { TermsRoutes } from '../useAppPaths/shared';
 
 interface TermRouteViewTypes {
   [TermsRoutes.termsViewType]:
@@ -16,13 +16,5 @@ interface AppTermRouteParams extends TermRouteViewTypes {
   [TermsRoutes.termSearchId]: string;
 }
 
-interface SearchRouteParams {
-  [SearchRoutes.searchId]: string;
-}
-
-interface AppSearchRouteParams {
-  [SearchRoutes.searchId]: string;
-}
-
-export type RouteParams = TermRouteParams & SearchRouteParams;
-export type AppRouteParams = AppSearchRouteParams & AppTermRouteParams;
+export type RouteParams = TermRouteParams;
+export type AppRouteParams = AppTermRouteParams;

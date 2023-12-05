@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { type MessagesByDate } from 'redux/interfaces';
 import { EmptyContentPlaceholder } from 'components/shared/elements';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDiscussionsPath, useDataEntityRouteParams } from 'routes';
 import Message from './Message/Message';
 import * as S from './MessagesListStyles';
@@ -31,11 +30,9 @@ const MessagesList: React.FC<MessagesListProps> = ({
 }) => {
   const navigate = useNavigate();
   const { dataEntityId, messageId: routerMessageId } = useDataEntityRouteParams();
-  const { updatePath } = useIsEmbeddedPath();
-
   const handleMessageOnClick = React.useCallback(
     (messageId: string) => () => {
-      navigate(updatePath(dataEntityDiscussionsPath(dataEntityId, messageId)));
+      navigate(dataEntityDiscussionsPath(dataEntityId, messageId));
     },
     [dataEntityId]
   );

@@ -4,7 +4,6 @@ import { Box, Grid, Typography } from '@mui/material';
 import { EntityClassItem, MetadataStale } from 'components/shared/elements';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 
 interface QueryExampleDetailsLinkedEntitiesItemProps {
@@ -16,9 +15,8 @@ const QueryExampleDetailsLinkedEntitiesItem = ({
 }: QueryExampleDetailsLinkedEntitiesItemProps) => {
   const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
   const navigate = useNavigate();
-  const { updatePath } = useIsEmbeddedPath();
   const onClick = useCallback(() => {
-    navigate(updatePath(dataEntityDetailsPath(entity.id)));
+    navigate(dataEntityDetailsPath(entity.id));
   }, [entity.id, navigate]);
 
   return (

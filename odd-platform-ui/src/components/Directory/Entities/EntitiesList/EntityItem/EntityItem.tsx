@@ -11,7 +11,6 @@ import {
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
 import { useAppDateTime } from 'lib/hooks';
 import { dataEntityDetailsPath, useDirectoryRouteParams } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface EntityItemProps {
   name: DataEntity['internalName'] | DataEntity['externalName'];
@@ -39,11 +38,10 @@ const EntityItem: FC<EntityItemProps> = ({
   id,
 }) => {
   const { typeId } = useDirectoryRouteParams();
-  const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
   return (
-    <Link to={updatePath(dataEntityDetailsPath(id))}>
+    <Link to={dataEntityDetailsPath(id)}>
       <Table.RowContainer>
         <Table.Cell $flex={flexMap.name}>
           <Grid

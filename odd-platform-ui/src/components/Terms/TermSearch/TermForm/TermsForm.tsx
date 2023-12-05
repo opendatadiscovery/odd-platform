@@ -18,7 +18,7 @@ import {
   getTermDetails,
   getTermUpdatingStatuses,
 } from 'redux/selectors';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import { termDetailsPath, useTermsRouteParams } from 'routes';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -28,8 +28,7 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { termId } = useAppParams();
-  const { termDetailsOverviewPath } = useAppPaths();
+  const { termId } = useTermsRouteParams();
 
   const term = useAppSelector(getTermDetails(termId));
   const { isLoading: isTermCreating, isLoaded: isTermCreated } = useAppSelector(
@@ -71,7 +70,7 @@ const TermsForm: FC<TermsFormDialogProps> = ({ btnCreateEl }) => {
       .unwrap()
       .then((response: TermDetails) => {
         clearState();
-        navigate(termDetailsOverviewPath(response.id));
+        navigate(termDetailsPath(response.id));
       });
   };
 

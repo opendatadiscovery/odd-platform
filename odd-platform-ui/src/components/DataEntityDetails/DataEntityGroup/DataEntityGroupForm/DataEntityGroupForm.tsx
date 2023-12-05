@@ -28,7 +28,6 @@ import {
 } from 'redux/selectors';
 import { createDataEntityGroup, updateDataEntityGroup } from 'redux/thunks';
 import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 
@@ -40,7 +39,6 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
   const navigate = useNavigate();
-  const { updatePath } = useIsEmbeddedPath();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
@@ -96,7 +94,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({ btnCreateEl }
       .unwrap()
       .then(response => {
         clearState();
-        navigate(updatePath(dataEntityDetailsPath(response.id)));
+        navigate(dataEntityDetailsPath(response.id));
       });
   };
 

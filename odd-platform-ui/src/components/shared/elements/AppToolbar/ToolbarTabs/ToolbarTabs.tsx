@@ -10,12 +10,14 @@ import { useAppDispatch } from 'redux/lib/hooks';
 import { createTermSearch } from 'redux/thunks';
 import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/AppTabs';
 import {
+  activityPath,
   alertsPath,
   dataQualityPath,
   directoryPath,
   managementPath,
   queryExamplesPath,
   searchPath,
+  termsSearchPath,
 } from 'routes';
 import useSetSelectedTab from '../../AppTabs/useSetSelectedTab';
 
@@ -27,7 +29,7 @@ const ToolbarTabs: FC = () => {
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const { activityPath, termSearchPath, TermsRoutes, updatePath } = useAppPaths();
+  const { updatePath } = useAppPaths();
   const match = useMatch(useLocation().pathname);
 
   const tabs = useMemo<AppTabItem[]>(
@@ -38,29 +40,29 @@ const ToolbarTabs: FC = () => {
       },
       {
         name: t('Directory'),
-        link: updatePath(directoryPath()),
+        link: directoryPath(),
       },
       {
         name: t('Data Quality'),
-        link: updatePath(dataQualityPath()),
+        link: dataQualityPath(),
       },
       {
         name: t('Data Modelling'),
-        link: updatePath(queryExamplesPath()),
+        link: queryExamplesPath(),
         hint: t('BETA'),
         hintType: 'secondary',
       },
       {
         name: t('Management'),
-        link: updatePath(managementPath()),
+        link: managementPath(),
       },
       {
         name: t('Dictionary'),
-        link: updatePath(TermsRoutes.termSearch),
+        link: termsSearchPath(),
       },
       {
         name: t('Alerts'),
-        link: updatePath(alertsPath('all')),
+        link: alertsPath('all'),
       },
       {
         name: t('Activity'),
@@ -83,8 +85,8 @@ const ToolbarTabs: FC = () => {
       if (tabs[idx].name === t('Dictionary')) {
         dispatch(createTermSearch({ termSearchFormData: initialParams }))
           .unwrap()
-          .then(termSearch => {
-            const termSearchLink = termSearchPath(termSearch.searchId);
+          .then(({ searchId }) => {
+            const termSearchLink = termsSearchPath(searchId);
             navigate(termSearchLink);
           });
         return;

@@ -1,7 +1,7 @@
 import { generatePath, useParams } from 'react-router-dom';
 import type { DataSource, DataSourceType } from '../generated-sources';
 
-const BASE_PATH = 'directory';
+const BASE_PATH = '/directory';
 
 export function directoryPath() {
   return BASE_PATH;

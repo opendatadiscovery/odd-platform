@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { integrationsPath } from 'routes';
 import type { Integration } from 'generated-sources';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
@@ -14,7 +13,6 @@ interface IntegrationTabsProps {
 }
 
 const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId }) => {
-  const { updatePath } = useIsEmbeddedPath();
   const match = useMatch(useLocation().pathname);
 
   const [selectedTab, setSelectedTab] = React.useState(0);
@@ -23,7 +21,7 @@ const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId
     () =>
       titles.map(title => ({
         name: capitalize(title),
-        link: updatePath(integrationsPath(integrationId, title)),
+        link: integrationsPath(integrationId, title),
       })),
     [titles]
   );

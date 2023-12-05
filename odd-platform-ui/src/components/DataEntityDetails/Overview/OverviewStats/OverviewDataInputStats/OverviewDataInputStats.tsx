@@ -3,7 +3,6 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DataEntityClassNameEnum, type DataEntityDetails } from 'generated-sources';
 import { Button, EntitiesListModal, EntityClassItem } from 'components/shared/elements';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 
 interface OverviewDataInputStatsProps {
@@ -19,7 +18,6 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
 }) => {
   const { t } = useTranslation();
   const displayedEntitiesNumber = 10;
-  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <Grid container>
@@ -39,7 +37,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
             .map(output => (
               <Button
                 text={output.internalName || output.externalName}
-                to={updatePath(dataEntityDetailsPath(output.id))}
+                to={dataEntityDetailsPath(output.id)}
                 key={output.id}
                 sx={{ my: 0.25 }}
                 buttonType='tertiary-m'

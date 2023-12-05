@@ -10,14 +10,17 @@ import {
   fetchIdentity,
   fetchTagsList,
 } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks';
 import {
+  activityPath,
   alertsPath,
+  dataEntitiesPath,
   dataModellingPath,
   dataQualityPath,
   directoryPath,
   managementPath,
   searchPath,
+  termsPath,
+  termsSearchPath,
 } from 'routes';
 
 // lazy elements
@@ -36,14 +39,6 @@ const DataModeling = lazy(() => import('./DataModelling/DataModelling'));
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const {
-    isPathEmbedded,
-    TermsRoutes,
-    ActivityRoutes,
-    getNonExactPath,
-    getNonExactParamPath,
-  } = useAppPaths();
-
   useEffect(() => {
     dispatch(fetchDataEntitiesClassesAndTypes()).catch(() => {});
     dispatch(fetchIdentity()).catch(() => {});
@@ -54,38 +49,25 @@ const App: React.FC = () => {
   return (
     <div className='App'>
       <Toaster position='bottom-right' toastOptions={{ custom: { duration: 6000 } }} />
-      {!isPathEmbedded && <AppToolbar />}
+      <AppToolbar />
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <AppSuspenseWrapper>
           <Routes>
             <Route path='/' element={<Overview />} />
             <Route path={`${searchPath()}/*`} element={<Search />} />
-            <Route path={managementPath()} element={<Management />} />
-            <Route
-              path={getNonExactPath(TermsRoutes.termSearch)}
-              element={<TermSearch />}
-            />
-            <Route path={getNonExactPath(alertsPath())} element={<Alerts />} />
-            <Route
-              path={getNonExactPath(ActivityRoutes.activity)}
-              element={<Activity />}
-            />
-            <Route path={getNonExactPath(TermsRoutes.terms)} element={<TermDetails />}>
-              <Route path={getNonExactParamPath(TermsRoutes.termIdParam)} />
+            <Route path={`${managementPath()}/*`} element={<Management />} />
+            <Route path={`${termsSearchPath()}/*`} element={<TermSearch />} />
+            <Route path={`${alertsPath()}/*`} element={<Alerts />} />
+            <Route path={activityPath()} element={<Activity />} />
+            <Route path={termsPath()}>
+              <Route path=':termId/*' element={<TermDetails />} />
             </Route>
-            <Route
-              path={getNonExactPath('/dataentities/:dataEntityId')}
-              element={<DataEntityDetails />}
-            />
-            <Route
-              path={getNonExactPath(directoryPath())}
-              element={<DirectoryRoutes />}
-            />
-            <Route path={getNonExactPath(dataQualityPath())} element={<DataQuality />} />
-            <Route
-              path={getNonExactPath(dataModellingPath())}
-              element={<DataModeling />}
-            />
+            <Route path={dataEntitiesPath()}>
+              <Route path=':dataEntityId/*' element={<DataEntityDetails />} />
+            </Route>
+            <Route path={`${directoryPath()}/*`} element={<DirectoryRoutes />} />
+            <Route path={dataQualityPath()} element={<DataQuality />} />
+            <Route path={`${dataModellingPath()}/*`} element={<DataModeling />} />
           </Routes>
         </AppSuspenseWrapper>
       </div>

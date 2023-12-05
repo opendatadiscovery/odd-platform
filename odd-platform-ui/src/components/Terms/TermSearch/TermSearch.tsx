@@ -4,7 +4,6 @@ import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
 import { useNavigate } from 'react-router-dom';
 import { PageWithLeftSidebar } from 'components/shared/elements';
-import { useAppParams } from 'lib/hooks';
 import {
   getTermSearchCreateStatuses,
   getTermSearchFacetsParams,
@@ -16,6 +15,7 @@ import { createTermSearch, getTermsSearch, updateTermSearch } from 'redux/thunks
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { useTermsRouteParams } from 'routes';
 import TermSearchFilters from './TermSearchFilters/TermSearchFilters';
 import TermsSearchResults from './TermSearchResults/TermSearchResults';
 import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
@@ -23,7 +23,7 @@ import TermSearchHeader from './TermSearchHeader/TermSearchHeader';
 const TermSearch: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { termSearchId: routerTermSearchId } = useAppParams();
+  const { termSearchId: routerTermSearchId } = useTermsRouteParams();
 
   const termSearchId = useAppSelector(getTermSearchId);
   const termSearchQuery = useAppSelector(getTermSearchQuery);

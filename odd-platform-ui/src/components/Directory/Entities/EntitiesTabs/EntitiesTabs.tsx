@@ -4,30 +4,26 @@ import type { DataEntityType } from 'generated-sources';
 import { AppTabs, type AppTabItem } from 'components/shared/elements';
 import { DataEntityClassTypeLabelMap } from 'lib/constants';
 import { directoryDataSourcePath, useDirectoryRouteParams } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface EntitiesListTabsProps {
   types: DataEntityType[];
 }
 
 const EntitiesTabs: FC<EntitiesListTabsProps> = ({ types }) => {
-  const { updatePath } = useIsEmbeddedPath();
   const { typeId, dataSourceTypePrefix, dataSourceId } = useDirectoryRouteParams();
   const [selectedTab, setSelectedTab] = React.useState(0);
 
   const tabs = React.useMemo<AppTabItem[]>(() => {
     const dynamicTabs = types.map(({ id, name }) => ({
       name: DataEntityClassTypeLabelMap.get(name)!.plural,
-      link: updatePath(directoryDataSourcePath(dataSourceTypePrefix, dataSourceId, id)),
+      link: directoryDataSourcePath(dataSourceTypePrefix, dataSourceId, id),
       value: id,
     }));
 
     return [
       {
         name: 'All',
-        link: updatePath(
-          directoryDataSourcePath(dataSourceTypePrefix, dataSourceId, 'all')
-        ),
+        link: directoryDataSourcePath(dataSourceTypePrefix, dataSourceId, 'all'),
         value: 'all',
       },
       ...dynamicTabs,

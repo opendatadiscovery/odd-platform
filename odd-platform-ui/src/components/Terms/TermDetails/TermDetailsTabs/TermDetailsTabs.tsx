@@ -1,42 +1,35 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type AppTabItem, AppTabs } from 'components/shared/elements';
-import { useAppParams, useAppPaths } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
+import { termDetailsPath, useTermsRouteParams } from 'routes';
+import { useLocation, useMatch } from 'react-router-dom';
+import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 const TermDetailsTabs: React.FC = () => {
   const { t } = useTranslation();
-  const { termId, termsViewType } = useAppParams();
-  const {
-    termDetailsOverviewPath,
-    termDetailsLinkedEntitiesPath,
-    termDetailsLinkedColumnsPath,
-    TermsRoutes,
-  } = useAppPaths();
-
+  const { termId } = useTermsRouteParams();
+  const match = useMatch(useLocation().pathname);
   const termDetails = useAppSelector(getTermDetails(termId));
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
       {
         name: t('Overview'),
-        link: termDetailsOverviewPath(termId),
-        value: TermsRoutes.overview,
+        link: termDetailsPath(termId),
       },
       {
         name: t('Linked entities'),
-        link: termDetailsLinkedEntitiesPath(termId),
+        link: termDetailsPath(termId, 'linked-entities'),
         hint: termDetails?.entitiesUsingCount,
         hidden: !termDetails?.entitiesUsingCount,
-        value: TermsRoutes.linkedEntities,
       },
       {
         name: t('Linked columns'),
-        link: termDetailsLinkedColumnsPath(termId),
+        link: termDetailsPath(termId, 'linked-columns'),
         hint: termDetails?.columnsUsingCount,
         hidden: !termDetails?.columnsUsingCount,
-        value: TermsRoutes.linkedColumns,
       },
     ],
     [termId, termDetails?.entitiesUsingCount, termDetails?.columnsUsingCount, t]
@@ -44,11 +37,7 @@ const TermDetailsTabs: React.FC = () => {
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
-  useEffect(() => {
-    setSelectedTab(
-      termsViewType ? tabs.findIndex(tab => tab.value === termsViewType) : 0
-    );
-  }, [tabs, termsViewType]);
+  useSetSelectedTab(tabs, match, setSelectedTab);
 
   return (
     <>

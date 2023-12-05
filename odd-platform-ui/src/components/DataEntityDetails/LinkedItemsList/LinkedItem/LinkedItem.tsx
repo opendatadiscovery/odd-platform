@@ -3,7 +3,6 @@ import { Box, Grid, Typography } from '@mui/material';
 import type { DataEntity } from 'generated-sources';
 import { useAppDateTime } from 'lib/hooks';
 import { MetadataStale } from 'components/shared/elements';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 import { Container, ItemLink, ColContainer } from './LinkedItemStyles';
 
@@ -13,8 +12,7 @@ interface LinkedItemProps {
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
   const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const { updatePath } = useIsEmbeddedPath();
-  const detailsLink = updatePath(dataEntityDetailsPath(linkedItem.id));
+  const detailsLink = dataEntityDetailsPath(linkedItem.id);
 
   return (
     <ItemLink to={detailsLink}>

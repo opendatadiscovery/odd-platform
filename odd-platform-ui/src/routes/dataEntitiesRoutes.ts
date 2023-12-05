@@ -1,7 +1,7 @@
 import { generatePath, useParams } from 'react-router-dom';
 import type { DataEntity, DataQualityTest } from 'generated-sources';
 
-const BASE_PATH = 'dataentities';
+const BASE_PATH = '/dataentities';
 const DataEntityDetailsRoutes = {
   OVERVIEW: 'overview',
   LINEAGE: 'lineage',
@@ -53,6 +53,9 @@ export const useDataEntityRouteParams = (): AppDataEntityDetailsRouteParams => {
 
 type DataEntityDetailsRoutesType = typeof DataEntityDetailsRoutes;
 
+export function dataEntitiesPath() {
+  return BASE_PATH;
+}
 export function dataEntityDetailsPath(
   id: DataEntity['id'] | string,
   path: DataEntityDetailsRoutesType[keyof DataEntityDetailsRoutesType] = 'overview'

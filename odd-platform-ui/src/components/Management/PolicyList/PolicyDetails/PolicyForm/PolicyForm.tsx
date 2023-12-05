@@ -10,7 +10,6 @@ import { AppJSONEditor, Button, Input } from 'components/shared/elements';
 import { ClearIcon } from 'components/shared/icons';
 import { Permission, type PolicyDetails, type PolicyFormData } from 'generated-sources';
 import { managementPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 
 interface PolicyFormProps {
   schema: Record<string, unknown>;
@@ -23,12 +22,11 @@ const PolicyForm: React.FC<PolicyFormProps> = ({ schema, policyId, name, policy 
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { updatePath } = useIsEmbeddedPath();
   const { hasAccessTo } = usePermissions();
   const canUpdatePolicy = hasAccessTo(Permission.POLICY_UPDATE);
 
   const isAdministrator = name === 'Administrator';
-  const toPolicies = updatePath(managementPath('policies'));
+  const toPolicies = managementPath('policies');
   const defaultValues = React.useMemo(() => ({ name, policy }), [name, policy]);
 
   const { control, handleSubmit, formState } = useForm<PolicyFormData>({
