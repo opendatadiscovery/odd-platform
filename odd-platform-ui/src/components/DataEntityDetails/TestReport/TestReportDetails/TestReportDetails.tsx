@@ -41,12 +41,10 @@ const TestReportDetails: React.FC = () => {
       {
         name: t('Overview'),
         link: dataEntityTestReportsPath(dataEntityId, dataQATestId),
-        value: 'overview',
       },
       {
         name: t('History'),
         link: dataEntityTestReportsPath(dataEntityId, dataQATestId, 'history'),
-        value: 'history',
       },
     ],
     [dataEntityId, dataQATestId, t]

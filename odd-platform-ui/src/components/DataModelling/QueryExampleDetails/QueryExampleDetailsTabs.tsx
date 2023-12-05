@@ -20,11 +20,9 @@ const QueryExampleDetailsTabs = ({
     () => [
       {
         name: t('Overview'),
-        value: 'overview',
       },
       {
         name: t('Linked Entities'),
-        value: 'linked-entities',
         hint: linkedEntitiesHint,
       },
     ],

@@ -11,11 +11,9 @@ const DataModellingTabs = () => {
     () => [
       {
         name: t('Query Examples'),
-        value: 'query-examples',
       },
       {
         name: t('Relationships'),
-        value: 'relationships',
         disabled: true,
       },
     ],

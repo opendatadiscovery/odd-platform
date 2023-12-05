@@ -31,12 +31,10 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
         name: t('New'),
         hint: newRequestsTabHint,
         link: associationsPath('new'),
-        value: true,
       },
       {
         name: t('Resolved'),
         link: associationsPath('resolved'),
-        value: false,
       },
     ],
     [t, newRequestsTabHint]
