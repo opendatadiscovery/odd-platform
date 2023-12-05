@@ -5,7 +5,6 @@ import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { AlertTotals } from 'generated-sources';
 import { alertsPath } from 'routes';
-import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 interface AlertsTabsProps {
@@ -16,8 +15,6 @@ interface AlertsTabsProps {
 const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const match = useMatch(useLocation().pathname);
-
   const [selectedTab, setSelectedTab] = useState(-1);
 
   const tabs = useMemo<AppTabItem[]>(
@@ -43,7 +40,7 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
     [totals, showMyAndDepends, t]
   );
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   const alertsFilterUpdateAction = useCallback(() => {
     dispatch(changeAlertsFilterAction());

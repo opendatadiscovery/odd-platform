@@ -1,5 +1,5 @@
 import React, { type FC, useCallback, useMemo, useState } from 'react';
-import { useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
@@ -28,8 +28,6 @@ const ToolbarTabs: FC = () => {
   const createSearch = useCreateSearch();
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
-
-  const match = useMatch(useLocation().pathname);
 
   const tabs = useMemo<AppTabItem[]>(
     () => [
@@ -73,7 +71,7 @@ const ToolbarTabs: FC = () => {
 
   const [selectedTab, setSelectedTab] = useState(-1);
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   const handleTabClick = useCallback(
     (idx: number) => {

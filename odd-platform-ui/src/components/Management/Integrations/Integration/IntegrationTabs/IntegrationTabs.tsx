@@ -5,7 +5,6 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { integrationsPath } from 'routes';
 import type { Integration } from 'generated-sources';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
-import { useLocation, useMatch } from 'react-router-dom';
 
 interface IntegrationTabsProps {
   titles: string[];
@@ -13,8 +12,6 @@ interface IntegrationTabsProps {
 }
 
 const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId }) => {
-  const match = useMatch(useLocation().pathname);
-
   const [selectedTab, setSelectedTab] = React.useState(0);
 
   const tabs = React.useMemo<AppTabItem[]>(
@@ -26,7 +23,7 @@ const IntegrationTabs: React.FC<IntegrationTabsProps> = ({ titles, integrationId
     [titles]
   );
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   return (
     <Grid sx={{ mt: 1 }}>

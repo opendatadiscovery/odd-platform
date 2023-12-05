@@ -4,13 +4,11 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { getTermDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import { termDetailsPath, useTermsRouteParams } from 'routes';
-import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 const TermDetailsTabs: React.FC = () => {
   const { t } = useTranslation();
   const { termId } = useTermsRouteParams();
-  const match = useMatch(useLocation().pathname);
   const termDetails = useAppSelector(getTermDetails(termId));
 
   const tabs = useMemo<AppTabItem[]>(
@@ -37,7 +35,7 @@ const TermDetailsTabs: React.FC = () => {
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   return (
     <>

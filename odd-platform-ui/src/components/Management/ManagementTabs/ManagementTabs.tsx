@@ -5,14 +5,11 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { Permission } from 'generated-sources';
 import { usePermissions } from 'lib/hooks';
 import { managementPath } from 'routes';
-import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 const ManagementTabs: FC = () => {
   const { t } = useTranslation();
   const { hasAccessTo } = usePermissions();
-  const match = useMatch(useLocation().pathname);
-
   const [selectedTab, setSelectedTab] = useState(0);
 
   const hideAssociations = useMemo(
@@ -54,7 +51,7 @@ const ManagementTabs: FC = () => {
     [hideAssociations, t]
   );
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   return (
     <Grid sx={{ p: 0.5 }}>

@@ -14,7 +14,6 @@ import {
   type ActivityQuery,
   defaultActivityQuery,
 } from 'components/shared/elements/Activity/common';
-import { useLocation, useMatch } from 'react-router-dom';
 import {
   dataEntityDetailsPath,
   dataEntityLineagePath,
@@ -43,8 +42,6 @@ const DataEntityDetailsTabs: React.FC = () => {
     getIsDataEntityBelongsToClass(dataEntityId)
   );
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
-  const match = useMatch(useLocation().pathname);
-
   const tabs = useMemo<AppTabItem[]>(
     () => [
       {
@@ -120,7 +117,7 @@ const DataEntityDetailsTabs: React.FC = () => {
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   return (
     <>

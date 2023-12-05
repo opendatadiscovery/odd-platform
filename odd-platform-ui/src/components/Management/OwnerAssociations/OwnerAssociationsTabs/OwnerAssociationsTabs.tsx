@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnerAssociationRequestList } from 'redux/thunks';
 import { getOwnerAssociationRequestsListFetchingStatuses } from 'redux/selectors';
 import { associationsPath } from 'routes';
-import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 import { queryAtom } from '../OwnerAssociationsStore/OwnerAssociationsAtoms';
 
@@ -25,7 +24,6 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   const [, setQuery] = useAtom(queryAtom);
 
   const { isLoading } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
-  const match = useMatch(useLocation().pathname);
 
   const tabs = React.useMemo<AppTabItem<boolean>[]>(
     () => [
@@ -45,7 +43,7 @@ const OwnerAssociationsTabs: React.FC<OwnerAssociationsTabsProps> = ({
   );
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   const onTabChange = React.useCallback(() => {
     setQuery('');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Navigate, Route, Routes, useLocation, useMatch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
@@ -31,8 +31,6 @@ const TestReportDetailsHistory = React.lazy(
 const TestReportDetails: React.FC = () => {
   const { t } = useTranslation();
   const { dataQATestId, dataEntityId } = useDataEntityRouteParams();
-  const match = useMatch(useLocation().pathname);
-
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
   const resourcePermissions = useAppSelector(
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
@@ -56,7 +54,7 @@ const TestReportDetails: React.FC = () => {
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   return (
     <Grid container sx={{ p: 2 }}>
