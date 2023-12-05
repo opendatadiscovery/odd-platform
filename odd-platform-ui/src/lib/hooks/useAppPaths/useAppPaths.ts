@@ -10,13 +10,6 @@ const useAppPaths = () => {
   const getNonExactPath = (path: string) => updatePath(`${path}/*`);
   const getNonExactParamPath = (path: string) => `${path}/*`;
 
-  const basePath = updatePath('');
-
-  // search
-  const baseSearchPath = () => `${SearchRoutes.search}`;
-  const searchPath = (searchId: string = SearchRoutes.searchIdParam) =>
-    updatePath(`${baseSearchPath()}/${searchId}`);
-
   // Activity
   const activityPath = (query?: string) => {
     const queryStr = `?${query}`;
@@ -29,11 +22,9 @@ const useAppPaths = () => {
       ActivityRoutes,
       SearchRoutes,
       TermsRoutes,
-      basePath,
       updatePath,
       getNonExactPath,
       getNonExactParamPath,
-      searchPath,
       activityPath,
       ...termsPaths,
     }),

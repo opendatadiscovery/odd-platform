@@ -17,6 +17,7 @@ import {
   dataQualityPath,
   directoryPath,
   managementPath,
+  searchPath,
 } from 'routes';
 
 // lazy elements
@@ -37,8 +38,6 @@ const App: React.FC = () => {
 
   const {
     isPathEmbedded,
-    SearchRoutes,
-    basePath,
     TermsRoutes,
     ActivityRoutes,
     getNonExactPath,
@@ -59,9 +58,9 @@ const App: React.FC = () => {
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <AppSuspenseWrapper>
           <Routes>
-            <Route path={basePath} element={<Overview />} />
-            <Route path={getNonExactPath(SearchRoutes.search)} element={<Search />} />
-            <Route path={getNonExactPath(managementPath())} element={<Management />} />
+            <Route path='/' element={<Overview />} />
+            <Route path={`${searchPath()}/*`} element={<Search />} />
+            <Route path={managementPath()} element={<Management />} />
             <Route
               path={getNonExactPath(TermsRoutes.termSearch)}
               element={<TermSearch />}

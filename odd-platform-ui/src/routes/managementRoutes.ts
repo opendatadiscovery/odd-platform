@@ -1,6 +1,6 @@
 import { generatePath, useParams } from 'react-router-dom';
 
-const BASE_PATH = 'management';
+const BASE_PATH = '/management';
 const ManagementRoutes = {
   NAMESPACES: 'namespaces',
   DATASOURCES: 'datasources',
