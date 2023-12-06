@@ -7,7 +7,6 @@ import { IntegratedIcon } from 'components/shared/icons';
 import type { DatasourceName } from 'lib/interfaces';
 import { DatasourceLogo } from 'components/shared/elements';
 import { integrationsPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import * as S from './IntegrationPreviewItem.styles';
 
 interface IntegrationPreviewItemProps {
@@ -25,10 +24,8 @@ const IntegrationPreviewItem: FC<IntegrationPreviewItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { updatePath } = useIsEmbeddedPath();
-
   const handleOnItemClick = useCallback(() => {
-    navigate(updatePath(integrationsPath(id)));
+    navigate(integrationsPath(id));
   }, [id]);
 
   return (

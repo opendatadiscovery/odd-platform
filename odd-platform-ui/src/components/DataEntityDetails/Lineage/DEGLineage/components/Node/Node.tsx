@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { EntityClassItem, LabeledInfoItem } from 'components/shared/elements';
 import { EmptyIcon } from 'components/shared/icons';
 import { dataEntityDetailsPath, dataEntityLineagePath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import * as S from './Node.styles';
 import type { Node as NodeType } from '../../lib/interfaces';
 
@@ -27,13 +26,12 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(
   ) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { updatePath } = useIsEmbeddedPath();
 
     const lineageLink = React.useMemo(
       () =>
         data?.entityClasses?.some(entityClass => entityClass.name === 'DATA_QUALITY_TEST')
-          ? updatePath(dataEntityDetailsPath(id))
-          : updatePath(dataEntityLineagePath(id)),
+          ? dataEntityDetailsPath(id)
+          : dataEntityLineagePath(id),
       [id, data?.entityClasses]
     );
 

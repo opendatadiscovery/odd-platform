@@ -11,7 +11,6 @@ import ConfirmationDialog from 'components/shared/elements/ConfirmationDialog/Co
 import { useTranslation } from 'react-i18next';
 import { useUnassignEntityQueryExample } from 'lib/hooks/api/dataModelling/queryExamples';
 import { queryExamplesPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import TruncatedCell from '../TruncatedCell/TruncatedCell';
 import Markdown from '../Markdown/Markdown';
 import CollapsibleInfoContainer from '../CollapsibleInfoContainer/CollapsibleInfoContainer';
@@ -49,7 +48,6 @@ const QueryExamplesListItem = ({
   const scrollbarWidth = useScrollBarWidth();
   const { t } = useTranslation();
   const { mutateAsync } = useUnassignEntityQueryExample();
-  const { updatePath } = useIsEmbeddedPath();
 
   return (
     <ListItemContainer key={queryExample.id} container pr={scrollbarWidth}>
@@ -75,7 +73,7 @@ const QueryExamplesListItem = ({
           <Button
             buttonType='linkGray-m-icon'
             icon={<PreviewIcon />}
-            to={updatePath(queryExamplesPath(queryExample.id))}
+            to={queryExamplesPath(queryExample.id)}
           />
           <WithPermissions permissionTo={Permission.QUERY_EXAMPLE_DATASET_DELETE}>
             <ConfirmationDialog

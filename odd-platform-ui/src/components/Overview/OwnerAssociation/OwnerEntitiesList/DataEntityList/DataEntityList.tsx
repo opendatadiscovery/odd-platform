@@ -7,7 +7,6 @@ import {
   MetadataStale,
 } from 'components/shared/elements';
 import { AlertIcon } from 'components/shared/icons';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 import * as S from './DataEntityListStyles';
 
@@ -25,10 +24,8 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   entityListIcon,
   isFetching,
   isNotFetched,
-}) => {
-  const { updatePath } = useIsEmbeddedPath();
-
-  return isNotFetched ? null : (
+}) =>
+  isNotFetched ? null : (
     <S.DataEntityListContainer item lg={3}>
       <S.SectionCaption variant='h4' sx={{ mb: 2 }}>
         {entityListIcon}
@@ -38,10 +35,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
       <S.ListLinksContainer $isListEmpty={!dataEntitiesList.length}>
         {dataEntitiesList.map(item => (
           <li key={item.id}>
-            <S.ListLink
-              to={updatePath(dataEntityDetailsPath(item.id))}
-              $hasAlerts={item.hasAlerts}
-            >
+            <S.ListLink to={dataEntityDetailsPath(item.id)} $hasAlerts={item.hasAlerts}>
               <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
                 <MetadataStale isStale={item.isStale} />
@@ -74,6 +68,5 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
       </S.ListLinksContainer>
     </S.DataEntityListContainer>
   );
-};
 
 export default DataEntityList;

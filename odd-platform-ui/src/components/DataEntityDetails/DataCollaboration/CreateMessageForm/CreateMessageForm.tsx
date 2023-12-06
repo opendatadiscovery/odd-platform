@@ -13,7 +13,6 @@ import {
 } from 'components/shared/elements';
 import { type MessageRequest } from 'generated-sources';
 import { getMessageToSlackCreatingStatuses } from 'redux/selectors';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 
 interface CreateMessageFormProps {
@@ -28,13 +27,12 @@ const CreateMessageForm: React.FC<CreateMessageFormProps> = ({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { updatePath } = useIsEmbeddedPath();
 
   const { isLoading: isMessageCreating, isLoaded: isMessageCreated } = useAppSelector(
     getMessageToSlackCreatingStatuses
   );
 
-  const toCollaboration = updatePath(dataEntityDetailsPath(dataEntityId, 'discussions'));
+  const toCollaboration = dataEntityDetailsPath(dataEntityId, 'discussions');
 
   type MessageFormData = Omit<MessageRequest, 'dataEntityId'>;
 

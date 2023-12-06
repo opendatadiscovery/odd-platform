@@ -7,10 +7,9 @@ import type {
   TermRef,
 } from 'generated-sources';
 import { useAppDispatch } from 'redux/lib/hooks';
-import useAppPaths from 'lib/hooks/useAppPaths/useAppPaths';
 import { TERM_PATTERN } from 'lib/constants';
 import { useGetTermByNamespaceAndName } from 'lib/hooks/api';
-import { useDataEntityRouteParams } from 'routes';
+import { termDetailsPath, useDataEntityRouteParams } from 'routes';
 
 interface UseTermWikiProps {
   updateDescription: (params: any) => AsyncThunkAction<any, any, any>;
@@ -37,7 +36,6 @@ export default function useTermWiki({
 }: UseTermWikiProps) {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useDataEntityRouteParams();
-  const { termDetailsOverviewPath } = useAppPaths();
   const fetchTerm = useGetTermByNamespaceAndName();
 
   const [editMode, setEditMode] = useState(false);
@@ -192,7 +190,7 @@ export default function useTermWiki({
 
       for (const termKey in fetchedTerms) {
         const { id, name, definition } = fetchedTerms[termKey];
-        const termLink = makeTermLink(name, termDetailsOverviewPath(id), definition);
+        const termLink = makeTermLink(name, termDetailsPath(id), definition);
         const termPattern = makeTermPattern(termKey);
         markdownDescription = markdownDescription.split(termPattern).join(termLink);
       }

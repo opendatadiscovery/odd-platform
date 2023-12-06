@@ -3,7 +3,8 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import { EmptyContentPlaceholder, Input } from 'components/shared/elements';
-import { useAppParams, useGetTermLinkedColumns } from 'lib/hooks';
+import { useGetTermLinkedColumns } from 'lib/hooks';
+import { useTermsRouteParams } from 'routes';
 import LinkedColumn from './LinkedColumn/LinkedColumn';
 import {
   TermLinkedColumnsColContainer,
@@ -16,7 +17,7 @@ const size = 50;
 
 const LinkedColumnsList: FC = () => {
   const { t } = useTranslation();
-  const { termId } = useAppParams();
+  const { termId } = useTermsRouteParams();
   const [query, setQuery] = useState('');
   const {
     data: { items, pageInfo },

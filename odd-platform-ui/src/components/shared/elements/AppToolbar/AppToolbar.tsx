@@ -6,7 +6,6 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { DropdownIcon } from 'components/shared/icons';
 import AppMenu from 'components/shared/elements/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/elements/AppMenuItem/AppMenuItem';
-import { useAppPaths } from 'lib/hooks';
 import ToolbarTabs from 'components/shared/elements/AppToolbar/ToolbarTabs/ToolbarTabs';
 import AppInfoMenu from 'components/shared/elements/AppToolbar/AppInfoMenu/AppInfoMenu';
 import Button from 'components/shared/elements/Button/Button';
@@ -17,7 +16,6 @@ import ChevronIcon from 'components/shared/icons/ChevronIcon';
 import type { Lang } from 'lib/interfaces';
 
 const AppToolbar: FC = () => {
-  const { basePath } = useAppPaths();
   const { i18n, t } = useTranslation();
   const identity = useAppSelector(getIdentity);
   const owner = useAppSelector(getOwnership);
@@ -54,7 +52,7 @@ const AppToolbar: FC = () => {
       <S.Container disableGutters>
         <S.ContentContainer container>
           <S.LogoContainer item xs={3}>
-            <S.Title to={basePath}>
+            <S.Title to='/'>
               <S.Logo />
               <Typography variant='h4' noWrap>
                 Platform

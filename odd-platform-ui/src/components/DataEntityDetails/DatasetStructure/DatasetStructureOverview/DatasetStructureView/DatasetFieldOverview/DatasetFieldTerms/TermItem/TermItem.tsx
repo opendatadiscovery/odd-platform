@@ -9,7 +9,8 @@ import {
   Markdown,
 } from 'components/shared/elements';
 import { DeleteIcon, LinkedTermIcon } from 'components/shared/icons';
-import { useAppPaths, useDeleteDatasetFieldTerm } from 'lib/hooks';
+import { useDeleteDatasetFieldTerm } from 'lib/hooks';
+import { termDetailsPath } from 'routes';
 
 interface TermItemProps {
   name: TermRef['name'];
@@ -30,8 +31,7 @@ const TermItem: FC<TermItemProps> = ({
 }) => {
   const { mutateAsync: deleteTerm } = useDeleteDatasetFieldTerm();
 
-  const { termDetailsOverviewPath } = useAppPaths();
-  const termDetailsLink = termDetailsOverviewPath(termId);
+  const termDetailsLink = termDetailsPath(termId, 'overview');
 
   const handleDelete = useCallback(
     (e: React.MouseEvent) => {

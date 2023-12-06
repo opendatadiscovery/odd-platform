@@ -1,6 +1,6 @@
 import { generatePath, useParams } from 'react-router-dom';
 
-const BASE_PATH = 'management';
+const BASE_PATH = '/management';
 const ManagementRoutes = {
   NAMESPACES: 'namespaces',
   DATASOURCES: 'datasources',
@@ -15,7 +15,7 @@ const ManagementRoutes = {
 type ManagementRoutesType = typeof ManagementRoutes;
 
 export function managementPath(path?: ManagementRoutesType[keyof ManagementRoutesType]) {
-  if (!path) return generatePath(BASE_PATH);
+  if (!path) return BASE_PATH;
   return generatePath(`${BASE_PATH}/${path}`);
 }
 
@@ -29,7 +29,7 @@ type AssociationsRoutesType = typeof AssociationsRoutes;
 export function associationsPath(
   path: AssociationsRoutesType[keyof AssociationsRoutesType]
 ) {
-  return generatePath(`${managementPath(ManagementRoutes.ASSOCIATIONS)}/${path}`);
+  return `${managementPath(ManagementRoutes.ASSOCIATIONS)}/${path}`;
 }
 
 const INTEGRATION_ID_PARAM = ':integrationId';

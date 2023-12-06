@@ -3,11 +3,11 @@ import { Box, Grid, Typography } from '@mui/material';
 import type { LinkedTerm } from 'generated-sources';
 import { Permission } from 'generated-sources';
 import { deleteDataEntityTerm } from 'redux/thunks/dataentities.thunks';
-import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { CloseIcon, LinkedTermIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button } from 'components/shared/elements';
+import { termDetailsPath } from 'routes';
 import * as S from './TermItem.styles';
 
 interface TermItemProps {
@@ -22,8 +22,7 @@ const TermItem: React.FC<TermItemProps> = ({
   isStatusDeleted,
 }) => {
   const dispatch = useAppDispatch();
-  const { termDetailsOverviewPath } = useAppPaths();
-  const termDetailsLink = termDetailsOverviewPath(linkedTerm.term.id);
+  const termDetailsLink = termDetailsPath(linkedTerm.term.id);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();

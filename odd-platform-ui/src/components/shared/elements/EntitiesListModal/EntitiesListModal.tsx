@@ -6,7 +6,6 @@ import type { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import DialogWrapper from 'components/shared/elements/DialogWrapper/DialogWrapper';
 import * as S from 'components/shared/elements/EntitiesListModal/EntitiesListModalStyles';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 
 type LabelForTypes =
@@ -32,10 +31,9 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   openBtnEl,
 }) => {
   const { t } = useTranslation();
-  const { updatePath } = useIsEmbeddedPath();
 
   const listItem = (item: DataEntityRef) => (
-    <Link to={updatePath(dataEntityDetailsPath(item.id))}>
+    <Link to={dataEntityDetailsPath(item.id)}>
       <S.ListItemContainer container>
         <Typography noWrap title={item.internalName || item.externalName}>
           {item.internalName || item.externalName}

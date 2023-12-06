@@ -10,18 +10,19 @@ import {
 import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/icons';
 import { deleteTermOwnership } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppDateTime, useAppParams } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
+import { useTermsRouteParams } from 'routes';
 import OwnershipForm from '../../Ownership/OwnershipForm';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 
 const OverviewGeneral: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { termId } = useAppParams();
+  const { termId } = useTermsRouteParams();
   const { termFormattedDateTime } = useAppDateTime();
 
   const termDetails = useAppSelector(getTermDetails(termId));

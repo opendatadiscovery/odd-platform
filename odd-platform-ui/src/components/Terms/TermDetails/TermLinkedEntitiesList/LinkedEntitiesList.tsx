@@ -12,7 +12,6 @@ import {
 } from 'components/shared/elements';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityClassesList,
   getTermLinkedList,
@@ -21,6 +20,7 @@ import {
   getTermLinkedListPageInfo,
 } from 'redux/selectors';
 import { fetchTermLinkedList } from 'redux/thunks';
+import { useTermsRouteParams } from 'routes';
 import LinkedEntity from './LinkedEntity/LinkedEntity';
 import {
   TermLinkedEntitiesColContainer,
@@ -32,7 +32,7 @@ import LinkedEntitiesListSkeleton from './LinkedEntitiesListSkeleton/LinkedEntit
 const LinkedEntitiesList: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { termId } = useAppParams();
+  const { termId } = useTermsRouteParams();
 
   const termLinkedList = useAppSelector(getTermLinkedList(termId));
 

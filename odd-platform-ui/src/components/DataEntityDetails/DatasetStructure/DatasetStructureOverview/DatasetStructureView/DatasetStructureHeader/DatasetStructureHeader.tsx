@@ -14,7 +14,6 @@ import {
   Input,
   NumberFormatted,
 } from 'components/shared/elements';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import {
   datasetStructureComparePath,
   datasetStructurePath,
@@ -28,7 +27,6 @@ const DatasetStructureHeader: FC = () => {
   const navigate = useNavigate();
   const { versionId, dataEntityId } = useDataEntityRouteParams();
   const { t } = useTranslation();
-  const { updatePath } = useIsEmbeddedPath();
   const { datasetStructureVersionFormattedDateTime } = useAppDateTime();
   const {
     handleSearch,
@@ -49,7 +47,7 @@ const DatasetStructureHeader: FC = () => {
     (event: SelectChangeEvent<unknown>) => {
       const newVersionId = event.target.value as number;
       dispatch(fetchDataSetStructure({ dataEntityId, versionId: newVersionId }));
-      navigate(updatePath(datasetStructurePath(dataEntityId, newVersionId)));
+      navigate(datasetStructurePath(dataEntityId, newVersionId));
     },
     [dataEntityId]
   );
@@ -71,11 +69,7 @@ const DatasetStructureHeader: FC = () => {
   const handleCompareClick = useCallback(() => {
     const firstVersionId = sortedVersions[0].id;
     const secondVersionId = sortedVersions[sortedVersions.length - 1].id;
-    navigate(
-      updatePath(
-        datasetStructureComparePath(dataEntityId, firstVersionId, secondVersionId)
-      )
-    );
+    navigate(datasetStructureComparePath(dataEntityId, firstVersionId, secondVersionId));
   }, [dataEntityId]);
 
   const onSearchClick = useCallback(() => {

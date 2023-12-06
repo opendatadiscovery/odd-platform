@@ -9,7 +9,6 @@ import {
 } from 'redux/selectors';
 import { Button, NumberFormatted } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityTestReportsPath } from 'routes';
 import OverviewDQReportSkeleton from './OverviewDQReportSkeleton/OverviewDQReportSkeleton';
 import * as S from './OverviewDQTestReportStyles';
@@ -20,7 +19,6 @@ interface OverviewDQTestReportProps {
 
 const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityId }) => {
   const { t } = useTranslation();
-  const { updatePath } = useIsEmbeddedPath();
 
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
     getDatasetTestReportFetchingStatuses
@@ -76,7 +74,7 @@ const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({ dataEntityI
             <Grid item>
               <Button
                 text={t('See all')}
-                to={updatePath(dataEntityTestReportsPath(dataEntityId))}
+                to={dataEntityTestReportsPath(dataEntityId)}
                 buttonType='tertiary-m'
               />
             </Grid>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Navigate, Route, Routes, useLocation, useMatch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
@@ -13,7 +13,6 @@ import { getQualityTestByTestId, getResourcePermissions } from 'redux/selectors'
 import { useAppSelector } from 'redux/lib/hooks';
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import {
   dataEntityDetailsPath,
   dataEntityTestReportsPath,
@@ -32,9 +31,6 @@ const TestReportDetailsHistory = React.lazy(
 const TestReportDetails: React.FC = () => {
   const { t } = useTranslation();
   const { dataQATestId, dataEntityId } = useDataEntityRouteParams();
-  const { updatePath } = useIsEmbeddedPath();
-  const match = useMatch(useLocation().pathname);
-
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
   const resourcePermissions = useAppSelector(
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
@@ -44,15 +40,11 @@ const TestReportDetails: React.FC = () => {
     () => [
       {
         name: t('Overview'),
-        link: updatePath(dataEntityTestReportsPath(dataEntityId, dataQATestId)),
-        value: 'overview',
+        link: dataEntityTestReportsPath(dataEntityId, dataQATestId),
       },
       {
         name: t('History'),
-        link: updatePath(
-          dataEntityTestReportsPath(dataEntityId, dataQATestId, 'history')
-        ),
-        value: 'history',
+        link: dataEntityTestReportsPath(dataEntityId, dataQATestId, 'history'),
       },
     ],
     [dataEntityId, dataQATestId, t]
@@ -60,7 +52,7 @@ const TestReportDetails: React.FC = () => {
 
   const [selectedTab, setSelectedTab] = React.useState(-1);
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   return (
     <Grid container sx={{ p: 2 }}>
@@ -74,7 +66,7 @@ const TestReportDetails: React.FC = () => {
         </Grid>
         <Button
           text={t('Go to page')}
-          to={updatePath(dataEntityDetailsPath(dataQATestId))}
+          to={dataEntityDetailsPath(dataQATestId)}
           buttonType='tertiary-m'
           sx={{ ml: 2, flexShrink: 0 }}
         />

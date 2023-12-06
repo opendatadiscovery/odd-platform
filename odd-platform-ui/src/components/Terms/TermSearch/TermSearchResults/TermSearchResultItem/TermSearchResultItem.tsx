@@ -1,7 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { type Term } from 'generated-sources';
-import { useAppDateTime, useAppPaths } from 'lib/hooks';
+import { useAppDateTime } from 'lib/hooks';
+import { termDetailsPath } from 'routes';
 import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
@@ -13,10 +14,9 @@ interface TermsResultItemProps {
 }
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({ termSearchResult }) => {
-  const { termDetailsOverviewPath } = useAppPaths();
   const { termFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
 
-  const termDetailsOverviewLink = termDetailsOverviewPath(termSearchResult.id);
+  const termDetailsOverviewLink = termDetailsPath(termSearchResult.id);
   const usingCount =
     (termSearchResult.entitiesUsingCount ?? 0) +
     (termSearchResult.columnsUsingCount ?? 0);

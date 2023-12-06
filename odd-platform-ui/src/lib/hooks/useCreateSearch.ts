@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import type { SearchFormData } from 'generated-sources';
 import { createDataEntitiesSearch } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-import useAppPaths from './useAppPaths/useAppPaths';
+import { searchPath } from 'routes';
 
 export default function useCreateSearch() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { searchPath } = useAppPaths();
 
   return useCallback(
     (searchFormData: SearchFormData) => {

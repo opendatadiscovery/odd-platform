@@ -1,3 +1,3 @@
 export function dataQualityPath() {
-  return 'data-quality';
+  return '/data-quality';
 }
