@@ -1,7 +1,7 @@
 import { generatePath, useParams } from 'react-router-dom';
 import type { DataEntity, DataQualityTest } from 'generated-sources';
 
-const BASE_PATH = 'dataentities';
+const BASE_PATH = '/dataentities';
 const DataEntityDetailsRoutes = {
   OVERVIEW: 'overview',
   LINEAGE: 'lineage',
@@ -53,6 +53,9 @@ export const useDataEntityRouteParams = (): AppDataEntityDetailsRouteParams => {
 
 type DataEntityDetailsRoutesType = typeof DataEntityDetailsRoutes;
 
+export function dataEntitiesPath() {
+  return BASE_PATH;
+}
 export function dataEntityDetailsPath(
   id: DataEntity['id'] | string,
   path: DataEntityDetailsRoutesType[keyof DataEntityDetailsRoutesType] = 'overview'
@@ -78,7 +81,8 @@ export function dataEntityTestReportsPath(
 
 export function dataEntityLineagePath(id: DataEntity['id'] | string, query?: string) {
   const detailsPath = dataEntityDetailsPath(id, DataEntityDetailsRoutes.LINEAGE);
-  return `${generatePath(detailsPath)}${query ? `?${query}` : ''}`;
+  const queryString = query ? `?${query}` : '';
+  return `${detailsPath}${queryString}`;
 }
 
 export function datasetStructurePath(id: DataEntity['id'] | string, versionId?: number) {
@@ -94,16 +98,12 @@ export function datasetStructurePath(id: DataEntity['id'] | string, versionId?: 
 
 export function datasetStructureComparePath(
   id: DataEntity['id'] | string,
-  firstVersionId?: number,
-  secondVersionId?: number
+  firstVersionId: number,
+  secondVersionId: number
 ) {
-  const query =
-    firstVersionId && secondVersionId
-      ? `?firstVersionId=${firstVersionId}&secondVersionId=${secondVersionId}`
-      : '';
-
   const detailsPath = dataEntityDetailsPath(id, DataEntityDetailsRoutes.STRUCTURE);
-  return `${generatePath(detailsPath)}${query ? `?${query}` : ''}`;
+  const queryString = `?firstVersionId=${firstVersionId}&secondVersionId=${secondVersionId}`;
+  return `${detailsPath}/compare${queryString}`;
 }
 
 export function dataEntityDiscussionsPath(

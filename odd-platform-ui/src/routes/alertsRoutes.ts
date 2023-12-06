@@ -1,4 +1,4 @@
-const BASE_PATH = 'alerts';
+const BASE_PATH = '/alerts';
 const AlertsRoutes = {
   ALL_PATH: `all`,
   MY_PATH: `my`,

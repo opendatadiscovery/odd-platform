@@ -9,7 +9,6 @@ import { GearIcon, UserIcon } from 'components/shared/icons';
 import { AlertStatusItem, Button, EntityClassItem } from 'components/shared/elements';
 import { alertTitlesMap } from 'lib/constants';
 import { getGlobalPermissions } from 'redux/selectors';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 import * as S from './AlertItemStyles';
 
@@ -31,7 +30,6 @@ const AlertItem: React.FC<AlertItemProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { alertFormattedDateTime } = useAppDateTime();
-  const { updatePath } = useIsEmbeddedPath();
 
   const [showHistory, setShowHistory] = React.useState(false);
   const [disableResolve, setDisableResolve] = React.useState(false);
@@ -119,7 +117,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
           <>
             <Button
               text={dataEntity.externalName || dataEntity.internalName}
-              to={updatePath(dataEntityDetailsPath(dataEntity.id))}
+              to={dataEntityDetailsPath(dataEntity.id)}
               buttonType='link-m'
             />
             {dataEntity?.entityClasses?.map(entityClass => (

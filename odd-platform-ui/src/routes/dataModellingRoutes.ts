@@ -5,7 +5,7 @@ export const URLSearchParams = {
   QUERY_SEARCH_ID: 'querySearchId',
 } as const;
 
-const BASE_PATH = 'data-modelling';
+const BASE_PATH = '/data-modelling';
 const QUERY_EXAMPLES_PATH = 'query-examples';
 
 export function dataModellingPath() {

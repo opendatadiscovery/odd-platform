@@ -4,7 +4,6 @@ import type { DataEntity } from 'generated-sources';
 import { EntityClassItem, MetadataStale } from 'components/shared/elements';
 import { useAppDateTime } from 'lib/hooks';
 import { dataEntityDetailsPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { TermLinkedEntitiesColContainer } from '../LinkedEntitiesListStyles';
 import { Container, EntityLink, NameContainer } from './LinkedEntityStyles';
 
@@ -13,10 +12,9 @@ interface LinkedEntityProps {
 }
 
 const LinkedEntity: React.FC<LinkedEntityProps> = ({ linkedEntity }) => {
-  const { updatePath } = useIsEmbeddedPath();
   const { linkedEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
 
-  const detailsLink = updatePath(dataEntityDetailsPath(linkedEntity.id));
+  const detailsLink = dataEntityDetailsPath(linkedEntity.id);
 
   return (
     <EntityLink to={detailsLink}>

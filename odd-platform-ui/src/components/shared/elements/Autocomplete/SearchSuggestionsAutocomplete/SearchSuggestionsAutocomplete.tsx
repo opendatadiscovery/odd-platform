@@ -25,8 +25,7 @@ import {
 import EntityClassItem from 'components/shared/elements/EntityClassItem/EntityClassItem';
 import Button from 'components/shared/elements/Button/Button';
 import Input, { type InputProps } from 'components/shared/elements/Input/Input';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
-import { dataEntityDetailsPath } from '../../../../../routes';
+import { dataEntityDetailsPath } from 'routes';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
@@ -54,8 +53,6 @@ const SearchSuggestionsAutocomplete: FC<SearchSuggestionsAutocompleteProps> = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { updatePath } = useIsEmbeddedPath();
-
   const searchSuggestions = useAppSelector(getSearchSuggestions);
   const { isLoading: isSuggestionsLoading } = useAppSelector(
     getSearchSuggestionsFetchingStatuses
@@ -138,9 +135,7 @@ const SearchSuggestionsAutocomplete: FC<SearchSuggestionsAutocompleteProps> = ({
       </Box>
     );
 
-    const linkedItem = id ? (
-      <Link to={updatePath(dataEntityDetailsPath(id))}>{item}</Link>
-    ) : null;
+    const linkedItem = id ? <Link to={dataEntityDetailsPath(id)}>{item}</Link> : null;
 
     return (
       <li {...props} key={id}>

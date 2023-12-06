@@ -12,7 +12,6 @@ import {
 } from 'components/shared/elements';
 import { TriangularUnionIcon } from 'components/shared/icons';
 import MetadataStale from 'components/shared/elements/MetadataStale/MetadataStale';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 
 interface EntityGroupItemProps {
@@ -42,7 +41,6 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
   lastIngestedAt,
   isStale,
 }) => {
-  const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime } = useAppDateTime();
 
   const ownersEllipsis = useCallback(
@@ -57,7 +55,7 @@ const EntityGroupItem: FC<EntityGroupItemProps> = ({
   );
 
   return (
-    <Link to={updatePath(dataEntityDetailsPath(id))}>
+    <Link to={dataEntityDetailsPath(id)}>
       <Table.RowContainer>
         <Table.Cell $flex={flexMap.name}>
           <Grid

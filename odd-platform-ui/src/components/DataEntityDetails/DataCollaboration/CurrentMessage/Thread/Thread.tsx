@@ -10,7 +10,6 @@ import {
 } from 'redux/selectors';
 import { fetchRelatedMessages, messagesListSize as size } from 'redux/thunks';
 import { clearThreadState } from 'redux/slices/dataCollaboration.slice';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
 import ThreadContent from './ThreadContent/ThreadContent';
 
@@ -21,7 +20,6 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { dataEntityId, messageId } = useDataEntityRouteParams();
-  const { updatePath } = useIsEmbeddedPath();
 
   const mainMessage = useAppSelector(getDataEntityMessage(messageDate, messageId));
   const relatedMessages = useAppSelector(getRelatedMessages);
@@ -32,7 +30,7 @@ const Thread: React.FC<ThreadProps> = ({ messageDate }) => {
 
   React.useEffect(() => {
     if (relatedMessagesError) {
-      navigate(updatePath(dataEntityDetailsPath(dataEntityId, 'discussions')));
+      navigate(dataEntityDetailsPath(dataEntityId, 'discussions'));
     }
     dispatch(
       fetchRelatedMessages({ dataEntityId, messageId, size, lastMessageId: lastId })

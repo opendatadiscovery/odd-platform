@@ -6,7 +6,6 @@ import { AppTooltip } from 'components/shared/elements';
 import { StrokedInfoIcon } from 'components/shared/icons';
 import TypeFieldLabel from 'components/DataEntityDetails/DatasetStructure/shared/TypeFieldLabel/TypeFieldLabel';
 import { dataEntityDetailsPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { Container, ColumnLink, NameContainer } from './LinkedColumnStyles';
 import { TermLinkedColumnsColContainer } from '../LinkedColumnsListStyles';
 
@@ -15,10 +14,9 @@ interface LinkedColumnProps {
 }
 
 const LinkedColumn: React.FC<LinkedColumnProps> = ({ linkedColumn }) => {
-  const { updatePath } = useIsEmbeddedPath();
   const { t } = useTranslation();
 
-  const detailsLink = updatePath(dataEntityDetailsPath(linkedColumn.dataEntityId!));
+  const detailsLink = dataEntityDetailsPath(linkedColumn.dataEntityId!);
 
   return (
     <ColumnLink to={detailsLink}>

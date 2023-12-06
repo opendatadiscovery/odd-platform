@@ -4,9 +4,7 @@ import { type AppTabItem, AppTabs } from 'components/shared/elements';
 import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import { useAppDispatch } from 'redux/lib/hooks';
 import type { AlertTotals } from 'generated-sources';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { alertsPath } from 'routes';
-import { useLocation, useMatch } from 'react-router-dom';
 import useSetSelectedTab from 'components/shared/elements/AppTabs/useSetSelectedTab';
 
 interface AlertsTabsProps {
@@ -17,9 +15,6 @@ interface AlertsTabsProps {
 const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { updatePath } = useIsEmbeddedPath();
-  const match = useMatch(useLocation().pathname);
-
   const [selectedTab, setSelectedTab] = useState(-1);
 
   const tabs = useMemo<AppTabItem[]>(
@@ -27,25 +22,25 @@ const AlertsTabs: React.FC<AlertsTabsProps> = ({ totals, showMyAndDepends }) => 
       {
         name: t('All'),
         hint: totals?.total ?? 0,
-        link: updatePath(alertsPath('all')),
+        link: alertsPath('all'),
       },
       {
         name: t('My Objects'),
         hint: totals?.myTotal ?? 0,
-        link: updatePath(alertsPath('my')),
+        link: alertsPath('my'),
         hidden: !showMyAndDepends,
       },
       {
         name: t('Dependents'),
         hint: totals?.dependentTotal ?? 0,
-        link: updatePath(alertsPath('dependents')),
+        link: alertsPath('dependents'),
         hidden: !showMyAndDepends,
       },
     ],
     [totals, showMyAndDepends, t]
   );
 
-  useSetSelectedTab(tabs, match, setSelectedTab);
+  useSetSelectedTab(tabs, setSelectedTab);
 
   const alertsFilterUpdateAction = useCallback(() => {
     dispatch(changeAlertsFilterAction());

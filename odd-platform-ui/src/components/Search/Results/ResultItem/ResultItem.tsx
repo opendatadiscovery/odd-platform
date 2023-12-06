@@ -19,7 +19,6 @@ import type { DataEntity } from 'redux/interfaces';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getSearchQuery } from 'redux/selectors';
 import { dataEntityDetailsPath } from 'routes';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { type GridSizesByBreakpoints, SearchCol } from '../Results.styles';
 import * as S from './ResultItemStyles';
 import SearchHighlights from './SearchHighlights/SearchHighlights';
@@ -39,9 +38,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { updatePath } = useIsEmbeddedPath();
   const { dataEntityFormattedDateTime, formatDistanceToNowStrict } = useAppDateTime();
-  const detailsLink = updatePath(dataEntityDetailsPath(searchResult.id));
+  const detailsLink = dataEntityDetailsPath(searchResult.id);
 
   const searchQuery = useAppSelector(getSearchQuery);
 

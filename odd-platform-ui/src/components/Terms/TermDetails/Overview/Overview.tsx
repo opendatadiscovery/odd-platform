@@ -2,7 +2,6 @@ import { Grid, Typography } from '@mui/material';
 import React, { type FC } from 'react';
 import { Markdown, SkeletonWrapper } from 'components/shared/elements';
 import { useAppSelector } from 'redux/lib/hooks';
-import { useAppParams } from 'lib/hooks';
 import {
   getResourcePermissions,
   getTermDetails,
@@ -10,13 +9,14 @@ import {
 } from 'redux/selectors';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { WithPermissionsProvider } from 'components/shared/contexts';
+import { useTermsRouteParams } from 'routes';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewTags from './OverviewTags/OverviewTags';
 import * as S from './OverviewStyles';
 
 const Overview: FC = () => {
-  const { termId } = useAppParams();
+  const { termId } = useTermsRouteParams();
 
   const termDetails = useAppSelector(getTermDetails(termId));
   const termPermissions = useAppSelector(

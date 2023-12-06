@@ -6,7 +6,6 @@ import { deleteDataEntityFromGroup } from 'redux/thunks';
 import { WithPermissions } from 'components/shared/contexts';
 import { Button } from 'components/shared/elements';
 import { CloseIcon } from 'components/shared/icons';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
 import { dataEntityDetailsPath } from 'routes';
 import * as S from './GroupItemStyles';
 
@@ -17,8 +16,7 @@ interface GroupItemProps {
 
 const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
-  const { updatePath } = useIsEmbeddedPath();
-  const groupDetailsLink = updatePath(dataEntityDetailsPath(group.id));
+  const groupDetailsLink = dataEntityDetailsPath(group.id);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();

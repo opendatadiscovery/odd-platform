@@ -8,8 +8,7 @@ import Button from 'components/shared/elements/Button/Button';
 import ActivityFieldState from 'components/shared/elements/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import ActivityFieldHeader from 'components/shared/elements/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import * as S from 'components/shared/elements/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';
-import { useIsEmbeddedPath } from 'lib/hooks/useAppPaths/useIsEmbeddedPath';
-import { dataEntityDetailsPath } from '../../../../../../routes';
+import { dataEntityDetailsPath } from 'routes';
 
 interface GroupFieldData {
   id?: number;
@@ -36,7 +35,6 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
   hideAllDetails,
 }) => {
   const { t } = useTranslation();
-  const { updatePath } = useIsEmbeddedPath();
 
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
@@ -140,7 +138,7 @@ const CustomGroupActivityField: React.FC<CustomGroupActivityFieldProps> = ({
             <S.ArrayItemWrapper key={item.id} $typeOfChange={item.typeOfChange}>
               <Button
                 text={item.name}
-                to={updatePath(dataEntityDetailsPath(item.id))}
+                to={dataEntityDetailsPath(item.id)}
                 buttonType='tertiary-m'
                 sx={{
                   mb: item.typeOfChange ? 0 : 0.5,
