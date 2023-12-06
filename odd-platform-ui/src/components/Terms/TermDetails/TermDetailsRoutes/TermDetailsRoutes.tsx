@@ -13,7 +13,6 @@ const LinkedColumnsList = lazy(
 const TermDetailsRoutes: React.FC = () => (
   <AppSuspenseWrapper>
     <Routes>
-      <Route path=':termDetailsView(overview|linked-entities|linked-columns)' />
       <Route path='overview' element={<Overview />} />
       <Route path='linked-entities' element={<LinkedEntitiesList />} />
       <Route path='linked-columns' element={<LinkedColumnsList />} />
