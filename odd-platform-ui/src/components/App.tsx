@@ -17,6 +17,7 @@ import {
   dataModellingPath,
   dataQualityPath,
   directoryPath,
+  lookupTablesPath,
   managementPath,
   searchPath,
   termsPath,
@@ -68,6 +69,7 @@ const App: React.FC = () => {
             <Route path={`${directoryPath()}/*`} element={<DirectoryRoutes />} />
             <Route path={dataQualityPath()} element={<DataQuality />} />
             <Route path={`${dataModellingPath()}/*`} element={<DataModeling />} />
+            <Route path={`${lookupTablesPath()}`} element={<div>master data</div>} />
           </Routes>
         </AppSuspenseWrapper>
       </div>

@@ -7,3 +7,4 @@ export * from './directoryRoutes';
 export * from './searchRoutes';
 export * from './activityRoutes';
 export * from './termsRoutes';
+export * from './masterDataRoutes';
