@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.repository.util;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.ListUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -14,19 +13,23 @@ import org.jooq.SQLDialect;
 import org.jooq.Table;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
-@RequiredArgsConstructor
-public class JooqReactiveOperations {
+public class JooqReactiveOperationsCustomTables {
     private static final int BATCH_SIZE = 1000;
 
     private final DSLContext mappingDSLContext = DSL.using(SQLDialect.POSTGRES);
 
     private final DatabaseClient databaseClient;
+
+    public JooqReactiveOperationsCustomTables(@Qualifier("customDataClient") final DatabaseClient databaseClient) {
+        this.databaseClient = databaseClient;
+    }
 
     @PostConstruct
     public void init() {

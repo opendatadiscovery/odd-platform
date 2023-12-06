@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.FacetState;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.ReferenceDataSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFacetState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
@@ -17,6 +18,8 @@ public interface FacetStateMapper {
     FacetStateDto mapForm(final TermSearchFormData formData);
 
     FacetStateDto mapForm(final QueryExampleSearchFormData formData);
+
+    FacetStateDto mapForm(final ReferenceDataSearchFormData formData);
 
     SearchFacetsPojo mapStateToPojo(final FacetStateDto state);
 

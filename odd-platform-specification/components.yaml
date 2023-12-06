@@ -3679,6 +3679,129 @@ components:
         - status
         - count
 
+    LookupTableFieldType:
+      type: string
+      enum:
+        - VARCHAR
+        - INTEGER
+        - SERIAL
+        - DECIMAL
+        - BOOLEAN
+        - DATE
+        - TIME
+        - ENUM
+        - JSON
+        - UUID
+
+    LookupTableFormData:
+      type: object
+      properties:
+        table_name:
+          type: string
+        description:
+          type: string
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+      required:
+        - table_name
+        - namespace
+
+    LookupTableFieldFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/LookupTableFieldType'
+        is_nullable:
+          type: boolean
+        is_unique:
+          type: boolean
+        default_value:
+          type: string
+      required:
+        - name
+        - field_type
+
+    LookupTableList:
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTable'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    LookupTable:
+      type: object
+      properties:
+        table_id:
+          type: integer
+          format: int64
+        table_name:
+          type: string
+        description:
+          type: string
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTableField'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    LookupTableField:
+      type: object
+      properties:
+        field_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/LookupTableFieldType'
+        is_primary_key:
+          type: boolean
+        is_nullable:
+          type: boolean
+        is_unique:
+          type: boolean
+        default_value:
+          type: string
+
+    ReferenceDataSearchFormData:
+      type: object
+      properties:
+        query:
+          type: string
+
+    ReferenceDataSearchFacetsData:
+      type: object
+      properties:
+        search_id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        total:
+          type: integer
+          format: int64
+      required:
+        - search_id
+        - query
+
   parameters:
     PageParam:
       name: page
@@ -3814,6 +3937,14 @@ components:
 
     QueryExampleIdParam:
       name: example_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LookupTableIdParam:
+      name: lookup_table_id
       in: path
       required: true
       schema:
