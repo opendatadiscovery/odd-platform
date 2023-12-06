@@ -36,6 +36,7 @@ const Activity = lazy(() => import('./Activity/Activity'));
 const DirectoryRoutes = lazy(() => import('./Directory/DirectoryRoutes'));
 const DataQuality = lazy(() => import('./DataQuality/DataQuality'));
 const DataModeling = lazy(() => import('./DataModelling/DataModelling'));
+const LookupTables = lazy(() => import('./MasterData/LookupTables'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -69,7 +70,7 @@ const App: React.FC = () => {
             <Route path={`${directoryPath()}/*`} element={<DirectoryRoutes />} />
             <Route path={dataQualityPath()} element={<DataQuality />} />
             <Route path={`${dataModellingPath()}/*`} element={<DataModeling />} />
-            <Route path={`${lookupTablesPath()}`} element={<div>master data</div>} />
+            <Route path={`${lookupTablesPath()}`} element={<LookupTables />} />
           </Routes>
         </AppSuspenseWrapper>
       </div>
