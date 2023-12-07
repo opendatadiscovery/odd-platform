@@ -1,13 +1,53 @@
 import { Grid, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, NumberFormatted, Table } from 'components/shared/elements';
+import { Button, NumberFormatted } from 'components/shared/elements';
+import { useSearchParams } from 'react-router-dom';
+import {
+  useCreateReferenceDataSearch,
+  useGetReferenceDataSearch,
+  useUpdateReferenceDataSearch,
+} from 'lib/hooks/api/lookupTables';
+import type { ReferenceDataSearchFacetsData } from 'generated-sources';
 import LookupTablesSearchInput from './LookupTables/LookupTablesSearchInput';
 import { AddIcon } from '../shared/icons';
+import LookupTablesList from './LookupTables/LookupTablesList';
 
 const LookupTables: React.FC = () => {
   const { t } = useTranslation();
-  const totalLookupTables = 0;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchId = useMemo(() => searchParams.get('searchId') ?? '', [searchParams]);
+  const { mutateAsync: createFacets, isPending } = useCreateReferenceDataSearch();
+  const { mutateAsync: updateFacets } = useUpdateReferenceDataSearch(searchId);
+  const [facets, setFacets] = useState<ReferenceDataSearchFacetsData>();
+  const { data, isLoading: isFacetsLoading } = useGetReferenceDataSearch({
+    searchId,
+    enabled: !!searchId,
+  });
+
+  useEffect(() => {
+    if (searchId) return;
+
+    createFacets('').then(({ searchId: sid, query, total }) => {
+      setSearchParams({ searchId: sid });
+      setFacets({ searchId: sid, query, total });
+    });
+  }, [searchId]);
+
+  useEffect(() => {
+    if (!data || facets) return;
+
+    setFacets(data);
+  }, [facets, data]);
+
+  const isLoading = useMemo(
+    () => isFacetsLoading || isPending,
+    [isFacetsLoading, isPending]
+  );
+
+  const handleSearch = async (query?: string) => {
+    await updateFacets({ ...facets, query });
+  };
 
   return (
     <Grid
@@ -23,26 +63,20 @@ const LookupTables: React.FC = () => {
         <Grid item container alignItems='center' justifyContent='space-between'>
           <Typography variant='h1'>{t('Lookup Tables')}</Typography>
           <Typography variant='subtitle1' color='texts.info'>
-            <NumberFormatted value={totalLookupTables} /> {t('lookup tables overall')}
+            <NumberFormatted value={facets?.total} /> {t('lookup tables overall')}
           </Typography>
         </Grid>
         <Grid item container alignItems='center' justifyContent='space-between'>
-          <LookupTablesSearchInput />
+          <LookupTablesSearchInput
+            value={facets?.query}
+            isLoading={isLoading}
+            onSearch={handleSearch}
+          />
           <Button text={t('Add new')} buttonType='main-lg' startIcon={<AddIcon />} />
         </Grid>
       </Grid>
       <Grid item>
-        <Table.HeaderContainer>
-          <Table.Cell $flex='1 0'>
-            <Typography variant='caption'>{t('Table Name')}</Typography>
-          </Table.Cell>
-          <Table.Cell $flex='1 0 44%'>
-            <Typography variant='caption'>{t('Description')}</Typography>
-          </Table.Cell>
-          <Table.Cell $flex='1 0'>
-            <Typography variant='caption'>{t('Namespace')}</Typography>
-          </Table.Cell>
-        </Table.HeaderContainer>
+        <LookupTablesList />
       </Grid>
     </Grid>
   );

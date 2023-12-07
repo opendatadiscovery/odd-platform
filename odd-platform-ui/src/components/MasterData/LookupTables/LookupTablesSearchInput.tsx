@@ -1,14 +1,28 @@
 import { Input } from 'components/shared/elements';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import type { InputProps } from 'components/shared/elements/Input/Input';
 
-const LookupTablesSearchInput = () => {
-  const [query, setQuery] = useState('');
+interface LookupTablesSearchInputProps extends Omit<InputProps, 'variant'> {
+  value?: string;
+  onSearch: (value?: string) => void;
+}
+
+const LookupTablesSearchInput = ({
+  value,
+  onSearch,
+  isLoading,
+}: LookupTablesSearchInputProps) => {
+  const [query, setQuery] = useState(value ?? '');
+
+  useEffect(() => {
+    setQuery(value ?? '');
+  }, [value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setQuery(e.target.value);
 
   const handleSearch = useCallback(() => {
-    console.log('lookup tables search input');
+    onSearch(query);
   }, [query]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -24,6 +38,7 @@ const LookupTablesSearchInput = () => {
       onKeyDown={handleKeyDown}
       onChange={handleInputChange}
       value={query}
+      isLoading={isLoading}
     />
   );
 };
