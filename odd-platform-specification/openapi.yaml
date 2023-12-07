@@ -3516,6 +3516,40 @@ paths:
       tags:
         - referenceData
 
+  /api/referencedata/table/{lookup_table_id}:
+    put:
+      summary: Update custom table
+      description: Update existing custom table
+      operationId: updateLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookupTableFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+    delete:
+      summary: Delete custom table
+      description: Deletes custom table
+      operationId: deleteLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - referenceData
+
   /api/referencedata/table/{lookup_table_id}/columns:
     post:
       summary: Create columns for custom table
@@ -3538,6 +3572,40 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/column/{column_id}:
+    put:
+      summary: Update custom table field
+      description: Update existing custom table field
+      operationId: updateLookupTableField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookupTableFieldUpdate'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+    delete:
+      summary: Delete custom table field
+      description: Deletes custom table field
+      operationId: deleteLookupTableField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - referenceData
 
@@ -3631,5 +3699,62 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/LookupTableList'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/data:
+    post:
+      summary: Create data in lookup_table
+      description: Create data in lookup_table
+      operationId: addDataToLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookUpTableRowFormDataList'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookUpTableRowList'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/data/{row_id}:
+    put:
+      summary: Update custom table field
+      description: Update existing custom table field
+      operationId: updateLookupTableRow
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupRowIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookUpTableRowFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookUpTableRowList'
+      tags:
+        - referenceData
+    delete:
+      summary: Delete custom table field
+      description: Deletes custom table field
+      operationId: deleteLookupTableRow
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupRowIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - referenceData

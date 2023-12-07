@@ -26,6 +26,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.JOB;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.JOB_RUN;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.KAFKA_SERVICE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.KAFKA_TOPIC;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.LOOKUP_TABLE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.MICROSERVICE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_EXPERIMENT;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.ML_MODEL_ARTIFACT;
@@ -37,7 +38,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.VIEW;
 
 @Getter
 public enum DataEntityClassDto {
-    DATA_SET(1, Set.of(TABLE, FILE, FEATURE_GROUP, KAFKA_TOPIC, VIEW, GRAPH_NODE, VECTOR_STORE)),
+    DATA_SET(1, Set.of(TABLE, FILE, FEATURE_GROUP, KAFKA_TOPIC, VIEW, GRAPH_NODE, VECTOR_STORE, LOOKUP_TABLE)),
     DATA_TRANSFORMER(2, Set.of(JOB, ML_MODEL_TRAINING, ML_MODEL_INSTANCE, VIEW, MICROSERVICE)),
     DATA_TRANSFORMER_RUN(3, JOB_RUN),
     DATA_QUALITY_TEST(4, JOB),

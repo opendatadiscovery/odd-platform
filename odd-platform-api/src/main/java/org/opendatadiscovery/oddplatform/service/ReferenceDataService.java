@@ -6,11 +6,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldForm
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import reactor.core.publisher.Mono;
 
-public interface LookupDataService {
-
+public interface ReferenceDataService {
     Mono<LookupTable> createLookupTable(final LookupTableFormData formData);
 
     Mono<LookupTable> addColumnsToLookupTable(final Long lookupTableId,
-                                              final Long dataEntityId,
                                               final List<LookupTableFieldFormData> columns);
 }

@@ -743,6 +743,7 @@ components:
             - KAFKA_SERVICE
             - DOMAIN
             - VECTOR_STORE
+            - LOOKUP_TABLE
       required:
         - id
         - name
@@ -3700,11 +3701,11 @@ components:
           type: string
         description:
           type: string
-        namespace:
-          $ref: '#/components/schemas/Namespace'
+        namespace_name:
+          type: string
       required:
         - table_name
-        - namespace
+        - namespace_name
 
     LookupTableFieldFormData:
       type: object
@@ -3725,6 +3726,22 @@ components:
         - name
         - field_type
 
+    LookupTableFieldUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        is_nullable:
+          type: boolean
+        is_unique:
+          type: boolean
+        default_value:
+          type: string
+      required:
+        - name
+
     LookupTableList:
       properties:
         items:
@@ -3741,6 +3758,9 @@ components:
       type: object
       properties:
         table_id:
+          type: integer
+          format: int64
+        dataset_id:
           type: integer
           format: int64
         table_name:
@@ -3764,6 +3784,9 @@ components:
       type: object
       properties:
         field_id:
+          type: integer
+          format: int64
+        dataset_field_id:
           type: integer
           format: int64
         name:
@@ -3801,6 +3824,53 @@ components:
       required:
         - search_id
         - query
+
+    LookUpTableRowFormDataList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookUpTableRowFormData'
+      required:
+        - items
+
+    LookUpTableRowFormData:
+      type: object
+      properties:
+        field_id:
+          type: integer
+          format: int64
+        value:
+          type: string
+      required:
+        - field_id
+        - value
+
+    LookUpTableRowList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTable'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    LookUpTableRow:
+      type: object
+      properties:
+        field_id:
+          type: integer
+          format: int64
+        value:
+          type: string
+      required:
+        - field_id
+        - value
 
   parameters:
     PageParam:
@@ -3945,6 +4015,22 @@ components:
 
     LookupTableIdParam:
       name: lookup_table_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LookupColumnIdParam:
+      name: column_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LookupRowIdParam:
+      name: row_id
       in: path
       required: true
       schema:

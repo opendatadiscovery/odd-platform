@@ -11,5 +11,8 @@ public interface DatasetStructureService {
     Mono<Void> createDatasetStructure(final List<DatasetVersionPojo> versions,
                                       final Map<String, List<DatasetFieldPojo>> datasetFields);
 
+    Mono<List<DatasetFieldPojo>> createDatasetStructureForSpecificEntity(final DatasetVersionPojo version,
+                                      final List<DatasetFieldPojo> datasetFields);
+
     Mono<Map<String, DatasetStructureDelta>> getLastDatasetStructureVersionDelta(final List<Long> datasetIds);
 }

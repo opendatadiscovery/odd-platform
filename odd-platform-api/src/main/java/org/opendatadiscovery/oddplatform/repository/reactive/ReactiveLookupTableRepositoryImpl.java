@@ -35,7 +35,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
 import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_DEFINITIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
-import static org.opendatadiscovery.oddplatform.model.Tables.QUERY_EXAMPLE;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.LOOKUP_TABLES_CONDITIONS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 

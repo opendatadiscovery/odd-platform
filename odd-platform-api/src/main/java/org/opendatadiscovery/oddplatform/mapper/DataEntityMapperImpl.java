@@ -34,6 +34,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSever
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedUrl;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -186,6 +187,24 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
             .setEntityClassIds(new Integer[] {classDto.getId()})
             .setTypeId(formData.getType().getId())
+            .setPlatformCreatedAt(now)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setStatusUpdatedAt(now)
+            .setManuallyCreated(true)
+            .setHollow(false)
+            .setExcludeFromSearch(false);
+    }
+
+    @Override
+    public DataEntityPojo mapCreatedLookupTablePojo(final LookupTableFormData formData,
+                                                    final DataEntityClassDto classDto,
+                                                    final NamespacePojo namespacePojo) {
+        final LocalDateTime now = DateTimeUtil.generateNow();
+        return new DataEntityPojo()
+            .setInternalName(formData.getTableName())
+            .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
+            .setEntityClassIds(new Integer[] {classDto.getId()})
+            .setTypeId(DataEntityTypeDto.LOOKUP_TABLE.getId())
             .setPlatformCreatedAt(now)
             .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
             .setStatusUpdatedAt(now)

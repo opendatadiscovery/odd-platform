@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableList;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,13 +39,17 @@ public abstract class LookupTableMapper {
         this.tableDefinitionMapper = lookupTableDefinitionMapper;
     }
 
-    @Mapping(source = "data.namespace.id", target = "namespaceId")
-    @Mapping(target = "name", expression = "java(data.getNamespace().getName() + \"_\" + data.getTableName())")
-    public abstract LookupTablesPojo mapToPojo(final LookupTableFormData data);
+    @Mapping(target = "name", expression = "java(namespacePojo.getName() + \"_\" + data.getTableName())")
+    @Mapping(source = "namespacePojo.id", target = "namespaceId")
+    @Mapping(target = "id", ignore = true)
+    public abstract LookupTablesPojo mapToPojo(final LookupTableFormData data,
+                                               final Long dataEntityId,
+                                               final NamespacePojo namespacePojo);
 
     public LookupTable mapToLookupTable(final LookupTableDto dto) {
         return new LookupTable()
             .tableId(dto.tablesPojo().getId())
+            .datasetId(dto.tablesPojo().getDataEntityId())
             .tableName(dto.tablesPojo().getName())
             .description(dto.tablesPojo().getDescription())
             .namespace(namespaceMapper.mapPojo(dto.namespacePojo()))
