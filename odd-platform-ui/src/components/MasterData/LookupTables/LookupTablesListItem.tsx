@@ -5,6 +5,8 @@ import { Typography } from '@mui/material';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import { useTranslation } from 'react-i18next';
 import { useDeleteLookupTable } from 'lib/hooks/api/masterData/lookupTables';
+import { dataEntityDetailsPath } from 'routes';
+import { Link } from 'react-router-dom';
 import LookupTableForm from '../LookupTableForm';
 
 interface LookupTablesListItemProps {
@@ -22,7 +24,13 @@ const LookupTablesListItem = ({ item }: LookupTablesListItemProps) => {
 
   return (
     <Table.RowContainer>
-      <Table.Cell $flex='1 0'>{item.tableName}</Table.Cell>
+      <Table.Cell $flex='1 0'>
+        <Link to={dataEntityDetailsPath(item.datasetId)}>
+          <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
+            {item.tableName}
+          </Typography>
+        </Link>
+      </Table.Cell>
       <Table.Cell $flex='1 0 30%'>{item.description}</Table.Cell>
       <Table.Cell $flex='1 0'>
         {item.namespace ? (

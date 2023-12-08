@@ -38,7 +38,7 @@ const LookupTablesList = () => {
     <>
       <Table.HeaderContainer>
         <Table.Cell $flex='1 0'>
-          <Typography variant='caption'>{t('Table Name')}</Typography>
+          <Typography variant='caption'>{t('Name')}</Typography>
         </Table.Cell>
         <Table.Cell $flex='1 0 30%'>
           <Typography variant='caption'>{t('Description')}</Typography>
