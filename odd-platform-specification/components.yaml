@@ -3779,6 +3779,12 @@ components:
         updated_at:
           type: string
           format: date-time
+      required:
+        - table_id
+        - dataset_id
+        - table_name
+        - namespace
+        - fields
 
     LookupTableField:
       type: object
@@ -3825,27 +3831,27 @@ components:
         - search_id
         - query
 
-    LookUpTableRowFormDataList:
+    LookupTableRowFormDataList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/LookUpTableRowFormData'
+            $ref: '#/components/schemas/LookupTableRowFormData'
       required:
         - items
 
-    LookUpTableRowFormData:
+    LookupTableRowFormData:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/LookUpTableRowColumnFormData'
+            $ref: '#/components/schemas/LookupTableRowColumnFormData'
       required:
         - items
 
-    LookUpTableRowColumnFormData:
+    LookupTableRowColumnFormData:
       type: object
       properties:
         field_id:
@@ -3857,30 +3863,30 @@ components:
         - field_id
         - value
 
-    LookUpTableRowList:
+    LookupTableRowList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/LookUpTableRow'
+            $ref: '#/components/schemas/LookupTableRow'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
         - page_info
 
-    LookUpTableRow:
+    LookupTableRow:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/LookUpTableRowColumnData'
+            $ref: '#/components/schemas/LookupTableRowColumnData'
       required:
         - items
 
-    LookUpTableRowColumnData:
+    LookupTableRowColumnData:
       type: object
       properties:
         field_id:

@@ -4,10 +4,15 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import type { LookupTableFormData, ReferenceDataSearchFormData } from 'generated-sources';
+import type {
+  LookupTable,
+  ReferenceDataApiCreateReferenceTableRequest,
+  ReferenceDataApiUpdateLookupTableRequest,
+  ReferenceDataSearchFormData,
+} from 'generated-sources';
 import { showSuccessToast } from 'lib/errorHandling';
-import { referenceDataApi } from '../../api';
-import { addNextPage } from './utils';
+import { referenceDataApi } from '../../../api';
+import { addNextPage } from '../utils';
 
 interface SearchLookupTablesParams {
   searchId: string;
@@ -76,12 +81,42 @@ export function useUpdateReferenceDataSearch(searchId: string) {
 export function useCreateLookupTable() {
   return useMutation({
     mutationKey: ['createLookupTable'],
-    mutationFn: (formData: LookupTableFormData) =>
-      referenceDataApi.createReferenceTable({
-        lookupTableFormData: formData,
-      }),
+    mutationFn: (params: ReferenceDataApiCreateReferenceTableRequest) =>
+      referenceDataApi.createReferenceTable(params),
     onSuccess: () => {
       showSuccessToast({ message: 'Reference Lookup Table successfully created!' });
+    },
+  });
+}
+
+export function useUpdateLookupTable() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['updateLookupTable'],
+    mutationFn: ({
+      lookupTableId,
+      lookupTableFormData,
+    }: ReferenceDataApiUpdateLookupTableRequest) =>
+      referenceDataApi.updateLookupTable({
+        lookupTableId,
+        lookupTableFormData,
+      }),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Reference Lookup Table successfully updated!' });
+      await queryClient.invalidateQueries({ queryKey: ['searchLookupTables'] });
+    },
+  });
+}
+
+export function useDeleteLookupTable() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ['deleteLookupTable'],
+    mutationFn: (lookupTableId: LookupTable['tableId']) =>
+      referenceDataApi.deleteLookupTable({ lookupTableId }),
+    onSuccess: async () => {
+      showSuccessToast({ message: 'Reference Lookup Table successfully deleted!' });
+      await queryClient.invalidateQueries({ queryKey: ['searchLookupTables'] });
     },
   });
 }

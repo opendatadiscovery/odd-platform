@@ -1,18 +1,28 @@
 import React, { useEffect, useMemo, useCallback, cloneElement } from 'react';
-import { useCreateLookupTable } from 'lib/hooks/api/lookupTables';
+import {
+  useCreateLookupTable,
+  useUpdateLookupTable,
+} from 'lib/hooks/api/masterData/lookupTables';
 import { Controller, useForm } from 'react-hook-form';
-import type { LookupTableFormData } from 'generated-sources';
+import type { LookupTable, LookupTableFormData } from 'generated-sources';
 import { useNavigate } from 'react-router-dom';
 import { lookupTablesPath } from 'routes';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Button, DialogWrapper, Input, Markdown } from 'components/shared/elements';
+import {
+  Button,
+  DialogWrapper,
+  Input,
+  Markdown,
+  NamespaceAutocomplete,
+} from 'components/shared/elements';
 
 interface LookupTableFormProps {
-  btnCreateEl: React.JSX.Element;
+  btnEl: React.JSX.Element;
+  lookupTable?: LookupTable;
 }
 
-const LookupTableForm = ({ btnCreateEl }: LookupTableFormProps) => {
+const LookupTableForm = ({ btnEl, lookupTable }: LookupTableFormProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const {
@@ -21,13 +31,19 @@ const LookupTableForm = ({ btnCreateEl }: LookupTableFormProps) => {
     isPending: isCreating,
   } = useCreateLookupTable();
 
+  const {
+    mutateAsync: editLookupTable,
+    isSuccess: isUpdated,
+    isPending: isUpdating,
+  } = useUpdateLookupTable();
+
   const defaultValues = useMemo(
     () => ({
-      tableName: '',
-      description: '',
-      namespaceName: '',
+      tableName: lookupTable ? lookupTable.tableName : '',
+      description: lookupTable ? lookupTable.description : '',
+      namespaceName: lookupTable ? lookupTable.namespace.name : '',
     }),
-    []
+    [lookupTable]
   );
 
   const { handleSubmit, control, reset, formState } = useForm<LookupTableFormData>({
@@ -40,16 +56,25 @@ const LookupTableForm = ({ btnCreateEl }: LookupTableFormProps) => {
     reset(defaultValues);
   }, [defaultValues]);
 
-  const onSubmit = useCallback((data: LookupTableFormData) => {
-    addLookupTable(data).then(_ => {
-      reset();
-      navigate(lookupTablesPath());
-    });
-  }, []);
+  const onSubmit = useCallback(
+    (data: LookupTableFormData) => {
+      const mutation$ = lookupTable
+        ? editLookupTable({
+            lookupTableFormData: data,
+            lookupTableId: lookupTable.tableId,
+          })
+        : addLookupTable({ lookupTableFormData: data });
+      mutation$.then(_ => {
+        reset();
+        navigate(lookupTablesPath());
+      });
+    },
+    [lookupTable]
+  );
 
   const title = (
     <Typography variant='h4' component='span'>
-      {t('Add')} {t('lookup table')}
+      {lookupTable ? t('Edit') : t('Add')} {t('lookup table')}
     </Typography>
   );
 
@@ -89,12 +114,18 @@ const LookupTableForm = ({ btnCreateEl }: LookupTableFormProps) => {
           </Grid>
         )}
       />
+      <Controller
+        control={control}
+        name='namespaceName'
+        rules={{ required: true }}
+        render={({ field }) => <NamespaceAutocomplete controllerProps={field} />}
+      />
     </form>
   );
 
   const actionButton = () => (
     <Button
-      text={t('Add lookup table')}
+      text={lookupTable ? t('Save lookup table') : t('Add lookup table')}
       buttonType='main-lg'
       type='submit'
       form='lookup-table-form'
@@ -106,14 +137,12 @@ const LookupTableForm = ({ btnCreateEl }: LookupTableFormProps) => {
   return (
     <DialogWrapper
       maxWidth='xl'
-      renderOpenBtn={({ handleOpen }) =>
-        cloneElement(btnCreateEl, { onClick: handleOpen })
-      }
+      renderOpenBtn={({ handleOpen }) => cloneElement(btnEl, { onClick: handleOpen })}
       title={title}
       renderContent={formContent}
       renderActions={actionButton}
-      handleCloseSubmittedForm={isCreated}
-      isLoading={isCreating}
+      handleCloseSubmittedForm={isUpdated || isCreated}
+      isLoading={isUpdating || isCreating}
       clearState={reset}
       formSubmitHandler={handleSubmit(onSubmit)}
     />

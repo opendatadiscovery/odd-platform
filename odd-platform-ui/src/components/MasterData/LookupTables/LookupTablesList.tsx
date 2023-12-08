@@ -7,7 +7,7 @@ import {
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { useSearchLookupTables } from 'lib/hooks/api/lookupTables';
+import { useSearchLookupTables } from 'lib/hooks/api/masterData/lookupTables';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import LookupTablesSkeleton from './LookupTablesSkeleton';
 import LookupTablesListItem from './LookupTablesListItem';
@@ -40,13 +40,13 @@ const LookupTablesList = () => {
         <Table.Cell $flex='1 0'>
           <Typography variant='caption'>{t('Table Name')}</Typography>
         </Table.Cell>
-        <Table.Cell $flex='1 0 35%'>
+        <Table.Cell $flex='1 0 30%'>
           <Typography variant='caption'>{t('Description')}</Typography>
         </Table.Cell>
         <Table.Cell $flex='1 0'>
           <Typography variant='caption'>{t('Namespace')}</Typography>
         </Table.Cell>
-        <Table.Cell $flex='0 0 10%' />
+        <Table.Cell $flex='0 0 15%' />
       </Table.HeaderContainer>
       <ScrollableContainer container id='lookup-tables-list' $offsetY={165}>
         <InfiniteScroll

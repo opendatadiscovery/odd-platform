@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import type {
   CollectorFormData,
   DataEntityGroupFormData,
+  LookupTableFormData,
   Namespace,
   TermFormData,
 } from 'generated-sources';
@@ -28,7 +29,8 @@ interface NamespaceAutocompleteProps {
     | ControllerRenderProps<TermFormData, 'namespaceName'>
     | ControllerRenderProps<DataEntityGroupFormData, 'namespaceName'>
     | ControllerRenderProps<DataSourceFormDataValues, 'namespaceName'>
-    | ControllerRenderProps<CollectorFormData, 'namespaceName'>;
+    | ControllerRenderProps<CollectorFormData, 'namespaceName'>
+    | ControllerRenderProps<LookupTableFormData, 'namespaceName'>;
 }
 
 const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({

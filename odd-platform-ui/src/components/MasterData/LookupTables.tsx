@@ -7,7 +7,7 @@ import {
   useCreateReferenceDataSearch,
   useGetReferenceDataSearch,
   useUpdateReferenceDataSearch,
-} from 'lib/hooks/api/lookupTables';
+} from 'lib/hooks/api/masterData/lookupTables';
 import type { ReferenceDataSearchFacetsData } from 'generated-sources';
 import LookupTablesSearchInput from './LookupTables/LookupTablesSearchInput';
 import { AddIcon } from '../shared/icons';
@@ -68,7 +68,7 @@ const LookupTables: React.FC = () => {
               onSearch={handleSearch}
             />
             <LookupTableForm
-              btnCreateEl={
+              btnEl={
                 <Button
                   text={t('Add new')}
                   buttonType='main-lg'

@@ -3716,14 +3716,14 @@ paths:
             schema:
               type: array
               items:
-                $ref: './components.yaml/#/components/schemas/LookUpTableRowFormData'
+                $ref: './components.yaml/#/components/schemas/LookupTableRowFormData'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/LookUpTableRowList'
+                $ref: './components.yaml/#/components/schemas/LookupTableRowList'
       tags:
         - referenceData
 
@@ -3739,14 +3739,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/LookUpTableRowFormData'
+              $ref: './components.yaml/#/components/schemas/LookupTableRowFormData'
       responses:
         '201':
           description: The resource has been successfully modified
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/LookUpTableRowList'
+                $ref: './components.yaml/#/components/schemas/LookupTableRowList'
       tags:
         - referenceData
     delete:
