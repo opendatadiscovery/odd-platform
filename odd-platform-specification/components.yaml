@@ -3838,6 +3838,16 @@ components:
     LookUpTableRowFormData:
       type: object
       properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookUpTableRowColumnFormData'
+      required:
+        - items
+
+    LookUpTableRowColumnFormData:
+      type: object
+      properties:
         field_id:
           type: integer
           format: int64
@@ -3853,7 +3863,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/LookupTable'
+            $ref: '#/components/schemas/LookUpTableRow'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
@@ -3861,6 +3871,16 @@ components:
         - page_info
 
     LookUpTableRow:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookUpTableRowColumnData'
+      required:
+        - items
+
+    LookUpTableRowColumnData:
       type: object
       properties:
         field_id:
