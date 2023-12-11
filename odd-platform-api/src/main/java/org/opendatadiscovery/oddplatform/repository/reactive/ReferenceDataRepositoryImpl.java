@@ -22,9 +22,9 @@ import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveCustomTransactional;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowColumnFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowColumnFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
 import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
@@ -95,8 +95,8 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
     }
 
     @Override
-    public Mono<LookUpTableRowList> addDataToLookupTable(final LookupTableDto table,
-                                                         final List<LookUpTableRowFormData> items) {
+    public Mono<LookupTableRowList> addDataToLookupTable(final LookupTableDto table,
+                                                         final List<LookupTableRowFormData> items) {
         final Table<Record> tableRecord = table(name(table.tablesPojo().getTableName()));
 
         final List<Pair<Field<Object>, LookupTablesDefinitionsPojo>> columnNames = table.definitionsPojos()
@@ -111,13 +111,13 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
 
         final InsertValuesStepN insertStep = DSL.insertInto(tableRecord, fields);
 
-        for (final LookUpTableRowFormData inputRow : items) {
+        for (final LookupTableRowFormData inputRow : items) {
             final Object[] rowToInsert = new Object[fields.length];
             boolean isAdded = false;
             for (int i = 0; i < columnNames.size(); i++) {
                 final Pair<Field<Object>, LookupTablesDefinitionsPojo> field = columnNames.get(i);
 
-                for (final LookUpTableRowColumnFormData item : inputRow.getItems()) {
+                for (final LookupTableRowColumnFormData item : inputRow.getItems()) {
                     if (!field.getRight().getId().equals(item.getFieldId())) {
                         continue;
                     }
@@ -142,7 +142,7 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         System.out.println("SQl " + insertStep.getSQL());
         return jooqReactiveOperationsCustomTables.mono(insertStep)
             .onErrorResume(exception -> Mono.error(new BadUserRequestException(exception.getMessage())))
-            .then(Mono.just(new LookUpTableRowList()));
+            .then(Mono.just(new LookupTableRowList()));
     }
 
     @NotNull

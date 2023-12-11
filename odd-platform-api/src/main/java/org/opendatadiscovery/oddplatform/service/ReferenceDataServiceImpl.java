@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
@@ -57,8 +57,8 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
-    public Mono<LookUpTableRowList> addDataToLookupTable(final Long lookupTableId,
-                                                         final List<LookUpTableRowFormData> items) {
+    public Mono<LookupTableRowList> addDataToLookupTable(final Long lookupTableId,
+                                                         final List<LookupTableRowFormData> items) {
         return lookupDataService.getLookupTableById(lookupTableId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
             .flatMap(table -> referenceDataRepository.addDataToLookupTable(table, items));

@@ -39,7 +39,7 @@ const LookupTableForm = ({ btnEl, lookupTable }: LookupTableFormProps) => {
 
   const defaultValues = useMemo(
     () => ({
-      tableName: lookupTable ? lookupTable.tableName : '',
+      name: lookupTable ? lookupTable.name : '',
       description: lookupTable ? lookupTable.description : '',
       namespaceName: lookupTable ? lookupTable.namespace.name : '',
     }),
@@ -81,9 +81,9 @@ const LookupTableForm = ({ btnEl, lookupTable }: LookupTableFormProps) => {
   const formContent = () => (
     <form id='lookup-table-form' onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name='tableName'
+        name='name'
         control={control}
-        defaultValue={defaultValues.tableName}
+        defaultValue={defaultValues.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <Grid container flexDirection='column' mt={1.25}>

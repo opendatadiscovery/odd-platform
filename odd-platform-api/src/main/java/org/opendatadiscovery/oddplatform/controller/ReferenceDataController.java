@@ -4,8 +4,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.ReferenceDataApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
@@ -47,9 +47,9 @@ public class ReferenceDataController implements ReferenceDataApi {
     }
 
     @Override
-    public Mono<ResponseEntity<LookUpTableRowList>>
+    public Mono<ResponseEntity<LookupTableRowList>>
         addDataToLookupTable(final Long lookupTableId,
-                             final Flux<LookUpTableRowFormData> lookUpTableRowFormDataList,
+                             final Flux<LookupTableRowFormData> lookUpTableRowFormDataList,
                              final ServerWebExchange exchange) {
         return lookUpTableRowFormDataList
             .collectList()

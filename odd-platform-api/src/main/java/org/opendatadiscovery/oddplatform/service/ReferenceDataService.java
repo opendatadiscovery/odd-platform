@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
@@ -14,5 +14,5 @@ public interface ReferenceDataService {
     Mono<LookupTable> addColumnsToLookupTable(final Long lookupTableId,
                                               final List<LookupTableFieldFormData> columns);
 
-    Mono<LookUpTableRowList> addDataToLookupTable(final Long lookupTableId, final List<LookUpTableRowFormData> items);
+    Mono<LookupTableRowList> addDataToLookupTable(final Long lookupTableId, final List<LookupTableRowFormData> items);
 }

@@ -27,7 +27,7 @@ const LookupTablesListItem = ({ item }: LookupTablesListItemProps) => {
       <Table.Cell $flex='1 0'>
         <Link to={dataEntityDetailsPath(item.datasetId)}>
           <Typography variant='caption' color='button.link.normal.color' fontWeight={500}>
-            {item.tableName}
+            {item.name}
           </Typography>
         </Link>
       </Table.Cell>
@@ -58,7 +58,7 @@ const LookupTablesListItem = ({ item }: LookupTablesListItemProps) => {
           actionName={t('Delete lookup table')}
           actionText={
             <>
-              &quot;{item.tableName}&quot; {t('will be deleted permanently')}
+              &quot;{item.name}&quot; {t('will be deleted permanently')}
             </>
           }
           onConfirm={handleDelete}
