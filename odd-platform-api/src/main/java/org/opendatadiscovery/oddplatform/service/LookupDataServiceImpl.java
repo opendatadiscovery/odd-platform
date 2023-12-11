@@ -8,7 +8,8 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldType;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
+import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
@@ -33,19 +34,22 @@ public class LookupDataServiceImpl implements LookupDataService {
 
     @Override
     @ReactiveTransactional
-    public Mono<LookupTable> createLookupTable(final LookupTableFormData formData) {
+    public Mono<LookupTable> createLookupTable(final ReferenceTableDto tableDto) {
 //        todo check namespace
-        return namespaceRepository.getByName(formData.getNamespaceName())
-            .flatMap(namespacePojo -> dataEntityLookupTableService.createLookupDataEntity(formData, namespacePojo)
+        return dataEntityLookupTableService.createLookupDataEntity(tableDto)
                 .flatMap(dataEntityPojo ->
-                    tableRepository.create(tableMapper.mapToPojo(formData, dataEntityPojo.getId(), namespacePojo))
-                )
+                    tableRepository.create(tableMapper.mapToPojo(tableDto, dataEntityPojo.getId()))
             )
             .flatMap(item -> createPrimaryKeyDefinition(item)
                 .then(tableRepository.getTableWithFieldsById(item.getId())))
             .map(tableMapper::mapToLookupTable)
             .flatMap(this::updateSearchVectors)
             .flatMap(this::updateNamespaceSearchVectors);
+    }
+
+    @Override
+    public Mono<LookupTableDto> getLookupTableById(final Long lookupTableId) {
+        return tableRepository.getTableWithFieldsById(lookupTableId);
     }
 
     @Override

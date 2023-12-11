@@ -3697,14 +3697,14 @@ components:
     LookupTableFormData:
       type: object
       properties:
-        table_name:
+        name:
           type: string
         description:
           type: string
         namespace_name:
           type: string
       required:
-        - table_name
+        - name
         - namespace_name
 
     LookupTableFieldFormData:
@@ -3763,7 +3763,7 @@ components:
         dataset_id:
           type: integer
           format: int64
-        table_name:
+        name:
           type: string
         description:
           type: string

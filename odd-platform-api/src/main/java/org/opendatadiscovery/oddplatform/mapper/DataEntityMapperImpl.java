@@ -34,7 +34,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSever
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedTerm;
 import org.opendatadiscovery.oddplatform.api.contract.model.LinkedUrl;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -43,6 +42,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
@@ -196,13 +196,12 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntityPojo mapCreatedLookupTablePojo(final LookupTableFormData formData,
-                                                    final DataEntityClassDto classDto,
-                                                    final NamespacePojo namespacePojo) {
+    public DataEntityPojo mapCreatedLookupTablePojo(final ReferenceTableDto tableDto,
+                                                    final DataEntityClassDto classDto) {
         final LocalDateTime now = DateTimeUtil.generateNow();
         return new DataEntityPojo()
-            .setInternalName(formData.getTableName())
-            .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
+            .setInternalName(tableDto.getTableName())
+            .setNamespaceId(tableDto.getNamespacePojo() != null ? tableDto.getNamespacePojo().getId() : null)
             .setEntityClassIds(new Integer[] {classDto.getId()})
             .setTypeId(DataEntityTypeDto.LOOKUP_TABLE.getId())
             .setPlatformCreatedAt(now)

@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS lookup_tables
 (
     id           bigserial PRIMARY KEY,
     name         text                        NOT NULL,
+    table_name   text                        NOT NULL,
     description  text,
     namespace_id bigint,
     data_entity_id bigint,
@@ -10,7 +11,6 @@ CREATE TABLE IF NOT EXISTS lookup_tables
 
     CONSTRAINT lookup_tables_fk_namespace FOREIGN KEY (namespace_id) REFERENCES namespace (id),
     CONSTRAINT lookup_tables_fk_entity FOREIGN KEY (data_entity_id) REFERENCES data_entity (id)
-
 );
 
 CREATE TABLE IF NOT EXISTS lookup_tables_definitions
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS lookup_tables_search_entrypoint
 CREATE INDEX IF NOT EXISTS lookup_tables_search_entrypoint_search_vector_idx
     ON lookup_tables_search_entrypoint USING gin (search_vector);
 
-CREATE SCHEMA IF NOT EXISTS custom_tables;
+CREATE SCHEMA IF NOT EXISTS lookup_tables_schema;
 
-SET search_path TO custom_tables,public;
+SET search_path TO lookup_tables_schema,public;
 

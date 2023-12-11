@@ -13,12 +13,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
@@ -36,9 +36,8 @@ public interface DataEntityMapper {
                                      final DataEntityClassDto classDto,
                                      final NamespacePojo namespacePojo);
 
-    DataEntityPojo mapCreatedLookupTablePojo(final LookupTableFormData formData,
-                                             final DataEntityClassDto classDto,
-                                             final NamespacePojo namespacePojo);
+    DataEntityPojo mapCreatedLookupTablePojo(final ReferenceTableDto formData,
+                                             final DataEntityClassDto classDto);
 
     DataEntityPojo applyToPojo(final DataEntityGroupFormData formData,
                                final NamespacePojo namespacePojo,

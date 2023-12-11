@@ -5,12 +5,11 @@ import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableList;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,18 +38,18 @@ public abstract class LookupTableMapper {
         this.tableDefinitionMapper = lookupTableDefinitionMapper;
     }
 
-    @Mapping(target = "name", expression = "java(namespacePojo.getName() + \"_\" + data.getTableName())")
-    @Mapping(source = "namespacePojo.id", target = "namespaceId")
+    @Mapping(source = "data.name", target = "name")
+    @Mapping(source = "data.tableName", target = "tableName")
+    @Mapping(source = "data.namespacePojo.id", target = "namespaceId")
     @Mapping(target = "id", ignore = true)
-    public abstract LookupTablesPojo mapToPojo(final LookupTableFormData data,
-                                               final Long dataEntityId,
-                                               final NamespacePojo namespacePojo);
+    public abstract LookupTablesPojo mapToPojo(final ReferenceTableDto data,
+                                               final Long dataEntityId);
 
     public LookupTable mapToLookupTable(final LookupTableDto dto) {
         return new LookupTable()
             .tableId(dto.tablesPojo().getId())
             .datasetId(dto.tablesPojo().getDataEntityId())
-            .tableName(dto.tablesPojo().getName())
+            .name(dto.tablesPojo().getName())
             .description(dto.tablesPojo().getDescription())
             .namespace(namespaceMapper.mapPojo(dto.namespacePojo()))
             .fields(tableDefinitionMapper.mapPojosToTablesFields(dto.definitionsPojos()))

@@ -8,27 +8,42 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.ConstraintEnforcementStep;
 import org.jooq.CreateSequenceFlagsStep;
 import org.jooq.CreateTableElementListStep;
 import org.jooq.DataType;
 import org.jooq.Field;
+import org.jooq.InsertValuesStepN;
 import org.jooq.JSONB;
+import org.jooq.Param;
+import org.jooq.Record;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveCustomTransactional;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowColumnFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookUpTableRowList;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
+import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperationsCustomTables;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.table;
 import static org.jooq.impl.SQLDataType.INTEGER;
 
 @Repository
 @RequiredArgsConstructor
 public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
+    public static final String ID_COLUMN = "id";
 
     private final JooqReactiveOperationsCustomTables jooqReactiveOperationsCustomTables;
 
@@ -36,11 +51,11 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
     @ReactiveCustomTransactional
     public Mono<Void> createLookupTable(final ReferenceTableDto tableDto) {
         final CreateSequenceFlagsStep sequence =
-            DSL.createSequence(tableDto.getNamespace() + "_" + tableDto.getTableName() + "_pk_sequence");
+            DSL.createSequence(tableDto.getTableName() + "_pk_sequence");
         final CreateTableElementListStep table =
-            DSL.createTable(tableDto.getNamespace() + "_" + tableDto.getTableName())
-                .column("id", INTEGER)
-                .constraint(DSL.constraint().primaryKey("id"));
+            DSL.createTable(tableDto.getTableName())
+                .column(ID_COLUMN, INTEGER.identity(true))
+                .constraint(DSL.constraint().primaryKey(ID_COLUMN));
 
         return jooqReactiveOperationsCustomTables.mono(sequence)
             .then(jooqReactiveOperationsCustomTables.mono(table))
@@ -50,18 +65,16 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
     @Override
     @ReactiveCustomTransactional
     public Mono<Void> addColumnsToLookupTable(final String tableName, final List<LookupTableColumnDto> columnDtos) {
-        System.out.println("WUTA " + tableName + " suze " + columnDtos.size());
         final List<Field<?>> fields = new ArrayList<>();
         final List<ConstraintEnforcementStep> constraints = new ArrayList<>();
 
         for (final LookupTableColumnDto column : columnDtos) {
             DataType<?> dataType = column.getDataType().getDataType();
-            if (!column.isNullable()) {
-                dataType = dataType.notNull();
-            }
 
             if (StringUtils.isNotBlank(column.getDefaultValue())) {
                 dataType = setDefaultValue(column.getDataType(), column.getDefaultValue());
+            } else if (!column.isNullable()) {
+                dataType = dataType.notNull();
             }
 
             fields.add(field(column.getName(), dataType));
@@ -78,6 +91,88 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
             return jooqReactiveOperationsCustomTables.mono(DSL.alterTable(tableName).add(fields))
                 .then(jooqReactiveOperationsCustomTables.mono(DSL.alterTable(tableName).add(constraints)))
                 .then(Mono.empty());
+        }
+    }
+
+    @Override
+    public Mono<LookUpTableRowList> addDataToLookupTable(final LookupTableDto table,
+                                                         final List<LookUpTableRowFormData> items) {
+        final Table<Record> tableRecord = table(name(table.tablesPojo().getTableName()));
+
+        final List<Pair<Field<Object>, LookupTablesDefinitionsPojo>> columnNames = table.definitionsPojos()
+            .stream()
+            .filter(item -> !item.getColumnName().equals(ID_COLUMN))
+            .map(item -> Pair.of(field(name(item.getColumnName().toLowerCase())), item))
+            .toList();
+
+        final Field<?>[] fields = columnNames.stream()
+            .map(Pair::getLeft)
+            .toArray(Field[]::new);
+
+        final InsertValuesStepN insertStep = DSL.insertInto(tableRecord, fields);
+
+        for (final LookUpTableRowFormData inputRow : items) {
+            final Object[] rowToInsert = new Object[fields.length];
+            boolean isAdded = false;
+            for (int i = 0; i < columnNames.size(); i++) {
+                final Pair<Field<Object>, LookupTablesDefinitionsPojo> field = columnNames.get(i);
+
+                for (final LookUpTableRowColumnFormData item : inputRow.getItems()) {
+                    if (!field.getRight().getId().equals(item.getFieldId())) {
+                        continue;
+                    }
+
+                    rowToInsert[i] = getValueToInsert(item.getValue(),
+                        LookupTableColumnTypes.resolveByTypeString(field.getValue().getColumnType()));
+                    isAdded = true;
+                    break;
+                }
+
+                if (!isAdded) {
+                    rowToInsert[i] = getValueToInsert(null,
+                        LookupTableColumnTypes.resolveByTypeString(field.getValue().getColumnType()));
+                }
+
+                isAdded = false;
+            }
+
+            insertStep.values(rowToInsert);
+        }
+
+        System.out.println("SQl " + insertStep.getSQL());
+        return jooqReactiveOperationsCustomTables.mono(insertStep)
+            .onErrorResume(exception -> Mono.error(new BadUserRequestException(exception.getMessage())))
+            .then(Mono.just(new LookUpTableRowList()));
+    }
+
+    @NotNull
+    private static Param<?> getValueToInsert(final String item, final LookupTableColumnTypes type) {
+        switch (type) {
+            case TYPE_VARCHAR -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_INTEGER, TYPE_SERIAL -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_DECIMAL -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_BOOLEAN -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_DATE -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_TIME -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_JSON -> {
+                return DSL.val(item, type.getDataType());
+            }
+            case TYPE_UUID -> {
+                return DSL.val(item, type.getDataType());
+            }
+            default -> throw new IllegalArgumentException(String.format("No entry with type %s was found", type));
         }
     }
 

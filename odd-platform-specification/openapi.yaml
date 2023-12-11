@@ -3714,7 +3714,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/LookUpTableRowFormDataList'
+              type: array
+              items:
+                $ref: './components.yaml/#/components/schemas/LookUpTableRowFormData'
       responses:
         '200':
           description: OK

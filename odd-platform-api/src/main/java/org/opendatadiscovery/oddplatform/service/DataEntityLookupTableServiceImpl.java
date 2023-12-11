@@ -11,22 +11,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddrn.Generator;
-import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
+import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityLookupTablesPath;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -48,10 +47,9 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
 
     @Override
     @ReactiveTransactional
-    public Mono<DataEntityPojo> createLookupDataEntity(final LookupTableFormData formData,
-                                                       final NamespacePojo namespacePojo) {
-        return Mono.just(formData)
-            .map(item -> dataEntityMapper.mapCreatedLookupTablePojo(item, DATA_SET, namespacePojo))
+    public Mono<DataEntityPojo> createLookupDataEntity(final ReferenceTableDto tableDto) {
+        return Mono.just(tableDto)
+            .map(item -> dataEntityMapper.mapCreatedLookupTablePojo(item, DATA_SET))
             .flatMap(reactiveDataEntityRepository::create)
             .map(pojo -> {
                 final String oddrn = generateOddrn(pojo);
@@ -154,7 +152,7 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
 
     private String generateOddrn(final DataEntityPojo pojo) {
         try {
-            return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
+            return oddrnGenerator.generate(ODDPlatformDataEntityLookupTablesPath.builder()
                 .id(pojo.getId())
                 .build());
         } catch (final Exception e) {
