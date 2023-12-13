@@ -8,6 +8,8 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldType;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
+import org.opendatadiscovery.oddplatform.dto.LookupTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
@@ -35,10 +37,9 @@ public class LookupDataServiceImpl implements LookupDataService {
     @Override
     @ReactiveTransactional
     public Mono<LookupTable> createLookupTable(final ReferenceTableDto tableDto) {
-//        todo check namespace
         return dataEntityLookupTableService.createLookupDataEntity(tableDto)
-                .flatMap(dataEntityPojo ->
-                    tableRepository.create(tableMapper.mapToPojo(tableDto, dataEntityPojo.getId()))
+            .flatMap(dataEntityPojo ->
+                tableRepository.create(tableMapper.mapToPojo(tableDto, dataEntityPojo.getId()))
             )
             .flatMap(item -> createPrimaryKeyDefinition(item)
                 .then(tableRepository.getTableWithFieldsById(item.getId())))
@@ -53,11 +54,16 @@ public class LookupDataServiceImpl implements LookupDataService {
     }
 
     @Override
+    public Mono<LookupTableColumnDto> getLookupTableDefinitionById(final Long columnId) {
+        return tableDefinitionRepository.getLookupColumnWithTable(columnId);
+    }
+
+    @Override
     @ReactiveTransactional
     public Mono<LookupTable> addColumnsToLookupTable(final Long lookupTableId,
                                                      final Long dataEntityId,
                                                      final List<LookupTableFieldFormData> columns) {
-        return dataEntityLookupTableService.createLookupDatasetFields(columns, dataEntityId)
+        return dataEntityLookupTableService.createOrUpdateLookupDatasetField(columns, dataEntityId)
             .flatMap(fields -> {
                 final List<Pair<Long, LookupTableFieldFormData>> formDataWithFieldsId = new ArrayList<>();
 
@@ -71,6 +77,36 @@ public class LookupDataServiceImpl implements LookupDataService {
                     .collectList();
             })
             .then(tableRepository.getTableWithFieldsById(lookupTableId))
+            .map(tableMapper::mapToLookupTable)
+            .flatMap(this::updateTableDefinitionSearchVectors);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<LookupTable> updateLookupTable(final LookupTableDto table,
+                                               final ReferenceTableDto dto) {
+        return dataEntityLookupTableService.updateLookupDataEntity(table, dto)
+            .then(tableRepository.update(tableMapper.applyToPojo(dto, table.tablesPojo())))
+            .flatMap(item -> tableRepository.getTableWithFieldsById(item.getId()))
+            .map(tableMapper::mapToLookupTable)
+            .flatMap(this::updateSearchVectors);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<LookupTable> updateLookupTableColumn(final LookupTableColumnDto columnDto,
+                                                     final LookupTableFieldUpdateFormData formData) {
+        final LookupTablesDefinitionsPojo updatedPojo =
+            tableDefinitionMapper.applyToPojo(formData, columnDto.columnPojo());
+        return dataEntityLookupTableService
+            .updateLookupDatasetField(updatedPojo,
+                columnDto.tablesPojo().getDataEntityId(),
+                columnDto.columnPojo().getDatasetFieldId())
+            .flatMap(fields -> {
+                updatedPojo.setDatasetFieldId(fields.getId());
+                return tableDefinitionRepository.update(updatedPojo);
+            })
+            .then(tableRepository.getTableWithFieldsById(columnDto.tablesPojo().getId()))
             .map(tableMapper::mapToLookupTable)
             .flatMap(this::updateTableDefinitionSearchVectors);
     }
@@ -98,7 +134,7 @@ public class LookupDataServiceImpl implements LookupDataService {
             .setColumnType(LookupTableFieldType.INTEGER.getValue())
             .setIsPrimaryKey(true);
 
-        return dataEntityLookupTableService.createLookupDatasetFields(pojo,
+        return dataEntityLookupTableService.createOrUpdateLookupDatasetField(pojo,
                 tablesPojo.getDataEntityId())
             .flatMap(item -> tableDefinitionRepository.create(pojo.setDatasetFieldId(item.getId())));
     }

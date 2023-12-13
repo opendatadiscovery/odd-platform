@@ -1,18 +1,8 @@
 package org.opendatadiscovery.oddplatform.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
 
-@Getter
-@Setter
-@Builder
-public class LookupTableColumnDto {
-    private String name;
-    private String defaultValue;
-    private LookupTableColumnTypes dataType;
-    private boolean isNullable;
-    private boolean isUnique;
-    private int maxLength;
-    private int maxValue;
+public record LookupTableColumnDto(LookupTablesPojo tablesPojo,
+                                   LookupTablesDefinitionsPojo columnPojo) {
 }

@@ -6,13 +6,15 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
-import org.opendatadiscovery.oddplatform.dto.LookupTableColumnDto;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -29,6 +31,15 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     private final ReferenceDataRepository referenceDataRepository;
     private final ReactiveLookupTableRepository tableRepository;
     private final ReactiveNamespaceRepository namespaceRepository;
+
+    @Override
+    public Mono<LookupTableRowList> getLookupTableRowList(final Long lookupTableId,
+                                                          final Integer page,
+                                                          final Integer size) {
+        return lookupDataService.getLookupTableById(lookupTableId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
+            .flatMap(table -> referenceDataRepository.getLookupTableRowList(table, page, size));
+    }
 
     @Override
     public Mono<LookupTable> createLookupTable(final LookupTableFormData formData) {
@@ -53,7 +64,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
             .flatMap(table ->
                 referenceDataRepository.addColumnsToLookupTable(table.getTableName(), retrieveColumns(columns))
-                .then(lookupDataService.addColumnsToLookupTable(lookupTableId, table.getDataEntityId(), columns)));
+                    .then(lookupDataService.addColumnsToLookupTable(lookupTableId, table.getDataEntityId(), columns)));
     }
 
     @Override
@@ -64,12 +75,48 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
             .flatMap(table -> referenceDataRepository.addDataToLookupTable(table, items));
     }
 
-    private List<LookupTableColumnDto> retrieveColumns(final List<LookupTableFieldFormData> columns) {
+    @Override
+    public Mono<LookupTable> updateLookupTable(final Long lookupTableId,
+                                               final LookupTableUpdateFormData formData) {
+        return lookupDataService.getLookupTableById(lookupTableId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
+            .flatMap(table -> {
+                final ReferenceTableDto tableDto = ReferenceTableDto.builder()
+                    .name(formData.getName())
+                    .tableName(buildTableName(formData.getName(), table.namespacePojo()))
+                    .tableDescription(formData.getDescription())
+                    .namespacePojo(table.namespacePojo())
+                    .build();
+                return referenceDataRepository.updateLookupTable(table, tableDto)
+                    .then(lookupDataService.updateLookupTable(table, tableDto));
+            });
+    }
+
+    @Override
+    public Mono<LookupTable> updateLookupTableField(final Long columnId,
+                                                    final LookupTableFieldUpdateFormData formData) {
+        return lookupDataService.getLookupTableDefinitionById(columnId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTableDefinition", columnId)))
+            .flatMap(columnDto -> {
+                final ReferenceTableColumnDto inputColumnInfo = ReferenceTableColumnDto.builder()
+                    .name(formData.getName())
+                    .defaultValue(StringUtils.isNotBlank(formData.getDefaultValue())
+                        ? formData.getDefaultValue()
+                        : null)
+                    .isNullable(formData.getIsNullable() != null ? formData.getIsNullable() : true)
+                    .isUnique(formData.getIsUnique() != null ? formData.getIsUnique() : false)
+                    .build();
+                return referenceDataRepository.updateLookupTableColumn(columnDto, inputColumnInfo)
+                    .then(lookupDataService.updateLookupTableColumn(columnDto, formData));
+            });
+    }
+
+    private List<ReferenceTableColumnDto> retrieveColumns(final List<LookupTableFieldFormData> columns) {
         if (CollectionUtils.isEmpty(columns)) {
             return Collections.emptyList();
         }
 
-        return columns.stream().map(column -> LookupTableColumnDto.builder()
+        return columns.stream().map(column -> ReferenceTableColumnDto.builder()
                 .name(column.getName())
                 .dataType(LookupTableColumnTypes.resolveByTypeString(column.getFieldType().name()))
                 .defaultValue(StringUtils.isNotBlank(column.getDefaultValue()) ? column.getDefaultValue() : null)
@@ -81,6 +128,6 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 
     private String buildTableName(final String name, final NamespacePojo namespacePojo) {
         final String fixedName = name.toLowerCase().replace(" ", "_");
-        return namespacePojo.getId() + "_" + fixedName;
+        return namespacePojo.getId() + "__" + fixedName;
     }
 }

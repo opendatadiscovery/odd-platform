@@ -14,7 +14,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldForm
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
+import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
@@ -24,6 +26,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefiniti
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityLookupTablesPath;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,7 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
     private final ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
+    private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final DataEntityMapper dataEntityMapper;
     private final DatasetFieldApiMapper datasetFieldApiMapper;
     private final DatasetVersionMapper datasetVersionMapper;
@@ -56,13 +60,14 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
                 pojo.setOddrn(oddrn);
                 return pojo;
             })
+            .flatMap(this::updateSearchVectors)
             .flatMap(reactiveDataEntityRepository::update)
             .flatMap(this::createVersion);
     }
 
     @Override
-    public Mono<List<DatasetFieldPojo>> createLookupDatasetFields(final List<LookupTableFieldFormData> columns,
-                                                                  final Long dataEntityId) {
+    public Mono<List<DatasetFieldPojo>> createOrUpdateLookupDatasetField(final List<LookupTableFieldFormData> columns,
+                                                                         final Long dataEntityId) {
         final Gson gson = new Gson();
         final List<DatasetFieldPojo> fieldsToCreate = new ArrayList<>();
 
@@ -71,8 +76,6 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
 
             typeMape.put("type", LookupTableColumnTypes.resolveByTypeString(column.getFieldType().getValue())
                 .getDatasetFieldType().getValue());
-            typeMape.put("is_nullable", column.getIsNullable());
-            typeMape.put("is_unique", column.getIsUnique());
             typeMape.put("logical_type", column.getFieldType().getValue());
 
             final JSONB typeJsonb = JSONB.jsonb(gson.toJson(typeMape));
@@ -101,15 +104,12 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
     }
 
     @Override
-    public Mono<DatasetFieldPojo> createLookupDatasetFields(final LookupTablesDefinitionsPojo definitionPojo,
-                                                            final Long dataEntityId) {
-        System.out.println("ENITY " + dataEntityId);
+    public Mono<DatasetFieldPojo> createOrUpdateLookupDatasetField(final LookupTablesDefinitionsPojo definitionPojo,
+                                                                   final Long dataEntityId) {
         final Map<String, Object> typeMape = new HashMap<>();
 
         typeMape.put("type", LookupTableColumnTypes.resolveByTypeString(definitionPojo.getColumnType())
             .getDatasetFieldType().getValue());
-        typeMape.put("is_nullable", definitionPojo.getIsNullable());
-        typeMape.put("is_unique", definitionPojo.getIsUnique());
         typeMape.put("logical_type", definitionPojo.getColumnType());
 
         final Gson gson = new Gson();
@@ -133,6 +133,50 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
             .flatMap(datasetFieldPojos -> Mono.just(datasetFieldPojos.get(0)));
     }
 
+    @Override
+    public Mono<DatasetFieldPojo> updateLookupDatasetField(final LookupTablesDefinitionsPojo definitionPojo,
+                                                           final Long dataEntityId,
+                                                           final Long datasetFieldId) {
+        final Map<String, Object> typeMape = new HashMap<>();
+
+        typeMape.put("type", LookupTableColumnTypes.resolveByTypeString(definitionPojo.getColumnType())
+            .getDatasetFieldType().getValue());
+        typeMape.put("logical_type", definitionPojo.getColumnType());
+
+        final Gson gson = new Gson();
+        final JSONB typeJsonb = JSONB.jsonb(gson.toJson(typeMape));
+        final JSONB stats = JSONB.jsonb(gson.toJson(new HashMap<>()));
+
+        return reactiveDatasetVersionRepository.getLatestDatasetVersion(dataEntityId)
+            .flatMap(version -> {
+                final String oddrn = version.getDatasetVersion().getDatasetOddrn()
+                    + "/field/" + definitionPojo.getColumnName();
+
+                    final List<DatasetFieldPojo> collect = version.getDatasetFields().stream()
+                        .map(DatasetFieldDto::getDatasetFieldPojo)
+                        .filter(item -> (!item.getId().equals(datasetFieldId) || item.getOddrn().equals(oddrn)))
+                        .collect(Collectors.toList());
+
+                    collect.add(datasetFieldApiMapper.mapLookupFieldToPojo(definitionPojo,
+                        oddrn,
+                        typeJsonb, stats));
+
+                    return createVersionWithFields(version, collect)
+                        .flatMap(datasetFieldPojos -> Mono.just(datasetFieldPojos.stream()
+                            .filter(item -> item.getOddrn().equals(oddrn))
+                            .findFirst().orElseThrow(NotFoundException::new)));
+                }
+            );
+    }
+
+    @Override
+    public Mono<DataEntityPojo> updateLookupDataEntity(final LookupTableDto table, final ReferenceTableDto dto) {
+        return reactiveDataEntityRepository.get(table.tablesPojo().getDataEntityId())
+            .map(fd -> dataEntityMapper.applyToPojo(fd, dto))
+            .flatMap(reactiveDataEntityRepository::update)
+            .flatMap(this::updateSearchVectors);
+    }
+
     private Mono<List<DatasetFieldPojo>> createVersionWithFields(final DatasetStructureDto version,
                                                                  final List<DatasetFieldPojo> collect) {
         return datasetStructureService
@@ -140,7 +184,10 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
                 datasetVersionMapper.mapDatasetVersion(version.getDatasetVersion().getDatasetOddrn(),
                     null,
                     version.getDatasetVersion().getVersion() + 1),
-                collect);
+                collect)
+            .flatMap(item -> reactiveSearchEntrypointRepository
+                .updateStructureVectorForDataEntitiesByOddrns(List.of(version.getDatasetVersion().getDatasetOddrn()))
+                .thenReturn(item));
     }
 
     private Mono<DataEntityPojo> createVersion(final DataEntityPojo entity) {
@@ -159,5 +206,12 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
             log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    private Mono<DataEntityPojo> updateSearchVectors(final DataEntityPojo pojo) {
+        return Mono.zip(
+            reactiveSearchEntrypointRepository.updateDataEntityVectors(pojo.getId()),
+            reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(pojo.getId())
+        ).thenReturn(pojo);
     }
 }

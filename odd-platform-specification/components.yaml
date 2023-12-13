@@ -3707,6 +3707,16 @@ components:
         - name
         - namespace_name
 
+    LookupTableUpdateFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
     LookupTableFieldFormData:
       type: object
       properties:
@@ -3726,7 +3736,7 @@ components:
         - name
         - field_type
 
-    LookupTableFieldUpdate:
+    LookupTableFieldUpdateFormData:
       type: object
       properties:
         name:

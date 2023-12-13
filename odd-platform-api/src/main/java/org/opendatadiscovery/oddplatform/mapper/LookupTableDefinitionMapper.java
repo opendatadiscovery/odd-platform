@@ -5,9 +5,11 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableField;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldType;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 
 @Mapper(config = MapperConfig.class,
@@ -45,4 +47,12 @@ public interface LookupTableDefinitionMapper {
             .map(this::mapPojoToTablesField)
             .collect(Collectors.toList());
     }
+
+    @Mapping(source = "formData.name", target = "columnName")
+    @Mapping(source = "formData.isUnique", target = "isUnique")
+    @Mapping(source = "formData.isNullable", target = "isNullable")
+    @Mapping(source = "formData.defaultValue", target = "defaultValue")
+    @Mapping(target = "isPrimaryKey", constant = "false")
+    LookupTablesDefinitionsPojo applyToPojo(final LookupTableFieldUpdateFormData formData,
+                                            @MappingTarget final LookupTablesDefinitionsPojo pojo);
 }

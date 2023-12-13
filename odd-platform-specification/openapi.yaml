@@ -3528,7 +3528,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/LookupTableFormData'
+              $ref: './components.yaml/#/components/schemas/LookupTableUpdateFormData'
       responses:
         '201':
           description: The resource has been successfully modified
@@ -3587,7 +3587,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/LookupTableFieldUpdate'
+              $ref: './components.yaml/#/components/schemas/LookupTableFieldUpdateFormData'
       responses:
         '201':
           description: The resource has been successfully modified
@@ -3703,6 +3703,23 @@ paths:
         - referenceData
 
   /api/referencedata/table/{lookup_table_id}/data:
+    get:
+      summary: List of data under the lookup table
+      description: Gets the list of data under the lookup table
+      operationId: getLookupTableRowList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableRowList'
+      tags:
+        - referenceData
     post:
       summary: Create data in lookup_table
       description: Create data in lookup_table

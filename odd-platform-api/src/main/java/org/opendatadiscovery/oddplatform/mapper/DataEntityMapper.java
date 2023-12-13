@@ -43,6 +43,8 @@ public interface DataEntityMapper {
                                final NamespacePojo namespacePojo,
                                final DataEntityPojo pojo);
 
+    DataEntityPojo applyToPojo(final DataEntityPojo pojo, final ReferenceTableDto dto);
+
     DataEntityPojo applyStatus(final DataEntityPojo pojo,
                                final DataEntityStatus status);
 

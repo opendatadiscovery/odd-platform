@@ -4,12 +4,14 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.ReferenceDataApi;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.ReferenceDataSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.ReferenceDataSearchFormData;
 import org.opendatadiscovery.oddplatform.service.LookupDataSearchService;
@@ -49,8 +51,8 @@ public class ReferenceDataController implements ReferenceDataApi {
     @Override
     public Mono<ResponseEntity<LookupTableRowList>>
         addDataToLookupTable(final Long lookupTableId,
-                             final Flux<LookupTableRowFormData> lookUpTableRowFormDataList,
-                             final ServerWebExchange exchange) {
+                         final Flux<LookupTableRowFormData> lookUpTableRowFormDataList,
+                         final ServerWebExchange exchange) {
         return lookUpTableRowFormDataList
             .collectList()
             .flatMap(items -> referenceDataService.addDataToLookupTable(lookupTableId, items))
@@ -75,6 +77,15 @@ public class ReferenceDataController implements ReferenceDataApi {
     }
 
     @Override
+    public Mono<ResponseEntity<LookupTableRowList>> getLookupTableRowList(final Long lookupTableId,
+                                                                          final Integer page,
+                                                                          final Integer size,
+                                                                          final ServerWebExchange exchange) {
+        return referenceDataService.getLookupTableRowList(lookupTableId, page, size)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<ReferenceDataSearchFacetsData>> referenceDataSearch(
         final Mono<ReferenceDataSearchFormData> referenceDataSearchFormData, final ServerWebExchange exchange) {
         return referenceDataSearchFormData
@@ -89,6 +100,26 @@ public class ReferenceDataController implements ReferenceDataApi {
                                        final ServerWebExchange exchange) {
         return referenceDataSearchFormData
             .flatMap(fd -> lookupDataSearchService.updateFacets(searchId, fd))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<LookupTable>>
+        updateLookupTable(final Long lookupTableId,
+                      final Mono<LookupTableUpdateFormData> lookupTableUpdateFormData,
+                      final ServerWebExchange exchange) {
+        return lookupTableUpdateFormData
+            .flatMap(item -> referenceDataService.updateLookupTable(lookupTableId, item))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<LookupTable>>
+        updateLookupTableField(final Long columnId,
+                           final Mono<LookupTableFieldUpdateFormData> lookupTableFieldUpdateFormData,
+                           final ServerWebExchange exchange) {
+        return lookupTableFieldUpdateFormData
+            .flatMap(item -> referenceDataService.updateLookupTableField(columnId, item))
             .map(ResponseEntity::ok);
     }
 }

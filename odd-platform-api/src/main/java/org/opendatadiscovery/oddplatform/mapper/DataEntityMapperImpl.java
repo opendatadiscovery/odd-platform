@@ -200,7 +200,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                                                     final DataEntityClassDto classDto) {
         final LocalDateTime now = DateTimeUtil.generateNow();
         return new DataEntityPojo()
-            .setInternalName(tableDto.getTableName())
+            .setInternalName(tableDto.getName())
+            .setExternalName(tableDto.getTableName())
             .setNamespaceId(tableDto.getNamespacePojo() != null ? tableDto.getNamespacePojo().getId() : null)
             .setEntityClassIds(new Integer[] {classDto.getId()})
             .setTypeId(DataEntityTypeDto.LOOKUP_TABLE.getId())
@@ -223,6 +224,20 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .setInternalName(formData.getName())
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
             .setTypeId(formData.getType().getId());
+    }
+
+    @Override
+    public DataEntityPojo applyToPojo(final DataEntityPojo pojo, final ReferenceTableDto dto) {
+        if (pojo == null) {
+            return null;
+        }
+
+        System.out.println("DTO " + dto.getTableName());
+        System.out.println("DTO " + dto.getName());
+        return pojo
+            .setInternalName(dto.getName())
+            .setExternalName(dto.getTableName())
+            .setNamespaceId(dto.getNamespacePojo() != null ? dto.getNamespacePojo().getId() : null);
     }
 
     @Override

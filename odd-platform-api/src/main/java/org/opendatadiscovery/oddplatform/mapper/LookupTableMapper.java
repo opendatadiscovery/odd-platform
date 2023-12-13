@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableList;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
@@ -40,10 +41,18 @@ public abstract class LookupTableMapper {
 
     @Mapping(source = "data.name", target = "name")
     @Mapping(source = "data.tableName", target = "tableName")
+    @Mapping(source = "data.tableDescription", target = "description")
     @Mapping(source = "data.namespacePojo.id", target = "namespaceId")
     @Mapping(target = "id", ignore = true)
     public abstract LookupTablesPojo mapToPojo(final ReferenceTableDto data,
                                                final Long dataEntityId);
+
+    @Mapping(source = "dto.name", target = "name")
+    @Mapping(source = "dto.tableName", target = "tableName")
+    @Mapping(source = "dto.tableDescription", target = "description")
+    @Mapping(source = "dto.namespacePojo.id", target = "namespaceId")
+    public abstract LookupTablesPojo applyToPojo(final ReferenceTableDto dto,
+                                                 @MappingTarget final LookupTablesPojo pojo);
 
     public LookupTable mapToLookupTable(final LookupTableDto dto) {
         return new LookupTable()
