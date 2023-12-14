@@ -95,11 +95,11 @@ export function useUpdateLookupTable() {
     mutationKey: ['updateLookupTable'],
     mutationFn: ({
       lookupTableId,
-      lookupTableFormData,
+      lookupTableUpdateFormData,
     }: ReferenceDataApiUpdateLookupTableRequest) =>
       referenceDataApi.updateLookupTable({
         lookupTableId,
-        lookupTableFormData,
+        lookupTableUpdateFormData,
       }),
     onSuccess: async () => {
       showSuccessToast({ message: 'Reference Lookup Table successfully updated!' });

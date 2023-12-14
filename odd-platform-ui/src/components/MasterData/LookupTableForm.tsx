@@ -60,7 +60,7 @@ const LookupTableForm = ({ btnEl, lookupTable }: LookupTableFormProps) => {
     (data: LookupTableFormData) => {
       const mutation$ = lookupTable
         ? editLookupTable({
-            lookupTableFormData: data,
+            lookupTableUpdateFormData: data,
             lookupTableId: lookupTable.tableId,
           })
         : addLookupTable({ lookupTableFormData: data });
@@ -117,7 +117,8 @@ const LookupTableForm = ({ btnEl, lookupTable }: LookupTableFormProps) => {
       <Controller
         control={control}
         name='namespaceName'
-        rules={{ required: true }}
+        disabled={!!lookupTable}
+        rules={{ required: !lookupTable }}
         render={({ field }) => <NamespaceAutocomplete controllerProps={field} />}
       />
     </form>

@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import React, { createContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { AppErrorPage, SkeletonWrapper } from 'components/shared/elements';
 import {
   fetchDataEntityAlertsCounts,
