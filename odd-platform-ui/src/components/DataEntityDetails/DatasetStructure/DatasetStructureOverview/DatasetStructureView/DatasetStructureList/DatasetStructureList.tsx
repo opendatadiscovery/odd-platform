@@ -11,9 +11,10 @@ import type { DataSetField } from 'generated-sources';
 import { useDataEntityRouteParams } from 'routes';
 import { DataEntityTypeContext } from 'components/shared/contexts';
 import { Box } from '@mui/material';
-import { AddIcon, EditIcon } from 'components/shared/icons';
+import { AddIcon } from 'components/shared/icons';
 import { Button } from 'components/shared/elements';
 import { useTranslation } from 'react-i18next';
+import ColumnForm from 'components/shared/elements/forms/CreateColumnForm';
 import useStructure from '../../lib/useStructure';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureList.styles';
@@ -83,10 +84,15 @@ const DatasetStructureList: FC = () => {
               pl={1}
               height={theme => theme.spacing(6)}
             >
-              <Button
-                text={t('Add column')}
-                buttonType='tertiary-m'
-                startIcon={<AddIcon />}
+              <ColumnForm
+                btnEl={
+                  <Button
+                    text={t('Add column')}
+                    buttonType='tertiary-m'
+                    startIcon={<AddIcon />}
+                  />
+                }
+                lookupTableId={0}
               />
             </Box>
           )}

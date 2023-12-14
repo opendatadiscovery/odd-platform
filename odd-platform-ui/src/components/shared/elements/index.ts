@@ -69,7 +69,7 @@ export { default as Input } from './Input/Input';
 export { default as InfoItem } from './InfoItem/InfoItem';
 export { default as CollapsibleInfoContainer } from './CollapsibleInfoContainer/CollapsibleInfoContainer';
 export { default as TestRunStatusReasonModal } from './TestRunStatusReasonModal/TestRunStatusReasonModal';
-export { default as AssignTermForm } from './forms/AssignTermForm/AssignTermForm';
+export { default as AssignTermForm } from './forms/AssignTermForm';
 export { default as ListLayout } from './ListLayout/ListLayout';
 export { default as ScrollableContainer } from './StyledComponents/ScrollableContainer';
 export * as Table from './StyledComponents/Table';
