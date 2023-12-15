@@ -3592,7 +3592,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/LookupTableField'
       tags:
         - referenceData
-    put:
+    patch:
       summary: Update custom table field
       description: Update existing custom table field
       operationId: updateLookupTableField

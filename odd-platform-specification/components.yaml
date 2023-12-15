@@ -3751,8 +3751,10 @@ components:
           type: string
         is_nullable:
           type: boolean
+          default: false
         is_unique:
           type: boolean
+          default: false
         default_value:
           type: string
       required:
