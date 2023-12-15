@@ -19,10 +19,7 @@ import {
 } from 'redux/selectors';
 import { AlertStatus, Permission, PermissionResourceType } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import {
-  WithPermissionsProvider,
-  DataEntityTypeContext,
-} from 'components/shared/contexts';
+import { WithPermissionsProvider } from 'components/shared/contexts';
 import { useDataEntityRouteParams } from 'routes';
 import DataEntityDetailsHeader from './DataEntityDetailsHeader/DataEntityDetailsHeader';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
@@ -79,50 +76,48 @@ const DataEntityDetails: React.FC = () => {
   }, [dataEntityId]);
 
   return (
-    <DataEntityTypeContext.Provider value={details.type}>
-      <S.Container>
-        {details.id && !isDataEntityDetailsFetching ? (
-          <>
-            <WithPermissionsProvider
-              allowedPermissions={[
-                Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE,
-                Permission.DATA_ENTITY_GROUP_UPDATE,
-                Permission.DATA_ENTITY_STATUS_UPDATE,
-              ]}
-              resourcePermissions={resourcePermissions}
-              render={() => (
-                <DataEntityDetailsHeader
-                  dataEntityId={dataEntityId}
-                  internalName={details.internalName}
-                  externalName={details.externalName}
-                  entityClasses={details.entityClasses}
-                  type={details.type}
-                  manuallyCreated={details.manuallyCreated}
-                  lastIngestedAt={details.lastIngestedAt}
-                  isStale={details.isStale}
-                  status={details.status}
-                />
-              )}
-            />
-            <Grid sx={{ mt: 2 }}>
-              <DataEntityDetailsTabs />
-            </Grid>
-          </>
-        ) : null}
-        {isDataEntityDetailsFetching ? (
-          <SkeletonWrapper
-            renderContent={({ randWidth }) => (
-              <DataEntityDetailsSkeleton width={randWidth()} />
+    <S.Container>
+      {details.id && !isDataEntityDetailsFetching ? (
+        <>
+          <WithPermissionsProvider
+            allowedPermissions={[
+              Permission.DATA_ENTITY_INTERNAL_NAME_UPDATE,
+              Permission.DATA_ENTITY_GROUP_UPDATE,
+              Permission.DATA_ENTITY_STATUS_UPDATE,
+            ]}
+            resourcePermissions={resourcePermissions}
+            render={() => (
+              <DataEntityDetailsHeader
+                dataEntityId={dataEntityId}
+                internalName={details.internalName}
+                externalName={details.externalName}
+                entityClasses={details.entityClasses}
+                type={details.type}
+                manuallyCreated={details.manuallyCreated}
+                lastIngestedAt={details.lastIngestedAt}
+                isStale={details.isStale}
+                status={details.status}
+              />
             )}
           />
-        ) : null}
-        <DataEntityDetailsRoutes />
-        <AppErrorPage
-          showError={isDataEntityDetailsNotFetched}
-          error={dataEntityDetailsFetchingError}
+          <Grid sx={{ mt: 2 }}>
+            <DataEntityDetailsTabs />
+          </Grid>
+        </>
+      ) : null}
+      {isDataEntityDetailsFetching ? (
+        <SkeletonWrapper
+          renderContent={({ randWidth }) => (
+            <DataEntityDetailsSkeleton width={randWidth()} />
+          )}
         />
-      </S.Container>
-    </DataEntityTypeContext.Provider>
+      ) : null}
+      <DataEntityDetailsRoutes />
+      <AppErrorPage
+        showError={isDataEntityDetailsNotFetched}
+        error={dataEntityDetailsFetchingError}
+      />
+    </S.Container>
   );
 };
 

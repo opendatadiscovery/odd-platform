@@ -16,6 +16,8 @@ import {
   Input,
   Markdown,
 } from 'components/shared/elements';
+import { ErrorMessage } from '@hookform/error-message';
+import parse from 'html-react-parser';
 
 interface ColumnFormProps {
   btnEl: React.JSX.Element;
@@ -73,10 +75,29 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
         name='name'
         control={control}
         defaultValue={defaultValues.name}
-        rules={{ required: true, validate: value => !!value.trim() }}
+        rules={{
+          required: true,
+          validate: value => !!value.trim(),
+          pattern: {
+            value: /^[a-zA-Z_][a-zA-Z0-9_]{0,62}$/, // postgresql table name pattern
+            message: `Name must apply the postgresql column name conventions: /^[a-zA-Z_][a-zA-Z0-9_]{0,62}$ <br />
+                1. Starts with a letter or an underscore.<br />
+                2. Can be followed by letters, numbers, or underscores.<br />
+                3. Has a maximum length of 63 characters.<br />`,
+          },
+        }}
         render={({ field }) => (
           <Grid container flexDirection='column' mt={1.25}>
             <Input {...field} variant='main-m' label={t('Table name')} />
+            <ErrorMessage
+              errors={formState.errors}
+              name='name'
+              render={({ message }) => (
+                <Typography mt={0.5} variant='body2' color='warning.main'>
+                  {parse(message || '')}
+                </Typography>
+              )}
+            />
           </Grid>
         )}
       />
