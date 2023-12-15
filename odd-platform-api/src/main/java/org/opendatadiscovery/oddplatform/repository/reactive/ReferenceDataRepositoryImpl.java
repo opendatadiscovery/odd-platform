@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.AlterTableAlterStep;
-import org.jooq.AlterTableFinalStep;
 import org.jooq.ConstraintEnforcementStep;
 import org.jooq.CreateSequenceFlagsStep;
 import org.jooq.CreateTableElementListStep;
@@ -366,25 +365,12 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
             getConstraintsByTableAndTemplateName(tableName,
                 buildSequenceNameTemplate(tableName, column.getColumnName()));
 
-        String s = buildSequenceNameTemplate(tableName, column.getColumnName());
-
-        System.out.println("ALLO " + s);
         return mapConstraintOrSequenceRecordsToNames(constraintsRecords)
-            .map(item -> {
-                System.out.println("SIZe " + item.size());
-                return item;
-            })
             .map(constraintsList -> constraintsList
                 .stream()
-                .map(constraint -> {
-                        System.out.println("SHTOBL " + constraint);
-                        AlterTableFinalStep alterTableFinalStep = DSL.alterTable(tableName)
-                            .renameConstraint(constraint)
-                            .to(constraint.replace(column.getColumnName().toLowerCase(), newColumnName.toLowerCase()));
-
-                        System.out.println("LLL " + alterTableFinalStep.getSQL());
-                        return jooqReactiveOperationsCustomTables.mono(alterTableFinalStep);
-                    }
+                .map(constraint -> jooqReactiveOperationsCustomTables.mono(DSL.alterTable(tableName)
+                    .renameConstraint(constraint)
+                    .to(constraint.replace(column.getColumnName().toLowerCase(), newColumnName.toLowerCase())))
                 )
                 .collect(Collectors.toList())
             );
@@ -395,8 +381,6 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         final SelectConditionStep<Record1<String>> constraints =
             getConstraintsByTableAndTemplateName(tableName,
                 buildSequenceNameTemplate(tableName, column.getColumnName()));
-
-        System.out.println("WUTA  " + buildSequenceNameTemplate(tableName, column.getColumnName()));
 
         return dropColumnConstraints(constraints, tableName);
     }
@@ -461,9 +445,9 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         return (StringUtils.isBlank(existedDefault) && StringUtils.isNotBlank(newDefault))
             || (StringUtils.isNotBlank(existedDefault) && StringUtils.isBlank(newDefault))
             || (StringUtils.isNotBlank(existedDefault)
-            && StringUtils.isNotBlank(newDefault)
-            && !existedDefault.equals(newDefault)
-        );
+                && StringUtils.isNotBlank(newDefault)
+                && !existedDefault.equals(newDefault)
+            );
     }
 
     protected Mono<Long> fetchCount(final String tableName) {
