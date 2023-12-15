@@ -37,7 +37,6 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
   const defaultValues = useMemo<LookupTableFieldFormData>(
     () => ({
       name: '',
-      description: '',
       fieldType: LookupTableFieldType.VARCHAR,
     }),
     []
