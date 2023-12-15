@@ -5,6 +5,7 @@ import type {
   ReferenceDataApiCreateColumnsForLookupTableRequest,
   ReferenceDataApiDeleteLookupTableFieldRequest,
   ReferenceDataApiGetLookupTableFieldRequest,
+  ReferenceDataApiUpdateLookupTableFieldRequest,
 } from 'generated-sources';
 
 export function useCreateLookupTableDefinition() {
@@ -16,12 +17,24 @@ export function useCreateLookupTableDefinition() {
   });
 }
 
-export function useGetLookupTableDefinition(
-  params: ReferenceDataApiGetLookupTableFieldRequest
-) {
+export function useGetLookupTableDefinition({
+  lookupTableId,
+  columnId,
+  enabled,
+}: ReferenceDataApiGetLookupTableFieldRequest & { enabled?: boolean }) {
   return useQuery({
-    queryKey: ['getLookupTableDefinition'],
-    queryFn: () => referenceDataApi.getLookupTableField(params),
+    queryKey: ['getLookupTableDefinition', lookupTableId, columnId],
+    queryFn: () => referenceDataApi.getLookupTableField({ lookupTableId, columnId }),
+    enabled,
+  });
+}
+
+export function useUpdateLookupTableDefinition() {
+  return useMutation({
+    mutationKey: ['updateLookupTableDefinition'],
+    mutationFn: async (params: ReferenceDataApiUpdateLookupTableFieldRequest) =>
+      referenceDataApi.updateLookupTableField(params),
+    onSuccess: () => showSuccessToast({ message: 'Column successfully updated!' }),
   });
 }
 

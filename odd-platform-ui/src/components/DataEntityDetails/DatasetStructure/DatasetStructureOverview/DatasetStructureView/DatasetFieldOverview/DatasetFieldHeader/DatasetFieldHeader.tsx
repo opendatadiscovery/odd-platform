@@ -13,11 +13,12 @@ import { AddIcon, EditIcon, KebabIcon } from 'components/shared/icons';
 import { WithPermissions } from 'components/shared/contexts';
 import { useTranslation } from 'react-i18next';
 import KeyFieldLabel from 'components/DataEntityDetails/DatasetStructure/shared/KeyFieldLabel/KeyFieldLabel';
-import { useDeleteLookupTableDefinition } from 'lib/hooks';
+import { useDeleteLookupTableDefinition, useGetLookupTableDefinition } from 'lib/hooks';
 import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityDetails } from 'redux/selectors';
+import ColumnForm from 'components/shared/elements/forms/ColumnForm';
 import DatasetFieldInternalNameForm from './DatasetFieldInternalNameForm/DatasetFieldInternalNameForm';
 
 type DatasetFieldHeaderProps = { field: DataSetField };
@@ -27,7 +28,14 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
   const { mutateAsync: deleteColumn } = useDeleteLookupTableDefinition();
   const { dataEntityId } = useDataEntityRouteParams();
   const { lookupTableId } = useAppSelector(getDataEntityDetails(dataEntityId));
+  const { lookupTableDefinitionId } = field;
+  const { data: lookupTableField } = useGetLookupTableDefinition({
+    lookupTableId: Number(lookupTableId),
+    columnId: Number(field.lookupTableDefinitionId),
+    enabled: !!lookupTableDefinitionId && !!lookupTableId,
+  });
   const navigate = useNavigate();
+
   const originalName = field.internalName && (
     <Grid container alignItems='center' width='auto'>
       <LabelItem labelName='Original' variant='body1' />
@@ -36,8 +44,6 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
       </Typography>
     </Grid>
   );
-
-  const { lookupTableDefinitionId } = field;
 
   const handleColumnDelete = useCallback(
     async (ltId: number, cId: number) => {
@@ -75,8 +81,19 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
             )}
           />
         </Grid>
-        <Grid item display='flex' alignItems='center'>
-          {!field.isPrimaryKey && !!lookupTableId && !!lookupTableDefinitionId && (
+        {!field.isPrimaryKey && !!lookupTableField && lookupTableId && (
+          <Grid item display='flex' alignItems='center'>
+            <ColumnForm
+              btnEl={
+                <Button
+                  text={t('Edit')}
+                  buttonType='secondary-m'
+                  startIcon={<EditIcon />}
+                />
+              }
+              lookupTableField={lookupTableField}
+              lookupTableId={lookupTableId}
+            />
             <AppPopover
               renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                 <Button
@@ -99,13 +116,13 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
                   </>
                 }
                 onConfirm={() =>
-                  handleColumnDelete(lookupTableId, lookupTableDefinitionId)
+                  handleColumnDelete(lookupTableId, lookupTableField.fieldId)
                 }
                 actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
               />
             </AppPopover>
-          )}
-        </Grid>
+          </Grid>
+        )}
       </Grid>
       {originalName}
     </Grid>

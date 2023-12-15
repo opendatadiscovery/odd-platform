@@ -3825,6 +3825,11 @@ components:
           type: boolean
         default_value:
           type: string
+      required:
+        - field_id
+        - dataset_field_id
+        - name
+        - field_type
 
     ReferenceDataSearchFormData:
       type: object

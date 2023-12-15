@@ -1,13 +1,20 @@
 import React, { cloneElement, useCallback, useEffect, useMemo } from 'react';
-import type { LookupTableFieldFormData } from 'generated-sources';
-import { LookupTableFieldType } from 'generated-sources';
+import {
+  LookupTableFieldType,
+  type LookupTable,
+  type LookupTableField,
+  type LookupTableFieldFormData,
+  type LookupTableFieldUpdateFormData,
+} from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCreateLookupTableDefinition } from 'lib/hooks';
+import {
+  useCreateLookupTableDefinition,
+  useUpdateLookupTableDefinition,
+} from 'lib/hooks';
 import { useNavigate } from 'react-router-dom';
 import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
-import isEmpty from 'lodash/isEmpty';
 import {
   AppMenuItem,
   AppSelect,
@@ -21,27 +28,38 @@ import parse from 'html-react-parser';
 
 interface ColumnFormProps {
   btnEl: React.JSX.Element;
-  lookupTableId: number;
+  lookupTableId: LookupTable['tableId'];
+  lookupTableField?: LookupTableField;
 }
 
-const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
+const ColumnForm = ({ btnEl, lookupTableId, lookupTableField }: ColumnFormProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { dataEntityId } = useDataEntityRouteParams();
   const {
     mutateAsync: addColumn,
-    isSuccess,
-    isPending,
+    isSuccess: isCreated,
+    isPending: isCreating,
   } = useCreateLookupTableDefinition();
 
-  const defaultValues = useMemo<LookupTableFieldFormData>(
-    () => ({
-      name: '',
-      fieldType: LookupTableFieldType.VARCHAR,
-    }),
-    []
-  );
+  const {
+    mutateAsync: editColumn,
+    isSuccess: isUpdated,
+    isPending: isUpdating,
+  } = useUpdateLookupTableDefinition();
 
+  type FormData = LookupTableFieldFormData | LookupTableFieldUpdateFormData;
+
+  const defaultValues = useMemo<FormData>(
+    () => ({
+      name: lookupTableField ? lookupTableField.name : '',
+      description: lookupTableField?.description,
+      fieldType: lookupTableField
+        ? lookupTableField.fieldType
+        : LookupTableFieldType.VARCHAR,
+    }),
+    [lookupTableField]
+  );
   const { handleSubmit, control, reset, formState } = useForm<LookupTableFieldFormData>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -49,22 +67,39 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
   });
 
   const onSubmit = useCallback(
-    async (data: LookupTableFieldFormData) => {
-      addColumn({ lookupTableId, lookupTableFieldFormData: [data] }).then(() => {
-        reset();
-        navigate(dataEntityDetailsPath(dataEntityId, 'structure'));
-      });
+    async (data: FormData) => {
+      if (lookupTableField) {
+        editColumn({
+          lookupTableId,
+          columnId: lookupTableField.fieldId,
+          lookupTableFieldUpdateFormData: {
+            ...lookupTableField,
+            ...data,
+          } as LookupTableFieldUpdateFormData,
+        }).then(() => {
+          reset();
+          navigate(dataEntityDetailsPath(dataEntityId, 'structure'));
+        });
+      } else {
+        addColumn({
+          lookupTableId,
+          lookupTableFieldFormData: [data as LookupTableFieldFormData],
+        }).then(() => {
+          reset();
+          navigate(dataEntityDetailsPath(dataEntityId, 'structure'));
+        });
+      }
     },
-    [addColumn, lookupTableId, dataEntityId]
+    [addColumn, editColumn, lookupTableId, dataEntityId, lookupTableField]
   );
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues]);
+  }, [defaultValues, lookupTableField]);
 
   const title = (
     <Typography variant='h4' component='span'>
-      {t('Add column')}
+      {lookupTableField ? t('Edit column') : t('Add column')}
     </Typography>
   );
 
@@ -87,7 +122,7 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
         }}
         render={({ field }) => (
           <Grid container flexDirection='column' mt={1.25}>
-            <Input {...field} variant='main-m' label={t('Table name')} />
+            <Input {...field} variant='main-m' label={t('Column name')} />
             <ErrorMessage
               errors={formState.errors}
               name='name'
@@ -126,7 +161,8 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
       <Controller
         name='fieldType'
         control={control}
-        rules={{ required: true, validate: val => !isEmpty(val) }}
+        disabled={!!lookupTableField}
+        rules={{ required: !lookupTableField }}
         render={({ field }) => (
           <AppSelect
             {...field}
@@ -147,7 +183,7 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
 
   const actionButton = () => (
     <Button
-      text={t('Save')}
+      text={lookupTableField ? t('Save column') : t('Add column')}
       buttonType='main-lg'
       type='submit'
       form='lookup-table-definition-form'
@@ -163,8 +199,8 @@ const ColumnForm = ({ btnEl, lookupTableId }: ColumnFormProps) => {
       title={title}
       renderContent={formContent}
       renderActions={actionButton}
-      handleCloseSubmittedForm={isSuccess}
-      isLoading={isPending}
+      handleCloseSubmittedForm={isCreated || isUpdated}
+      isLoading={isCreating || isUpdating}
       clearState={reset}
       formSubmitHandler={handleSubmit(onSubmit)}
     />
