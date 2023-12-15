@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.ReferenceDataApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableField;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
@@ -77,6 +78,13 @@ public class ReferenceDataController implements ReferenceDataApi {
     }
 
     @Override
+    public Mono<ResponseEntity<LookupTableField>> getLookupTableField(final Long lookupTableId, final Long columnId,
+                                                                      final ServerWebExchange exchange) {
+        return referenceDataService.getLookupTableField(lookupTableId, columnId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<LookupTableRowList>> getLookupTableRowList(final Long lookupTableId,
                                                                           final Integer page,
                                                                           final Integer size,
@@ -136,6 +144,14 @@ public class ReferenceDataController implements ReferenceDataApi {
                                                              final Long columnId,
                                                              final ServerWebExchange exchange) {
         return referenceDataService.deleteLookupTableField(columnId)
+            .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLookupTableRow(final Long lookupTableId,
+                                                           final Long rowId,
+                                                           final ServerWebExchange exchange) {
+        return referenceDataService.deleteLookupTableRow(lookupTableId, rowId)
             .thenReturn(ResponseEntity.noContent().build());
     }
 }

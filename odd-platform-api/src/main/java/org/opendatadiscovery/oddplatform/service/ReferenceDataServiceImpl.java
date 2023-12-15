@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableField;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
@@ -16,7 +17,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableUpdateFor
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnTypes;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
+import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
@@ -31,6 +34,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     private final ReferenceDataRepository referenceDataRepository;
     private final ReactiveLookupTableRepository tableRepository;
     private final ReactiveNamespaceRepository namespaceRepository;
+    private final LookupTableDefinitionMapper tableDefinitionMapper;
 
     @Override
     public Mono<LookupTableRowList> getLookupTableRowList(final Long lookupTableId,
@@ -39,6 +43,21 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         return lookupDataService.getLookupTableById(lookupTableId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
             .flatMap(table -> referenceDataRepository.getLookupTableRowList(table, page, size));
+    }
+
+    @Override
+    public Mono<LookupTableField> getLookupTableField(final Long lookupTableId, final Long columnId) {
+        return lookupDataService.getLookupTableDefinitionById(columnId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTableDefinition", columnId)))
+            .map(field -> {
+                if (!field.tablesPojo().getId().equals(lookupTableId)) {
+                    throw new BadUserRequestException("%s doesn't belong to %s",
+                        field.columnPojo().getColumnName(),
+                        field.tablesPojo().getName());
+                }
+
+                return tableDefinitionMapper.mapPojoToTablesField(field.columnPojo());
+            });
     }
 
     @Override
@@ -127,6 +146,13 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
                 .then(lookupDataService.deleteLookupTableField(field)));
     }
 
+    @Override
+    public Mono<Void> deleteLookupTableRow(final Long lookupTableId, final Long rowId) {
+        return lookupDataService.getLookupTableById(lookupTableId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
+            .flatMap(table -> referenceDataRepository.deleteLookupTableRow(table, rowId));
+    }
+
     private List<ReferenceTableColumnDto> retrieveColumns(final List<LookupTableFieldFormData> columns) {
         if (CollectionUtils.isEmpty(columns)) {
             return Collections.emptyList();
@@ -144,6 +170,6 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 
     private String buildTableName(final String name, final NamespacePojo namespacePojo) {
         final String fixedName = name.toLowerCase().replace(" ", "_");
-        return namespacePojo.getId() + "__" + fixedName;
+        return "N_" + namespacePojo.getId() + "__" + fixedName;
     }
 }

@@ -3576,6 +3576,22 @@ paths:
         - referenceData
 
   /api/referencedata/table/{lookup_table_id}/column/{column_id}:
+    get:
+      summary: Get custom table field
+      description: Get existing custom table field
+      operationId: getLookupTableField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableField'
+      tags:
+        - referenceData
     put:
       summary: Update custom table field
       description: Update existing custom table field
@@ -3752,6 +3768,7 @@ paths:
       description: Update existing custom table field
       operationId: updateLookupTableRow
       parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
         - $ref: './components.yaml/#/components/parameters/LookupRowIdParam'
       requestBody:
         required: true
@@ -3773,6 +3790,7 @@ paths:
       description: Deletes custom table field
       operationId: deleteLookupTableRow
       parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
         - $ref: './components.yaml/#/components/parameters/LookupRowIdParam'
       responses:
         '204':

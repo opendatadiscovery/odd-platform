@@ -28,4 +28,6 @@ public interface ReferenceDataRepository {
     Mono<Void> deleteLookupTable(final LookupTableDto table);
 
     Mono<Void> deleteLookupTableField(final LookupTableColumnDto field);
+
+    Mono<Void> deleteLookupTableRow(final LookupTableDto table, final Long rowId);
 }

@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableField;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFormData;
@@ -12,6 +13,8 @@ import reactor.core.publisher.Mono;
 
 public interface ReferenceDataService {
     Mono<LookupTableRowList> getLookupTableRowList(final Long lookupTableId, final Integer page, final Integer size);
+
+    Mono<LookupTableField> getLookupTableField(Long lookupTableId, Long columnId);
 
     Mono<LookupTable> createLookupTable(final LookupTableFormData formData);
 
@@ -28,4 +31,6 @@ public interface ReferenceDataService {
     Mono<Void> deleteLookupTable(final Long lookupTableId);
 
     Mono<Void> deleteLookupTableField(final Long columnId);
+
+    Mono<Void> deleteLookupTableRow(final Long lookupTableId, final Long rowId);
 }

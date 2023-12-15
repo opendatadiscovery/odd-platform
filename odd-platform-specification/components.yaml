@@ -1646,6 +1646,9 @@ components:
         parent_field_id:
           type: integer
           format: int64
+        lookup_table_definition_id:
+          type: integer
+          format: int64
         reference_field_id:
           type: integer
           format: int64

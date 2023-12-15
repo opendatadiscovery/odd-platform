@@ -284,6 +284,15 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
             .then(Mono.empty());
     }
 
+    @Override
+    @ReactiveCustomTransactional
+    public Mono<Void> deleteLookupTableRow(final LookupTableDto table, final Long rowId) {
+        return jooqReactiveOperationsCustomTables.mono(
+                DSL.deleteFrom(DSL.table(DSL.name(table.tablesPojo().getTableName().toLowerCase())))
+                    .where(DSL.field(ID_COLUMN).eq(rowId)))
+            .then(Mono.empty());
+    }
+
     private DDLQuery getRenameQuery(final ReferenceTableColumnDto inputColumnInfo,
                                     final LookupTablesDefinitionsPojo column,
                                     final String tableName) {
