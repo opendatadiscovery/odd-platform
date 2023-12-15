@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 import { AddIcon } from 'components/shared/icons';
 import { Button } from 'components/shared/elements';
 import { useTranslation } from 'react-i18next';
-import ColumnForm from 'components/shared/elements/forms/CreateColumnForm';
+import ColumnForm from 'components/shared/elements/forms/ColumnForm';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';

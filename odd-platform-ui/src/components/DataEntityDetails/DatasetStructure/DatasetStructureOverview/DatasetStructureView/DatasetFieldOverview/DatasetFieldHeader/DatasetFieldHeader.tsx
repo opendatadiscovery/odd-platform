@@ -16,6 +16,8 @@ import KeyFieldLabel from 'components/DataEntityDetails/DatasetStructure/shared/
 import { useDeleteLookupTableDefinition } from 'lib/hooks';
 import { dataEntityDetailsPath, useDataEntityRouteParams } from 'routes';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getDataEntityDetails } from 'redux/selectors';
 import DatasetFieldInternalNameForm from './DatasetFieldInternalNameForm/DatasetFieldInternalNameForm';
 
 type DatasetFieldHeaderProps = { field: DataSetField };
@@ -24,6 +26,7 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
   const { t } = useTranslation();
   const { mutateAsync: deleteColumn } = useDeleteLookupTableDefinition();
   const { dataEntityId } = useDataEntityRouteParams();
+  const { lookupTableId } = useAppSelector(getDataEntityDetails(dataEntityId));
   const navigate = useNavigate();
   const originalName = field.internalName && (
     <Grid container alignItems='center' width='auto'>
@@ -34,12 +37,14 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
     </Grid>
   );
 
+  const { lookupTableDefinitionId } = field;
+
   const handleColumnDelete = useCallback(
-    async (id: number) => {
-      await deleteColumn({ lookupTableId: 1, columnId: id });
+    async (ltId: number, cId: number) => {
+      await deleteColumn({ lookupTableId: ltId, columnId: cId });
       navigate(dataEntityDetailsPath(dataEntityId, 'structure'));
     },
-    [field.id]
+    [deleteColumn, dataEntityId]
   );
 
   return (
@@ -71,7 +76,7 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
           />
         </Grid>
         <Grid item display='flex' alignItems='center'>
-          {!field.isPrimaryKey && (
+          {!field.isPrimaryKey && !!lookupTableId && !!lookupTableDefinitionId && (
             <AppPopover
               renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                 <Button
@@ -93,7 +98,9 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
                     &quot;{field.name}&quot; {t('will be deleted permanently')}
                   </>
                 }
-                onConfirm={() => handleColumnDelete(field.id)}
+                onConfirm={() =>
+                  handleColumnDelete(lookupTableId, lookupTableDefinitionId)
+                }
                 actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
               />
             </AppPopover>
