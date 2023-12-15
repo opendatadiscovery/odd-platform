@@ -288,6 +288,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .tags(tagMapper.mapToTagList(dto.getTags()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
             .terms(linkedTerms)
+            .lookupTableId(dto.getLookupTablesPojo() != null ? dto.getLookupTablesPojo().getId() : null)
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {

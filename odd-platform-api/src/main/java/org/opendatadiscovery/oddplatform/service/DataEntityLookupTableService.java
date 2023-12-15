@@ -24,4 +24,8 @@ public interface DataEntityLookupTableService {
                                                     final Long datasetFieldId);
 
     Mono<DataEntityPojo> updateLookupDataEntity(LookupTableDto table, ReferenceTableDto dto);
+
+    Mono<Void> deleteByDataEntityId(final Long dataEntityId);
+
+    Mono<Void> deleteByDatasetFieldById(final Long dataEntityId, final Long datasetFieldId);
 }

@@ -44,4 +44,6 @@ public interface ReactiveSearchEntrypointRepository {
     Mono<Integer> updateMetadataVectors(final long dataEntityId);
 
     Mono<Integer> updateMetadataVectors(final List<Long> dataEntityIds);
+
+    Mono<Void> deleteByDataEntityId(final Long dataEntityId);
 }

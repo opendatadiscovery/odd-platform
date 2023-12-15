@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
 import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_DEFINITIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_SEARCH_ENTRYPOINT;
 
 @Repository
 public class ReactiveLookupTableDefinitionRepositoryImpl
@@ -25,6 +26,7 @@ public class ReactiveLookupTableDefinitionRepositoryImpl
         super(jooqReactiveOperations, jooqQueryHelper, LOOKUP_TABLES_DEFINITIONS, LookupTablesDefinitionsPojo.class);
     }
 
+    @Override
     public Mono<LookupTableColumnDto> getLookupColumnWithTable(final Long columnId) {
         final SelectHavingStep<Record> query = DSL.select(LOOKUP_TABLES_DEFINITIONS.asterisk())
             .select(LOOKUP_TABLES.asterisk())
@@ -37,5 +39,19 @@ public class ReactiveLookupTableDefinitionRepositoryImpl
             .map(r -> new LookupTableColumnDto(
                 r.into(LOOKUP_TABLES).into(LookupTablesPojo.class),
                 r.into(LOOKUP_TABLES_DEFINITIONS).into(LookupTablesDefinitionsPojo.class)));
+    }
+
+    @Override
+    public Mono<Void> deleteByTableId(final Long tableId) {
+        return jooqReactiveOperations.mono(DSL.deleteFrom(LOOKUP_TABLES_DEFINITIONS)
+                .where(LOOKUP_TABLES_DEFINITIONS.LOOKUP_TABLE_ID.eq(tableId)))
+            .then(Mono.empty());
+    }
+
+    @Override
+    public Mono<Void> deleteFieldById(final Long columnId) {
+        return jooqReactiveOperations.mono(DSL.deleteFrom(LOOKUP_TABLES_DEFINITIONS)
+                .where(LOOKUP_TABLES_DEFINITIONS.ID.eq(columnId)))
+            .then(Mono.empty());
     }
 }

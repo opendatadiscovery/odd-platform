@@ -26,4 +26,8 @@ public interface LookupDataService {
 
     Mono<LookupTable> updateLookupTableColumn(final LookupTableColumnDto columnDto,
                                               final LookupTableFieldUpdateFormData formData);
+
+    Mono<Void> deleteLookupTable(final LookupTableDto table);
+
+    Mono<Void> deleteLookupTableField(final LookupTableColumnDto field);
 }

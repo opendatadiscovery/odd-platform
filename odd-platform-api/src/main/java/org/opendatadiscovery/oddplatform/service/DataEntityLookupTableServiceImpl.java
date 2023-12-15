@@ -2,9 +2,11 @@ package org.opendatadiscovery.oddplatform.service;
 
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
@@ -149,8 +152,8 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
 
         return reactiveDatasetVersionRepository.getLatestDatasetVersion(dataEntityId)
             .flatMap(version -> {
-                final String oddrn = version.getDatasetVersion().getDatasetOddrn()
-                    + "/field/" + definitionPojo.getColumnName();
+                    final String oddrn = version.getDatasetVersion().getDatasetOddrn()
+                        + "/field/" + definitionPojo.getColumnName();
 
                     final List<DatasetFieldPojo> collect = version.getDatasetFields().stream()
                         .map(DatasetFieldDto::getDatasetFieldPojo)
@@ -175,6 +178,50 @@ public class DataEntityLookupTableServiceImpl implements DataEntityLookupTableSe
             .map(fd -> dataEntityMapper.applyToPojo(fd, dto))
             .flatMap(reactiveDataEntityRepository::update)
             .flatMap(this::updateSearchVectors);
+    }
+
+    @Override
+    public Mono<Void> deleteByDataEntityId(final Long dataEntityId) {
+        return reactiveDataEntityRepository.get(dataEntityId)
+            .flatMap(dataEntityPojo ->
+                reactiveDatasetVersionRepository.getVersions(dataEntityPojo.getOddrn())
+                    .flatMap(versions -> {
+                        final Set<Long> versionsId = versions.stream()
+                            .map(DatasetVersionPojo::getId)
+                            .collect(Collectors.toSet());
+                        return reactiveDatasetVersionRepository.getDatasetVersionFields(versionsId)
+                            .flatMap(versionsWithFields -> {
+                                final Set<Long> fieldsIds = versionsWithFields.values().stream()
+                                    .flatMap(Collection::stream)
+                                    .map(DatasetFieldPojo::getId)
+                                    .collect(Collectors.toSet());
+                                return datasetStructureService.deleteStructureByVersionIds(versionsWithFields.keySet())
+                                    .then(reactiveDatasetFieldRepository.delete(fieldsIds).collectList())
+                                    .then(reactiveDatasetVersionRepository.delete(versionsId).collectList());
+                            })
+                            .then(reactiveSearchEntrypointRepository.deleteByDataEntityId(dataEntityPojo.getId()));
+                    })
+            )
+            .then(reactiveDataEntityRepository.delete(dataEntityId))
+            .then(Mono.empty());
+    }
+
+    @Override
+    public Mono<Void> deleteByDatasetFieldById(final Long dataEntityId, final Long datasetFieldId) {
+        return reactiveDatasetVersionRepository.getLatestDatasetVersion(dataEntityId)
+            .flatMap(version -> {
+                    final List<DatasetFieldPojo> collect = version.getDatasetFields().stream()
+                        .map(DatasetFieldDto::getDatasetFieldPojo)
+                        .filter(item -> !item.getId().equals(datasetFieldId))
+                        .collect(Collectors.toList());
+
+                    return createVersionWithFields(version, collect);
+                }
+            )
+            .then(reactiveDataEntityRepository.get(dataEntityId))
+            .flatMap(item -> reactiveSearchEntrypointRepository
+                .updateStructureVectorForDataEntitiesByOddrns(List.of(item.getOddrn())))
+            .then(Mono.empty());
     }
 
     private Mono<List<DatasetFieldPojo>> createVersionWithFields(final DatasetStructureDto version,

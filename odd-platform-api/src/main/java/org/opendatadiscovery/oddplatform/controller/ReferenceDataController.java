@@ -115,11 +115,27 @@ public class ReferenceDataController implements ReferenceDataApi {
 
     @Override
     public Mono<ResponseEntity<LookupTable>>
-        updateLookupTableField(final Long columnId,
-                           final Mono<LookupTableFieldUpdateFormData> lookupTableFieldUpdateFormData,
-                           final ServerWebExchange exchange) {
+        updateLookupTableField(
+        final Long lookupTableId,
+        final Long columnId,
+        final Mono<LookupTableFieldUpdateFormData> lookupTableFieldUpdateFormData,
+        final ServerWebExchange exchange) {
         return lookupTableFieldUpdateFormData
             .flatMap(item -> referenceDataService.updateLookupTableField(columnId, item))
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLookupTable(final Long lookupTableId, final ServerWebExchange exchange) {
+        return referenceDataService.deleteLookupTable(lookupTableId)
+            .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLookupTableField(final Long lookupTableId,
+                                                             final Long columnId,
+                                                             final ServerWebExchange exchange) {
+        return referenceDataService.deleteLookupTableField(columnId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 }

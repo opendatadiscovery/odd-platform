@@ -16,10 +16,9 @@ import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableDefinitionRepositoryImpl;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableDefinitionRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -28,8 +27,7 @@ import reactor.core.publisher.Mono;
 public class LookupDataServiceImpl implements LookupDataService {
     private final DataEntityLookupTableService dataEntityLookupTableService;
     private final ReactiveLookupTableRepository tableRepository;
-    private final ReactiveNamespaceRepository namespaceRepository;
-    private final ReactiveLookupTableDefinitionRepositoryImpl tableDefinitionRepository;
+    private final ReactiveLookupTableDefinitionRepository tableDefinitionRepository;
     private final ReactiveLookupTableSearchEntrypointRepository lookupTableSearchEntrypointRepository;
     private final LookupTableMapper tableMapper;
     private final LookupTableDefinitionMapper tableDefinitionMapper;
@@ -109,6 +107,23 @@ public class LookupDataServiceImpl implements LookupDataService {
             .then(tableRepository.getTableWithFieldsById(columnDto.tablesPojo().getId()))
             .map(tableMapper::mapToLookupTable)
             .flatMap(this::updateTableDefinitionSearchVectors);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<Void> deleteLookupTable(final LookupTableDto table) {
+        return lookupTableSearchEntrypointRepository.deleteByTableId(table.tablesPojo().getId())
+            .then(tableDefinitionRepository.deleteByTableId(table.tablesPojo().getId()))
+            .then(tableRepository.delete(table.tablesPojo().getId()))
+            .then(dataEntityLookupTableService.deleteByDataEntityId(table.tablesPojo().getDataEntityId()));
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<Void> deleteLookupTableField(final LookupTableColumnDto field) {
+        return tableDefinitionRepository.deleteFieldById(field.columnPojo().getId())
+            .then(dataEntityLookupTableService.deleteByDatasetFieldById(field.tablesPojo().getDataEntityId(),
+                field.columnPojo().getDatasetFieldId()));
     }
 
     private Mono<LookupTable> updateSearchVectors(final LookupTable lookupTable) {

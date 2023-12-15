@@ -3581,6 +3581,7 @@ paths:
       description: Update existing custom table field
       operationId: updateLookupTableField
       parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
         - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
       requestBody:
         required: true
@@ -3603,6 +3604,7 @@ paths:
       operationId: deleteLookupTableField
       parameters:
         - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'

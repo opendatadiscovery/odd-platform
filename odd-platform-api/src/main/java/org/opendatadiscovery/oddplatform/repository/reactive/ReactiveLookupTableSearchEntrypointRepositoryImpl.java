@@ -107,4 +107,12 @@ public class ReactiveLookupTableSearchEntrypointRepositoryImpl
 
         return jooqReactiveOperations.mono(insertQuery);
     }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<Void> deleteByTableId(final Long tableId) {
+        return jooqReactiveOperations.mono(DSL.deleteFrom(LOOKUP_TABLES_SEARCH_ENTRYPOINT)
+            .where(LOOKUP_TABLES_SEARCH_ENTRYPOINT.LOOKUP_TABLE_ID.eq(tableId)))
+            .then(Mono.empty());
+    }
 }

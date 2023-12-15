@@ -82,6 +82,11 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
             });
     }
 
+    @Override
+    public Mono<Void> deleteStructureByVersionIds(final Set<Long> longs) {
+        return reactiveDatasetStructureRepository.deleteStructureByVersionIds(longs);
+    }
+
     private Mono<Map<String, DatasetStructureDelta>> getLastStructureDelta(
         final List<DatasetVersionPojo> latestVersions,
         final List<DatasetVersionPojo> penultimateList) {

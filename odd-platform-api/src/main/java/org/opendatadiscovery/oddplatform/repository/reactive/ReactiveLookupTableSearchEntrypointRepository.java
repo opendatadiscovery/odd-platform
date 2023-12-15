@@ -8,4 +8,6 @@ public interface ReactiveLookupTableSearchEntrypointRepository {
     Mono<Integer> updateNamespaceSearchVectors(final Long tableId);
 
     Mono<Integer> updateTableDefinitionSearchVectors(final Long tableId);
+
+    Mono<Void> deleteByTableId(final Long tableId);
 }

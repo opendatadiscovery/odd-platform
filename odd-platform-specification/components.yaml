@@ -536,6 +536,9 @@ components:
           $ref: '#/components/schemas/OwnershipList'
         data_source:
           $ref: '#/components/schemas/DataSourceSafe'
+        lookup_table_id:
+          type: integer
+          format: int64
         entity_classes:
           type: array
           items:

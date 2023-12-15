@@ -24,4 +24,8 @@ public interface ReferenceDataRepository {
 
     Mono<Void> updateLookupTableColumn(final LookupTableColumnDto columnDto,
                                        final ReferenceTableColumnDto inputColumnInfo);
+
+    Mono<Void> deleteLookupTable(final LookupTableDto table);
+
+    Mono<Void> deleteLookupTableField(final LookupTableColumnDto field);
 }

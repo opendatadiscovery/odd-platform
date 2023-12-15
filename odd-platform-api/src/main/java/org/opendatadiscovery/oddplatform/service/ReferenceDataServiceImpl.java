@@ -111,6 +111,22 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
             });
     }
 
+    @Override
+    public Mono<Void> deleteLookupTable(final Long lookupTableId) {
+        return lookupDataService.getLookupTableById(lookupTableId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
+            .flatMap(table -> referenceDataRepository.deleteLookupTable(table)
+                .then(lookupDataService.deleteLookupTable(table)));
+    }
+
+    @Override
+    public Mono<Void> deleteLookupTableField(final Long columnId) {
+        return lookupDataService.getLookupTableDefinitionById(columnId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTableDefinition", columnId)))
+            .flatMap(field -> referenceDataRepository.deleteLookupTableField(field)
+                .then(lookupDataService.deleteLookupTableField(field)));
+    }
+
     private List<ReferenceTableColumnDto> retrieveColumns(final List<LookupTableFieldFormData> columns) {
         if (CollectionUtils.isEmpty(columns)) {
             return Collections.emptyList();
