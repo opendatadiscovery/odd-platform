@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS lookup_tables_definitions
     dataset_field_id       bigint                   NOT NULL,
     column_name            text                     NOT NULL,
     description            text,
-    is_primary_key         boolean,
-    is_nullable            boolean,
-    is_unique              boolean,
+    is_primary_key         boolean                  NOT NULL DEFAULT FALSE,
+    is_nullable            boolean                  NOT NULL DEFAULT FALSE,
+    is_unique              boolean                  NOT NULL DEFAULT FALSE,
     column_type            text                     NOT NULL,
     default_value          text,
 

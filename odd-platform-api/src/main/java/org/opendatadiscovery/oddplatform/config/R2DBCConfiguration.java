@@ -61,8 +61,6 @@ public class R2DBCConfiguration {
             .option(ConnectionFactoryOptions.PASSWORD, password)
             .build());
 
-        System.out.println("TUTA " + url);
-
         final R2dbcProperties.Pool pool = properties.getPool();
         final PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
         final ConnectionPoolConfiguration.Builder builder = ConnectionPoolConfiguration.builder(factory);

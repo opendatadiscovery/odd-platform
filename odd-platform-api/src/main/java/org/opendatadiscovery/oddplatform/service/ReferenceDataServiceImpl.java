@@ -131,6 +131,14 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     }
 
     @Override
+    public Mono<LookupTableRowList> updateLookupTableRow(final Long lookupTableId, final Long rowId,
+                                                         final LookupTableRowFormData item) {
+        return lookupDataService.getLookupTableById(lookupTableId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
+            .flatMap(table -> referenceDataRepository.updateLookupTableRow(table, item, rowId));
+    }
+
+    @Override
     public Mono<Void> deleteLookupTable(final Long lookupTableId) {
         return lookupDataService.getLookupTableById(lookupTableId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
@@ -170,6 +178,6 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
 
     private String buildTableName(final String name, final NamespacePojo namespacePojo) {
         final String fixedName = name.toLowerCase().replace(" ", "_");
-        return "N_" + namespacePojo.getId() + "__" + fixedName;
+        return "n_" + namespacePojo.getId() + "__" + fixedName;
     }
 }

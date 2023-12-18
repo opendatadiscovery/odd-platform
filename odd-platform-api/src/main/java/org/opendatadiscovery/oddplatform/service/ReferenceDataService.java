@@ -28,6 +28,9 @@ public interface ReferenceDataService {
 
     Mono<LookupTable> updateLookupTableField(final Long columnId, final LookupTableFieldUpdateFormData formData);
 
+    Mono<LookupTableRowList> updateLookupTableRow(final Long lookupTableId, final Long rowId,
+                                                  final LookupTableRowFormData item);
+
     Mono<Void> deleteLookupTable(final Long lookupTableId);
 
     Mono<Void> deleteLookupTableField(final Long columnId);

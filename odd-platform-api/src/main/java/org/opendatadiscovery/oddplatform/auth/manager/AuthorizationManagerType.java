@@ -6,6 +6,9 @@ public enum AuthorizationManagerType {
     DATASET_FIELD,
     TERM,
     QUERY_EXAMPLE,
+    LOOKUP_TABLE,
+    LOOKUP_TABLE_DEFINITION,
+    LOOKUP_TABLE_DATA,
     ALERT,
     DEG
 }

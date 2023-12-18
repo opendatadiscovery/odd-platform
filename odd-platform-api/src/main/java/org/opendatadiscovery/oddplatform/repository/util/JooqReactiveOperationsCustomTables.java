@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.collections4.ListUtils;
@@ -29,11 +28,6 @@ public class JooqReactiveOperationsCustomTables {
 
     public JooqReactiveOperationsCustomTables(@Qualifier("customDataClient") final DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
-    }
-
-    @PostConstruct
-    public void init() {
-        System.out.println(databaseClient.getConnectionFactory().getMetadata().getName());
     }
 
     public Mono<Integer> mono(final RowCountQuery query) {

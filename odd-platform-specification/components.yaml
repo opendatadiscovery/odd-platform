@@ -189,6 +189,15 @@ components:
         - QUERY_EXAMPLE_DELETE
         - QUERY_EXAMPLE_DATASET_CREATE
         - QUERY_EXAMPLE_DATASET_DELETE
+        - LOOKUP_TABLE_CREATE
+        - LOOKUP_TABLE_UPDATE
+        - LOOKUP_TABLE_DELETE
+        - LOOKUP_TABLE_DEFINITION_CREATE
+        - LOOKUP_TABLE_DEFINITION_UPDATE
+        - LOOKUP_TABLE_DEFINITION_DELETE
+        - LOOKUP_TABLE_DATA_CREATE
+        - LOOKUP_TABLE_DATA_UPDATE
+        - LOOKUP_TABLE_DATA_DELETE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -3734,8 +3743,10 @@ components:
           $ref: '#/components/schemas/LookupTableFieldType'
         is_nullable:
           type: boolean
+          default: false
         is_unique:
           type: boolean
+          default: false
         default_value:
           type: string
       required:

@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,7 +26,6 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveCustomTransactional;
-import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowColumnFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableRowList;
 import org.opendatadiscovery.oddplatform.dto.LookupTableColumnDto;
@@ -39,6 +40,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperationsCustomTables;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
@@ -87,13 +89,14 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
                     .getDataTypeWithDefaultValue(column.getDefaultValue(), column.getName());
             } else {
                 dataType = column.getDataType().getDataType();
+            }
 
-                if (!column.isNullable()) {
-                    dataType = dataType.notNull();
-                }
+            if (!column.isNullable()) {
+                dataType = dataType.notNull();
             }
 
             fields.add(field(column.getName(), dataType));
+
             if (column.isUnique()) {
                 constraints.add(DSL.constraint().unique(field(column.getName())));
             }
@@ -110,6 +113,7 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
     }
 
     @Override
+    @ReactiveCustomTransactional
     public Mono<LookupTableRowList> addDataToLookupTable(final LookupTableDto table,
                                                          final List<LookupTableRowFormData> items) {
         final Table<Record> tableRecord = table(name(table.tablesPojo().getTableName()));
@@ -128,30 +132,13 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
 
         for (final LookupTableRowFormData inputRow : items) {
             final Object[] rowToInsert = new Object[fields.length];
-            boolean isAdded = false;
+
             for (int i = 0; i < columnNames.size(); i++) {
-                final Pair<Field<Object>, LookupTablesDefinitionsPojo> field = columnNames.get(i);
-
                 final LookupTableColumnTypes type = LookupTableColumnTypes
-                    .resolveByTypeString(field.getValue().getColumnType());
-                for (final LookupTableRowColumnFormData item : inputRow.getItems()) {
-                    if (!field.getRight().getId().equals(item.getFieldId())) {
-                        continue;
-                    }
+                    .resolveByTypeString(columnNames.get(i).getValue().getColumnType());
 
-                    rowToInsert[i] =
-                        DSL.val(type.getValidator().getValue(item.getValue(), field.getValue().getColumnName()),
-                            type.getDataType());
-
-                    isAdded = true;
-                    break;
-                }
-
-                if (!isAdded) {
-                    rowToInsert[i] = DSL.val(null, type.getDataType());
-                }
-
-                isAdded = false;
+                rowToInsert[i] = DSL.val(getColumnInputData(inputRow, columnNames.get(i).getValue(), type),
+                    type.getDataType());
             }
 
             insertStep.values(rowToInsert);
@@ -198,7 +185,7 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
             getSequencesByNameTemplate(table.tablesPojo().getTableName().concat("_%"));
 
         final SelectConditionStep<Record1<String>> constraints =
-            getConstraintsByTableAndTemplateName(table.tablesPojo().getTableName(),
+            getConstraintsByTableAndTemplateName(dto.getTableName(),
                 table.tablesPojo().getTableName().concat("_%"));
 
         return jooqReactiveOperationsCustomTables.mono(
@@ -224,8 +211,8 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         final String tableName = columnDto.tablesPojo().getTableName();
         final DDLQuery renameQuery = getRenameQuery(inputColumnInfo, column, tableName);
         final DDLQuery updateQuery = getNullableAndDefaultValueUpdateQuery(inputColumnInfo, column, tableName, type);
-        final Mono<?> uniqueQuery = getUniqueConstraintUpdateQuery(inputColumnInfo, column, tableName);
-        Mono<?> renameSequenceAndConstraintsQuery = null;
+        final Mono<List<Integer>> uniqueQuery = getUniqueConstraintUpdateQuery(inputColumnInfo, column, tableName);
+        Mono<List<Integer>> renameSequenceAndConstraintsQuery = null;
 
         if (renameQuery != null) {
 //        In case uniqueQuery is not null, you should not rename constraints because
@@ -233,19 +220,42 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
 //        or we will remove the constraint.
             if (uniqueQuery == null) {
                 renameSequenceAndConstraintsQuery =
-                    renameConstraintUpdateQuery(inputColumnInfo.getName(), column, tableName);
-//                        .then(renameSequencesUpdateQuery(inputColumnInfo.getName(), column, tableName));
+                    renameConstraintUpdateQuery(inputColumnInfo.getName(), column, tableName)
+                        .then(renameSequencesUpdateQuery(inputColumnInfo.getName(), column, tableName));
             } else {
                 renameSequenceAndConstraintsQuery =
                     renameSequencesUpdateQuery(inputColumnInfo.getName(), column, tableName);
             }
         }
 
-        return (uniqueQuery != null ? uniqueQuery : Mono.empty())
-            .then(getOperation(renameQuery))
+        return getOperation(renameQuery)
             .then(getOperation(updateQuery))
-            .then(renameSequenceAndConstraintsQuery != null ? renameSequenceAndConstraintsQuery : null)
+            .then(uniqueQuery != null ? uniqueQuery : Mono.empty())
+            .then(renameSequenceAndConstraintsQuery != null ? renameSequenceAndConstraintsQuery : Mono.empty())
             .then(Mono.empty());
+    }
+
+    @Override
+    @ReactiveCustomTransactional
+    public Mono<LookupTableRowList> updateLookupTableRow(final LookupTableDto table, final LookupTableRowFormData item,
+                                                         final Long rowId) {
+        final Table<Record> tableRecord = table(name(table.tablesPojo().getTableName()));
+        final List<LookupTablesDefinitionsPojo> columnNames = table.definitionsPojos()
+            .stream()
+            .filter(column -> !column.getColumnName().equals(ID_COLUMN))
+            .toList();
+        final Map<String, Object> columnWithValues = new HashMap<>();
+
+        for (final LookupTablesDefinitionsPojo targetColumn : columnNames) {
+            columnWithValues.put(targetColumn.getColumnName().toLowerCase(),
+                getColumnInputData(item, targetColumn,
+                    LookupTableColumnTypes.resolveByTypeString(targetColumn.getColumnType())));
+        }
+
+        return jooqReactiveOperationsCustomTables.mono(
+                DSL.update(tableRecord).set(columnWithValues)
+                    .where(DSL.field(ID_COLUMN).eq(rowId)))
+            .then(getLookupTableRowList(table, 1, 50));
     }
 
     @Override
@@ -276,11 +286,10 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         return dropColumnConstraints(constraints, field.tablesPojo().getTableName())
             .then(jooqReactiveOperationsCustomTables.mono(DSL.alterTable(field.tablesPojo().getTableName())
                 .dropColumnIfExists(field.columnPojo().getColumnName().toLowerCase())))
-            .then(mapConstraintOrSequenceRecordsToNames(sequences))
-            .map(sequenceList -> sequenceList
-                .stream()
-                .map(sequence -> jooqReactiveOperationsCustomTables
-                    .mono(DSL.dropSequenceIfExists(sequence))))
+            .then(mapConstraintOrSequenceRecordsToNames(sequences)
+                .flatMap(sequence -> jooqReactiveOperationsCustomTables
+                    .mono(DSL.dropSequenceIfExists(sequence)))
+                .collectList())
             .then(Mono.empty());
     }
 
@@ -291,6 +300,16 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
                 DSL.deleteFrom(DSL.table(DSL.name(table.tablesPojo().getTableName().toLowerCase())))
                     .where(DSL.field(ID_COLUMN).eq(rowId)))
             .then(Mono.empty());
+    }
+
+    private Object getColumnInputData(final LookupTableRowFormData inputRow,
+                                      final LookupTablesDefinitionsPojo field,
+                                      final LookupTableColumnTypes type) {
+        return inputRow.getItems().stream()
+            .filter(item -> field.getId().equals(item.getFieldId()))
+            .findFirst()
+            .map(item -> type.getValidator().getValue(item.getValue(), field.getColumnName()))
+            .orElse(null);
     }
 
     private DDLQuery getRenameQuery(final ReferenceTableColumnDto inputColumnInfo,
@@ -332,21 +351,22 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         return null;
     }
 
-    private Mono<?> getUniqueConstraintUpdateQuery(final ReferenceTableColumnDto inputColumnInfo,
-                                                   final LookupTablesDefinitionsPojo column,
-                                                   final String tableName) {
+    private Mono<List<Integer>> getUniqueConstraintUpdateQuery(final ReferenceTableColumnDto inputColumnInfo,
+                                                               final LookupTablesDefinitionsPojo column,
+                                                               final String tableName) {
         if (!column.getIsUnique().equals(inputColumnInfo.isUnique())) {
             if (inputColumnInfo.isUnique()) {
                 return jooqReactiveOperationsCustomTables.mono(DSL.alterTable(tableName)
-                    .add(DSL.constraint().unique(field(inputColumnInfo.getName()))));
+                    .add(DSL.constraint().unique(field(inputColumnInfo.getName()))))
+                    .map(Collections::singletonList);
             } else {
-                return dropUniqueConstraintOperation(tableName, column);
+                return dropUniqueConstraintOperation(tableName, inputColumnInfo.getName().toLowerCase());
             }
         }
         return null;
     }
 
-    private Mono<?> renameSequencesUpdateQuery(final String newColumnName,
+    private Mono<List<Integer>> renameSequencesUpdateQuery(final String newColumnName,
                                                final LookupTablesDefinitionsPojo column,
                                                final String tableName) {
         final String template = buildSequenceNameTemplate(tableName, column.getColumnName());
@@ -354,42 +374,35 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         final SelectConditionStep<Record1<String>> sequences =
             getSequencesByNameTemplate(template);
 
-        System.out.println("SEQ");
         return mapConstraintOrSequenceRecordsToNames(sequences)
-            .map(constraintsList -> constraintsList
-                .stream()
-                .map(sequence -> jooqReactiveOperationsCustomTables
-                    .mono(DSL.alterSequence(sequence)
-                        .renameTo(
-                            sequence.replace(column.getColumnName().toLowerCase(), newColumnName.toLowerCase()))
-                    )
+            .flatMap(sequence -> jooqReactiveOperationsCustomTables
+                .mono(DSL.alterSequence(sequence)
+                    .renameTo(
+                        sequence.replace(column.getColumnName().toLowerCase(), newColumnName.toLowerCase()))
                 )
-            );
+            ).collectList();
     }
 
-    private Mono<?> renameConstraintUpdateQuery(final String newColumnName,
-                                                final LookupTablesDefinitionsPojo column,
-                                                final String tableName) {
+    private Mono<List<Integer>> renameConstraintUpdateQuery(final String newColumnName,
+                                                            final LookupTablesDefinitionsPojo column,
+                                                            final String tableName) {
         final SelectConditionStep<Record1<String>> constraintsRecords =
             getConstraintsByTableAndTemplateName(tableName,
                 buildSequenceNameTemplate(tableName, column.getColumnName()));
 
         return mapConstraintOrSequenceRecordsToNames(constraintsRecords)
-            .map(constraintsList -> constraintsList
-                .stream()
-                .map(constraint -> jooqReactiveOperationsCustomTables.mono(DSL.alterTable(tableName)
-                    .renameConstraint(constraint)
-                    .to(constraint.replace(column.getColumnName().toLowerCase(), newColumnName.toLowerCase())))
-                )
-                .collect(Collectors.toList())
-            );
+            .flatMap(constraint -> jooqReactiveOperationsCustomTables.mono(DSL.alterTable(tableName)
+                .renameConstraint(constraint)
+                .to(constraint.replace(column.getColumnName().toLowerCase(), newColumnName.toLowerCase())))
+            )
+            .collect(Collectors.toList());
     }
 
-    private Mono<?> dropUniqueConstraintOperation(final String tableName, final LookupTablesDefinitionsPojo column) {
+    private Mono<List<Integer>> dropUniqueConstraintOperation(final String tableName, final String columnName) {
 //        RIGHT NOW COLUMN CAN HAVE ONLY ONE CONSTRAINT - UNIQUE
         final SelectConditionStep<Record1<String>> constraints =
             getConstraintsByTableAndTemplateName(tableName,
-                buildSequenceNameTemplate(tableName, column.getColumnName()));
+                buildSequenceNameTemplate(tableName, columnName.toLowerCase()));
 
         return dropColumnConstraints(constraints, tableName);
     }
@@ -400,27 +413,19 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
             : Mono.empty();
     }
 
-    private Mono<Stream<Mono<Integer>>> dropColumnConstraints(
+    private Mono<List<Integer>> dropColumnConstraints(
         final SelectConditionStep<Record1<String>> constraints,
         final String tableName) {
         return mapConstraintOrSequenceRecordsToNames(constraints)
-            .map(constraintsList -> constraintsList
-                .stream()
-                .map(constraint -> jooqReactiveOperationsCustomTables
-                    .mono(DSL.alterTable(tableName).dropConstraintIfExists(constraint))));
+            .flatMap(items -> jooqReactiveOperationsCustomTables
+                .mono(DSL.alterTable(tableName).dropConstraintIfExists(items)))
+            .collectList();
     }
 
-    private Mono<List<String>> mapConstraintOrSequenceRecordsToNames(
+    private Flux<String> mapConstraintOrSequenceRecordsToNames(
         final SelectConditionStep<Record1<String>> records) {
         return jooqReactiveOperationsCustomTables.flux(records)
-            .collectList()
-            .map(item -> {
-                System.out.println("WUTTT " + item.size());
-                return item;
-            })
-            .map(sequenceList -> sequenceList.stream()
-                .map(Record1::component1)
-                .collect(Collectors.toList()));
+            .map(Record1::component1);
     }
 
     private String buildSequenceNameTemplate(final String tableName, final String columnName) {

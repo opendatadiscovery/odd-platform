@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
-import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +26,6 @@ public class JooqReactiveOperations {
     private final DSLContext mappingDSLContext = DSL.using(SQLDialect.POSTGRES);
 
     private final DatabaseClient databaseClient;
-
-    @PostConstruct
-    public void init() {
-        System.out.println(databaseClient.getConnectionFactory().getMetadata().getName());
-    }
 
     public Mono<Integer> mono(final RowCountQuery query) {
         return databaseClient.inConnection(c -> {

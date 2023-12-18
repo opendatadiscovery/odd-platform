@@ -232,8 +232,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             return null;
         }
 
-        System.out.println("DTO " + dto.getTableName());
-        System.out.println("DTO " + dto.getName());
         return pojo
             .setInternalName(dto.getName())
             .setExternalName(dto.getTableName())
