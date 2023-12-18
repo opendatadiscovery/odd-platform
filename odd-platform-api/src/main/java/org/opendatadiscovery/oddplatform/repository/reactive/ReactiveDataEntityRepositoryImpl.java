@@ -439,7 +439,7 @@ public class ReactiveDataEntityRepositoryImpl
     @Override
     public Mono<Long> countByState(final FacetStateDto state, final OwnerPojo owner) {
         final List<Condition> conditions = new ArrayList<>(jooqFTSHelper
-            .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of(FacetType.ENTITY_CLASSES)));
+            .facetStateConditions(state, DATA_ENTITY_CONDITIONS, List.of()));
         if (!deletedEntitiesAreRequested(state.getState())) {
             conditions.add(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId()));
         }

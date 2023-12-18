@@ -185,7 +185,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
             .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
-            .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
+            .select(DSL.countDistinct(DATA_ENTITY.ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
@@ -195,6 +195,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID)
+                .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId())))
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID))
             .where(TERM.ID.eq(id).and(TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
@@ -293,7 +295,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(jsonArrayAgg(field(TERM_OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIPS_FIELD))
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNERS_FIELD))
             .select(jsonArrayAgg(field(TITLE.asterisk().toString())).as(AGG_TITLES_FIELD))
-            .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
+            .select(DSL.countDistinct(DATA_ENTITY.ID).as(ENTITIES_COUNT))
             .select(DSL.countDistinct(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID).as(COLUMNS_COUNT))
             .from(termCTE.getName())
             .join(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)))
@@ -301,6 +303,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
             .leftJoin(TITLE).on(TITLE.ID.eq(TERM_OWNERSHIP.TITLE_ID))
             .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID)
+                .and(DATA_ENTITY.STATUS.ne(DataEntityStatusDto.DELETED.getId())))
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
             .groupBy(groupByFields);
 
