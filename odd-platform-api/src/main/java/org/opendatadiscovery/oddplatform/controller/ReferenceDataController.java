@@ -78,6 +78,13 @@ public class ReferenceDataController implements ReferenceDataApi {
     }
 
     @Override
+    public Mono<ResponseEntity<LookupTable>> getLookupTableById(final Long lookupTableId,
+                                                                final ServerWebExchange exchange) {
+        return referenceDataService.getLookupTableById(lookupTableId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<LookupTableField>> getLookupTableField(final Long lookupTableId, final Long columnId,
                                                                       final ServerWebExchange exchange) {
         return referenceDataService.getLookupTableField(lookupTableId, columnId)

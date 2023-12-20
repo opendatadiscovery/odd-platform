@@ -3517,6 +3517,21 @@ paths:
         - referenceData
 
   /api/referencedata/table/{lookup_table_id}:
+    get:
+      summary: Get custom table
+      description: Get existing custom table
+      operationId: getLookupTableById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
     put:
       summary: Update custom table
       description: Update existing custom table
@@ -3575,7 +3590,7 @@ paths:
       tags:
         - referenceData
 
-  /api/referencedata/table/{lookup_table_id}/column/{column_id}:
+  /api/referencedata/table/{lookup_table_id}/columns/{column_id}:
     get:
       summary: Get custom table field
       description: Get existing custom table field

@@ -20,6 +20,7 @@ import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.exception.BadUserRequestException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LookupTableDefinitionMapper;
+import org.opendatadiscovery.oddplatform.mapper.LookupTableMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLookupTableRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
@@ -35,6 +36,7 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
     private final ReactiveLookupTableRepository tableRepository;
     private final ReactiveNamespaceRepository namespaceRepository;
     private final LookupTableDefinitionMapper tableDefinitionMapper;
+    private final LookupTableMapper tableMapper;
 
     @Override
     public Mono<LookupTableRowList> getLookupTableRowList(final Long lookupTableId,
@@ -43,6 +45,13 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
         return lookupDataService.getLookupTableById(lookupTableId)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
             .flatMap(table -> referenceDataRepository.getLookupTableRowList(table, page, size));
+    }
+
+    @Override
+    public Mono<LookupTable> getLookupTableById(final Long lookupTableId) {
+        return lookupDataService.getLookupTableById(lookupTableId)
+            .switchIfEmpty(Mono.error(() -> new NotFoundException("LookupTable", lookupTableId)))
+            .map(tableMapper::mapToLookupTable);
     }
 
     @Override

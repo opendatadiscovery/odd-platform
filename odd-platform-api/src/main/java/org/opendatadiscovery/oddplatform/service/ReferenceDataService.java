@@ -14,6 +14,8 @@ import reactor.core.publisher.Mono;
 public interface ReferenceDataService {
     Mono<LookupTableRowList> getLookupTableRowList(final Long lookupTableId, final Integer page, final Integer size);
 
+    Mono<LookupTable> getLookupTableById(final Long lookupTableId);
+
     Mono<LookupTableField> getLookupTableField(Long lookupTableId, Long columnId);
 
     Mono<LookupTable> createLookupTable(final LookupTableFormData formData);
