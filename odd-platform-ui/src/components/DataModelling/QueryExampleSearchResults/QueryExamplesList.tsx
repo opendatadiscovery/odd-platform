@@ -7,15 +7,15 @@ import {
   QueryExamplesSkeleton,
   ScrollableContainer,
 } from 'components/shared/elements';
+import { useSearchParams } from 'react-router-dom';
 
-interface QueryExampleSearchResultsProps {
-  searchId: string;
-}
-
-const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps) => {
+const QueryExamplesList = () => {
+  const [searchParams] = useSearchParams();
+  const searchId = useMemo(() => searchParams.get('querySearchId') ?? '', [searchParams]);
   const { data, fetchNextPage, hasNextPage, isLoading } = useSearchQueryExamples({
     searchId,
     size: 30,
+    enabled: !!searchId,
   });
 
   const queryExamples = useMemo(
@@ -48,4 +48,4 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
   );
 };
 
-export default QueryExampleSearchResults;
+export default QueryExamplesList;

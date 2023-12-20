@@ -4,7 +4,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { Permission } from 'generated-sources';
 import { WithPermissionsProvider } from '../shared/contexts';
 
-const QueryExamplesContainer = lazy(() => import('./QueryExamplesContainer'));
+const QueryExamples = lazy(() => import('./QueryExamples'));
 const QueryExampleDetails = lazy(
   () => import('./QueryExampleDetails/QueryExampleDetailsContainer')
 );
@@ -19,7 +19,7 @@ const DataModellingRoutes: React.FC = () => (
           <WithPermissionsProvider
             allowedPermissions={[Permission.QUERY_EXAMPLE_CREATE]}
             resourcePermissions={[]}
-            render={() => <QueryExamplesContainer />}
+            render={() => <QueryExamples />}
           />
         }
       />

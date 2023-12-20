@@ -51,8 +51,12 @@ export function useUpdateQueryExampleSearchFacets() {
 type UseSearchQueryExamples = Omit<
   QueryExampleApiGetQueryExampleSearchResultsRequest,
   'page'
->;
-export function useSearchQueryExamples({ searchId, size }: UseSearchQueryExamples) {
+> & { enabled: boolean };
+export function useSearchQueryExamples({
+  searchId,
+  size,
+  enabled,
+}: UseSearchQueryExamples) {
   return useInfiniteQuery({
     queryKey: ['searchQueryExamples', searchId, size],
     queryFn: async ({ pageParam }) => {
@@ -66,5 +70,6 @@ export function useSearchQueryExamples({ searchId, size }: UseSearchQueryExample
     },
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
+    enabled,
   });
 }

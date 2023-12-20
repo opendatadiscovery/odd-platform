@@ -6,14 +6,14 @@ import { AddIcon } from 'components/shared/icons';
 import useCreateQueryExampleSearch from 'lib/hooks/useCreateQueryExampleSearch';
 import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
-import QueryExampleSearchResults from './QueryExampleSearchResults/QueryExampleSearchResults';
+import QueryExamplesList from './QueryExampleSearchResults/QueryExamplesList';
 import DataModellingTabs from './DataModellingTabs';
 import QueryExamplesListHeader from '../shared/elements/QueryExamples/QueryExamplesListHeader';
 import QueryExampleForm from './QueryExampleForm/QueryExampleForm';
 
-const QueryExamplesContainer: React.FC = () => {
+const QueryExamples: React.FC = () => {
   const { t } = useTranslation();
-  const { facets, searchId, updateFacets, isLoading } = useCreateQueryExampleSearch();
+  const { facets, updateFacets, searchId, isLoading } = useCreateQueryExampleSearch();
   const handleSearch = async (query?: string) => {
     await updateFacets({ queryExampleSearchFormData: { query }, searchId });
   };
@@ -51,10 +51,10 @@ const QueryExamplesContainer: React.FC = () => {
       </Grid>
       <Grid item xs={12}>
         <QueryExamplesListHeader />
-        {searchId && <QueryExampleSearchResults searchId={searchId} />}
+        <QueryExamplesList />
       </Grid>
     </Grid>
   );
 };
 
-export default QueryExamplesContainer;
+export default QueryExamples;
