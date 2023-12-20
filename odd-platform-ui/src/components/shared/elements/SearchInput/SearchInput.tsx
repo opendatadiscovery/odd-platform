@@ -1,17 +1,19 @@
-import { Input } from 'components/shared/elements';
 import React, { useCallback, useEffect, useState } from 'react';
 import type { InputProps } from 'components/shared/elements/Input/Input';
+import Input from '../Input/Input';
 
-interface LookupTablesSearchInputProps extends Omit<InputProps, 'variant'> {
+interface SearchInputProps extends Omit<InputProps, 'variant'> {
   value?: string;
   onSearch: (value?: string) => void;
 }
 
-const LookupTablesSearchInput = ({
+const SearchInput = ({
   value,
   onSearch,
   isLoading,
-}: LookupTablesSearchInputProps) => {
+  placeholder,
+  id,
+}: SearchInputProps) => {
   const [query, setQuery] = useState(value ?? '');
 
   useEffect(() => {
@@ -32,8 +34,8 @@ const LookupTablesSearchInput = ({
   return (
     <Input
       variant='search-lg'
-      id='lookup-tables-search'
-      placeholder='Search lookup tables...'
+      id={id}
+      placeholder={placeholder}
       maxWidth={640}
       onKeyDown={handleKeyDown}
       onChange={handleInputChange}
@@ -43,4 +45,4 @@ const LookupTablesSearchInput = ({
   );
 };
 
-export default LookupTablesSearchInput;
+export default SearchInput;

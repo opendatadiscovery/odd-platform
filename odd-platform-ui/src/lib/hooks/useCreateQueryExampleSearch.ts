@@ -1,30 +1,47 @@
 import { useSearchParams } from 'react-router-dom';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { URLSearchParams } from 'routes';
+import type { QueryExampleSearchFacetsData } from 'generated-sources';
 import {
   useCreateQueryExampleSearchId,
   useGetQueryExampleSearchFacets,
+  useUpdateQueryExampleSearchFacets,
 } from './api/dataModelling/searchQueryExamples';
 
 export default function useCreateQueryExampleSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchId = searchParams.get(URLSearchParams.QUERY_SEARCH_ID);
-  const { data: facetsData, isFetching } = useGetQueryExampleSearchFacets({
+  const searchId = useMemo(
+    () => searchParams.get(URLSearchParams.QUERY_SEARCH_ID) ?? '',
+    [searchParams]
+  );
+
+  const { mutateAsync: createFacets, isPending } = useCreateQueryExampleSearchId();
+  const { mutateAsync: updateFacets } = useUpdateQueryExampleSearchFacets();
+  const [facets, setFacets] = useState<QueryExampleSearchFacetsData>();
+  const { data, isLoading: isFacetsLoading } = useGetQueryExampleSearchFacets({
+    searchId,
     enabled: !!searchId,
-    searchId: searchId ?? '',
   });
-
-  const { data: newFacetsData, isFetching: isCreating } = useCreateQueryExampleSearchId({
-    enabled: !searchId && !facetsData,
-  });
-
-  const facets = useMemo(() => facetsData ?? newFacetsData, [facetsData, newFacetsData]);
 
   useEffect(() => {
-    if (searchId || !facets?.searchId) return;
+    if (searchId) return;
 
-    setSearchParams({ [URLSearchParams.QUERY_SEARCH_ID]: facets.searchId });
-  }, [searchId, facets?.searchId, setSearchParams]);
+    createFacets('').then(({ searchId: sid, query, total }) => {
+      setSearchParams({ [URLSearchParams.QUERY_SEARCH_ID]: sid });
+      setFacets({ searchId: sid, query, total });
+    });
+  }, [searchId]);
 
-  return { facets, searchId, isFetching: isFetching || isCreating };
+  useEffect(() => {
+    if (!data || facets) return;
+
+    setFacets(data);
+  }, [facets, data]);
+
+  const isLoading = useMemo(
+    () => isFacetsLoading || isPending,
+    [isFacetsLoading, isPending]
+  );
+
+  return { facets, searchId, isLoading, updateFacets };
 }

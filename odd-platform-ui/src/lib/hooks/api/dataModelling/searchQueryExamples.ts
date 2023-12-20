@@ -12,12 +12,11 @@ import type {
   QueryExampleApiGetQueryExampleSearchFacetListRequest,
 } from 'generated-sources';
 
-export function useCreateQueryExampleSearchId({ enabled }: { enabled: boolean }) {
-  return useQuery({
-    queryKey: ['createQueryExampleSearchId'],
-    queryFn: async () =>
-      queryExampleApi.queryExamplesSearch({ queryExampleSearchFormData: { query: '' } }),
-    enabled,
+export function useCreateQueryExampleSearchId() {
+  return useMutation({
+    mutationKey: ['createQueryExampleSearchId'],
+    mutationFn: async (query?: string) =>
+      queryExampleApi.queryExamplesSearch({ queryExampleSearchFormData: { query } }),
   });
 }
 

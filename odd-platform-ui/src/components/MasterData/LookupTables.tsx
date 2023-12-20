@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, NumberFormatted } from 'components/shared/elements';
+import { Button, NumberFormatted, SearchInput } from 'components/shared/elements';
 import { useSearchParams } from 'react-router-dom';
 import {
   useCreateReferenceDataSearch,
@@ -9,7 +9,6 @@ import {
   useUpdateReferenceDataSearch,
 } from 'lib/hooks/api/masterData/lookupTables';
 import type { ReferenceDataSearchFacetsData } from 'generated-sources';
-import LookupTablesSearchInput from './LookupTables/LookupTablesSearchInput';
 import { AddIcon } from '../shared/icons';
 import LookupTablesList from './LookupTables/LookupTablesList';
 import LookupTableForm from './LookupTableForm';
@@ -62,7 +61,9 @@ const LookupTables: React.FC = () => {
             </Typography>
           </Grid>
           <Grid container alignItems='center' justifyContent='space-between'>
-            <LookupTablesSearchInput
+            <SearchInput
+              id='lookup-tables-search'
+              placeholder='Search lookup tables...'
               value={facets?.query}
               isLoading={isLoading}
               onSearch={handleSearch}
