@@ -97,6 +97,11 @@ const DataEntityDetailsTabs: React.FC = () => {
         link: dataEntityDetailsPath(dataEntityId, 'discussions'),
         hidden: isStatusDeleted,
       },
+      {
+        name: t('Data'),
+        link: dataEntityDetailsPath(dataEntityId, 'data'),
+        hidden: !dataEntityDetails.lookupTableId,
+      },
     ],
     [
       dataEntityId,

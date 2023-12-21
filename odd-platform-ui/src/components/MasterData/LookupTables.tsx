@@ -7,7 +7,7 @@ import {
   useCreateReferenceDataSearch,
   useGetReferenceDataSearch,
   useUpdateReferenceDataSearch,
-} from 'lib/hooks/api/masterData/lookupTables';
+} from 'lib/hooks/api/masterData/referenceDataSearch';
 import type { ReferenceDataSearchFacetsData } from 'generated-sources';
 import { AddIcon } from '../shared/icons';
 import LookupTablesList from './LookupTables/LookupTablesList';

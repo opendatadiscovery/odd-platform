@@ -4,7 +4,11 @@ import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements'
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
-import { getIsEntityStatusDeleted, getResourcePermissions } from 'redux/selectors';
+import {
+  getDatasetLookupTableId,
+  getIsEntityStatusDeleted,
+  getResourcePermissions,
+} from 'redux/selectors';
 import { useDataEntityRouteParams } from 'routes';
 
 const Overview = lazy(() => import('../Overview/Overview'));
@@ -24,6 +28,7 @@ const LinkedItemsList = lazy(() => import('../LinkedItemsList/LinkedItemsList'))
 const DataEntityDetailsQueryExamples = lazy(
   () => import('../DataEntityQueryExamples/DataEntityDetailsQueryExamples')
 );
+const DatasetData = lazy(() => import('../DatasetData/DatasetData'));
 
 const DataEntityDetailsRoutes = () => {
   const { dataEntityId } = useDataEntityRouteParams();
@@ -32,6 +37,7 @@ const DataEntityDetailsRoutes = () => {
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
   );
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
+  const lookupTableId = useAppSelector(getDatasetLookupTableId(dataEntityId));
 
   return (
     <AppSuspenseWrapper>
@@ -114,16 +120,24 @@ const DataEntityDetailsRoutes = () => {
         <Route
           path='query-examples'
           element={
-            <RestrictedRoute isAllowedTo={!isStatusDeleted} redirectTo='../overview'>
-              <WithPermissionsProvider
-                allowedPermissions={[
-                  Permission.QUERY_EXAMPLE_DATASET_CREATE,
-                  Permission.QUERY_EXAMPLE_DATASET_DELETE,
-                ]}
-                resourcePermissions={[]}
-                Component={DataEntityDetailsQueryExamples}
-              />
-            </RestrictedRoute>
+            <WithPermissionsProvider
+              allowedPermissions={[
+                Permission.QUERY_EXAMPLE_DATASET_CREATE,
+                Permission.QUERY_EXAMPLE_DATASET_DELETE,
+              ]}
+              resourcePermissions={[]}
+              Component={DataEntityDetailsQueryExamples}
+            />
+          }
+        />
+        <Route
+          path='data'
+          element={
+            <RestrictedRoute
+              isAllowedTo={!!lookupTableId && !isStatusDeleted}
+              redirectTo='../overview'
+              component={DatasetData}
+            />
           }
         />
       </Routes>

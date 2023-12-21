@@ -8,10 +8,9 @@ import type {
   LookupTable,
   ReferenceDataApiCreateReferenceTableRequest,
   ReferenceDataApiUpdateLookupTableRequest,
-  ReferenceDataSearchFormData,
 } from 'generated-sources';
 import { showSuccessToast } from 'lib/errorHandling';
-import { referenceDataApi } from '../../../api';
+import { referenceDataApi } from 'lib/api';
 import { addNextPage } from '../utils';
 
 interface SearchLookupTablesParams {
@@ -41,40 +40,15 @@ export function useSearchLookupTables({
   });
 }
 
-interface GetReferenceDataSearchParams {
-  searchId: string;
+interface GetLookupTableParams {
+  lookupTableId: LookupTable['tableId'];
   enabled?: boolean;
 }
-export function useGetReferenceDataSearch({
-  searchId,
-  enabled,
-}: GetReferenceDataSearchParams) {
+export function useGetLookupTable({ lookupTableId, enabled }: GetLookupTableParams) {
   return useQuery({
-    queryKey: ['referenceDataSearch', searchId],
-    queryFn: () => referenceDataApi.getReferenceDataSearchFacetList({ searchId }),
+    queryKey: ['lookupTable', lookupTableId],
+    queryFn: () => referenceDataApi.getLookupTableById({ lookupTableId }),
     enabled,
-  });
-}
-
-export function useCreateReferenceDataSearch() {
-  return useMutation({
-    mutationKey: ['createReferenceDataSearch'],
-    mutationFn: (query?: string) =>
-      referenceDataApi.referenceDataSearch({ referenceDataSearchFormData: { query } }),
-  });
-}
-
-export function useUpdateReferenceDataSearch(searchId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationKey: ['updateReferenceDataSearch', searchId],
-    mutationFn: (referenceDataSearchFormData: ReferenceDataSearchFormData) =>
-      referenceDataApi.updateReferenceDataSearchFacetList({
-        searchId,
-        referenceDataSearchFormData,
-      }),
-    onSuccess: async () =>
-      await queryClient.invalidateQueries({ queryKey: ['searchLookupTables'] }),
   });
 }
 

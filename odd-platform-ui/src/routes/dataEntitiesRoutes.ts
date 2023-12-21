@@ -13,6 +13,7 @@ const DataEntityDetailsRoutes = {
   QUERY_EXAMPLES: 'query-examples',
   LINKED_ENTITIES: 'linked-entities',
   STRUCTURE: 'structure',
+  DATA: 'data',
 } as const;
 
 const DATA_ENTITY_ID_PARAM = ':dataEntityId';
