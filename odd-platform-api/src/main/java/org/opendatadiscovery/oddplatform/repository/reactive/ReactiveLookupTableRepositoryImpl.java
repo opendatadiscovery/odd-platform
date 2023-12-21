@@ -2,7 +2,9 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
@@ -195,6 +197,8 @@ public class ReactiveLookupTableRepositoryImpl
 
     private List<LookupTablesDefinitionsPojo> extractTableDefinitionPojos(final Record r) {
         return new ArrayList<>(jooqRecordHelper.extractAggRelation(r, AGG_TABLE_DEFINITION_FIELD,
-            LookupTablesDefinitionsPojo.class));
+            LookupTablesDefinitionsPojo.class))
+            .stream().sorted(Comparator.comparing(LookupTablesDefinitionsPojo::getId))
+            .collect(Collectors.toList());
     }
 }

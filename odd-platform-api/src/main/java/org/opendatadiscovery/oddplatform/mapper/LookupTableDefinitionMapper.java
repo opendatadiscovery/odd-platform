@@ -13,10 +13,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpda
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 
 @Mapper(config = MapperConfig.class,
-    uses = {
-        DateTimeMapper.class,
-        LookupTableMapper.class,
-    },
     imports = LookupTableFieldType.class)
 public interface LookupTableDefinitionMapper {
 

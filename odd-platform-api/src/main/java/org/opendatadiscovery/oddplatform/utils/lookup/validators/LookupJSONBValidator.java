@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.utils.lookup.validators;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DataType;
 import org.jooq.impl.DSL;
@@ -24,8 +26,9 @@ public class LookupJSONBValidator implements LookupTypesValidator {
         }
 
         try {
+            new ObjectMapper().readTree(value);
             return org.jooq.JSONB.valueOf(value);
-        } catch (NumberFormatException e) {
+        } catch (JsonProcessingException e) {
             throw new BadUserRequestException(ERROR_MESSAGE.formatted(value, columnName));
         }
     }

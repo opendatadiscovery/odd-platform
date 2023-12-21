@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS lookup_tables_definitions
     is_unique              boolean                  NOT NULL DEFAULT FALSE,
     column_type            text                     NOT NULL,
     default_value          text,
+    created_at   timestamp without time zone NOT NULL DEFAULT NOW(),
+    updated_at   timestamp without time zone NOT NULL DEFAULT NOW(),
 
     CONSTRAINT lookup_tables_defenitions_table_lookup_id_fkey FOREIGN KEY (lookup_table_id) REFERENCES lookup_tables (id),
     CONSTRAINT lookup_tables_definitions_fk_field FOREIGN KEY (dataset_field_id) REFERENCES dataset_field (id)

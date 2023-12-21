@@ -67,7 +67,7 @@ public interface DatasetFieldApiMapper {
             .setIsPrimaryKey(definitionPojo.getIsPrimaryKey())
             .setIsSortKey(false)
             .setOddrn(oddrn)
-            .setInternalDescription(definitionPojo.getDescription())
+            .setExternalDescription(definitionPojo.getDescription())
             .setDefaultValue(definitionPojo.getDefaultValue())
             .setType(type)
             .setStats(stats);

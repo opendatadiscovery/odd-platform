@@ -115,8 +115,11 @@ public class ReferenceDataServiceImpl implements ReferenceDataService {
                     .tableDescription(formData.getDescription())
                     .namespacePojo(table.namespacePojo())
                     .build();
-                return referenceDataRepository.updateLookupTable(table, tableDto)
-                    .then(lookupDataService.updateLookupTable(table, tableDto));
+
+                return (table.tablesPojo().getTableName().equals(tableDto.getTableName())
+                    ? Mono.empty()
+                    : referenceDataRepository.updateLookupTable(table, tableDto)
+                ).then(lookupDataService.updateLookupTable(table, tableDto));
             });
     }
 
