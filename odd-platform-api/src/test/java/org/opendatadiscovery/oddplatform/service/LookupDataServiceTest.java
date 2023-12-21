@@ -15,10 +15,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LookupTable;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableField;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldType;
+import org.opendatadiscovery.oddplatform.api.contract.model.LookupTableFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
+import org.opendatadiscovery.oddplatform.dto.LookupTableColumnDto;
 import org.opendatadiscovery.oddplatform.dto.LookupTableDto;
 import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
@@ -186,8 +188,7 @@ public class LookupDataServiceTest {
                 .setId(1L)
                 .setLookupTableId(lookupTableId)
                 .setDatasetFieldId(datasetFieldId)
-                .setColumnName("id")
-                .setDatasetFieldId(1L)));
+                .setColumnName("id")));
 
         when(tableRepository.getTableWithFieldsById(anyLong()))
             .thenReturn(Mono.just(new LookupTableDto(
@@ -215,18 +216,70 @@ public class LookupDataServiceTest {
 
         lookupDataService.createLookupTable(referenceTableDto)
             .as(StepVerifier::create)
-            .assertNext(item -> {
-                assertEquals(expected.getTableId(), item.getTableId());
-                assertEquals(expected.getFields().size(), item.getFields().size());
-                assertEquals(expected.getDescription(), item.getDescription());
-                assertEquals(expected.getNamespace().getId(), item.getNamespace().getId());
-                assertEquals(expected.getName(), item.getName());
-            }).verifyComplete();
+            .assertNext(item -> validateLookupTable(expected, item)).verifyComplete();
+    }
+
+    @ParameterizedTest
+    @MethodSource("updateLookupTableProvider")
+    @DisplayName("Update lookupTable")
+    public void updateLookupTableTest(final LookupTableDto dto,
+                                      final ReferenceTableDto referenceTableDto,
+                                      final LookupTable expected) {
+        when(reactiveDataEntityRepository.get(anyLong()))
+            .thenReturn(Mono.just(new DataEntityPojo()
+                .setId(100L)
+                .setExternalName(dto.tablesPojo().getTableName())
+                .setInternalName(dto.tablesPojo().getName())));
+
+        when(dataEntityMapper.applyToPojo(any(DataEntityPojo.class),
+            any(ReferenceTableDto.class)))
+            .thenReturn(new DataEntityPojo()
+                .setInternalName(referenceTableDto.getName())
+                .setExternalName(referenceTableDto.getTableName())
+                .setNamespaceId(referenceTableDto.getNamespacePojo().getId())
+                .setEntityClassIds(new Integer[] {DATA_SET.getId()})
+                .setManuallyCreated(true));
+
+        when(reactiveDataEntityRepository.update(any(DataEntityPojo.class)))
+            .thenReturn(Mono.just(new DataEntityPojo()
+                .setId(100L)
+                .setInternalDescription(referenceTableDto.getName()))
+            );
+
+        when(tableRepository.update(any(LookupTablesPojo.class)))
+            .thenReturn(Mono.just(
+                new LookupTablesPojo()
+                    .setId(1L)
+                    .setDataEntityId(100L)
+                    .setName(referenceTableDto.getName())
+                    .setDescription(referenceTableDto.getTableDescription()))
+            );
+
+        when(tableRepository.getTableWithFieldsById(anyLong()))
+            .thenReturn(Mono.just(new LookupTableDto(
+                    new LookupTablesPojo()
+                        .setId(1L)
+                        .setDataEntityId(100L)
+                        .setName(referenceTableDto.getName())
+                        .setDescription(referenceTableDto.getTableDescription()),
+                    new NamespacePojo().setId(1L),
+                    List.of()
+                )
+            ));
+
+        when(lookupTableSearchEntrypointRepository.updateLookupTableVectors(anyLong())).thenReturn(Mono.empty());
+        when(reactiveSearchEntrypointRepository.updateDataEntityVectors(anyLong())).thenReturn(Mono.empty());
+        when(reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(anyLong()))
+            .thenReturn(Mono.empty());
+
+        lookupDataService.updateLookupTable(dto, referenceTableDto)
+            .as(StepVerifier::create)
+            .assertNext(item -> validateLookupTable(expected, item)).verifyComplete();
     }
 
     @ParameterizedTest
     @MethodSource("lookupTableFieldsProvider")
-    @DisplayName("Creates new lookupTable")
+    @DisplayName("Creates new lookupTable Fields")
     public void createLookupTableFieldsTest(final Long lookupTableId,
                                             final Long dataEntityId,
                                             final List<LookupTableFieldFormData> columns,
@@ -286,22 +339,101 @@ public class LookupDataServiceTest {
 
         lookupDataService.addColumnsToLookupTable(lookupTableId, dataEntityId, columns)
             .as(StepVerifier::create)
-            .assertNext(item -> {
-                assertEquals(expected.getFields().size(), item.getFields().size());
+            .assertNext(item -> validateLookupTablesFields(expected, item))
+            .verifyComplete();
+    }
 
-                expected.getFields().forEach(expectedField -> {
-                    item.getFields().stream()
-                        .filter(actualField -> expectedField.getName().equals(actualField.getName()))
-                        .forEach(actualField -> {
-                            assertEquals(expectedField.getFieldId(), actualField.getFieldId());
-                            assertEquals(expectedField.getDatasetFieldId(), actualField.getDatasetFieldId());
-                            assertEquals(expectedField.getFieldType(), actualField.getFieldType());
-                            assertEquals(expectedField.getIsNullable(), actualField.getIsNullable());
-                            assertEquals(expectedField.getIsUnique(), actualField.getIsUnique());
-                            assertEquals(expectedField.getIsPrimaryKey(), actualField.getIsPrimaryKey());
-                        });
+    @ParameterizedTest
+    @MethodSource("updateLookupTableColumnProvider")
+    @DisplayName("Update new lookupTable Fields")
+    public void updateLookupTableColumnTest(final LookupTableColumnDto columnDto,
+                                            final LookupTableFieldUpdateFormData formData,
+                                            final LookupTable expected) {
+        final DatasetFieldDto datasetFieldDto = new DatasetFieldDto();
+        final String oddrn = generateOddrn(1L);
+        datasetFieldDto.setDatasetFieldPojo(new DatasetFieldPojo()
+            .setId(1000L)
+            .setName("name")
+            .setExternalDescription("descr")
+            .setOddrn(oddrn + "/field/name"));
+
+        mockGetLatestDatasetVersion(oddrn, List.of(datasetFieldDto));
+
+        when(datasetStructureService
+            .createDatasetStructureForSpecificEntity(any(DatasetVersionPojo.class), anyList()))
+            .thenReturn(Mono.just(List.of(
+                    new DatasetFieldPojo().setId(1000L)
+                        .setName("updated_name")
+                        .setExternalDescription("updated_desc")
+                        .setOddrn(oddrn + "/field/updated_name"))
+            ));
+
+        when(reactiveSearchEntrypointRepository.updateStructureVectorForDataEntitiesByOddrns(anyList()))
+            .thenReturn(Mono.empty());
+
+        when(tableDefinitionRepository.update(any(LookupTablesDefinitionsPojo.class)))
+            .thenReturn(Mono.just(new LookupTablesDefinitionsPojo()
+                .setId(1L)
+                .setLookupTableId(1L)
+                .setDatasetFieldId(1000L)
+                .setColumnName("updated_name")
+                .setDescription("updated_desc")
+                .setIsNullable(true)
+                .setIsUnique(true)));
+
+        when(tableRepository.getTableWithFieldsById(anyLong()))
+            .thenReturn(Mono.just(new LookupTableDto(
+                    new LookupTablesPojo()
+                        .setId(1L)
+                        .setName("test")
+                        .setDataEntityId(1L)
+                        .setDescription("Descr"),
+                    new NamespacePojo().setId(1L),
+                    List.of(new LookupTablesDefinitionsPojo()
+                        .setId(1L)
+                        .setLookupTableId(1L)
+                        .setColumnName("updated_name")
+                        .setDescription("updated_desc")
+                        .setDatasetFieldId(1000L)
+                        .setIsUnique(true)
+                        .setIsNullable(true)
+                        .setColumnType(LookupTableFieldType.VARCHAR.getValue()))
+                )
+            ));
+
+        when(lookupTableSearchEntrypointRepository.updateTableDefinitionSearchVectors(anyLong())).thenReturn(
+            Mono.empty());
+
+        lookupDataService.updateLookupTableColumn(columnDto, formData)
+            .as(StepVerifier::create)
+            .assertNext(item -> validateLookupTablesFields(expected, item)).verifyComplete();
+    }
+
+    private static void validateLookupTable(final LookupTable expected, final LookupTable item) {
+        assertEquals(expected.getTableId(), item.getTableId());
+        assertEquals(expected.getFields().size(), item.getFields().size());
+        assertEquals(expected.getDescription(), item.getDescription());
+        assertEquals(expected.getNamespace().getId(), item.getNamespace().getId());
+        assertEquals(expected.getName(), item.getName());
+    }
+
+    private static void validateLookupTablesFields(final LookupTable expected, final LookupTable item) {
+        assertEquals(expected.getFields().size(), item.getFields().size());
+
+        expected.getFields().forEach(expectedField -> {
+            item.getFields().stream()
+                .filter(actualField -> expectedField.getName().equals(actualField.getName()))
+                .forEach(actualField -> {
+                    assertEquals(expectedField.getFieldId(), actualField.getFieldId());
+                    assertEquals(expectedField.getDefaultValue(), actualField.getDefaultValue());
+                    assertEquals(expectedField.getDescription(), actualField.getDescription());
+                    assertEquals(expectedField.getDatasetFieldId(), actualField.getDatasetFieldId());
+                    assertEquals(expectedField.getFieldType(), actualField.getFieldType());
+                    assertEquals(expectedField.getIsNullable(), actualField.getIsNullable());
+                    assertEquals(expectedField.getIsUnique(), actualField.getIsUnique());
+                    assertEquals(expectedField.getIsPrimaryKey(), actualField.getIsPrimaryKey());
                 });
-            }).verifyComplete();
+        });
     }
 
     private static Stream<Arguments> lookupTableProvider() {
@@ -325,6 +457,43 @@ public class LookupDataServiceTest {
 
         return Stream.of(
             Arguments.arguments(referenceTableDto, lookupTable));
+    }
+
+    private static Stream<Arguments> updateLookupTableProvider() {
+        final NamespacePojo namespace = new NamespacePojo(1L, "namespace",
+            LocalDateTime.now(), LocalDateTime.now(), null);
+
+        final LookupTableDto lookupTableDto = new LookupTableDto(
+            new LookupTablesPojo()
+                .setId(1L)
+                .setDataEntityId(100L)
+                .setName("name")
+                .setTableName("table_name"),
+            new NamespacePojo()
+                .setId(1L)
+                .setName("namespace"),
+            List.of(new LookupTablesDefinitionsPojo()
+                .setId(1L)
+                .setColumnName("id"))
+        );
+
+        final ReferenceTableDto referenceTableDto = ReferenceTableDto.builder()
+            .name("test")
+            .namespacePojo(namespace)
+            .tableName(buildTableName("test", namespace))
+            .tableDescription("Descr")
+            .build();
+
+        final LookupTable lookupTable = new LookupTable()
+            .tableId(1L)
+            .datasetId(100L)
+            .name("test")
+            .description("Descr")
+            .namespace(new Namespace().id(1L).name("namespace"))
+            .fields(List.of());
+
+        return Stream.of(
+            Arguments.arguments(lookupTableDto, referenceTableDto, lookupTable));
     }
 
     private static Stream<Arguments> lookupTableFieldsProvider() {
@@ -359,6 +528,46 @@ public class LookupDataServiceTest {
 
         return Stream.of(
             Arguments.arguments(1L, 100L, lookupTableFieldFormData, lookupTable));
+    }
+
+    private static Stream<Arguments> updateLookupTableColumnProvider() {
+        final LookupTableColumnDto lookupTableColumnDto = new LookupTableColumnDto(
+            new LookupTablesPojo()
+                .setId(1L)
+                .setDataEntityId(1L)
+                .setName("test"),
+            new LookupTablesDefinitionsPojo()
+                .setId(1L)
+                .setLookupTableId(1L)
+                .setDatasetFieldId(1000L)
+                .setColumnName("name")
+                .setDescription("descr")
+                .setColumnType(LookupTableFieldType.VARCHAR.getValue())
+        );
+
+        final LookupTableFieldUpdateFormData formData = new LookupTableFieldUpdateFormData()
+            .name("updated_name")
+            .description("updated_desc")
+            .isNullable(true)
+            .isUnique(true);
+
+        final LookupTable lookupTable = new LookupTable()
+            .tableId(1L)
+            .datasetId(1L)
+            .name("test")
+            .fields(List.of(
+                new LookupTableField()
+                    .fieldId(1L)
+                    .description("updated_desc")
+                    .datasetFieldId(1000L)
+                    .name("updated_name")
+                    .fieldType(LookupTableFieldType.VARCHAR)
+                    .isNullable(true)
+                    .isUnique(true))
+            );
+
+        return Stream.of(
+            Arguments.arguments(lookupTableColumnDto, formData, lookupTable));
     }
 
     private String generateOddrn(final long dataEntityId) {
