@@ -3743,7 +3743,7 @@ components:
           $ref: '#/components/schemas/LookupTableFieldType'
         is_nullable:
           type: boolean
-          default: false
+          default: true
         is_unique:
           type: boolean
           default: false
