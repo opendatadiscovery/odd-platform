@@ -6,8 +6,7 @@ export const HeaderContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  borderBottom: '1px solid',
-  borderBottomColor: theme.palette.border.primary,
+  borderBottom: `1px solid ${theme.palette.border.primary}`,
   padding: theme.spacing(0, 0.25, 0, 0),
 }));
 
