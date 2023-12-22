@@ -3705,7 +3705,6 @@ components:
         - BOOLEAN
         - DATE
         - TIME
-        - ENUM
         - JSON
         - UUID
 
