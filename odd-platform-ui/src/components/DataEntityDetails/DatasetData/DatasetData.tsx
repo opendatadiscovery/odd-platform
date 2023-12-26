@@ -3,25 +3,22 @@ import { useAppSelector } from 'redux/lib/hooks';
 import { getDatasetLookupTableId } from 'redux/selectors';
 import { useDataEntityRouteParams } from 'routes';
 import { useGetLookupTable } from 'lib/hooks';
-import { Box, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useGetReferenceData } from 'lib/hooks/api/masterData/referenceData';
 import { EmptyContentPlaceholder, ScrollableContainer } from 'components/shared/elements';
+import { Typography } from '@mui/material';
 import LookupTablesSkeleton from 'components/MasterData/LookupTables/LookupTablesSkeleton';
 import * as Table from './DatasetDataStyles';
+import DatasetDataTableRowActions from './DatasetDataTableRowActions';
 
 const DatasetData: React.FC = () => {
   const { dataEntityId } = useDataEntityRouteParams();
-  const lookupTableId = useAppSelector(getDatasetLookupTableId(dataEntityId));
-  const { data: lookupTable } = useGetLookupTable({
-    lookupTableId: lookupTableId ?? 0,
-    enabled: !!lookupTableId,
-  });
+  const lookupTableId = useAppSelector(getDatasetLookupTableId(dataEntityId))!;
+  const { data: lookupTable } = useGetLookupTable({ lookupTableId });
 
   const { data, hasNextPage, fetchNextPage, isLoading } = useGetReferenceData({
-    lookupTableId: lookupTableId ?? 0,
+    lookupTableId,
     size: 30,
-    enabled: !!lookupTableId,
   });
 
   const lookupTableRowList = useMemo(
@@ -51,6 +48,7 @@ const DatasetData: React.FC = () => {
             <Typography variant='caption'>{name}</Typography>
           </Table.HeaderCell>
         ))}
+        <Table.HeaderCell flex='1 0 5%' />
       </Table.Header>
       <InfiniteScroll
         style={{ overflow: 'visible' }}
@@ -71,6 +69,11 @@ const DatasetData: React.FC = () => {
                 <Typography variant='body2'>{item.value}</Typography>
               </Table.RowCell>
             ))}
+            <Table.RowCell flex='1 0 5%'>
+              <Table.HiddenContent>
+                <DatasetDataTableRowActions row={row} lookupTableId={lookupTableId} />
+              </Table.HiddenContent>
+            </Table.RowCell>
           </Table.Row>
         ))}
         {isEmpty && <EmptyContentPlaceholder offsetTop={260} />}

@@ -2,6 +2,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { referenceDataApi } from 'lib/api';
 import { showSuccessToast } from 'lib/errorHandling';
 import type {
+  DataSetField,
+  LookupTable,
+  LookupTableField,
   ReferenceDataApiCreateColumnsForLookupTableRequest,
   ReferenceDataApiDeleteLookupTableFieldRequest,
   ReferenceDataApiGetLookupTableFieldRequest,
@@ -17,13 +20,23 @@ export function useCreateLookupTableDefinition() {
   });
 }
 
+const lookupTableDefinitionQueryKeys = {
+  lookupTableDefinition: (
+    lookupTableId?: LookupTable['tableId'],
+    columnId?: DataSetField['lookupTableDefinitionId']
+  ) => ['getLookupTableDefinition', lookupTableId, columnId],
+} as const;
+
 export function useGetLookupTableDefinition({
   lookupTableId,
   columnId,
   enabled,
 }: ReferenceDataApiGetLookupTableFieldRequest & { enabled?: boolean }) {
   return useQuery({
-    queryKey: ['getLookupTableDefinition', lookupTableId, columnId],
+    queryKey: lookupTableDefinitionQueryKeys.lookupTableDefinition(
+      lookupTableId,
+      columnId
+    ),
     queryFn: () => referenceDataApi.getLookupTableField({ lookupTableId, columnId }),
     enabled,
   });

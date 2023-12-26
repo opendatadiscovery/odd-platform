@@ -44,11 +44,10 @@ interface GetLookupTableParams {
   lookupTableId: LookupTable['tableId'];
   enabled?: boolean;
 }
-export function useGetLookupTable({ lookupTableId, enabled }: GetLookupTableParams) {
+export function useGetLookupTable({ lookupTableId }: GetLookupTableParams) {
   return useQuery({
     queryKey: ['lookupTable', lookupTableId],
     queryFn: () => referenceDataApi.getLookupTableById({ lookupTableId }),
-    enabled,
   });
 }
 

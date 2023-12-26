@@ -6,18 +6,21 @@ import type {
 import { referenceDataApi } from 'lib/api';
 import { addNextPage } from '../utils';
 
+export const referenceDataQueryKeys = {
+  referenceData: (lookupTableId?: LookupTable['tableId']) => [
+    'referenceData',
+    lookupTableId,
+  ],
+} as const;
+
 interface GetReferenceDataParams {
   lookupTableId: LookupTable['tableId'];
   size: ReferenceDataApiGetLookupTableRowListRequest['size'];
   enabled?: boolean;
 }
-export function useGetReferenceData({
-  lookupTableId,
-  size,
-  enabled,
-}: GetReferenceDataParams) {
+export function useGetReferenceData({ lookupTableId, size }: GetReferenceDataParams) {
   return useInfiniteQuery({
-    queryKey: ['referenceData', lookupTableId],
+    queryKey: referenceDataQueryKeys.referenceData(lookupTableId),
     queryFn: async ({ pageParam }) => {
       const response = await referenceDataApi.getLookupTableRowList({
         lookupTableId,
@@ -29,6 +32,5 @@ export function useGetReferenceData({
     },
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
-    enabled,
   });
 }
