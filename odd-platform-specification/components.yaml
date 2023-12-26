@@ -3912,12 +3912,16 @@ components:
     LookupTableRow:
       type: object
       properties:
+        row_id:
+          type: integer
+          format: int64
         items:
           type: array
           items:
             $ref: '#/components/schemas/LookupTableRowColumnData'
       required:
         - items
+        - row_id
 
     LookupTableRowColumnData:
       type: object

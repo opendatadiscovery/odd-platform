@@ -17,6 +17,7 @@ public class LookupTableRowMapper {
     public LookupTableRow mapRecordToLookupTableRow(final Record record,
                                                     final List<LookupTablesDefinitionsPojo> fields) {
         final List<LookupTableRowColumnData> row = new ArrayList<>();
+        Long rowId = null;
 
         for (final LookupTablesDefinitionsPojo column : fields) {
             final Field<?> field = record.field(column.getColumnName().toLowerCase());
@@ -28,12 +29,20 @@ public class LookupTableRowMapper {
                 continue;
             }
 
+            final String value = record.getValue(field).toString();
+
+            if (column.getIsPrimaryKey()) {
+//               Currently, all primary keys have Long type
+                rowId = Long.valueOf(value);
+            }
+
             row.add(new LookupTableRowColumnData()
                 .fieldId(column.getId())
-                .value(record.getValue(field).toString()));
+                .value(value));
         }
 
         return new LookupTableRow()
+            .rowId(rowId)
             .items(row);
     }
 
