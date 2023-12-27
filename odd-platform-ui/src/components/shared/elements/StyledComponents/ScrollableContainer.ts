@@ -7,6 +7,5 @@ export default styled(Grid)<{ $offsetY?: number }>(({ $offsetY = 130 }) => ({
   flexDirection: 'column',
   flexWrap: 'nowrap',
   height: `calc(100vh - ${toolbarHeight}px - ${$offsetY}px)`,
-  overflowY: 'scroll',
-  overflowX: 'scroll',
+  overflow: 'auto',
 }));

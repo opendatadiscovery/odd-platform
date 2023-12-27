@@ -6,18 +6,18 @@ import { useTranslation } from 'react-i18next';
 import { useDeleteLookupTableRow } from 'lib/hooks/api/masterData/lookupTableRows';
 
 interface DatasetDataTableRowActionsProps {
-  row: LookupTableRow;
+  rowId: LookupTableRow['rowId'];
   lookupTableId: LookupTable['tableId'];
 }
 
 const DatasetDataTableRowActions = ({
-  row,
+  rowId,
   lookupTableId,
 }: DatasetDataTableRowActionsProps) => {
   const { t } = useTranslation();
   const { mutateAsync: deleteRow } = useDeleteLookupTableRow(lookupTableId);
 
-  const handleDelete = useCallback(() => deleteRow(row.rowId), [row.rowId, deleteRow]);
+  const handleDelete = useCallback(() => deleteRow(rowId), [rowId, deleteRow]);
 
   return (
     <ConfirmationDialog

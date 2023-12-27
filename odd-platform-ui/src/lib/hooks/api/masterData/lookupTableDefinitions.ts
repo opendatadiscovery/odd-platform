@@ -4,7 +4,6 @@ import { showSuccessToast } from 'lib/errorHandling';
 import type {
   DataSetField,
   LookupTable,
-  LookupTableField,
   ReferenceDataApiCreateColumnsForLookupTableRequest,
   ReferenceDataApiDeleteLookupTableFieldRequest,
   ReferenceDataApiGetLookupTableFieldRequest,
