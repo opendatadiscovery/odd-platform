@@ -54,7 +54,7 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
             setSelectedDate(date);
             return onAccept;
           }}
-          inputFormat={inputFormat || metadataDatePickerInputFormat}
+          inputFormat={inputFormat ?? metadataDatePickerInputFormat}
           disableMaskedInput={disableMaskedInput}
           label={label}
           value={selectedDate}

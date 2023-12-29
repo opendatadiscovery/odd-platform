@@ -59,7 +59,7 @@ export const useDatasetDataTable = (lookupTable: LookupTable) => {
       {
         accessorKey: 'actions',
         header: null,
-        size: 100,
+        size: 135,
         cell: ({ row }: any) => (
           <HiddenBox>
             <DatasetDataTableRowActions

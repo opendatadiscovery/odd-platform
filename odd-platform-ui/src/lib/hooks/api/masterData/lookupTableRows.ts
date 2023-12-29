@@ -14,7 +14,7 @@ export function useDeleteLookupTableRow(lookupTableId: LookupTable['tableId']) {
     onSuccess: async () => {
       showSuccessToast({ message: 'Row successfully deleted!' });
       await queryClient.invalidateQueries({
-        queryKey: referenceDataQueryKeys.referenceData(lookupTableId),
+        queryKey: referenceDataQueryKeys.referenceData(),
       });
     },
   });
