@@ -12,12 +12,18 @@ function calcColumnSize(fieldType: LookupTableFieldType) {
   switch (fieldType) {
     case LookupTableFieldType.VARCHAR:
       return 200;
+    case LookupTableFieldType.DATE:
+      return 225;
+    case LookupTableFieldType.TIME:
+      return 225;
     case LookupTableFieldType.INTEGER:
-      return 50;
+      return 100;
+    case LookupTableFieldType.DECIMAL:
+      return 125;
     case LookupTableFieldType.BOOLEAN:
       return 100;
     default:
-      return 150;
+      return 200;
   }
 }
 
