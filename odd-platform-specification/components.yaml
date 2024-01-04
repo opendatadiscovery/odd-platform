@@ -2739,14 +2739,14 @@ components:
         - search_id
         - query
 
-    QueryExampleDatasetFormData:
+    DataEntityQueryExampleFormData:
       type: object
       properties:
-        dataset_id:
+        query_example_id:
           type: integer
           format: int64
       required:
-        - dataset_id
+        - query_example_id
 
     ActivityCountInfo:
       type: object
@@ -3255,6 +3255,7 @@ components:
       enum:
         - DATA_ENTITY
         - TERM
+        - QUERY_EXAMPLE
         - MANAGEMENT
 
     MessageChannel:

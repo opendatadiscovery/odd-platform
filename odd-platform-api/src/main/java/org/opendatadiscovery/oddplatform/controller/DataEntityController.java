@@ -21,6 +21,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupItemL
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityQueryExampleFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityStatusFormData;
@@ -41,6 +42,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetricSet;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.QueryExample;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
@@ -53,6 +55,7 @@ import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.MessageService;
 import org.opendatadiscovery.oddplatform.service.MetricService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
+import org.opendatadiscovery.oddplatform.service.QueryExampleService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +78,7 @@ public class DataEntityController implements DataEntityApi {
     private final MessageService messageService;
     private final AlertHaltConfigService alertHaltConfigService;
     private final MetricService metricService;
+    private final QueryExampleService queryExampleService;
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
@@ -427,5 +431,24 @@ public class DataEntityController implements DataEntityApi {
     public Mono<ResponseEntity<DataEntityDomainList>> getDomains(final ServerWebExchange exchange) {
         return dataEntityService.getDomainsInfo()
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<QueryExample>>
+        createQueryExampleToDatasetRelationshipNew(final Long dataEntityId,
+                                               final Mono<DataEntityQueryExampleFormData> formDataMono,
+                                               final ServerWebExchange exchange) {
+        return formDataMono
+            .flatMap(item ->
+                queryExampleService.createQueryExampleToDatasetRelationship(item.getQueryExampleId(), dataEntityId))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteQueryExampleToDatasetRelationshipNew(final Long dataEntityId,
+                                                                                 final Long exampleId,
+                                                                                 final ServerWebExchange exchange) {
+        return queryExampleService.deleteQueryExampleDatasetRelationship(exampleId, dataEntityId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 }
