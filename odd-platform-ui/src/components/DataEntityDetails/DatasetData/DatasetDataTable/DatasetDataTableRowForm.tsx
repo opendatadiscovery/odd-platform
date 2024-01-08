@@ -3,7 +3,7 @@ import type { LookupTable } from 'generated-sources';
 import { LookupTableFieldType } from 'generated-sources';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import {
   AppDatePicker,
   AppDateTimePicker,
@@ -45,6 +45,23 @@ const DatasetDataTableRowForm = ({
     }
   };
 
+  const defaultFieldValue = (fieldType: LookupTableFieldType, defaultValue: unknown) => {
+    if (defaultValue) return defaultValue;
+
+    switch (fieldType) {
+      case LookupTableFieldType.BOOLEAN:
+        return false;
+      case LookupTableFieldType.VARCHAR:
+        return '';
+      case LookupTableFieldType.DATE:
+        return '';
+      case LookupTableFieldType.TIME:
+        return '';
+      default:
+        return '';
+    }
+  };
+
   return (
     <S.Tr>
       <S.Td>
@@ -55,13 +72,13 @@ const DatasetDataTableRowForm = ({
           <Controller
             name={String(fieldId)}
             control={control}
-            defaultValue={defaultValue ?? ''}
+            defaultValue={defaultFieldValue(fieldType, defaultValue)}
             render={({ field }) => renderInput(fieldType, field)}
           />
         </S.Td>
       ))}
       <S.Td>
-        <Grid container justifyContent='space-between'>
+        <Box display='flex' justifyContent='flex-end' gap={1}>
           <Button
             text='Save'
             buttonType='main-m'
@@ -69,7 +86,7 @@ const DatasetDataTableRowForm = ({
             type='submit'
           />
           <Button text='Cancel' onClick={onCancel} buttonType='secondary-m' />
-        </Grid>
+        </Box>
       </S.Td>
     </S.Tr>
   );

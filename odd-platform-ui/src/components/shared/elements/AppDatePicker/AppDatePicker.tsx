@@ -16,7 +16,7 @@ interface AppDatePickerProps
   > {
   sx?: SxProps<Theme>;
   errorText?: string;
-  defaultDate: string;
+  defaultDate?: string;
 }
 
 const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
@@ -35,7 +35,11 @@ const AppDatePicker: React.FC<AppDatePickerProps> = React.forwardRef(
   ) => {
     const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
-    React.useEffect(() => setSelectedDate(new Date(defaultDate)), [defaultDate]);
+    React.useEffect(() => {
+      if (defaultDate) {
+        setSelectedDate(new Date(defaultDate));
+      }
+    }, [defaultDate]);
 
     const AppDatePickerIcon = React.useCallback(() => <CalendarIcon />, [CalendarIcon]);
 

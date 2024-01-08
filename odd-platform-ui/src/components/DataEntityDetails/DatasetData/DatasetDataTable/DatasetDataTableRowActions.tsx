@@ -1,34 +1,85 @@
-import type { LookupTable, LookupTableRow } from 'generated-sources';
+import type { LookupTable } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
-import { DeleteIcon } from 'components/shared/icons';
+import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDeleteLookupTableRow } from 'lib/hooks/api/masterData/lookupTableRows';
+import type { Row, Table } from '@tanstack/react-table';
+import { HiddenBox } from './DatasetDataTable.styles';
+import type { TableData } from './interfaces';
 
 interface DatasetDataTableRowActionsProps {
-  rowId: LookupTableRow['rowId'];
+  primaryKeyFieldId: LookupTable['fields'][0]['fieldId'];
   lookupTableId: LookupTable['tableId'];
+  row: Row<TableData>;
+  table: Table<TableData>;
 }
 
 const DatasetDataTableRowActions = ({
-  rowId,
+  primaryKeyFieldId,
   lookupTableId,
+  row,
+  table,
 }: DatasetDataTableRowActionsProps) => {
+  const rowId = Number(row.original[primaryKeyFieldId]);
+  const { meta } = table.options;
   const { t } = useTranslation();
   const { mutateAsync: deleteRow } = useDeleteLookupTableRow(lookupTableId);
 
   const handleDelete = useCallback(() => deleteRow(rowId), [rowId, deleteRow]);
 
+  const setEditedRowsData = useCallback(() => {
+    meta?.setEditedRowsData(prev => ({
+      ...prev,
+      [row.id]: row.original,
+    }));
+  }, [meta?.setEditedRowsData, row.id, row.original]);
+
+  const cleanEditedRowsData = useCallback(() => {
+    meta?.setEditedRowsData(prev => {
+      const newEditedRowsData = { ...prev };
+      delete newEditedRowsData[row.id];
+      return newEditedRowsData;
+    });
+  }, [meta?.setEditedRowsData, row.id]);
+
+  const onEdit = useCallback(() => {
+    row.toggleSelected(true);
+    setEditedRowsData();
+  }, [setEditedRowsData, row.getToggleSelectedHandler]);
+
+  const onCancel = useCallback(() => {
+    row.toggleSelected(false);
+    cleanEditedRowsData();
+  }, [cleanEditedRowsData]);
+
   return (
-    <ConfirmationDialog
-      actionTitle={t('Are you sure you want to delete this row?')}
-      actionName={t('Delete row')}
-      actionText={t('This row will be deleted permanently')}
-      onConfirm={handleDelete}
-      actionBtn={
-        <Button buttonType='tertiary-m' icon={<DeleteIcon />} sx={{ ml: 0.5 }} />
-      }
-    />
+    <HiddenBox display='flex' justifyContent='flex-end' gap={1}>
+      {row.getIsSelected() ? (
+        <>
+          <Button text='Save' buttonType='main-m' type='button' />
+          <Button text='Cancel' onClick={onCancel} buttonType='secondary-m' />
+        </>
+      ) : (
+        <>
+          <ConfirmationDialog
+            actionTitle={t('Are you sure you want to delete this row?')}
+            actionName={t('Delete row')}
+            actionText={t('This row will be deleted permanently')}
+            onConfirm={handleDelete}
+            actionBtn={
+              <Button buttonType='tertiary-m' icon={<DeleteIcon />} sx={{ ml: 0.5 }} />
+            }
+          />
+          <Button
+            text='Edit'
+            onClick={onEdit}
+            buttonType='tertiary-m'
+            icon={<EditIcon />}
+          />
+        </>
+      )}
+    </HiddenBox>
   );
 };
 
