@@ -34,7 +34,6 @@ const DatasetDataTableRowActions = ({
 
   const handleDelete = useCallback(async () => {
     await deleteRow(rowId);
-    navigate(0);
   }, [rowId, deleteRow]);
 
   const setEditedRowsData = useCallback(() => {
@@ -73,9 +72,7 @@ const DatasetDataTableRowActions = ({
             value: value as string,
           })),
       };
-      cleanEditedRowsData();
       await updateRow({ lookupTableId, rowId, lookupTableRowFormData });
-      navigate(0);
     }
     cleanEditedRowsData();
   }, [meta?.editedRowsData, row.id]);

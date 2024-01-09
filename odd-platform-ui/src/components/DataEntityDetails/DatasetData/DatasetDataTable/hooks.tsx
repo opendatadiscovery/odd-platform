@@ -94,7 +94,7 @@ export const useDatasetDataTable = (lookupTable: LookupTable) => {
         ),
       },
     ],
-    [lookupTable.fields]
+    [inputFields, idFieldColumn, lookupTable.fields]
   );
 
   const totalDBRowCount = data?.pages?.[0]?.pageInfo.total ?? 0;

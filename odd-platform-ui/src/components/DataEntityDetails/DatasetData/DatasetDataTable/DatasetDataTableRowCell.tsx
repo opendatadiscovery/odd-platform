@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { Column, Row, Table } from '@tanstack/react-table';
 import { LookupTableFieldType } from 'generated-sources';
 import {
@@ -42,27 +42,27 @@ const DatasetDataTableRowCell = ({
       default:
         return String(v);
     }
-  }, [columnMeta?.fieldType]);
+  }, [columnMeta?.fieldType, getValue]);
 
   const initialValue = readValue();
   const [value, setValue] = useState(initialValue);
+  const isEditing = row.getIsSelected();
 
   useEffect(() => {
-    if (row.getIsSelected()) {
-      const editedRowsData = { ...tableMeta?.editedRowsData };
-      editedRowsData[row.id] = {
-        ...editedRowsData[row.id],
-        [column.id]: value,
-      };
-      tableMeta?.setEditedRowsData(editedRowsData);
-    }
-  }, [value, tableMeta?.setEditedRowsData, row.getIsSelected]);
+    if (!isEditing) return;
+
+    const editedRowsData = { ...tableMeta?.editedRowsData };
+    editedRowsData[row.id] = {
+      ...editedRowsData[row.id],
+      [column.id]: value,
+    };
+    tableMeta?.setEditedRowsData(editedRowsData);
+  }, [value]);
 
   useEffect(() => {
-    if (!row.getIsSelected()) {
-      setValue(initialValue);
-    }
-  }, [row.getIsSelected, initialValue]);
+    if (isEditing) return;
+    setValue(initialValue);
+  }, [isEditing]);
 
   const renderInput = (type?: LookupTableFieldType) => {
     switch (type) {
@@ -130,7 +130,7 @@ const DatasetDataTableRowCell = ({
     }
   };
 
-  return row.getIsSelected() ? renderInput(columnMeta?.fieldType) : value;
+  return isEditing ? renderInput(columnMeta?.fieldType) : initialValue;
 };
 
 export default DatasetDataTableRowCell;

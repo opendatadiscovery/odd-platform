@@ -6,7 +6,6 @@ import { Button, ScrollableContainer } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useCreateReferenceData } from 'lib/hooks/api/masterData/referenceData';
-import { useNavigate } from 'react-router-dom';
 import { useDatasetDataTable } from './DatasetDataTable/hooks';
 import * as S from './DatasetDataTable/DatasetDataTable.styles';
 import DatasetDataTableRowForm from './DatasetDataTable/DatasetDataTableRowForm';
@@ -15,7 +14,6 @@ interface DatasetDataTableProps {
   lookupTable: LookupTable;
 }
 const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
-  const navigate = useNavigate();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const { table, rows, fetchMoreOnBottomReached } = useDatasetDataTable(lookupTable);
   const [isFormShow, setIsFormShow] = useState(false);
@@ -35,7 +33,6 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
         ],
       });
       setIsFormShow(false);
-      navigate(0);
     },
     [setIsFormShow]
   );
@@ -44,7 +41,7 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
     fetchMoreOnBottomReached(tableContainerRef.current);
   }, [fetchMoreOnBottomReached]);
 
-  const { getVirtualItems, measureElement } = useVirtualizer({
+  const { getVirtualItems } = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 98,
@@ -91,11 +88,7 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
               {getVirtualItems().map(virtualRow => {
                 const row = rows[virtualRow.index];
                 return (
-                  <S.Tr
-                    key={virtualRow.key}
-                    data-index={virtualRow.index}
-                    ref={measureElement}
-                  >
+                  <S.Tr key={row.id}>
                     {row.getVisibleCells().map(cell => (
                       <S.Td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
