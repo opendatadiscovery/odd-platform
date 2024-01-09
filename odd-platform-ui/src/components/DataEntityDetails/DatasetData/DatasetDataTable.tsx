@@ -9,6 +9,7 @@ import { useCreateReferenceData } from 'lib/hooks/api/masterData/referenceData';
 import { useDatasetDataTable } from './DatasetDataTable/hooks';
 import * as S from './DatasetDataTable/DatasetDataTable.styles';
 import DatasetDataTableRowForm from './DatasetDataTable/DatasetDataTableRowForm';
+import { buildTableRowData } from './DatasetDataTable/utils';
 
 interface DatasetDataTableProps {
   lookupTable: LookupTable;
@@ -23,14 +24,7 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
     async (data: Record<string, string>) => {
       await createReferenceData({
         lookupTableId: lookupTable.tableId,
-        lookupTableRowFormData: [
-          {
-            items: Object.entries(data).map(([key, value]) => ({
-              fieldId: Number(key),
-              value,
-            })),
-          },
-        ],
+        lookupTableRowFormData: [buildTableRowData(data)],
       });
       setIsFormShow(false);
     },

@@ -9,8 +9,10 @@ import {
 } from 'lib/hooks/api/masterData/lookupTableRows';
 import type { Row, Table } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 import { HiddenBox } from './DatasetDataTable.styles';
 import type { TableData } from './interfaces';
+import { buildTableRowData } from './utils';
 
 interface DatasetDataTableRowActionsProps {
   primaryKeyFieldId: LookupTable['fields'][0]['fieldId'];
@@ -26,7 +28,6 @@ const DatasetDataTableRowActions = ({
   table,
 }: DatasetDataTableRowActionsProps) => {
   const rowId = Number(row.original[primaryKeyFieldId]);
-  const navigate = useNavigate();
   const { meta } = table.options;
   const { t } = useTranslation();
   const { mutateAsync: deleteRow } = useDeleteLookupTableRow(lookupTableId);
@@ -64,23 +65,16 @@ const DatasetDataTableRowActions = ({
   const onSave = useCallback(async () => {
     const editedRow = meta?.editedRowsData[row.id];
     if (editedRow) {
-      const lookupTableRowFormData = {
-        items: Object.entries(editedRow)
-          .slice(0) // remove primary key field
-          .map(([key, value]) => ({
-            fieldId: Number(key),
-            value: value as string,
-          })),
-      };
+      const lookupTableRowFormData = buildTableRowData(editedRow);
       await updateRow({ lookupTableId, rowId, lookupTableRowFormData });
     }
     cleanEditedRowsData();
   }, [meta?.editedRowsData, row.id]);
 
   return (
-    <HiddenBox display='flex' justifyContent='flex-end' gap={1}>
+    <HiddenBox>
       {row.getIsSelected() ? (
-        <>
+        <Box display='flex' justifyContent='flex-end' gap={1}>
           <Button text='Save' buttonType='main-m' type='button' onClick={onSave} />
           <Button
             text='Cancel'
@@ -88,9 +82,9 @@ const DatasetDataTableRowActions = ({
             type='button'
             onClick={onCancel}
           />
-        </>
+        </Box>
       ) : (
-        <>
+        <Box display='flex' justifyContent='flex-end' gap={1}>
           <ConfirmationDialog
             actionTitle={t('Are you sure you want to delete this row?')}
             actionName={t('Delete row')}
@@ -106,7 +100,7 @@ const DatasetDataTableRowActions = ({
             buttonType='tertiary-m'
             icon={<EditIcon />}
           />
-        </>
+        </Box>
       )}
     </HiddenBox>
   );

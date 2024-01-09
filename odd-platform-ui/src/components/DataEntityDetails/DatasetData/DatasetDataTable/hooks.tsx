@@ -105,6 +105,7 @@ export const useDatasetDataTable = (lookupTable: LookupTable) => {
     columns: columns as ColumnDef<Record<string, unknown>, any>[],
     getCoreRowModel: getCoreRowModel(),
     onRowSelectionChange: setRowSelection,
+    enableMultiRowSelection: false,
     state: {
       rowSelection,
     },
