@@ -3,7 +3,7 @@ import type { LookupTable } from 'generated-sources';
 import { LookupTableFieldType } from 'generated-sources';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import {
   AppDatePicker,
   AppDateTimePicker,

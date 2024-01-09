@@ -3,7 +3,10 @@ import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDeleteLookupTableRow } from 'lib/hooks/api/masterData/lookupTableRows';
+import {
+  useDeleteLookupTableRow,
+  useUpdateLookupTableRow,
+} from 'lib/hooks/api/masterData/lookupTableRows';
 import type { Row, Table } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 import { HiddenBox } from './DatasetDataTable.styles';
@@ -27,6 +30,7 @@ const DatasetDataTableRowActions = ({
   const { meta } = table.options;
   const { t } = useTranslation();
   const { mutateAsync: deleteRow } = useDeleteLookupTableRow(lookupTableId);
+  const { mutateAsync: updateRow } = useUpdateLookupTableRow();
 
   const handleDelete = useCallback(async () => {
     await deleteRow(rowId);
@@ -46,6 +50,7 @@ const DatasetDataTableRowActions = ({
       delete newEditedRowsData[row.id];
       return newEditedRowsData;
     });
+    row.toggleSelected(false);
   }, [meta?.setEditedRowsData, row.id]);
 
   const onEdit = useCallback(() => {
@@ -54,16 +59,38 @@ const DatasetDataTableRowActions = ({
   }, [setEditedRowsData, row.getToggleSelectedHandler]);
 
   const onCancel = useCallback(() => {
-    row.toggleSelected(false);
     cleanEditedRowsData();
   }, [cleanEditedRowsData]);
+
+  const onSave = useCallback(async () => {
+    const editedRow = meta?.editedRowsData[row.id];
+    if (editedRow) {
+      const lookupTableRowFormData = {
+        items: Object.entries(editedRow)
+          .slice(0) // remove primary key field
+          .map(([key, value]) => ({
+            fieldId: Number(key),
+            value: value as string,
+          })),
+      };
+      cleanEditedRowsData();
+      await updateRow({ lookupTableId, rowId, lookupTableRowFormData });
+      navigate(0);
+    }
+    cleanEditedRowsData();
+  }, [meta?.editedRowsData, row.id]);
 
   return (
     <HiddenBox display='flex' justifyContent='flex-end' gap={1}>
       {row.getIsSelected() ? (
         <>
-          <Button text='Save' buttonType='main-m' type='button' />
-          <Button text='Cancel' onClick={onCancel} buttonType='secondary-m' />
+          <Button text='Save' buttonType='main-m' type='button' onClick={onSave} />
+          <Button
+            text='Cancel'
+            buttonType='secondary-m'
+            type='button'
+            onClick={onCancel}
+          />
         </>
       ) : (
         <>

@@ -44,7 +44,7 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
     fetchMoreOnBottomReached(tableContainerRef.current);
   }, [fetchMoreOnBottomReached]);
 
-  const { getVirtualItems } = useVirtualizer({
+  const { getVirtualItems, measureElement } = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 98,
@@ -91,7 +91,11 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
               {getVirtualItems().map(virtualRow => {
                 const row = rows[virtualRow.index];
                 return (
-                  <S.Tr key={row.id}>
+                  <S.Tr
+                    key={virtualRow.key}
+                    data-index={virtualRow.index}
+                    ref={measureElement}
+                  >
                     {row.getVisibleCells().map(cell => (
                       <S.Td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

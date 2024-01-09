@@ -108,7 +108,6 @@ export const useDatasetDataTable = (lookupTable: LookupTable) => {
     state: {
       rowSelection,
     },
-    debugTable: true,
     meta: {
       editedRowsData,
       setEditedRowsData,
