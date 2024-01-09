@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDeleteLookupTableRow } from 'lib/hooks/api/masterData/lookupTableRows';
 import type { Row, Table } from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 import { HiddenBox } from './DatasetDataTable.styles';
 import type { TableData } from './interfaces';
 
@@ -22,11 +23,15 @@ const DatasetDataTableRowActions = ({
   table,
 }: DatasetDataTableRowActionsProps) => {
   const rowId = Number(row.original[primaryKeyFieldId]);
+  const navigate = useNavigate();
   const { meta } = table.options;
   const { t } = useTranslation();
   const { mutateAsync: deleteRow } = useDeleteLookupTableRow(lookupTableId);
 
-  const handleDelete = useCallback(() => deleteRow(rowId), [rowId, deleteRow]);
+  const handleDelete = useCallback(async () => {
+    await deleteRow(rowId);
+    navigate(0);
+  }, [rowId, deleteRow]);
 
   const setEditedRowsData = useCallback(() => {
     meta?.setEditedRowsData(prev => ({

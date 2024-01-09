@@ -37,7 +37,6 @@ const DataEntityDetailsRoutes = () => {
     getResourcePermissions(PermissionResourceType.DATA_ENTITY, dataEntityId)
   );
   const isStatusDeleted = useAppSelector(getIsEntityStatusDeleted(dataEntityId));
-  const lookupTableId = useAppSelector(getDatasetLookupTableId(dataEntityId));
 
   return (
     <AppSuspenseWrapper>
@@ -134,7 +133,7 @@ const DataEntityDetailsRoutes = () => {
           path='data'
           element={
             <RestrictedRoute
-              isAllowedTo={!!lookupTableId && !isStatusDeleted}
+              isAllowedTo={!isStatusDeleted}
               redirectTo='../overview'
               component={DatasetData}
             />

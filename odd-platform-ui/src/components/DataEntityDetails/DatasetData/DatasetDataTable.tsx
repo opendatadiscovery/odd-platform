@@ -6,6 +6,7 @@ import { Button, ScrollableContainer } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useCreateReferenceData } from 'lib/hooks/api/masterData/referenceData';
+import { useNavigate } from 'react-router-dom';
 import { useDatasetDataTable } from './DatasetDataTable/hooks';
 import * as S from './DatasetDataTable/DatasetDataTable.styles';
 import DatasetDataTableRowForm from './DatasetDataTable/DatasetDataTableRowForm';
@@ -14,6 +15,7 @@ interface DatasetDataTableProps {
   lookupTable: LookupTable;
 }
 const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
+  const navigate = useNavigate();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const { table, rows, fetchMoreOnBottomReached } = useDatasetDataTable(lookupTable);
   const [isFormShow, setIsFormShow] = useState(false);
@@ -33,6 +35,7 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
         ],
       });
       setIsFormShow(false);
+      navigate(0);
     },
     [setIsFormShow]
   );
