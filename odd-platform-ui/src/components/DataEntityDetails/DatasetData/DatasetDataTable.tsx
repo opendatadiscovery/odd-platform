@@ -82,7 +82,7 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
               {getVirtualItems().map(virtualRow => {
                 const row = rows[virtualRow.index];
                 return (
-                  <S.Tr key={row.id}>
+                  <S.Tr key={JSON.stringify(row.original)}>
                     {row.getVisibleCells().map(cell => (
                       <S.Td key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

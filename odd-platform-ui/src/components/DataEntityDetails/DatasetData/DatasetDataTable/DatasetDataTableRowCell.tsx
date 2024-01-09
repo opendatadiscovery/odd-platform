@@ -1,13 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { Column, Row, Table } from '@tanstack/react-table';
 import { LookupTableFieldType } from 'generated-sources';
-import {
-  AppDatePicker,
-  AppDateTimePicker,
-  Checkbox,
-  Input,
-} from 'components/shared/elements';
+import { Checkbox, Input } from 'components/shared/elements';
 import type { TableData } from './interfaces';
+import { readValue } from './utils';
 
 // https://tanstack.com/table/v8/docs/api/core/column-def#cell
 interface DatasetDataTableRowCellProps {
@@ -23,96 +19,40 @@ const DatasetDataTableRowCell = ({
   table,
   row,
 }: DatasetDataTableRowCellProps) => {
+  const initialValue = readValue(getValue());
+  const [value, setValue] = useState(initialValue);
   const { meta: columnMeta } = column.columnDef;
   const { meta: tableMeta } = table.options;
-
-  const readValue = useCallback(() => {
-    const v = getValue();
-    switch (columnMeta?.fieldType) {
-      case LookupTableFieldType.DATE:
-        return new Date(v as string).toLocaleDateString();
-      case LookupTableFieldType.TIME:
-        return new Date(v as string).toLocaleTimeString();
-      case LookupTableFieldType.BOOLEAN:
-        return Boolean(v);
-      case LookupTableFieldType.DECIMAL:
-        return Number(v);
-      case LookupTableFieldType.INTEGER:
-        return Number(v);
-      default:
-        return String(v);
-    }
-  }, [columnMeta?.fieldType, getValue]);
-
-  const initialValue = readValue();
-  const [value, setValue] = useState(initialValue);
   const isEditing = row.getIsSelected();
 
-  useEffect(() => {
-    if (!isEditing) return;
-
-    const editedRowsData = { ...tableMeta?.editedRowsData };
-    editedRowsData[row.id] = {
-      ...editedRowsData[row.id],
-      [column.id]: value,
-    };
-    tableMeta?.setEditedRowsData(editedRowsData);
-  }, [value]);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
 
   useEffect(() => {
-    if (isEditing) return;
-    setValue(initialValue);
-  }, [isEditing]);
+    if (isEditing) {
+      const editedRowsData = { ...tableMeta?.editedRowsData };
+      editedRowsData[row.id] = {
+        ...editedRowsData[row.id],
+        [column.id]: value,
+      };
+      tableMeta?.setEditedRowsData(editedRowsData);
+    }
+  }, [value, isEditing, row.id, column.id]);
 
   const renderInput = (type?: LookupTableFieldType) => {
     switch (type) {
       case LookupTableFieldType.VARCHAR:
-        return (
-          <Input
-            variant='main-m'
-            value={value as string}
-            onChange={event => setValue(event.target.value)}
-          />
-        );
+        return <Input variant='main-m' value={value as string} onChange={handleChange} />;
       case LookupTableFieldType.BOOLEAN:
-        return (
-          <Checkbox value={value} onChange={event => setValue(event.target.value)} />
-        );
-      case LookupTableFieldType.DATE:
-        return (
-          <AppDatePicker
-            disableMaskedInput
-            defaultDate={value as string}
-            onChange={v => {
-              if (v instanceof Date) {
-                setValue(v.toDateString());
-              } else {
-                setValue('');
-              }
-            }}
-          />
-        );
-      case LookupTableFieldType.TIME:
-        return (
-          <AppDateTimePicker
-            disableMaskedInput
-            value={new Date(value as string)}
-            onChange={v => {
-              if (v instanceof Date) {
-                setValue(v.toISOString());
-              } else {
-                setValue('');
-              }
-            }}
-          />
-        );
+        return <Checkbox value={value} onChange={handleChange} />;
       case LookupTableFieldType.INTEGER:
         return (
           <Input
             type='number'
             variant='main-m'
             value={Number(value)}
-            onChange={event => setValue(event.target.value)}
+            onChange={handleChange}
           />
         );
       case LookupTableFieldType.DECIMAL:
@@ -122,7 +62,7 @@ const DatasetDataTableRowCell = ({
             variant='main-m'
             step='.01'
             value={Number(value)}
-            onChange={event => setValue(event.target.value)}
+            onChange={handleChange}
           />
         );
       default:

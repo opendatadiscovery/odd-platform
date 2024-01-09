@@ -8,7 +8,6 @@ import {
   useUpdateLookupTableRow,
 } from 'lib/hooks/api/masterData/lookupTableRows';
 import type { Row, Table } from '@tanstack/react-table';
-import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { HiddenBox } from './DatasetDataTable.styles';
 import type { TableData } from './interfaces';
