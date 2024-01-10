@@ -3778,7 +3778,7 @@ paths:
         - referenceData
 
   /api/referencedata/table/{lookup_table_id}/data/{row_id}:
-    put:
+    patch:
       summary: Update custom table field
       description: Update existing custom table field
       operationId: updateLookupTableRow

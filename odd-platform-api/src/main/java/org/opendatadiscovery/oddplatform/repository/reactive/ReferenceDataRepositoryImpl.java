@@ -239,6 +239,8 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
     @ReactiveCustomTransactional
     public Mono<LookupTableRowList> updateLookupTableRow(final LookupTableDto table, final LookupTableRowFormData item,
                                                          final Long rowId) {
+//      TODO: need to collect all field validation errors (currently, we throw exceptions only for the first error)
+//      TODO: number of columns in LookupTableRowFormData should be equal to  definitionsPojos() - 1 (this is ID field)
         final Table<Record> tableRecord = table(name(table.tablesPojo().getTableName()));
         final List<LookupTablesDefinitionsPojo> columnNames = table.definitionsPojos()
             .stream()
