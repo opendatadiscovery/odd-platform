@@ -4,13 +4,8 @@ import { LookupTableFieldType } from 'generated-sources';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Box, Typography } from '@mui/material';
-import {
-  AppDatePicker,
-  AppDateTimePicker,
-  Button,
-  Checkbox,
-  Input,
-} from 'components/shared/elements';
+import { AppDatePicker, Button, Checkbox, Input } from 'components/shared/elements';
+import { format, isValid } from 'date-fns';
 import * as S from './DatasetDataTable.styles';
 
 interface DatasetDataTableRowFormProps {
@@ -33,28 +28,38 @@ const DatasetDataTableRowForm = ({
       case LookupTableFieldType.BOOLEAN:
         return <Checkbox {...field} />;
       case LookupTableFieldType.DATE:
-        return <AppDatePicker {...field} disableMaskedInput defaultDate='' />;
+        return (
+          <AppDatePicker
+            {...field}
+            inputFormat='yyyy-MM-dd'
+            onChange={date => {
+              if (date && isValid(date)) {
+                field.onChange(format(date, 'yyyy-MM-dd'));
+                return;
+              }
+              field.onChange(null);
+            }}
+          />
+        );
       case LookupTableFieldType.INTEGER:
         return <Input type='number' variant='main-m' {...field} />;
       case LookupTableFieldType.DECIMAL:
-        return <Input type='number' variant='main-m' {...field} step='.01' />;
+        return <Input type='number' variant='main-m' {...field} step='.1' />;
       default:
         return <Input variant='main-m' {...field} />;
     }
   };
 
   const defaultFieldValue = (fieldType: LookupTableFieldType, defaultValue: unknown) => {
-    if (defaultValue) return defaultValue;
+    if (!defaultValue) return '';
 
     switch (fieldType) {
       case LookupTableFieldType.BOOLEAN:
-        return false;
+        return JSON.parse(String(defaultValue));
       case LookupTableFieldType.VARCHAR:
-        return '';
+        return String(defaultValue);
       case LookupTableFieldType.DATE:
-        return '';
-      case LookupTableFieldType.TIME:
-        return '';
+        return format(new Date(String(defaultValue)), 'yyyy-MM-dd');
       default:
         return '';
     }

@@ -74,7 +74,10 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
                     <Button
                       buttonType='tertiary-m'
                       icon={<AddIcon />}
-                      onClick={() => setIsFormShow(true)}
+                      onClick={() => {
+                        setIsFormShow(true);
+                        form.reset();
+                      }}
                     />
                   </S.Td>
                 </S.Tr>
