@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppDatePicker } from 'components/shared/elements';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import type { RowCellProps } from './interfaces';
 
 interface Props extends RowCellProps {
@@ -15,21 +15,13 @@ const DatasetDataTableRowCellDate: React.FC<Props> = ({
   isEditing,
   onChange,
 }) => {
-  const [value, setValue] = useState(initialValue);
-
   const handleChange = useCallback((date: typeof initialValue) => {
-    setValue(date);
-  }, []);
-
-  useEffect(() => {
-    if (isEditing) {
-      // send proper date format
-      onChange(value ? format(value, POSTGRES_DATE_FORMAT) : null);
+    if (date && isValid(date)) {
+      onChange(format(date, POSTGRES_DATE_FORMAT));
       return;
     }
-    // reset value on cancel
-    setValue(initialValue);
-  }, [value, isEditing]);
+    onChange(null);
+  }, []);
 
   const defaultDate = useMemo(
     () => (initialValue ? format(initialValue, POSTGRES_DATE_FORMAT) : undefined),
