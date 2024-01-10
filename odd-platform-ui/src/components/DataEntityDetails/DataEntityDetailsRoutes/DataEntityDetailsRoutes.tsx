@@ -4,11 +4,7 @@ import { AppSuspenseWrapper, RestrictedRoute } from 'components/shared/elements'
 import { WithPermissionsProvider } from 'components/shared/contexts';
 import { Permission, PermissionResourceType } from 'generated-sources';
 import { useAppSelector } from 'redux/lib/hooks';
-import {
-  getDatasetLookupTableId,
-  getIsEntityStatusDeleted,
-  getResourcePermissions,
-} from 'redux/selectors';
+import { getIsEntityStatusDeleted, getResourcePermissions } from 'redux/selectors';
 import { useDataEntityRouteParams } from 'routes';
 
 const Overview = lazy(() => import('../Overview/Overview'));

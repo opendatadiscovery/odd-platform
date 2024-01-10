@@ -31,16 +31,16 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
     [setIsFormShow]
   );
 
-  useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current);
-  }, [fetchMoreOnBottomReached]);
-
   const { getVirtualItems } = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 98,
     overscan: 30,
   });
+
+  useEffect(() => {
+    fetchMoreOnBottomReached(tableContainerRef.current);
+  }, [fetchMoreOnBottomReached]);
 
   return (
     <ScrollableContainer

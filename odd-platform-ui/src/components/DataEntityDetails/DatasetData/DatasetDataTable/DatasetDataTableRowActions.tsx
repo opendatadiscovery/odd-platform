@@ -39,9 +39,9 @@ const DatasetDataTableRowActions = ({
   const setEditedRowsData = useCallback(() => {
     meta?.setEditedRowsData(prev => ({
       ...prev,
-      [row.id]: row.original,
+      [row.id]: {},
     }));
-  }, [meta?.setEditedRowsData, row.id, row.original]);
+  }, [meta?.setEditedRowsData, row.id]);
 
   const cleanEditedRowsData = useCallback(() => {
     meta?.setEditedRowsData(prev => {
@@ -55,7 +55,7 @@ const DatasetDataTableRowActions = ({
   const onEdit = useCallback(() => {
     row.toggleSelected(true);
     setEditedRowsData();
-  }, [setEditedRowsData, row.getToggleSelectedHandler]);
+  }, [setEditedRowsData, row.toggleSelected]);
 
   const onCancel = useCallback(() => {
     cleanEditedRowsData();

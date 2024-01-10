@@ -18,6 +18,7 @@ declare module '@tanstack/react-table' {
     setEditedRowsData: React.Dispatch<React.SetStateAction<EditedRowsData>>;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     fieldType: LookupTableFieldType;
   }

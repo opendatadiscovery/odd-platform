@@ -4,7 +4,6 @@ import type {
   LookupTableRow,
   ReferenceDataApiUpdateLookupTableRowRequest,
 } from 'generated-sources';
-import { LookupTableRowFormData } from 'generated-sources';
 import { referenceDataApi } from 'lib/api';
 import { showSuccessToast } from 'lib/errorHandling';
 import { referenceDataQueryKeys } from './referenceData';

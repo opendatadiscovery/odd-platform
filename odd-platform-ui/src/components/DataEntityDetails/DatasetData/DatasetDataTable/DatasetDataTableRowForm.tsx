@@ -34,8 +34,6 @@ const DatasetDataTableRowForm = ({
         return <Checkbox {...field} />;
       case LookupTableFieldType.DATE:
         return <AppDatePicker {...field} disableMaskedInput defaultDate='' />;
-      case LookupTableFieldType.TIME:
-        return <AppDateTimePicker {...field} disableMaskedInput />;
       case LookupTableFieldType.INTEGER:
         return <Input type='number' variant='main-m' {...field} />;
       case LookupTableFieldType.DECIMAL:
