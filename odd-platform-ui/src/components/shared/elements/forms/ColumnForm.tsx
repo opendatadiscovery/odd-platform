@@ -167,13 +167,13 @@ const ColumnForm = ({ btnEl, lookupTableId, lookupTableField }: ColumnFormProps)
           <AppSelect
             {...field}
             label='Data type'
-            sx={{ mt: 1.5 }}
+            sx={{ mt: 1.5, maxWidth: '400px' }}
             renderValue={value => value as LookupTableFieldType}
           >
             {Object.values(LookupTableFieldType)
               .filter(type => ['VARCHAR', 'INTEGER', 'DECIMAL', 'DATE'].includes(type))
               .map(type => (
-                <AppMenuItem key={type} value={type} maxWidth={undefined}>
+                <AppMenuItem key={type} value={type}>
                   {type}
                 </AppMenuItem>
               ))}

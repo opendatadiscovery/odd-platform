@@ -42,6 +42,8 @@ const DatasetDataTableRowCell = ({
 
   const renderCell = (type?: LookupTableFieldType) => {
     const value = getValue();
+    if (value === undefined)
+      return <Typography variant='body1'>{String(value)}</Typography>;
     switch (type) {
       case LookupTableFieldType.VARCHAR:
         return (
