@@ -12,6 +12,7 @@ public class HealthAPITest extends BaseIntegrationTest {
     @Autowired
     private WebTestClient webTestClient;
 
+//TODO: investigate, why this test fails in github
 //    @Test
     public void testHealthCheck() {
         webTestClient.get()
