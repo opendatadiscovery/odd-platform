@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import ColumnForm from 'components/shared/elements/forms/ColumnForm';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
-import { WithPermissions } from 'components/shared/contexts';
+import { WithPermissions, WithPermissionsProvider } from 'components/shared/contexts';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureList.styles';
 import useStructure from '../../lib/useStructure';
@@ -73,25 +73,30 @@ const DatasetStructureList: FC = () => {
             </div>
           ))}
           {lookupTableId && (
-            <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_CREATE}>
-              <Box
-                display='flex'
-                alignItems='center'
-                pl={1}
-                height={theme => theme.spacing(6)}
-              >
-                <ColumnForm
-                  btnEl={
-                    <Button
-                      text={t('Add column')}
-                      buttonType='tertiary-m'
-                      startIcon={<AddIcon />}
-                    />
-                  }
-                  lookupTableId={lookupTableId}
-                />
-              </Box>
-            </WithPermissions>
+            <WithPermissionsProvider
+              allowedPermissions={[Permission.LOOKUP_TABLE_DEFINITION_CREATE]}
+              resourcePermissions={[]}
+            >
+              <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_CREATE}>
+                <Box
+                  display='flex'
+                  alignItems='center'
+                  pl={1}
+                  height={theme => theme.spacing(6)}
+                >
+                  <ColumnForm
+                    btnEl={
+                      <Button
+                        text={t('Add column')}
+                        buttonType='tertiary-m'
+                        startIcon={<AddIcon />}
+                      />
+                    }
+                    lookupTableId={lookupTableId}
+                  />
+                </Box>
+              </WithPermissions>
+            </WithPermissionsProvider>
           )}
         </S.ItemContainer>
       </S.Container>
