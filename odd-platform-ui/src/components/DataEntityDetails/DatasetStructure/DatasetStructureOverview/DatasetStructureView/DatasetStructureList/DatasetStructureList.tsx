@@ -65,7 +65,7 @@ const DatasetStructureList: FC = () => {
   return (
     <S.Scrollable ref={containerRef}>
       <S.Container $height={virtualizer.getTotalSize()}>
-        <S.ItemContainer $translateY={items[0].start}>
+        <S.ItemContainer $translateY={items[0]?.start || 0}>
           {items.map(({ key, index, size }) => (
             <div key={key} data-index={index} ref={virtualizer.measureElement}>
               {renderStructureItem(datasetStructureRoot[index], 0, size)}
