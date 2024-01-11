@@ -83,48 +83,44 @@ const DatasetFieldHeader = ({ field }: DatasetFieldHeaderProps) => {
         </Grid>
         {!field.isPrimaryKey && !!lookupTableField && lookupTableId && (
           <Grid item display='flex' alignItems='center'>
-            <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_UPDATE}>
-              <ColumnForm
-                btnEl={
-                  <Button
-                    text={t('Edit')}
-                    buttonType='secondary-m'
-                    startIcon={<EditIcon />}
-                  />
-                }
-                lookupTableField={lookupTableField}
-                lookupTableId={lookupTableId}
-              />
-            </WithPermissions>
-            <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_DELETE}>
-              <AppPopover
-                renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-                  <Button
-                    aria-describedby={ariaDescribedBy}
-                    buttonType='secondary-m'
-                    icon={<KebabIcon />}
-                    onClick={onClick}
-                    sx={{ ml: 1 }}
-                  />
-                )}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                transformOrigin={{ vertical: -5, horizontal: 67 }}
-              >
-                <ConfirmationDialog
-                  actionTitle={t('Are you sure you want to delete this column?')}
-                  actionName={t('Delete column')}
-                  actionText={
-                    <>
-                      &quot;{field.name}&quot; {t('will be deleted permanently')}
-                    </>
-                  }
-                  onConfirm={() =>
-                    handleColumnDelete(lookupTableId, lookupTableField.fieldId)
-                  }
-                  actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
+            <ColumnForm
+              btnEl={
+                <Button
+                  text={t('Edit')}
+                  buttonType='secondary-m'
+                  startIcon={<EditIcon />}
                 />
-              </AppPopover>
-            </WithPermissions>
+              }
+              lookupTableField={lookupTableField}
+              lookupTableId={lookupTableId}
+            />
+            <AppPopover
+              renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                <Button
+                  aria-describedby={ariaDescribedBy}
+                  buttonType='secondary-m'
+                  icon={<KebabIcon />}
+                  onClick={onClick}
+                  sx={{ ml: 1 }}
+                />
+              )}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              transformOrigin={{ vertical: -5, horizontal: 67 }}
+            >
+              <ConfirmationDialog
+                actionTitle={t('Are you sure you want to delete this column?')}
+                actionName={t('Delete column')}
+                actionText={
+                  <>
+                    &quot;{field.name}&quot; {t('will be deleted permanently')}
+                  </>
+                }
+                onConfirm={() =>
+                  handleColumnDelete(lookupTableId, lookupTableField.fieldId)
+                }
+                actionBtn={<AppMenuItem>{t('Delete')}</AppMenuItem>}
+              />
+            </AppPopover>
           </Grid>
         )}
       </Grid>

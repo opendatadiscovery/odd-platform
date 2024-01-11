@@ -27,18 +27,15 @@ const DatasetDataTableRowCell = ({
   const { meta: tableMeta } = table.options;
   const isEditing = row.getIsSelected();
 
-  const onChange = useCallback(
-    (v: unknown) => {
-      tableMeta?.setEditedRowsData(prev => ({
-        ...prev,
-        [row.id]: {
-          ...prev[row.id],
-          [column.id]: v,
-        },
-      }));
-    },
-    [row.id, column.id]
-  );
+  const onChange = useCallback((v: unknown) => {
+    tableMeta?.setEditedRowsData(prev => ({
+      ...prev,
+      [row.id]: {
+        ...prev[row.id],
+        [column.id]: v,
+      },
+    }));
+  }, []);
 
   const renderCell = (type?: LookupTableFieldType) => {
     const value = getValue();

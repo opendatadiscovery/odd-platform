@@ -249,9 +249,12 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
         final Map<String, Object> columnWithValues = new HashMap<>();
 
         for (final LookupTablesDefinitionsPojo targetColumn : columnNames) {
+            final LookupTableColumnTypes dataType =
+                LookupTableColumnTypes.resolveByTypeString(targetColumn.getColumnType());
+
             columnWithValues.put(targetColumn.getColumnName().toLowerCase(),
-                getColumnInputData(item, targetColumn,
-                    LookupTableColumnTypes.resolveByTypeString(targetColumn.getColumnType())));
+                DSL.val(getColumnInputData(item, targetColumn, dataType),
+                    dataType.getDataType()));
         }
 
         return jooqReactiveOperationsCustomTables.mono(
@@ -369,8 +372,8 @@ public class ReferenceDataRepositoryImpl implements ReferenceDataRepository {
     }
 
     private Mono<List<Integer>> renameSequencesUpdateQuery(final String newColumnName,
-                                               final LookupTablesDefinitionsPojo column,
-                                               final String tableName) {
+                                                           final LookupTablesDefinitionsPojo column,
+                                                           final String tableName) {
         final String template = buildSequenceNameTemplate(tableName, column.getColumnName());
 
         final SelectConditionStep<Record1<String>> sequences =
