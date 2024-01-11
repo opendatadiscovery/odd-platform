@@ -1,6 +1,6 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { Permission, type DataSetField } from 'generated-sources';
+import { type DataSetField } from 'generated-sources';
 import { useDataEntityRouteParams } from 'routes';
 import { Box } from '@mui/material';
 import { AddIcon } from 'components/shared/icons';
@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import ColumnForm from 'components/shared/elements/forms/ColumnForm';
 import { getDataEntityDetails } from 'redux/selectors';
 import { useAppSelector } from 'redux/lib/hooks';
-import { WithPermissions, WithPermissionsProvider } from 'components/shared/contexts';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureList.styles';
 import useStructure from '../../lib/useStructure';
@@ -73,30 +72,23 @@ const DatasetStructureList: FC = () => {
             </div>
           ))}
           {lookupTableId && (
-            <WithPermissionsProvider
-              allowedPermissions={[Permission.LOOKUP_TABLE_DEFINITION_CREATE]}
-              resourcePermissions={[]}
+            <Box
+              display='flex'
+              alignItems='center'
+              pl={1}
+              height={theme => theme.spacing(6)}
             >
-              <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_CREATE}>
-                <Box
-                  display='flex'
-                  alignItems='center'
-                  pl={1}
-                  height={theme => theme.spacing(6)}
-                >
-                  <ColumnForm
-                    btnEl={
-                      <Button
-                        text={t('Add column')}
-                        buttonType='tertiary-m'
-                        startIcon={<AddIcon />}
-                      />
-                    }
-                    lookupTableId={lookupTableId}
+              <ColumnForm
+                btnEl={
+                  <Button
+                    text={t('Add column')}
+                    buttonType='tertiary-m'
+                    startIcon={<AddIcon />}
                   />
-                </Box>
-              </WithPermissions>
-            </WithPermissionsProvider>
+                }
+                lookupTableId={lookupTableId}
+              />
+            </Box>
           )}
         </S.ItemContainer>
       </S.Container>
