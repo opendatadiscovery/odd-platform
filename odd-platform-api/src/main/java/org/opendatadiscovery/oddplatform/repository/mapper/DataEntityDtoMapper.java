@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -36,6 +37,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.repository.util.DataEntityCTEQueryConfig.AGG_METADATA_VALUE_FIELD;
@@ -90,6 +92,7 @@ public class DataEntityDtoMapper {
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
+            .lookupTablesPojo(jooqRecordHelper.extractRelation(r, LOOKUP_TABLES, LookupTablesPojo.class))
             .build();
     }
 

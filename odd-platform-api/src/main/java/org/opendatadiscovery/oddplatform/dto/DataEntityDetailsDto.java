@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 
 @EqualsAndHashCode(callSuper = true)
@@ -32,8 +33,9 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
                                 final Collection<MetadataDto> metadata,
-                                final Collection<TagDto> tags) {
-        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership, dataSource);
+                                final Collection<TagDto> tags,
+                                final LookupTablesPojo lookupTablesPojo) {
+        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership, dataSource, lookupTablesPojo);
         this.metadata = metadata;
         this.tags = tags;
     }

@@ -129,6 +129,12 @@ export const getDatasetStats = (dataEntityId: number) =>
     dataEntities => dataEntities.byId[dataEntityId]?.stats
   );
 
+export const getDatasetLookupTableId = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.lookupTableId
+  );
+
 // statuses selectors
 export const getMyDataEntitiesFetchingStatuses = createStatusesSelector(
   actions.fetchMyDataEntitiesActionType

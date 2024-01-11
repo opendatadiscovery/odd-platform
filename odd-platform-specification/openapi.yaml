@@ -43,6 +43,7 @@ tags:
   - name: directory
   - name: dataQualityRuns
   - name: queryExample
+  - name: referenceData
 
 paths:
   /api/integrations:
@@ -3493,3 +3494,321 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSourceEntityList'
       tags:
         - directory
+
+  /api/referencedata/table:
+    post:
+      summary: Create custom table
+      description: Create data reference custom table
+      operationId: createReferenceTable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookupTableFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}:
+    get:
+      summary: Get custom table
+      description: Get existing custom table
+      operationId: getLookupTableById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+    put:
+      summary: Update custom table
+      description: Update existing custom table
+      operationId: updateLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookupTableUpdateFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+    delete:
+      summary: Delete custom table
+      description: Deletes custom table
+      operationId: deleteLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/columns:
+    post:
+      summary: Create columns for custom table
+      description: Create columns for custom table
+      operationId: createColumnsForLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: './components.yaml/#/components/schemas/LookupTableFieldFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/columns/{column_id}:
+    get:
+      summary: Get custom table field
+      description: Get existing custom table field
+      operationId: getLookupTableField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableField'
+      tags:
+        - referenceData
+    patch:
+      summary: Update custom table field
+      description: Update existing custom table field
+      operationId: updateLookupTableField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookupTableFieldUpdateFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTable'
+      tags:
+        - referenceData
+    delete:
+      summary: Delete custom table field
+      description: Deletes custom table field
+      operationId: deleteLookupTableField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupColumnIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - referenceData
+
+  /api/referencedata/search:
+    post:
+      summary: Reference Data search by query
+      description: Creates a new search of all the matching Reference Data to given query and calculates the aggregation data for correspondent data slice
+      operationId: referenceDataSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/ReferenceDataSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ReferenceDataSearchFacetsData'
+      tags:
+        - referenceData
+
+  /api/referencedata/search/{search_id}:
+    get:
+      summary: Get Reference Data search facets by search ID
+      description: Gets Reference Data search facets by parameter which can be found in search endpoint response
+      operationId: getReferenceDataSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ReferenceDataSearchFacetsData'
+      tags:
+        - referenceData
+    put:
+      summary: Update Reference Data search facets by search ID
+      description: Updates Reference Data search facets of a certain search ID by provided search parameters
+      operationId: updateReferenceDataSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/ReferenceDataSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ReferenceDataSearchFacetsData'
+      tags:
+        - referenceData
+
+  /api/referencedata/search/{search_id}/results:
+    get:
+      summary: Get Reference Data search results by search ID
+      description: Returns paginated list of Reference Data search results for a given search ID
+      operationId: getReferenceDataSearchResults
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableList'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/data:
+    get:
+      summary: List of data under the lookup table
+      description: Gets the list of data under the lookup table
+      operationId: getLookupTableRowList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableRowList'
+      tags:
+        - referenceData
+    post:
+      summary: Create data in lookup_table
+      description: Create data in lookup_table
+      operationId: addDataToLookupTable
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: './components.yaml/#/components/schemas/LookupTableRowFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableRowList'
+      tags:
+        - referenceData
+
+  /api/referencedata/table/{lookup_table_id}/data/{row_id}:
+    patch:
+      summary: Update custom table field
+      description: Update existing custom table field
+      operationId: updateLookupTableRow
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupRowIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LookupTableRowFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LookupTableRowList'
+      tags:
+        - referenceData
+    delete:
+      summary: Delete custom table field
+      description: Deletes custom table field
+      operationId: deleteLookupTableRow
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/LookupTableIdParam'
+        - $ref: './components.yaml/#/components/parameters/LookupRowIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - referenceData

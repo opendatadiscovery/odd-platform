@@ -96,7 +96,7 @@ const DatasetStructureOverview: React.FC = () => {
       )}
       <AppErrorPage
         showError={isDatasetStructureNotFetched || isDatasetStructureLatestNotFetched}
-        error={datasetStructureFetchingError || datasetStructureLatestFetchingError}
+        error={datasetStructureFetchingError ?? datasetStructureLatestFetchingError}
         offsetTop={132}
       />
       <EmptyContentPlaceholder

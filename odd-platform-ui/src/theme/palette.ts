@@ -62,7 +62,7 @@ const colors = {
   purple20: '#AA99FF',
   purple10: '#D4CCFF',
   purple5: '#EAE5FF',
-};
+} as const;
 
 export const palette = createPalette({
   border: {
@@ -337,4 +337,4 @@ export const palette = createPalette({
     DELETED: { background: colors.orange5, color: colors.orange50 },
     ERROR_SENDING: { background: colors.red5, color: colors.red50 },
   },
-});
+} as const);

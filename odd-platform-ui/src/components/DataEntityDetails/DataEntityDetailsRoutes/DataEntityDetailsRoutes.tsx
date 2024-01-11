@@ -24,6 +24,7 @@ const LinkedItemsList = lazy(() => import('../LinkedItemsList/LinkedItemsList'))
 const DataEntityDetailsQueryExamples = lazy(
   () => import('../DataEntityQueryExamples/DataEntityDetailsQueryExamples')
 );
+const DatasetData = lazy(() => import('../DatasetData/DatasetData'));
 
 const DataEntityDetailsRoutes = () => {
   const { dataEntityId } = useDataEntityRouteParams();
@@ -114,16 +115,24 @@ const DataEntityDetailsRoutes = () => {
         <Route
           path='query-examples'
           element={
-            <RestrictedRoute isAllowedTo={!isStatusDeleted} redirectTo='../overview'>
-              <WithPermissionsProvider
-                allowedPermissions={[
-                  Permission.QUERY_EXAMPLE_DATASET_CREATE,
-                  Permission.QUERY_EXAMPLE_DATASET_DELETE,
-                ]}
-                resourcePermissions={[]}
-                Component={DataEntityDetailsQueryExamples}
-              />
-            </RestrictedRoute>
+            <WithPermissionsProvider
+              allowedPermissions={[
+                Permission.QUERY_EXAMPLE_DATASET_CREATE,
+                Permission.QUERY_EXAMPLE_DATASET_DELETE,
+              ]}
+              resourcePermissions={[]}
+              Component={DataEntityDetailsQueryExamples}
+            />
+          }
+        />
+        <Route
+          path='data'
+          element={
+            <RestrictedRoute
+              isAllowedTo={!isStatusDeleted}
+              redirectTo='../overview'
+              component={DatasetData}
+            />
           }
         />
       </Routes>

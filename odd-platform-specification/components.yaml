@@ -189,6 +189,15 @@ components:
         - QUERY_EXAMPLE_DELETE
         - QUERY_EXAMPLE_DATASET_CREATE
         - QUERY_EXAMPLE_DATASET_DELETE
+        - LOOKUP_TABLE_CREATE
+        - LOOKUP_TABLE_UPDATE
+        - LOOKUP_TABLE_DELETE
+        - LOOKUP_TABLE_DEFINITION_CREATE
+        - LOOKUP_TABLE_DEFINITION_UPDATE
+        - LOOKUP_TABLE_DEFINITION_DELETE
+        - LOOKUP_TABLE_DATA_CREATE
+        - LOOKUP_TABLE_DATA_UPDATE
+        - LOOKUP_TABLE_DATA_DELETE
         - TERM_CREATE
         - TERM_UPDATE
         - TERM_DELETE
@@ -536,6 +545,9 @@ components:
           $ref: '#/components/schemas/OwnershipList'
         data_source:
           $ref: '#/components/schemas/DataSourceSafe'
+        lookup_table_id:
+          type: integer
+          format: int64
         entity_classes:
           type: array
           items:
@@ -743,6 +755,7 @@ components:
             - KAFKA_SERVICE
             - DOMAIN
             - VECTOR_STORE
+            - LOOKUP_TABLE
       required:
         - id
         - name
@@ -1640,6 +1653,9 @@ components:
           type: integer
           format: int64
         parent_field_id:
+          type: integer
+          format: int64
+        lookup_table_definition_id:
           type: integer
           format: int64
         reference_field_id:
@@ -3679,6 +3695,246 @@ components:
         - status
         - count
 
+    LookupTableFieldType:
+      type: string
+      enum:
+        - VARCHAR
+        - INTEGER
+        - SERIAL
+        - DECIMAL
+        - BOOLEAN
+        - DATE
+        - TIME
+        - JSON
+        - UUID
+
+    LookupTableFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        namespace_name:
+          type: string
+      required:
+        - name
+        - namespace_name
+
+    LookupTableUpdateFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
+    LookupTableFieldFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/LookupTableFieldType'
+        is_nullable:
+          type: boolean
+          default: true
+        is_unique:
+          type: boolean
+          default: false
+        default_value:
+          type: string
+      required:
+        - name
+        - field_type
+
+    LookupTableFieldUpdateFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        is_nullable:
+          type: boolean
+          default: false
+        is_unique:
+          type: boolean
+          default: false
+        default_value:
+          type: string
+      required:
+        - name
+
+    LookupTableList:
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTable'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    LookupTable:
+      type: object
+      properties:
+        table_id:
+          type: integer
+          format: int64
+        dataset_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTableField'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - table_id
+        - dataset_id
+        - table_name
+        - namespace
+        - fields
+
+    LookupTableField:
+      type: object
+      properties:
+        field_id:
+          type: integer
+          format: int64
+        dataset_field_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        field_type:
+          $ref: '#/components/schemas/LookupTableFieldType'
+        is_primary_key:
+          type: boolean
+        is_nullable:
+          type: boolean
+        is_unique:
+          type: boolean
+        default_value:
+          type: string
+      required:
+        - field_id
+        - dataset_field_id
+        - name
+        - field_type
+
+    ReferenceDataSearchFormData:
+      type: object
+      properties:
+        query:
+          type: string
+
+    ReferenceDataSearchFacetsData:
+      type: object
+      properties:
+        search_id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        total:
+          type: integer
+          format: int64
+      required:
+        - search_id
+        - query
+
+    LookupTableRowFormDataList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTableRowFormData'
+      required:
+        - items
+
+    LookupTableRowFormData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTableRowColumnFormData'
+      required:
+        - items
+
+    LookupTableRowColumnFormData:
+      type: object
+      properties:
+        field_id:
+          type: integer
+          format: int64
+        value:
+          type: string
+      required:
+        - field_id
+        - value
+
+    LookupTableRowList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTableRow'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    LookupTableRow:
+      type: object
+      properties:
+        row_id:
+          type: integer
+          format: int64
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LookupTableRowColumnData'
+      required:
+        - items
+        - row_id
+
+    LookupTableRowColumnData:
+      type: object
+      properties:
+        field_id:
+          type: integer
+          format: int64
+        value:
+          type: string
+      required:
+        - field_id
+        - value
+
   parameters:
     PageParam:
       name: page
@@ -3814,6 +4070,30 @@ components:
 
     QueryExampleIdParam:
       name: example_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LookupTableIdParam:
+      name: lookup_table_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LookupColumnIdParam:
+      name: column_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    LookupRowIdParam:
+      name: row_id
       in: path
       required: true
       schema:

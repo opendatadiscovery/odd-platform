@@ -15,6 +15,7 @@ import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.FacetState;
 import org.opendatadiscovery.oddplatform.api.contract.model.QueryExampleSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.ReferenceDataSearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
@@ -130,6 +131,15 @@ public class FacetStateMapperImpl implements FacetStateMapper {
 
     @Override
     public FacetStateDto mapForm(final QueryExampleSearchFormData formData) {
+        return new FacetStateDto(
+            Map.of(),
+            formData.getQuery(),
+            false
+        );
+    }
+
+    @Override
+    public FacetStateDto mapForm(final ReferenceDataSearchFormData formData) {
         return new FacetStateDto(
             Map.of(),
             formData.getQuery(),

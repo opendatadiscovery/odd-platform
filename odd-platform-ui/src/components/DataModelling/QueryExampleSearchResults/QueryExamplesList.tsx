@@ -1,26 +1,21 @@
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useMemo } from 'react';
-import { primaryTabsHeight, tabsContainerMargin, toolbarHeight } from 'lib/constants';
-import { useTheme } from 'styled-components';
 import { useSearchQueryExamples } from 'lib/hooks/api/dataModelling/searchQueryExamples';
 import {
   EmptyContentPlaceholder,
   QueryExamplesListItem,
   QueryExamplesSkeleton,
+  ScrollableContainer,
 } from 'components/shared/elements';
-import { ScrollableYGrid } from 'components/shared/styled-components/ScrollableYGrid';
+import { useSearchParams } from 'react-router-dom';
 
-interface QueryExampleSearchResultsProps {
-  searchId: string;
-}
-
-const querySearchHeight = 40;
-
-const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps) => {
-  const theme = useTheme();
+const QueryExamplesList = () => {
+  const [searchParams] = useSearchParams();
+  const searchId = useMemo(() => searchParams.get('querySearchId') ?? '', [searchParams]);
   const { data, fetchNextPage, hasNextPage, isLoading } = useSearchQueryExamples({
     searchId,
     size: 30,
+    enabled: !!searchId,
   });
 
   const queryExamples = useMemo(
@@ -33,12 +28,8 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
     [queryExamples.length, isLoading]
   );
 
-  const calculatedHeight = `calc(100vh - ${toolbarHeight}px - ${querySearchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
-    8
-  )})`;
-
   return (
-    <ScrollableYGrid height={calculatedHeight} item xs={12} id='query-examples-list'>
+    <ScrollableContainer container id='query-examples-list' $offsetY={165}>
       <InfiniteScroll
         dataLength={queryExamples.length}
         next={fetchNextPage}
@@ -51,10 +42,10 @@ const QueryExampleSearchResults = ({ searchId }: QueryExampleSearchResultsProps)
           <QueryExamplesListItem queryExample={qe} key={qe.definition} />
         ))}
         {isLoading && <QueryExamplesSkeleton />}
-        {isEmpty && <EmptyContentPlaceholder />}
+        {isEmpty && <EmptyContentPlaceholder offsetTop={215} />}
       </InfiniteScroll>
-    </ScrollableYGrid>
+    </ScrollableContainer>
   );
 };
 
-export default QueryExampleSearchResults;
+export default QueryExamplesList;

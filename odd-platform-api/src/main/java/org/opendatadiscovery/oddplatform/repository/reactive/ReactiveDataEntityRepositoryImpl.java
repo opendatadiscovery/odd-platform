@@ -63,6 +63,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -862,7 +863,9 @@ public class ReactiveDataEntityRepositoryImpl
         final Select<Record> dataEntitySelect = cteDataEntitySelect(cteConfig);
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
 
-        final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(), DATA_SOURCE.fields())
+        final List<Field<?>> groupByFields = Stream.of(deCte.fields(), NAMESPACE.fields(),
+                DATA_SOURCE.fields(),
+                LOOKUP_TABLES.fields())
             .flatMap(Arrays::stream)
             .toList();
 
@@ -879,7 +882,9 @@ public class ReactiveDataEntityRepositoryImpl
             .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
             .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID));
+            .leftJoin(TITLE).on(TITLE.ID.eq(OWNERSHIP.TITLE_ID))
+            .leftJoin(LOOKUP_TABLES)
+            .on(LOOKUP_TABLES.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)));
 
         return DSL.with(deCteName)
             .asMaterialized(dataEntitySelect)

@@ -1,14 +1,24 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import type { DataSetField } from 'generated-sources';
+import { Permission, type DataSetField } from 'generated-sources';
 import { useDataEntityRouteParams } from 'routes';
-import useStructure from '../../lib/useStructure';
+import { Box } from '@mui/material';
+import { AddIcon } from 'components/shared/icons';
+import { Button } from 'components/shared/elements';
+import { useTranslation } from 'react-i18next';
+import ColumnForm from 'components/shared/elements/forms/ColumnForm';
+import { getDataEntityDetails } from 'redux/selectors';
+import { useAppSelector } from 'redux/lib/hooks';
+import { WithPermissions } from 'components/shared/contexts';
 import DatasetStructureItem from './DatasetStructureItem/DatasetStructureItem';
 import * as S from './DatasetStructureList.styles';
+import useStructure from '../../lib/useStructure';
 
 const DatasetStructureList: FC = () => {
   const { dataEntityId, versionId } = useDataEntityRouteParams();
+  const { lookupTableId } = useAppSelector(getDataEntityDetails(dataEntityId));
   const { datasetStructureRoot, idxToScroll, isSearchUpdated } = useStructure();
+  const { t } = useTranslation();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const structureLength = useMemo(
@@ -62,6 +72,27 @@ const DatasetStructureList: FC = () => {
               {renderStructureItem(datasetStructureRoot[index], 0, size)}
             </div>
           ))}
+          {lookupTableId && (
+            <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DEFINITION_CREATE}>
+              <Box
+                display='flex'
+                alignItems='center'
+                pl={1}
+                height={theme => theme.spacing(6)}
+              >
+                <ColumnForm
+                  btnEl={
+                    <Button
+                      text={t('Add column')}
+                      buttonType='tertiary-m'
+                      startIcon={<AddIcon />}
+                    />
+                  }
+                  lookupTableId={lookupTableId}
+                />
+              </Box>
+            </WithPermissions>
+          )}
         </S.ItemContainer>
       </S.Container>
     </S.Scrollable>

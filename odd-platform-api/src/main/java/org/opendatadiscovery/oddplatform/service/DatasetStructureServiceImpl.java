@@ -45,6 +45,22 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
     }
 
     @Override
+    public Mono<List<DatasetFieldPojo>>
+        createDatasetStructureForSpecificEntity(final DatasetVersionPojo version,
+                                                final List<DatasetFieldPojo> datasetFields) {
+        return datasetFieldService.createOrUpdateDatasetFields(datasetFields)
+            .flatMap(fields -> reactiveDatasetVersionRepository.create(version)
+                .map(createdVersion ->
+                    fields.stream()
+                        .map(field -> new DatasetStructurePojo()
+                            .setDatasetFieldId(field.getId())
+                            .setDatasetVersionId(createdVersion.getId()))
+                        .collect(Collectors.toList()))
+                .flatMap(reactiveDatasetStructureRepository::bulkCreateHeadless)
+                .thenReturn(fields));
+    }
+
+    @Override
     public Mono<Map<String, DatasetStructureDelta>> getLastDatasetStructureVersionDelta(
         final List<Long> datasetIds
     ) {
@@ -64,6 +80,11 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
                 return reactiveDatasetVersionRepository.getPenultimateVersions(latestVersionsWithPenultimates)
                     .flatMap(penultimateList -> getLastStructureDelta(latestVersionsWithPenultimates, penultimateList));
             });
+    }
+
+    @Override
+    public Mono<Void> deleteStructureByVersionIds(final Set<Long> longs) {
+        return reactiveDatasetStructureRepository.deleteStructureByVersionIds(longs);
     }
 
     private Mono<Map<String, DatasetStructureDelta>> getLastStructureDelta(

@@ -5,6 +5,7 @@ import { toolbarHeight } from 'lib/constants';
 export default styled(Grid)<{ $offsetY?: number }>(({ $offsetY = 130 }) => ({
   display: 'flex',
   flexDirection: 'column',
+  flexWrap: 'nowrap',
   height: `calc(100vh - ${toolbarHeight}px - ${$offsetY}px)`,
-  overflowY: 'scroll',
+  overflow: 'auto',
 }));

@@ -12,12 +12,11 @@ import type {
   QueryExampleApiGetQueryExampleSearchFacetListRequest,
 } from 'generated-sources';
 
-export function useCreateQueryExampleSearchId({ enabled }: { enabled: boolean }) {
-  return useQuery({
-    queryKey: ['createQueryExampleSearchId'],
-    queryFn: async () =>
-      queryExampleApi.queryExamplesSearch({ queryExampleSearchFormData: { query: '' } }),
-    enabled,
+export function useCreateQueryExampleSearchId() {
+  return useMutation({
+    mutationKey: ['createQueryExampleSearchId'],
+    mutationFn: async (query?: string) =>
+      queryExampleApi.queryExamplesSearch({ queryExampleSearchFormData: { query } }),
   });
 }
 
@@ -52,8 +51,12 @@ export function useUpdateQueryExampleSearchFacets() {
 type UseSearchQueryExamples = Omit<
   QueryExampleApiGetQueryExampleSearchResultsRequest,
   'page'
->;
-export function useSearchQueryExamples({ searchId, size }: UseSearchQueryExamples) {
+> & { enabled: boolean };
+export function useSearchQueryExamples({
+  searchId,
+  size,
+  enabled,
+}: UseSearchQueryExamples) {
   return useInfiniteQuery({
     queryKey: ['searchQueryExamples', searchId, size],
     queryFn: async ({ pageParam }) => {
@@ -67,5 +70,6 @@ export function useSearchQueryExamples({ searchId, size }: UseSearchQueryExample
     },
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.pageInfo.nextPage,
+    enabled,
   });
 }

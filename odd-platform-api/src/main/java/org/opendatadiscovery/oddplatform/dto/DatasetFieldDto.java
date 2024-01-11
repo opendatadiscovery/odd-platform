@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.metadata.DatasetFieldMetadataDto;
 import org.opendatadiscovery.oddplatform.dto.term.LinkedTermDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +16,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 @Builder
 public class DatasetFieldDto {
     private DatasetFieldPojo datasetFieldPojo;
+    private LookupTablesDefinitionsPojo lookupTablesDefinitionsPojo;
     private List<TagDto> tags;
     private List<DatasetFieldMetadataDto> metadata;
     private List<LinkedTermDto> terms;

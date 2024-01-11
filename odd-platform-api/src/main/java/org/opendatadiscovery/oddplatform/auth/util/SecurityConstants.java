@@ -43,6 +43,15 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.D
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_TOKEN_REGENERATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.DATA_SOURCE_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DATA_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DATA_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DATA_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DEFINITION_CREATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DEFINITION_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DEFINITION_UPDATE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_DELETE;
+import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.LOOKUP_TABLE_UPDATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_CREATE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_DELETE;
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.NAMESPACE_UPDATE;
@@ -73,6 +82,7 @@ import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.T
 import static org.opendatadiscovery.oddplatform.dto.policy.PolicyPermissionDto.TERM_UPDATE;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
@@ -97,6 +107,8 @@ public final class SecurityConstants {
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/terms", POST), TERM_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/queryexample", POST),
             QUERY_EXAMPLE_CREATE),
+        new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/referencedata/table", POST),
+            LOOKUP_TABLE_CREATE),
         new SecurityRule(NO_CONTEXT, new PathPatternParserServerWebExchangeMatcher("/api/datasources", POST),
             DATA_SOURCE_CREATE),
         new SecurityRule(NO_CONTEXT,
@@ -290,6 +302,36 @@ public final class SecurityConstants {
         new SecurityRule(NO_CONTEXT,
             new PathPatternParserServerWebExchangeMatcher(
                 "/api/queryexample/{example_id}/dataset/{data_entity_id}", DELETE),
-            QUERY_EXAMPLE_DATASET_DELETE)
+            QUERY_EXAMPLE_DATASET_DELETE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher("/api/referencedata/table/{lookup_table_id}", PUT),
+            LOOKUP_TABLE_UPDATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher("/api/referencedata/table/{lookup_table_id}", DELETE),
+            LOOKUP_TABLE_DELETE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/referencedata/table/{lookup_table_id}/columns", POST),
+            LOOKUP_TABLE_DEFINITION_CREATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/referencedata/table/{lookup_table_id}/column/{column_id}", PATCH),
+            LOOKUP_TABLE_DEFINITION_UPDATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/referencedata/table/{lookup_table_id}/column/{column_id}", DELETE),
+            LOOKUP_TABLE_DEFINITION_DELETE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/referencedata/table/{lookup_table_id}/data", POST),
+            LOOKUP_TABLE_DATA_CREATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/referencedata/table/{lookup_table_id}/data/{row_id}", PUT),
+            LOOKUP_TABLE_DATA_UPDATE),
+        new SecurityRule(NO_CONTEXT,
+            new PathPatternParserServerWebExchangeMatcher(
+                "/api/referencedata/table/{lookup_table_id}/data/{row_id}", DELETE),
+            LOOKUP_TABLE_DATA_DELETE)
     );
 }

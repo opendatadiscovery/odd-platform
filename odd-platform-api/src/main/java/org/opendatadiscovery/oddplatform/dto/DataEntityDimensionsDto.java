@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 
 @EqualsAndHashCode(callSuper = true)
@@ -24,6 +25,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     protected NamespacePojo namespace;
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
+    protected LookupTablesPojo lookupTablesPojo;
 
     protected Collection<DataEntityPojo> parentGroups;
     protected DataEntityGroupDimensionsDto groupsDto;
@@ -39,12 +41,14 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final Map<DataEntityClassDto, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
-                                   final DataSourcePojo dataSource) {
+                                   final DataSourcePojo dataSource,
+                                   final LookupTablesPojo lookupTablesPojo) {
         super(dataEntity, hasAlerts);
         this.specificAttributes = specificAttributes;
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
+        this.lookupTablesPojo = lookupTablesPojo;
     }
 
     public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities,

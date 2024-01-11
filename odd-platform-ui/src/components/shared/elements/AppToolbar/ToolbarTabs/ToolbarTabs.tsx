@@ -14,6 +14,7 @@ import {
   alertsPath,
   dataQualityPath,
   directoryPath,
+  lookupTablesPath,
   managementPath,
   queryExamplesPath,
   searchPath,
@@ -48,6 +49,10 @@ const ToolbarTabs: FC = () => {
         link: queryExamplesPath(),
         hint: t('BETA'),
         hintType: 'secondary',
+      },
+      {
+        name: t('Master Data'),
+        link: lookupTablesPath(),
       },
       {
         name: t('Management'),

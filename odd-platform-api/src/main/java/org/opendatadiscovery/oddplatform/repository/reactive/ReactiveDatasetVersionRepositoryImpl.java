@@ -32,6 +32,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldMetadata
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LookupTablesDefinitionsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -61,6 +62,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_DEFINITIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
@@ -94,7 +96,9 @@ public class ReactiveDatasetVersionRepositoryImpl
 
     @Override
     public Mono<DatasetStructureDto> getDatasetVersion(final long datasetVersionId) {
-        final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
+        final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(),
+                DATASET_FIELD.fields(),
+                LOOKUP_TABLES_DEFINITIONS.fields())
             .flatMap(Arrays::stream)
             .toList();
 
@@ -121,6 +125,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD.ID.eq(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID))
             .leftJoin(TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID)).and(TERM.DELETED_AT.isNull())
             .leftJoin(NAMESPACE).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID))
+            .leftJoin(LOOKUP_TABLES_DEFINITIONS).on(LOOKUP_TABLES_DEFINITIONS.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
             .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields);
 
@@ -162,7 +167,9 @@ public class ReactiveDatasetVersionRepositoryImpl
             .where(DATA_ENTITY.ID.eq(datasetId))
             .groupBy(DATASET_VERSION.DATASET_ODDRN);
 
-        final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
+        final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(),
+                DATASET_FIELD.fields(),
+                LOOKUP_TABLES_DEFINITIONS.fields())
             .flatMap(Arrays::stream)
             .toList();
 
@@ -192,6 +199,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .leftJoin(DATASET_FIELD_TO_TERM).on(DATASET_FIELD.ID.eq(DATASET_FIELD_TO_TERM.DATASET_FIELD_ID))
             .leftJoin(TERM).on(DATASET_FIELD_TO_TERM.TERM_ID.eq(TERM.ID)).and(TERM.DELETED_AT.isNull())
             .leftJoin(NAMESPACE).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID))
+            .leftJoin(LOOKUP_TABLES_DEFINITIONS).on(LOOKUP_TABLES_DEFINITIONS.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
             .groupBy(selectFields);
 
         return jooqReactiveOperations
@@ -295,6 +303,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .tags(extractTags(datasetVersionRecord))
             .metadata(extractMetadata(datasetVersionRecord))
             .terms(extractTerms(datasetVersionRecord))
+            .lookupTablesDefinitionsPojo(extractLookupTableDefinition(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
             .build();
     }
@@ -360,6 +369,11 @@ public class ReactiveDatasetVersionRepositoryImpl
                 return new LinkedTermDto(termRefDto, isDescriptionLink);
             })
             .toList();
+    }
+
+    private LookupTablesDefinitionsPojo extractLookupTableDefinition(final Record datasetVersionRecord) {
+        return jooqRecordHelper.extractRelation(datasetVersionRecord,
+            LOOKUP_TABLES_DEFINITIONS, LookupTablesDefinitionsPojo.class);
     }
 
     private boolean isNullList(final List<DatasetFieldDto> list) {

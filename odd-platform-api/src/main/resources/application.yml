@@ -5,6 +5,10 @@ spring:
     url: jdbc:postgresql://127.0.0.1:5432/odd-platform
     username: odd-platform
     password: odd-platform-password
+  custom-datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/odd-platform?schema=lookup_tables_schema
+    username: odd-platform
+    password: odd-platform-password
   jooq:
     sql-dialect: postgres
   codec:

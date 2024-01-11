@@ -7,3 +7,5 @@ export * from './dataEntityAttachments/dataEntityFiles';
 export * from './dataEntityAttachments/dataEntityLinks';
 export * from './directory';
 export * from './terms';
+export * from './masterData/lookupTables';
+export * from './masterData/lookupTableDefinitions';

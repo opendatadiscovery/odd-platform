@@ -22,7 +22,13 @@ export const components: Components = {
     styleOverrides: {
       body: {
         '*::-webkit-scrollbar': { width: '4px' },
+        '*::-webkit-scrollbar:horizontal': { height: '4px' },
         '*::-webkit-scrollbar-thumb': {
+          backgroundColor: '#EBECF0',
+          borderRadius: '2px',
+          '&:hover': { backgroundColor: '#C1C7D0' },
+        },
+        '*::-webkit-scrollbar-thumb:horizontal': {
           backgroundColor: '#EBECF0',
           borderRadius: '2px',
           '&:hover': { backgroundColor: '#C1C7D0' },

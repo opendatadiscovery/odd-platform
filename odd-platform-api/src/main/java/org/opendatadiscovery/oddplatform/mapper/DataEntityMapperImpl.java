@@ -42,6 +42,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityStatusDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.ReferenceTableDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.LinkedUrlAttribute;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
@@ -195,6 +196,24 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
+    public DataEntityPojo mapCreatedLookupTablePojo(final ReferenceTableDto tableDto,
+                                                    final DataEntityClassDto classDto) {
+        final LocalDateTime now = DateTimeUtil.generateNow();
+        return new DataEntityPojo()
+            .setInternalName(tableDto.getName())
+            .setExternalName(tableDto.getTableName())
+            .setNamespaceId(tableDto.getNamespacePojo() != null ? tableDto.getNamespacePojo().getId() : null)
+            .setEntityClassIds(new Integer[] {classDto.getId()})
+            .setTypeId(DataEntityTypeDto.LOOKUP_TABLE.getId())
+            .setPlatformCreatedAt(now)
+            .setStatus(DataEntityStatusDto.UNASSIGNED.getId())
+            .setStatusUpdatedAt(now)
+            .setManuallyCreated(true)
+            .setHollow(false)
+            .setExcludeFromSearch(false);
+    }
+
+    @Override
     public DataEntityPojo applyToPojo(final DataEntityGroupFormData formData,
                                       final NamespacePojo namespacePojo,
                                       final DataEntityPojo pojo) {
@@ -205,6 +224,18 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .setInternalName(formData.getName())
             .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
             .setTypeId(formData.getType().getId());
+    }
+
+    @Override
+    public DataEntityPojo applyToPojo(final DataEntityPojo pojo, final ReferenceTableDto dto) {
+        if (pojo == null) {
+            return null;
+        }
+
+        return pojo
+            .setInternalName(dto.getName())
+            .setExternalName(dto.getTableName())
+            .setNamespaceId(dto.getNamespacePojo() != null ? dto.getNamespacePojo().getId() : null);
     }
 
     @Override
@@ -255,6 +286,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .tags(tagMapper.mapToTagList(dto.getTags()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
             .terms(linkedTerms)
+            .lookupTableId(dto.getLookupTablesPojo() != null ? dto.getLookupTablesPojo().getId() : null)
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {

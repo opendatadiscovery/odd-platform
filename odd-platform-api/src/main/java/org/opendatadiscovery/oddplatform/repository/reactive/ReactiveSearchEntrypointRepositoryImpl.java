@@ -33,6 +33,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -614,5 +615,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         );
 
         return jooqReactiveOperations.mono(insertQuery);
+    }
+
+//    USED ONLY FOR LOOK UP TABLES API'S
+    @Override
+    public Mono<Void> deleteByDataEntityId(final Long dataEntityId) {
+        return jooqReactiveOperations.mono(DSL.deleteFrom(SEARCH_ENTRYPOINT)
+                .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(dataEntityId)))
+            .then(Mono.empty());
     }
 }

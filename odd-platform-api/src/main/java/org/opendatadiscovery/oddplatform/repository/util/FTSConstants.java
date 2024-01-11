@@ -18,6 +18,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES;
+import static org.opendatadiscovery.oddplatform.model.Tables.LOOKUP_TABLES_DEFINITIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -65,6 +67,13 @@ public class FTSConstants {
         Map.entry(QUERY_EXAMPLE.QUERY, "B"),
         Map.entry(DATA_ENTITY.INTERNAL_NAME, "B"),
         Map.entry(DATA_ENTITY.EXTERNAL_NAME, "C")
+    );
+
+    public static final Map<Field<?>, String> LOOKUP_TABLES_FTS_WEIGHTS = Map.ofEntries(
+        Map.entry(LOOKUP_TABLES.NAME, "A"),
+        Map.entry(LOOKUP_TABLES.DESCRIPTION, "B"),
+        Map.entry(LOOKUP_TABLES_DEFINITIONS.COLUMN_NAME, "B"),
+        Map.entry(NAMESPACE.NAME, "B")
     );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> DATA_ENTITY_CONDITIONS =
@@ -115,6 +124,7 @@ public class FTSConstants {
     );
 
     public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> QUERY_EXAMPLE_CONDITIONS = Map.of();
+    public static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> LOOKUP_TABLES_CONDITIONS = Map.of();
 
     private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
