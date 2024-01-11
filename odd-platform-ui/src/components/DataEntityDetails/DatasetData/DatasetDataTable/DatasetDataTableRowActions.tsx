@@ -1,4 +1,4 @@
-import type { LookupTable } from 'generated-sources';
+import { Permission, type LookupTable } from 'generated-sources';
 import { Button, ConfirmationDialog } from 'components/shared/elements';
 import { DeleteIcon, EditIcon } from 'components/shared/icons';
 import React, { useCallback } from 'react';
@@ -9,6 +9,7 @@ import {
 } from 'lib/hooks/api/masterData/lookupTableRows';
 import type { Row, Table } from '@tanstack/react-table';
 import { Box } from '@mui/material';
+import { WithPermissions } from 'components/shared/contexts';
 import { HiddenBox } from './DatasetDataTable.styles';
 import type { TableData } from './interfaces';
 import { buildTableRowData } from './utils';
@@ -84,21 +85,25 @@ const DatasetDataTableRowActions = ({
         </Box>
       ) : (
         <Box display='flex' justifyContent='flex-end' gap={1}>
-          <ConfirmationDialog
-            actionTitle={t('Are you sure you want to delete this row?')}
-            actionName={t('Delete row')}
-            actionText={t('This row will be deleted permanently')}
-            onConfirm={handleDelete}
-            actionBtn={
-              <Button buttonType='tertiary-m' icon={<DeleteIcon />} sx={{ ml: 0.5 }} />
-            }
-          />
-          <Button
-            text='Edit'
-            onClick={onEdit}
-            buttonType='tertiary-m'
-            icon={<EditIcon />}
-          />
+          <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DATA_DELETE}>
+            <ConfirmationDialog
+              actionTitle={t('Are you sure you want to delete this row?')}
+              actionName={t('Delete row')}
+              actionText={t('This row will be deleted permanently')}
+              onConfirm={handleDelete}
+              actionBtn={
+                <Button buttonType='tertiary-m' icon={<DeleteIcon />} sx={{ ml: 0.5 }} />
+              }
+            />
+          </WithPermissions>
+          <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DATA_UPDATE}>
+            <Button
+              text='Edit'
+              onClick={onEdit}
+              buttonType='tertiary-m'
+              icon={<EditIcon />}
+            />
+          </WithPermissions>
         </Box>
       )}
     </HiddenBox>
