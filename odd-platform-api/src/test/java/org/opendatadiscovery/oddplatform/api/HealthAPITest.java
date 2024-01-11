@@ -14,6 +14,7 @@ public class HealthAPITest extends BaseIntegrationTest {
 
     @Test
     public void testHealthCheck() {
+        System.out.println("PING");
         webTestClient.get()
             .uri(URI.create("/actuator/health"))
             .exchange()
