@@ -12,6 +12,9 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldEnumValue;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GraphRelationshipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
 
 @Data
 @Builder
@@ -40,7 +43,9 @@ public class DataEntityIngestionDto {
     public record DataSetIngestionDto(String parentDatasetOddrn,
                                       List<DatasetFieldIngestionDto> fieldList,
                                       String structureHash,
-                                      Long rowsCount) {
+                                      Long rowsCount,
+                                      Map<RelationshipPojo, List<ErdRelationshipPojo>> erdRelationDto,
+                                      Map<RelationshipPojo, GraphRelationshipPojo> graphRelationDto) {
     }
 
     public record DataTransformerIngestionDto(List<String> sourceList, List<String> targetList) {
