@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.GraphRelationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
@@ -18,8 +19,11 @@ public class DatasetGraphRelationIngestionMapperImpl implements DatasetGraphRela
     private final DatasetRelationIngestionMapper relationIngestionMapper;
 
     @Override
-    public Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(
-        final List<Relationship> relationships) {
+    public Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships) {
+        if(CollectionUtils.isEmpty(relationships)){
+            return Map.of();
+        }
+
         return relationships.stream()
             .filter(item -> item.getGraphRelationship() != null)
             .collect(Collectors.toMap(relationIngestionMapper::mapToPojo,

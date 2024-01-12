@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.ERDRelationship;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ErdRelationshipPojo;
@@ -18,6 +19,10 @@ public class DatasetERDRelationIngestionMapperImpl implements DatasetERDRelation
 
     @Override
     public Map<RelationshipPojo, List<ErdRelationshipPojo>> mapERDRelations(final List<Relationship> relationships) {
+        if(CollectionUtils.isEmpty(relationships)){
+            return Map.of();
+        }
+
         return relationships.stream()
             .filter(item -> item.getErdRelationship() != null)
             .collect(Collectors.toMap(relationIngestionMapper::mapToPojo,
