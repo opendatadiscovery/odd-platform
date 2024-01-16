@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { addDays, endOfDay, startOfDay } from 'date-fns';
-import DatePicker, { type DateObject } from 'react-multi-date-picker';
 import AppDateRangePickerFooter from 'components/shared/elements/AppDateRangePicker/AppDateRangePickerFooter/AppDateRangePickerFooter';
 import * as S from 'components/shared/elements/AppDateRangePicker/AppDateRangePickerStyles';
+import DatePicker, { type DateObject } from 'react-multi-date-picker';
 
 interface AppDateRangePickerProps {
   defaultRange: { beginDate: Date; endDate: Date };
@@ -93,7 +93,6 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         portal
         arrow={false}
         showOtherDays
-        multiple
         offsetY={4}
         numberOfMonths={2}
         mapDays={disableSelectedDate}
