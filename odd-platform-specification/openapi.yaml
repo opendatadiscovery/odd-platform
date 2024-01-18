@@ -1768,6 +1768,59 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/relationships:
+    get:
+      summary: Get list of relationships for dataset
+      description: Get information about DataSet's relationships for dataset by DataSet's id
+      operationId: getDataSetRelationships
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/RelationshipList'
+      tags:
+        - dataSet
+
+  /api/datasets/{data_entity_id}/graphrelationships/{relationships_id}:
+    get:
+      summary: Get list of relationships for dataset
+      description: Get information about DataSet's relationships for dataset by DataSet's id
+      operationId: getDataSetGraphRelationshipsById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipsIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/GraphRelationshipDetailsList'
+      tags:
+        - dataSet
+
+  /api/datasets/{data_entity_id}/erdrelationships/{relationships_id}:
+    get:
+      summary: Get list of relationships for dataset
+      description: Get information about DataSet's relationships for dataset by DataSet's id
+      operationId: getDataSetErdRelationshipsById
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/RelationshipsIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ERDRelationshipDetailsList'
+      tags:
+        - dataSet
+
   /api/datasets/{data_entity_id}/structure/{version_id}:
     get:
       summary: Get DataSet structure information

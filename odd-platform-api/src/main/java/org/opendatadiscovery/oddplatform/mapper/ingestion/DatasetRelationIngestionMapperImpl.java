@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Relationship;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RelationshipPojo;
 import org.opendatadiscovery.oddplatform.service.ingestion.util.DateTimeUtil;
@@ -23,6 +24,7 @@ public class DatasetRelationIngestionMapperImpl implements DatasetRelationIngest
         relationshipPojo.setSourceDatasetOddrn(relationship.getSourceDatasetOddrn());
         relationshipPojo.setTargetDatasetOddrn(relationship.getTargetDatasetOddrn());
         relationshipPojo.setLastIngestedAt(DateTimeUtil.generateNow());
+        relationshipPojo.setRelationshipStatus(RelationshipStatusDto.ACTIVE.getId());
 
         return relationshipPojo;
     }

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS relationship
     source_dataset_oddrn       varchar(512)       NOT NULL,
     target_dataset_oddrn       varchar(512)       NOT NULL,
     is_manualy_created         boolean,
+    relationship_status        SMALLINT,
     last_ingested_at           TIMESTAMP WITHOUT TIME ZONE,
     deleted_at                 TIMESTAMP WITHOUT TIME ZONE
 );

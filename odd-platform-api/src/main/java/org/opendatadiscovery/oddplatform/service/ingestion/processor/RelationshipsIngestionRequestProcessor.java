@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.opendatadiscovery.oddplatform.dto.RelationshipStatusDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataSetIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
@@ -34,7 +37,6 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
 
     @Override
     public Mono<Void> process(final IngestionRequest request) {
-        System.out.println("tut");
         final List<DataSetIngestionDto> dataSets = request.getAllEntities()
             .stream()
             .map(DataEntityIngestionDto::getDataSet)
@@ -49,7 +51,8 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
         return relationshipsRepository.getRelationshipByDatasetOddrns(datasetOddrn)
             .collectList()
             .flatMap(existedPojos -> handleERDRelations(existedPojos, dataSets)
-                .then(handleGraphRelations(existedPojos, dataSets)));
+                .then(handleGraphRelations(existedPojos, dataSets))
+                .then(removeRelationships(existedPojos, dataSets)));
     }
 
     @Override
@@ -83,8 +86,6 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
             }
         });
 
-        final List<RelationshipPojo> erdToDelete = getDeleteRelations(erdMap.keySet(), existedPojos);
-
         return updateExistedERDRelations(erdToUpdateMap)
             .then(
                 Flux.fromIterable(erdToCreate.entrySet())
@@ -98,11 +99,6 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
                             return erdRelationshipsRepository.bulkCreate(toCreate).collectList();
                         })
                     ).collectList()
-            ).then(Flux.fromIterable(erdToDelete).collectList())
-            .flatMap(item -> relationshipsRepository.delete(item.stream()
-                    .map(RelationshipPojo::getId)
-                    .toList())
-                .collectList()
             )
             .then();
     }
@@ -115,12 +111,12 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
             .toList();
 
         return erdRelationshipsRepository.findERDSByRelationIds(relationshipIds)
-            .flatMap(item -> {
+            .flatMap(existedErds -> {
                 final Set<ErdRelationshipPojo> toCreate = new HashSet<>();
                 final Set<ErdRelationshipPojo> toUpdate = new HashSet<>();
                 final Set<Long> toDelete = new HashSet<>();
 
-                for (final ErdRelationshipPojo erdPojo : item) {
+                for (final ErdRelationshipPojo erdPojo : existedErds) {
                     final List<ErdRelationshipPojo> ingestErd =
                         erdToUpdateMap.get(erdPojo.getRelationshipId()).getValue();
                     final ErdRelationshipPojo pojoToUpdate = ingestErd.stream()
@@ -148,8 +144,12 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
                         });
                 }
 
-                return Flux.fromIterable(erdToUpdateMap.values())
-                    .flatMap(element -> relationshipsRepository.update(element.getKey())).collectList()
+                final List<RelationshipPojo> relationsToUpdate = erdToUpdateMap.values().stream()
+                    .map(Pair::getKey)
+                    .toList();
+
+                return Flux.fromIterable(relationsToUpdate).collectList()
+                    .flatMap(element -> relationshipsRepository.bulkUpdate(relationsToUpdate).collectList())
                     .then(erdRelationshipsRepository.delete(toDelete).collectList())
                     .then(erdRelationshipsRepository.bulkUpdate(toUpdate).collectList())
                     .then(erdRelationshipsRepository.bulkCreate(toCreate).collectList());
@@ -178,8 +178,6 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
             }
         });
 
-        final List<RelationshipPojo> graphToDelete = getDeleteRelations(grapMap.keySet(), existedPojos);
-
         final List<Long> relationshipIds = graphToUpdate.values()
             .stream()
             .map(relationshipPojoListPair -> relationshipPojoListPair.getKey().getId())
@@ -207,13 +205,26 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
                         return graphRelationshipsRepository.create(element.getValue());
                     })
                 ).collectList()
-            ).then(Flux.fromIterable(graphToDelete).collectList())
-            .flatMap(item -> relationshipsRepository.delete(item.stream()
-                    .map(RelationshipPojo::getId)
-                    .toList())
-                .collectList()
-            )
-            .then();
+            ).then();
+    }
+
+    private Mono<Void> removeRelationships(final List<RelationshipPojo> existedPojos,
+                                           final List<DataSetIngestionDto> dataSets) {
+        final Set<String> ingestedRelations = dataSets.stream().map(item -> {
+            final List<RelationshipPojo> relationshipList = new ArrayList<>();
+
+            relationshipList.addAll(item.erdRelationDto().keySet().stream().toList());
+            relationshipList.addAll(item.graphRelationDto().keySet().stream().toList());
+
+            return relationshipList;
+        }).flatMap(Collection::stream).map(RelationshipPojo::getRelationshipOddrn).collect(Collectors.toSet());
+
+        final List<RelationshipPojo> toRemove =
+            existedPojos.stream().filter(existedPojo -> !ingestedRelations.contains(existedPojo.getRelationshipOddrn()))
+                .map(item -> item.setRelationshipStatus(RelationshipStatusDto.DELETED.getId())).toList();
+
+        return Flux.fromIterable(toRemove).collectList()
+            .flatMap(items -> relationshipsRepository.bulkUpdate(items).collectList()).then();
     }
 
     private RelationshipPojo getExistedRelationByOddrn(final List<RelationshipPojo> existedPojos,
@@ -222,17 +233,5 @@ public class RelationshipsIngestionRequestProcessor implements IngestionRequestP
             .filter(existedPojo ->
                 key.getRelationshipOddrn().equals(existedPojo.getRelationshipOddrn()))
             .findFirst().orElse(null);
-    }
-
-    private List<RelationshipPojo> getDeleteRelations(final Set<RelationshipPojo> relationSet,
-                                                      final List<RelationshipPojo> existedPojos) {
-        final Set<String> oddrnSet = relationSet
-            .stream()
-            .map(RelationshipPojo::getRelationshipOddrn)
-            .collect(Collectors.toSet());
-
-        return existedPojos.stream()
-            .filter(existedPojo -> !oddrnSet.contains(existedPojo.getRelationshipOddrn()))
-            .collect(Collectors.toList());
     }
 }

@@ -3935,6 +3935,121 @@ components:
         - field_id
         - value
 
+    RelationshipList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetRelationship'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DatasetRelationship:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        oddrn:
+          type: string
+        source_data_entity_id:
+          type: integer
+          format: int64
+        target_data_entity_id:
+          type: integer
+          format: int64
+        source_dataset_oddrn:
+          type: string
+        target_dataset_oddrn:
+          type: string
+        type:
+          $ref: '#/components/schemas/DatasetRelationshipType'
+      required:
+        - name
+        - oddrn
+        - source_dataset_oddrn
+        - target_dataset_oddrn
+        - type
+
+    DatasetRelationshipType:
+      type: string
+      enum:
+        - ERD
+        - GRAPH
+
+    ERDRelationshipDetailsList:
+      type: object
+      properties:
+        dataset_relationship:
+          $ref: '#/components/schemas/DatasetRelationship'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ERDRelationshipDetails'
+      required:
+        - items
+
+    ERDRelationshipDetails:
+      type: object
+      properties:
+        erd_relationships_id:
+          type: integer
+          format: int64
+        source_dataset_field_oddrn:
+          type: string
+        target_dataset_field_oddrn:
+          type: string
+        is_identifying:
+          type: boolean
+        cardinality:
+          type: string
+      required:
+        - erd_relationships_id
+        - source_dataset_field_oddrn
+        - target_dataset_field_oddrn
+
+    GraphRelationshipDetailsList:
+      type: object
+      properties:
+        dataset_relationship:
+          $ref: '#/components/schemas/DatasetRelationship'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphRelationshipDetails'
+      required:
+        - items
+
+    GraphRelationshipDetails:
+      type: object
+      properties:
+        graph_relationships_id:
+          type: integer
+          format: int64
+        is_directed:
+          type: boolean
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphRelationshipAttributes'
+
+    GraphRelationshipAttributes:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - field
+        - value
+
   parameters:
     PageParam:
       name: page
@@ -4094,6 +4209,14 @@ components:
 
     LookupRowIdParam:
       name: row_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    RelationshipsIdParam:
+      name: relationships_id
       in: path
       required: true
       schema:

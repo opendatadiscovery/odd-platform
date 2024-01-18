@@ -20,7 +20,7 @@ public class DatasetGraphRelationIngestionMapperImpl implements DatasetGraphRela
 
     @Override
     public Map<RelationshipPojo, GraphRelationshipPojo> mapGraphRelations(final List<Relationship> relationships) {
-        if(CollectionUtils.isEmpty(relationships)){
+        if (CollectionUtils.isEmpty(relationships)) {
             return Map.of();
         }
 

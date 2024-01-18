@@ -19,7 +19,7 @@ public class DatasetERDRelationIngestionMapperImpl implements DatasetERDRelation
 
     @Override
     public Map<RelationshipPojo, List<ErdRelationshipPojo>> mapERDRelations(final List<Relationship> relationships) {
-        if(CollectionUtils.isEmpty(relationships)){
+        if (CollectionUtils.isEmpty(relationships)) {
             return Map.of();
         }
 
