@@ -73,7 +73,7 @@ const App: React.FC = () => {
             <Route path={dataQualityPath()} element={<DataQuality />} />
             <Route path={`${dataModellingPath()}/*`} element={<DataModeling />} />
             <Route
-              path={`${lookupTablesPath()}`}
+              path={lookupTablesPath()}
               element={
                 <WithPermissionsProvider
                   allowedPermissions={[
