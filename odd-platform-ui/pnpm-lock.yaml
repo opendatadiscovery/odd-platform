@@ -140,7 +140,7 @@ dependencies:
     version: 5.1.2(react@18.2.0)
   recharts:
     specifier: ^2.10.2
-    version: 2.10.2(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+    version: 2.10.4(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
   styled-components:
     specifier: ^6.1.1
     version: 6.1.1(react-dom@18.2.0)(react@18.2.0)
@@ -2108,7 +2108,7 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@babel/runtime': 7.22.11
+      '@babel/runtime': 7.23.5
       '@uiw/copy-to-clipboard': 1.0.15
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -6451,8 +6451,8 @@ packages:
       decimal.js-light: 2.5.1
     dev: false
 
-  /recharts@2.10.2(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-goasBqGqpH8SLty+a24xG1KkZWowo793mgoNVrOkBRXZCG2xX+BUbCgaWrB/G+DGIpN2AX/arCttLuHdg/A6LQ==}
+  /recharts@2.10.4(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-/Q7/wdf8bW91lN3NEeCjL9RWfaiXQViJFgdnas4Eix/I8B9HAI3tHHK/CW/zDfgRMh4fzW1zlfjoz1IAapLO1Q==}
     engines: {node: '>=14'}
     peerDependencies:
       prop-types: ^15.6.0
