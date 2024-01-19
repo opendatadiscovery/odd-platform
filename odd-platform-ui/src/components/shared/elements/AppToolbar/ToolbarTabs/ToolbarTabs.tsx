@@ -60,10 +60,6 @@ const ToolbarTabs: FC = () => {
         value: 'master-data',
       },
       {
-        name: t('Master Data'),
-        link: lookupTablesPath(),
-      },
-      {
         name: t('Management'),
         link: managementPath(),
         value: 'management',
