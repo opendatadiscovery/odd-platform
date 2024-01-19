@@ -23,6 +23,8 @@ import {
   termsPath,
   termsSearchPath,
 } from 'routes';
+import { WithPermissionsProvider } from './shared/contexts';
+import { Permission } from '../generated-sources';
 
 // lazy elements
 const Management = lazy(() => import('./Management/Management'));
@@ -70,7 +72,20 @@ const App: React.FC = () => {
             <Route path={`${directoryPath()}/*`} element={<DirectoryRoutes />} />
             <Route path={dataQualityPath()} element={<DataQuality />} />
             <Route path={`${dataModellingPath()}/*`} element={<DataModeling />} />
-            <Route path={`${lookupTablesPath()}`} element={<LookupTables />} />
+            <Route
+              path={lookupTablesPath()}
+              element={
+                <WithPermissionsProvider
+                  allowedPermissions={[
+                    Permission.LOOKUP_TABLE_CREATE,
+                    Permission.LOOKUP_TABLE_UPDATE,
+                    Permission.LOOKUP_TABLE_DELETE,
+                  ]}
+                  resourcePermissions={[]}
+                  Component={LookupTables}
+                />
+              }
+            />
           </Routes>
         </AppSuspenseWrapper>
       </div>

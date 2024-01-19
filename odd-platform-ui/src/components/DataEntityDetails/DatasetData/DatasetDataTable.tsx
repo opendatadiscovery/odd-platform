@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { LookupTable } from 'generated-sources';
+import { Permission } from 'generated-sources';
 import { flexRender } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Button, ScrollableContainer } from 'components/shared/elements';
 import { AddIcon } from 'components/shared/icons';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useCreateReferenceData } from 'lib/hooks/api/masterData/referenceData';
+import { WithPermissions } from 'components/shared/contexts';
 import { useDatasetDataTable } from './DatasetDataTable/hooks';
 import * as S from './DatasetDataTable/DatasetDataTable.styles';
 import DatasetDataTableRowForm from './DatasetDataTable/DatasetDataTableRowForm';
@@ -63,25 +65,27 @@ const DatasetDataTable = ({ lookupTable }: DatasetDataTableProps) => {
               ))}
             </S.Thead>
             <tbody>
-              {isFormShow ? (
-                <DatasetDataTableRowForm
-                  lookupTable={lookupTable}
-                  onCancel={() => setIsFormShow(false)}
-                />
-              ) : (
-                <S.Tr>
-                  <S.Td colSpan={table.getAllColumns().length}>
-                    <Button
-                      buttonType='tertiary-m'
-                      icon={<AddIcon />}
-                      onClick={() => {
-                        setIsFormShow(true);
-                        form.reset();
-                      }}
-                    />
-                  </S.Td>
-                </S.Tr>
-              )}
+              <WithPermissions permissionTo={Permission.LOOKUP_TABLE_DATA_CREATE}>
+                {isFormShow ? (
+                  <DatasetDataTableRowForm
+                    lookupTable={lookupTable}
+                    onCancel={() => setIsFormShow(false)}
+                  />
+                ) : (
+                  <S.Tr>
+                    <S.Td colSpan={table.getAllColumns().length}>
+                      <Button
+                        buttonType='tertiary-m'
+                        icon={<AddIcon />}
+                        onClick={() => {
+                          setIsFormShow(true);
+                          form.reset();
+                        }}
+                      />
+                    </S.Td>
+                  </S.Tr>
+                )}
+              </WithPermissions>
               {getVirtualItems().map(virtualRow => {
                 const row = rows[virtualRow.index];
                 return (

@@ -8,6 +8,9 @@ const QueryExamplesListHeader = () => {
 
   return (
     <Table.HeaderContainer>
+      <Table.Cell $flex='1 0 1'>
+        <Typography variant='caption'>#</Typography>
+      </Table.Cell>
       <Table.Cell $flex='1 0 25%'>
         <Typography variant='caption'>{t('Definition')}</Typography>
       </Table.Cell>

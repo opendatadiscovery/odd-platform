@@ -8,7 +8,6 @@ import { WithPermissions } from 'components/shared/contexts';
 import { Permission } from 'generated-sources';
 import QueryExamplesList from './QueryExampleSearchResults/QueryExamplesList';
 import DataModellingTabs from './DataModellingTabs';
-import QueryExamplesListHeader from '../shared/elements/QueryExamples/QueryExamplesListHeader';
 import QueryExampleForm from './QueryExampleForm/QueryExampleForm';
 
 const QueryExamples: React.FC = () => {
@@ -50,7 +49,6 @@ const QueryExamples: React.FC = () => {
         <DataModellingTabs />
       </Grid>
       <Grid item xs={12}>
-        <QueryExamplesListHeader />
         <QueryExamplesList />
       </Grid>
     </Grid>

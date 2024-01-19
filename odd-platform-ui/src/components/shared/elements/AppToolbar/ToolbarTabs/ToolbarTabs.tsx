@@ -1,5 +1,5 @@
-import React, { type FC, useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { type FC, useCallback, useMemo, useState, useEffect } from 'react';
+import { matchPath, useLocation, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCreateSearch, useQueryParams } from 'lib/hooks';
 import {
@@ -12,6 +12,7 @@ import AppTabs, { type AppTabItem } from 'components/shared/elements/AppTabs/App
 import {
   activityPath,
   alertsPath,
+  dataEntitiesPath,
   dataQualityPath,
   directoryPath,
   lookupTablesPath,
@@ -20,17 +21,17 @@ import {
   searchPath,
   termsSearchPath,
 } from 'routes';
-import useSetSelectedTab from '../../AppTabs/useSetSelectedTab';
 
 const ToolbarTabs: FC = () => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const createSearch = useCreateSearch();
+  const { pathname } = useResolvedPath(useLocation());
   const { defaultQueryString: activityQueryString } =
     useQueryParams<ActivityQuery>(defaultActivityQuery);
 
-  const tabs = useMemo<AppTabItem[]>(
+  const tabs = useMemo<AppTabItem<string>[]>(
     () => [
       {
         name: t('Catalog'),
@@ -39,16 +40,24 @@ const ToolbarTabs: FC = () => {
       {
         name: t('Directory'),
         link: directoryPath(),
+        value: 'directory',
       },
       {
         name: t('Data Quality'),
         link: dataQualityPath(),
+        value: 'data-quality',
       },
       {
         name: t('Data Modelling'),
         link: queryExamplesPath(),
         hint: t('BETA'),
         hintType: 'secondary',
+        value: 'data-modelling',
+      },
+      {
+        name: t('Master Data'),
+        link: lookupTablesPath(),
+        value: 'master-data',
       },
       {
         name: t('Master Data'),
@@ -57,18 +66,22 @@ const ToolbarTabs: FC = () => {
       {
         name: t('Management'),
         link: managementPath(),
+        value: 'management',
       },
       {
         name: t('Dictionary'),
         link: termsSearchPath(),
+        value: 'dictionary',
       },
       {
         name: t('Alerts'),
         link: alertsPath('all'),
+        value: 'alerts',
       },
       {
         name: t('Activity'),
         link: activityPath(activityQueryString),
+        value: 'activity',
       },
     ],
     [activityQueryString, t]
@@ -76,12 +89,29 @@ const ToolbarTabs: FC = () => {
 
   const [selectedTab, setSelectedTab] = useState(-1);
 
-  useSetSelectedTab(tabs, setSelectedTab);
+  useEffect(() => {
+    if (matchPath('/', pathname)) {
+      setSelectedTab(-1);
+      return;
+    }
+
+    if (
+      matchPath(`${searchPath()}/*`, pathname) ||
+      matchPath(`${dataEntitiesPath()}/*`, pathname)
+    ) {
+      setSelectedTab(0);
+      return;
+    }
+
+    tabs.forEach((tab, idx) => {
+      if (tab.value && pathname.includes(tab.value)) {
+        setSelectedTab(idx);
+      }
+    });
+  }, [pathname]);
 
   const handleTabClick = useCallback(
     (idx: number) => {
-      setSelectedTab(idx);
-
       const initialParams = { query: '', pageSize: 30, filters: {} };
 
       if (tabs[idx].name === t('Dictionary')) {

@@ -8,11 +8,12 @@ import {
   useGetReferenceDataSearch,
   useUpdateReferenceDataSearch,
 } from 'lib/hooks/api/masterData/referenceDataSearch';
-import type { ReferenceDataSearchFacetsData } from 'generated-sources';
+import { Permission, type ReferenceDataSearchFacetsData } from 'generated-sources';
 import { AddIcon } from '../shared/icons';
 import LookupTablesList from './LookupTables/LookupTablesList';
 import LookupTableForm from './LookupTableForm';
 import ListLayout from '../shared/elements/ListLayout/ListLayout';
+import { WithPermissions } from '../shared/contexts';
 
 const LookupTables: React.FC = () => {
   const { t } = useTranslation();
@@ -68,15 +69,17 @@ const LookupTables: React.FC = () => {
               isLoading={isLoading}
               onSearch={handleSearch}
             />
-            <LookupTableForm
-              btnEl={
-                <Button
-                  text={t('Add new')}
-                  buttonType='main-lg'
-                  startIcon={<AddIcon />}
-                />
-              }
-            />
+            <WithPermissions permissionTo={Permission.LOOKUP_TABLE_CREATE}>
+              <LookupTableForm
+                btnEl={
+                  <Button
+                    text={t('Add new')}
+                    buttonType='main-lg'
+                    startIcon={<AddIcon />}
+                  />
+                }
+              />
+            </WithPermissions>
           </Grid>
         </Grid>
         <Grid item>
